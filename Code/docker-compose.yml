@@ -1,0 +1,8 @@
+version: '3.4'
+
+services:
+  avalanche.api:
+    image: ${DOCKER_REGISTRY-}avalancheapi
+    build:
+      context: .
+      dockerfile: Avalanche.Api/Dockerfile

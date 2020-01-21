@@ -1,0 +1,36 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <DockerComposeProjectPath>..\docker-compose.dcproj</DockerComposeProjectPath>
+    <UserSecretsId>2f27c3dd-6545-459d-9b88-0b474aab5e53</UserSecretsId>
+    <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Folder Include="Repositories\Content\" />
+    <Folder Include="Repositories\Licensing\" />
+    <Folder Include="Repositories\Settings\" />
+    <Folder Include="Repositories\Procedures\" />
+    <Folder Include="Services\Licensing\" />
+    <Folder Include="Services\Media\" />
+    <Folder Include="Services\Settings\" />
+    <Folder Include="Services\Security\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="3.1.0" />
+    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.9.10" />
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="3.1.0" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="5.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Avalanche.Api.Broadcaster\Avalanche.Api.Broadcaster.csproj" />
+    <ProjectReference Include="..\Avalanche.Api.Mocks\Avalanche.Api.Mocks.csproj" />
+    <ProjectReference Include="..\Avalanche.Shared.Domain\Avalanche.Shared.Domain.csproj" />
+    <ProjectReference Include="..\Avalanche.Shared.Infrastructure\Avalanche.Shared.Infrastructure.csproj" />
+  </ItemGroup>
+
+
+</Project>
