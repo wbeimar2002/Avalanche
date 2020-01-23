@@ -2,6 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Avalanche.Api.Managers.Settings;
+using Avalanche.Api.Services.Configuration;
+using Avalanche.Shared.Infrastructure.Services.Configuration;
+using Avalanche.Shared.Infrastructure.Services.Logger;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -33,6 +37,16 @@ namespace Avalanche.Api
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Avalanche.Api", Version = "V1" });
             });
+
+
+            IConfigurationService configurationService = new ConfigurationService(Configuration);
+            services.AddSingleton<IConfigurationService>(c => configurationService);
+
+            services.AddSingleton<IAppLoggerService, AppLoggerService>();
+
+            services.AddSingleton<ISettingsManager, SettingsManagerMock>();
+
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

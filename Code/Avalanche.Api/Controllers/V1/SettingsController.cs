@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Avalanche.Api.Managers.Settings;
 using Avalanche.Api.ViewModels;
 using Avalanche.Shared.Domain.Models;
 using Avalanche.Shared.Infrastructure.Enumerations;
@@ -20,10 +21,13 @@ namespace Avalanche.Api.Controllers.V1
     public class SettingsController : ControllerBase
     {
         readonly IAppLoggerService _appLoggerService;
+        readonly ISettingsManager _settingsManager;
 
-        public SettingsController(IAppLoggerService appLoggerService)
+        public SettingsController(IAppLoggerService appLoggerService,
+            ISettingsManager settingsManager)
         {
             _appLoggerService = appLoggerService;
+            _settingsManager = settingsManager;
         }
 
         [HttpGet("categories")]
@@ -33,8 +37,8 @@ namespace Avalanche.Api.Controllers.V1
             try
             {
                 _appLoggerService.Log(LogType.Debug, LoggerHelper.GetLogMessage(DebugLogType.Requested));
-                await Task.CompletedTask;
-                return Ok();
+                
+                return Ok(await _settingsManager.GetCategories());
             }
             catch (Exception exception)
             {
@@ -54,8 +58,7 @@ namespace Avalanche.Api.Controllers.V1
             try
             {
                 _appLoggerService.Log(LogType.Debug, LoggerHelper.GetLogMessage(DebugLogType.Requested));
-                await Task.CompletedTask;
-                return Ok();
+                return Ok(await _settingsManager.GetSettingsByCategory());
             }
             catch (Exception exception)
             {

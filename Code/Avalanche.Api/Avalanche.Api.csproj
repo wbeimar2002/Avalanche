@@ -27,7 +27,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Avalanche.Api.Broadcaster\Avalanche.Api.Broadcaster.csproj" />
-    <ProjectReference Include="..\Avalanche.Api.Mocks\Avalanche.Api.Mocks.csproj" />
     <ProjectReference Include="..\Avalanche.Shared.Domain\Avalanche.Shared.Domain.csproj" />
     <ProjectReference Include="..\Avalanche.Shared.Infrastructure\Avalanche.Shared.Infrastructure.csproj" />
   </ItemGroup>
