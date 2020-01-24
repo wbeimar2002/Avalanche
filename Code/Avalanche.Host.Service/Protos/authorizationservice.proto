@@ -1,0 +1,18 @@
+﻿syntax = "proto3";
+
+package Avalanche.Host.Service.Clients;
+
+service AuthorizationServiceProto {
+    rpc AuthenticateUser(ApplicationUser) returns (AuthorizationResult) {}
+}
+
+message ApplicationUser {
+    string username = 1;
+    string password = 2;
+}
+
+message AuthorizationResult {
+    bool success = 1;
+    string username = 2;
+	string message = 3;
+}
