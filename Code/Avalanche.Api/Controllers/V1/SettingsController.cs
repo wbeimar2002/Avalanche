@@ -53,12 +53,12 @@ namespace Avalanche.Api.Controllers.V1
 
         [HttpGet("categories/{key}")]
         [Produces(typeof(SettingCategoryViewModel))]
-        public async Task<IActionResult> GetSettingsByCategory([FromServices]IWebHostEnvironment env)
+        public async Task<IActionResult> GetSettingsByCategory(string key, [FromServices]IWebHostEnvironment env)
         {
             try
             {
                 _appLoggerService.Log(LogType.Debug, LoggerHelper.GetLogMessage(DebugLogType.Requested));
-                return Ok(await _settingsManager.GetSettingsByCategory());
+                return Ok(await _settingsManager.GetSettingsByCategory(key));
             }
             catch (Exception exception)
             {
@@ -71,7 +71,7 @@ namespace Avalanche.Api.Controllers.V1
             }
         }
 
-        [HttpPost("categories/{key}")]
+        [HttpPost("categories/{categoryKey}")]
         public async Task<IActionResult> SaveSettingsByCategory([FromServices]IWebHostEnvironment env)
         {
             try
@@ -79,6 +79,26 @@ namespace Avalanche.Api.Controllers.V1
                 _appLoggerService.Log(LogType.Debug, LoggerHelper.GetLogMessage(DebugLogType.Requested));
                 await Task.CompletedTask;
                 return Ok();
+            }
+            catch (Exception exception)
+            {
+                _appLoggerService.Log(LogType.Debug, LoggerHelper.GetLogMessage(DebugLogType.Exception), exception);
+                return new BadRequestObjectResult(exception.Get(env.IsDevelopment()));
+            }
+            finally
+            {
+                _appLoggerService.Log(LogType.Debug, LoggerHelper.GetLogMessage(DebugLogType.Completed));
+            }
+        }
+
+        [HttpGet("categories/{categoryKey}/sources/{sourcekey}")]
+        [Produces(typeof(SettingCategoryViewModel))]
+        public async Task<IActionResult> GetSettingsByCategory(string categoryKey, string sourcekey, [FromServices]IWebHostEnvironment env)
+        {
+            try
+            {
+                _appLoggerService.Log(LogType.Debug, LoggerHelper.GetLogMessage(DebugLogType.Requested));
+                return Ok(_settingsManager.GetSourceValuesByCategory(categoryKey, sourcekey));
             }
             catch (Exception exception)
             {

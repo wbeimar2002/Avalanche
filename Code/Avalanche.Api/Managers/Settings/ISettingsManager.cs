@@ -10,6 +10,7 @@ namespace Avalanche.Api.Managers.Settings
     public interface ISettingsManager
     {
         Task<List<SettingCategory>> GetCategories();
-        Task<SettingCategoryViewModel> GetSettingsByCategory();
+        Task<SettingCategoryViewModel> GetSettingsByCategory(string categoryKey);
+        List<KeyValuePairViewModel> GetSourceValuesByCategory(string categoryKey, string sourceKey);
     }
 }

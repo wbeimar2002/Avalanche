@@ -15,5 +15,6 @@ namespace Avalanche.Shared.Domain.Models
         public string Value { get; set; }
         public string DefaultLabelValue { get; set; }
         public VisualStyle VisualStyle { get; set; }
+        public string SourceKey { get; set; }
     }
 }

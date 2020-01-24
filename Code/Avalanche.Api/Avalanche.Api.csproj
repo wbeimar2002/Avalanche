@@ -8,6 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Folder Include="Protos\" />
     <Folder Include="Repositories\Content\" />
     <Folder Include="Repositories\Licensing\" />
     <Folder Include="Repositories\Settings\" />
@@ -16,6 +17,10 @@
     <Folder Include="Services\Media\" />
     <Folder Include="Services\Settings\" />
     <Folder Include="Services\Security\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="..\Avalanche.Host.Service\Protos\authorizationservice.proto" Link="Protos\authorizationservice.proto" />
   </ItemGroup>
 
   <ItemGroup>

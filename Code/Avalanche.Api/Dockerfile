@@ -10,7 +10,6 @@ WORKDIR /src
 COPY ["Avalanche.Api/Avalanche.Api.csproj", "Avalanche.Api/"]
 COPY ["Avalanche.Shared.Infrastructure/Avalanche.Shared.Infrastructure.csproj", "Avalanche.Shared.Infrastructure/"]
 COPY ["Avalanche.Shared.Domain/Avalanche.Shared.Domain.csproj", "Avalanche.Shared.Domain/"]
-COPY ["Avalanche.Api.Mocks/Avalanche.Api.Mocks.csproj", "Avalanche.Api.Mocks/"]
 RUN dotnet restore "Avalanche.Api/Avalanche.Api.csproj"
 COPY . .
 WORKDIR "/src/Avalanche.Api"

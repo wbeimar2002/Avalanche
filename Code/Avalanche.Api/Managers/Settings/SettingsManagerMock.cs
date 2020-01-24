@@ -30,7 +30,7 @@ namespace Avalanche.Api.Managers.Settings
             return Task.FromResult(mock);
         }
 
-        public Task<SettingCategoryViewModel> GetSettingsByCategory()
+        public Task<SettingCategoryViewModel> GetSettingsByCategory(string categoryKey)
         {
             var settingsMock = new List<Setting>();
             settingsMock.Add(new Setting() 
@@ -68,6 +68,15 @@ namespace Avalanche.Api.Managers.Settings
                 MaximumValue = 5
             });
 
+            settingsMock.Add(new Setting()
+            {
+                TranslationKey = "PaperOrientationLabel",
+                DefaultLabelValue = "Paper Orientation",
+                SettingType = SettingType.Text,
+                VisualStyle = VisualStyle.DropDown,
+                SourceKey = "PaperOrientation"
+            });
+
             var mock = new SettingCategoryViewModel()
             {
                 Category = new SettingCategory()
@@ -80,6 +89,37 @@ namespace Avalanche.Api.Managers.Settings
             };
 
             return Task.FromResult(mock);
+        }
+
+        public List<KeyValuePairViewModel> GetSourceValuesByCategory(string categoryKey, string sourceKey)
+        {
+            switch (categoryKey)
+            {
+                case "PaperOrientation":
+                    return GetPaperOrientations();
+                default:
+                    return new List<KeyValuePairViewModel>();
+            }
+        }
+
+        private List<KeyValuePairViewModel> GetPaperOrientations()
+        {
+            var list = new List<KeyValuePairViewModel>();
+
+            list.Add(new KeyValuePairViewModel() {
+                TranslationKey = "PaperOrientationHorizontal",
+                Id = "1",
+                Value = "Horizontal Layout"
+            });
+
+            list.Add(new KeyValuePairViewModel()
+            {
+                TranslationKey = "PaperOrientationVertical",
+                Id = "1",
+                Value = "Horizontal Layout"
+            });
+
+            return list;
         }
     }
 }
