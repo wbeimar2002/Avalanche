@@ -2,8 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Avalanche.Api.Managers.Security;
 using Avalanche.Api.Managers.Settings;
 using Avalanche.Api.Services.Configuration;
+using Avalanche.Api.Services.Security;
 using Avalanche.Shared.Infrastructure.Services.Configuration;
 using Avalanche.Shared.Infrastructure.Services.Logger;
 using Microsoft.AspNetCore.Builder;
@@ -45,8 +47,9 @@ namespace Avalanche.Api
             services.AddSingleton<IAppLoggerService, AppLoggerService>();
 
             services.AddSingleton<ISettingsManager, SettingsManagerMock>();
-
-
+            services.AddSingleton<ISecurityManager, SecurityManagerMock>();
+            
+            services.AddSingleton<IAuthorizationServiceClient, AuthorizationServiceClient>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

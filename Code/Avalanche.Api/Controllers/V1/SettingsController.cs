@@ -98,6 +98,7 @@ namespace Avalanche.Api.Controllers.V1
             try
             {
                 _appLoggerService.Log(LogType.Debug, LoggerHelper.GetLogMessage(DebugLogType.Requested));
+                await Task.CompletedTask;
                 return Ok(_settingsManager.GetSourceValuesByCategory(categoryKey, sourcekey));
             }
             catch (Exception exception)
