@@ -1,7 +1,7 @@
 ﻿using Avalanche.Api.Broadcaster.Models;
 using Avalanche.Shared.Infrastructure.Enumerations;
 using Avalanche.Shared.Infrastructure.Services.HttpClient;
-using Avalanche.Shared.Infrastructure.Services.Logger;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -11,11 +11,11 @@ namespace Avalanche.Api.Broadcaster.Services
 {
     public class BroadcasterClientService : IBroadcasterClientService
     {
-        private readonly IAppLoggerService _logger;
+        private readonly ILogger _logger;
         private readonly IHttpClientService _httpClientService;
 
         public BroadcasterClientService(
-            IAppLoggerService logger,
+            ILogger<BroadcasterClientService> logger,
             IHttpClientService httpClientService)
         {
             _logger = logger;
@@ -32,7 +32,7 @@ namespace Avalanche.Api.Broadcaster.Services
                 if (!response.IsSuccessStatusCode)
                 {
                     string data = await response.Content.ReadAsStringAsync();
-                    _logger.Log(LogType.Error, $"Error sending notification to the cloud boadcaster. Response {data}");
+                    _logger.LogError($"Error sending notification to the cloud broadcaster. Response {data}");
                     return false;
                 }
 
@@ -40,7 +40,7 @@ namespace Avalanche.Api.Broadcaster.Services
             }
             catch (Exception ex)
             {
-                _logger.Log(LogType.Error, $"Error sending notification to the cloud boadcaster", ex);
+                _logger.LogError($"Error sending notification to the cloud boadcaster", ex);
                 return false;
             }
         }

@@ -5,6 +5,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Services\Logger\**" />
+    <EmbeddedResource Remove="Services\Logger\**" />
+    <None Remove="Services\Logger\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Microsoft.IdentityModel.Tokens" Version="5.6.0" />
     <PackageReference Include="Serilog" Version="2.9.0" />
     <PackageReference Include="Serilog.Settings.AppSettings" Version="2.2.2" />

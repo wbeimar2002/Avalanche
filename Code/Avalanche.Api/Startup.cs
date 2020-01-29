@@ -7,7 +7,6 @@ using Avalanche.Api.Managers.Settings;
 using Avalanche.Api.Services.Configuration;
 using Avalanche.Api.Services.Security;
 using Avalanche.Shared.Infrastructure.Services.Configuration;
-using Avalanche.Shared.Infrastructure.Services.Logger;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -17,6 +16,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
+using Serilog;
 
 namespace Avalanche.Api
 {
@@ -44,8 +44,6 @@ namespace Avalanche.Api
             IConfigurationService configurationService = new ConfigurationService(Configuration);
             services.AddSingleton<IConfigurationService>(c => configurationService);
 
-            services.AddSingleton<IAppLoggerService, AppLoggerService>();
-
             services.AddSingleton<ISettingsManager, SettingsManagerMock>();
             services.AddSingleton<ISecurityManager, SecurityManagerMock>();
             
@@ -59,6 +57,8 @@ namespace Avalanche.Api
             {
                 app.UseDeveloperExceptionPage();
             }
+
+            app.UseSerilogRequestLogging();
 
             // Enable middleware to serve generated Swagger as a JSON endpoint.
             app.UseSwagger();

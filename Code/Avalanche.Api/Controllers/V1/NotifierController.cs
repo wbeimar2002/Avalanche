@@ -6,10 +6,10 @@ using Avalanche.Api.Broadcaster.Models;
 using Avalanche.Api.Broadcaster.Services;
 using Avalanche.Shared.Infrastructure.Enumerations;
 using Avalanche.Shared.Infrastructure.Helpers;
-using Avalanche.Shared.Infrastructure.Services.Logger;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 
 namespace Avalanche.Api.Controllers.V1
 {
@@ -18,9 +18,9 @@ namespace Avalanche.Api.Controllers.V1
     public class NotifierController : Controller
     {
         private readonly IBroadcastService _broadcastService;
-        private readonly IAppLoggerService _appLoggerService;
+        private readonly ILogger _appLoggerService;
 
-        public NotifierController(IBroadcastService broadcastService, IAppLoggerService appLoggerService)
+        public NotifierController(IBroadcastService broadcastService, ILogger<NotifierController> appLoggerService)
         {
             _broadcastService = broadcastService;
             _appLoggerService = appLoggerService;
@@ -31,7 +31,7 @@ namespace Avalanche.Api.Controllers.V1
         {
             try
             {
-                _appLoggerService.Log(LogType.Debug, LoggerHelper.GetLogMessage(DebugLogType.Requested));
+                _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
 
                 _broadcastService.Broadcast(messageRequest);
 
@@ -39,12 +39,12 @@ namespace Avalanche.Api.Controllers.V1
             }
             catch (Exception ex)
             {
-                _appLoggerService.Log(LogType.Error, LoggerHelper.GetLogMessage(DebugLogType.Completed), ex);
+                _appLoggerService.LogError (LoggerHelper.GetLogMessage(DebugLogType.Completed), ex);
                 return await Task.FromResult(BadRequest());
             }
             finally
             {
-                _appLoggerService.Log(LogType.Debug, LoggerHelper.GetLogMessage(DebugLogType.Completed));
+                _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
             }
         }
     }

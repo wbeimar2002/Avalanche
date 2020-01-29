@@ -1,12 +1,14 @@
 ﻿using Avalanche.Host.Service.Clients;
 using Avalanche.Host.Service.Enumerations;
 using Avalanche.Host.Service.Helpers;
-using Avalanche.Host.Service.Services.Logging;
 using Avalanche.Host.Service.Services.Security;
 using Grpc.Core;
+using Serilog;
+using Serilog.Events;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -42,31 +44,71 @@ namespace Avalanche.Host.Service
 
         static void RegisterServicesForIoC()
         {
-            IAppLoggerService logger = null;
+            ILogger logger = null;
 
             try
             {
-                Head.Register<AuthorizationServiceProto.AuthorizationServiceProtoBase, AuthorizationService>();
-                Head.Register<ISecurityService, SecurityService>();
+                IoCHelper.Register<ILogger>(() => CreateLogger(), IoCLifestyle.Singleton);
+                IoCHelper.Register<AuthorizationServiceProto.AuthorizationServiceProtoBase, AuthorizationService>();
+                IoCHelper.Register<ISecurityService, SecurityService>();
 
                 var svr = new Server
                 {
                     Services = {
-                        AuthorizationServiceProto.BindService(Head.GetImplementation<AuthorizationServiceProto.AuthorizationServiceProtoBase>()),
+                        AuthorizationServiceProto.BindService(IoCHelper.GetImplementation<AuthorizationServiceProto.AuthorizationServiceProtoBase>()),
                     },
                     Ports = { new ServerPort(_hostname, _port, ServerCredentials.Insecure) }
                 };
 
                 svr.Start();
 
-                logger = Head.GetImplementation<IAppLoggerService>();
-                logger.Log(LogType.Information, "Avalanche Host Service is now initialized.");
+                logger = IoCHelper.GetImplementation<ILogger>();
+                logger.Information("Avalanche Host Service is now initialized.");
             }
             catch (Exception ex)
             {
                 if (logger == null) { throw; }
-                else { logger.Log(LogType.Fatal, "Avalanche Host Service failed to initialize!", ex); }
+                else { logger.Error("Avalanche Host Service failed to initialize!", ex); }
             }
         }
+
+        private static ILogger CreateLogger()
+        {
+            var logFile = Environment.GetEnvironmentVariable("LoggerFileName") ?? "avalanchehostservicelogs.txt";
+            var logFolder = Environment.GetEnvironmentVariable("LoggerFolder") ?? @"C:\Olympus\AvalancheLogs";
+
+            var logFilePath = Path.Combine(logFolder, logFile);
+
+            Int32 logFileSizeLimit = Convert.ToInt32(Environment.GetEnvironmentVariable("LoggerFileSizeLimit") ?? "209715200");
+            Int32 retainedFileCountLimit = Convert.ToInt32(Environment.GetEnvironmentVariable("LoggerRetainedFileCountLimit") ?? "5");
+
+            //https://github.com/serilog/serilog/wiki/Configuration-Basics
+            string seqUrl = Environment.GetEnvironmentVariable("seqUrl") ?? "http://localhost:5341";
+
+            LogEventLevel level = LogEventLevel.Information;
+#if DEBUG
+            level = LogEventLevel.Debug;
+#endif
+
+            ILogger appLogger = new LoggerConfiguration()
+                .ReadFrom.AppSettings()
+                .Enrich.FromLogContext()
+#if DEBUG
+                .MinimumLevel.Override("Microsoft.AspNetCore", LogEventLevel.Debug)
+                .MinimumLevel.Debug()
+#endif
+                .WriteTo.File(
+                    path: logFilePath,
+                    rollingInterval: RollingInterval.Day,
+                    retainedFileCountLimit: retainedFileCountLimit,
+                    fileSizeLimitBytes: logFileSizeLimit,
+                    restrictedToMinimumLevel: level)
+                .WriteTo.Seq(seqUrl)
+                .WriteTo.Console(restrictedToMinimumLevel: level)
+                .CreateLogger();
+
+            return appLogger;
+        }
+
     }
 }

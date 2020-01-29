@@ -6,11 +6,11 @@ using Avalanche.Shared.Domain.Models;
 using Avalanche.Shared.Infrastructure.Enumerations;
 using Avalanche.Shared.Infrastructure.Extensions;
 using Avalanche.Shared.Infrastructure.Helpers;
-using Avalanche.Shared.Infrastructure.Services.Logger;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 
 namespace Avalanche.Api.Controllers.V1
 {
@@ -18,9 +18,9 @@ namespace Avalanche.Api.Controllers.V1
     [ApiController]
     public class UsersController : ControllerBase
     {
-        readonly IAppLoggerService _appLoggerService;
+        readonly ILogger _appLoggerService;
 
-        public UsersController(IAppLoggerService appLoggerService)
+        public UsersController(ILogger<UsersController> appLoggerService)
         {
             _appLoggerService = appLoggerService;
         }
@@ -31,18 +31,18 @@ namespace Avalanche.Api.Controllers.V1
         {
             try
             {
-                _appLoggerService.Log(LogType.Debug, LoggerHelper.GetLogMessage(DebugLogType.Requested));
+                _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
                 await Task.CompletedTask;
                 return Ok();
             }
             catch (Exception exception)
             {
-                _appLoggerService.Log(LogType.Debug, LoggerHelper.GetLogMessage(DebugLogType.Exception), exception);
+                _appLoggerService.LogError(LoggerHelper.GetLogMessage(DebugLogType.Exception), exception);
                 return new BadRequestObjectResult(exception.Get(env.IsDevelopment()));
             }
             finally
             {
-                _appLoggerService.Log(LogType.Debug, LoggerHelper.GetLogMessage(DebugLogType.Completed));
+                _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
             }
         }
 
@@ -52,18 +52,18 @@ namespace Avalanche.Api.Controllers.V1
         {
             try
             {
-                _appLoggerService.Log(LogType.Debug, LoggerHelper.GetLogMessage(DebugLogType.Requested));
+                _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
                 await Task.CompletedTask;
                 return Ok();
             }
             catch (Exception exception)
             {
-                _appLoggerService.Log(LogType.Debug, LoggerHelper.GetLogMessage(DebugLogType.Exception), exception);
+                _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Exception), exception);
                 return new BadRequestObjectResult(exception.Get(env.IsDevelopment()));
             }
             finally
             {
-                _appLoggerService.Log(LogType.Debug, LoggerHelper.GetLogMessage(DebugLogType.Completed));
+                _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
             }
         }
 
@@ -73,18 +73,18 @@ namespace Avalanche.Api.Controllers.V1
         {
             try
             {
-                _appLoggerService.Log(LogType.Debug, LoggerHelper.GetLogMessage(DebugLogType.Requested));
+                _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
                 await Task.CompletedTask;
                 return Ok();
             }
             catch (Exception exception)
             {
-                _appLoggerService.Log(LogType.Debug, LoggerHelper.GetLogMessage(DebugLogType.Exception), exception);
+                _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Exception), exception);
                 return new BadRequestObjectResult(exception.Get(env.IsDevelopment()));
             }
             finally
             {
-                _appLoggerService.Log(LogType.Debug, LoggerHelper.GetLogMessage(DebugLogType.Completed));
+                _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
             }
         }
 
@@ -94,18 +94,18 @@ namespace Avalanche.Api.Controllers.V1
         {
             try
             {
-                _appLoggerService.Log(LogType.Debug, LoggerHelper.GetLogMessage(DebugLogType.Requested));
+                _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
                 await Task.CompletedTask;
                 return Ok();
             }
             catch (Exception exception)
             {
-                _appLoggerService.Log(LogType.Debug, LoggerHelper.GetLogMessage(DebugLogType.Exception), exception);
+                _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Exception), exception);
                 return new BadRequestObjectResult(exception.Get(env.IsDevelopment()));
             }
             finally
             {
-                _appLoggerService.Log(LogType.Debug, LoggerHelper.GetLogMessage(DebugLogType.Completed));
+                _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
             }
         }
 
@@ -115,18 +115,18 @@ namespace Avalanche.Api.Controllers.V1
         {
             try
             {
-                _appLoggerService.Log(LogType.Debug, LoggerHelper.GetLogMessage(DebugLogType.Requested));
+                _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
                 await Task.CompletedTask;
                 return Ok();
             }
             catch (Exception exception)
             {
-                _appLoggerService.Log(LogType.Debug, LoggerHelper.GetLogMessage(DebugLogType.Exception), exception);
+                _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Exception), exception);
                 return new BadRequestObjectResult(exception.Get(env.IsDevelopment()));
             }
             finally
             {
-                _appLoggerService.Log(LogType.Debug, LoggerHelper.GetLogMessage(DebugLogType.Completed));
+                _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
             }
         }
     }

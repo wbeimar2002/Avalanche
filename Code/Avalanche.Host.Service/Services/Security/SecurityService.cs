@@ -1,4 +1,4 @@
-﻿using Avalanche.Host.Service.Services.Logging;
+﻿using Serilog;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,7 +13,7 @@ namespace Avalanche.Host.Service.Services.Security
 
         #region private fields
 
-        readonly IAppLoggerService _logger;
+        readonly ILogger _logger;
 
         #endregion
 
@@ -27,13 +27,12 @@ namespace Avalanche.Host.Service.Services.Security
 
 
         #region ctor
-        public SecurityService(IAppLoggerService logger)
+        public SecurityService(ILogger logger)
         {
             _logger = logger;
         }
 
         #endregion
-
 
         #region IAuthorizationService implementation
 

@@ -8,8 +8,8 @@ using Avalanche.Api.Broadcaster.Models;
 using Avalanche.Api.Broadcaster.Services;
 using Avalanche.Shared.Infrastructure.Enumerations;
 using Avalanche.Shared.Infrastructure.Extensions;
-using Avalanche.Shared.Infrastructure.Services.Logger;
 using Microsoft.AspNetCore.SignalR;
+using Microsoft.Extensions.Logging;
 
 namespace Avalanche.Api.Hubs
 {
@@ -18,10 +18,10 @@ namespace Avalanche.Api.Hubs
         #region Constructor
 
         private readonly IHubContext<BroadcastHub> _hubContext;
-        private readonly IAppLoggerService _appLoggerService;
+        private readonly ILogger _appLoggerService;
 
         public BroadcastHub(IBroadcastService broadcaster,
-            IAppLoggerService appLoggerService,
+            ILogger<BroadcastHub> appLoggerService,
             IHubContext<BroadcastHub> hubContext)
         {
             _hubContext = hubContext;
@@ -77,7 +77,7 @@ namespace Avalanche.Api.Hubs
             catch (Exception ex)
             {
                 Console.WriteLine("Exception: " + ex.Message);
-                _appLoggerService.Log(LogType.Error, $"Error sending notification to the cloud boadcaster", ex);
+                _appLoggerService.LogError($"Error sending notification to the cloud boadcaster", ex);
             }
         }
 

@@ -3,8 +3,8 @@ using Avalanche.Shared.Domain.Models;
 using Avalanche.Shared.Infrastructure.Enumerations;
 using Avalanche.Shared.Infrastructure.Helpers;
 using Avalanche.Shared.Infrastructure.Services.Configuration;
-using Avalanche.Shared.Infrastructure.Services.Logger;
 using Grpc.Core;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Threading.Tasks;
 
@@ -14,11 +14,11 @@ namespace Avalanche.Api.Services.Security
     {
         readonly Grpc.Core.Channel _channel;
         readonly AuthorizationServiceProto.AuthorizationServiceProtoClient _client;
-        readonly IAppLoggerService _appLoggerService;
+        readonly ILogger _appLoggerService;
 
         public AuthorizationServiceClient(
             IConfigurationService configuration,
-            IAppLoggerService appLogger)
+            ILogger<AuthorizationServiceClient> appLogger)
         {
             string HostIpAddress = Environment.GetEnvironmentVariable("HOST_IP_ADDRESS");
             var endpoint = string.IsNullOrEmpty(HostIpAddress) ?
@@ -44,7 +44,7 @@ namespace Avalanche.Api.Services.Security
             }
             catch (System.Exception exception)
             {
-                _appLoggerService.Log(LogType.Error, LoggerHelper.GetLogMessage(DebugLogType.Exception), exception);
+                _appLoggerService.LogError(LoggerHelper.GetLogMessage(DebugLogType.Exception), exception);
                 return false;
             }
         }
