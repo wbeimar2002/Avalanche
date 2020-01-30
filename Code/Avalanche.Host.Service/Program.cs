@@ -67,23 +67,23 @@ namespace Avalanche.Host.Service
             }
             catch (Exception ex)
             {
-                if (logger == null) { throw; }
+                if (logger == null) { throw; } 
                 else { logger.Error("Avalanche Host Service failed to initialize!", ex); }
             }
         }
 
         private static ILogger CreateLogger()
         {
-            var logFile = Environment.GetEnvironmentVariable("LoggerFileName") ?? "avalanchehostservicelogs.txt";
-            var logFolder = Environment.GetEnvironmentVariable("LoggerFolder") ?? @"C:\Olympus\AvalancheLogs";
+            var logFile = ConfigurationManager.AppSettings["LoggerFileName"] ?? "avalanchehostservicelogs.txt";
+            var logFolder = ConfigurationManager.AppSettings["LoggerFolder"] ?? @"C:\Olympus\AvalancheLogs";
 
             var logFilePath = Path.Combine(logFolder, logFile);
 
-            Int32 logFileSizeLimit = Convert.ToInt32(Environment.GetEnvironmentVariable("LoggerFileSizeLimit") ?? "209715200");
-            Int32 retainedFileCountLimit = Convert.ToInt32(Environment.GetEnvironmentVariable("LoggerRetainedFileCountLimit") ?? "5");
+            Int32 logFileSizeLimit = Convert.ToInt32(ConfigurationManager.AppSettings["LoggerFileSizeLimit"] ?? "209715200");
+            Int32 retainedFileCountLimit = Convert.ToInt32(ConfigurationManager.AppSettings["LoggerRetainedFileCountLimit"] ?? "5");
 
             //https://github.com/serilog/serilog/wiki/Configuration-Basics
-            string seqUrl = Environment.GetEnvironmentVariable("seqUrl") ?? "http://localhost:5341";
+            string seqUrl = ConfigurationManager.AppSettings["seqUrl"] ?? "http://localhost:5341";
 
             LogEventLevel level = LogEventLevel.Information;
 #if DEBUG
@@ -92,9 +92,9 @@ namespace Avalanche.Host.Service
 
             ILogger appLogger = new LoggerConfiguration()
                 .ReadFrom.AppSettings()
+                .Enrich.With(new ApplicationNameEnricher("Avalanche.Host.Service"))
                 .Enrich.FromLogContext()
 #if DEBUG
-                .MinimumLevel.Override("Microsoft.AspNetCore", LogEventLevel.Debug)
                 .MinimumLevel.Debug()
 #endif
                 .WriteTo.File(

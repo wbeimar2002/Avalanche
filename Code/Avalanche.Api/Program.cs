@@ -12,6 +12,8 @@ using Serilog.Extensions.Logging;
 using Serilog.Events;
 using Avalanche.Shared.Infrastructure.Models;
 using Newtonsoft.Json;
+using Avalanche.Shared.Infrastructure.Helpers;
+using Avalanche.Api.Helpers;
 
 namespace Avalanche.Api
 {
@@ -19,16 +21,16 @@ namespace Avalanche.Api
     {
         public static void Main(string[] args)
         {
-            var logFile = Environment.GetEnvironmentVariable("LoggerFileName") ?? "avalancheapilogs.txt"; 
-            var logFolder = Environment.GetEnvironmentVariable("LoggerFolder") ?? "/logs"; 
+            var logFile = Environment.GetEnvironmentVariable("loggerFileName") ?? "avalancheapilogs.txt"; 
+            var logFolder = Environment.GetEnvironmentVariable("loggerFolder") ?? "/logs"; 
 
             var logFilePath = Path.Combine(logFolder, logFile);
 
-            Int32 logFileSizeLimit = Convert.ToInt32(Environment.GetEnvironmentVariable("LoggerFileSizeLimit") ?? "209715200"); 
-            Int32 retainedFileCountLimit = Convert.ToInt32(Environment.GetEnvironmentVariable("LoggerRetainedFileCountLimit") ?? "5"); 
+            Int32 logFileSizeLimit = Convert.ToInt32(Environment.GetEnvironmentVariable("loggerFileSizeLimit") ?? "209715200"); 
+            Int32 retainedFileCountLimit = Convert.ToInt32(Environment.GetEnvironmentVariable("loggerRetainedFileCountLimit") ?? "5"); 
 
             //https://github.com/serilog/serilog/wiki/Configuration-Basics
-            string seqUrl = Environment.GetEnvironmentVariable("seqUrl") ?? "http://seq:5341"; 
+            string seqUrl = Environment.GetEnvironmentVariable("seqUrl") ?? "http://seq:5341";//"http://localhost:5341"; 
 
             LogEventLevel level = LogEventLevel.Information;
 #if DEBUG
@@ -37,6 +39,7 @@ namespace Avalanche.Api
 
             Log.Logger = new LoggerConfiguration()
                 .ReadFrom.AppSettings()
+                .Enrich.With(new ApplicationNameEnricher("Avalanche.Api"))
                 .Enrich.FromLogContext()
 #if DEBUG
                 .MinimumLevel.Override("Microsoft.AspNetCore", LogEventLevel.Debug)
@@ -54,7 +57,7 @@ namespace Avalanche.Api
 
             try
             {
-                Log.Information("Starting up");
+                Log.Information("Starting up Flowy " + DateTime.Now);
 
                 CreateHostBuilder(args)
                     .Build()
