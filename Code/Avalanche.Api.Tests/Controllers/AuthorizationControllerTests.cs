@@ -46,9 +46,9 @@ namespace Avalanche.Api.Tests.Controllers
             var user = new User();
             var okResult = _controller.Authenticate(user,_environment.Object);
 
-            _appLoggerService.Verify<AuthorizationController>(LogLevel.Error, "Exception AuthorizationController.Authenticate", Times.Never());
-            _appLoggerService.Verify<AuthorizationController>(LogLevel.Debug, "Requested AuthorizationController.Authenticate", Times.Once());
-            _appLoggerService.Verify<AuthorizationController>(LogLevel.Debug, "Completed AuthorizationController.Authenticate", Times.Once());
+            _appLoggerService.Verify(LogLevel.Error, "Exception AuthorizationController.Authenticate", Times.Never());
+            _appLoggerService.Verify(LogLevel.Debug, "Requested AuthorizationController.Authenticate", Times.Once());
+            _appLoggerService.Verify(LogLevel.Debug, "Completed AuthorizationController.Authenticate", Times.Once());
 
             Assert.IsInstanceOf<OkObjectResult>(okResult.Result);
         }
@@ -60,9 +60,9 @@ namespace Avalanche.Api.Tests.Controllers
 
             var badResult = _controller.Authenticate(It.IsAny<User>(), _environment.Object);
 
-            _appLoggerService.Verify<AuthorizationController>(LogLevel.Error, "Exception AuthorizationController.Authenticate", Times.Once());
-            _appLoggerService.Verify<AuthorizationController>(LogLevel.Debug, "Requested AuthorizationController.Authenticate", Times.Once());
-            _appLoggerService.Verify<AuthorizationController>(LogLevel.Debug, "Completed AuthorizationController.Authenticate", Times.Once());
+            _appLoggerService.Verify(LogLevel.Error, "Exception AuthorizationController.Authenticate", Times.Once());
+            _appLoggerService.Verify(LogLevel.Debug, "Requested AuthorizationController.Authenticate", Times.Once());
+            _appLoggerService.Verify(LogLevel.Debug, "Completed AuthorizationController.Authenticate", Times.Once());
 
             Assert.IsInstanceOf<BadRequestObjectResult>(badResult.Result);
         }

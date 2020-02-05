@@ -5,10 +5,13 @@ using System.Threading.Tasks;
 using Avalanche.Api.Broadcaster.Models;
 using Avalanche.Api.Broadcaster.Services;
 using Avalanche.Shared.Infrastructure.Enumerations;
+using Avalanche.Shared.Infrastructure.Extensions;
 using Avalanche.Shared.Infrastructure.Helpers;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
 namespace Avalanche.Api.Controllers.V1
@@ -27,7 +30,7 @@ namespace Avalanche.Api.Controllers.V1
         }
 
         [HttpPost]
-        public async Task<IActionResult> Broadcast([FromBody]MessageRequest messageRequest)
+        public async Task<IActionResult> Broadcast([FromBody]MessageRequest messageRequest, [FromServices]IWebHostEnvironment env)
         {
             try
             {
@@ -37,10 +40,10 @@ namespace Avalanche.Api.Controllers.V1
 
                 return await Task.FromResult(Accepted());
             }
-            catch (Exception ex)
+            catch (Exception exception)
             {
-                _appLoggerService.LogError (LoggerHelper.GetLogMessage(DebugLogType.Completed), ex);
-                return await Task.FromResult(BadRequest());
+                _appLoggerService.LogError(LoggerHelper.GetLogMessage(DebugLogType.Exception), exception);
+                return new BadRequestObjectResult(exception.Get(env.IsDevelopment()));
             }
             finally
             {
