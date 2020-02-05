@@ -20,9 +20,9 @@ namespace Avalanche.Api.Services.Security
             IConfigurationService configuration,
             ILogger<AuthorizationServiceClient> appLogger)
         {
-            string HostIpAddress = Environment.GetEnvironmentVariable("HOST_IP_ADDRESS");
-            var endpoint = string.IsNullOrEmpty(HostIpAddress) ?
-                configuration.GetValue<string>("HostService:EndpointAddress") : HostIpAddress;
+            string hostIpAddress = Environment.GetEnvironmentVariable("hostIpAddress");
+            var endpoint = string.IsNullOrEmpty(hostIpAddress) ?
+                configuration.GetValue<string>("HostService:EndpointAddress") : hostIpAddress;
 
             _appLoggerService = appLogger;
             _channel = new Grpc.Core.Channel(endpoint, ChannelCredentials.Insecure);
