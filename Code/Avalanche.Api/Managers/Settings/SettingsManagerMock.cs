@@ -38,32 +38,32 @@ namespace Avalanche.Api.Managers.Settings
                 Format = @"^([a-zA-Z0-9_\-\.]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5})$",
                 TranslationKey = "EmailFieldLabel",
                 DefaultLabelValue = "Email",
-                SettingType = SettingType.Text,
-                VisualStyle = VisualStyle.Text,
+                SettingType = SettingTypes.Text,
+                VisualStyle = VisualStyles.Text,
             });
 
             settingsMock.Add(new Setting()
             {
                 TranslationKey = "AllowEditSettingsLabel",
                 DefaultLabelValue = "Allow Edit Settings",
-                SettingType = SettingType.Boolean,
-                VisualStyle = VisualStyle.Toggle,
+                SettingType = SettingTypes.Boolean,
+                VisualStyle = VisualStyles.Toggle,
             });
 
             settingsMock.Add(new Setting()
             {
                 TranslationKey = "AutoLoginLabel",
                 DefaultLabelValue = "Auto Login",
-                SettingType = SettingType.Boolean,
-                VisualStyle = VisualStyle.Switch,
+                SettingType = SettingTypes.Boolean,
+                VisualStyle = VisualStyles.Switch,
             });
 
             settingsMock.Add(new Setting()
             {
                 TranslationKey = "LogVerboseLabel",
                 DefaultLabelValue = "Loggin Verbose Level",
-                SettingType = SettingType.Int,
-                VisualStyle = VisualStyle.DropDown,
+                SettingType = SettingTypes.Int,
+                VisualStyle = VisualStyles.DropDown,
                 MinimumValue = 1,
                 MaximumValue = 5
             });
@@ -72,8 +72,8 @@ namespace Avalanche.Api.Managers.Settings
             {
                 TranslationKey = "PaperOrientationLabel",
                 DefaultLabelValue = "Paper Orientation",
-                SettingType = SettingType.Text,
-                VisualStyle = VisualStyle.DropDown,
+                SettingType = SettingTypes.Text,
+                VisualStyle = VisualStyles.DropDown,
                 SourceKey = "PaperOrientation"
             });
 

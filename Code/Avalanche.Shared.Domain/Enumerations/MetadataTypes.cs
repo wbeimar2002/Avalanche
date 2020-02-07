@@ -4,10 +4,9 @@ using System.Text;
 
 namespace Avalanche.Shared.Domain.Enumerations
 {
-    public enum SettingType
+    public enum MetadataTypes
     {
-        Text,
-        Int,
-        Boolean
+        Genders,
+        ProcedureTypes
     }
 }
