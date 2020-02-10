@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Avalanche.Api.Managers.Health;
 using Avalanche.Shared.Domain.Models;
 using Avalanche.Shared.Infrastructure.Enumerations;
 using Avalanche.Shared.Infrastructure.Extensions;
@@ -19,10 +20,12 @@ namespace Avalanche.Api.Controllers.V1
     public class PhysiciansController : ControllerBase
     {
         readonly ILogger _appLoggerService;
+        readonly IPhysiciansManager _physiciansManager;
 
-        public PhysiciansController(ILogger<PhysiciansController> appLoggerService)
+        public PhysiciansController(ILogger<PhysiciansController> appLoggerService, IPhysiciansManager physiciansManager)
         {
             _appLoggerService = appLoggerService;
+            _physiciansManager = physiciansManager;
         }
 
         [HttpGet("")]
@@ -32,8 +35,8 @@ namespace Avalanche.Api.Controllers.V1
             try
             {
                 _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
-                await Task.CompletedTask;
-                return Ok();
+                var result = await _physiciansManager.GetAllPhysicians();
+                return Ok(result);
             }
             catch (Exception exception)
             {

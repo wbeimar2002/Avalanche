@@ -22,6 +22,18 @@ namespace Avalanche.Api.Managers.Health
             return Task.FromResult(fixture.CreateMany<Procedure>(10).ToList());
         }
 
+        public Task<Patient> RegisterPatient(Patient newPatient)
+        {
+            var fixture = new Fixture();
+            return Task.FromResult(fixture.Create<Patient>());
+        }
+
+        public Task<Patient> RegisterQuickPatient()
+        {
+            var fixture = new Fixture();
+            return Task.FromResult(fixture.Create<Patient>());
+        }
+
         public Task<PatientListViewModel> Search(PatientSearchFilterViewModel filter)
         {
             var fixture = new Fixture();

@@ -12,5 +12,7 @@ namespace Avalanche.Api.Managers.Health
         Task<PatientListViewModel> Search(PatientSearchFilterViewModel filter);
         Task<List<Physician>> GetPhysiciansByPatient(string patiendId);
         Task<List<Procedure>> GetProceduresByPhysicianAndPatient(string patiendId, string physicianId);
+        Task<Patient> RegisterPatient(Patient newPatient);
+        Task<Patient> RegisterQuickPatient();
     }
 }

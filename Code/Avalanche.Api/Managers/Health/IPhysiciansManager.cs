@@ -8,6 +8,6 @@ namespace Avalanche.Api.Managers.Health
 {
     public interface IPhysiciansManager
     {
-        Task<List<Physician>> GetPhysicians();
+        Task<List<Physician>> GetAllPhysicians();
     }
 }

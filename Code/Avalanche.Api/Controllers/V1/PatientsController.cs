@@ -31,6 +31,48 @@ namespace Avalanche.Api.Controllers.V1
             _patientsManager = patientsManager;
         }
 
+        [HttpPost("")]
+        [Produces(typeof(Patient))]
+        public async Task<IActionResult> Post(Patient newPatient, [FromServices]IWebHostEnvironment env)
+        {
+            try
+            {
+                _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
+                newPatient = await _patientsManager.RegisterPatient(newPatient);
+                return Ok(newPatient);
+            }
+            catch (Exception exception)
+            {
+                _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Exception), exception);
+                return new BadRequestObjectResult(exception.Get(env.IsDevelopment()));
+            }
+            finally
+            {
+                _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
+            }
+        }
+
+        [HttpPost("quick")]
+        [Produces(typeof(Patient))]
+        public async Task<IActionResult> Post([FromServices]IWebHostEnvironment env)
+        {
+            try
+            {
+                _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
+                var newPatient = await _patientsManager.RegisterQuickPatient();
+                return Ok(newPatient);
+            }
+            catch (Exception exception)
+            {
+                _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Exception), exception);
+                return new BadRequestObjectResult(exception.Get(env.IsDevelopment()));
+            }
+            finally
+            {
+                _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
+            }
+        }
+
         [HttpPost("filtered")]
         [Produces(typeof(List<Patient>))]
         public async Task<IActionResult> Search(PatientSearchFilterViewModel filter, [FromServices]IWebHostEnvironment env)

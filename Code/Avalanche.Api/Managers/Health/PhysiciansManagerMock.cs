@@ -9,7 +9,7 @@ namespace Avalanche.Api.Managers.Health
 {
     public class PhysiciansManagerMock : IPhysiciansManager
     {
-        public Task<List<Physician>> GetPhysicians()
+        public Task<List<Physician>> GetAllPhysicians()
         {
             var fixture = new Fixture();
             return Task.FromResult(fixture.CreateMany<Physician>(10).ToList());

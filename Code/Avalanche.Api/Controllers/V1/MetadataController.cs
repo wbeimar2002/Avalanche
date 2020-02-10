@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Avalanche.Api.Managers.Metadata;
+using Avalanche.Api.ViewModels;
 using Avalanche.Shared.Infrastructure.Enumerations;
 using Avalanche.Shared.Infrastructure.Extensions;
 using Avalanche.Shared.Infrastructure.Helpers;
@@ -20,23 +21,24 @@ namespace Avalanche.Api.Controllers.V1
     public class MetadataController : ControllerBase
     {
         readonly ILogger _appLoggerService;
-        readonly IMetadataManager _typesManager;
+        readonly IMetadataManager _metadataManager;
 
-        public MetadataController(ILogger<MetadataController> appLoggerService, IMetadataManager typesManager)
+        public MetadataController(ILogger<MetadataController> appLoggerService, IMetadataManager metadataManager)
         {
             _appLoggerService = appLoggerService;
-            _typesManager = typesManager;
+            _metadataManager = metadataManager;
         }
 
         [EnableCors]
         [HttpGet("genders")]
+        [Produces(typeof(List<KeyValuePairViewModel>))]
         public async Task<IActionResult> GetGenders([FromServices]IWebHostEnvironment env)
         {
             try
             {
                 _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
-                await Task.CompletedTask;
-                return Ok();
+                var result = _metadataManager.GetMetadata(Shared.Domain.Enumerations.MetadataTypes.Genders);
+                return Ok(result);
             }
             catch (Exception exception)
             {
@@ -51,13 +53,14 @@ namespace Avalanche.Api.Controllers.V1
 
         [EnableCors]
         [HttpGet("proceduretypes")]
+        [Produces(typeof(List<KeyValuePairViewModel>))]
         public async Task<IActionResult> GetProcedureTypes([FromServices]IWebHostEnvironment env)
         {
             try
             {
                 _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
-                await Task.CompletedTask;
-                return Ok();
+                var result = _metadataManager.GetMetadata(Shared.Domain.Enumerations.MetadataTypes.ProcedureTypes);
+                return Ok(result);
             }
             catch (Exception exception)
             {
