@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Avalanche.Api.Managers.Metadata
 {
-    public class MetadataManager : IMetadataManager
+    public class MetadataManagerMock : IMetadataManager
     {
         public List<KeyValuePairViewModel> GetMetadata(Shared.Domain.Enumerations.MetadataTypes type)
         {

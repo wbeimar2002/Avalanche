@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Avalanche.Api.Helpers;
 using Avalanche.Api.Managers.Health;
+using Avalanche.Api.Managers.Metadata;
 using Avalanche.Api.Managers.Security;
 using Avalanche.Api.Managers.Settings;
 using Avalanche.Api.Services.Configuration;
@@ -60,6 +61,7 @@ namespace Avalanche.Api
             services.AddSingleton<IPatientsManager, PatientsManagerMock>();
             services.AddSingleton<IPhysiciansManager, PhysiciansManagerMock>();
             services.AddSingleton<IProceduresManager, ProceduresManagerMock>();
+            services.AddSingleton<IMetadataManager, MetadataManagerMock>();
 
             services.AddSingleton<IAuthorizationServiceClient, AuthorizationServiceClient>();
 
