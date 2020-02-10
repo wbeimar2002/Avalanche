@@ -73,14 +73,30 @@ namespace Avalanche.Api.Controllers.V1
             }
         }
 
-        [HttpPost("filtered")]
-        [Produces(typeof(List<Patient>))]
-        public async Task<IActionResult> Search(PatientSearchFilterViewModel filter, [FromServices]IWebHostEnvironment env)
+        [HttpGet("")]
+        [Produces(typeof(PagedCollectionViewModel<Patient>))]
+        public async Task<IActionResult> Search([FromQuery]PatientSearchFilterViewModel filter, [FromServices]IWebHostEnvironment env)
         {
             try
             {
                 _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
-                var result = await _patientsManager.Search(filter);
+                
+                var result = new PagedCollectionViewModel<Patient>();
+                result.Items = await _patientsManager.Search(filter);
+
+                //Get next page URL string  
+                PatientSearchFilterViewModel nextFilter = filter.Clone() as PatientSearchFilterViewModel;
+                nextFilter.Page += 1;
+                String nextUrl = result.Items.Count() <= 0 ? null : this.Url.Action("Get", null, nextFilter, Request.Scheme);
+
+                //Get previous page URL string  
+                PatientSearchFilterViewModel previousFilter = filter.Clone() as PatientSearchFilterViewModel;
+                previousFilter.Page -= 1;
+                String previousUrl = previousFilter.Page <= 0 ? null : this.Url.Action("Get", null, previousFilter, Request.Scheme);
+
+                result.NextPage = !String.IsNullOrWhiteSpace(nextUrl) ? new Uri(nextUrl) : null;
+                result.PreviousPage = !String.IsNullOrWhiteSpace(previousUrl) ? new Uri(previousUrl) : null;
+
                 return Ok(result);
             }
             catch (Exception exception)

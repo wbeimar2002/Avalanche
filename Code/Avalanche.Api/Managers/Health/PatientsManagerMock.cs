@@ -34,16 +34,10 @@ namespace Avalanche.Api.Managers.Health
             return Task.FromResult(fixture.Create<Patient>());
         }
 
-        public Task<PatientListViewModel> Search(PatientSearchFilterViewModel filter)
+        public Task<List<Patient>> Search(PatientSearchFilterViewModel filter)
         {
             var fixture = new Fixture();
-            var list = fixture.CreateMany<Patient>(10).ToList();
-
-            return Task.FromResult(new PatientListViewModel()
-            {
-                PageIndex = 0,
-                Patients = list
-            });
+            return Task.FromResult(fixture.CreateMany<Patient>(filter.Limit).ToList());
         }
     }
 }
