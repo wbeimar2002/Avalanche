@@ -73,9 +73,9 @@ namespace Avalanche.Api.Controllers.V1
             }
         }
 
-        [HttpGet("")]
+        [HttpGet("filtered")]
         [Produces(typeof(PagedCollectionViewModel<Patient>))]
-        public async Task<IActionResult> Search([FromQuery]PatientSearchFilterViewModel filter, [FromServices]IWebHostEnvironment env)
+        public async Task<IActionResult> Search([FromBody]PatientSearchFilterViewModel filter, [FromServices]IWebHostEnvironment env)
         {
             try
             {
