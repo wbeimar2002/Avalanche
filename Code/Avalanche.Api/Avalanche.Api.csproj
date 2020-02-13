@@ -12,9 +12,6 @@
     <Folder Include="Repositories\Licensing\" />
     <Folder Include="Repositories\Settings\" />
     <Folder Include="Repositories\Procedures\" />
-    <Folder Include="Services\Licensing\" />
-    <Folder Include="Services\Media\" />
-    <Folder Include="Services\Settings\" />
   </ItemGroup>
 
   <ItemGroup>
