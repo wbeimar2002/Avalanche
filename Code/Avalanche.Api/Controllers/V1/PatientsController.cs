@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 using Avalanche.Api.Managers.Health;
 using Avalanche.Api.ViewModels;
@@ -39,7 +40,8 @@ namespace Avalanche.Api.Controllers.V1
             {
                 _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
                 newPatient = await _patientsManager.RegisterPatient(newPatient);
-                return Ok(newPatient);
+                
+                return new ObjectResult(newPatient) { StatusCode = StatusCodes.Status201Created };
             }
             catch (Exception exception)
             {
@@ -60,7 +62,8 @@ namespace Avalanche.Api.Controllers.V1
             {
                 _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
                 var newPatient = await _patientsManager.RegisterQuickPatient();
-                return Ok(newPatient);
+
+                return new ObjectResult(newPatient) { StatusCode = StatusCodes.Status201Created };
             }
             catch (Exception exception)
             {
