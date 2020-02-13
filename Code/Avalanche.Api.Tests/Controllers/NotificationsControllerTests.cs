@@ -15,22 +15,22 @@ using Avalanche.Api.Broadcaster.Models;
 namespace Avalanche.Api.Tests.Controllers
 {
     [TestFixture()]
-    public class NotifierControllerTests
+    public class NotificationsControllerTests
     {
-        Mock<ILogger<NotifierController>> _appLoggerService;
+        Mock<ILogger<NotificationsController>> _appLoggerService;
         Mock<IBroadcastService> _broadcastService;
         Mock<IWebHostEnvironment> _environment;
 
-        NotifierController _controller;
+        NotificationsController _controller;
 
         [SetUp]
         public void Setup()
         {
-            _appLoggerService = new Mock<ILogger<NotifierController>>();
+            _appLoggerService = new Mock<ILogger<NotificationsController>>();
             _broadcastService = new Mock<IBroadcastService>();
             _environment = new Mock<IWebHostEnvironment>();
 
-            _controller = new NotifierController(_broadcastService.Object, _appLoggerService.Object);
+            _controller = new NotificationsController(_broadcastService.Object, _appLoggerService.Object);
         }
 
         [Test]
@@ -56,9 +56,9 @@ namespace Avalanche.Api.Tests.Controllers
             var message = new MessageRequest();
             var badResult = _controller.Broadcast(message, _environment.Object);
 
-            _appLoggerService.Verify<NotifierController>(LogLevel.Error, "Exception NotifierController.Broadcast", Times.Once());
-            _appLoggerService.Verify<NotifierController>(LogLevel.Debug, "Requested NotifierController.Broadcast", Times.Once());
-            _appLoggerService.Verify<NotifierController>(LogLevel.Debug, "Completed NotifierController.Broadcast", Times.Once());
+            _appLoggerService.Verify<NotificationsController>(LogLevel.Error, "Exception NotifierController.Broadcast", Times.Once());
+            _appLoggerService.Verify<NotificationsController>(LogLevel.Debug, "Requested NotifierController.Broadcast", Times.Once());
+            _appLoggerService.Verify<NotificationsController>(LogLevel.Debug, "Completed NotifierController.Broadcast", Times.Once());
 
             Assert.IsInstanceOf<BadRequestObjectResult>(badResult.Result);
         }

@@ -17,13 +17,13 @@ using Microsoft.Extensions.Logging;
 namespace Avalanche.Api.Controllers.V1
 {
     [Route("api/v1/[controller]")]
-    [Authorize]
-    public class NotifierController : Controller
+    //[Authorize]
+    public class NotificationsController : Controller
     {
         private readonly IBroadcastService _broadcastService;
         private readonly ILogger _appLoggerService;
 
-        public NotifierController(IBroadcastService broadcastService, ILogger<NotifierController> appLoggerService)
+        public NotificationsController(IBroadcastService broadcastService, ILogger<NotificationsController> appLoggerService)
         {
             _broadcastService = broadcastService;
             _appLoggerService = appLoggerService;
