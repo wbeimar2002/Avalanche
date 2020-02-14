@@ -1,0 +1,55 @@
+version: '3.4'
+
+networks:
+   app_net:
+     external: true
+
+services:
+  avalanche.api:
+    container_name: avalancheapi
+    image: ${DOCKER_REGISTRY-}avalancheapi     
+    restart: always
+    build:
+      context: .
+      dockerfile: Avalanche.Api/Dockerfile
+    volumes:
+    - type: bind
+      source: C:\Olympus\AvalancheLogs
+      target: /logs
+      read_only: false
+      volume:
+        nocopy: true
+    - type: bind
+      source: C:\Olympus\apps\config\AvalancheApi
+      target: /config
+      read_only: false
+      volume:
+        nocopy: true
+    networks:
+      app_net:
+        ipv4_address: 192.168.1.50
+    environment:
+      hostIpAddress: '10.0.75.1:9012'
+      seqUrl: 'http://seq:5341'
+      logging:loglevel:default: 'debug'
+      loggerFileName: 'avalancheapilogs.txt'
+      loggerFolder: '/logs'
+      loggerFileSizeLimit: 209715200
+      loggerRetainedFileCountLimit: 5
+  seqserver:
+    container_name: seq
+    image: 'datalust/seq:latest'
+    ports:
+      - '5341:80'
+    networks:
+        app_net:
+            ipv4_address: 192.168.1.61
+    environment:
+      ACCEPT_EULA: 'Y'
+    volumes:
+      - type: volume
+        source: seq_data
+        target: /data
+
+volumes:
+    seq_data:
