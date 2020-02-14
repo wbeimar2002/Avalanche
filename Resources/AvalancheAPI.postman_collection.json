@@ -70,7 +70,7 @@
 					"raw": "{\n  \"username\": \"localdevtesting\",\n  \"password\": \"MPtestAcct1\"\n}"
 				},
 				"url": {
-					"raw": "https://localhost:32772/api/Authorization",
+					"raw": "https://localhost:32772/api/v1/Authorization",
 					"protocol": "https",
 					"host": [
 						"localhost"
@@ -78,6 +78,7 @@
 					"port": "32772",
 					"path": [
 						"api",
+						"v1",
 						"Authorization"
 					]
 				}
@@ -137,7 +138,7 @@
 					}
 				],
 				"url": {
-					"raw": "https://localhost:32772/api/Licenses/testingabc",
+					"raw": "https://localhost:32772/api/v1/Licenses/testingabc",
 					"protocol": "https",
 					"host": [
 						"localhost"
@@ -145,6 +146,7 @@
 					"port": "32772",
 					"path": [
 						"api",
+						"v1",
 						"Licenses",
 						"testingabc"
 					]
@@ -274,7 +276,7 @@
 					}
 				],
 				"url": {
-					"raw": "https://localhost:32772/api/Metadata/genders",
+					"raw": "https://localhost:32772/api/v1/Metadata/genders",
 					"protocol": "https",
 					"host": [
 						"localhost"
@@ -282,6 +284,7 @@
 					"port": "32772",
 					"path": [
 						"api",
+						"v1",
 						"Metadata",
 						"genders"
 					]
@@ -342,7 +345,7 @@
 					}
 				],
 				"url": {
-					"raw": "https://localhost:32772/api/Metadata/proceduretypes",
+					"raw": "https://localhost:32772/api/v1/Metadata/proceduretypes",
 					"protocol": "https",
 					"host": [
 						"localhost"
@@ -350,6 +353,7 @@
 					"port": "32772",
 					"path": [
 						"api",
+						"v1",
 						"Metadata",
 						"proceduretypes"
 					]
@@ -367,6 +371,11 @@
 						"exec": [
 							"pm.test(\"Successful POST request\", function () {",
 							"    pm.expect(pm.response.code).to.be.oneOf([201,202]);",
+							"});",
+							"pm.test(\"Patient was created\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.name).to.eql(\"testing\");",
+							"    pm.expect(jsonData.lastName).to.eql(\"testing\");",
 							"});"
 						],
 						"type": "text/javascript"
@@ -419,10 +428,10 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n  \"id\": \"string\",\r\n  \"name\": \"string\",\r\n  \"lastName\": \"string\",\r\n  \"dateOfBirth\": \"2020-02-13T15:04:32.364Z\",\r\n  \"gender\": \"string\"\r\n}"
+					"raw": "{\r\n  \"id\": \"string\",\r\n  \"name\": \"testing\",\r\n  \"lastName\": \"testing\",\r\n  \"dateOfBirth\": \"2020-02-13T15:04:32.364Z\",\r\n  \"gender\": \"string\"\r\n}"
 				},
 				"url": {
-					"raw": "https://localhost:32772/api/Patients",
+					"raw": "https://localhost:32772/api/v1/Patients",
 					"protocol": "https",
 					"host": [
 						"localhost"
@@ -430,6 +439,7 @@
 					"port": "32772",
 					"path": [
 						"api",
+						"v1",
 						"Patients"
 					]
 				}
@@ -497,7 +507,7 @@
 					}
 				],
 				"url": {
-					"raw": "https://localhost:32772/api/Patients/quick",
+					"raw": "https://localhost:32772/api/v1/Patients/quick",
 					"protocol": "https",
 					"host": [
 						"localhost"
@@ -505,6 +515,7 @@
 					"port": "32772",
 					"path": [
 						"api",
+						"v1",
 						"Patients",
 						"quick"
 					]
@@ -577,7 +588,7 @@
 					"raw": "{\r\n  \"term\": \"string\",\r\n  \"page\": 0,\r\n  \"limit\": 10\r\n}"
 				},
 				"url": {
-					"raw": "https://localhost:32772/api/Patients/filtered",
+					"raw": "https://localhost:32772/api/v1/Patients/filtered",
 					"protocol": "https",
 					"host": [
 						"localhost"
@@ -585,6 +596,7 @@
 					"port": "32772",
 					"path": [
 						"api",
+						"v1",
 						"Patients",
 						"filtered"
 					]
@@ -645,7 +657,7 @@
 					}
 				],
 				"url": {
-					"raw": "https://localhost:32772/api/Physicians",
+					"raw": "https://localhost:32772/api/v1/Physicians",
 					"protocol": "https",
 					"host": [
 						"localhost"
@@ -653,6 +665,7 @@
 					"port": "32772",
 					"path": [
 						"api",
+						"v1",
 						"Physicians"
 					]
 				}

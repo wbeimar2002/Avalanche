@@ -1,6 +1,9 @@
 ﻿using Avalanche.Api.Controllers.V1;
 using Avalanche.Api.Managers.Health;
+using Avalanche.Api.Tests.Extensions;
+using Avalanche.Shared.Domain.Models;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
@@ -27,6 +30,35 @@ namespace Avalanche.Api.Tests.Controllers
             _physiciansManager = new Mock<IPhysiciansManager>();
 
             _controller = new PhysiciansController(_appLoggerService.Object, _physiciansManager.Object);
+        }
+
+        [Test]
+        public void BroadcastShouldReturnOkResult()
+        {
+            List<Physician> list = new List<Physician>();
+            _physiciansManager.Setup(mock => mock.GetAllPhysicians()).ReturnsAsync(list);
+
+            var okResult = _controller.GetAll(_environment.Object);
+
+            _appLoggerService.Verify(LogLevel.Error, "Exception PhysiciansController.GetAll", Times.Never());
+            _appLoggerService.Verify(LogLevel.Debug, "Requested PhysiciansController.GetAll", Times.Once());
+            _appLoggerService.Verify(LogLevel.Debug, "Completed PhysiciansController.GetAll", Times.Once());
+
+            Assert.IsInstanceOf<OkObjectResult>(okResult.Result);
+        }
+
+        [Test]
+        public void BroadcastShouldReturnBadResultIfFails()
+        {
+            _physiciansManager.Setup(mock => mock.GetAllPhysicians()).Throws(It.IsAny<Exception>());
+
+            var badResult = _controller.GetAll(_environment.Object);
+
+            _appLoggerService.Verify(LogLevel.Error, "Exception PhysiciansController.GetAll", Times.Once());
+            _appLoggerService.Verify(LogLevel.Debug, "Requested PhysiciansController.GetAll", Times.Once());
+            _appLoggerService.Verify(LogLevel.Debug, "Completed PhysiciansController.GetAll", Times.Once());
+
+            Assert.IsInstanceOf<BadRequestObjectResult>(badResult.Result);
         }
     }
 }

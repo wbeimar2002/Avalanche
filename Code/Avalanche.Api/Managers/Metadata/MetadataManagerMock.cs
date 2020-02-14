@@ -9,16 +9,16 @@ namespace Avalanche.Api.Managers.Metadata
 {
     public class MetadataManagerMock : IMetadataManager
     {
-        public List<KeyValuePairViewModel> GetMetadata(Shared.Domain.Enumerations.MetadataTypes type)
+        public Task<List<KeyValuePairViewModel>> GetMetadata(Shared.Domain.Enumerations.MetadataTypes type)
         {
             switch (type)
             {
                 case Shared.Domain.Enumerations.MetadataTypes.Genders:
-                    return GetGenderTypes();
+                    return Task.FromResult(GetGenderTypes());
                 case Shared.Domain.Enumerations.MetadataTypes.ProcedureTypes:
-                    return GetProcedureTypes();
+                    return Task.FromResult(GetProcedureTypes());
                 default:
-                    return new List<KeyValuePairViewModel>();
+                    return Task.FromResult(new List<KeyValuePairViewModel>());
             }
         }
 

@@ -37,12 +37,12 @@ namespace Avalanche.Api.Controllers.V1
             try
             {
                 _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
-                var result = _metadataManager.GetMetadata(Shared.Domain.Enumerations.MetadataTypes.Genders);
+                var result = await _metadataManager.GetMetadata(Shared.Domain.Enumerations.MetadataTypes.Genders);
                 return Ok(result);
             }
             catch (Exception exception)
             {
-                _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Exception), exception);
+                _appLoggerService.LogError(LoggerHelper.GetLogMessage(DebugLogType.Exception), exception);
                 return new BadRequestObjectResult(exception.Get(env.IsDevelopment()));
             }
             finally
@@ -59,12 +59,12 @@ namespace Avalanche.Api.Controllers.V1
             try
             {
                 _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
-                var result = _metadataManager.GetMetadata(Shared.Domain.Enumerations.MetadataTypes.ProcedureTypes);
+                var result = await _metadataManager.GetMetadata(Shared.Domain.Enumerations.MetadataTypes.ProcedureTypes);
                 return Ok(result);
             }
             catch (Exception exception)
             {
-                _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Exception), exception);
+                _appLoggerService.LogError(LoggerHelper.GetLogMessage(DebugLogType.Exception), exception);
                 return new BadRequestObjectResult(exception.Get(env.IsDevelopment()));
             }
             finally

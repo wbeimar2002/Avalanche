@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Avalanche.Api.Broadcaster.Services;
 using Avalanche.Api.Helpers;
 using Avalanche.Api.Managers.Health;
+using Avalanche.Api.Managers.Licencing;
 using Avalanche.Api.Managers.Metadata;
 using Avalanche.Api.Managers.Security;
 using Avalanche.Api.Managers.Settings;
@@ -62,8 +64,10 @@ namespace Avalanche.Api
             services.AddSingleton<IPhysiciansManager, PhysiciansManagerMock>();
             services.AddSingleton<IProceduresManager, ProceduresManagerMock>();
             services.AddSingleton<IMetadataManager, MetadataManagerMock>();
+            services.AddSingleton<ILicensingManager, LicensingManagerMock>();
 
             services.AddSingleton<IAuthorizationServiceClient, AuthorizationServiceClient>();
+            services.AddSingleton<IBroadcastService, BroadcastService>();
 
             ConfigureCorsPolicy(services, configurationService);
 

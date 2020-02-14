@@ -1,6 +1,8 @@
 ﻿using Avalanche.Api.Controllers.V1;
 using Avalanche.Api.Managers.Licencing;
+using Avalanche.Api.Tests.Extensions;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
@@ -26,7 +28,34 @@ namespace Avalanche.Api.Tests.Controllers
             _environment = new Mock<IWebHostEnvironment>();
             _licensingManager = new Mock<ILicensingManager>();
 
-            _controller = new LicensesController(_appLoggerService.Object);
+            _controller = new LicensesController(_appLoggerService.Object, _licensingManager.Object) ;
+        }
+
+        [Test]
+        public void ValidateShouldReturnOkResult()
+        {
+            string licenseKey = Guid.NewGuid().ToString();
+            var okResult = _controller.Validate(licenseKey, _environment.Object);
+
+            _appLoggerService.Verify(LogLevel.Error, "Exception LicensesController.Validate", Times.Never());
+            _appLoggerService.Verify(LogLevel.Debug, "Requested LicensesController.Validate", Times.Once());
+            _appLoggerService.Verify(LogLevel.Debug, "Completed LicensesController.Validate", Times.Once());
+
+            Assert.IsInstanceOf<OkResult>(okResult.Result);
+        }
+
+        [Test]
+        public void ValidateShouldReturnBadResultIfFails()
+        {
+            _licensingManager.Setup(mock => mock.Validate(It.IsAny<string>())).Throws(It.IsAny<Exception>());
+
+            var badResult = _controller.Validate(It.IsAny<string>(), _environment.Object);
+
+            _appLoggerService.Verify(LogLevel.Error, "Exception LicensesController.Validate", Times.Once());
+            _appLoggerService.Verify(LogLevel.Debug, "Requested LicensesController.Validate", Times.Once());
+            _appLoggerService.Verify(LogLevel.Debug, "Completed LicensesController.Validate", Times.Once());
+
+            Assert.IsInstanceOf<BadRequestObjectResult>(badResult.Result);
         }
     }
 }

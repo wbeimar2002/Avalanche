@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Avalanche.Api.Managers.Licencing;
 using Avalanche.Shared.Infrastructure.Enumerations;
 using Avalanche.Shared.Infrastructure.Extensions;
 using Avalanche.Shared.Infrastructure.Helpers;
@@ -18,10 +19,12 @@ namespace Avalanche.Api.Controllers.V1
     public class LicensesController : ControllerBase
     {
         readonly ILogger _appLoggerService;
+        readonly ILicensingManager _licensingManager;
 
-        public LicensesController(ILogger<LicensesController> appLoggerService)
+        public LicensesController(ILogger<LicensesController> appLoggerService, ILicensingManager licensingManager)
         {
             _appLoggerService = appLoggerService;
+            _licensingManager = licensingManager;
         }
 
         [HttpGet("{key}")]
@@ -30,12 +33,12 @@ namespace Avalanche.Api.Controllers.V1
             try
             {
                 _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
-                await Task.CompletedTask;
+                var result = await _licensingManager.Validate(key);
                 return Ok();
             }
             catch (Exception exception)
             {
-                _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Exception), exception);
+                _appLoggerService.LogError(LoggerHelper.GetLogMessage(DebugLogType.Exception), exception);
                 return new BadRequestObjectResult(exception.Get(env.IsDevelopment()));
             }
             finally

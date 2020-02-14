@@ -9,6 +9,6 @@ namespace Avalanche.Api.Managers.Metadata
 {
     public interface IMetadataManager
     {
-        List<KeyValuePairViewModel> GetMetadata(MetadataTypes type);
+        Task<List<KeyValuePairViewModel>> GetMetadata(MetadataTypes type);
     }
 }

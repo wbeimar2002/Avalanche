@@ -5,7 +5,8 @@ using System.Threading.Tasks;
 
 namespace Avalanche.Api.Managers.Licencing
 {
-    public class ILicensingManager
+    public interface ILicensingManager
     {
+        Task<bool> Validate(string key);        
     }
 }

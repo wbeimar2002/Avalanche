@@ -28,6 +28,8 @@ namespace Avalanche.Api.Tests.Controllers
 
             _controller = new SettingsController(_appLoggerService.Object, _settingsManager.Object);
         }
+
+       
     }
 }
 

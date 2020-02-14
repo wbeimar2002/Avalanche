@@ -36,14 +36,12 @@ namespace Avalanche.Api.Tests.Controllers
         [Test]
         public void BroadcastShouldReturnOkResult()
         {
-            _broadcastService.Setup(mock => mock.Broadcast(It.IsAny<MessageRequest>()));
-
             var message = new MessageRequest();
             var okResult = _controller.Broadcast(message, _environment.Object);
 
-            _appLoggerService.Verify(LogLevel.Error, "Exception NotifierController.Broadcast", Times.Never());
-            _appLoggerService.Verify(LogLevel.Debug, "Requested NotifierController.Broadcast", Times.Once());
-            _appLoggerService.Verify(LogLevel.Debug, "Completed NotifierController.Broadcast", Times.Once());
+            _appLoggerService.Verify(LogLevel.Error, "Exception NotificationsController.Broadcast", Times.Never());
+            _appLoggerService.Verify(LogLevel.Debug, "Requested NotificationsController.Broadcast", Times.Once());
+            _appLoggerService.Verify(LogLevel.Debug, "Completed NotificationsController.Broadcast", Times.Once());
 
             Assert.IsInstanceOf<AcceptedResult>(okResult.Result);
         }
@@ -56,9 +54,9 @@ namespace Avalanche.Api.Tests.Controllers
             var message = new MessageRequest();
             var badResult = _controller.Broadcast(message, _environment.Object);
 
-            _appLoggerService.Verify<NotificationsController>(LogLevel.Error, "Exception NotifierController.Broadcast", Times.Once());
-            _appLoggerService.Verify<NotificationsController>(LogLevel.Debug, "Requested NotifierController.Broadcast", Times.Once());
-            _appLoggerService.Verify<NotificationsController>(LogLevel.Debug, "Completed NotifierController.Broadcast", Times.Once());
+            _appLoggerService.Verify(LogLevel.Error, "Exception NotificationsController.Broadcast", Times.Once());
+            _appLoggerService.Verify(LogLevel.Debug, "Requested NotificationsController.Broadcast", Times.Once());
+            _appLoggerService.Verify(LogLevel.Debug, "Completed NotificationsController.Broadcast", Times.Once());
 
             Assert.IsInstanceOf<BadRequestObjectResult>(badResult.Result);
         }

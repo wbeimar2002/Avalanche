@@ -24,8 +24,8 @@ namespace Avalanche.Api.Managers.Health
 
         public Task<Patient> RegisterPatient(Patient newPatient)
         {
-            var fixture = new Fixture();
-            return Task.FromResult(fixture.Create<Patient>());
+            newPatient.Id = Guid.NewGuid().ToString();
+            return Task.FromResult(newPatient);
         }
 
         public Task<Patient> RegisterQuickPatient()
