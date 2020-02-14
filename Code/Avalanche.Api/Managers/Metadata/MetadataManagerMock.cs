@@ -41,7 +41,7 @@ namespace Avalanche.Api.Managers.Metadata
             list.Add(new KeyValuePairViewModel()
             {
                 Id = "M",
-                Value = "Female"
+                Value = "Male"
             });
 
             list.Add(new KeyValuePairViewModel()
