@@ -12,9 +12,6 @@ variables:
 - name: BuildConfiguration
   value: 'Release'
 
-- name: BuildConfiguration
-  value: 'Release'
-
 steps:
 - task: DotNetCoreCLI@2
   displayName: 'dotnet restore'
