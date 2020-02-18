@@ -27,7 +27,7 @@ services:
         nocopy: true
     networks:
       app_net:
-        ipv4_address: 192.168.1.50
+        ipv4_address: 192.168.1.60
     environment:
       hostIpAddress: '10.0.75.1:9012'
       seqUrl: 'http://seq:5341'
@@ -50,6 +50,5 @@ services:
       - type: volume
         source: seq_data
         target: /data
-
 volumes:
     seq_data:
