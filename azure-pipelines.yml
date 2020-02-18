@@ -6,7 +6,14 @@ pool:
   name: Azure Pipelines
 
 variables:
+
 - group: DEV-AVALANCHE-API
+
+- name: BuildConfiguration
+  value: 'Release'
+
+- name: BuildConfiguration
+  value: 'Release'
 
 steps:
 - task: DotNetCoreCLI@2
