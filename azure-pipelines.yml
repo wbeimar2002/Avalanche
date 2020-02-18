@@ -1,6 +1,9 @@
 
 trigger:
-- master
+- dev
+
+pool:
+  vmImage: 'ubuntu-latest'
 
 pool:
   name: Azure Pipelines
