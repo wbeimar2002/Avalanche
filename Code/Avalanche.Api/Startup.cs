@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Avalanche.Api.Broadcaster.Services;
 using Avalanche.Api.Helpers;
 using Avalanche.Api.Managers.Health;
-using Avalanche.Api.Managers.Licencing;
+using Avalanche.Api.Managers.Licensing;
 using Avalanche.Api.Managers.Metadata;
 using Avalanche.Api.Managers.Security;
 using Avalanche.Api.Managers.Settings;
