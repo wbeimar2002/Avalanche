@@ -1,6 +1,8 @@
-﻿using Avalanche.Api.Controllers.V1;
+﻿using AutoFixture;
+using Avalanche.Api.Controllers.V1;
 using Avalanche.Api.Managers.Licensing;
 using Avalanche.Api.Tests.Extensions;
+using Avalanche.Shared.Domain.Models;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -8,6 +10,7 @@ using Moq;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace Avalanche.Api.Tests.Controllers
@@ -62,21 +65,27 @@ namespace Avalanche.Api.Tests.Controllers
         public void GetAllActiveShouldReturnOkResult()
         {
             string licenseKey = Guid.NewGuid().ToString();
+
+            var fixture = new Fixture();
+            var list = fixture.CreateMany<License>(10).ToList();
+
+            _licensingManager.Setup(mock => mock.GetAllActive()).ReturnsAsync(list);
+
             var okResult = _controller.GetAllActive(_environment.Object);
 
             _appLoggerService.Verify(LogLevel.Error, "Exception LicensesController.GetAllActive", Times.Never());
             _appLoggerService.Verify(LogLevel.Debug, "Requested LicensesController.GetAllActive", Times.Once());
             _appLoggerService.Verify(LogLevel.Debug, "Completed LicensesController.GetAllActive", Times.Once());
 
-            Assert.IsInstanceOf<OkResult>(okResult.Result);
+            Assert.IsInstanceOf<OkObjectResult>(okResult.Result);
         }
 
         [Test]
         public void GetAllActiveShouldReturnBadResultIfFails()
         {
-            _licensingManager.Setup(mock => mock.Validate(It.IsAny<string>())).Throws(It.IsAny<Exception>());
+            _licensingManager.Setup(mock => mock.GetAllActive()).Throws(It.IsAny<Exception>());
 
-            var badResult = _controller.Validate(It.IsAny<string>(), _environment.Object);
+            var badResult = _controller.GetAllActive(_environment.Object);
 
             _appLoggerService.Verify(LogLevel.Error, "Exception LicensesController.GetAllActive", Times.Once());
             _appLoggerService.Verify(LogLevel.Debug, "Requested LicensesController.GetAllActive", Times.Once());
