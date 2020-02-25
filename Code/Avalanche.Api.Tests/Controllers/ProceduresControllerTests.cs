@@ -1,5 +1,5 @@
 ﻿using Avalanche.Api.Controllers.V1;
-using Avalanche.Api.Managers.Licencing;
+using Avalanche.Api.Managers.Licensing;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Logging;
 using Moq;
@@ -15,7 +15,6 @@ namespace Avalanche.Api.Tests.Controllers
     {
         Mock<ILogger<ProceduresController>> _appLoggerService;
         Mock<IWebHostEnvironment> _environment;
-        Mock<ILicensingManager> _licensingManager;
 
         ProceduresController _controller;
 
@@ -24,7 +23,6 @@ namespace Avalanche.Api.Tests.Controllers
         {
             _appLoggerService = new Mock<ILogger<ProceduresController>>();
             _environment = new Mock<IWebHostEnvironment>();
-            _licensingManager = new Mock<ILicensingManager>();
 
             _controller = new ProceduresController(_appLoggerService.Object);
         }
