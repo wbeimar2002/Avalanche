@@ -14,9 +14,9 @@ variables:
   value: 'Release'
 
 stages:
-- stage: build_test
+- stage: dev
   jobs:
-  - job: build
+  - job: build_test_push
     steps:
     - task: UseDotNet@2
       inputs:
@@ -65,9 +65,9 @@ stages:
         zipAfterPublish: false
         modifyOutputPath: false
     
-- stage: docker_push
-  jobs:
+    
   - job: push
+    dependsOn: publish
     pool:
       vmImage: 'ubuntu-latest'
     steps:
