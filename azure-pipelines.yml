@@ -14,7 +14,7 @@ variables:
   value: 'Release'
 
 stages:
-- stage: build
+- stage: dev
   jobs:
   - job: build
     steps:
@@ -38,6 +38,7 @@ stages:
        projects: '**/Code/Avalanche.Api/Avalanche.Api.csproj'
        arguments: '--configuration $(BuildConfiguration)'
   - job: test
+    dependsOn: build
     timeoutInMinutes: 10
     pool:
      vmImage: 'windows-latest'
@@ -49,6 +50,7 @@ stages:
        projects: '**/Code/Avalanche.Api.Tests/Avalanche.Api.Tests.csproj'
        arguments: '--configuration $(buildConfiguration)'
   - job: publish
+    dependsOn: test
     timeoutInMinutes: 10
     pool:
      vmImage: 'ubuntu-latest'
@@ -62,21 +64,10 @@ stages:
         arguments: '-c $(BuildConfiguration)  -o app'
         zipAfterPublish: false
         modifyOutputPath: false
-    - powershell: |
-        $temp = "$(ImageName)"
-        $temp = $temp.ToLower()
-        Write-Host "##vso[task.setvariable variable=ImageNameLowercase;]$temp"
-      displayName: 'PS Script'
     
-    - task: Docker@0
-      displayName: 'Run a Docker command-Build'
-      inputs:
-        action: 'Run a Docker command'
-        customCommand: 'build -t $(ImageNameLowercase) . -f Code/Avalanche.Api/DokerfileForAdoPipeline'
-
-- stage: dockerpush
-  jobs:
+    
   - job: push
+    dependsOn: publish
     pool:
       vmImage: 'ubuntu-latest'
     steps:
