@@ -16,7 +16,7 @@ variables:
 stages:
 - stage: dev
   jobs:
-  - job: build_test_push
+  - job: build
     steps:
     - task: UseDotNet@2
       inputs:
