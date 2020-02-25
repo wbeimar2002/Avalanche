@@ -1,4 +1,5 @@
-﻿using Avalanche.Api.Controllers.V1;
+﻿using AutoFixture;
+using Avalanche.Api.Controllers.V1;
 using Avalanche.Api.Managers.Health;
 using Avalanche.Api.Tests.Extensions;
 using Avalanche.Shared.Domain.Models;
@@ -9,6 +10,7 @@ using Moq;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace Avalanche.Api.Tests.Controllers
@@ -35,7 +37,9 @@ namespace Avalanche.Api.Tests.Controllers
         [Test]
         public void BroadcastShouldReturnOkResult()
         {
-            List<Physician> list = new List<Physician>();
+            var fixture = new Fixture();
+            var list = fixture.CreateMany<Physician>(10).ToList();
+
             _physiciansManager.Setup(mock => mock.GetAllPhysicians()).ReturnsAsync(list);
 
             var okResult = _controller.GetAll(_environment.Object);

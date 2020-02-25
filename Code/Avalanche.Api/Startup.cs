@@ -54,7 +54,6 @@ namespace Avalanche.Api
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Avalanche.Api", Version = "V1" });
             });
 
-
             IConfigurationService configurationService = new ConfigurationService(Configuration);
             services.AddSingleton<IConfigurationService>(c => configurationService);
 
