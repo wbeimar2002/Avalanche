@@ -55,19 +55,20 @@ namespace Avalanche.Api.Tests.Controllers
         [Test]
         public void HealthCheckShouldReturnBadResultIfFails()
         {
-            _appLoggerService.Setup(LogLevel.Debug, "Requested HealthController.HealthCheck").Throws(It.IsAny<Exception>());
-            
-            var badResult = _controller.HealthCheck(_environment.Object);
-
             if (_checkLogger)
             {
+                _appLoggerService.Setup(LogLevel.Debug, "Requested HealthController.HealthCheck").Throws(It.IsAny<Exception>());
+            
+                var badResult = _controller.HealthCheck(_environment.Object);
+
+            
                 _appLoggerService.Verify(LogLevel.Error, $"Exception {_controller.GetType().Name}.HealthCheck", Times.Once());
                 _appLoggerService.Verify(LogLevel.Information, "Avalanche Api is healthy.", Times.Never());
                 _appLoggerService.Verify(LogLevel.Debug, $"Requested {_controller.GetType().Name}.HealthCheck", Times.Once());
                 _appLoggerService.Verify(LogLevel.Debug, $"Completed {_controller.GetType().Name}.HealthCheck", Times.Once());
+            
+                Assert.IsInstanceOf<BadRequestObjectResult>(badResult);
             }
-
-            Assert.IsInstanceOf<BadRequestObjectResult>(badResult);
         }
     }
 }
