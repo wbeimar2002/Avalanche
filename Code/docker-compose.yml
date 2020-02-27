@@ -38,11 +38,11 @@ services:
       loggerRetainedFileCountLimit: 5
   avalanche.security.server:
     container_name: avalanchesecurityserver
-    image: ${DOCKER_REGISTRY-}avalanchesecurityserver     
-    restart: always
+    image: ${DOCKER_REGISTRY-}avalanchesecurityserver
     build:
       context: .
-      dockerfile: Avalanche.Security.Server/Dockerfile
+      dockerfile: Avalanche.Security.Server/Dockerfile  
+    restart: always
     volumes:
     - type: bind
       source: C:\Olympus\AvalancheLogs
@@ -81,11 +81,6 @@ services:
       - type: volume
         source: seq_data
         target: /data
-  avalanche.security.server:
-    image: ${DOCKER_REGISTRY-}avalanchesecurityserver
-    build:
-      context: .
-      dockerfile: Avalanche.Security.Server/Dockerfile
 
 volumes:
     seq_data:

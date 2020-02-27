@@ -27,6 +27,8 @@ namespace Avalanche.Api.Tests.Controllers
 
         PatientsController _controller;
 
+        bool _checkLogger = false;
+
         [SetUp]
         public void Setup()
         {
@@ -50,6 +52,11 @@ namespace Avalanche.Api.Tests.Controllers
 
             var context = new ControllerContext() { HttpContext = new DefaultHttpContext() };
             _controller.ControllerContext = context;
+
+            OperatingSystem os = Environment.OSVersion;
+
+            if (os.Platform == PlatformID.Win32NT)
+                _checkLogger = true;
         }
 
         [Test]
@@ -69,9 +76,12 @@ namespace Avalanche.Api.Tests.Controllers
 
             var okResult = _controller.Search(filter, _environment.Object);
 
-            _appLoggerService.Verify(LogLevel.Error, "Exception PatientsController.Search", Times.Never());
-            _appLoggerService.Verify(LogLevel.Debug, "Requested PatientsController.Search", Times.Once());
-            _appLoggerService.Verify(LogLevel.Debug, "Completed PatientsController.Search", Times.Once());
+            if (_checkLogger)
+            {
+                _appLoggerService.Verify(LogLevel.Error, "Exception PatientsController.Search", Times.Never());
+                _appLoggerService.Verify(LogLevel.Debug, "Requested PatientsController.Search", Times.Once());
+                _appLoggerService.Verify(LogLevel.Debug, "Completed PatientsController.Search", Times.Once());
+            }
 
             Assert.IsInstanceOf<OkObjectResult>(okResult.Result);
         }
@@ -92,9 +102,12 @@ namespace Avalanche.Api.Tests.Controllers
 
             var okResult = _controller.Search(filter, _environment.Object);
 
-            _appLoggerService.Verify(LogLevel.Error, "Exception PatientsController.Search", Times.Never());
-            _appLoggerService.Verify(LogLevel.Debug, "Requested PatientsController.Search", Times.Once());
-            _appLoggerService.Verify(LogLevel.Debug, "Completed PatientsController.Search", Times.Once());
+            if (_checkLogger)
+            {
+                _appLoggerService.Verify(LogLevel.Error, $"Exception {_controller.GetType().Name}.Search", Times.Never());
+                _appLoggerService.Verify(LogLevel.Debug, $"Requested {_controller.GetType().Name}.Search", Times.Once());
+                _appLoggerService.Verify(LogLevel.Debug, $"Completed {_controller.GetType().Name}.Search", Times.Once());
+            }
 
             Assert.IsInstanceOf<OkObjectResult>(okResult.Result);
         }
@@ -106,9 +119,12 @@ namespace Avalanche.Api.Tests.Controllers
 
             var badResult = _controller.Search(It.IsAny<PatientSearchFilterViewModel>(), _environment.Object);
 
-            _appLoggerService.Verify(LogLevel.Error, "Exception PatientsController.Search", Times.Once());
-            _appLoggerService.Verify(LogLevel.Debug, "Requested PatientsController.Search", Times.Once());
-            _appLoggerService.Verify(LogLevel.Debug, "Completed PatientsController.Search", Times.Once());
+            if (_checkLogger)
+            {
+                _appLoggerService.Verify(LogLevel.Error, $"Exception {_controller.GetType().Name}.Search", Times.Once());
+                _appLoggerService.Verify(LogLevel.Debug, $"Requested {_controller.GetType().Name}.Search", Times.Once());
+                _appLoggerService.Verify(LogLevel.Debug, $"Completed {_controller.GetType().Name}.Search", Times.Once());
+            }
 
             Assert.IsInstanceOf<BadRequestObjectResult>(badResult.Result);
         }

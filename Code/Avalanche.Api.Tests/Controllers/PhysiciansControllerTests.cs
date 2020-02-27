@@ -24,6 +24,8 @@ namespace Avalanche.Api.Tests.Controllers
 
         PhysiciansController _controller;
 
+        bool _checkLogger = false;
+
         [SetUp]
         public void Setup()
         {
@@ -32,6 +34,11 @@ namespace Avalanche.Api.Tests.Controllers
             _physiciansManager = new Mock<IPhysiciansManager>();
 
             _controller = new PhysiciansController(_appLoggerService.Object, _physiciansManager.Object);
+
+            OperatingSystem os = Environment.OSVersion;
+
+            if (os.Platform == PlatformID.Win32NT)
+                _checkLogger = true;
         }
 
         [Test]
@@ -44,9 +51,12 @@ namespace Avalanche.Api.Tests.Controllers
 
             var okResult = _controller.GetAll(_environment.Object);
 
-            _appLoggerService.Verify(LogLevel.Error, "Exception PhysiciansController.GetAll", Times.Never());
-            _appLoggerService.Verify(LogLevel.Debug, "Requested PhysiciansController.GetAll", Times.Once());
-            _appLoggerService.Verify(LogLevel.Debug, "Completed PhysiciansController.GetAll", Times.Once());
+            if (_checkLogger)
+            {
+                _appLoggerService.Verify(LogLevel.Error, $"Exception {_controller.GetType().Name}.GetAll", Times.Never());
+                _appLoggerService.Verify(LogLevel.Debug, $"Requested {_controller.GetType().Name}.GetAll", Times.Once());
+                _appLoggerService.Verify(LogLevel.Debug, $"Completed {_controller.GetType().Name}.GetAll", Times.Once());
+            }
 
             Assert.IsInstanceOf<OkObjectResult>(okResult.Result);
         }
@@ -58,9 +68,12 @@ namespace Avalanche.Api.Tests.Controllers
 
             var badResult = _controller.GetAll(_environment.Object);
 
-            _appLoggerService.Verify(LogLevel.Error, "Exception PhysiciansController.GetAll", Times.Once());
-            _appLoggerService.Verify(LogLevel.Debug, "Requested PhysiciansController.GetAll", Times.Once());
-            _appLoggerService.Verify(LogLevel.Debug, "Completed PhysiciansController.GetAll", Times.Once());
+            if (_checkLogger)
+            {
+                _appLoggerService.Verify(LogLevel.Error, $"Exception {_controller.GetType().Name}.GetAll", Times.Once());
+                _appLoggerService.Verify(LogLevel.Debug, $"Requested {_controller.GetType().Name}.GetAll", Times.Once());
+                _appLoggerService.Verify(LogLevel.Debug, $"Completed {_controller.GetType().Name}.GetAll", Times.Once());
+            }
 
             Assert.IsInstanceOf<BadRequestObjectResult>(badResult.Result);
         }
