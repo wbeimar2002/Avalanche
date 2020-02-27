@@ -23,6 +23,8 @@ namespace Avalanche.Api.Tests.Controllers
 
         AuthorizationController _controller;
 
+        bool _checkLogger = false;
+
         [SetUp]
         public void Setup()
         {
@@ -31,6 +33,11 @@ namespace Avalanche.Api.Tests.Controllers
             _environment = new Mock<IWebHostEnvironment>();
 
             _controller = new AuthorizationController(_securityManager.Object, _appLoggerService.Object) ;
+
+            OperatingSystem os = Environment.OSVersion;
+
+            if (os.Platform == PlatformID.Win32NT)
+                _checkLogger = true;
         }
 
         [Test]
@@ -46,9 +53,12 @@ namespace Avalanche.Api.Tests.Controllers
             var user = new User();
             var okResult = _controller.Authenticate(user,_environment.Object);
 
-            _appLoggerService.Verify(LogLevel.Error, "Exception AuthorizationController.Authenticate", Times.Never());
-            _appLoggerService.Verify(LogLevel.Debug, "Requested AuthorizationController.Authenticate", Times.Once());
-            _appLoggerService.Verify(LogLevel.Debug, "Completed AuthorizationController.Authenticate", Times.Once());
+            if (_checkLogger)
+            {
+                _appLoggerService.Verify(LogLevel.Error, $"Exception {_controller.GetType().Name}.Authenticate", Times.Never());
+                _appLoggerService.Verify(LogLevel.Debug, $"Requested {_controller.GetType().Name}.Authenticate", Times.Once());
+                _appLoggerService.Verify(LogLevel.Debug, $"Completed {_controller.GetType().Name}.Authenticate", Times.Once());
+            }
 
             Assert.IsInstanceOf<OkObjectResult>(okResult.Result);
         }
@@ -60,9 +70,12 @@ namespace Avalanche.Api.Tests.Controllers
 
             var badResult = _controller.Authenticate(It.IsAny<User>(), _environment.Object);
 
-            _appLoggerService.Verify(LogLevel.Error, "Exception AuthorizationController.Authenticate", Times.Once());
-            _appLoggerService.Verify(LogLevel.Debug, "Requested AuthorizationController.Authenticate", Times.Once());
-            _appLoggerService.Verify(LogLevel.Debug, "Completed AuthorizationController.Authenticate", Times.Once());
+            if (_checkLogger)
+            {
+                _appLoggerService.Verify(LogLevel.Error, $"Exception {_controller.GetType().Name}.Authenticate", Times.Once());
+                _appLoggerService.Verify(LogLevel.Debug, $"Requested {_controller.GetType().Name}.Authenticate", Times.Once());
+                _appLoggerService.Verify(LogLevel.Debug, $"Completed {_controller.GetType().Name}.Authenticate", Times.Once());
+            }
 
             Assert.IsInstanceOf<BadRequestObjectResult>(badResult.Result);
         }

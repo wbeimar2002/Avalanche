@@ -19,7 +19,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Avalanche.Api.Broadcaster.T
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Avalanche.Host.Service", "Avalanche.Host.Service\Avalanche.Host.Service.csproj", "{B68D5703-1617-4AE5-9DC3-84D4FF0E6987}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Avalanche.Security.Server", "Avalanche.Security.Server\Avalanche.Security.Server.csproj", "{008B9FC4-11D2-471D-A092-E2623B7571E9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Avalanche.Security.Server", "Avalanche.Security.Server\Avalanche.Security.Server.csproj", "{008B9FC4-11D2-471D-A092-E2623B7571E9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Avalanche.Utilities", "Avalanche.Utilities\Avalanche.Utilities.csproj", "{5F002EED-EFEC-4F79-865E-3FCF7BC41EC9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -63,6 +65,10 @@ Global
 		{008B9FC4-11D2-471D-A092-E2623B7571E9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{008B9FC4-11D2-471D-A092-E2623B7571E9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{008B9FC4-11D2-471D-A092-E2623B7571E9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5F002EED-EFEC-4F79-865E-3FCF7BC41EC9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5F002EED-EFEC-4F79-865E-3FCF7BC41EC9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5F002EED-EFEC-4F79-865E-3FCF7BC41EC9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5F002EED-EFEC-4F79-865E-3FCF7BC41EC9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

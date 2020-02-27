@@ -15,7 +15,15 @@
 						"exec": [
 							"pm.test(\"Status code is 200\", function () {",
 							"    pm.response.to.have.status(200);",
-							"});"
+							"});",
+							"",
+							"pm.test(\"Is an array\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData).to.be.an('array');",
+							"});",
+							"",
+							"    ",
+							""
 						],
 						"type": "text/javascript"
 					}
@@ -58,12 +66,12 @@
 					}
 				],
 				"url": {
-					"raw": "https://localhost:32772/api/v1/Metadata/genders",
+					"raw": "https://localhost:32786/api/v1/Metadata/genders",
 					"protocol": "https",
 					"host": [
 						"localhost"
 					],
-					"port": "32772",
+					"port": "32786",
 					"path": [
 						"api",
 						"v1",
@@ -84,7 +92,13 @@
 						"exec": [
 							"pm.test(\"Status code is 200\", function () {",
 							"    pm.response.to.have.status(200);",
-							"});"
+							"});",
+							"",
+							"pm.test(\"Is an array\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData).to.be.an('array');",
+							"});",
+							""
 						],
 						"type": "text/javascript"
 					}
@@ -127,12 +141,12 @@
 					}
 				],
 				"url": {
-					"raw": "https://localhost:32772/api/v1/Metadata/proceduretypes",
+					"raw": "https://localhost:32786/api/v1/Metadata/proceduretypes",
 					"protocol": "https",
 					"host": [
 						"localhost"
 					],
-					"port": "32772",
+					"port": "32786",
 					"path": [
 						"api",
 						"v1",
@@ -158,6 +172,11 @@
 							"    var jsonData = pm.response.json();",
 							"    pm.expect(jsonData.name).to.eql(\"testing\");",
 							"    pm.expect(jsonData.lastName).to.eql(\"testing\");",
+							"    pm.expect(jsonData).to.have.property('id');",
+							"    pm.expect(jsonData).to.have.property('name');",
+							"    pm.expect(jsonData).to.have.property('lastName');",
+							"    pm.expect(jsonData).to.have.property('department');",
+							"    pm.expect(jsonData).to.have.property('gender');",
 							"});"
 						],
 						"type": "text/javascript"
@@ -213,12 +232,12 @@
 					"raw": "{\r\n  \"id\": \"string\",\r\n  \"name\": \"testing\",\r\n  \"lastName\": \"testing\",\r\n  \"dateOfBirth\": \"2020-02-13T15:04:32.364Z\",\r\n  \"gender\": \"string\"\r\n}"
 				},
 				"url": {
-					"raw": "https://localhost:32772/api/v1/Patients",
+					"raw": "https://localhost:32786/api/v1/Patients",
 					"protocol": "https",
 					"host": [
 						"localhost"
 					],
-					"port": "32772",
+					"port": "32786",
 					"path": [
 						"api",
 						"v1",
@@ -289,12 +308,12 @@
 					}
 				],
 				"url": {
-					"raw": "https://localhost:32772/api/v1/Patients/quick",
+					"raw": "https://localhost:32786/api/v1/Patients/quick",
 					"protocol": "https",
 					"host": [
 						"localhost"
 					],
-					"port": "32772",
+					"port": "32786",
 					"path": [
 						"api",
 						"v1",
@@ -315,6 +334,13 @@
 						"exec": [
 							"pm.test(\"Status code is 200\", function () {",
 							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Contains data for paging\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData).to.have.a.property('items');",
+							"    pm.expect(jsonData).to.have.a.property('nextPage');",
+							"    pm.expect(jsonData).to.have.a.property('previousPage');",
 							"});"
 						],
 						"type": "text/javascript"
@@ -370,12 +396,12 @@
 					"raw": "{\r\n  \"term\": \"string\",\r\n  \"page\": 0,\r\n  \"limit\": 10\r\n}"
 				},
 				"url": {
-					"raw": "https://localhost:32772/api/v1/Patients/filtered",
+					"raw": "https://localhost:32786/api/v1/Patients/filtered",
 					"protocol": "https",
 					"host": [
 						"localhost"
 					],
-					"port": "32772",
+					"port": "32786",
 					"path": [
 						"api",
 						"v1",
@@ -396,6 +422,11 @@
 						"exec": [
 							"pm.test(\"Status code is 200\", function () {",
 							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Is an array\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData).to.be.an('array');",
 							"});"
 						],
 						"type": "text/javascript"
@@ -439,12 +470,12 @@
 					}
 				],
 				"url": {
-					"raw": "https://localhost:32772/api/v1/Physicians",
+					"raw": "https://localhost:32786/api/v1/Physicians",
 					"protocol": "https",
 					"host": [
 						"localhost"
 					],
-					"port": "32772",
+					"port": "32786",
 					"path": [
 						"api",
 						"v1",

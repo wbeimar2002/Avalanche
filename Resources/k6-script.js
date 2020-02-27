@@ -13,7 +13,7 @@ postman[Symbol.for("initial")]({
 export default function() {
   postman[Request]({
     name: "Get Genders",
-    id: "58cccf1d-2122-4a7e-87c3-52774c2dc115",
+    id: "7cb04431-cb45-4a2a-bc73-28e9477f1a38",
     method: "GET",
     address: "https://192.168.1.60:443/api/v1/Metadata/genders",
     headers: {
@@ -31,12 +31,17 @@ export default function() {
       pm.test("Status code is 200", function() {
         pm.response.to.have.status(200);
       });
+
+      pm.test("Is an array", function() {
+        var jsonData = pm.response.json();
+        pm.expect(jsonData).to.be.an("array");
+      });
     }
   });
 
   postman[Request]({
     name: "Get Procedure Types",
-    id: "841bee18-17c8-4d25-b4fd-211f9e969e6a",
+    id: "25e87952-8128-40d1-82c3-c5c99cc5f9cc",
     method: "GET",
     address: "https://192.168.1.60:443/api/v1/Metadata/proceduretypes",
     headers: {
@@ -54,12 +59,17 @@ export default function() {
       pm.test("Status code is 200", function() {
         pm.response.to.have.status(200);
       });
+
+      pm.test("Is an array", function() {
+        var jsonData = pm.response.json();
+        pm.expect(jsonData).to.be.an("array");
+      });
     }
   });
 
   postman[Request]({
     name: "Register Patient",
-    id: "6208e6ca-7204-4dd1-bc0a-db0ed353d520",
+    id: "2adaa249-08ed-4f8a-bec4-807e9eb4df6f",
     method: "POST",
     address: "https://192.168.1.60:443/api/v1/Patients",
     data:
@@ -85,13 +95,18 @@ export default function() {
         var jsonData = pm.response.json();
         pm.expect(jsonData.name).to.eql("testing");
         pm.expect(jsonData.lastName).to.eql("testing");
+        pm.expect(jsonData).to.have.property("id");
+        pm.expect(jsonData).to.have.property("name");
+        pm.expect(jsonData).to.have.property("lastName");
+        pm.expect(jsonData).to.have.property("department");
+        pm.expect(jsonData).to.have.property("gender");
       });
     }
   });
 
   postman[Request]({
     name: "Quick Patient Registration",
-    id: "08f39b68-7352-4ec6-b4f6-afca104ed267",
+    id: "cda1cb22-e353-4f61-aa4e-615699be8536",
     method: "POST",
     address: "https://192.168.1.60:443/api/v1/Patients/quick",
     headers: {
@@ -116,7 +131,7 @@ export default function() {
 
   postman[Request]({
     name: "Search Patients",
-    id: "20fe52c5-98d6-44b1-89ac-1b0ca546553e",
+    id: "3fd0ec9a-d39a-4dc8-81a8-d61f5b4ace96",
     method: "POST",
     address: "https://192.168.1.60:443/api/v1/Patients/filtered",
     data: '{\r\n  "term": "string",\r\n  "page": 0,\r\n  "limit": 10\r\n}',
@@ -137,12 +152,19 @@ export default function() {
       pm.test("Status code is 200", function() {
         pm.response.to.have.status(200);
       });
+
+      pm.test("Contains data for paging", function() {
+        var jsonData = pm.response.json();
+        pm.expect(jsonData).to.have.a.property("items");
+        pm.expect(jsonData).to.have.a.property("nextPage");
+        pm.expect(jsonData).to.have.a.property("previousPage");
+      });
     }
   });
 
   postman[Request]({
     name: "Get Physicians",
-    id: "4a3296b1-274a-41a8-a689-85fb7c36f98a",
+    id: "ee8bbe4e-b116-4660-bee9-bdcf8b695fb5",
     method: "GET",
     address: "https://192.168.1.60:443/api/v1/Physicians",
     headers: {
@@ -159,6 +181,11 @@ export default function() {
     post(response) {
       pm.test("Status code is 200", function() {
         pm.response.to.have.status(200);
+      });
+
+      pm.test("Is an array", function() {
+        var jsonData = pm.response.json();
+        pm.expect(jsonData).to.be.an("array");
       });
     }
   });

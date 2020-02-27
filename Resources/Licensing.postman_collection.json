@@ -1,0 +1,155 @@
+{
+	"info": {
+		"_postman_id": "8fd21f07-a928-4f50-8c87-d4a013198872",
+		"name": "Licensing",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Validate License",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "0ccef6e7-e778-44dc-b104-e9caac3aa0e6",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "authority",
+						"value": "localhost:32786"
+					},
+					{
+						"key": "content-length",
+						"value": "0"
+					},
+					{
+						"key": "accept",
+						"value": "*/*"
+					},
+					{
+						"key": "user-agent",
+						"value": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.26 Safari/537.36 Edg/81.0.416.16"
+					},
+					{
+						"key": "origin",
+						"value": "https://localhost:32786"
+					},
+					{
+						"key": "sec-fetch-site",
+						"value": "same-origin"
+					},
+					{
+						"key": "sec-fetch-mode",
+						"value": "cors"
+					},
+					{
+						"key": "sec-fetch-dest",
+						"value": "empty"
+					},
+					{
+						"key": "referer",
+						"value": "https://localhost:32786/index.html"
+					},
+					{
+						"key": "accept-language",
+						"value": "en-US,en;q=0.9,es;q=0.8,th;q=0.7"
+					}
+				],
+				"url": {
+					"raw": "https://localhost:32786/api/v1/Licenses/1234",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "32786",
+					"path": [
+						"api",
+						"v1",
+						"Licenses",
+						"1234"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get All Active Licenses",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "586adac8-bb70-436a-8840-cf846761d822",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "authority",
+						"value": "localhost:32786"
+					},
+					{
+						"key": "accept",
+						"value": "text/plain"
+					},
+					{
+						"key": "user-agent",
+						"value": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.26 Safari/537.36 Edg/81.0.416.16"
+					},
+					{
+						"key": "sec-fetch-site",
+						"value": "same-origin"
+					},
+					{
+						"key": "sec-fetch-mode",
+						"value": "cors"
+					},
+					{
+						"key": "sec-fetch-dest",
+						"value": "empty"
+					},
+					{
+						"key": "referer",
+						"value": "https://localhost:32786/index.html"
+					},
+					{
+						"key": "accept-language",
+						"value": "en-US,en;q=0.9,es;q=0.8,th;q=0.7"
+					}
+				],
+				"url": {
+					"raw": "https://localhost:32786/api/v1/Licenses",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "32786",
+					"path": [
+						"api",
+						"v1",
+						"Licenses"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"protocolProfileBehavior": {}
+}

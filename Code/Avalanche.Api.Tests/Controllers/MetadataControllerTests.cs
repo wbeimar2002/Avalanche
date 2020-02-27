@@ -22,6 +22,8 @@ namespace Avalanche.Api.Tests.Controllers
 
         MetadataController _controller;
 
+        bool _checkLogger = false;
+
         [SetUp]
         public void Setup()
         {
@@ -30,6 +32,11 @@ namespace Avalanche.Api.Tests.Controllers
             _metadataManager = new Mock<IMetadataManager>();
 
             _controller = new MetadataController(_appLoggerService.Object, _metadataManager.Object);
+
+            OperatingSystem os = Environment.OSVersion;
+
+            if (os.Platform == PlatformID.Win32NT)
+                _checkLogger = true;
         }
 
         [Test]
@@ -37,9 +44,12 @@ namespace Avalanche.Api.Tests.Controllers
         {
             var okResult = _controller.GetGenders(_environment.Object);
 
-            _appLoggerService.Verify(LogLevel.Error, "Exception MetadataController.GetGenders", Times.Never());
-            _appLoggerService.Verify(LogLevel.Debug, "Requested MetadataController.GetGenders", Times.Once());
-            _appLoggerService.Verify(LogLevel.Debug, "Completed MetadataController.GetGenders", Times.Once());
+            if (_checkLogger)
+            {
+                _appLoggerService.Verify(LogLevel.Error, $"Exception {_controller.GetType().Name}.GetGenders", Times.Never());
+                _appLoggerService.Verify(LogLevel.Debug, $"Requested {_controller.GetType().Name}.GetGenders", Times.Once());
+                _appLoggerService.Verify(LogLevel.Debug, $"Completed {_controller.GetType().Name}.GetGenders", Times.Once());
+            }
 
             Assert.IsInstanceOf<OkObjectResult>(okResult.Result);
         }
@@ -51,9 +61,12 @@ namespace Avalanche.Api.Tests.Controllers
 
             var badResult = _controller.GetGenders(_environment.Object);
 
-            _appLoggerService.Verify(LogLevel.Error, "Exception MetadataController.GetGenders", Times.Once());
-            _appLoggerService.Verify(LogLevel.Debug, "Requested MetadataController.GetGenders", Times.Once());
-            _appLoggerService.Verify(LogLevel.Debug, "Completed MetadataController.GetGenders", Times.Once());
+            if (_checkLogger)
+            {
+                _appLoggerService.Verify(LogLevel.Error, $"Exception {_controller.GetType().Name}.GetGenders", Times.Once());
+                _appLoggerService.Verify(LogLevel.Debug, $"Requested {_controller.GetType().Name}.GetGenders", Times.Once());
+                _appLoggerService.Verify(LogLevel.Debug, $"Completed {_controller.GetType().Name}.GetGenders", Times.Once());
+            }
 
             Assert.IsInstanceOf<BadRequestObjectResult>(badResult.Result);
         }
@@ -63,9 +76,12 @@ namespace Avalanche.Api.Tests.Controllers
         {
             var okResult = _controller.GetProcedureTypes(_environment.Object);
 
-            _appLoggerService.Verify(LogLevel.Error, "Exception MetadataController.GetProcedureTypes", Times.Never());
-            _appLoggerService.Verify(LogLevel.Debug, "Requested MetadataController.GetProcedureTypes", Times.Once());
-            _appLoggerService.Verify(LogLevel.Debug, "Completed MetadataController.GetProcedureTypes", Times.Once());
+            if (_checkLogger)
+            {
+                _appLoggerService.Verify(LogLevel.Error, $"Exception {_controller.GetType().Name}.GetProcedureTypes", Times.Never());
+                _appLoggerService.Verify(LogLevel.Debug, $"Requested {_controller.GetType().Name}.GetProcedureTypes", Times.Once());
+                _appLoggerService.Verify(LogLevel.Debug, $"Completed {_controller.GetType().Name}.GetProcedureTypes", Times.Once());
+            }
 
             Assert.IsInstanceOf<OkObjectResult>(okResult.Result);
         }
@@ -77,9 +93,12 @@ namespace Avalanche.Api.Tests.Controllers
 
             var badResult = _controller.GetProcedureTypes(_environment.Object);
 
-            _appLoggerService.Verify(LogLevel.Error, "Exception MetadataController.GetProcedureTypes", Times.Once());
-            _appLoggerService.Verify(LogLevel.Debug, "Requested MetadataController.GetProcedureTypes", Times.Once());
-            _appLoggerService.Verify(LogLevel.Debug, "Completed MetadataController.GetProcedureTypes", Times.Once());
+            if (_checkLogger)
+            {
+                _appLoggerService.Verify(LogLevel.Error, $"Exception {_controller.GetType().Name}.GetProcedureTypes", Times.Once());
+                _appLoggerService.Verify(LogLevel.Debug, $"Requested {_controller.GetType().Name}.GetProcedureTypes", Times.Once());
+                _appLoggerService.Verify(LogLevel.Debug, $"Completed {_controller.GetType().Name}.GetProcedureTypes", Times.Once());
+            }
 
             Assert.IsInstanceOf<BadRequestObjectResult>(badResult.Result);
         }

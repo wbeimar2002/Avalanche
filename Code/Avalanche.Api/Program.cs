@@ -57,8 +57,6 @@ namespace Avalanche.Api
 
             try
             {
-                Log.Information("Starting up Flowy " + DateTime.Now);
-
                 CreateHostBuilder(args)
                     .Build()
                     .Run(); 

@@ -14,6 +14,7 @@ using Avalanche.Api.Services.Configuration;
 using Avalanche.Api.Services.Security;
 using Avalanche.Shared.Infrastructure.Models;
 using Avalanche.Shared.Infrastructure.Services.Configuration;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -30,9 +31,7 @@ namespace Avalanche.Api
 {
     public class Startup
     {
-        static readonly string __secretKey = "SigningKeyThatIsFromTheEnvironmentAvalanche"; //TODO: Check this
-        static readonly SymmetricSecurityKey __signingKey = new SymmetricSecurityKey(key: Encoding.ASCII.GetBytes(__secretKey));
-
+        
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
@@ -43,8 +42,6 @@ namespace Avalanche.Api
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            var jwtAppSettings = Configuration.GetSection(nameof(JwtIssuerOptions));
-
             services.AddControllers();
             services.AddSignalR();
 
@@ -69,22 +66,47 @@ namespace Avalanche.Api
             services.AddSingleton<IBroadcastService, BroadcastService>();
 
             ConfigureCorsPolicy(services, configurationService);
+            ConfigureAuthorization(services);
+        }
 
+        private void ConfigureAuthorization(IServiceCollection services)
+        {
+            var jwtAppSettings = Configuration.GetSection(nameof(JwtIssuerOptions));
+            
             services
-                .AddAuthentication("Bearer")
+                .AddAuthentication(x =>
+                {
+                    x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                    x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                })
                 .AddJwtBearer(o =>
                 {
-                    o.TokenValidationParameters = GetTokenValidationParams(jwtAppSettings);
+                    o.RequireHttpsMetadata = false;
+                    o.SaveToken = true;
+                    o.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidateIssuerSigningKey = true,
+                        IssuerSigningKey = new SymmetricSecurityKey(key: Encoding.ASCII.GetBytes(jwtAppSettings[nameof(JwtIssuerOptions.SecurityKey)])),
+
+                        // Clock skew compensates for server time drift.
+                        // We recommend 5 minutes or less:
+                        ClockSkew = TimeSpan.FromMinutes(5),
+                        // Specify the key used to sign the token:
+                        
+                        RequireSignedTokens = true,
+                        // Ensure the token hasn't expired:
+                        RequireExpirationTime = true,
+                        ValidateLifetime = true,
+                        // Ensure the token audience matches our audience value (default true):
+                        ValidateAudience = true,
+                        ValidAudience = jwtAppSettings[nameof(JwtIssuerOptions.Audience)],
+                        // Ensure the token was issued by a trusted authorization server (default true):
+                        ValidateIssuer = true,
+                        ValidIssuer = jwtAppSettings[nameof(JwtIssuerOptions.Issuer)],
+                    };
                 });
 
             services.AddAuthorization(opt => { opt.AddPolicy(ConstantsHelper.ADMIN_POLICY_NAME, policy => policy.RequireClaim("UserType", "AvalancheAdmin")); });
-
-            services.Configure<JwtIssuerOptions>(o =>
-            {
-                o.Issuer = jwtAppSettings[nameof(JwtIssuerOptions.Issuer)];
-                o.Audience = jwtAppSettings[nameof(JwtIssuerOptions.Audience)];
-                o.SigningCredentials = new SigningCredentials(__signingKey, SecurityAlgorithms.HmacSha256);
-            });
         }
 
         private static void ConfigureCorsPolicy(IServiceCollection services, IConfigurationService configurationService)
@@ -147,22 +169,5 @@ namespace Avalanche.Api
                 endpoints.MapControllers();
             });
         }
-
-        static TokenValidationParameters GetTokenValidationParams(IConfiguration jwtAppSettings) => new TokenValidationParameters
-        {
-            ValidateIssuer = true,
-            ValidIssuer = jwtAppSettings[nameof(JwtIssuerOptions.Issuer)],
-
-            ValidateAudience = true,
-            ValidAudience = jwtAppSettings[nameof(JwtIssuerOptions.Audience)],
-
-            ValidateIssuerSigningKey = true,
-            IssuerSigningKey = __signingKey,
-
-            RequireExpirationTime = true,
-            ValidateLifetime = true,
-
-            ClockSkew = TimeSpan.Zero
-        };
     }
 }

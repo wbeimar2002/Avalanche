@@ -20,6 +20,8 @@ namespace Avalanche.Api.Tests.Controllers
 
         HealthController _controller;
 
+        bool _checkLogger = false;
+
         [SetUp]
         public void Setup()
         {
@@ -27,17 +29,25 @@ namespace Avalanche.Api.Tests.Controllers
             _environment = new Mock<IWebHostEnvironment>();
 
             _controller = new HealthController(_appLoggerService.Object);
+
+            OperatingSystem os = Environment.OSVersion;
+
+            if (os.Platform == PlatformID.Win32NT)
+                _checkLogger = true;
         }
 
         [Test]
         public void HealthCheckShouldReturnOkResult()
         {
             var okResult = _controller.HealthCheck(_environment.Object);
-            
-            _appLoggerService.Verify(LogLevel.Error, "Exception HealthController.HealthCheck", Times.Never());
-            _appLoggerService.Verify(LogLevel.Information, "Avalanche Api is healthy.", Times.Once());
-            _appLoggerService.Verify(LogLevel.Debug, "Requested HealthController.HealthCheck", Times.Once());
-            _appLoggerService.Verify(LogLevel.Debug, "Completed HealthController.HealthCheck", Times.Once());
+
+            if (_checkLogger)
+            {
+                _appLoggerService.Verify(LogLevel.Error, $"Exception {_controller.GetType().Name}.HealthCheck", Times.Never());
+                _appLoggerService.Verify(LogLevel.Information, "Avalanche Api is healthy.", Times.Once());
+                _appLoggerService.Verify(LogLevel.Debug, $"Requested {_controller.GetType().Name}.HealthCheck", Times.Once());
+                _appLoggerService.Verify(LogLevel.Debug, $"Completed {_controller.GetType().Name}.HealthCheck", Times.Once());
+            }
 
             Assert.IsInstanceOf<OkObjectResult>(okResult);
         }
@@ -49,10 +59,13 @@ namespace Avalanche.Api.Tests.Controllers
             
             var badResult = _controller.HealthCheck(_environment.Object);
 
-            _appLoggerService.Verify(LogLevel.Error, "Exception HealthController.HealthCheck", Times.Once());
-            _appLoggerService.Verify(LogLevel.Information, "Avalanche Api is healthy.", Times.Never());
-            _appLoggerService.Verify(LogLevel.Debug, "Requested HealthController.HealthCheck", Times.Once());
-            _appLoggerService.Verify(LogLevel.Debug, "Completed HealthController.HealthCheck", Times.Once());
+            if (_checkLogger)
+            {
+                _appLoggerService.Verify(LogLevel.Error, $"Exception {_controller.GetType().Name}.HealthCheck", Times.Once());
+                _appLoggerService.Verify(LogLevel.Information, "Avalanche Api is healthy.", Times.Never());
+                _appLoggerService.Verify(LogLevel.Debug, $"Requested {_controller.GetType().Name}.HealthCheck", Times.Once());
+                _appLoggerService.Verify(LogLevel.Debug, $"Completed {_controller.GetType().Name}.HealthCheck", Times.Once());
+            }
 
             Assert.IsInstanceOf<BadRequestObjectResult>(badResult);
         }
