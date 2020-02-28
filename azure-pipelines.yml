@@ -41,7 +41,7 @@ stages:
     dependsOn: build
     timeoutInMinutes: 10
     pool:
-     vmImage: 'windows-latest'
+     vmImage: 'ubuntu-latest'
     steps:
     - task: DotNetCoreCLI@2
       displayName: 'Test Avalanche.Api.Tests'
