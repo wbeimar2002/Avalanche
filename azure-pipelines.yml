@@ -8,7 +8,7 @@ pool:
 
 variables:
 
-- group: DEV-AVALANCHE-API
+- group: vg-dev-avalanche-web
 
 - name: BuildConfiguration
   value: 'Release'
@@ -35,8 +35,8 @@ stages:
      - task: DotNetCoreCLI@2
        displayName: 'Build Avalanche.Api'
        inputs:
-       projects: '**/Code/Avalanche.Api/Avalanche.Api.csproj'
-       arguments: '--configuration $(BuildConfiguration)'
+        projects: '**/Code/Avalanche.Api/Avalanche.Api.csproj'
+        arguments: '--configuration $(BuildConfiguration)'
   #- job: test
     #dependsOn: build
     #timeoutInMinutes: 10
@@ -46,9 +46,9 @@ stages:
      - task: DotNetCoreCLI@2
        displayName: 'Test Avalanche.Api.Tests'
        inputs:
-       command: test
-       projects: '**/Code/Avalanche.Api.Tests/Avalanche.Api.Tests.csproj'
-       arguments: '--configuration $(buildConfiguration)'
+        command: test
+        projects: '**/Code/Avalanche.Api.Tests/Avalanche.Api.Tests.csproj'
+        arguments: '--configuration $(buildConfiguration)'
   #- job: publish
     #dependsOn: test
     #timeoutInMinutes: 10
