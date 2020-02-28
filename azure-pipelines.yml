@@ -80,9 +80,24 @@ stages:
        inputs:
         PathtoPublish: 'app'
         ArtifactName: app 
-     
-     - task: DownloadBuildArtifacts@0
-       displayName: 'Download Build Artifacts'
-       inputs:
-        artifactName: app
-        downloadPath: '.'
+- stage: dev
+  jobs:
+     - job: push
+       steps:  
+       - task: DownloadBuildArtifacts@0
+         displayName: 'Download Build Artifacts'
+         inputs:
+          artifactName: app
+          downloadPath: '.'
+
+       - powershell: |
+          $temp = "$(ImageName)"
+          $temp = $temp.ToLower()
+          Write-Host "##vso[task.setvariable variable=ImageNameLowercase;]$temp"
+         displayName: 'Set image name'
+
+       - task: Docker@0
+         displayName: 'Run a Docker command-Build'
+         inputs:
+          action: 'Run a Docker command'
+          customCommand: 'build -t $(ImageNameLowercase) . -f Code/Avalanche.Api/DokerfileForAdoPipeline' 
