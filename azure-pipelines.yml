@@ -8,7 +8,7 @@ pool:
 
 variables:
 
-- group: vg-dev-avalanche-web
+- group: vg-dev-avalanche-api
 
 - name: BuildConfiguration
   value: 'Release'
