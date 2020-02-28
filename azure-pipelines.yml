@@ -78,6 +78,6 @@ stages:
      - task: PublishBuildArtifacts@1
        displayName: 'Publish Build Artifacts'
        inputs:
-        PathtoPublish: '/app'
+        PathtoPublish: 'app'
         ArtifactName: app 
      
