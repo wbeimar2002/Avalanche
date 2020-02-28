@@ -81,3 +81,8 @@ stages:
         PathtoPublish: 'app'
         ArtifactName: app 
      
+     - task: DownloadBuildArtifacts@0
+       displayName: 'Download Build Artifacts'
+       inputs:
+        artifactName: app
+        downloadPath: 'app'
