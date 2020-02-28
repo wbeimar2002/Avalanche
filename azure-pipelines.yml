@@ -85,4 +85,4 @@ stages:
        displayName: 'Download Build Artifacts'
        inputs:
         artifactName: app
-        downloadPath: 'app'
+        downloadPath: '.'
