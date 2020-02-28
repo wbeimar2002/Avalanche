@@ -76,7 +76,7 @@ stages:
         modifyOutputPath: false
 
      
-- stage: build
+- stage: dev
   jobs:
   - job: push
     steps:
