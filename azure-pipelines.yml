@@ -18,46 +18,46 @@ stages:
   jobs:
   - job: build
     steps:
-    - task: UseDotNet@2
-      inputs:
-       version: '3.1.x'
-    - task: UseDotNet@2
-      inputs:
+     - task: UseDotNet@2
+       inputs:
+        version: '3.1.x'
+     - task: UseDotNet@2
+       inputs:
         version: '2.2.x'
         packageType: runtime
     
-    - task: DotNetCoreCLI@2
-      displayName: 'Restore Avalanche.Api'
-      inputs:
-       command: restore
-       projects: '**/Code/Avalanche.Api/Avalanche.Api.csproj'
-       vstsFeed: 'd61e3552-9162-4b94-9184-b843c159ef58'
-    - task: DotNetCoreCLI@2
-      displayName: 'Build Avalanche.Api'
-      inputs:
+     - task: DotNetCoreCLI@2
+       displayName: 'Restore Avalanche.Api'
+       inputs:
+        command: restore
+        projects: '**/Code/Avalanche.Api/Avalanche.Api.csproj'
+        vstsFeed: 'd61e3552-9162-4b94-9184-b843c159ef58'
+     - task: DotNetCoreCLI@2
+       displayName: 'Build Avalanche.Api'
+       inputs:
        projects: '**/Code/Avalanche.Api/Avalanche.Api.csproj'
        arguments: '--configuration $(BuildConfiguration)'
-  - job: test
-    dependsOn: build
-    timeoutInMinutes: 10
-    pool:
-     vmImage: 'ubuntu-latest'
-    steps:
-    - task: DotNetCoreCLI@2
-      displayName: 'Test Avalanche.Api.Tests'
-      inputs:
+  #- job: test
+    #dependsOn: build
+    #timeoutInMinutes: 10
+    #pool:
+     #vmImage: 'ubuntu-latest'
+    #steps:
+     - task: DotNetCoreCLI@2
+       displayName: 'Test Avalanche.Api.Tests'
+       inputs:
        command: test
        projects: '**/Code/Avalanche.Api.Tests/Avalanche.Api.Tests.csproj'
        arguments: '--configuration $(buildConfiguration)'
-  - job: publish
-    dependsOn: test
-    timeoutInMinutes: 10
-    pool:
-     vmImage: 'ubuntu-latest'
-    steps:
-    - task: DotNetCoreCLI@2
-      displayName: 'Publish Avalanche.Api'
-      inputs:
+  #- job: publish
+    #dependsOn: test
+    #timeoutInMinutes: 10
+    #pool:
+     #vmImage: 'ubuntu-latest'
+    #steps:
+     - task: DotNetCoreCLI@2
+       displayName: 'Publish Avalanche.Api'
+       inputs:
         command: publish
         publishWebProjects: false
         projects: '**/Code/Avalanche.Api/Avalanche.Api.csproj'
