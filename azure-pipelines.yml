@@ -64,18 +64,10 @@ stages:
         arguments: '-c $(BuildConfiguration)  -o app'
         zipAfterPublish: false
         modifyOutputPath: false
-    
-    
-  - job: push
-    dependsOn: publish
-    pool:
-      vmImage: 'ubuntu-latest'
-    steps:
-    
-    
-    - task: DotNetCoreCLI@2
-      displayName: 'Publish Avalanche.Api'
-      inputs:
+
+     - task: DotNetCoreCLI@2
+       displayName: 'Publish Avalanche.Api'
+       inputs:
         command: publish
         publishWebProjects: false
         projects: '**/Code/Avalanche.Api/Avalanche.Api.csproj'
@@ -83,29 +75,29 @@ stages:
         zipAfterPublish: false
         modifyOutputPath: false
 
-    - powershell: |
+     - powershell: |
         $temp = "$(ImageName)"
         $temp = $temp.ToLower()
         Write-Host "##vso[task.setvariable variable=ImageNameLowercase;]$temp"
-      displayName: 'PS Script'
+       displayName: 'PS Script'
 
-    - task: Docker@0
-      displayName: 'Run a Docker command-Build'
-      inputs:
+     - task: Docker@0
+       displayName: 'Run a Docker command-Build'
+       inputs:
         action: 'Run a Docker command'
         customCommand: 'build -t $(ImageNameLowercase) . -f Code/Avalanche.Api/DokerfileForAdoPipeline'
   
-    - task: Docker@2
-      displayName: 'Run a Docker command -Tag'
-      inputs:
-       command: 'tag'
-       arguments: '$(ImageNameLowercase) $(AcrRepository)/$(ImageNameLowercase):$(Build.BuildNumber)'
-       addPipelineData: false
+     - task: Docker@2
+       displayName: 'Run a Docker command -Tag'
+       inputs:
+        command: 'tag'
+        arguments: '$(ImageNameLowercase) $(AcrRepository)/$(ImageNameLowercase):$(Build.BuildNumber)'
+        addPipelineData: false
 
-    - task: Docker@1
-      displayName: 'Run a Docker command -Push'
-      inputs:
-       azureSubscriptionEndpoint: '7770e554-30b1-4187-b512-c68b0f1617b7'
-       azureContainerRegistry: '$(AcrRepository)'
-       command: 'Push an image'
-       imageName: '$(AcrRepository)/$(ImageNameLowercase):$(Build.BuildNumber)'
+     - task: Docker@1
+       displayName: 'Run a Docker command -Push'
+       inputs:
+        azureSubscriptionEndpoint: '7770e554-30b1-4187-b512-c68b0f1617b7'
+        azureContainerRegistry: '$(AcrRepository)'
+        command: 'Push an image'
+        imageName: '$(AcrRepository)/$(ImageNameLowercase):$(Build.BuildNumber)'
