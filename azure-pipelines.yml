@@ -85,7 +85,7 @@ stages:
         $temp = "$(ImageName)"
         $temp = $temp.ToLower()
         Write-Host "##vso[task.setvariable variable=ImageNameLowercase;]$temp"
-        displayName: 'Set image name'
+      displayName: 'Set image name'
 
     - task: Docker@0
       displayName: 'Run a Docker command-Build'
