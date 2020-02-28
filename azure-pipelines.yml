@@ -8,74 +8,56 @@ pool:
 
 variables:
 
-- group: DEV-AVALANCHE-API
+- group: vg-dev-avalanche-api
 
 - name: BuildConfiguration
   value: 'Release'
 
 stages:
-- stage: dev
+- stage: build
   jobs:
-  - job: build
+  - job: build_test_publish
     steps:
-    - task: UseDotNet@2
-      inputs:
-       version: '3.1.x'
-    - task: UseDotNet@2
-      inputs:
+     - task: UseDotNet@2
+       inputs:
+        version: '3.1.x'
+     - task: UseDotNet@2
+       inputs:
         version: '2.2.x'
         packageType: runtime
     
-    - task: DotNetCoreCLI@2
-      displayName: 'Restore Avalanche.Api'
-      inputs:
-       command: restore
-       projects: '**/Code/Avalanche.Api/Avalanche.Api.csproj'
-       vstsFeed: 'd61e3552-9162-4b94-9184-b843c159ef58'
-    - task: DotNetCoreCLI@2
-      displayName: 'Build Avalanche.Api'
-      inputs:
-       projects: '**/Code/Avalanche.Api/Avalanche.Api.csproj'
-       arguments: '--configuration $(BuildConfiguration)'
-  - job: test
-    dependsOn: build
-    timeoutInMinutes: 10
-    pool:
-     vmImage: 'ubuntu-latest'
-    steps:
-    - task: DotNetCoreCLI@2
-      displayName: 'Test Avalanche.Api.Tests'
-      inputs:
-       command: test
-       projects: '**/Code/Avalanche.Api.Tests/Avalanche.Api.Tests.csproj'
-       arguments: '--configuration $(buildConfiguration)'
-  - job: publish
-    dependsOn: test
-    timeoutInMinutes: 10
-    pool:
-     vmImage: 'ubuntu-latest'
-    steps:
-    - task: DotNetCoreCLI@2
-      displayName: 'Publish Avalanche.Api'
-      inputs:
-        command: publish
-        publishWebProjects: false
+     - task: DotNetCoreCLI@2
+       displayName: 'Restore Avalanche.Api'
+       inputs:
+        command: restore
         projects: '**/Code/Avalanche.Api/Avalanche.Api.csproj'
-        arguments: '-c $(BuildConfiguration)  -o app'
-        zipAfterPublish: false
-        modifyOutputPath: false
-    
-    
-  - job: push
-    dependsOn: publish
-    pool:
-      vmImage: 'ubuntu-latest'
-    steps:
-    
-    
-    - task: DotNetCoreCLI@2
-      displayName: 'Publish Avalanche.Api'
-      inputs:
+        vstsFeed: 'd61e3552-9162-4b94-9184-b843c159ef58'
+     - task: DotNetCoreCLI@2
+       displayName: 'Build Avalanche.Api'
+       inputs:
+        projects: '**/Code/Avalanche.Api/Avalanche.Api.csproj'
+        arguments: '--configuration $(BuildConfiguration)'
+  #- job: test
+    #dependsOn: build
+    #timeoutInMinutes: 10
+    #pool:
+     #vmImage: 'ubuntu-latest'
+    #steps:
+     - task: DotNetCoreCLI@2
+       displayName: 'Test Avalanche.Api.Tests'
+       inputs:
+        command: test
+        projects: '**/Code/Avalanche.Api.Tests/Avalanche.Api.Tests.csproj'
+        arguments: '--configuration $(buildConfiguration)'
+  #- job: publish
+    #dependsOn: test
+    #timeoutInMinutes: 10
+    #pool:
+     #vmImage: 'ubuntu-latest'
+    #steps:
+     - task: DotNetCoreCLI@2
+       displayName: 'Publish Avalanche.Api'
+       inputs:
         command: publish
         publishWebProjects: false
         projects: '**/Code/Avalanche.Api/Avalanche.Api.csproj'
@@ -83,29 +65,54 @@ stages:
         zipAfterPublish: false
         modifyOutputPath: false
 
-    - powershell: |
-        $temp = "$(ImageName)"
-        $temp = $temp.ToLower()
-        Write-Host "##vso[task.setvariable variable=ImageNameLowercase;]$temp"
-      displayName: 'PS Script'
+     - task: DotNetCoreCLI@2
+       displayName: 'Publish Avalanche.Api'
+       inputs:
+        command: publish
+        publishWebProjects: false
+        projects: '**/Code/Avalanche.Api/Avalanche.Api.csproj'
+        arguments: '-c $(BuildConfiguration)  -o app'
+        zipAfterPublish: false
+        modifyOutputPath: false
+ 
+     - task: PublishBuildArtifacts@1
+       displayName: 'Publish Build Artifacts'
+       inputs:
+        PathtoPublish: 'app'
+        ArtifactName: app 
+- stage: dev
+  jobs:
+     - job: push
+       steps:  
+       - task: DownloadBuildArtifacts@0
+         displayName: 'Download Build Artifacts'
+         inputs:
+          artifactName: app
+          downloadPath: '.'
 
-    - task: Docker@0
-      displayName: 'Run a Docker command-Build'
-      inputs:
-        action: 'Run a Docker command'
-        customCommand: 'build -t $(ImageNameLowercase) . -f Code/Avalanche.Api/DokerfileForAdoPipeline'
-  
-    - task: Docker@2
-      displayName: 'Run a Docker command -Tag'
-      inputs:
-       command: 'tag'
-       arguments: '$(ImageNameLowercase) $(AcrRepository)/$(ImageNameLowercase):$(Build.BuildNumber)'
-       addPipelineData: false
+       - powershell: |
+          $temp = "$(ImageName)"
+          $temp = $temp.ToLower()
+          Write-Host "##vso[task.setvariable variable=ImageNameLowercase;]$temp"
+         displayName: 'Set image name'
 
-    - task: Docker@1
-      displayName: 'Run a Docker command -Push'
-      inputs:
-       azureSubscriptionEndpoint: '7770e554-30b1-4187-b512-c68b0f1617b7'
-       azureContainerRegistry: '$(AcrRepository)'
-       command: 'Push an image'
-       imageName: '$(AcrRepository)/$(ImageNameLowercase):$(Build.BuildNumber)'
+       - task: Docker@0
+         displayName: 'Run a Docker command-Build'
+         inputs:
+          action: 'Run a Docker command'
+          customCommand: 'build -t $(ImageNameLowercase) . -f Code/Avalanche.Api/DokerfileForAdoPipeline' 
+
+       - task: Docker@2
+         displayName: 'Run a Docker command -Tag'
+         inputs:
+          command: 'tag'
+          arguments: '$(ImageNameLowercase) $(AcrRepository)/$(ImageNameLowercase):$(Build.BuildNumber)'
+          addPipelineData: false
+
+       - task: Docker@1
+         displayName: 'Run a Docker command -Push'
+         inputs:
+          azureSubscriptionEndpoint: '7770e554-30b1-4187-b512-c68b0f1617b7'
+          azureContainerRegistry: '$(AcrRepository)'
+          command: 'Push an image'
+          imageName: '$(AcrRepository)/$(ImageNameLowercase):$(Build.BuildNumber)'
