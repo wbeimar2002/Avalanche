@@ -1,0 +1,44 @@
+﻿using Grpc.Core;
+using Grpc.Core.Interceptors;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Ism.Security.Grpc.Interceptors
+{
+    public class AuthInterceptor : Interceptor
+    {
+        public override Task<TResponse> UnaryServerHandler<TRequest, TResponse>(TRequest request, ServerCallContext context,
+            UnaryServerMethod<TRequest, TResponse> continuation)
+        {
+            //jwt token validation;
+            //populate auth context with claims principle?
+            var token = context.RequestHeaders.FirstOrDefault(h => h.Key == "authorization").Value.Split(' ').Last();
+            if (token == null)
+            {
+                context.Status = new Status(StatusCode.Unauthenticated, "Invalid token");
+                return default(Task<TResponse>);
+            }
+
+            if (ValidateToken(token))
+            {
+                PopulateAuthContext(token, context);
+                return continuation(request, context);
+            }
+
+            context.Status = new Status(StatusCode.Unauthenticated, "Invalid token");
+            return default(Task<TResponse>);
+        }
+
+        private bool ValidateToken(String tokenToValidate)
+        {
+            return true;
+        }
+
+        private void PopulateAuthContext(String token, ServerCallContext context)
+        {
+        }
+    }
+}

@@ -1,0 +1,19 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="..\Ism.Security.Grpc\Helpers\CertificateValidatorHelper.cs" Link="Helpers\CertificateValidatorHelper.cs" />
+    <Compile Include="..\Ism.Security.Grpc\Interceptors\AuthInterceptor.cs" Link="Interceptors\AuthInterceptor.cs" />
+    <Compile Include="..\Ism.Security.Grpc\Interceptors\CallbackInterceptor.cs" Link="Interceptors\CallbackInterceptor.cs" />
+    <Compile Include="..\Ism.Security.Grpc\Interceptors\CertificateValidatorInterceptor.cs" Link="Interceptors\CertificateValidatorInterceptor.cs" />
+    <Compile Include="..\Ism.Security.Grpc\Interceptors\RequestLoggerInterceptor.cs" Link="Interceptors\RequestLoggerInterceptor.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Grpc.Core" Version="2.27.0" />
+  </ItemGroup>
+
+</Project>

@@ -1,9 +1,9 @@
-﻿using Avalanche.Api.Broadcaster.Enumerations;
-using Avalanche.Api.Broadcaster.EventArgs;
-using Avalanche.Api.Broadcaster.Services;
+﻿using Ism.Api.Broadcaster.Enumerations;
+using Ism.Api.Broadcaster.EventArgs;
+using Ism.Api.Broadcaster.Services;
 using System;
 
-namespace Avalanche.Api.Broadcaster.Tester
+namespace Ism.Api.Broadcaster.Tester
 {
     class Program
     {

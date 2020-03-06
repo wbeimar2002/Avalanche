@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
 using Avalanche.Host.Service.Clients;
@@ -8,6 +10,7 @@ using Avalanche.Host.Service.Enumerations;
 using Avalanche.Host.Service.Helpers;
 using Avalanche.Host.Service.Models;
 using Grpc.Core;
+using Grpc.Core.Utils;
 using Serilog;
 
 namespace Avalanche.Host.Service.Services.Security
@@ -32,8 +35,9 @@ namespace Avalanche.Host.Service.Services.Security
         }
 
         #endregion
-        
-        #region public functions
+
+        #region public functions   
+
         public override Task<AuthorizationResult> AuthenticateUser(Clients.ApplicationUser request, ServerCallContext context)
         {
             try
