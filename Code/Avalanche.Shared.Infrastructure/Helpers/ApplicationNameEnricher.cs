@@ -4,7 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Avalanche.Api.Helpers
+namespace Avalanche.Shared.Infrastructure.Helpers
 {
     public class ApplicationNameEnricher : ILogEventEnricher
     {

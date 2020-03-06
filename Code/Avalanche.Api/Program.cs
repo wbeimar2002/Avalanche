@@ -13,7 +13,6 @@ using Serilog.Events;
 using Avalanche.Shared.Infrastructure.Models;
 using Newtonsoft.Json;
 using Avalanche.Shared.Infrastructure.Helpers;
-using Avalanche.Api.Helpers;
 
 namespace Avalanche.Api
 {

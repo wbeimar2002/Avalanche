@@ -4,7 +4,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Avalanche.Api.Broadcaster.Services;
-using Avalanche.Api.Helpers;
 using Avalanche.Api.Managers.Health;
 using Avalanche.Api.Managers.Licensing;
 using Avalanche.Api.Managers.Metadata;
@@ -52,7 +51,7 @@ namespace Avalanche.Api
             });
 
             IConfigurationService configurationService = new ConfigurationService(Configuration);
-            services.AddSingleton<IConfigurationService>(c => configurationService);
+            services.AddSingleton(c => configurationService);
 
             services.AddSingleton<ISettingsManager, SettingsManagerMock>();
             services.AddSingleton<ISecurityManager, SecurityManagerMock>();
@@ -66,47 +65,6 @@ namespace Avalanche.Api
             services.AddSingleton<IBroadcastService, BroadcastService>();
 
             ConfigureCorsPolicy(services, configurationService);
-            ConfigureAuthorization(services);
-        }
-
-        private void ConfigureAuthorization(IServiceCollection services)
-        {
-            var jwtAppSettings = Configuration.GetSection(nameof(JwtIssuerOptions));
-            
-            services
-                .AddAuthentication(x =>
-                {
-                    x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                    x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-                })
-                .AddJwtBearer(o =>
-                {
-                    o.RequireHttpsMetadata = false;
-                    o.SaveToken = true;
-                    o.TokenValidationParameters = new TokenValidationParameters
-                    {
-                        ValidateIssuerSigningKey = true,
-                        IssuerSigningKey = new SymmetricSecurityKey(key: Encoding.ASCII.GetBytes(jwtAppSettings[nameof(JwtIssuerOptions.SecurityKey)])),
-
-                        // Clock skew compensates for server time drift.
-                        // We recommend 5 minutes or less:
-                        ClockSkew = TimeSpan.FromMinutes(5),
-                        // Specify the key used to sign the token:
-                        
-                        RequireSignedTokens = true,
-                        // Ensure the token hasn't expired:
-                        RequireExpirationTime = true,
-                        ValidateLifetime = true,
-                        // Ensure the token audience matches our audience value (default true):
-                        ValidateAudience = true,
-                        ValidAudience = jwtAppSettings[nameof(JwtIssuerOptions.Audience)],
-                        // Ensure the token was issued by a trusted authorization server (default true):
-                        ValidateIssuer = true,
-                        ValidIssuer = jwtAppSettings[nameof(JwtIssuerOptions.Issuer)],
-                    };
-                });
-
-            services.AddAuthorization(opt => { opt.AddPolicy(ConstantsHelper.ADMIN_POLICY_NAME, policy => policy.RequireClaim("UserType", "AvalancheAdmin")); });
         }
 
         private static void ConfigureCorsPolicy(IServiceCollection services, IConfigurationService configurationService)
@@ -128,9 +86,7 @@ namespace Avalanche.Api
             services.AddCors(o => o.AddDefaultPolicy(builder =>
             {
                 builder
-                    .WithOrigins(
-                        "https://localhost:8443",
-                        "http://localhost:4200") //Dev Mode
+                    .WithOrigins("http://localhost:5001") //Dev Mode
                         //configSettings.IpAddress)
                     //.AllowAnyOrigin()
                     .AllowAnyMethod()
