@@ -23,21 +23,28 @@ namespace GrpcClient
         {
             var endpoint = "10.0.75.1:9012";
             var token = "Bearer SampleToken";
-
-            List<Interceptor> interceptors = new List<Interceptor>();
+            var certificatePath = @"C:\Olympus\certificates\grpc_serverl5.crt";
             
-            var client = ClientHelper.GetClient<AuthorizationServiceProto.AuthorizationServiceProtoClient>(endpoint, token, interceptors);
+            //Interceptors are optional in te client in you send the metadata in the call
+            //or you can use and interceptor for sending metadata in every call
+            List<Interceptor> interceptors = new List<Interceptor>();
+            List<Func<Metadata, Metadata>> functionInterceptors = new List<Func<Metadata, Metadata>>();
+
+            var client = ClientHelper.GetSecureClient<AuthorizationServiceProto.AuthorizationServiceProtoClient>(endpoint, certificatePath, token, interceptors, functionInterceptors);
+
+            var certificate = new X509Certificate2(certificatePath);
+
+            Metadata metadata = new Metadata();
+            metadata.Add(new Metadata.Entry("CertificateThumbprint", certificate.Thumbprint));
+            metadata.Add(new Metadata.Entry("CertificateSubjectName", certificate.SubjectName.Name));
 
             var reply = await client.AuthenticateUserAsync(
                 new Avalanche.Host.Service.Clients.ApplicationUser()
                 {
-                    Password = "DockerHost",
-                    Username = "DockerHost"
+                    Password = "localdevtesting",
+                    Username = "MPtestAcct1"
                 },
-                new Metadata()
-                {
-                    new Metadata.Entry("Sample", Guid.NewGuid().ToString())
-                });
+                metadata);
 
             Console.WriteLine("Result: " + reply.Success);
 

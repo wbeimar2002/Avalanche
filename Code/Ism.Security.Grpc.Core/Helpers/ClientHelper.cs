@@ -1,6 +1,7 @@
 ﻿using Grpc.Core;
 using Grpc.Core.Interceptors;
 using Ism.Security.Grpc.Interceptors;
+using Ism.Security.Grpc.Models;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -13,44 +14,64 @@ using System.Threading.Tasks;
 namespace Ism.Security.Grpc.Helpers
 
 {
-    public class ClientHelper 
+    public static class ClientHelper 
     {
-        public static T GetClient<T>(string endpoint, string certificatePath = null, List<Interceptor> interceptors = null, List<Func<Metadata, Metadata>> interceptorFunctions = null, string token = null)
+        public static T GetSecureClient<T>(string endpoint, string certificatePath = null, string token = null, List <Interceptor> interceptors = null, List<Func<Metadata, Metadata>> functionInterceptors = null)
         {
-            var asyncAuthInterceptor = new AsyncAuthInterceptor(SetBearerToken(token));
-
             string content = string.Empty;
             SslCredentials sslCredentials = null;
 
-            if (!string.IsNullOrEmpty(certificatePath))
+            var asyncAuthInterceptor = new AsyncAuthInterceptor(SetBearerToken(token));
+            //var asyncAuthInterceptor = new AsyncAuthInterceptor(SetSecurityInfo(certificatePath));
+
+            if (sslCredentials == null && !string.IsNullOrEmpty(certificatePath))
             {
-                File.ReadAllText(certificatePath);
+                content = File.ReadAllText(certificatePath);
                 sslCredentials = new SslCredentials(content);
             }
 
-            ChannelCredentials channelCredentials;
-
-            if (sslCredentials == null)
-            {
-                channelCredentials = ChannelCredentials.Create(ChannelCredentials.Insecure,
-                    CallCredentials.FromInterceptor(asyncAuthInterceptor));
-            }
-            else
-            {
-                channelCredentials = ChannelCredentials.Create(sslCredentials,
-                    CallCredentials.FromInterceptor(asyncAuthInterceptor));
-            }
-
+            var channelCredentials = ChannelCredentials.Create(sslCredentials, CallCredentials.FromInterceptor(asyncAuthInterceptor));
             var channel = new Channel(endpoint, channelCredentials);
 
-            foreach (var interceptor in interceptorFunctions)
+            if (functionInterceptors != null)
             {
-                channel.Intercept(interceptor);
+                foreach (var interceptor in functionInterceptors)
+                {
+                    channel.Intercept(interceptor);
+                }
             }
 
-            foreach (var interceptor in interceptors)
+            if (interceptors != null)
             {
-                channel.Intercept(interceptor);
+                foreach (var interceptor in interceptors)
+                {
+                    channel.Intercept(interceptor);
+                }
+            }
+
+            return (T)Activator.CreateInstance(typeof(T), channel);
+        }
+
+        public static T GetInsecureClient<T>(string endpoint, string token = null, List<Interceptor> interceptors = null, List<Func<Metadata, Metadata>> functionInterceptors = null)
+        {
+            var asyncAuthInterceptor = new AsyncAuthInterceptor(SetBearerToken(token));
+           
+            var channel = new Channel(endpoint, ChannelCredentials.Insecure);
+
+            if (functionInterceptors != null)
+            {
+                foreach (var interceptor in functionInterceptors)
+                {
+                    channel.Intercept(interceptor);
+                }
+            }
+
+            if (interceptors != null)
+            {
+                foreach (var interceptor in interceptors)
+                {
+                    channel.Intercept(interceptor);
+                }
             }
 
             return (T)Activator.CreateInstance(typeof(T), channel);
@@ -68,16 +89,28 @@ namespace Ism.Security.Grpc.Helpers
             };
         }
 
+        private static AsyncAuthInterceptor SetSecurityInfo(string certificatePath)
+        {
+            return async (context, metadata) =>
+            {
+                await Task.Delay(100).ConfigureAwait(false);  //Make sure the operation is asynchronous.
+
+                if (!string.IsNullOrEmpty(certificatePath))
+                {
+                    var certificate = new X509Certificate2(certificatePath);
+                    
+                    metadata.Add(new Metadata.Entry("CertificateThumbprint", certificate.Thumbprint));
+                    metadata.Add(new Metadata.Entry("CertificateSubjectName", certificate.SubjectName.Name));
+                }
+            };
+        }
+
         public static ClientCertificateValidatorInterceptor VerifyCertificateInterceptor(X509Certificate2 leaf)
         {
             return async (metadata1, metadata2) =>
             {
-                var result = CertificateValidatorHelper.Verify(leaf);
-
-                metadata1 = metadata1 ?? new Metadata();
-                metadata1.Add(new Metadata.Entry("CertificateIsValid", result.ToString()));
-                metadata1.Add(new Metadata.Entry("CertificateThumbprint", leaf.Thumbprint));
-
+                var certificateInfo = CertificateValidatorHelper.Verify(leaf);
+                //Here is possible to populate the metadata with interceptors
                 await Task.CompletedTask;
             };
         }
@@ -86,12 +119,8 @@ namespace Ism.Security.Grpc.Helpers
         {
             return async (metadata1, metadata2) =>
             {
-                var result = CertificateValidatorHelper.Verify(leaf, authorithy);
-
-                metadata1 = metadata1 ?? new Metadata();
-                metadata1.Add(new Metadata.Entry("CertificateIsValid", result.ToString()));
-                metadata1.Add(new Metadata.Entry("CertificateThumbprint", leaf.Thumbprint));
-
+                var certificateInfo = CertificateValidatorHelper.Verify(leaf, authorithy);
+                //Here is possible to populate the metadata with interceptors
                 await Task.CompletedTask;
             };
         }
@@ -100,12 +129,8 @@ namespace Ism.Security.Grpc.Helpers
         {
             return async (metadata1, metadata2) =>
             {
-                var result = CertificateValidatorHelper.Verify(subjectName);
-
-                metadata1 = metadata1 ?? new Metadata();
-                metadata1.Add(new Metadata.Entry("CertificateIsValid", result.ToString()));
-                metadata1.Add(new Metadata.Entry("CertificateSubjectName", subjectName));
-
+                var certificateInfo = CertificateValidatorHelper.Verify(subjectName);
+                //Here is possible to populate the metadata with interceptors
                 await Task.CompletedTask;
             };
         }

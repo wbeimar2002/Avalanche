@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
@@ -10,10 +10,16 @@
     <Compile Include="..\Ism.Security.Grpc\Interceptors\CallbackInterceptor.cs" Link="Interceptors\CallbackInterceptor.cs" />
     <Compile Include="..\Ism.Security.Grpc\Interceptors\CertificateValidatorInterceptor.cs" Link="Interceptors\CertificateValidatorInterceptor.cs" />
     <Compile Include="..\Ism.Security.Grpc\Interceptors\RequestLoggerInterceptor.cs" Link="Interceptors\RequestLoggerInterceptor.cs" />
+    <Compile Include="..\Ism.Security.Grpc\Models\CertificateInfo.cs" Link="Models\CertificateInfo.cs" />
+    <Compile Include="..\Ism.Security.Grpc\Models\CertificateInfoBase.cs" Link="Models\CertificateInfoBase.cs" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Grpc.Core" Version="2.27.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Models\" />
   </ItemGroup>
 
 </Project>

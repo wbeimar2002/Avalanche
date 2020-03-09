@@ -18,10 +18,12 @@ namespace Ism.Security.Grpc.Interceptors
         public override Task<TResponse> UnaryServerHandler<TRequest, TResponse>(TRequest request, ServerCallContext context,
             UnaryServerMethod<TRequest, TResponse> continuation)
         {
-            var sampleFromClient = context.RequestHeaders
-                .FirstOrDefault(h => h.Key.Equals("Sample", StringComparison.OrdinalIgnoreCase))?.Value;
+            var subjectName = context.RequestHeaders
+                .FirstOrDefault(h => h.Key.Equals("CertificateSubjectName", StringComparison.OrdinalIgnoreCase))?.Value;
 
-            if (CertificateValidatorHelper.Verify(sampleFromClient))
+            var certificateInfo = CertificateValidatorHelper.Verify(subjectName);
+
+            if (certificateInfo.IsValid)
             {
                 return continuation(request, context);
             }

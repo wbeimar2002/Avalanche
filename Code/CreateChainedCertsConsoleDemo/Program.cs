@@ -20,49 +20,52 @@ namespace CreateChainedCertsConsoleDemo
             Console.WriteLine("Type the DNS Name");
             string dnsName = Console.ReadLine();
 
+            Console.WriteLine("Type the Prefix");
+            string prefix = Console.ReadLine().Trim();
+
             var createClientServerAuthCerts = serviceProvider.GetService<CreateCertificatesClientServerAuth>();
 
             var rootCaL1 = createClientServerAuthCerts.NewRootCertificate(
-                new DistinguishedName { CommonName = "root dev", Country = "US" },
+                new DistinguishedName { CommonName = $"{prefix.ToLower()} root dev", Country = "US" },
                 new ValidityPeriod { ValidFrom = DateTime.UtcNow, ValidTo = DateTime.UtcNow.AddYears(10) },
                 3, dnsName);
-            rootCaL1.FriendlyName = "Development Root L1 certificate";
+            rootCaL1.FriendlyName = $"{prefix} Development Root L1 certificate";
 
             // Platform Intermediate L2 chained from root L1
             var intermediateCaL2 = createClientServerAuthCerts.NewIntermediateChainedCertificate(
-                new DistinguishedName { CommonName = "platform intermediate dev", Country = "US" },
+                new DistinguishedName { CommonName = $"{prefix.ToLower()} platform intermediate dev", Country = "US" },
                 new ValidityPeriod { ValidFrom = DateTime.UtcNow, ValidTo = DateTime.UtcNow.AddYears(10) },
                 2, dnsName, rootCaL1);
-            intermediateCaL2.FriendlyName = "Development Platform Intermediate L2 certificate";
+            intermediateCaL2.FriendlyName = $"{prefix} Development Platform Intermediate L2 certificate";
 
             // Site Intermediate L3 chained from platform intermediate L2
             var intermediateCaL3 = createClientServerAuthCerts.NewIntermediateChainedCertificate(
-                new DistinguishedName { CommonName = "site intermediate dev", Country = "US" },
+                new DistinguishedName { CommonName = $"{prefix.ToLower()} site intermediate dev", Country = "US" },
                 new ValidityPeriod { ValidFrom = DateTime.UtcNow, ValidTo = DateTime.UtcNow.AddYears(10) },
                 2, dnsName, intermediateCaL2);
-            intermediateCaL3.FriendlyName = "Development Site Intermediate L3 certificate";
+            intermediateCaL3.FriendlyName = $"{prefix} Development Site Intermediate L3 certificate";
 
             // Child-Site Intermediate L4 chained from Site intermediate L3
             var intermediateCaL4 = createClientServerAuthCerts.NewIntermediateChainedCertificate(
-                new DistinguishedName { CommonName = "child-site intermediate dev", Country = "US" },
+                new DistinguishedName { CommonName = $"{prefix.ToLower()} child-site intermediate dev", Country = "US" },
                 new ValidityPeriod { ValidFrom = DateTime.UtcNow, ValidTo = DateTime.UtcNow.AddYears(10) },
                 2, dnsName, intermediateCaL3);
-            intermediateCaL4.FriendlyName = "Development Child-Site Intermediate L4 certificate";
+            intermediateCaL4.FriendlyName = $"{prefix} Development Child-Site Intermediate L4 certificate";
 
             // Leaf-Child-Site L5 chained from Child-Site L4
             var serverL5 = createClientServerAuthCerts.NewServerChainedCertificate(
-                new DistinguishedName { CommonName = "leaf child site server dev", Country = "US" },
+                new DistinguishedName { CommonName = $"{prefix.ToLower()} leaf child site server dev", Country = "US" },
                 new ValidityPeriod { ValidFrom = DateTime.UtcNow, ValidTo = DateTime.UtcNow.AddYears(10) },
                 dnsName, intermediateCaL4);
 
-            serverL5.FriendlyName = "Development Leaf Child Site Server L5 certificate";
+            serverL5.FriendlyName = $"{prefix} Development Leaf Child Site Server L5 certificate";
 
             var clientL5 = createClientServerAuthCerts.NewClientChainedCertificate(
-                new DistinguishedName { CommonName = "client", Country = "US" },
+                new DistinguishedName { CommonName = $"{prefix.ToLower()} client", Country = "US" },
                 new ValidityPeriod { ValidFrom = DateTime.UtcNow, ValidTo = DateTime.UtcNow.AddYears(10) },
                 dnsName, intermediateCaL4);
                         
-            clientL5.FriendlyName = "Development Client L5 certificate";
+            clientL5.FriendlyName = $"{prefix} Development Client L5 certificate";
 
             Console.WriteLine($"Created Client, Server L5 Certificates {clientL5.FriendlyName}");
 
@@ -70,26 +73,26 @@ namespace CreateChainedCertsConsoleDemo
             var importExportCertificate = serviceProvider.GetService<ImportExportCertificate>();
 
             var rootCertInPfxBtyes = importExportCertificate.ExportRootPfx(password, rootCaL1);
-            File.WriteAllBytes("localhost_root_l1.pfx", rootCertInPfxBtyes);
+            File.WriteAllBytes($"{prefix.ToLower()}_localhost_root_l1.pfx", rootCertInPfxBtyes);
 
             var rootPublicKey = importExportCertificate.ExportCertificatePublicKey(rootCaL1);
             var rootPublicKeyBytes = rootPublicKey.Export(X509ContentType.Cert);
-            File.WriteAllBytes($"localhost_root_l1.cer", rootPublicKeyBytes);
+            File.WriteAllBytes($"{prefix.ToLower()}_localhost_root_l1.cer", rootPublicKeyBytes);
 
             var intermediatePlatformCertInPfxBtyes = importExportCertificate.ExportChainedCertificatePfx(password, intermediateCaL2, rootCaL1);
-            File.WriteAllBytes("localhost_platform_intermediate_l2.pfx", intermediatePlatformCertInPfxBtyes);
+            File.WriteAllBytes($"{prefix.ToLower()}_localhost_platform_intermediate_l2.pfx", intermediatePlatformCertInPfxBtyes);
 
             var intermediateSiteCertInPfxBtyes = importExportCertificate.ExportChainedCertificatePfx(password, intermediateCaL3, intermediateCaL2);
-            File.WriteAllBytes("localhost_site_intermediate_l3.pfx", intermediateSiteCertInPfxBtyes);
+            File.WriteAllBytes($"{prefix.ToLower()}_localhost_site_intermediate_l3.pfx", intermediateSiteCertInPfxBtyes);
 
             var intermediateChildSiteCertInPfxBtyes = importExportCertificate.ExportChainedCertificatePfx(password, intermediateCaL4, intermediateCaL3);
-            File.WriteAllBytes("localhost_child_site_intermediate_l4.pfx", intermediateChildSiteCertInPfxBtyes);
+            File.WriteAllBytes($"{prefix.ToLower()}_localhost_child_site_intermediate_l4.pfx", intermediateChildSiteCertInPfxBtyes);
 
             var leafChildSiteServerCertL5InPfxBtyes = importExportCertificate.ExportChainedCertificatePfx(password, serverL5, intermediateCaL4);
-            File.WriteAllBytes("serverl5.pfx", leafChildSiteServerCertL5InPfxBtyes);
+            File.WriteAllBytes($"{prefix.ToLower()}_serverl5.pfx", leafChildSiteServerCertL5InPfxBtyes);
 
             var clientCertL5InPfxBtyes = importExportCertificate.ExportChainedCertificatePfx(password, clientL5, intermediateCaL4);
-            File.WriteAllBytes("clientl5.pfx", clientCertL5InPfxBtyes);
+            File.WriteAllBytes($"{prefix.ToLower()}_clientl5.pfx", clientCertL5InPfxBtyes);
 
             Console.WriteLine("Certificates exported to pfx and cer files");
         }
