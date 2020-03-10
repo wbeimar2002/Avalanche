@@ -95,7 +95,7 @@ stages:
   jobs:
      - job: push
        steps:  
-       #- checkout: avalanche-api
+       - checkout: avalanche-api
        - task: DownloadBuildArtifacts@0
          displayName: 'Download Build Artifacts'
          inputs:
