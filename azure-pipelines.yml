@@ -104,19 +104,6 @@ stages:
           artifactName: app
           downloadPath: '.'
        
-
-       - bash: |
-          echo 'pwd'
-          pwd
-          echo 'ls'
-          ls
-          echo 'ls avalanche-api'
-          ls avalanche-api
-          echo 'ls Code'
-          ls Code
-         displayName: 'Bash Script: pwd and ls'
-
-  
        - powershell: |
           $temp = "$(ImageName)"
           $temp = $temp.ToLower()
