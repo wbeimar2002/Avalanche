@@ -1,3 +1,9 @@
+resources:
+  repositories:
+  - repository: avalanche
+    type: git
+    name: avalanche-api
+
 name: $(Date:yyyyMMdd)$(Rev:.rr)
 
 trigger:
