@@ -102,7 +102,12 @@ stages:
           artifactName: app
           downloadPath: '.'
        
-       
+
+       - bash: |
+          pwd
+          ls
+         displayName: 'Bash Script: pwd and ls'
+
   
        - powershell: |
           $temp = "$(ImageName)"
