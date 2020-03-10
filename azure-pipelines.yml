@@ -112,7 +112,7 @@ stages:
        - task: AzureCLI@1
          displayName: 'Azure CLI '
          inputs:
-          azureSubscription: 'ISM MedPresence Cloud (7770e554-30b1-4187-b512-c68b0f1617b7)'
+          azureSubscription: '7770e554-30b1-4187-b512-c68b0f1617b7'
           scriptLocation: inlineScript
           inlineScript: |
             temp=$(dig +short myip.opendns.com @resolver1.opendns.com)
