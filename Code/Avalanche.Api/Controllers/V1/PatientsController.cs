@@ -19,7 +19,7 @@ using Microsoft.Extensions.Logging;
 namespace Avalanche.Api.Controllers.V1
 {
     [EnableCors]
-    [Route("api/v1/[controller]")]
+    [Route("[controller]")]
     [ApiController]
     public class PatientsController : ControllerBase
     {

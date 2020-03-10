@@ -1,25 +1,42 @@
 ﻿using Avalanche.Security.Server.Core.Security.Hashing;
 using Avalanche.Security.Server.Persistence;
+using Avalanche.Shared.Infrastructure.Helpers;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Logging;
 using Serilog;
-using Serilog.Extensions.Logging;
 using Serilog.Events;
-using Newtonsoft.Json;
-using Avalanche.Shared.Infrastructure.Helpers;
+using System;
+using System.IO;
 
 namespace Avalanche.Security.Server
 {
 	public class Program
 	{
+        /*public static void Main(string[] args)
+		{
+			var host = CreateHostBuilder(args).Build();
+
+			using (var scope = host.Services.CreateScope())
+			{
+				var services = scope.ServiceProvider;
+				var context = services.GetService<AppDbContext>();
+				var passwordHasher = services.GetService<IPasswordHasher>();
+				DatabaseSeed.Seed(context, passwordHasher);
+			}
+
+			host.Run();
+		}
+
+		public static IHostBuilder CreateHostBuilder(string[] args)
+		{
+			return Host.CreateDefaultBuilder(args)
+										.ConfigureWebHostDefaults(webBuilder =>
+										{
+											webBuilder.UseStartup<Startup>();
+										});
+		}*/
+
         public static void Main(string[] args)
         {
             var logFile = Environment.GetEnvironmentVariable("loggerFileName") ?? "avalancheapilogs.txt";
@@ -80,12 +97,13 @@ namespace Avalanche.Security.Server
                 Log.CloseAndFlush();
             }
         }
+
         public static IHostBuilder CreateHostBuilder(string[] args) =>
-			Microsoft.Extensions.Hosting.Host.CreateDefaultBuilder(args)
-				.UseSerilog()
-				.ConfigureWebHostDefaults(webBuilder =>
-				{
-					webBuilder.UseStartup<Startup>();
-				});
-	}
+            Microsoft.Extensions.Hosting.Host.CreateDefaultBuilder(args)
+                .UseSerilog()
+                .ConfigureWebHostDefaults(webBuilder =>
+                {
+                    webBuilder.UseStartup<Startup>();
+                });
+    }
 }

@@ -5,7 +5,7 @@ using System;
 using System.IO;
 using System.Reflection;
 
-namespace Avalanche.Security.Server.Extensions
+namespace Avalanche.Api.Extensions
 {
 	public static class MiddlewareExtensions
 	{
@@ -15,9 +15,9 @@ namespace Avalanche.Security.Server.Extensions
 			{
 				cfg.SwaggerDoc("v1", new OpenApiInfo
 				{
-					Title = "Avalanche Security Server",
+					Title = "Avalanche Api",
 					Version = "v1",
-					Description = "Api Security Server for Avalanche.",
+					Description = "Api Gateway for Avalanche.",
 					Contact = new OpenApiContact
 					{
 						Name = "Olympus",
@@ -60,8 +60,8 @@ namespace Avalanche.Security.Server.Extensions
 		{
 			app.UseSwagger().UseSwaggerUI(options =>
 			{
-				options.SwaggerEndpoint("/swagger/v1/swagger.json", "Avalanche.Security.Server");
-				options.DocumentTitle = "Avalanche Security Server";
+				options.SwaggerEndpoint("/swagger/v1/swagger.json", "Avalanche.Api");
+				options.DocumentTitle = "Avalanche Api";
 			});
 
 			return app;

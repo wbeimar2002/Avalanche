@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Security.Cryptography.X509Certificates;
 using AutoMapper;
 using Avalanche.Security.Server.Core.Repositories;
 using Avalanche.Security.Server.Core.Security.Hashing;
@@ -12,19 +9,15 @@ using Avalanche.Security.Server.Persistence;
 using Avalanche.Security.Server.Security.Hashing;
 using Avalanche.Security.Server.Security.Tokens;
 using Avalanche.Security.Server.Services;
+using Avalanche.Shared.Infrastructure.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.DataProtection;
-using Microsoft.AspNetCore.DataProtection.AuthenticatedEncryption;
-using Microsoft.AspNetCore.DataProtection.AuthenticatedEncryption.ConfigurationModel;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
-using Microsoft.OpenApi.Models;
 
 namespace Avalanche.Security.Server
 {
@@ -39,13 +32,10 @@ namespace Avalanche.Security.Server
 
 		public void ConfigureServices(IServiceCollection services)
 		{
-			/*services.AddDbContext<AppDbContext>(options =>
-			{
-				options.UseInMemoryDatabase("Avalanche.Security.Server");
-			});*/
-
 			services.AddDbContext<AppDbContext>(options =>
-				  options.UseSqlite(Configuration.GetConnectionString("ConnectionSqlite")));
+			{
+				options.UseInMemoryDatabase("jwtapi");
+			});
 
 			services.AddControllers();
 
@@ -63,7 +53,10 @@ namespace Avalanche.Security.Server
 			services.Configure<TokenOptions>(Configuration.GetSection("TokenOptions"));
 			var tokenOptions = Configuration.GetSection("TokenOptions").Get<TokenOptions>();
 
-			var signingConfigurations = new SigningConfigurations();
+			services.Configure<TokenOptions>(Configuration.GetSection("AuthSettings"));
+			var authSettings = Configuration.GetSection("AuthSettings").Get<AuthSettings>();
+
+			var signingConfigurations = new SigningConfigurations(authSettings.SecretKey);
 			services.AddSingleton(signingConfigurations);
 
 			services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
@@ -82,32 +75,19 @@ namespace Avalanche.Security.Server
 				});
 
 			services.AddAutoMapper(this.GetType().Assembly);
-
-			services.AddCors(o => o.AddDefaultPolicy(builder =>
-			{
-				builder
-					.WithOrigins("http://localhost:6001") //Dev Mode
-												 //configSettings.IpAddress)
-												 //.AllowAnyOrigin()
-					.AllowAnyMethod()
-					.AllowAnyHeader()
-					.AllowCredentials();
-			}));
 		}
 
 		public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
 		{
-			if (env.IsDevelopment())
-			{
-				app.UseDeveloperExceptionPage();
-			}
+			app.UseDeveloperExceptionPage();
+
+			app.UseRouting();
 
 			app.UseCustomSwagger();
 
-			app.UseHttpsRedirection();
-			app.UseRouting();
+			app.UseAuthentication();
 			app.UseAuthorization();
-			app.UseCors();
+
 			app.UseEndpoints(endpoints =>
 			{
 				endpoints.MapControllers();

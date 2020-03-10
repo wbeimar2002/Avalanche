@@ -16,7 +16,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Avalanche.Api.Controllers.V1
 {
-    [Route("api/v1/[controller]")]
+    [Route("[controller]")]
     //[Authorize]
     public class NotificationsController : Controller
     {

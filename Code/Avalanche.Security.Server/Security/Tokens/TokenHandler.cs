@@ -6,6 +6,7 @@ using System.Security.Claims;
 using Avalanche.Security.Server.Core.Models;
 using Avalanche.Security.Server.Core.Security.Hashing;
 using Avalanche.Security.Server.Core.Security.Tokens;
+using Avalanche.Shared.Infrastructure.Models;
 using Microsoft.Extensions.Options;
 
 namespace Avalanche.Security.Server.Security.Tokens

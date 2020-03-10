@@ -7,7 +7,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Controllers\ProtectedController.cs" />
+    <Compile Remove="Controllers\HealthController.cs" />
+    <Compile Remove="Security\Tokens\SigningConfigurations.cs" />
+    <Compile Remove="Security\Tokens\TokenOptions.cs" />
   </ItemGroup>
 
   <ItemGroup>

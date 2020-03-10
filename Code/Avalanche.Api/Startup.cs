@@ -7,10 +7,8 @@ using Ism.Api.Broadcaster.Services;
 using Avalanche.Api.Managers.Health;
 using Avalanche.Api.Managers.Licensing;
 using Avalanche.Api.Managers.Metadata;
-using Avalanche.Api.Managers.Security;
 using Avalanche.Api.Managers.Settings;
 using Avalanche.Api.Services.Configuration;
-using Avalanche.Api.Services.Security;
 using Avalanche.Shared.Infrastructure.Models;
 using Avalanche.Shared.Infrastructure.Services.Configuration;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -25,6 +23,9 @@ using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Serilog;
+using Microsoft.AspNetCore.Authorization;
+using Avalanche.Api.Handlers;
+using Avalanche.Api.Extensions;
 
 namespace Avalanche.Api
 {
@@ -44,27 +45,50 @@ namespace Avalanche.Api
             services.AddControllers();
             services.AddSignalR();
 
-            //Register the Swagger generator, defining 1 or more Swagger documents
-            services.AddSwaggerGen(c =>
-            {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "Avalanche.Api", Version = "V1" });
-            });
+            services.AddCustomSwagger();
+            services.AddHttpContextAccessor();
 
             IConfigurationService configurationService = new ConfigurationService(Configuration);
             services.AddSingleton(c => configurationService);
 
             services.AddSingleton<ISettingsManager, SettingsManagerMock>();
-            services.AddSingleton<ISecurityManager, SecurityManagerMock>();
             services.AddSingleton<IPatientsManager, PatientsManagerMock>();
             services.AddSingleton<IPhysiciansManager, PhysiciansManagerMock>();
             services.AddSingleton<IProceduresManager, ProceduresManagerMock>();
             services.AddSingleton<IMetadataManager, MetadataManagerMock>();
             services.AddSingleton<ILicensingManager, LicensingManagerMock>();
 
-            services.AddSingleton<IAuthorizationServiceClient, AuthorizationServiceClient>();
             services.AddSingleton<IBroadcastService, BroadcastService>();
 
+            ConfigureAuthorization(services);
             ConfigureCorsPolicy(services, configurationService);
+        }
+
+        private void ConfigureAuthorization(IServiceCollection services)
+        {
+            services.Configure<TokenOptions>(Configuration.GetSection("TokenOptions"));
+            var tokenOptions = Configuration.GetSection("TokenOptions").Get<TokenOptions>();
+
+            services.Configure<TokenOptions>(Configuration.GetSection("AuthSettings"));
+            var authSettings = Configuration.GetSection("AuthSettings").Get<AuthSettings>();
+
+            var signingConfigurations = new SigningConfigurations(authSettings.SecretKey);
+            services.AddSingleton(signingConfigurations);
+
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                .AddJwtBearer(jwtBearerOptions =>
+                {
+                    jwtBearerOptions.TokenValidationParameters = new TokenValidationParameters()
+                    {
+                        ValidateAudience = true,
+                        ValidateLifetime = true,
+                        ValidateIssuerSigningKey = true,
+                        ValidIssuer = tokenOptions.Issuer,
+                        ValidAudience = tokenOptions.Audience,
+                        IssuerSigningKey = signingConfigurations.Key,
+                        ClockSkew = TimeSpan.Zero
+                    };
+                });
         }
 
         private static void ConfigureCorsPolicy(IServiceCollection services, IConfigurationService configurationService)
@@ -105,20 +129,14 @@ namespace Avalanche.Api
 
             app.UseSerilogRequestLogging();
 
-            // Enable middleware to serve generated Swagger as a JSON endpoint.
-            app.UseSwagger();
-
-            // Enable middleware to serve swagger-ui (HTML, JS, CSS, etc.),
-            // specifying the Swagger JSON endpoint.
-            app.UseSwaggerUI(c =>
-            {
-                c.SwaggerEndpoint("/swagger/v1/swagger.json", "Avalanche.Api V1");
-                c.RoutePrefix = string.Empty;
-            });
+            app.UseCustomSwagger();
             
             app.UseHttpsRedirection();
             app.UseRouting();
+
+            app.UseAuthentication();
             app.UseAuthorization();
+
             app.UseCors();
             app.UseEndpoints(endpoints =>
             {

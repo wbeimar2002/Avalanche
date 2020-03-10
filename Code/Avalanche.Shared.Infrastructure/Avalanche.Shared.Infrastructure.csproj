@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
@@ -8,6 +8,11 @@
     <Compile Remove="Services\Logger\**" />
     <EmbeddedResource Remove="Services\Logger\**" />
     <None Remove="Services\Logger\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Remove="Models\JwtIssuerOptions.cs" />
+    <Compile Remove="Models\Token.cs" />
   </ItemGroup>
 
   <ItemGroup>

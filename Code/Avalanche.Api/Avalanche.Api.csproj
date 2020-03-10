@@ -8,10 +8,18 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Managers\Security\**" />
     <Compile Remove="Repositories\**" />
+    <Compile Remove="Services\Security\**" />
+    <Content Remove="Managers\Security\**" />
     <Content Remove="Repositories\**" />
+    <Content Remove="Services\Security\**" />
+    <EmbeddedResource Remove="Managers\Security\**" />
     <EmbeddedResource Remove="Repositories\**" />
+    <EmbeddedResource Remove="Services\Security\**" />
+    <None Remove="Managers\Security\**" />
     <None Remove="Repositories\**" />
+    <None Remove="Services\Security\**" />
   </ItemGroup>
 
   <ItemGroup>
