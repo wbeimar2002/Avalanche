@@ -115,6 +115,7 @@ stages:
           azureSubscription: '7770e554-30b1-4187-b512-c68b0f1617b7'
           scriptLocation: inlineScript
           inlineScript: |
+            source ../common/commonfunctions.sh
             temp=$(dig +short myip.opendns.com @resolver1.opendns.com)
             add_ip_address_in_acr_netwpork_rule $(AcrRepository) $temp
     
