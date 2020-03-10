@@ -3,6 +3,9 @@ resources:
   - repository: avalanche
     type: git
     name: avalanche-api
+  - repository: avalanche
+    type: git
+    name: devops
 
 name: $(Date:yyyyMMdd)$(Rev:.rr)
 
