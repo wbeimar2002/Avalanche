@@ -1,4 +1,14 @@
+resources:
+  repositories:
+  
+  - repository: avalanche-api
+    type: git
+    name: avalanche/avalanche-api
 
+  - repository: devops
+    type: git
+    name: avalanche/devops
+    
 name: $(Date:yyyyMMdd)$(Rev:.rr)
 
 trigger:
