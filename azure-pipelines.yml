@@ -101,7 +101,9 @@ stages:
          inputs:
           artifactName: app
           downloadPath: '.'
-
+       
+       - checkout: devops
+  
        - powershell: |
           $temp = "$(ImageName)"
           $temp = $temp.ToLower()
