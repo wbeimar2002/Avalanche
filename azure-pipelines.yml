@@ -108,7 +108,16 @@ stages:
           command: 'tag'
           arguments: '$(ImageNameLowercase) $(AcrRepository)/$(ImageNameLowercase):$(Build.BuildNumber)'
           addPipelineData: false
-
+       
+       - task: AzureCLI@1
+         displayName: 'Azure CLI '
+         inputs:
+          azureSubscription: 'ISM MedPresence Cloud (7770e554-30b1-4187-b512-c68b0f1617b7)'
+          scriptLocation: inlineScript
+          inlineScript: |
+            temp=$(dig +short myip.opendns.com @resolver1.opendns.com)
+            add_ip_address_in_acr_netwpork_rule $(AcrRepository) $temp
+    
        - task: Docker@1
          displayName: 'Run a Docker command -Push'
          inputs:
