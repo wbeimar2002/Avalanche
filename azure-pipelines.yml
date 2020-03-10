@@ -4,6 +4,7 @@ resources:
   - repository: avalanche-api
     type: git
     name: avalanche/avalanche-api
+    ref: dev
 
   - repository: devops
     type: git
