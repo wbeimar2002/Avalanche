@@ -97,6 +97,7 @@ stages:
      - job: push
        steps:  
        - checkout: avalanche-api
+       - checkout: devops
        - task: DownloadBuildArtifacts@0
          displayName: 'Download Build Artifacts'
          inputs:
@@ -132,7 +133,7 @@ stages:
        
        
 
-       - checkout: devops
+      
 
        - task: Docker@1
          displayName: 'Run a Docker command -Push'
