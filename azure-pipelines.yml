@@ -127,7 +127,7 @@ stages:
          displayName: 'Run a Docker command-Build'
          inputs:
           action: 'Run a Docker command'
-          customCommand: 'build -t $(ImageNameLowercase) . -f Code/Avalanche.Api/DokerfileForAdoPipeline' 
+          customCommand: 'build -t $(ImageNameLowercase) . -f avalanche-api/Code/Avalanche.Api/DokerfileForAdoPipeline' 
 
        - task: Docker@2
          displayName: 'Run a Docker command -Tag'
