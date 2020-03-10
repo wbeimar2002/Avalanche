@@ -130,7 +130,7 @@ stages:
           inlineScript: |
             source devops/common/commonfunctions.sh
             temp=$(dig +short myip.opendns.com @resolver1.opendns.com)
-            add_ip_address_in_acr_netwpork_rule $(AcrRepository) $temp
+            add_ip_address_in_acr_netwpork_rule 'acrdevavalancheglobal' $temp
        
 
       
