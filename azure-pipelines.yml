@@ -133,8 +133,8 @@ stages:
             temp=$(dig +short myip.opendns.com @resolver1.opendns.com)
             add_ip_address_in_acr_netwpork_rule $(AcrRepository) $temp
 
-       - checkout: devops
-       
+       #- checkout: devops
+
        - task: Docker@1
          displayName: 'Run a Docker command -Push'
          inputs:
