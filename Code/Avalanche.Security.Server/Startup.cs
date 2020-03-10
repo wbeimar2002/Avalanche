@@ -32,10 +32,13 @@ namespace Avalanche.Security.Server
 
 		public void ConfigureServices(IServiceCollection services)
 		{
-			services.AddDbContext<AppDbContext>(options =>
+			/*services.AddDbContext<AppDbContext>(options =>
 			{
-				options.UseInMemoryDatabase("jwtapi");
-			});
+				options.UseInMemoryDatabase("Avalanche.Security.Server");
+			});*/
+
+			services.AddDbContext<AppDbContext>(options =>
+				  options.UseSqlite(Configuration.GetConnectionString("ConnectionSqlite")));
 
 			services.AddControllers();
 
