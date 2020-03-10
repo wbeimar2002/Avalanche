@@ -106,6 +106,7 @@ stages:
        - bash: |
           pwd
           ls
+          ls avalanche-api
          displayName: 'Bash Script: pwd and ls'
 
   
