@@ -42,35 +42,52 @@ stages:
        inputs:
         version: '2.2.x'
         packageType: runtime
+ 
+     - powershell: |
+        $paths = Get-ChildItem -include *.csproj -Recurse
+        foreach($pathobject in $paths) 
+        {
+            $path = $pathobject.fullname
+            $doc = New-Object System.Xml.XmlDocument
+            $doc.Load($path)
+            $child = $doc.CreateElement("ProjectGuid")
+            $child.InnerText = "{"+[guid]::NewGuid().ToString().ToUpper()+"}"
+            $node = $doc.SelectSingleNode("//Project/PropertyGroup")
+            $node.AppendChild($child)
+            $doc.Save($path)
+        }
+        displayName: 'PowerShell Script'
+
      - task: SonarQubePrepare@4
        inputs:
          SonarQube: 'sonarqube'
          scannerMode: 'MSBuild'
          projectKey: 'avalanche-api'
          projectName: 'avalanche-api'
-     - task: DotNetCoreCLI@2
-       displayName: 'Restore solution '
-       inputs:
-        command: restore
-        projects: '**/Code/*.sln'
-        vstsFeed: 'd61e3552-9162-4b94-9184-b843c159ef58'
      #- task: DotNetCoreCLI@2
-       #displayName: 'Restore Avalanche.Api'
+       #displayName: 'Restore solution '
        #inputs:
         #command: restore
-        #projects: '**/Code/Avalanche.Api/Avalanche.Api.csproj'
+        #projects: '**/Code/*.sln'
         #vstsFeed: 'd61e3552-9162-4b94-9184-b843c159ef58'
      - task: DotNetCoreCLI@2
-       displayName: 'Build solution'
+       displayName: 'Restore Avalanche.Api'
        inputs:
-        projects: '**/Code/*.sln'
-        arguments: '--configuration $(BuildConfiguration)'
-     
+        command: restore
+        projects: '**/Code/Avalanche.Api/Avalanche.Api.csproj'
+        vstsFeed: 'd61e3552-9162-4b94-9184-b843c159ef58'
+
      #- task: DotNetCoreCLI@2
-       #displayName: 'Build Avalanche.Api'
+       #displayName: 'Build solution'
        #inputs:
-        #projects: '**/Code/Avalanche.Api/Avalanche.Api.csproj'
+        #projects: '**/Code/*.sln'
         #arguments: '--configuration $(BuildConfiguration)'
+     
+     - task: DotNetCoreCLI@2
+       displayName: 'Build Avalanche.Api'
+       inputs:
+        projects: '**/Code/Avalanche.Api/Avalanche.Api.csproj'
+        arguments: '--configuration $(BuildConfiguration)'
 
      - task: DotNetCoreCLI@2
        displayName: 'Test Avalanche.Api.Tests'
