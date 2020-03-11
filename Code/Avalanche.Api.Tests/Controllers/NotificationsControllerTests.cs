@@ -9,8 +9,8 @@ using Avalanche.Api.Tests.Extensions;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
-using Ism.Api.Broadcaster.Services;
-using Ism.Api.Broadcaster.Models;
+using Ism.Broadcaster.Services;
+using Ism.Broadcaster.Models;
 
 namespace Avalanche.Api.Tests.Controllers
 {

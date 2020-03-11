@@ -1,16 +1,16 @@
-﻿using Ism.Api.Broadcaster.Enumerations;
-using Ism.Api.Broadcaster.EventArgs;
-using Ism.Api.Broadcaster.Services;
+﻿using Ism.Broadcaster.Enumerations;
+using Ism.Broadcaster.EventArgs;
+using Ism.Broadcaster.Services;
 using System;
 
-namespace Ism.Api.Broadcaster.Tester
+namespace Ism.Broadcaster.Tester
 {
     class Program
     {
         static void Main(string[] args)
         {
-            string hubURL = "http://localhost:32772/broadcaster";
-            EventNameEnum hubEventName = EventNameEnum.Unknown;
+            string hubURL = "https://localhost:5001/broadcast";
+            EventNameEnum hubEventName = EventNameEnum.OnTesting;
 
             var listener = new BroadcastListenerService(hubURL, hubEventName);
             listener.ListenHubEvent(EventListened);
@@ -21,7 +21,7 @@ namespace Ism.Api.Broadcaster.Tester
 
         private static void EventListened(object suscriber, BroadcastEventArgs args)
         {
-            Console.WriteLine($"New message: {args.MessageRequest.Message}");
+            Console.WriteLine($"New message: {args.MessageRequest.Content}");
         }
     }
 }

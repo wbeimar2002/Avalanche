@@ -4,7 +4,7 @@ using System.ComponentModel;
 using System.Reflection;
 using System.Text;
 
-namespace Ism.Api.Broadcaster.Extensions
+namespace Ism.Broadcaster.Extensions
 {
     public static class EnumExtension
     {

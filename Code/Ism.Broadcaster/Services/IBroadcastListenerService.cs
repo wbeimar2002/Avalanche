@@ -1,10 +1,10 @@
-﻿using Ism.Api.Broadcaster.Enumerations;
-using Ism.Api.Broadcaster.EventArgs;
+﻿using Ism.Broadcaster.Enumerations;
+using Ism.Broadcaster.EventArgs;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Ism.Api.Broadcaster.Services
+namespace Ism.Broadcaster.Services
 {
     public interface IBroadcastListenerService
     {

@@ -1,14 +1,14 @@
-﻿using Ism.Api.Broadcaster.Enumerations;
-using Ism.Api.Broadcaster.EventArgs;
-using Ism.Api.Broadcaster.Extensions;
-using Ism.Api.Broadcaster.Models;
+﻿using Ism.Broadcaster.Enumerations;
+using Ism.Broadcaster.EventArgs;
+using Ism.Broadcaster.Extensions;
+using Ism.Broadcaster.Models;
 using Microsoft.AspNetCore.SignalR.Client;
 using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Ism.Api.Broadcaster.Services
+namespace Ism.Broadcaster.Services
 {
     public class BroadcastListenerService : IBroadcastListenerService, IDisposable
     {
@@ -102,7 +102,7 @@ namespace Ism.Api.Broadcaster.Services
                         _broadcastListenerEventArgs = new BroadcastEventArgs(
                             new MessageRequest()
                             {
-                                Message = message,
+                                Content = message,
                                 EventName = HubEventName
                             });
 

@@ -2,15 +2,16 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Ism.Api.Broadcaster.Enumerations;
-using Ism.Api.Broadcaster.EventArgs;
-using Ism.Api.Broadcaster.Models;
-using Ism.Api.Broadcaster.Services;
+using Ism.Broadcaster.Enumerations;
+using Ism.Broadcaster.EventArgs;
+using Ism.Broadcaster.Models;
+using Ism.Broadcaster.Services;
 using Avalanche.Shared.Infrastructure.Enumerations;
 using Avalanche.Shared.Infrastructure.Extensions;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Logging;
-using Ism.Api.Broadcaster.Extensions;
+using Ism.Broadcaster.Extensions;
+using Ism.RabbitMq.Client;
 
 namespace Avalanche.Api.Hubs
 {
@@ -57,21 +58,28 @@ namespace Avalanche.Api.Hubs
         {
             try
             {
+                MessageRequest messageRequest = broadcastArgs.MessageRequest;
+
                 if (broadcastArgs != null)
                 {
-                    MessageRequest messageRequest = broadcastArgs.MessageRequest;
-
-                    IClientProxy clientProxy = _hubContext.Clients.All;
-
-                    if (messageRequest.EventName == EventNameEnum.Unknown)
+                    if (broadcastArgs.ExternalAction == null)
                     {
-                        string errorMessage = "Unknown or empty event name is requested!";
-                        clientProxy.SendAsync(EventNameEnum.OnException.EnumDescription(), errorMessage); // Goes to the listener
-                        throw new Exception(errorMessage); // Goes to the broadcaster
+                        IClientProxy clientProxy = _hubContext.Clients.All;
+
+                        if (messageRequest.EventName == EventNameEnum.Unknown)
+                        {
+                            string errorMessage = "Unknown or empty event name is requested!";
+                            clientProxy.SendAsync(EventNameEnum.OnException.EnumDescription(), errorMessage); // Goes to the listener
+                            throw new Exception(errorMessage); // Goes to the broadcaster
+                        }
+                        else
+                        {
+                            clientProxy.SendAsync(messageRequest.EventName.EnumDescription(), messageRequest.Content);
+                        }
                     }
                     else
                     {
-                        clientProxy.SendAsync(messageRequest.EventName.EnumDescription(), messageRequest.Message);
+                        broadcastArgs.ExternalAction(messageRequest);
                     }
                 }
             }

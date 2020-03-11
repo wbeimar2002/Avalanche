@@ -1,10 +1,10 @@
-﻿using Ism.Api.Broadcaster.EventArgs;
-using Ism.Api.Broadcaster.Models;
+﻿using Ism.Broadcaster.EventArgs;
+using Ism.Broadcaster.Models;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Ism.Api.Broadcaster.Services
+namespace Ism.Broadcaster.Services
 {
     public class BroadcastService : IBroadcastService
     {
@@ -17,7 +17,7 @@ namespace Ism.Api.Broadcaster.Services
 
         #region Public Methods 
 
-        public void Broadcast(MessageRequest messageRequest)
+        public void Broadcast(MessageRequest messageRequest, Action<MessageRequest> externalAction = null)
         {
             EventHandler<BroadcastEventArgs> handler;
             lock (eventLocker)
@@ -25,7 +25,7 @@ namespace Ism.Api.Broadcaster.Services
                 handler = messageListenedHandler;
                 if (handler != null)
                 {
-                    handler(this, new BroadcastEventArgs(messageRequest));
+                    handler(this, new BroadcastEventArgs(messageRequest, externalAction));
                 }
             }
         }

@@ -1,13 +1,14 @@
-﻿using Ism.Api.Broadcaster.Enumerations;
+﻿using Ism.Broadcaster.Enumerations;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Ism.Api.Broadcaster.Models
+namespace Ism.Broadcaster.Models
 {
     public class MessageRequest
     {
-        public string Message { get; set; }
+        public string Topic { get; set; }
+        public string Content { get; set; }
         public EventNameEnum EventName { get; set; }
     }
 }
