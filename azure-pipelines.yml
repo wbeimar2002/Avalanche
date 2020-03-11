@@ -48,6 +48,12 @@ stages:
          projectKey: 'avalanche-api'
          projectName: 'avalanche-api'
      - task: DotNetCoreCLI@2
+       displayName: 'Restore solution '
+       inputs:
+        command: restore
+        projects: '**/Code/*.sln'
+        vstsFeed: 'd61e3552-9162-4b94-9184-b843c159ef58'
+     - task: DotNetCoreCLI@2
        displayName: 'Restore Avalanche.Api'
        inputs:
         command: restore
