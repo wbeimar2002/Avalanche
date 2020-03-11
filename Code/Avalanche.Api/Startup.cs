@@ -3,15 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Avalanche.Api.Broadcaster.Services;
-using Avalanche.Api.Helpers;
+using Ism.Api.Broadcaster.Services;
 using Avalanche.Api.Managers.Health;
 using Avalanche.Api.Managers.Licensing;
 using Avalanche.Api.Managers.Metadata;
-using Avalanche.Api.Managers.Security;
 using Avalanche.Api.Managers.Settings;
 using Avalanche.Api.Services.Configuration;
-using Avalanche.Api.Services.Security;
 using Avalanche.Shared.Infrastructure.Models;
 using Avalanche.Shared.Infrastructure.Services.Configuration;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -26,6 +23,9 @@ using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Serilog;
+using Microsoft.AspNetCore.Authorization;
+using Avalanche.Api.Handlers;
+using Avalanche.Api.Extensions;
 
 namespace Avalanche.Api
 {
@@ -45,68 +45,50 @@ namespace Avalanche.Api
             services.AddControllers();
             services.AddSignalR();
 
-            //Register the Swagger generator, defining 1 or more Swagger documents
-            services.AddSwaggerGen(c =>
-            {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "Avalanche.Api", Version = "V1" });
-            });
+            services.AddCustomSwagger();
+            services.AddHttpContextAccessor();
 
             IConfigurationService configurationService = new ConfigurationService(Configuration);
-            services.AddSingleton<IConfigurationService>(c => configurationService);
+            services.AddSingleton(c => configurationService);
 
             services.AddSingleton<ISettingsManager, SettingsManagerMock>();
-            services.AddSingleton<ISecurityManager, SecurityManagerMock>();
             services.AddSingleton<IPatientsManager, PatientsManagerMock>();
             services.AddSingleton<IPhysiciansManager, PhysiciansManagerMock>();
             services.AddSingleton<IProceduresManager, ProceduresManagerMock>();
             services.AddSingleton<IMetadataManager, MetadataManagerMock>();
             services.AddSingleton<ILicensingManager, LicensingManagerMock>();
 
-            services.AddSingleton<IAuthorizationServiceClient, AuthorizationServiceClient>();
             services.AddSingleton<IBroadcastService, BroadcastService>();
 
-            ConfigureCorsPolicy(services, configurationService);
             ConfigureAuthorization(services);
+            ConfigureCorsPolicy(services, configurationService);
         }
 
         private void ConfigureAuthorization(IServiceCollection services)
         {
-            var jwtAppSettings = Configuration.GetSection(nameof(JwtIssuerOptions));
-            
-            services
-                .AddAuthentication(x =>
-                {
-                    x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                    x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-                })
-                .AddJwtBearer(o =>
-                {
-                    o.RequireHttpsMetadata = false;
-                    o.SaveToken = true;
-                    o.TokenValidationParameters = new TokenValidationParameters
-                    {
-                        ValidateIssuerSigningKey = true,
-                        IssuerSigningKey = new SymmetricSecurityKey(key: Encoding.ASCII.GetBytes(jwtAppSettings[nameof(JwtIssuerOptions.SecurityKey)])),
+            services.Configure<TokenOptions>(Configuration.GetSection("TokenOptions"));
+            var tokenOptions = Configuration.GetSection("TokenOptions").Get<TokenOptions>();
 
-                        // Clock skew compensates for server time drift.
-                        // We recommend 5 minutes or less:
-                        ClockSkew = TimeSpan.FromMinutes(5),
-                        // Specify the key used to sign the token:
-                        
-                        RequireSignedTokens = true,
-                        // Ensure the token hasn't expired:
-                        RequireExpirationTime = true,
-                        ValidateLifetime = true,
-                        // Ensure the token audience matches our audience value (default true):
+            services.Configure<TokenOptions>(Configuration.GetSection("AuthSettings"));
+            var authSettings = Configuration.GetSection("AuthSettings").Get<AuthSettings>();
+
+            var signingConfigurations = new SigningConfigurations(authSettings.SecretKey);
+            services.AddSingleton(signingConfigurations);
+
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                .AddJwtBearer(jwtBearerOptions =>
+                {
+                    jwtBearerOptions.TokenValidationParameters = new TokenValidationParameters()
+                    {
                         ValidateAudience = true,
-                        ValidAudience = jwtAppSettings[nameof(JwtIssuerOptions.Audience)],
-                        // Ensure the token was issued by a trusted authorization server (default true):
-                        ValidateIssuer = true,
-                        ValidIssuer = jwtAppSettings[nameof(JwtIssuerOptions.Issuer)],
+                        ValidateLifetime = true,
+                        ValidateIssuerSigningKey = true,
+                        ValidIssuer = tokenOptions.Issuer,
+                        ValidAudience = tokenOptions.Audience,
+                        IssuerSigningKey = signingConfigurations.Key,
+                        ClockSkew = TimeSpan.Zero
                     };
                 });
-
-            services.AddAuthorization(opt => { opt.AddPolicy(ConstantsHelper.ADMIN_POLICY_NAME, policy => policy.RequireClaim("UserType", "AvalancheAdmin")); });
         }
 
         private static void ConfigureCorsPolicy(IServiceCollection services, IConfigurationService configurationService)
@@ -128,9 +110,7 @@ namespace Avalanche.Api
             services.AddCors(o => o.AddDefaultPolicy(builder =>
             {
                 builder
-                    .WithOrigins(
-                        "https://localhost:8443",
-                        "http://localhost:4200") //Dev Mode
+                    .WithOrigins("http://localhost:5001") //Dev Mode
                         //configSettings.IpAddress)
                     //.AllowAnyOrigin()
                     .AllowAnyMethod()
@@ -149,20 +129,14 @@ namespace Avalanche.Api
 
             app.UseSerilogRequestLogging();
 
-            // Enable middleware to serve generated Swagger as a JSON endpoint.
-            app.UseSwagger();
-
-            // Enable middleware to serve swagger-ui (HTML, JS, CSS, etc.),
-            // specifying the Swagger JSON endpoint.
-            app.UseSwaggerUI(c =>
-            {
-                c.SwaggerEndpoint("/swagger/v1/swagger.json", "Avalanche.Api V1");
-                c.RoutePrefix = string.Empty;
-            });
+            app.UseCustomSwagger();
             
             app.UseHttpsRedirection();
             app.UseRouting();
+
+            app.UseAuthentication();
             app.UseAuthorization();
+
             app.UseCors();
             app.UseEndpoints(endpoints =>
             {

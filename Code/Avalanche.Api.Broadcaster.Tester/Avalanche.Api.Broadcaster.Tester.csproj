@@ -6,7 +6,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Avalanche.Api.Broadcaster\Avalanche.Api.Broadcaster.csproj" />
+    <ProjectReference Include="..\Ism.Api.Broadcaster\Ism.Api.Broadcaster.csproj" />
   </ItemGroup>
 
 </Project>

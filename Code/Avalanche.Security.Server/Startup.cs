@@ -1,51 +1,100 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System;
+using AutoMapper;
+using Avalanche.Security.Server.Core.Repositories;
+using Avalanche.Security.Server.Core.Security.Hashing;
+using Avalanche.Security.Server.Core.Security.Tokens;
+using Avalanche.Security.Server.Core.Services;
+using Avalanche.Security.Server.Extensions;
+using Avalanche.Security.Server.Persistence;
+using Avalanche.Security.Server.Security.Hashing;
+using Avalanche.Security.Server.Security.Tokens;
+using Avalanche.Security.Server.Services;
+using Avalanche.Shared.Infrastructure.Models;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
+using Microsoft.IdentityModel.Tokens;
 
 namespace Avalanche.Security.Server
 {
-    public class Startup
-    {
-        public Startup(IConfiguration configuration)
-        {
-            Configuration = configuration;
-        }
+	public class Startup
+	{
+		public Startup(IConfiguration configuration)
+		{
+			Configuration = configuration;
+		}
 
-        public IConfiguration Configuration { get; }
+		public IConfiguration Configuration { get; }
 
-        // This method gets called by the runtime. Use this method to add services to the container.
-        public void ConfigureServices(IServiceCollection services)
-        {
-            services.AddControllers();
-        }
+		public void ConfigureServices(IServiceCollection services)
+		{
+			/*services.AddDbContext<AppDbContext>(options =>
+			{
+				options.UseInMemoryDatabase("Avalanche.Security.Server");
+			});*/
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
-        {
-            if (env.IsDevelopment())
-            {
-                app.UseDeveloperExceptionPage();
-            }
+			services.AddDbContext<AppDbContext>(options =>
+				  options.UseSqlite(Configuration.GetConnectionString("ConnectionSqlite")));
 
-            app.UseHttpsRedirection();
+			services.AddControllers();
 
-            app.UseRouting();
+			services.AddCustomSwagger();
 
-            app.UseAuthorization();
+			services.AddScoped<IUserRepository, UserRepository>();
+			services.AddScoped<IUnitOfWork, UnitOfWork>();
 
-            app.UseEndpoints(endpoints =>
-            {
-                endpoints.MapControllers();
-            });
-        }
-    }
+			services.AddSingleton<IPasswordHasher, PasswordHasher>();
+			services.AddSingleton<ITokenHandler, Security.Tokens.TokenHandler>();
+
+			services.AddScoped<IUserService, UserService>();
+			services.AddScoped<IAuthenticationService, AuthenticationService>();
+
+			services.Configure<TokenOptions>(Configuration.GetSection("TokenOptions"));
+			var tokenOptions = Configuration.GetSection("TokenOptions").Get<TokenOptions>();
+
+			services.Configure<TokenOptions>(Configuration.GetSection("AuthSettings"));
+			var authSettings = Configuration.GetSection("AuthSettings").Get<AuthSettings>();
+
+			var signingConfigurations = new SigningConfigurations(authSettings.SecretKey);
+			services.AddSingleton(signingConfigurations);
+
+			services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+				.AddJwtBearer(jwtBearerOptions =>
+				{
+					jwtBearerOptions.TokenValidationParameters = new TokenValidationParameters()
+					{
+						ValidateAudience = true,
+						ValidateLifetime = true,
+						ValidateIssuerSigningKey = true,
+						ValidIssuer = tokenOptions.Issuer,
+						ValidAudience = tokenOptions.Audience,
+						IssuerSigningKey = signingConfigurations.Key,
+						ClockSkew = TimeSpan.Zero
+					};
+				});
+
+			services.AddAutoMapper(this.GetType().Assembly);
+		}
+
+		public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+		{
+			app.UseDeveloperExceptionPage();
+
+			app.UseRouting();
+
+			app.UseCustomSwagger();
+
+			app.UseAuthentication();
+			app.UseAuthorization();
+
+			app.UseEndpoints(endpoints =>
+			{
+				endpoints.MapControllers();
+			});
+		}
+	}
 }

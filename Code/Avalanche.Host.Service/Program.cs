@@ -3,15 +3,15 @@ using Avalanche.Host.Service.Enumerations;
 using Avalanche.Host.Service.Helpers;
 using Avalanche.Host.Service.Services.Security;
 using Grpc.Core;
+using Grpc.Core.Interceptors;
+using Ism.Security.Grpc.Helpers;
+using Ism.Security.Grpc.Interceptors;
 using Serilog;
 using Serilog.Events;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Topshelf;
 
 namespace Avalanche.Host.Service
@@ -48,27 +48,42 @@ namespace Avalanche.Host.Service
 
             try
             {
-                IoCHelper.Register<ILogger>(() => CreateLogger(), IoCLifestyle.Singleton);
+                //Change this values to the AppConfig
+                string certificateKeyPath = @"C:\Olympus\certificates\grpc_serverl5.pem";
+                string certificateFilePath = @"C:\Olympus\certificates\grpc_serverl5.crt";
+                int chainLevelsToValidate = 5;
+
+                IoCHelper.Register(() => CreateLogger(), IoCLifestyle.Singleton);
                 IoCHelper.Register<AuthorizationServiceProto.AuthorizationServiceProtoBase, AuthorizationService>();
                 IoCHelper.Register<ISecurityService, SecurityService>();
 
-                var svr = new Server
-                {
-                    Services = {
-                        AuthorizationServiceProto.BindService(IoCHelper.GetImplementation<AuthorizationServiceProto.AuthorizationServiceProtoBase>()),
-                    },
-                    Ports = { new ServerPort(_hostname, _port, ServerCredentials.Insecure) }
-                };
+                logger = IoCHelper.GetImplementation<ILogger>();
+
+                var authorizationServiceImplementation = IoCHelper.GetImplementation<AuthorizationServiceProto.AuthorizationServiceProtoBase>();
+
+                ServerServiceDefinition serviceDefinition = AuthorizationServiceProto.BindService(authorizationServiceImplementation)
+                           .Intercept(new AuthInterceptor())
+                           .Intercept(new RequestLoggerInterceptor());
+                           //.Intercept(new CertificateValidatorInterceptor());
+
+                Server svr = ServerHelper.GetSecureServer(_hostname, _port, certificateFilePath, certificateKeyPath, chainLevelsToValidate,
+                    new List<ServerServiceDefinition>() 
+                    { 
+                        serviceDefinition 
+                    });
 
                 svr.Start();
 
-                logger = IoCHelper.GetImplementation<ILogger>();
                 logger.Information("Avalanche Host Service is now initialized.");
             }
             catch (Exception ex)
-            {
-                if (logger == null) { throw; } 
-                else { logger.Error("Avalanche Host Service failed to initialize!", ex); }
+            { 
+                if (logger == null) 
+                { 
+                    throw; 
+                }
+                
+                else { logger.Error($"Avalanche Host Service failed to initialize! {ex.Message}", ex); }
             }
         }
 
@@ -112,3 +127,4 @@ namespace Avalanche.Host.Service
 
     }
 }
+ 

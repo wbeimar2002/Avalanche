@@ -29,13 +29,14 @@ services:
       app_net:
         ipv4_address: 192.168.1.60
     environment:
-      hostIpAddress: '10.0.75.1:9012'
       seqUrl: 'http://seq:5341'
       logging:loglevel:default: 'debug'
       loggerFileName: 'avalancheapilogs.txt'
       loggerFolder: '/logs'
       loggerFileSizeLimit: 209715200
       loggerRetainedFileCountLimit: 5
+    depends_on:
+      - seqserver
   avalanche.security.server:
     container_name: avalanchesecurityserver
     image: ${DOCKER_REGISTRY-}avalanchesecurityserver
@@ -44,6 +45,18 @@ services:
       dockerfile: Avalanche.Security.Server/Dockerfile  
     restart: always
     volumes:
+    - type: bind
+      source: C:\Olympus\dbs
+      target: /data
+      read_only: false
+      volume:
+        nocopy: true
+    - type: bind
+      source: C:\Olympus\certificates
+      target: /certificates
+      read_only: true
+      volume:
+        nocopy: true
     - type: bind
       source: C:\Olympus\AvalancheLogs
       target: /logs
@@ -67,6 +80,8 @@ services:
       loggerFolder: '/logs'
       loggerFileSizeLimit: 209715200
       loggerRetainedFileCountLimit: 5
+    depends_on:
+      - seqserver
   seqserver:
     container_name: seq
     image: 'datalust/seq:latest'

@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Avalanche.Api.Broadcaster.Models;
-using Avalanche.Api.Broadcaster.Services;
+using Ism.Api.Broadcaster.Models;
+using Ism.Api.Broadcaster.Services;
 using Avalanche.Shared.Infrastructure.Enumerations;
 using Avalanche.Shared.Infrastructure.Extensions;
 using Avalanche.Shared.Infrastructure.Helpers;
@@ -16,7 +16,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Avalanche.Api.Controllers.V1
 {
-    [Route("api/v1/[controller]")]
+    [Route("[controller]")]
     //[Authorize]
     public class NotificationsController : Controller
     {

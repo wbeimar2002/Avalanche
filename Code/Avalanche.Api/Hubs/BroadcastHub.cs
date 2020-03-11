@@ -2,14 +2,15 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Avalanche.Api.Broadcaster.Enumerations;
-using Avalanche.Api.Broadcaster.EventArgs;
-using Avalanche.Api.Broadcaster.Models;
-using Avalanche.Api.Broadcaster.Services;
+using Ism.Api.Broadcaster.Enumerations;
+using Ism.Api.Broadcaster.EventArgs;
+using Ism.Api.Broadcaster.Models;
+using Ism.Api.Broadcaster.Services;
 using Avalanche.Shared.Infrastructure.Enumerations;
 using Avalanche.Shared.Infrastructure.Extensions;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Logging;
+using Ism.Api.Broadcaster.Extensions;
 
 namespace Avalanche.Api.Hubs
 {
