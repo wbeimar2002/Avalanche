@@ -128,19 +128,13 @@ stages:
          #displayName: 'Display all IP configs on this machine'
 
        - task: AzureCLI@1
-         displayName: 'Add build ip to acr firewall '
+         displayName: 'Azure CLI example-repo/pipelines-dotnet-core-master/Views/_ViewImports.cshtml'
          inputs:
-          azureSubscription: '7770e554-30b1-4187-b512-c68b0f1617b7'
-          scriptLocation: inlineScript
-          inlineScript: |
+        azureSubscription: '7770e554-30b1-4187-b512-c68b0f1617b7'
+       scriptPath: 'devops/resources/add-acr-firewall-ip.sh  7770e554-30b1-4187-b512-c68b0f1617b7 acrdevavalancheglobal 52.242.126.66l'
+    
+    arguments: 'ghgh hjkhk'
 
-            # source devops/common/commonfunctions.sh
-            ip=$(dig +short myip.opendns.com @resolver1.opendns.com)
-            #add_ip_address_in_acr_netwpork_rule 'acrdevavalancheglobal' $temp
-            cd devops/resources
-            sh add-acr-firewall-ip.sh '7770e554-30b1-4187-b512-c68b0f1617b7' 'acrdevavalancheglobal' $ip
-            ls
-            ls ../common
        - task: Docker@1
          displayName: 'Run a Docker command -Push'
          inputs:
