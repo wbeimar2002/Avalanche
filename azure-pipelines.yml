@@ -56,6 +56,7 @@ stages:
             $node.AppendChild($child)
             $doc.Save($path)
         }
+        workingDirectory: avalanche-api
         displayName: 'PowerShell Script'
 
      - task: SonarQubePrepare@4
