@@ -41,30 +41,7 @@ stages:
        displayName: 'use dotnet 2.2.x'
        inputs:
         version: '2.2.x'
-        packageType: runtime
- 
-     - powershell: |
-        $paths = Get-ChildItem -include *.csproj -Recurse
-        foreach($pathobject in $paths) 
-        {
-            $path = $pathobject.fullname
-            $doc = New-Object System.Xml.XmlDocument
-            $doc.Load($path)
-            $child = $doc.CreateElement("ProjectGuid")
-            $child.InnerText = "{"+[guid]::NewGuid().ToString().ToUpper()+"}"
-            $node = $doc.SelectSingleNode("//Project/PropertyGroup")
-            $node.AppendChild($child)
-            $doc.Save($path)
-        }
-        workingDirectory: avalanche-api
-        displayName: 'PowerShell Script'
-
-     - task: SonarQubePrepare@4
-       inputs:
-         SonarQube: 'sonarqube'
-         scannerMode: 'MSBuild'
-         projectKey: 'avalanche-api'
-         projectName: 'avalanche-api'
+        packageType: runtim
      #- task: DotNetCoreCLI@2
        #displayName: 'Restore solution '
        #inputs:
@@ -96,21 +73,6 @@ stages:
         command: test
         projects: '**/Code/Avalanche.Api.Tests/Avalanche.Api.Tests.csproj'
         arguments: '--configuration $(buildConfiguration)'
-   
-     - task: SonarQubeAnalyze@4
-       displayName: 'Run Code Analysis'
-       continueOnError: true
-
-     - task: DotNetCoreCLI@2
-       displayName: 'Publish Avalanche.Api'
-       inputs:
-        command: publish
-        publishWebProjects: false
-        projects: '**/Code/Avalanche.Api/Avalanche.Api.csproj'
-        arguments: '-c $(BuildConfiguration)  -o app'
-        zipAfterPublish: false
-        modifyOutputPath: false
-
      - task: DotNetCoreCLI@2
        displayName: 'Publish Avalanche.Api'
        inputs:
