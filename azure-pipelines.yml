@@ -127,7 +127,7 @@ stages:
           #ifconfig -a
          #displayName: 'Display all IP configs on this machine'
        - bash: |
-          source ../common/commonfunctions.sh
+          source devops/common/commonfunctions.sh
           ip=$(get_ext_ip)
           echo 'build server external ip is ' $ip
          displayName: 'Get build server external ip'
