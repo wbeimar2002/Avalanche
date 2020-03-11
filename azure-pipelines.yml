@@ -41,7 +41,13 @@ stages:
        inputs:
         version: '2.2.x'
         packageType: runtime
-    
+     - task: SonarSource.sonarqube.15B84CA1-B62F-4A2A-A403-89B77A063157.SonarQubePrepare@4
+       displayName: 'Prepare analysis on SonarQube'
+       inputs:
+        SonarQube: sonarqubeserverconnection
+        projectKey: sonarqubedemo
+        projectName: sonarqubedemo
+
      - task: DotNetCoreCLI@2
        displayName: 'Restore Avalanche.Api'
        inputs:
