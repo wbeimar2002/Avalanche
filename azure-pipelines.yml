@@ -126,9 +126,14 @@ stages:
        #- bash: |
           #ifconfig -a
          #displayName: 'Display all IP configs on this machine'
+       - bash: |
+          source ../common/commonfunctions.sh
+          ip=$(get_ext_ip)
+          echo 'build server external ip is ' $ip
+         displayName: 'Get build server external ip'
 
        - task: AzureCLI@1
-         displayName: 'Azure CLI example-repo/pipelines-dotnet-core-master/Views/_ViewImports.cshtml'
+         displayName: 'Add build server external ip to acr firewall'
          inputs:
           azureSubscription: '7770e554-30b1-4187-b512-c68b0f1617b7'
           scriptPath: 'devops/resources/add-acr-firewall-ip.sh'
