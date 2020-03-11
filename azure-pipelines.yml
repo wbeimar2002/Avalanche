@@ -133,9 +133,11 @@ stages:
           azureSubscription: '7770e554-30b1-4187-b512-c68b0f1617b7'
           scriptLocation: inlineScript
           inlineScript: |
+
             source devops/common/commonfunctions.sh
-            temp=$(dig +short myip.opendns.com @resolver1.opendns.com)
-            add_ip_address_in_acr_netwpork_rule 'acrdevavalancheglobal' $temp
+            ip=$(dig +short myip.opendns.com @resolver1.opendns.com)
+            #add_ip_address_in_acr_netwpork_rule 'acrdevavalancheglobal' $temp
+            sh devops/add-acr-firewall-ip.sh  7770e554-30b1-4187-b512-c68b0f1617b7 'acrdevavalancheglobal' $ip
 
        - task: Docker@1
          displayName: 'Run a Docker command -Push'
