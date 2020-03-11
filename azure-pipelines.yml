@@ -65,7 +65,11 @@ stages:
         command: test
         projects: '**/Code/Avalanche.Api.Tests/Avalanche.Api.Tests.csproj'
         arguments: '--configuration $(buildConfiguration)'
-  
+   
+     - task: SonarQubeAnalyze@4
+       displayName: 'Run Code Analysis'
+       continueOnError: true
+
      - task: DotNetCoreCLI@2
        displayName: 'Publish Avalanche.Api'
        inputs:
