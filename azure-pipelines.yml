@@ -110,13 +110,13 @@ stages:
          displayName: 'Set image name'
 
        - task: Docker@0
-         displayName: 'Run a Docker command-Build'
+         displayName: 'Docker command -Build'
          inputs:
           action: 'Run a Docker command'
           customCommand: 'build -t $(ImageNameLowercase) . -f avalanche-api/Code/Avalanche.Api/DokerfileForAdoPipeline' 
 
        - task: Docker@2
-         displayName: 'Run a Docker command -Tag'
+         displayName: 'Docker command -Tag'
          inputs:
           command: 'tag'
           arguments: '$(ImageNameLowercase) $(AcrRepository)/$(ImageNameLowercase):$(Build.BuildNumber)'
@@ -128,7 +128,7 @@ stages:
          #displayName: 'Display all IP configs on this machine'
 
        - task: AzureCLI@1
-         displayName: 'Azure CLI '
+         displayName: 'Add build ip to acr firewall '
          inputs:
           azureSubscription: '7770e554-30b1-4187-b512-c68b0f1617b7'
           scriptLocation: inlineScript
