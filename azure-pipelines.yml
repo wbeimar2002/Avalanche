@@ -130,10 +130,9 @@ stages:
        - task: AzureCLI@1
          displayName: 'Azure CLI example-repo/pipelines-dotnet-core-master/Views/_ViewImports.cshtml'
          inputs:
-        azureSubscription: '7770e554-30b1-4187-b512-c68b0f1617b7'
-       scriptPath: 'devops/resources/add-acr-firewall-ip.sh  7770e554-30b1-4187-b512-c68b0f1617b7 acrdevavalancheglobal 52.242.126.66l'
-    
-    arguments: 'ghgh hjkhk'
+          azureSubscription: '7770e554-30b1-4187-b512-c68b0f1617b7'
+          scriptPath: 'devops/resources/add-acr-firewall-ip.sh'
+          arguments: 'acrdevavalancheglobal 52.242.126.66l'
 
        - task: Docker@1
          displayName: 'Run a Docker command -Push'
