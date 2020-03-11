@@ -121,10 +121,11 @@ stages:
           command: 'tag'
           arguments: '$(ImageNameLowercase) $(AcrRepository)/$(ImageNameLowercase):$(Build.BuildNumber)'
           addPipelineData: false
-
-       - bash: |
-          ifconfig -a
-         displayName: 'Display all IP configs on this machine'
+       
+       # use this debug acr firewall access
+       #- bash: |
+          #ifconfig -a
+         #displayName: 'Display all IP configs on this machine'
 
        - task: AzureCLI@1
          displayName: 'Azure CLI '
