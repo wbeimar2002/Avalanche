@@ -80,7 +80,6 @@ stages:
 
 - stage: dev
   
-  
   jobs:
      - job: push
        
@@ -158,3 +157,22 @@ stages:
           scriptPath: 'devops/resources/delete-acr-firewall-ip.sh'
           arguments: '$(azuresubscription) $(acrname) $(ip)'
           #arguments: '$(azuresubscription) $(AcrRepository) $(ip)'
+
+- stage: te
+  
+  jobs:
+     - job: push
+       
+       variables:
+
+       - template: vg-te-avalanche-api.yml
+
+       steps:  
+       - checkout: avalanche-api
+       - checkout: devops
+       
+       - task: DownloadBuildArtifacts@0
+         displayName: 'Download Build Artifacts'
+         inputs:
+          artifactName: app
+          downloadPath: '.'
