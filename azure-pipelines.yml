@@ -21,7 +21,6 @@ pool:
   vmImage: 'ubuntu-latest'
 
 variables:
-
 #common variables
 - template: vg-dev-avalanche-api.yml
 
@@ -89,7 +88,8 @@ stages:
        steps:  
        - checkout: avalanche-api
        - checkout: devops
-       
+       - name: BuildConfiguration
+        value: 'Release'
        - task: DownloadBuildArtifacts@0
          displayName: 'Download Build Artifacts'
          inputs:
