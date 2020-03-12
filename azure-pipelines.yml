@@ -14,7 +14,7 @@ name: $(Date:yyyyMMdd)$(Rev:.rr)
 
 trigger:
 
-- dev
+-  none
 
 pool:
   
