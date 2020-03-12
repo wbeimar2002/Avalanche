@@ -7,7 +7,6 @@ namespace Ism.RabbitMq.Client.Models
 {
     public class Message
     {
-        public string Topic { get; set; }
         public string Content { get; set; }
         public EventNameEnum EventName { get; set; }
     }

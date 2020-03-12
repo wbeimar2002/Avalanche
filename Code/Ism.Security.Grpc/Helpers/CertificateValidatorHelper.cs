@@ -115,16 +115,6 @@ namespace Ism.Security.Grpc.Helpers
             }
             else 
             { 
-                /*foreach (var chainStatus in chain.ChainStatus)
-                {
-                    // In reality you can == this, since X509Chain.ChainStatus builds
-                    // an object per flag, but since it's [Flags] let's play it safe.
-                    if ((chainStatus.Status & X509ChainStatusFlags.PartialChain) != 0)
-                    {
-                        Debug.WriteLine(chainStatus.StatusInformation);
-                    }
-                }*/
-
                 return new CertificateInfo()
                 {
                     Thumbprint = cert.Thumbprint,
@@ -166,14 +156,6 @@ namespace Ism.Security.Grpc.Helpers
                     }
                     else
                     {
-                        /*foreach (X509ChainElement chainElement in chain.ChainElements)
-                        {
-                            foreach (X509ChainStatus chainStatus in chainElement.ChainElementStatus)
-                            {
-                                Debug.WriteLine(chainStatus.StatusInformation);
-                            }
-                        }*/
-
                         return new CertificateInfo()
                         {
                             Chain = findResult,

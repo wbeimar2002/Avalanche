@@ -66,7 +66,6 @@
     <Compile Include="Helpers\ServerHelper.cs" />
     <Compile Include="Interceptors\AuthInterceptor.cs" />
     <Compile Include="Interceptors\CallbackInterceptor.cs" />
-    <Compile Include="Interceptors\CertificateValidatorInterceptor.cs" />
     <Compile Include="Interceptors\RequestLoggerInterceptor.cs" />
     <Compile Include="Models\CertificateInfo.cs" />
     <Compile Include="Models\CertificateInfoBase.cs" />

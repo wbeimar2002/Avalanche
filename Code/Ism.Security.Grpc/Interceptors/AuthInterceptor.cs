@@ -13,9 +13,6 @@ namespace Ism.Security.Grpc.Interceptors
         public override Task<TResponse> UnaryServerHandler<TRequest, TResponse>(TRequest request, ServerCallContext context,
             UnaryServerMethod<TRequest, TResponse> continuation)
         {
-            //jwt token validation;
-            //populate auth context with claims principle?
-
             var authorizationHeader = context.RequestHeaders.FirstOrDefault(h => h.Key == "authorization");
 
             if (authorizationHeader == null)
@@ -49,6 +46,7 @@ namespace Ism.Security.Grpc.Interceptors
 
         private void PopulateAuthContext(String token, ServerCallContext context)
         {
+            //Should be this particular to each service?
         }
     }
 }

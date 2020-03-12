@@ -13,7 +13,6 @@ using Grpc.Core.Interceptors;
 using Grpc.Core.Internal;
 using Grpc.Core.Utils;
 using Ism.Security.Grpc.Helpers;
-using Ism.Security.Grpc.Interceptors;
 
 namespace Avalanche.Api.GrpcClient.Tester
 {
@@ -25,7 +24,7 @@ namespace Avalanche.Api.GrpcClient.Tester
             var token = "Bearer SampleToken";
             var certificatePath = @"C:\Olympus\certificates\grpc_serverl5.crt";
             
-            //Interceptors are optional in te client in you send the metadata in the call
+            //Interceptors are optional in the client in you send the metadata in the call
             //or you can use and interceptor for sending metadata in every call
             List<Interceptor> interceptors = new List<Interceptor>();
             List<Func<Metadata, Metadata>> functionInterceptors = new List<Func<Metadata, Metadata>>();
@@ -34,6 +33,7 @@ namespace Avalanche.Api.GrpcClient.Tester
 
             var certificate = new X509Certificate2(certificatePath);
 
+            //Metadata is optional
             Metadata metadata = new Metadata();
             metadata.Add(new Metadata.Entry("CertificateThumbprint", certificate.Thumbprint));
             metadata.Add(new Metadata.Entry("CertificateSubjectName", certificate.SubjectName.Name));
