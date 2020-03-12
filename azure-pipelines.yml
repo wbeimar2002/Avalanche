@@ -19,8 +19,6 @@ pool:
   vmImage: 'ubuntu-latest'
 
 variables:
-#common variables
-- template: vg-dev-avalanche-api.yml
 
 - name: BuildConfiguration
   value: 'Release'
@@ -84,6 +82,10 @@ stages:
   jobs:
      - job: push
        variables:
+
+         #common variables
+       - template: vg-dev-avalanche-api.yml
+       
        - name: BuildConfiguration
          value: 'Release'
 
