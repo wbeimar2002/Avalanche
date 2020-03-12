@@ -131,6 +131,7 @@ stages:
           ip=$(get_ext_ip)
           echo 'build server external ip is ' $ip
           echo "##vso[task.setvariable variable=ip]$ip"
+          echo 'variable ip ' $(ip)
          displayName: 'Get build server external ip'
 
        - task: AzureCLI@1
@@ -138,7 +139,7 @@ stages:
          inputs:
           azureSubscription: '7770e554-30b1-4187-b512-c68b0f1617b7'
           scriptPath: 'devops/resources/add-acr-firewall-ip.sh'
-          arguments: '7770e554-30b1-4187-b512-c68b0f1617b7 acrdevavalancheglobal $ip'
+          arguments: '7770e554-30b1-4187-b512-c68b0f1617b7 acrdevavalancheglobal $(ip)'
 
        - task: Docker@1
          displayName: 'Run a Docker command -Push'
