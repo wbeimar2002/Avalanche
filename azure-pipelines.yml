@@ -171,8 +171,4 @@ stages:
        - checkout: avalanche-api
        - checkout: devops
        
-       - task: DownloadBuildArtifacts@0
-         displayName: 'Download Build Artifacts'
-         inputs:
-          artifactName: app
-          downloadPath: '.'
+       - bash: echo 'env='$(env)
