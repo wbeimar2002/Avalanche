@@ -1,5 +1,8 @@
 name: $(Date:yyyyMMdd)$(Rev:.rr)
 
+trigger:
+  - dev
+  
 resources:
   repositories:
   
@@ -11,11 +14,6 @@ resources:
   - repository: devops
     type: git
     name: avalanche/devops
-
-
-trigger:
-  
-  - dev
 
 pool:
   
