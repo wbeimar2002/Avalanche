@@ -13,8 +13,8 @@ resources:
 name: $(Date:yyyyMMdd)$(Rev:.rr)
 
 trigger:
-
--  none
+  
+  - none
 
 pool:
   
