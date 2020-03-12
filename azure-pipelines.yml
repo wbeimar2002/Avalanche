@@ -20,11 +20,9 @@ pool:
 
 variables:
 
- #common variables
-#- template: vg-dev-avalanche-api.yml
-
-- name: BuildConfiguration
-  value: 'Release'
+  - template: vg-dev-avalanche-api.yml
+  - name: BuildConfiguration
+    value: 'Release'
 
 stages:
 - stage: build
@@ -81,10 +79,7 @@ stages:
         ArtifactName: app 
 
 - stage: dev
-  variables:
-       - template: vg-dev-avalanche-api.yml
-       - name: BuildConfiguration
-         value: 'Release'
+  
   jobs:
      - job: push
        
