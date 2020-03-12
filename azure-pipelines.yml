@@ -13,13 +13,15 @@ resources:
 name: $(Date:yyyyMMdd)$(Rev:.rr)
 
 trigger:
+
 - dev
 
 pool:
-  #vmImage: 'windows-latest'
+  
   vmImage: 'ubuntu-latest'
 
 variables:
+
 #common variables
 - template: vg-dev-avalanche-api.yml
 
