@@ -119,7 +119,7 @@ stages:
          displayName: 'Docker command -Tag'
          inputs:
           command: 'tag'
-          arguments: '$(ImageNameLowercase) $(AcrRepository)/$(ImageNameLowercase):$(Build.BuildNumber)'
+          arguments: '$(ImageNameLowercase) $(AcrRepository).azurecr.io/$(ImageNameLowercase):$(Build.BuildNumber)'
           addPipelineData: false
        
        # use this debug acr firewall access
@@ -145,6 +145,6 @@ stages:
          displayName: 'Run a Docker command -Push'
          inputs:
           azureSubscriptionEndpoint: '7770e554-30b1-4187-b512-c68b0f1617b7'
-          azureContainerRegistry: '$(AcrRepository)'
+          azureContainerRegistry: '$(AcrRepository).azurecr.io'
           command: 'Push an image'
-          imageName: '$(AcrRepository)/$(ImageNameLowercase):$(Build.BuildNumber)'
+          imageName: '$(AcrRepository).azurecr.io/$(ImageNameLowercase):$(Build.BuildNumber)'
