@@ -1,3 +1,5 @@
+name: $(Date:yyyyMMdd)$(Rev:.rr)
+
 resources:
   repositories:
   
@@ -9,8 +11,7 @@ resources:
   - repository: devops
     type: git
     name: avalanche/devops
-    
-name: $(Date:yyyyMMdd)$(Rev:.rr)
+
 
 trigger:
   
