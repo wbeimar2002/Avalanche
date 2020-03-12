@@ -22,7 +22,6 @@ pool:
 variables:
 #common variables
 - template: vg-dev-avalanche-api.yml
-#- group: vg-dev-avalanche-api
 
 - name: BuildConfiguration
   value: 'Release'
