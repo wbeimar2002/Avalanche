@@ -20,7 +20,7 @@ pool:
 
 variables:
 
-  - template: vg-dev-avalanche-api.yml
+  #- template: vg-dev-avalanche-api.yml
   - name: BuildConfiguration
     value: 'Release'
 
@@ -80,9 +80,13 @@ stages:
 
 - stage: dev
   
+  
   jobs:
      - job: push
        
+       variables:
+
+       - template: vg-dev-avalanche-api.yml
 
        steps:  
        - checkout: avalanche-api
