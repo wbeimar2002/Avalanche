@@ -88,8 +88,11 @@ stages:
        steps:  
        - checkout: avalanche-api
        - checkout: devops
+       
+       variables:
        - name: BuildConfiguration
         value: 'Release'
+
        - task: DownloadBuildArtifacts@0
          displayName: 'Download Build Artifacts'
          inputs:
