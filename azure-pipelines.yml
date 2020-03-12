@@ -20,7 +20,7 @@ pool:
 
 variables:
 
-  - template: vg-te-avalanche-api.yml
+  - template: dummy.yml
   - name: BuildConfiguration
     value: 'Release'
 
