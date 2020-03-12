@@ -15,7 +15,7 @@ resources:
 
 trigger:
   
-  - none
+  - dev
 
 pool:
   
