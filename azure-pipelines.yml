@@ -98,7 +98,7 @@ stages:
           ip=$(get_ext_ip)
           echo 'build server external ip is ' $ip
           echo "##vso[task.setvariable variable=ip]$ip"
-          echo 'variable ip ' $(ip)
+          #echo 'variable ip ' $(ip)
          displayName: 'Get build server external ip'
        
        - bash: |
