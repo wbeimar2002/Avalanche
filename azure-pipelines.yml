@@ -1,8 +1,8 @@
 name: $(Date:yyyyMMdd)$(Rev:.rr)
 
 trigger:
-  - dev
-  
+  - none
+
 resources:
   repositories:
   
@@ -16,7 +16,6 @@ resources:
     name: avalanche/devops
 
 pool:
-  
   vmImage: 'ubuntu-latest'
 
 variables:
