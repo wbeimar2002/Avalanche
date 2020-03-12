@@ -2,5 +2,5 @@ variables:
  env: 'te'
  platform: 'avalanche'
  #AcrRepository: 'acrdevavalancheglobal'
- azuresubscription: '7770e554-30b1-4187-b512-c68b0f1617b71'
+ azuresubscription: '7770e554-30b1-4187-b512-c68b0f1617b7'
  ImageName: 'Avalanche-Api'
