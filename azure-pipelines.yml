@@ -81,13 +81,13 @@ stages:
         ArtifactName: app 
 
 - stage: dev
-   
-  jobs:
-     - job: push
-       variables:
+  variables:
        - template: vg-dev-avalanche-api.yml
        - name: BuildConfiguration
          value: 'Release'
+  jobs:
+     - job: push
+       
 
        steps:  
        - checkout: avalanche-api
