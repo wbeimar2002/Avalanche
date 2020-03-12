@@ -137,3 +137,10 @@ stages:
           azureContainerRegistry: '$(AcrRepository).azurecr.io'
           command: 'Push an image'
           imageName: '$(AcrRepository).azurecr.io/$(ImageNameLowercase):$(Build.BuildNumber)'
+
+       - task: AzureCLI@1
+         displayName: 'Delete build server external ip from acr firewall'
+         inputs:
+          azureSubscription: $(azuresubscription)
+          scriptPath: 'devops/resources/delete-acr-firewall-ip.sh'
+          arguments: '$(azuresubscription) $(AcrRepository) $(ip)'
