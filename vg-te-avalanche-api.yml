@@ -2,5 +2,5 @@ variables:
  env: 'te'
  platform: 'avalanche'
  #AcrRepository: 'acrdevavalancheglobal'
- azuresubscription: 'Visual Studio Enterprise – MPN (25e93262-5d61-4d06-bbc4-b0f76bc3a1e7)'
+ azuresubscription: '25e93262-5d61-4d06-bbc4-b0f76bc3a1e7'
  ImageName: 'Avalanche-Api'
