@@ -120,7 +120,8 @@ stages:
          displayName: 'Docker command -Tag'
          inputs:
           command: 'tag'
-          arguments: '$(ImageNameLowercase) $(AcrRepository).azurecr.io/$(ImageNameLowercase):$(Build.BuildNumber)'
+          arguments: '$(ImageNameLowercase) $(acrname).azurecr.io/$(ImageNameLowercase):$(Build.BuildNumber)'
+          #arguments: '$(ImageNameLowercase) $(AcrRepository).azurecr.io/$(ImageNameLowercase):$(Build.BuildNumber)'
           addPipelineData: false
        
        - bash: |
