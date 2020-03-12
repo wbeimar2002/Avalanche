@@ -43,24 +43,13 @@ stages:
        inputs:
         version: '2.2.x'
         packageType: runtime
-     #- task: DotNetCoreCLI@2
-       #displayName: 'Restore solution '
-       #inputs:
-        #command: restore
-        #projects: '**/Code/*.sln'
-        #vstsFeed: 'd61e3552-9162-4b94-9184-b843c159ef58'
+     
      - task: DotNetCoreCLI@2
        displayName: 'Restore Avalanche.Api'
        inputs:
         command: restore
         projects: '**/Code/Avalanche.Api/Avalanche.Api.csproj'
         vstsFeed: 'd61e3552-9162-4b94-9184-b843c159ef58'
-
-     #- task: DotNetCoreCLI@2
-       #displayName: 'Build solution'
-       #inputs:
-        #projects: '**/Code/*.sln'
-        #arguments: '--configuration $(BuildConfiguration)'
      
      - task: DotNetCoreCLI@2
        displayName: 'Build Avalanche.Api'
@@ -74,6 +63,7 @@ stages:
         command: test
         projects: '**/Code/Avalanche.Api.Tests/Avalanche.Api.Tests.csproj'
         arguments: '--configuration $(buildConfiguration)'
+     
      - task: DotNetCoreCLI@2
        displayName: 'Publish Avalanche.Api'
        inputs:
@@ -97,6 +87,7 @@ stages:
        steps:  
        - checkout: avalanche-api
        - checkout: devops
+       
        - task: DownloadBuildArtifacts@0
          displayName: 'Download Build Artifacts'
          inputs:
@@ -122,10 +113,6 @@ stages:
           arguments: '$(ImageNameLowercase) $(AcrRepository).azurecr.io/$(ImageNameLowercase):$(Build.BuildNumber)'
           addPipelineData: false
        
-       # use this debug acr firewall access
-       #- bash: |
-          #ifconfig -a
-         #displayName: 'Display all IP configs on this machine'
        - bash: |
           source devops/common/commonfunctions.sh
           ip=$(get_ext_ip)
@@ -137,14 +124,14 @@ stages:
        - task: AzureCLI@1
          displayName: 'Add build server external ip to acr firewall'
          inputs:
-          azureSubscription: '7770e554-30b1-4187-b512-c68b0f1617b7'
+          azureSubscription: $(azuresubscription)
           scriptPath: 'devops/resources/add-acr-firewall-ip.sh'
-          arguments: '7770e554-30b1-4187-b512-c68b0f1617b7 acrdevavalancheglobal $(ip)'
+          arguments: '$(azuresubscription) $(AcrRepository) $(ip)'
 
        - task: Docker@1
          displayName: 'Run a Docker command -Push'
          inputs:
-          azureSubscriptionEndpoint: '7770e554-30b1-4187-b512-c68b0f1617b7'
+          azureSubscriptionEndpoint: $(azuresubscription)
           azureContainerRegistry: '$(AcrRepository).azurecr.io'
           command: 'Push an image'
           imageName: '$(AcrRepository).azurecr.io/$(ImageNameLowercase):$(Build.BuildNumber)'
