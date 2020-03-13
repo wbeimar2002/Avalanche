@@ -20,7 +20,7 @@ pool:
 
 variables:
 
-  - template: dummy.yml
+  - template: pipeline-bug-workaround.yml
   - name: BuildConfiguration
     value: 'Release'
 
