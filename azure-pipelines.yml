@@ -78,41 +78,6 @@ stages:
         PathtoPublish: 'app'
         ArtifactName: app 
 
-- stage: te
-  
-  jobs:
-     - job: push
-       
-       variables:
-
-       - template: vg-te-avalanche-api.yml
-
-       steps:  
-       - checkout: avalanche-api
-       - checkout: devops
-       
-       - bash: echo 'env='$(env)
-
-       - bash: |
-          source devops/common/commonfunctions.sh
-          ip=$(get_ext_ip)
-          echo 'build server external ip is ' $ip
-          echo "##vso[task.setvariable variable=ip]$ip"
-          #echo 'variable ip ' $(ip)
-         displayName: 'Get build server external ip'
-       
-       - bash: |
-          acrname='acr$(env)$(platform)global'
-          echo 'target acr name' $acrname
-          echo "##vso[task.setvariable variable=acrname]$acrname"
-         displayName: 'Set acr name'
-       
-       - task: AzureCLI@1
-         displayName: 'Add build server external ip to acr firewall'
-         inputs:
-          azureSubscription: $(azuresubscription)
-          scriptPath: 'devops/resources/add-acr-firewall-ip.sh'
-          arguments: '$(azuresubscription) $(acrname) $(ip)'
 
 - stage: dev
   
@@ -194,3 +159,27 @@ stages:
           arguments: '$(azuresubscription) $(acrname) $(ip)'
           #arguments: '$(azuresubscription) $(AcrRepository) $(ip)'
 
+- stage: te
+  
+  jobs:
+     - job: push
+       
+       variables:
+
+       - template: vg-te-avalanche-api.yml
+
+       steps:  
+       - checkout: avalanche-api
+       - checkout: devops
+       
+       - bash: echo 'env='$(env)
+       
+       - bash: |
+          acrname='acr$(env)$(platform)global'
+          echo 'target acr name' $acrname
+          echo "##vso[task.setvariable variable=acrname]$acrname"
+         displayName: 'Set acr name'
+        
+        - bash: echo 'acr='$acrname
+
+       
