@@ -180,6 +180,6 @@ stages:
           echo "##vso[task.setvariable variable=acrname]$acrname"
          displayName: 'Set acr name'
         
-        - bash: echo 'acr='$acrname
+        - bash: echo 'acr='$(acrname)
 
        
