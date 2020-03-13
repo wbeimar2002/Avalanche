@@ -1,2 +1,7 @@
+#purpose of thies file is to overcome a bug. if this file is not included without "azuresubscription" variable defined then we will get the following error. This value in this variable is eventually overwritten by value in variable group per stage in the main pipelin.
+
+#error:
+#There was a resource authorization issue: "The pipeline is not valid. Job push: Step AzureCLI1 input connectedServiceNameARM references service connection $(azuresubscription) which could not be found. The service connection does not exist or has not been authorized for use. For authorization details, refer to https://aka.ms/yamlauthz.,Job push: Step Docker3 input azureSubscriptionEndpoint references service connection $(azuresubscription) which could not be found. The service connection does not exist or has not been authorized for use. For authorization details, refer to https://aka.ms/yamlauthz."
+
 variables:
  azuresubscription: '7770e554-30b1-4187-b512-c68b0f1617b7'
