@@ -51,7 +51,6 @@ namespace Avalanche.Api.Controllers.V1
                     {
                         Content = messageRequest.Content,
                         EventName = (Ism.RabbitMq.Client.Enumerations.EventNameEnum)messageRequest.EventName,
-                        Topic = messageRequest.Topic
                     });
                 };
 
