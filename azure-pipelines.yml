@@ -1,3 +1,8 @@
+name: $(Date:yyyyMMdd)$(Rev:.rr)
+
+trigger:
+  - none
+
 resources:
   repositories:
   
@@ -9,21 +14,15 @@ resources:
   - repository: devops
     type: git
     name: avalanche/devops
-    
-name: $(Date:yyyyMMdd)$(Rev:.rr)
-
-trigger:
-- dev
 
 pool:
   vmImage: 'ubuntu-latest'
 
 variables:
 
-- group: vg-dev-avalanche-api
-
-- name: BuildConfiguration
-  value: 'Release'
+  - template: pipeline-bug-workaround.yml
+  - name: BuildConfiguration
+    value: 'Release'
 
 stages:
 - stage: build
@@ -35,42 +34,34 @@ stages:
        displayName: 'use dotnet 3.1.x'
        inputs:
         version: '3.1.x'
+        packageType: runtime
         
      - task: UseDotNet@2
        displayName: 'use dotnet 2.2.x'
        inputs:
         version: '2.2.x'
         packageType: runtime
-    
+     
      - task: DotNetCoreCLI@2
        displayName: 'Restore Avalanche.Api'
        inputs:
         command: restore
         projects: '**/Code/Avalanche.Api/Avalanche.Api.csproj'
         vstsFeed: 'd61e3552-9162-4b94-9184-b843c159ef58'
+     
      - task: DotNetCoreCLI@2
        displayName: 'Build Avalanche.Api'
        inputs:
         projects: '**/Code/Avalanche.Api/Avalanche.Api.csproj'
         arguments: '--configuration $(BuildConfiguration)'
-  
+
      - task: DotNetCoreCLI@2
        displayName: 'Test Avalanche.Api.Tests'
        inputs:
         command: test
         projects: '**/Code/Avalanche.Api.Tests/Avalanche.Api.Tests.csproj'
         arguments: '--configuration $(buildConfiguration)'
-  
-     - task: DotNetCoreCLI@2
-       displayName: 'Publish Avalanche.Api'
-       inputs:
-        command: publish
-        publishWebProjects: false
-        projects: '**/Code/Avalanche.Api/Avalanche.Api.csproj'
-        arguments: '-c $(BuildConfiguration)  -o app'
-        zipAfterPublish: false
-        modifyOutputPath: false
-
+     
      - task: DotNetCoreCLI@2
        displayName: 'Publish Avalanche.Api'
        inputs:
@@ -87,13 +78,20 @@ stages:
         PathtoPublish: 'app'
         ArtifactName: app 
 
-- stage: dev
 
+- stage: dev
+  
   jobs:
      - job: push
+       
+       variables:
+
+       - template: vg-dev-avalanche-api.yml
+
        steps:  
        - checkout: avalanche-api
        - checkout: devops
+       
        - task: DownloadBuildArtifacts@0
          displayName: 'Download Build Artifacts'
          inputs:
@@ -107,36 +105,58 @@ stages:
          displayName: 'Set image name'
 
        - task: Docker@0
-         displayName: 'Run a Docker command-Build'
+         displayName: 'Docker command -Build'
          inputs:
           action: 'Run a Docker command'
           customCommand: 'build -t $(ImageNameLowercase) . -f avalanche-api/Code/Avalanche.Api/DokerfileForAdoPipeline' 
+       
+       - bash: |
+          acrname='acr$(env)$(platform)global'
+          echo 'target acr name' $acrname
+          echo "##vso[task.setvariable variable=acrname]$acrname"
+         displayName: 'Set acr name'
 
        - task: Docker@2
-         displayName: 'Run a Docker command -Tag'
+         displayName: 'Docker command -Tag'
          inputs:
           command: 'tag'
-          arguments: '$(ImageNameLowercase) $(AcrRepository)/$(ImageNameLowercase):$(Build.BuildNumber)'
+          arguments: '$(ImageNameLowercase) $(acrname).azurecr.io/$(ImageNameLowercase):$(Build.BuildNumber)'
+          #arguments: '$(ImageNameLowercase) $(AcrRepository).azurecr.io/$(ImageNameLowercase):$(Build.BuildNumber)'
           addPipelineData: false
-
+       
        - bash: |
-          ifconfig -a
-         displayName: 'Display all IP configs on this machine'
+          source devops/common/commonfunctions.sh
+          ip=$(get_ext_ip)
+          echo 'build server external ip is ' $ip
+          echo "##vso[task.setvariable variable=ip]$ip"
+          echo 'variable ip ' $(ip)
+         displayName: 'Get build server external ip'
 
+       
        - task: AzureCLI@1
-         displayName: 'Azure CLI '
+         displayName: 'Add build server external ip to acr firewall'
          inputs:
-          azureSubscription: '7770e554-30b1-4187-b512-c68b0f1617b7'
-          scriptLocation: inlineScript
-          inlineScript: |
-            source devops/common/commonfunctions.sh
-            temp=$(dig +short myip.opendns.com @resolver1.opendns.com)
-            add_ip_address_in_acr_netwpork_rule 'acrdevavalancheglobal' $temp
+          azureSubscription: $(azuresubscription)
+          scriptPath: 'devops/resources/add-acr-firewall-ip.sh'
+          arguments: '$(azuresubscription) $(acrname) $(ip)'
+          #arguments: '$(azuresubscription) $(AcrRepository) $(ip)'
 
        - task: Docker@1
          displayName: 'Run a Docker command -Push'
          inputs:
-          azureSubscriptionEndpoint: '7770e554-30b1-4187-b512-c68b0f1617b7'
-          azureContainerRegistry: '$(AcrRepository)'
+          azureSubscriptionEndpoint: $(azuresubscription)
+          azureContainerRegistry: '$(acrname).azurecr.io'
+          #azureContainerRegistry: '$(AcrRepository).azurecr.io'
           command: 'Push an image'
-          imageName: '$(AcrRepository)/$(ImageNameLowercase):$(Build.BuildNumber)'
+          imageName: '$(acrname).azurecr.io/$(ImageNameLowercase):$(Build.BuildNumber)'
+          #imageName: '$(AcrRepository).azurecr.io/$(ImageNameLowercase):$(Build.BuildNumber)'
+
+       - task: AzureCLI@1
+         displayName: 'Delete build server external ip from acr firewall'
+         inputs:
+          azureSubscription: $(azuresubscription)
+          scriptPath: 'devops/resources/delete-acr-firewall-ip.sh'
+          arguments: '$(azuresubscription) $(acrname) $(ip)'
+          #arguments: '$(azuresubscription) $(AcrRepository) $(ip)'
+
+       
