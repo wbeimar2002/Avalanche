@@ -4,11 +4,11 @@ using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
 using Ism.RabbitMq.Client.Enumerations;
-using Ism.RabbitMq.Client.Extensions;
 using Ism.RabbitMq.Client.Helpers;
 using Ism.RabbitMq.Client.Models;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
+using Ism.RabbitMq.Client.Extensions;
 
 namespace Ism.RabbitMq.Client
 {
@@ -27,9 +27,9 @@ namespace Ism.RabbitMq.Client
 
         public IModel Channel { get; internal set; }
 
-        private Action<Message, ulong> OnDirectLogReceived { get; set; }
-        private Action<Message> OnFanoutLogReceived { get; set; }
-        private Action<string> OnBasicMessageReceived { get; set; }
+        private Action<MessageRequest, ulong> OnMessageReceived { get; set; }
+        private Action<MessageRequest> OnFanoutLogReceived { get; set; }
+        private Action<MessageRequest> OnBasicMessageReceived { get; set; }
 
         #endregion
 
@@ -92,9 +92,9 @@ namespace Ism.RabbitMq.Client
             }
         }
 
-        public void SendDirectLog(string queueName, Message log)
+        public void SendMessage(string queueName, string message)
         {
-            var body = Encoding.UTF8.GetBytes(Newtonsoft.Json.JsonConvert.SerializeObject(log));
+            var body = Encoding.UTF8.GetBytes(message);
 
             Channel.ExchangeDeclare(exchange: queueName, type: "direct");
 
@@ -104,9 +104,9 @@ namespace Ism.RabbitMq.Client
             Channel.BasicPublish(exchange: queueName, routingKey: queueName, basicProperties: properties, body: body);
         }
 
-        public void SubscribeToDirectLogs(string queueName, Action<Message, ulong> onDirectLogReceivedAction)
+        public void SubscribeToDirectMessages(string queueName, Action<MessageRequest, ulong> onDirectMessageReceivedAction)
         {
-            this.OnDirectLogReceived = onDirectLogReceivedAction;
+            this.OnMessageReceived = onDirectMessageReceivedAction;
 
             var _subscribeModel = Channel.QueueDeclare(queue: queueName,
                         durable: true,
@@ -126,22 +126,22 @@ namespace Ism.RabbitMq.Client
                 var message = Encoding.UTF8.GetString(body);
                 var routingKey = args.RoutingKey;
 
-                OnDirectLogReceived?.Invoke(message.Get<Message>(), args.DeliveryTag);
+                OnMessageReceived?.Invoke(message.Get<MessageRequest>(), args.DeliveryTag);
             };
 
             Channel.BasicConsume(queue: queueName, autoAck: false, consumer: consumer);
         }
 
-        public void SendBasicMessage(string message)
+        public void SendBasicMessage(MessageRequest message)
         {
             Channel.QueueDeclare(queue: "telemetry", durable: false, exclusive: false, autoDelete: false, arguments: null);
 
-            var body = Encoding.UTF8.GetBytes(message);
+            var body = Encoding.UTF8.GetBytes(message.Json());
 
             Channel.BasicPublish(exchange: "", routingKey: "telemetry", basicProperties: null, body: body);
         }
 
-        public void SubscribeToBasicMessages(Action<string> onBasicMessageReceivedAction)
+        public void SubscribeToBasicMessages(Action<MessageRequest> onBasicMessageReceivedAction)
         {
             OnBasicMessageReceived = onBasicMessageReceivedAction;
             Channel.QueueDeclare(queue: "telemetry", durable: false, exclusive: false, autoDelete: false, arguments: null);
@@ -152,21 +152,21 @@ namespace Ism.RabbitMq.Client
                 var body = ea.Body;
                 var message = Encoding.UTF8.GetString(body);
 
-                OnBasicMessageReceived?.Invoke(message);
+                OnBasicMessageReceived?.Invoke(message.Get<MessageRequest>());
             };
 
             Channel.BasicConsume(queue: "telemetry", autoAck: true, consumer: consumer);
         }
 
-        public void SendFanoutLog<T>(T log)
+        public void SendFanoutMessage(MessageRequest serializedMessage)
         {
-            var body = Encoding.UTF8.GetBytes(Newtonsoft.Json.JsonConvert.SerializeObject(log));
+            var body = Encoding.UTF8.GetBytes(Newtonsoft.Json.JsonConvert.SerializeObject(serializedMessage));
 
             Channel.ExchangeDeclare(exchange: "logs", type: "fanout");
             Channel.BasicPublish(exchange: "logs", routingKey: "", basicProperties: null, body: body);
         }
 
-        public void SubscribeToFanoutLogs<T>(Action<Message> onFanoutLogReceivedAction)
+        public void SubscribeToFanoutsMessage(Action<MessageRequest> onFanoutLogReceivedAction)
         {
             OnFanoutLogReceived = onFanoutLogReceivedAction;
 
@@ -181,7 +181,7 @@ namespace Ism.RabbitMq.Client
                 var body = ea.Body;
                 var message = Encoding.UTF8.GetString(body);
 
-                OnFanoutLogReceived?.Invoke(message.Get<Message>());
+                OnFanoutLogReceived?.Invoke(message.Get<MessageRequest>());
             };
 
             Channel.BasicConsume(queue: queueName, autoAck: true, consumer: consumer);

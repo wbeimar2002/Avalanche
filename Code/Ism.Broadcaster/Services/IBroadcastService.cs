@@ -8,7 +8,7 @@ namespace Ism.Broadcaster.Services
 {
     public interface IBroadcastService
     {
-        void Broadcast(MessageRequest messageRequest, Action<MessageRequest> externalAction = null);
+        void Broadcast(MessageRequest messageRequest);
         event EventHandler<BroadcastEventArgs> MessageListened;
     }
 }

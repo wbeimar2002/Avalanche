@@ -97,9 +97,10 @@ namespace Avalanche.Api
 
             var rabbitOptions = provider.GetService<IOptions<RabbitMqOptions>>();
             var hubContext = provider.GetService<IHubContext<BroadcastHub>>();
+            var broadcastService = provider.GetService<IBroadcastService>();
 
             //IDequeuerService
-            var dequeuer = new DequeuerService(rabbitmq, configurationService, rabbitOptions, hubContext);
+            var dequeuer = new DequeuerService(rabbitmq, configurationService, rabbitOptions, broadcastService, hubContext);
             services.AddSingleton<IDequeuerService>(d => dequeuer);
 
             dequeuer.Initialize();

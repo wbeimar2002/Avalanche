@@ -3,6 +3,7 @@ using Avalanche.Api.Hubs;
 using Avalanche.Shared.Infrastructure.Services.Configuration;
 using Ism.Broadcaster.Enumerations;
 using Ism.Broadcaster.Extensions;
+using Ism.Broadcaster.Services;
 using Ism.RabbitMq.Client;
 using Ism.RabbitMq.Client.Models;
 using Microsoft.AspNetCore.SignalR;
@@ -11,6 +12,8 @@ using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using RabbitMQ.Client;
+using Avalanche.Shared.Infrastructure.Extensions;
+using Ism.Broadcaster.Models;
 
 namespace IAvalanche.Api.Services.Dequeuer
 {
@@ -18,6 +21,7 @@ namespace IAvalanche.Api.Services.Dequeuer
     {
         readonly IRabbitMqClientService _rabbitMqClientService;
         readonly IConfigurationService _configurationService;
+        readonly IBroadcastService _broadcastService;
         readonly IHubContext<BroadcastHub> _hubContext;
         readonly RabbitMqOptions _rabbitMqOptions;
 
@@ -26,9 +30,11 @@ namespace IAvalanche.Api.Services.Dequeuer
         public DequeuerService(IRabbitMqClientService rabbitMqClientService, 
             IConfigurationService configurationService,
             IOptions<RabbitMqOptions> rabbitMqOptions,
+            IBroadcastService broadcastService,
             IHubContext<BroadcastHub> hubContext)
         {
             _hubContext = hubContext;
+            _broadcastService = broadcastService;
             _rabbitMqClientService = rabbitMqClientService;
             _rabbitMqOptions = rabbitMqOptions.Value;
             _configurationService = configurationService;
@@ -39,7 +45,7 @@ namespace IAvalanche.Api.Services.Dequeuer
             try
             {
                 //TODO: Should we use only one queue?
-                _rabbitMqClientService.SubscribeToDirectLogs(_rabbitMqOptions.QueueName, OnDirectLogReceived);
+                _rabbitMqClientService.SubscribeToDirectMessages(_rabbitMqOptions.QueueName, OnDirectMessageReceived);
 
                 IsEnabled = true;
             }
@@ -49,21 +55,10 @@ namespace IAvalanche.Api.Services.Dequeuer
             }
         }
 
-        public void OnDirectLogReceived(Message messageRequest, ulong deliveryTag)
+        public void OnDirectMessageReceived(Ism.RabbitMq.Client.Models.MessageRequest messageRequest, ulong deliveryTag)
         {
-            IClientProxy clientProxy = _hubContext.Clients.All;
-
-            if (messageRequest.EventName.Equals(EventNameEnum.Unknown))
-            {
-                string errorMessage = "Unknown or empty event name is requested!";
-                clientProxy.SendAsync(EventNameEnum.OnException.EnumDescription(), errorMessage); // Goes to the listener
-                throw new Exception(errorMessage); // Goes to the broadcaster
-            }
-            else
-            {
-                clientProxy.SendAsync(messageRequest.EventName.EnumDescription(), messageRequest.Content);
-            }
-
+            _broadcastService.Broadcast(JsonConvert.DeserializeObject<Ism.Broadcaster.Models.MessageRequest>(messageRequest.Json()));
+            //Here we can take the decision of preserve or discard the message from RabbitMq
             _rabbitMqClientService.SetAcknowledge(deliveryTag, true);
         }
     }

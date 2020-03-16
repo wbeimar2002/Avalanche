@@ -3,16 +3,16 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Text;
 
-namespace Ism.RabbitMq.Client.Enumerations
+namespace Ism.Broadcaster.Enumerations
 {
-    public enum EventNameEnum
+    public enum EventGroupEnum
     {
         Unknown = 0,
 
         [Description("OnException")]
         OnException = 1,
 
-        [Description("OkTesting")]
+        [Description("OnTesting")]
         OnTesting = 2,
     }
 }

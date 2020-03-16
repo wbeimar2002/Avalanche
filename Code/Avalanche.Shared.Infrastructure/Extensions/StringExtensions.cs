@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Ism.RabbitMq.Client.Extensions
+namespace Avalanche.Shared.Infrastructure.Extensions
 {
     public static class StringExtensions
     {
@@ -12,9 +12,9 @@ namespace Ism.RabbitMq.Client.Extensions
             return JsonConvert.DeserializeObject<T>(json);
         }
 
-        public static string Json<T>(this T log)
+        public static string Json<T>(this T fullObject)
         {
-            return JsonConvert.SerializeObject(log);
+            return JsonConvert.SerializeObject(fullObject);
         }
     }
 }

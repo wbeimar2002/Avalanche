@@ -62,24 +62,17 @@ namespace Avalanche.Api.Hubs
 
                 if (broadcastArgs != null)
                 {
-                    if (broadcastArgs.ExternalAction == null)
-                    {
-                        IClientProxy clientProxy = _hubContext.Clients.All;
+                    IClientProxy clientProxy = _hubContext.Clients.All;
 
-                        if (messageRequest.EventName == EventNameEnum.Unknown)
-                        {
-                            string errorMessage = "Unknown or empty event name is requested!";
-                            clientProxy.SendAsync(EventNameEnum.OnException.EnumDescription(), errorMessage); // Goes to the listener
-                            throw new Exception(errorMessage); // Goes to the broadcaster
-                        }
-                        else
-                        {
-                            clientProxy.SendAsync(messageRequest.EventName.EnumDescription(), messageRequest.Content);
-                        }
+                    if (messageRequest.EventGroup == EventGroupEnum.Unknown)
+                    {
+                        string errorMessage = "Unknown or empty event name is requested!";
+                        clientProxy.SendAsync(EventGroupEnum.OnException.EnumDescription(), errorMessage); // Goes to the listener
+                        throw new Exception(errorMessage); // Goes to the broadcaster
                     }
                     else
                     {
-                        broadcastArgs.ExternalAction(messageRequest);
+                        clientProxy.SendAsync(messageRequest.EventGroup.EnumDescription(), messageRequest.Content);
                     }
                 }
             }

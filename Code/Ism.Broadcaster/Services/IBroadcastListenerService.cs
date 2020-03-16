@@ -9,7 +9,7 @@ namespace Ism.Broadcaster.Services
     public interface IBroadcastListenerService
     {
         string HubURL { get; set; }
-        EventNameEnum HubEventName { get; set; }
+        EventGroupEnum HubEventName { get; set; }
         bool IsConnected { get; }
         BroadcastEventArgs BroadcastEventArgs { get; }
     }
