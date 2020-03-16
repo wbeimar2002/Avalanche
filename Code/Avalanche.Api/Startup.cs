@@ -65,22 +65,12 @@ namespace Avalanche.Api
 
             services.AddSingleton<IBroadcastService, BroadcastService>();
 
-            ConfigureAuthorization(services);
-            ConfigureCorsPolicy(services, configurationService);
-
-            ////IRabbitMqClientService
             var hostName = configurationService.GetValue<string>("RabbitMqOptions:HostName");
             var port = configurationService.GetValue<int>("RabbitMqOptions:Port");
             var managementPort = configurationService.GetValue<int>("RabbitMqOptions:ManagementPort");
             var userName = configurationService.GetValue<string>("RabbitMqOptions:UserName");
             var password = configurationService.GetValue<string>("RabbitMqOptions:Password");
             var queueName = configurationService.GetValue<string>("RabbitMqOptions:QueueName");
-
-            //var rabbitmq = new RabbitMqClientService(
-            //    hostName, port, managementPort, userName, password);
-
-            ////If this fail throws an exception, this is necessary because Docker
-            //services.AddSingleton<IRabbitMqClientService>(r => rabbitmq);
 
             services.Configure<RabbitMqOptions>(options =>
             {
@@ -92,19 +82,10 @@ namespace Avalanche.Api
                 options.Port = port;
             });
 
-            //var provider = services.BuildServiceProvider();
-
-            //var rabbitOptions = provider.GetService<IOptions<RabbitMqOptions>>();
-            //var hubContext = provider.GetService<IHubContext<BroadcastHub>>();
-            //var broadcastService = provider.GetService<IBroadcastService>();
-
-            //IDequeuerService
-            //var dequeuer = new DequeuerService(rabbitmq, configurationService, rabbitOptions, broadcastService, hubContext);
-            //services.AddSingleton<IDequeuerService>(d => dequeuer);
-
-            //dequeuer.Initialize();
-            //broadcastService.test = "Initialized";
             services.AddSingleton<IRabbitMqClientService, RabbitMqClientService>();
+
+            ConfigureAuthorization(services);
+            ConfigureCorsPolicy(services, configurationService);
         }
 
         private void ConfigureAuthorization(IServiceCollection services)

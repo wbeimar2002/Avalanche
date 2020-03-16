@@ -10,6 +10,5 @@ namespace Ism.Broadcaster.Services
     {
         void Broadcast(MessageRequest messageRequest);
         event EventHandler<BroadcastEventArgs> MessageListened;
-        public string test { get; set; }
     }
 }
