@@ -28,7 +28,7 @@ namespace Ism.Broadcaster.Services
 
 
         public string HubURL { get; set; }
-        public EventNameEnum HubEventName { get; set; }
+        public EventGroupEnum HubEventName { get; set; }
         public bool IsConnected { get { return hubConnection.State == HubConnectionState.Connected; } }
 
         public BroadcastEventArgs BroadcastEventArgs
@@ -43,7 +43,7 @@ namespace Ism.Broadcaster.Services
 
         #region Constructor
 
-        public BroadcastListenerService(string hubURL, EventNameEnum hubEventName)
+        public BroadcastListenerService(string hubURL, EventGroupEnum hubEventName)
         {
             if (string.IsNullOrWhiteSpace(hubURL) || !Uri.IsWellFormedUriString(hubURL, UriKind.Absolute))
             {
@@ -67,6 +67,9 @@ namespace Ism.Broadcaster.Services
                 .WithUrl(HubURL)
                 .Build();
 
+            System.Net.ServicePointManager.ServerCertificateValidationCallback =
+                    ((sender, certificate, chain, sslPolicyErrors) => true);
+
             try
             {
                 hubConnection.StartAsync().
@@ -75,12 +78,15 @@ namespace Ism.Broadcaster.Services
                     {
                         if (task.IsFaulted)
                         {
+                            Console.WriteLine("Signal R connection faulted.");
                             throw task.Exception;
                         }
                         else
                         {
+                            Console.WriteLine("Signal R connection open.");
+
                             // Register/attach broadcast listener event
-                            if (HubEventName != EventNameEnum.Unknown)
+                            if (HubEventName != EventGroupEnum.Unknown)
                             {
                                 lock (eventLocker)
                                 {
@@ -103,7 +109,7 @@ namespace Ism.Broadcaster.Services
                             new MessageRequest()
                             {
                                 Content = message,
-                                EventName = HubEventName
+                                EventGroup = HubEventName
                             });
 
                         OnMessageListened(_broadcastListenerEventArgs);

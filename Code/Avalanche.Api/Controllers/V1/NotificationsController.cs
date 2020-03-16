@@ -22,39 +22,51 @@ namespace Avalanche.Api.Controllers.V1
     [Route("[controller]")]
     public class NotificationsController : Controller
     {
-        private readonly IBroadcastService _broadcastService;
-        private readonly ILogger _appLoggerService;
-        private readonly IRabbitMqClientService _rabbitMqClientService;
-        private readonly RabbitMqOptions _rabbitMqOptions;
+        readonly ILogger _appLoggerService;
+        readonly IRabbitMqClientService _rabbitMqClientService;
+        readonly IBroadcastService _broadcastService;
+        readonly RabbitMqOptions _rabbitMqOptions;
 
-        public NotificationsController(IBroadcastService broadcastService, 
+        public NotificationsController(IBroadcastService broadcastService,
             ILogger<NotificationsController> appLoggerService,
             IOptions<RabbitMqOptions> rabbitMqOptions,
             IRabbitMqClientService rabbitMqClient)
         {
-            _broadcastService = broadcastService;
             _appLoggerService = appLoggerService;
             _rabbitMqClientService = rabbitMqClient;
             _rabbitMqOptions = rabbitMqOptions.Value;
+            _broadcastService = broadcastService;
         }
 
-        [HttpPost]
-        public async Task<IActionResult> Broadcast([FromBody]MessageRequest messageRequest, [FromServices]IWebHostEnvironment env)
+        [HttpPost("queue")]
+        public async Task<IActionResult> Broadcast([FromBody]Ism.Broadcaster.Models.MessageRequest messageRequest, [FromServices]IWebHostEnvironment env)
         {
             try
             {
                 _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
 
-                Action<MessageRequest> externalAction = (messageRequest) =>
-                {
-                    _rabbitMqClientService.SendDirectLog(_rabbitMqOptions.QueueName, new Message()
-                    {
-                        Content = messageRequest.Content,
-                        EventName = (Ism.RabbitMq.Client.Enumerations.EventNameEnum)messageRequest.EventName,
-                    });
-                };
+                _rabbitMqClientService.SendMessage(_rabbitMqOptions.QueueName, messageRequest.Json());
 
-                _broadcastService.Broadcast(messageRequest, externalAction);
+                return await Task.FromResult(Accepted());
+            }
+            catch (Exception exception)
+            {
+                _appLoggerService.LogError(LoggerHelper.GetLogMessage(DebugLogType.Exception), exception);
+                return new BadRequestObjectResult(exception.Get(env.IsDevelopment()));
+            }
+            finally
+            {
+                _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
+            }
+        }
+
+        [HttpPost("direct")]
+        public async Task<IActionResult> BroadcastDirect([FromBody]Ism.Broadcaster.Models.MessageRequest messageRequest, [FromServices]IWebHostEnvironment env)
+        {
+            try
+            {
+                _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
+                _broadcastService.Broadcast(messageRequest);
 
                 return await Task.FromResult(Accepted());
             }

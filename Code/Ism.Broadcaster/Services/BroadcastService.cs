@@ -17,7 +17,7 @@ namespace Ism.Broadcaster.Services
 
         #region Public Methods 
 
-        public void Broadcast(MessageRequest messageRequest, Action<MessageRequest> externalAction = null)
+        public void Broadcast(MessageRequest messageRequest)
         {
             EventHandler<BroadcastEventArgs> handler;
             lock (eventLocker)
@@ -25,7 +25,7 @@ namespace Ism.Broadcaster.Services
                 handler = messageListenedHandler;
                 if (handler != null)
                 {
-                    handler(this, new BroadcastEventArgs(messageRequest, externalAction));
+                    handler(this, new BroadcastEventArgs(messageRequest));
                 }
             }
         }

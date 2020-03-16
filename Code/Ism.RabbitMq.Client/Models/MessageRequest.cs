@@ -1,13 +1,12 @@
-﻿using Ism.RabbitMq.Client.Enumerations;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Text;
 
 namespace Ism.RabbitMq.Client.Models
 {
-    public class Message
+    public class MessageRequest
     {
         public string Content { get; set; }
-        public EventNameEnum EventName { get; set; }
+        public int EventGroup { get; set; }
     }
 }

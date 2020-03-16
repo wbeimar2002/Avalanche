@@ -14,7 +14,7 @@ namespace Ism.RabbitMq.Client
         Task<HttpResponseMessage> CheckHealth();
 
         void SetAcknowledge(ulong deliveryTag, bool isPositive);
-        void SendDirectLog(string queueName, Message message);
-        void SubscribeToDirectLogs(string queueName, Action<Message, ulong> onDirectLogReceivedAction);
+        void SendMessage(string queueName, string message);
+        void SubscribeToDirectMessages(string queueName, Action<MessageRequest, ulong> onDirectLogReceivedAction);
     }
 }

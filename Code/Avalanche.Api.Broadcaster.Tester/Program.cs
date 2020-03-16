@@ -10,7 +10,7 @@ namespace Ism.Broadcaster.Tester
         static void Main(string[] args)
         {
             string hubURL = "https://localhost:5001/broadcast";
-            EventNameEnum hubEventName = EventNameEnum.OnTesting;
+            EventGroupEnum hubEventName = EventGroupEnum.OnTesting;
 
             var listener = new BroadcastListenerService(hubURL, hubEventName);
             listener.ListenHubEvent(EventListened);
