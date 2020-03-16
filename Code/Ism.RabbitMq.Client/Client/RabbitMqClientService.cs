@@ -9,6 +9,7 @@ using Ism.RabbitMq.Client.Models;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 using Ism.RabbitMq.Client.Extensions;
+using Microsoft.Extensions.Options;
 
 namespace Ism.RabbitMq.Client
 {
@@ -33,19 +34,16 @@ namespace Ism.RabbitMq.Client
 
         #endregion
 
-        public RabbitMqClientService(string hostName, 
-                                        int port, int managementPort, 
-                                        string userName, 
-                                        string password)
+        public RabbitMqClientService(IOptions<RabbitMqOptions> rabbitMqOptions)
         {
 
-                _hostName = hostName;
-                _port = port;
-                _managementPort = managementPort;
-                _userName = userName;
-                _password = password;
+                _hostName = rabbitMqOptions.Value.HostName;
+                _port = rabbitMqOptions.Value.Port;
+                _managementPort = rabbitMqOptions.Value.ManagementPort;
+                _userName = rabbitMqOptions.Value.UserName;
+                _password = rabbitMqOptions.Value.Password;
 
-                Console.WriteLine($"Starting connection of RabbitMQ Client. hostName '{hostName}' userName '{userName}' password '{password}'");
+                Console.WriteLine($"Starting connection of RabbitMQ Client. hostName '{_hostName}' userName '{_userName}' password '{_password}'");
 
                 factory = new ConnectionFactory()
                 {

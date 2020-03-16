@@ -66,7 +66,7 @@ namespace Avalanche.Api.Controllers.V1
             try
             {
                 _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
-
+                _broadcastService.test = "Direct";
                 _broadcastService.Broadcast(messageRequest);
 
                 return await Task.FromResult(Accepted());

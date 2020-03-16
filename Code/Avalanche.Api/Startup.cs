@@ -28,7 +28,6 @@ using Avalanche.Api.Handlers;
 using Avalanche.Api.Extensions;
 using Avalanche.Api.Hubs;
 using Ism.RabbitMq.Client;
-using IAvalanche.Api.Services.Dequeuer;
 using Ism.RabbitMq.Client.Models;
 using Microsoft.Extensions.Options;
 using Microsoft.AspNetCore.SignalR;
@@ -69,7 +68,7 @@ namespace Avalanche.Api
             ConfigureAuthorization(services);
             ConfigureCorsPolicy(services, configurationService);
 
-            //IRabbitMqClientService
+            ////IRabbitMqClientService
             var hostName = configurationService.GetValue<string>("RabbitMqOptions:HostName");
             var port = configurationService.GetValue<int>("RabbitMqOptions:Port");
             var managementPort = configurationService.GetValue<int>("RabbitMqOptions:ManagementPort");
@@ -77,11 +76,11 @@ namespace Avalanche.Api
             var password = configurationService.GetValue<string>("RabbitMqOptions:Password");
             var queueName = configurationService.GetValue<string>("RabbitMqOptions:QueueName");
 
-            var rabbitmq = new RabbitMqClientService(
-                hostName, port, managementPort, userName, password);
+            //var rabbitmq = new RabbitMqClientService(
+            //    hostName, port, managementPort, userName, password);
 
-            //If this fail throws an exception, this is necessary because Docker
-            services.AddSingleton<IRabbitMqClientService>(r => rabbitmq);
+            ////If this fail throws an exception, this is necessary because Docker
+            //services.AddSingleton<IRabbitMqClientService>(r => rabbitmq);
 
             services.Configure<RabbitMqOptions>(options =>
             {
@@ -93,17 +92,19 @@ namespace Avalanche.Api
                 options.Port = port;
             });
 
-            var provider = services.BuildServiceProvider();
+            //var provider = services.BuildServiceProvider();
 
-            var rabbitOptions = provider.GetService<IOptions<RabbitMqOptions>>();
-            var hubContext = provider.GetService<IHubContext<BroadcastHub>>();
-            var broadcastService = provider.GetService<IBroadcastService>();
+            //var rabbitOptions = provider.GetService<IOptions<RabbitMqOptions>>();
+            //var hubContext = provider.GetService<IHubContext<BroadcastHub>>();
+            //var broadcastService = provider.GetService<IBroadcastService>();
 
             //IDequeuerService
-            var dequeuer = new DequeuerService(rabbitmq, configurationService, rabbitOptions, broadcastService, hubContext);
-            services.AddSingleton<IDequeuerService>(d => dequeuer);
+            //var dequeuer = new DequeuerService(rabbitmq, configurationService, rabbitOptions, broadcastService, hubContext);
+            //services.AddSingleton<IDequeuerService>(d => dequeuer);
 
-            dequeuer.Initialize();
+            //dequeuer.Initialize();
+            //broadcastService.test = "Initialized";
+            services.AddSingleton<IRabbitMqClientService, RabbitMqClientService>();
         }
 
         private void ConfigureAuthorization(IServiceCollection services)

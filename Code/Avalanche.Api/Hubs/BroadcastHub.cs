@@ -12,6 +12,9 @@ using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Logging;
 using Ism.Broadcaster.Extensions;
 using Ism.RabbitMq.Client;
+using Avalanche.Api.Handlers;
+using Ism.RabbitMq.Client.Models;
+using Microsoft.Extensions.Options;
 
 namespace Avalanche.Api.Hubs
 {
@@ -19,36 +22,59 @@ namespace Avalanche.Api.Hubs
     {
         #region Constructor
 
-        private readonly IHubContext<BroadcastHub> _hubContext;
-        private readonly ILogger _appLoggerService;
+        readonly IHubContext<BroadcastHub> _hubContext;
+        readonly ILogger _appLoggerService;
+        readonly RabbitMqOptions _rabbitMqOptions;
 
         public BroadcastHub(IBroadcastService broadcaster,
+            IRabbitMqClientService rabbitMqClientService,
             ILogger<BroadcastHub> appLoggerService,
+            IOptions<RabbitMqOptions> rabbitMqOptions,
             IHubContext<BroadcastHub> hubContext)
         {
             _hubContext = hubContext;
             _appLoggerService = appLoggerService;
+            _rabbitMqOptions = rabbitMqOptions.Value;
 
             if (broadcaster == null)
                 throw new ArgumentNullException("Broadcast object is null!");
 
-            BeginBroadcast(broadcaster); //This will avoid an explicit call to initialize a hub by message broadcaster client
+            BeginBroadcast(broadcaster, rabbitMqClientService); //This will avoid an explicit call to initialize a hub by message broadcaster client
         }
 
         #endregion
 
         #region Private Methods
 
-        private void BeginBroadcast(IBroadcastService broadcaster)
+        public override Task OnConnectedAsync()
         {
+            ConnectionsHandler.ConnectedIds.Add(Context.ConnectionId);
+            return base.OnConnectedAsync();
+        }
+
+        public override Task OnDisconnectedAsync(Exception exception)
+        {
+            ConnectionsHandler.ConnectedIds.Remove(Context.ConnectionId);
+            return base.OnDisconnectedAsync(exception);
+        }
+
+        private void BeginBroadcast(IBroadcastService broadcastService, IRabbitMqClientService rabbitMqClientService)
+        {
+            rabbitMqClientService.SubscribeToDirectMessages(_rabbitMqOptions.QueueName, (messageRequest, deliveryTag) =>
+            {
+                broadcastService.Broadcast((messageRequest.Json().Get<Ism.Broadcaster.Models.MessageRequest>()));
+                //Here we can take the decision of preserve or discard the message from RabbitMq
+                rabbitMqClientService.SetAcknowledge(deliveryTag, true);
+            });
+
             // Register/Attach broadcast listener event
-            broadcaster.MessageListened += (sender, broadcastArgs) =>
+            broadcastService.MessageListened += (sender, broadcastArgs) =>
             {
                 RegisterMessageEvents(broadcastArgs);
             };
 
             // Unregister/detach broadcast listener event
-            broadcaster.MessageListened -= (sender, broadcastArgs) =>
+            broadcastService.MessageListened -= (sender, broadcastArgs) =>
             {
                 RegisterMessageEvents(broadcastArgs);
             };
@@ -58,7 +84,7 @@ namespace Avalanche.Api.Hubs
         {
             try
             {
-                MessageRequest messageRequest = broadcastArgs.MessageRequest;
+                Ism.Broadcaster.Models.MessageRequest messageRequest = broadcastArgs.MessageRequest;
 
                 if (broadcastArgs != null)
                 {

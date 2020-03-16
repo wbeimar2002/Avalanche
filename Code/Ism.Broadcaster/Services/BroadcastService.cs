@@ -13,6 +13,8 @@ namespace Ism.Broadcaster.Services
         private EventHandler<BroadcastEventArgs> messageListenedHandler;
         private readonly object eventLocker = new object();
 
+        public string test { get; set; }
+
         #endregion
 
         #region Public Methods 
