@@ -9,8 +9,11 @@ using Avalanche.Api.Tests.Extensions;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
-using Ism.Api.Broadcaster.Services;
-using Ism.Api.Broadcaster.Models;
+using Ism.Broadcaster.Services;
+using Ism.Broadcaster.Models;
+using Ism.RabbitMq.Client;
+using Ism.RabbitMq.Client.Models;
+using Microsoft.Extensions.Options;
 
 namespace Avalanche.Api.Tests.Controllers
 {
@@ -20,6 +23,8 @@ namespace Avalanche.Api.Tests.Controllers
         Mock<ILogger<NotificationsController>> _appLoggerService;
         Mock<IBroadcastService> _broadcastService;
         Mock<IWebHostEnvironment> _environment;
+        Mock<IRabbitMqClientService> _rabbitMqClientService;
+        Mock<IOptions<RabbitMqOptions>> _rabbitMqOptions;
 
         NotificationsController _controller;
 
@@ -30,9 +35,10 @@ namespace Avalanche.Api.Tests.Controllers
         {
             _appLoggerService = new Mock<ILogger<NotificationsController>>();
             _broadcastService = new Mock<IBroadcastService>();
+            _rabbitMqClientService = new Mock<IRabbitMqClientService>();
             _environment = new Mock<IWebHostEnvironment>();
 
-            _controller = new NotificationsController(_broadcastService.Object, _appLoggerService.Object);
+            _controller = new NotificationsController(_broadcastService.Object, _appLoggerService.Object, _rabbitMqOptions.Object, _rabbitMqClientService.Object);
 
             OperatingSystem os = Environment.OSVersion;
 
@@ -59,7 +65,14 @@ namespace Avalanche.Api.Tests.Controllers
         [Test]
         public void BroadcastShouldReturnBadResultIfFails()
         {
-            _broadcastService.Setup(mock => mock.Broadcast(It.IsAny<MessageRequest>())).Throws(It.IsAny<Exception>());
+            bool actionExecuted = false;
+
+            Action<MessageRequest> externalAction = (message) => 
+            {
+                actionExecuted = true;
+            };
+
+            _broadcastService.Setup(mock => mock.Broadcast(It.IsAny<MessageRequest>(), externalAction)).Throws(It.IsAny<Exception>());
 
             var message = new MessageRequest();
             var badResult = _controller.Broadcast(message, _environment.Object);

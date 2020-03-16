@@ -49,7 +49,8 @@
   <ItemGroup>
     <ProjectReference Include="..\Avalanche.Shared.Domain\Avalanche.Shared.Domain.csproj" />
     <ProjectReference Include="..\Avalanche.Shared.Infrastructure\Avalanche.Shared.Infrastructure.csproj" />
-    <ProjectReference Include="..\Ism.Api.Broadcaster\Ism.Api.Broadcaster.csproj" />
+    <ProjectReference Include="..\Ism.Broadcaster\Ism.Broadcaster.csproj" />
+    <ProjectReference Include="..\Ism.RabbitMq.Client\Ism.RabbitMq.Client.csproj" />
   </ItemGroup>
 
 

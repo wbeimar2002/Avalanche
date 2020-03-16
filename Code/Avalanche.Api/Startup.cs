@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Ism.Api.Broadcaster.Services;
+using Ism.Broadcaster.Services;
 using Avalanche.Api.Managers.Health;
 using Avalanche.Api.Managers.Licensing;
 using Avalanche.Api.Managers.Metadata;
@@ -26,6 +26,12 @@ using Serilog;
 using Microsoft.AspNetCore.Authorization;
 using Avalanche.Api.Handlers;
 using Avalanche.Api.Extensions;
+using Avalanche.Api.Hubs;
+using Ism.RabbitMq.Client;
+using IAvalanche.Api.Services.Dequeuer;
+using Ism.RabbitMq.Client.Models;
+using Microsoft.Extensions.Options;
+using Microsoft.AspNetCore.SignalR;
 
 namespace Avalanche.Api
 {
@@ -62,6 +68,41 @@ namespace Avalanche.Api
 
             ConfigureAuthorization(services);
             ConfigureCorsPolicy(services, configurationService);
+
+            //IRabbitMqClientService
+            var hostName = configurationService.GetValue<string>("RabbitMqOptions:HostName");
+            var port = configurationService.GetValue<int>("RabbitMqOptions:Port");
+            var managementPort = configurationService.GetValue<int>("RabbitMqOptions:ManagementPort");
+            var userName = configurationService.GetValue<string>("RabbitMqOptions:UserName");
+            var password = configurationService.GetValue<string>("RabbitMqOptions:Password");
+            var queueName = configurationService.GetValue<string>("RabbitMqOptions:QueueName");
+
+            var rabbitmq = new RabbitMqClientService(
+                hostName, port, managementPort, userName, password);
+
+            //If this fail throws an exception, this is necessary because Docker
+            services.AddSingleton<IRabbitMqClientService>(r => rabbitmq);
+
+            services.Configure<RabbitMqOptions>(options =>
+            {
+                options.HostName = hostName;
+                options.ManagementPort = managementPort;
+                options.UserName = userName;
+                options.Password = password;
+                options.QueueName = queueName;
+                options.Port = port;
+            });
+
+            var provider = services.BuildServiceProvider();
+
+            var rabbitOptions = provider.GetService<IOptions<RabbitMqOptions>>();
+            var hubContext = provider.GetService<IHubContext<BroadcastHub>>();
+
+            //IDequeuerService
+            var dequeuer = new DequeuerService(rabbitmq, configurationService, rabbitOptions, hubContext);
+            services.AddSingleton<IDequeuerService>(d => dequeuer);
+
+            dequeuer.Initialize();
         }
 
         private void ConfigureAuthorization(IServiceCollection services)
@@ -110,7 +151,7 @@ namespace Avalanche.Api
             services.AddCors(o => o.AddDefaultPolicy(builder =>
             {
                 builder
-                    .WithOrigins("http://localhost:5001") //Dev Mode
+                    .WithOrigins("http://localhost:4200") //Dev Mode
                         //configSettings.IpAddress)
                     //.AllowAnyOrigin()
                     .AllowAnyMethod()
@@ -138,8 +179,11 @@ namespace Avalanche.Api
             app.UseAuthorization();
 
             app.UseCors();
+            app.UseFileServer();
+            
             app.UseEndpoints(endpoints =>
             {
+                endpoints.MapHub<BroadcastHub>("/broadcast");
                 endpoints.MapControllers();
             });
         }
