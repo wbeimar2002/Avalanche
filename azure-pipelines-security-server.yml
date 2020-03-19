@@ -43,20 +43,20 @@ stages:
         packageType: runtime
      
      - task: DotNetCoreCLI@2
-       displayName: 'Restore Avalanche.Api'
+       displayName: 'Restore Avalanche.Security.Serve'
        inputs:
         command: restore
         projects: '**/Code/Avalanche.Security.Server/Avalanche.Security.Server.csproj'
         vstsFeed: 'd61e3552-9162-4b94-9184-b843c159ef58'
     
      - task: DotNetCoreCLI@2
-       displayName: 'Build Avalanche.Api'
+       displayName: 'Build Avalanche.Security.Serve'
        inputs:
         projects: '**/Code/Avalanche.Security.Server/Avalanche.Security.Server.csproj'
         arguments: '--configuration $(BuildConfiguration)'
      
      - task: DotNetCoreCLI@2
-       displayName: 'Test Avalanche.Api.Tests'
+       displayName: 'Test Avalanche.Security.Server.Tests'
        inputs:
         command: test
         projects: 'Code/Avalanche.Security.Server.Tests/Avalanche.Security.Server.Tests.csproj'
