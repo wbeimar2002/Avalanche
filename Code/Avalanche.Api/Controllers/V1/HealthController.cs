@@ -6,6 +6,7 @@ using Avalanche.Shared.Infrastructure.Enumerations;
 using Avalanche.Shared.Infrastructure.Extensions;
 using Avalanche.Shared.Infrastructure.Helpers;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -15,7 +16,9 @@ using Microsoft.Extensions.Logging;
 namespace Avalanche.Api.Controllers.V1
 {
     [Route("[controller]")]
-    public class HealthController : Controller
+    [ApiController]
+    [EnableCors]
+    public class HealthController : ControllerBase
     {
         readonly ILogger _appLoggerService;
 

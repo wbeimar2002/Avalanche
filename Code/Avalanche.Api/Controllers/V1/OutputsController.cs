@@ -2,10 +2,14 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Avalanche.Api.Managers.Devices;
+using Avalanche.Shared.Domain.Enumerations;
 using Avalanche.Shared.Domain.Models;
 using Avalanche.Shared.Infrastructure.Enumerations;
 using Avalanche.Shared.Infrastructure.Extensions;
 using Avalanche.Shared.Infrastructure.Helpers;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -16,24 +20,28 @@ namespace Avalanche.Api.Controllers.V1
 {
     [Route("[controller]")]
     [ApiController]
-    public class UsersController : ControllerBase
+    [Authorize]
+    [EnableCors]
+    public class OutputsController : ControllerBase
     {
         readonly ILogger _appLoggerService;
+        readonly IOutputsManager _outputsManager;
 
-        public UsersController(ILogger<UsersController> appLoggerService)
+        public OutputsController(IOutputsManager outputsManager, ILogger<OutputsController> logger)
         {
-            _appLoggerService = appLoggerService;
+            _appLoggerService = logger;
+            _outputsManager = outputsManager;
         }
 
-        [HttpGet("")]
-        [Produces(typeof(List<User>))]
-        public async Task<IActionResult> GetAll([FromServices]IWebHostEnvironment env)
+        [HttpGet("Content/{contentType}")]
+        [Produces(typeof(Signal))]
+        public async Task<IActionResult> Get(string contentType, [FromServices]IWebHostEnvironment env)
         {
             try
             {
                 _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
-                await Task.CompletedTask;
-                return Ok();
+                Signal result = await _outputsManager.GetContent(contentType);
+                return Ok(result);
             }
             catch (Exception exception)
             {
@@ -46,15 +54,15 @@ namespace Avalanche.Api.Controllers.V1
             }
         }
 
-        [HttpGet("{id}")]
-        [Produces(typeof(User))]
-        public async Task<IActionResult> Get([FromServices]IWebHostEnvironment env)
+        [HttpGet("{id}/state/{stateType}")]
+        [Produces(typeof(State))]
+        public async Task<IActionResult> GetCurrentState(string id, StateTypes stateType, [FromServices]IWebHostEnvironment env)
         {
             try
             {
                 _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
-                await Task.CompletedTask;
-                return Ok();
+                State result = await _outputsManager.GetCurrentState(id, stateType);
+                return Ok(result);
             }
             catch (Exception exception)
             {
@@ -67,15 +75,15 @@ namespace Avalanche.Api.Controllers.V1
             }
         }
 
-        [HttpPost("")]
-        [Produces(typeof(User))]
-        public async Task<IActionResult> Post(User newUser, [FromServices]IWebHostEnvironment env)
+        [HttpGet("all")]
+        [Produces(typeof(List<Output>))]
+        public async Task<IActionResult> GetAllAvailable([FromServices]IWebHostEnvironment env)
         {
             try
             {
                 _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
-                await Task.CompletedTask;
-                return Ok();
+                var result = await _outputsManager.GetAllAvailable();
+                return Ok(result);
             }
             catch (Exception exception)
             {
@@ -88,35 +96,13 @@ namespace Avalanche.Api.Controllers.V1
             }
         }
 
-        [HttpPut("{id}")]
-        [Produces(typeof(User))]
-        public async Task<IActionResult> Put(string id, User existingUser, [FromServices]IWebHostEnvironment env)
+        [HttpPut("{id}/commands")]
+        public async Task<IActionResult> SendCommand(string id, [FromBody]Command command, [FromServices]IWebHostEnvironment env)
         {
             try
             {
                 _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
-                await Task.CompletedTask;
-                return Ok();
-            }
-            catch (Exception exception)
-            {
-                _appLoggerService.LogError(LoggerHelper.GetLogMessage(DebugLogType.Exception), exception);
-                return new BadRequestObjectResult(exception.Get(env.IsDevelopment()));
-            }
-            finally
-            {
-                _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
-            }
-        }
-
-        [HttpDelete("{id}")]
-        [Produces(typeof(User))]
-        public async Task<IActionResult> Put(string id, [FromServices]IWebHostEnvironment env)
-        {
-            try
-            {
-                _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
-                await Task.CompletedTask;
+                await _outputsManager.SendCommand(id, command);
                 return Ok();
             }
             catch (Exception exception)

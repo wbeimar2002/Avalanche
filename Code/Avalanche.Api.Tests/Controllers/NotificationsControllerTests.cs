@@ -49,7 +49,7 @@ namespace Avalanche.Api.Tests.Controllers
         [Test]
         public void BroadcastShouldReturnOkResult()
         {
-            var message = new MessageRequest();
+            var message = new Ism.Broadcaster.Models.MessageRequest();
             var okResult = _controller.Broadcast(message, _environment.Object);
 
             if (_checkLogger)
@@ -65,16 +65,9 @@ namespace Avalanche.Api.Tests.Controllers
         [Test]
         public void BroadcastShouldReturnBadResultIfFails()
         {
-            bool actionExecuted = false;
+            _broadcastService.Setup(mock => mock.Broadcast(It.IsAny<Ism.Broadcaster.Models.MessageRequest>())).Throws(It.IsAny<Exception>());
 
-            Action<MessageRequest> externalAction = (message) => 
-            {
-                actionExecuted = true;
-            };
-
-            _broadcastService.Setup(mock => mock.Broadcast(It.IsAny<MessageRequest>(), externalAction)).Throws(It.IsAny<Exception>());
-
-            var message = new MessageRequest();
+            var message = new Ism.Broadcaster.Models.MessageRequest();
             var badResult = _controller.Broadcast(message, _environment.Object);
 
             if (_checkLogger)

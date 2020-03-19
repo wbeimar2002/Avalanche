@@ -14,8 +14,10 @@ namespace Avalanche.Api.Managers.Metadata
             switch (type)
             {
                 case Shared.Domain.Enumerations.MetadataTypes.Genders:
-                    return Task.FromResult(GetGenderTypes());
+                    return Task.FromResult(GetContentTypes());
                 case Shared.Domain.Enumerations.MetadataTypes.ProcedureTypes:
+                    return Task.FromResult(GetProcedureTypes());
+                case Shared.Domain.Enumerations.MetadataTypes.ContentTypes:
                     return Task.FromResult(GetProcedureTypes());
                 default:
                     return Task.FromResult(new List<KeyValuePairViewModel>());
@@ -54,6 +56,25 @@ namespace Avalanche.Api.Managers.Metadata
             {
                 Id = "U",
                 Value = "Unspecified"
+            });
+
+            return list;
+        }
+
+        private List<KeyValuePairViewModel> GetContentTypes()
+        {
+            var list = new List<KeyValuePairViewModel>();
+
+            list.Add(new KeyValuePairViewModel()
+            {
+                Id = "G",
+                Value = "General"
+            });
+
+            list.Add(new KeyValuePairViewModel()
+            {
+                Id = "P",
+                Value = "Pediatric"
             });
 
             return list;

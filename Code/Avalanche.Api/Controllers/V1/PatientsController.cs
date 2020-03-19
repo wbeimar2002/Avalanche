@@ -9,6 +9,7 @@ using Avalanche.Shared.Domain.Models;
 using Avalanche.Shared.Infrastructure.Enumerations;
 using Avalanche.Shared.Infrastructure.Extensions;
 using Avalanche.Shared.Infrastructure.Helpers;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -18,9 +19,10 @@ using Microsoft.Extensions.Logging;
 
 namespace Avalanche.Api.Controllers.V1
 {
-    [EnableCors]
     [Route("[controller]")]
     [ApiController]
+    [Authorize]
+    [EnableCors]
     public class PatientsController : ControllerBase
     {
         readonly ILogger _appLoggerService;

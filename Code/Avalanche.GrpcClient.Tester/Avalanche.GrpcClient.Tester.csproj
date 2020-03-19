@@ -6,9 +6,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Grpc.Core" Version="2.27.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Authentication.Certificate" Version="3.1.2" />
     <PackageReference Include="Google.Protobuf" Version="3.11.4" />
+    <PackageReference Include="Grpc.Core" Version="2.27.0" />
     <PackageReference Include="Grpc.Tools" Version="2.27.0">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -16,11 +15,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Protos\" />
+    <ProjectReference Include="..\Ism.Security.Grpc\Ism.Security.Grpc.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Ism.Security.Grpc.Core\Ism.Security.Grpc.Core.csproj" />
+    <Folder Include="Protos\" />
   </ItemGroup>
 
   <ItemGroup>

@@ -16,11 +16,15 @@ using Microsoft.Extensions.Logging;
 using Ism.RabbitMq.Client;
 using Microsoft.Extensions.Options;
 using Ism.RabbitMq.Client.Models;
+using Microsoft.AspNetCore.Cors;
 
 namespace Avalanche.Api.Controllers.V1
 {
     [Route("[controller]")]
-    public class NotificationsController : Controller
+    [ApiController]
+    [Authorize]
+    [EnableCors]
+    public class NotificationsController : ControllerBase
     {
         readonly ILogger _appLoggerService;
         readonly IRabbitMqClientService _rabbitMqClientService;
