@@ -92,7 +92,8 @@ stages:
        - checkout: devops
        
        - bash: |
-          ls  /home/vsts/work/1/s/avalanche-api
+          ls  /home/vsts/work/1/s/avalanche-api/Code/Avalanche.Security.Server
+          
        - task: DownloadBuildArtifacts@0
          displayName: 'Download Build Artifacts'
          inputs:
