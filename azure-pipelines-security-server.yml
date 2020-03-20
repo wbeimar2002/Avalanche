@@ -9,7 +9,7 @@ resources:
   - repository: avalanche-api
     type: git
     name: avalanche/avalanche-api
-    ref: dev
+    ref: nh-avalanche-api-security
 
   - repository: devops
     type: git
