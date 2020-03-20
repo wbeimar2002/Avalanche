@@ -102,3 +102,8 @@ stages:
           $temp = $temp.ToLower()
           Write-Host "##vso[task.setvariable variable=ImageNameLowercase;]$temp"
          displayName: 'Set image name'
+       - task: Docker@0
+         displayName: 'Docker command -Build'
+         inputs:
+          action: 'Run a Docker command'
+          customCommand: 'build -t $(ImageNameLowercase) . -f **/Code/Avalanche.Security.Server/DokerfileForAdoPipeline' 
