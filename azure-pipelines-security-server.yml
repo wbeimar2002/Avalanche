@@ -96,4 +96,9 @@ stages:
          inputs:
           artifactName: app
           downloadPath: '.'
-     
+          
+       - powershell: |
+          $temp = "$(ImageName)"
+          $temp = $temp.ToLower()
+          Write-Host "##vso[task.setvariable variable=ImageNameLowercase;]$temp"
+         displayName: 'Set image name'
