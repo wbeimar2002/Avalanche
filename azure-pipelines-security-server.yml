@@ -131,7 +131,6 @@ stages:
           echo "##vso[task.setvariable variable=ip]$ip"
           echo 'variable ip ' $(ip)
          displayName: 'Get build server external ip'
-
        
        - task: AzureCLI@1
          displayName: 'Add build server external ip to acr firewall'
@@ -140,7 +139,6 @@ stages:
           scriptPath: 'devops/resources/add-acr-firewall-ip.sh'
           arguments: '$(azuresubscription) $(acrname) $(ip)'
           
-
        - task: Docker@1
          displayName: 'Run a Docker command -Push'
          inputs:
@@ -150,7 +148,6 @@ stages:
           command: 'Push an image'
           imageName: '$(acrname).azurecr.io/$(ImageNameLowercase):$(Build.BuildNumber)'
           
-
        - task: AzureCLI@1
          displayName: 'Delete build server external ip from acr firewall'
          inputs:
