@@ -91,6 +91,8 @@ stages:
        - checkout: avalanche-api
        - checkout: devops
        
+       - bash: |
+          ls  /home/vsts/work/1/s/avalanche-api
        - task: DownloadBuildArtifacts@0
          displayName: 'Download Build Artifacts'
          inputs:
