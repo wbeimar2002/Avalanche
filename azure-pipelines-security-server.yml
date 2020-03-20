@@ -78,7 +78,7 @@ stages:
         PathtoPublish: 'app'
         ArtifactName: app 
 
-      - stage: dev
+- stage: dev
   
   jobs:
      - job: push
