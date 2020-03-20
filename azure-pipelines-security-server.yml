@@ -106,4 +106,4 @@ stages:
          displayName: 'Docker command -Build'
          inputs:
           action: 'Run a Docker command'
-          customCommand: 'build -t $(ImageNameLowercase) . -f **/Code/Avalanche.Security.Server/DokerfileForAdoPipeline' 
+          customCommand: 'build -t $(ImageNameLowercase) . -f avalanche-api/Code/Avalanche.Security.Server/DokerfileForAdoPipeline' 
