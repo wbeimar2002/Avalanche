@@ -6,7 +6,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Ism.Broadcaster\Ism.Broadcaster.csproj" />
+    <PackageReference Include="Ism.Broadcaster" Version="1.0.0-prerelease2" />
   </ItemGroup>
 
 </Project>

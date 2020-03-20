@@ -96,13 +96,13 @@ namespace Avalanche.Api.Controllers.V1
             }
         }
 
-        [HttpPut("{id}/commands")]
-        public async Task<IActionResult> SendCommand(string id, [FromBody]Command command, [FromServices]IWebHostEnvironment env)
+        [HttpPut("commands")]
+        public async Task<IActionResult> SendCommand([FromBody]Command command, [FromServices]IWebHostEnvironment env)
         {
             try
             {
                 _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
-                await _outputsManager.SendCommand(id, command);
+                await _outputsManager.SendCommand(command);
                 return Ok();
             }
             catch (Exception exception)

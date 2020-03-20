@@ -12,10 +12,7 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\Ism.Security.Grpc\Ism.Security.Grpc.csproj" />
+    <PackageReference Include="Ism.Security.Grpc" Version="1.0.0-prerelease2" />
   </ItemGroup>
 
   <ItemGroup>

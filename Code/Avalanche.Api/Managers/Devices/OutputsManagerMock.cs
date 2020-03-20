@@ -28,14 +28,9 @@ namespace Avalanche.Api.Managers.Devices
             return Task.FromResult(fixture.Create<State>());
         }
 
-        public Task SendCommand(string id, CommandTypes commandType)
+        public Task SendCommand(Command command)
         {
             return Task.CompletedTask;
-        }
-
-        public Task SendCommand(string id, Command command)
-        {
-            throw new NotImplementedException();
         }
     }
 }

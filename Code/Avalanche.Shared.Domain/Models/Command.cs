@@ -9,5 +9,6 @@ namespace Avalanche.Shared.Domain.Models
     {
         public CommandTypes CommandType { get; set; }
         public string Value { get; set; }
+        public List<Output> Outputs { get; set; }
     }
 }
