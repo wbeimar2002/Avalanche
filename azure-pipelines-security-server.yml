@@ -85,7 +85,7 @@ stages:
        
        variables:
 
-       - template: vg-dev-avalanche-api.yml
+       - template: vg-dev-avalanche-security-server.yml
 
        steps:  
        - checkout: avalanche-api
