@@ -122,7 +122,6 @@ stages:
          inputs:
           command: 'tag'
           arguments: '$(ImageNameLowercase) $(acrname).azurecr.io/$(ImageNameLowercase):$(Build.BuildNumber)'
-          #arguments: '$(ImageNameLowercase) $(AcrRepository).azurecr.io/$(ImageNameLowercase):$(Build.BuildNumber)'
           addPipelineData: false
        
        - bash: |
@@ -140,17 +139,17 @@ stages:
           azureSubscription: $(azuresubscription)
           scriptPath: 'devops/resources/add-acr-firewall-ip.sh'
           arguments: '$(azuresubscription) $(acrname) $(ip)'
-          #arguments: '$(azuresubscription) $(AcrRepository) $(ip)'
+          
 
        - task: Docker@1
          displayName: 'Run a Docker command -Push'
          inputs:
           azureSubscriptionEndpoint: $(azuresubscription)
           azureContainerRegistry: '$(acrname).azurecr.io'
-          #azureContainerRegistry: '$(AcrRepository).azurecr.io'
+         
           command: 'Push an image'
           imageName: '$(acrname).azurecr.io/$(ImageNameLowercase):$(Build.BuildNumber)'
-          #imageName: '$(AcrRepository).azurecr.io/$(ImageNameLowercase):$(Build.BuildNumber)'
+          
 
        - task: AzureCLI@1
          displayName: 'Delete build server external ip from acr firewall'
@@ -158,4 +157,4 @@ stages:
           azureSubscription: $(azuresubscription)
           scriptPath: 'devops/resources/delete-acr-firewall-ip.sh'
           arguments: '$(azuresubscription) $(acrname) $(ip)'
-          #arguments: '$(azuresubscription) $(AcrRepository) $(ip)'
+          
