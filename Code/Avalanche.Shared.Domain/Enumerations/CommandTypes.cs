@@ -4,10 +4,12 @@ using System.Text;
 
 namespace Avalanche.Shared.Domain.Enumerations
 {
-    public enum MetadataTypes
+    public enum CommandTypes
     {
-        Genders,
-        ProcedureTypes,
-        ContentTypes
+        Play,
+        Stop,
+        Mute,
+        GetVolumeUp,
+        GetVolumeDown,
     }
 }

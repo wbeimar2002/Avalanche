@@ -10,7 +10,10 @@ WORKDIR /src
 COPY ["Avalanche.Api/Avalanche.Api.csproj", "Avalanche.Api/"]
 COPY ["Avalanche.Shared.Infrastructure/Avalanche.Shared.Infrastructure.csproj", "Avalanche.Shared.Infrastructure/"]
 COPY ["Avalanche.Shared.Domain/Avalanche.Shared.Domain.csproj", "Avalanche.Shared.Domain/"]
-RUN dotnet restore "Avalanche.Api/Avalanche.Api.csproj"
+
+COPY NuGet.Config ./
+RUN dotnet restore "Avalanche.Api/Avalanche.Api.csproj" --configfile NuGet.Config -nowarn:msb3202,nu1503
+
 COPY . .
 WORKDIR "/src/Avalanche.Api"
 RUN dotnet build "Avalanche.Api.csproj" -c Release -o /app/build

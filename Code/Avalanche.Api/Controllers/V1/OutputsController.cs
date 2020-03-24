@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Avalanche.Api.Managers.Settings;
-using Avalanche.Api.ViewModels;
+using Avalanche.Api.Managers.Devices;
+using Avalanche.Shared.Domain.Enumerations;
 using Avalanche.Shared.Domain.Models;
 using Avalanche.Shared.Infrastructure.Enumerations;
 using Avalanche.Shared.Infrastructure.Extensions;
@@ -22,27 +22,32 @@ namespace Avalanche.Api.Controllers.V1
     [ApiController]
     [Authorize]
     [EnableCors]
-    public class SettingsController : ControllerBase
+    public class OutputsController : ControllerBase
     {
         readonly ILogger _appLoggerService;
-        readonly ISettingsManager _settingsManager;
+        readonly IOutputsManager _outputsManager;
 
-        public SettingsController(ILogger<SettingsController> appLoggerService,
-            ISettingsManager settingsManager)
+        public OutputsController(IOutputsManager outputsManager, ILogger<OutputsController> logger)
         {
-            _appLoggerService = appLoggerService;
-            _settingsManager = settingsManager;
+            _appLoggerService = logger;
+            _outputsManager = outputsManager;
         }
 
-        [HttpGet("categories")]
-        [Produces(typeof(List<SettingCategory>))]
-        public async Task<IActionResult> GetCategories([FromServices]IWebHostEnvironment env)
+        /// <summary>
+        /// Returns the preview content according to the type sent
+        /// </summary>
+        /// <param name="contentType">Content type Id</param>
+        /// <param name="env"></param>
+        /// <returns></returns>
+        [HttpGet("Content/{contentType}")]
+        [Produces(typeof(Signal))]
+        public async Task<IActionResult> Get(string contentType, [FromServices]IWebHostEnvironment env)
         {
             try
             {
                 _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
-                
-                return Ok(await _settingsManager.GetCategories());
+                Signal result = await _outputsManager.GetContent(contentType);
+                return Ok(result);
             }
             catch (Exception exception)
             {
@@ -55,14 +60,15 @@ namespace Avalanche.Api.Controllers.V1
             }
         }
 
-        [HttpGet("categories/{key}")]
-        [Produces(typeof(SettingCategoryViewModel))]
-        public async Task<IActionResult> GetSettingsByCategory(string key, [FromServices]IWebHostEnvironment env)
+        [HttpGet("{id}/state/{stateType}")]
+        [Produces(typeof(State))]
+        public async Task<IActionResult> GetCurrentState(string id, StateTypes stateType, [FromServices]IWebHostEnvironment env)
         {
             try
             {
                 _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
-                return Ok(await _settingsManager.GetSettingsByCategory(key));
+                State result = await _outputsManager.GetCurrentState(id, stateType);
+                return Ok(result);
             }
             catch (Exception exception)
             {
@@ -75,35 +81,35 @@ namespace Avalanche.Api.Controllers.V1
             }
         }
 
-        [HttpPost("categories/{categoryKey}")]
-        public async Task<IActionResult> SaveSettingsByCategory([FromServices]IWebHostEnvironment env)
+        [HttpGet("all")]
+        [Produces(typeof(List<Output>))]
+        public async Task<IActionResult> GetAllAvailable([FromServices]IWebHostEnvironment env)
         {
             try
             {
                 _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
-                await Task.CompletedTask;
+                var result = await _outputsManager.GetAllAvailable();
+                return Ok(result);
+            }
+            catch (Exception exception)
+            {
+                _appLoggerService.LogError(LoggerHelper.GetLogMessage(DebugLogType.Exception), exception);
+                return new BadRequestObjectResult(exception.Get(env.IsDevelopment()));
+            }
+            finally
+            {
+                _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
+            }
+        }
+
+        [HttpPut("commands")]
+        public async Task<IActionResult> SendCommand([FromBody]Command command, [FromServices]IWebHostEnvironment env)
+        {
+            try
+            {
+                _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
+                await _outputsManager.SendCommand(command);
                 return Ok();
-            }
-            catch (Exception exception)
-            {
-                _appLoggerService.LogError(LoggerHelper.GetLogMessage(DebugLogType.Exception), exception);
-                return new BadRequestObjectResult(exception.Get(env.IsDevelopment()));
-            }
-            finally
-            {
-                _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
-            }
-        }
-
-        [HttpGet("categories/{categoryKey}/sources/{sourcekey}")]
-        [Produces(typeof(SettingCategoryViewModel))]
-        public async Task<IActionResult> GetSettingsByCategory(string categoryKey, string sourcekey, [FromServices]IWebHostEnvironment env)
-        {
-            try
-            {
-                _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
-                await Task.CompletedTask;
-                return Ok(_settingsManager.GetSourceValuesByCategory(categoryKey, sourcekey));
             }
             catch (Exception exception)
             {

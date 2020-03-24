@@ -13,13 +13,16 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Ism.Security.Grpc" Version="1.0.0-prerelease2" />
-    <PackageReference Include="SimpleInjector" Version="4.9.1" />
-    <PackageReference Include="System.Configuration.ConfigurationManager" Version="4.7.0" />
-    <PackageReference Include="Topshelf" Version="4.2.1" />
   </ItemGroup>
 
   <ItemGroup>
-    <Protobuf Include="Protos\authorizationservice.proto" />
+    <Folder Include="Protos\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Protobuf Include="..\Avalanche.Host.Service\Protos\authorizationservice.proto">
+      <Link>Protos\authorizationservice.proto</Link>
+    </Protobuf>
   </ItemGroup>
 
 </Project>

@@ -25,7 +25,7 @@ namespace Avalanche.Api.Extensions
 					},
 					License = new OpenApiLicense
 					{
-						Name = "MIT",
+						Name = "All rights reserved",
 					},
 				});
 
@@ -48,9 +48,10 @@ namespace Avalanche.Api.Extensions
 					}
 				});
 
-				/*var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+				// Set the comments path for the Swagger JSON and UI.
+				var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
 				var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
-				cfg.IncludeXmlComments(xmlPath);*/
+				cfg.IncludeXmlComments(xmlPath);
 			});
 
 			return services;

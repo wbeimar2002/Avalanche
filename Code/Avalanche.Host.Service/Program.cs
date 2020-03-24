@@ -4,10 +4,9 @@ using Avalanche.Host.Service.Helpers;
 using Avalanche.Host.Service.Services.Security;
 using Grpc.Core;
 using Grpc.Core.Interceptors;
+using Grpc.Core.Logging;
 using Ism.Security.Grpc.Helpers;
 using Ism.Security.Grpc.Interceptors;
-using Serilog;
-using Serilog.Events;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -53,7 +52,9 @@ namespace Avalanche.Host.Service
                 string certificateFilePath = @"C:\Olympus\certificates\grpc_serverl5.crt";
                 int chainLevelsToValidate = 5;
 
-                IoCHelper.Register(() => CreateLogger(), IoCLifestyle.Singleton);
+                logger = new ConsoleLogger();
+
+                IoCHelper.Register(() => logger, IoCLifestyle.Singleton);
                 IoCHelper.Register<AuthorizationServiceProto.AuthorizationServiceProtoBase, AuthorizationService>();
                 IoCHelper.Register<ISecurityService, SecurityService>();
 
@@ -62,11 +63,10 @@ namespace Avalanche.Host.Service
                 var authorizationServiceImplementation = IoCHelper.GetImplementation<AuthorizationServiceProto.AuthorizationServiceProtoBase>();
 
                 ServerServiceDefinition serviceDefinition = AuthorizationServiceProto.BindService(authorizationServiceImplementation)
-                           .Intercept(new AuthInterceptor())
-                           .Intercept(new RequestLoggerInterceptor());
-                           //.Intercept(new CertificateValidatorInterceptor());
+                           .Intercept(new AuthInterceptor());
 
-                Server svr = ServerHelper.GetSecureServer(_hostname, _port, certificateFilePath, certificateKeyPath, chainLevelsToValidate,
+                //Server svr = ServerHelper.GetSecureServer(_hostname, _port, certificateFilePath, certificateKeyPath, chainLevelsToValidate,
+                Server svr = ServerHelper.GetInsecureServer(_hostname, _port, 
                     new List<ServerServiceDefinition>() 
                     { 
                         serviceDefinition 
@@ -74,7 +74,7 @@ namespace Avalanche.Host.Service
 
                 svr.Start();
 
-                logger.Information("Avalanche Host Service is now initialized.");
+                logger.Info("Avalanche Host Service is now initialized.");
             }
             catch (Exception ex)
             { 
@@ -86,45 +86,6 @@ namespace Avalanche.Host.Service
                 else { logger.Error($"Avalanche Host Service failed to initialize! {ex.Message}", ex); }
             }
         }
-
-        private static ILogger CreateLogger()
-        {
-            var logFile = ConfigurationManager.AppSettings["LoggerFileName"] ?? "avalanchehostservicelogs.txt";
-            var logFolder = ConfigurationManager.AppSettings["LoggerFolder"] ?? @"C:\Olympus\AvalancheLogs";
-
-            var logFilePath = Path.Combine(logFolder, logFile);
-
-            Int32 logFileSizeLimit = Convert.ToInt32(ConfigurationManager.AppSettings["LoggerFileSizeLimit"] ?? "209715200");
-            Int32 retainedFileCountLimit = Convert.ToInt32(ConfigurationManager.AppSettings["LoggerRetainedFileCountLimit"] ?? "5");
-
-            //https://github.com/serilog/serilog/wiki/Configuration-Basics
-            string seqUrl = ConfigurationManager.AppSettings["seqUrl"] ?? "http://localhost:5341";
-
-            LogEventLevel level = LogEventLevel.Information;
-#if DEBUG
-            level = LogEventLevel.Debug;
-#endif
-
-            ILogger appLogger = new LoggerConfiguration()
-                .ReadFrom.AppSettings()
-                .Enrich.With(new ApplicationNameEnricher("Avalanche.Host.Service"))
-                .Enrich.FromLogContext()
-#if DEBUG
-                .MinimumLevel.Debug()
-#endif
-                .WriteTo.File(
-                    path: logFilePath,
-                    rollingInterval: RollingInterval.Day,
-                    retainedFileCountLimit: retainedFileCountLimit,
-                    fileSizeLimitBytes: logFileSizeLimit,
-                    restrictedToMinimumLevel: level)
-                .WriteTo.Seq(seqUrl)
-                .WriteTo.Console(restrictedToMinimumLevel: level)
-                .CreateLogger();
-
-            return appLogger;
-        }
-
     }
 }
  

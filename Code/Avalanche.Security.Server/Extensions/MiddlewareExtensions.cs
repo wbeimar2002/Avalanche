@@ -25,7 +25,7 @@ namespace Avalanche.Security.Server.Extensions
 					},
 					License = new OpenApiLicense
 					{
-						Name = "MIT",
+						Name = "All rights reserved",
 					},
 				});
 

@@ -1,7 +1,4 @@
 ﻿using Avalanche.Host.Service.Enumerations;
-using Serilog;
-using Serilog.Core;
-using Serilog.Events;
 using SimpleInjector;
 using System;
 using System.Collections.Generic;

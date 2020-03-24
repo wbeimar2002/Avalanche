@@ -4,10 +4,10 @@ using System.Text;
 
 namespace Avalanche.Shared.Domain.Enumerations
 {
-    public enum MetadataTypes
+    public enum StateTypes
     {
-        Genders,
-        ProcedureTypes,
-        ContentTypes
+        Volume,
+        SilentMode, 
+        CurrentMainSignal,
     }
 }

@@ -7,6 +7,10 @@
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DocumentationFile>C:\Users\sorey\source\repos\AvalancheApiOfficial\Code\Avalanche.Api\Avalanche.Api.xml</DocumentationFile>
+  </PropertyGroup>
+
   <ItemGroup>
     <Compile Remove="Managers\Security\**" />
     <Compile Remove="Repositories\**" />
@@ -34,6 +38,8 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+    <PackageReference Include="Ism.Broadcaster" Version="1.0.0-prerelease2" />
+    <PackageReference Include="Ism.RabbitMq.Client" Version="1.0.0-prerelease1" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="3.1.2" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Cors" Version="2.2.0" />
     <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="3.1.2" />
@@ -49,8 +55,6 @@
   <ItemGroup>
     <ProjectReference Include="..\Avalanche.Shared.Domain\Avalanche.Shared.Domain.csproj" />
     <ProjectReference Include="..\Avalanche.Shared.Infrastructure\Avalanche.Shared.Infrastructure.csproj" />
-    <ProjectReference Include="..\Ism.Broadcaster\Ism.Broadcaster.csproj" />
-    <ProjectReference Include="..\Ism.RabbitMq.Client\Ism.RabbitMq.Client.csproj" />
   </ItemGroup>
 
 

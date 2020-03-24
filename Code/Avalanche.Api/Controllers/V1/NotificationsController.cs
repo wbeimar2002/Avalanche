@@ -16,11 +16,15 @@ using Microsoft.Extensions.Logging;
 using Ism.RabbitMq.Client;
 using Microsoft.Extensions.Options;
 using Ism.RabbitMq.Client.Models;
+using Microsoft.AspNetCore.Cors;
 
 namespace Avalanche.Api.Controllers.V1
 {
     [Route("[controller]")]
-    public class NotificationsController : Controller
+    [ApiController]
+    [Authorize]
+    [EnableCors]
+    public class NotificationsController : ControllerBase
     {
         readonly ILogger _appLoggerService;
         readonly IRabbitMqClientService _rabbitMqClientService;
@@ -39,7 +43,7 @@ namespace Avalanche.Api.Controllers.V1
         }
 
         [HttpPost("queue")]
-        public async Task<IActionResult> Broadcast([FromBody]Ism.Broadcaster.Models.MessageRequest messageRequest, [FromServices]IWebHostEnvironment env)
+        public IActionResult Broadcast([FromBody]Ism.Broadcaster.Models.MessageRequest messageRequest, [FromServices]IWebHostEnvironment env)
         {
             try
             {
@@ -47,7 +51,7 @@ namespace Avalanche.Api.Controllers.V1
 
                 _rabbitMqClientService.SendMessage(_rabbitMqOptions.QueueName, messageRequest.Json());
 
-                return await Task.FromResult(Accepted());
+                return Accepted();
             }
             catch (Exception exception)
             {
@@ -61,14 +65,14 @@ namespace Avalanche.Api.Controllers.V1
         }
 
         [HttpPost("direct")]
-        public async Task<IActionResult> BroadcastDirect([FromBody]Ism.Broadcaster.Models.MessageRequest messageRequest, [FromServices]IWebHostEnvironment env)
+        public IActionResult BroadcastDirect([FromBody]Ism.Broadcaster.Models.MessageRequest messageRequest, [FromServices]IWebHostEnvironment env)
         {
             try
             {
                 _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
                 _broadcastService.Broadcast(messageRequest);
 
-                return await Task.FromResult(Accepted());
+                return Accepted();
             }
             catch (Exception exception)
             {

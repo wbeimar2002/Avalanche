@@ -31,6 +31,7 @@ using Ism.RabbitMq.Client;
 using Ism.RabbitMq.Client.Models;
 using Microsoft.Extensions.Options;
 using Microsoft.AspNetCore.SignalR;
+using Avalanche.Api.Managers.Devices;
 
 namespace Avalanche.Api
 {
@@ -62,6 +63,7 @@ namespace Avalanche.Api
             services.AddSingleton<IProceduresManager, ProceduresManagerMock>();
             services.AddSingleton<IMetadataManager, MetadataManagerMock>();
             services.AddSingleton<ILicensingManager, LicensingManagerMock>();
+            services.AddSingleton<IOutputsManager, OutputsManagerMock>();
 
             services.AddSingleton<IBroadcastService, BroadcastService>();
 
