@@ -36,6 +36,8 @@ namespace Avalanche.Api.Tests.Controllers
             _appLoggerService = new Mock<ILogger<NotificationsController>>();
             _broadcastService = new Mock<IBroadcastService>();
             _rabbitMqClientService = new Mock<IRabbitMqClientService>();
+            _rabbitMqOptions = new Mock<IOptions<RabbitMqOptions>>();
+
             _environment = new Mock<IWebHostEnvironment>();
 
             _controller = new NotificationsController(_broadcastService.Object, _appLoggerService.Object, _rabbitMqOptions.Object, _rabbitMqClientService.Object);
@@ -50,16 +52,19 @@ namespace Avalanche.Api.Tests.Controllers
         public void BroadcastShouldReturnOkResult()
         {
             var message = new Ism.Broadcaster.Models.MessageRequest();
-            var okResult = _controller.Broadcast(message, _environment.Object);
+
+            _broadcastService.Setup(mock => mock.Broadcast(It.IsAny<Ism.Broadcaster.Models.MessageRequest>()));
+
+            var okResult = _controller.BroadcastDirect(message, _environment.Object);
 
             if (_checkLogger)
             {
-                _appLoggerService.Verify(LogLevel.Error, $"Exception {_controller.GetType().Name}.Broadcast", Times.Never());
-                _appLoggerService.Verify(LogLevel.Debug, $"Requested {_controller.GetType().Name}.Broadcast", Times.Once());
-                _appLoggerService.Verify(LogLevel.Debug, $"Completed {_controller.GetType().Name}.Broadcast", Times.Once());
+                _appLoggerService.Verify(LogLevel.Error, $"Exception {_controller.GetType().Name}.BroadcastDirect", Times.Never());
+                _appLoggerService.Verify(LogLevel.Debug, $"Requested {_controller.GetType().Name}.BroadcastDirect", Times.Once());
+                _appLoggerService.Verify(LogLevel.Debug, $"Completed {_controller.GetType().Name}.BroadcastDirect", Times.Once());
             }
 
-            Assert.IsInstanceOf<AcceptedResult>(okResult.Result);
+            Assert.IsInstanceOf<AcceptedResult>(okResult);
         }
 
         [Test]
@@ -68,16 +73,16 @@ namespace Avalanche.Api.Tests.Controllers
             _broadcastService.Setup(mock => mock.Broadcast(It.IsAny<Ism.Broadcaster.Models.MessageRequest>())).Throws(It.IsAny<Exception>());
 
             var message = new Ism.Broadcaster.Models.MessageRequest();
-            var badResult = _controller.Broadcast(message, _environment.Object);
+            var badResult = _controller.BroadcastDirect(message, _environment.Object);
 
             if (_checkLogger)
             {
-                _appLoggerService.Verify(LogLevel.Error, $"Exception {_controller.GetType().Name}.Broadcast", Times.Once());
-                _appLoggerService.Verify(LogLevel.Debug, $"Requested {_controller.GetType().Name}.Broadcast", Times.Once());
-                _appLoggerService.Verify(LogLevel.Debug, $"Completed {_controller.GetType().Name}.Broadcast", Times.Once());
+                _appLoggerService.Verify(LogLevel.Error, $"Exception {_controller.GetType().Name}.BroadcastDirect", Times.Once());
+                _appLoggerService.Verify(LogLevel.Debug, $"Requested {_controller.GetType().Name}.BroadcastDirect", Times.Once());
+                _appLoggerService.Verify(LogLevel.Debug, $"Completed {_controller.GetType().Name}.BroadcastDirect", Times.Once());
             }
 
-            Assert.IsInstanceOf<BadRequestObjectResult>(badResult.Result);
+            Assert.IsInstanceOf<BadRequestObjectResult>(badResult);
         }
     }
 }
