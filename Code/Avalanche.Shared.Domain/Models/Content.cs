@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Avalanche.Shared.Domain.Models
 {
-    public class Signal
+    public class Content
     {
         public string Title { get; set; }
         public string Description { get; set; }

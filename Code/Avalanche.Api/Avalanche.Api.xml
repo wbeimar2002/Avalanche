@@ -8,9 +8,16 @@
             <summary>
             Returns the preview content according to the type sent
             </summary>
-            <param name="contentType">Content type Id</param>
-            <param name="env"></param>
-            <returns></returns>
+        </member>
+        <member name="M:Avalanche.Api.Controllers.V1.OutputsController.GetCurrentState(System.String,Avalanche.Shared.Domain.Enumerations.StateTypes,Microsoft.AspNetCore.Hosting.IWebHostEnvironment)">
+            <summary>
+            Returns the state of a signal in an output
+            </summary>
+        </member>
+        <member name="M:Avalanche.Api.Controllers.V1.OutputsController.GetCurrentStates(System.String,Microsoft.AspNetCore.Hosting.IWebHostEnvironment)">
+            <summary>
+            Returns the state of a signal in an output
+            </summary>
         </member>
         <member name="T:Avalanche.Host.Service.Clients.AuthorizationserviceReflection">
             <summary>Holder for reflection information generated from Protos/authorizationservice.proto</summary>
