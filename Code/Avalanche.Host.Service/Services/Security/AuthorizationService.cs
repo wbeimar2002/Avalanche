@@ -10,8 +10,8 @@ using Avalanche.Host.Service.Enumerations;
 using Avalanche.Host.Service.Helpers;
 using Avalanche.Host.Service.Models;
 using Grpc.Core;
+using Grpc.Core.Logging;
 using Grpc.Core.Utils;
-using Serilog;
 
 namespace Avalanche.Host.Service.Services.Security
 {
@@ -31,7 +31,7 @@ namespace Avalanche.Host.Service.Services.Security
             _logger = logger;
             _securityService = authSvc;
 
-            _logger.Information("AuthorizationService is now running.");
+            _logger.Info("AuthorizationService is now running.");
         }
 
         #endregion

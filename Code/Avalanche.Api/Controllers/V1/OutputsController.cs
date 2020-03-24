@@ -33,6 +33,12 @@ namespace Avalanche.Api.Controllers.V1
             _outputsManager = outputsManager;
         }
 
+        /// <summary>
+        /// Returns the preview content according to the type sent
+        /// </summary>
+        /// <param name="contentType">Content type Id</param>
+        /// <param name="env"></param>
+        /// <returns></returns>
         [HttpGet("Content/{contentType}")]
         [Produces(typeof(Signal))]
         public async Task<IActionResult> Get(string contentType, [FromServices]IWebHostEnvironment env)

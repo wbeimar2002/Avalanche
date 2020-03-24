@@ -1,0 +1,74 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Avalanche.Api</name>
+    </assembly>
+    <members>
+        <member name="M:Avalanche.Api.Controllers.V1.OutputsController.Get(System.String,Microsoft.AspNetCore.Hosting.IWebHostEnvironment)">
+            <summary>
+            Returns the preview content according to the type sent
+            </summary>
+            <param name="contentType">Content type Id</param>
+            <param name="env"></param>
+            <returns></returns>
+        </member>
+        <member name="T:Avalanche.Host.Service.Clients.AuthorizationserviceReflection">
+            <summary>Holder for reflection information generated from Protos/authorizationservice.proto</summary>
+        </member>
+        <member name="P:Avalanche.Host.Service.Clients.AuthorizationserviceReflection.Descriptor">
+            <summary>File descriptor for Protos/authorizationservice.proto</summary>
+        </member>
+        <member name="F:Avalanche.Host.Service.Clients.ApplicationUser.UsernameFieldNumber">
+            <summary>Field number for the "username" field.</summary>
+        </member>
+        <member name="F:Avalanche.Host.Service.Clients.ApplicationUser.PasswordFieldNumber">
+            <summary>Field number for the "password" field.</summary>
+        </member>
+        <member name="F:Avalanche.Host.Service.Clients.AuthorizationResult.SuccessFieldNumber">
+            <summary>Field number for the "success" field.</summary>
+        </member>
+        <member name="F:Avalanche.Host.Service.Clients.AuthorizationResult.UsernameFieldNumber">
+            <summary>Field number for the "username" field.</summary>
+        </member>
+        <member name="F:Avalanche.Host.Service.Clients.AuthorizationResult.MessageFieldNumber">
+            <summary>Field number for the "message" field.</summary>
+        </member>
+        <member name="P:Avalanche.Host.Service.Clients.AuthorizationServiceProto.Descriptor">
+            <summary>Service descriptor</summary>
+        </member>
+        <member name="T:Avalanche.Host.Service.Clients.AuthorizationServiceProto.AuthorizationServiceProtoBase">
+            <summary>Base class for server-side implementations of AuthorizationServiceProto</summary>
+        </member>
+        <member name="T:Avalanche.Host.Service.Clients.AuthorizationServiceProto.AuthorizationServiceProtoClient">
+            <summary>Client for AuthorizationServiceProto</summary>
+        </member>
+        <member name="M:Avalanche.Host.Service.Clients.AuthorizationServiceProto.AuthorizationServiceProtoClient.#ctor(Grpc.Core.ChannelBase)">
+            <summary>Creates a new client for AuthorizationServiceProto</summary>
+            <param name="channel">The channel to use to make remote calls.</param>
+        </member>
+        <member name="M:Avalanche.Host.Service.Clients.AuthorizationServiceProto.AuthorizationServiceProtoClient.#ctor(Grpc.Core.CallInvoker)">
+            <summary>Creates a new client for AuthorizationServiceProto that uses a custom <c>CallInvoker</c>.</summary>
+            <param name="callInvoker">The callInvoker to use to make remote calls.</param>
+        </member>
+        <member name="M:Avalanche.Host.Service.Clients.AuthorizationServiceProto.AuthorizationServiceProtoClient.#ctor">
+            <summary>Protected parameterless constructor to allow creation of test doubles.</summary>
+        </member>
+        <member name="M:Avalanche.Host.Service.Clients.AuthorizationServiceProto.AuthorizationServiceProtoClient.#ctor(Grpc.Core.ClientBase.ClientBaseConfiguration)">
+            <summary>Protected constructor to allow creation of configured clients.</summary>
+            <param name="configuration">The client configuration.</param>
+        </member>
+        <member name="M:Avalanche.Host.Service.Clients.AuthorizationServiceProto.AuthorizationServiceProtoClient.NewInstance(Grpc.Core.ClientBase.ClientBaseConfiguration)">
+            <summary>Creates a new instance of client from given <c>ClientBaseConfiguration</c>.</summary>
+        </member>
+        <member name="M:Avalanche.Host.Service.Clients.AuthorizationServiceProto.BindService(Avalanche.Host.Service.Clients.AuthorizationServiceProto.AuthorizationServiceProtoBase)">
+            <summary>Creates service definition that can be registered with a server</summary>
+            <param name="serviceImpl">An object implementing the server-side handling logic.</param>
+        </member>
+        <member name="M:Avalanche.Host.Service.Clients.AuthorizationServiceProto.BindService(Grpc.Core.ServiceBinderBase,Avalanche.Host.Service.Clients.AuthorizationServiceProto.AuthorizationServiceProtoBase)">
+            <summary>Register service method with a service binder with or without implementation. Useful when customizing the  service binding logic.
+            Note: this method is part of an experimental API that can change or be removed without any prior notice.</summary>
+            <param name="serviceBinder">Service methods will be bound by calling <c>AddMethod</c> on this object.</param>
+            <param name="serviceImpl">An object implementing the server-side handling logic.</param>
+        </member>
+    </members>
+</doc>

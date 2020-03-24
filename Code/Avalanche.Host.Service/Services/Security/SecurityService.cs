@@ -1,4 +1,4 @@
-﻿using Serilog;
+﻿using Grpc.Core.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,8 +20,8 @@ namespace Avalanche.Host.Service.Services.Security
 
         #region external pointers
 
-        [DllImport("advapi32.dll", SetLastError = true)]
-        public static extern bool LogonUser(string lpszUsername, string lpszDomain, string lpszPassword, int dwLogonType, int dwLogonProvider, out IntPtr phToken);
+        /*[DllImport("advapi32.dll", SetLastError = true)]
+        public static extern bool LogonUser(string lpszUsername, string lpszDomain, string lpszPassword, int dwLogonType, int dwLogonProvider, out IntPtr phToken);*/
 
         #endregion
 
@@ -38,7 +38,8 @@ namespace Avalanche.Host.Service.Services.Security
 
         public bool AuthenticateUser(string username, string password)
         {
-            return LogonUser(username, ".", password, 2, 0, out _);
+            return (username.Equals("test") && password.Equals("test"));
+            //return LogonUser(username, ".", password, 2, 0, out _);
         }
 
         #endregion

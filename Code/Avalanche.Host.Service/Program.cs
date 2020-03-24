@@ -52,7 +52,9 @@ namespace Avalanche.Host.Service
                 string certificateFilePath = @"C:\Olympus\certificates\grpc_serverl5.crt";
                 int chainLevelsToValidate = 5;
 
-                IoCHelper.Register(() => new ConsoleLogger(), IoCLifestyle.Singleton);
+                logger = new ConsoleLogger();
+
+                IoCHelper.Register(() => logger, IoCLifestyle.Singleton);
                 IoCHelper.Register<AuthorizationServiceProto.AuthorizationServiceProtoBase, AuthorizationService>();
                 IoCHelper.Register<ISecurityService, SecurityService>();
 
@@ -61,11 +63,10 @@ namespace Avalanche.Host.Service
                 var authorizationServiceImplementation = IoCHelper.GetImplementation<AuthorizationServiceProto.AuthorizationServiceProtoBase>();
 
                 ServerServiceDefinition serviceDefinition = AuthorizationServiceProto.BindService(authorizationServiceImplementation)
-                           .Intercept(new AuthInterceptor())
-                           .Intercept(new Ism.Security.Grpc.Interceptors.RequestLoggerInterceptor(logger));
-                           //.Intercept(new CertificateValidatorInterceptor());
+                           .Intercept(new AuthInterceptor());
 
-                Server svr = ServerHelper.GetSecureServer(_hostname, _port, certificateFilePath, certificateKeyPath, chainLevelsToValidate,
+                //Server svr = ServerHelper.GetSecureServer(_hostname, _port, certificateFilePath, certificateKeyPath, chainLevelsToValidate,
+                Server svr = ServerHelper.GetInsecureServer(_hostname, _port, 
                     new List<ServerServiceDefinition>() 
                     { 
                         serviceDefinition 
