@@ -18,7 +18,7 @@ namespace Avalanche.Api.Managers.Metadata
                 case Shared.Domain.Enumerations.MetadataTypes.ProcedureTypes:
                     return Task.FromResult(GetProcedureTypes());
                 case Shared.Domain.Enumerations.MetadataTypes.ContentTypes:
-                    return Task.FromResult(GetProcedureTypes());
+                    return Task.FromResult(GetContentTypes());
                 default:
                     return Task.FromResult(new List<KeyValuePairViewModel>());
             }
