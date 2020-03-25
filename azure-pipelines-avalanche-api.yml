@@ -47,6 +47,9 @@ stages:
        inputs:
         command: restore
         projects: '**/Code/Avalanche.Api/Avalanche.Api.csproj'
+        nugetConfigPath: NuGet.config
+        #restoreArguments: -nowarn:msb3202,nu1503
+        arguments: -nowarn:msb3202,nu1503
         vstsFeed: 'd61e3552-9162-4b94-9184-b843c159ef58'
      
      - task: DotNetCoreCLI@2
