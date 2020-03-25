@@ -62,7 +62,7 @@ namespace Avalanche.Api.Controllers.V1
             {
                 _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
 
-                _appLoggerService.LogInformation("Avalanche Api is healthy and secure.");
+                _appLoggerService.LogInformation("Avalanche Api is healthy.");
 
                 return new OkObjectResult(new
                 {

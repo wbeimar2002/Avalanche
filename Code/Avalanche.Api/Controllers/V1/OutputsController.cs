@@ -38,7 +38,7 @@ namespace Avalanche.Api.Controllers.V1
         /// </summary>
         [HttpGet("Content/{contentType}")]
         [Produces(typeof(Content))]
-        public async Task<IActionResult> Get(string contentType, [FromServices]IWebHostEnvironment env)
+        public async Task<IActionResult> GetContentType(string contentType, [FromServices]IWebHostEnvironment env)
         {
             try
             {
@@ -82,7 +82,7 @@ namespace Avalanche.Api.Controllers.V1
         }
 
         /// <summary>
-        /// Returns the state of a signal in an output
+        /// Returns the state of all signals for an output
         /// </summary>
         [HttpGet("{id}/states")]
         [Produces(typeof(List<State>))]
@@ -105,6 +105,9 @@ namespace Avalanche.Api.Controllers.V1
             }
         }
 
+        /// <summary>
+        /// Returns all the outputs available to reproduce content
+        /// </summary>
         [HttpGet("all")]
         [Produces(typeof(List<Output>))]
         public async Task<IActionResult> GetAllAvailable([FromServices]IWebHostEnvironment env)
@@ -126,6 +129,9 @@ namespace Avalanche.Api.Controllers.V1
             }
         }
 
+        /// <summary>
+        /// Send a command to the output
+        /// </summary>
         [HttpPut("commands")]
         public async Task<IActionResult> SendCommand([FromBody]Command command, [FromServices]IWebHostEnvironment env)
         {
