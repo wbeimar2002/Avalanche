@@ -32,6 +32,9 @@ namespace Avalanche.Api.Controllers.V1
             _physiciansManager = physiciansManager;
         }
 
+        /// <summary>
+        /// Get all physicians
+        /// </summary>
         [HttpGet("")]
         [Produces(typeof(List<Physician>))]
         public async Task<IActionResult> GetAll([FromServices]IWebHostEnvironment env)
@@ -53,6 +56,9 @@ namespace Avalanche.Api.Controllers.V1
             }
         }
 
+        /// <summary>
+        /// Get physician by id
+        /// </summary>
         [HttpGet("{id}")]
         [Produces(typeof(Physician))]
         public async Task<IActionResult> Get([FromServices]IWebHostEnvironment env)
@@ -74,6 +80,9 @@ namespace Avalanche.Api.Controllers.V1
             }
         }
 
+        /// <summary>
+        /// Register physician
+        /// </summary>
         [HttpPost("")]
         [Produces(typeof(Physician))]
         public async Task<IActionResult> Post(Physician newPhysician, [FromServices]IWebHostEnvironment env)
@@ -95,6 +104,9 @@ namespace Avalanche.Api.Controllers.V1
             }
         }
 
+        /// <summary>
+        /// Update physician
+        /// </summary>
         [HttpPut("{id}")]
         [Produces(typeof(Physician))]
         public async Task<IActionResult> Put(string id, Physician existingPhysician, [FromServices]IWebHostEnvironment env)
@@ -116,9 +128,12 @@ namespace Avalanche.Api.Controllers.V1
             }
         }
 
+        /// <summary>
+        /// Delete physician
+        /// </summary>
         [HttpDelete("{id}")]
         [Produces(typeof(Physician))]
-        public async Task<IActionResult> Put(string id, [FromServices]IWebHostEnvironment env)
+        public async Task<IActionResult> Delete(string id, [FromServices]IWebHostEnvironment env)
         {
             try
             {

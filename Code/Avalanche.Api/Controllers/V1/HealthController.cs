@@ -27,6 +27,9 @@ namespace Avalanche.Api.Controllers.V1
             _appLoggerService = logger;
         }
 
+        /// <summary>
+        /// Health check without secure
+        /// </summary>
         [Route("check")]
         [HttpGet]
         public IActionResult HealthCheck([FromServices]IWebHostEnvironment env)
@@ -53,6 +56,9 @@ namespace Avalanche.Api.Controllers.V1
             }
         }
 
+        /// <summary>
+        /// Health check with secure
+        /// </summary>
         [Authorize]
         [Route("check/secure")]
         [HttpGet]

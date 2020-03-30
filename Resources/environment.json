@@ -1,0 +1,24 @@
+{
+	"id": "dc536815-b12a-4fc8-8944-09a229598c1d",
+	"name": "Avalanche_Dev",
+	"values": [
+		{
+			"key": "ADMIN_USR",
+			"value": "admin@admin.com",
+			"enabled": true
+		},
+		{
+			"key": "ADMIN_PASS",
+			"value": "12345678",
+			"enabled": true
+		},
+		{
+			"key": "LOGIN_URL",
+			"value": "https://localhost:6001/api/login",
+			"enabled": true
+		}
+	],
+	"_postman_variable_scope": "environment",
+	"_postman_exported_at": "2020-03-30T21:57:11.519Z",
+	"_postman_exported_using": "Postman/7.21.1"
+}

@@ -19,8 +19,8 @@ namespace Avalanche.Api.Controllers.V1
 {
     [Route("[controller]")]
     [ApiController]
-    [Authorize]
     [EnableCors]
+    [Authorize]
     public class LicensesController : ControllerBase
     {
         readonly ILogger _appLoggerService;
@@ -32,6 +32,9 @@ namespace Avalanche.Api.Controllers.V1
             _licensingManager = licensingManager;
         }
 
+        /// <summary>
+        /// Validate license key
+        /// </summary>
         [HttpPost("{key}")]
         public async Task<IActionResult> Validate(string key, [FromServices]IWebHostEnvironment env)
         {
@@ -52,6 +55,9 @@ namespace Avalanche.Api.Controllers.V1
             }
         }
 
+        /// <summary>
+        /// Get all active software installed
+        /// </summary>
         [HttpGet("")]
         [Produces(typeof(List<License>))]
         public async Task<IActionResult> GetAllActive([FromServices]IWebHostEnvironment env)
