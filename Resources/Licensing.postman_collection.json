@@ -122,6 +122,16 @@
 					"script": {
 						"id": "97fb78b8-f77b-4218-b3a4-e744537b15e4",
 						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Is an array\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData).to.be.an('array');",
+							"});",
+							"",
+							"    ",
 							""
 						],
 						"type": "text/javascript"

@@ -7,6 +7,20 @@
 	"item": [
 		{
 			"name": "Send Broadcast to RabbitMQ",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "061c0b8d-8a7d-4258-8b67-ae2906367bb1",
+						"exec": [
+							"pm.test(\"Successful POST request\", function () {",
+							"    pm.expect(pm.response.code).to.be.oneOf([201,202]);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
 			"request": {
 				"auth": {
 					"type": "bearer",
@@ -82,6 +96,20 @@
 		},
 		{
 			"name": "Send Broadcast Direct to Signal R",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "489a6436-6979-4cc7-ba56-7bb9a4461408",
+						"exec": [
+							"pm.test(\"Successful POST request\", function () {",
+							"    pm.expect(pm.response.code).to.be.oneOf([201,202]);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
 			"request": {
 				"auth": {
 					"type": "bearer",
