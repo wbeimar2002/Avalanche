@@ -34,6 +34,9 @@ namespace Avalanche.Api.Controllers.V1
             _patientsManager = patientsManager;
         }
 
+        /// <summary>
+        /// Register new patient
+        /// </summary>
         [HttpPost("")]
         [Produces(typeof(Patient))]
         public async Task<IActionResult> Post(Patient newPatient, [FromServices]IWebHostEnvironment env)
@@ -56,6 +59,9 @@ namespace Avalanche.Api.Controllers.V1
             }
         }
 
+        /// <summary>
+        /// Get a quick patient registration
+        /// </summary>
         [HttpPost("quick")]
         [Produces(typeof(Patient))]
         public async Task<IActionResult> Post([FromServices]IWebHostEnvironment env)
@@ -78,6 +84,9 @@ namespace Avalanche.Api.Controllers.V1
             }
         }
 
+        /// <summary>
+        /// Search patient using criteria and paging
+        /// </summary>
         [HttpPost("filtered")]
         [Produces(typeof(PagedCollectionViewModel<Patient>))]
         public async Task<IActionResult> Search([FromBody]PatientSearchFilterViewModel filter, [FromServices]IWebHostEnvironment env)
@@ -115,6 +124,9 @@ namespace Avalanche.Api.Controllers.V1
             }
         }
 
+        /// <summary>
+        /// Get physiciansby patient
+        /// </summary>
         [HttpGet("{patiendId}/physicians/")]
         [Produces(typeof(List<Physician>))]
         public async Task<IActionResult> GetPhysiciansByPatient(string patiendId, [FromServices]IWebHostEnvironment env)
@@ -136,6 +148,9 @@ namespace Avalanche.Api.Controllers.V1
             }
         }
 
+        /// <summary>
+        /// Get procedures by patient and physician
+        /// </summary>
         [HttpGet("{patientId}/physicians/{physicianId}/procedures")]
         [Produces(typeof(List<Procedure>))]
         public async Task<IActionResult> GetProceduresByPhysicianAndPatient(string patiendId, string physicianId, [FromServices]IWebHostEnvironment env)

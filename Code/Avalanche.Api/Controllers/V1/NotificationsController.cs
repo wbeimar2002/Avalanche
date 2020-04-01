@@ -42,6 +42,9 @@ namespace Avalanche.Api.Controllers.V1
             _broadcastService = broadcastService;
         }
 
+        /// <summary>
+        /// Send broadcast to Signal R using RabbitMQ
+        /// </summary>
         [HttpPost("queue")]
         public IActionResult Broadcast([FromBody]Ism.Broadcaster.Models.MessageRequest messageRequest, [FromServices]IWebHostEnvironment env)
         {
@@ -64,6 +67,9 @@ namespace Avalanche.Api.Controllers.V1
             }
         }
 
+        /// <summary>
+        /// Send broadcast to Signal R without RabbitMQ
+        /// </summary>
         [HttpPost("direct")]
         public IActionResult BroadcastDirect([FromBody]Ism.Broadcaster.Models.MessageRequest messageRequest, [FromServices]IWebHostEnvironment env)
         {

@@ -30,7 +30,10 @@ namespace Avalanche.Api.Controllers.V1
             _appLoggerService = appLoggerService;
         }
 
-        [HttpGet("")]
+        /// <summary>
+        /// Search procedures
+        /// </summary>
+        [HttpPost("")]
         [Produces(typeof(List<Procedure>))]
         public async Task<IActionResult> Search(ProcedureSearchFilterViewModel filter, [FromServices]IWebHostEnvironment env)
         {
@@ -51,6 +54,9 @@ namespace Avalanche.Api.Controllers.V1
             }
         }
 
+        /// <summary>
+        /// Get procedure
+        /// </summary>
         [HttpGet("{id}")]
         [Produces(typeof(ProcedureDetailsViewModel))]
         public async Task<IActionResult> Get([FromServices]IWebHostEnvironment env)

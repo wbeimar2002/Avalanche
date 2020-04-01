@@ -1,17 +1,17 @@
 {
 	"info": {
-		"_postman_id": "33d78812-f15b-4c58-8a4f-4bff6e08dc70",
-		"name": "Setup",
+		"_postman_id": "fb491568-50b6-47f4-9058-babcc43ea5ea",
+		"name": "PGS",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"item": [
 		{
-			"name": "Get Genders",
+			"name": "Get Content Types",
 			"event": [
 				{
 					"listen": "test",
 					"script": {
-						"id": "aa196b58-5f33-4ba6-9547-b577ffcd9ef7",
+						"id": "16540472-0e04-42ad-ade2-064373677f19",
 						"exec": [
 							"pm.test(\"Status code is 200\", function () {",
 							"    pm.response.to.have.status(200);",
@@ -76,7 +76,7 @@
 					}
 				],
 				"url": {
-					"raw": "https://localhost:5001/Metadata/genders",
+					"raw": "https://localhost:5001/Metadata/contenttypes",
 					"protocol": "https",
 					"host": [
 						"localhost"
@@ -84,28 +84,25 @@
 					"port": "5001",
 					"path": [
 						"Metadata",
-						"genders"
+						"contenttypes"
 					]
 				}
 			},
 			"response": []
 		},
 		{
-			"name": "Get Procedure Types",
+			"name": "Get Content by Type",
 			"event": [
 				{
 					"listen": "test",
 					"script": {
-						"id": "03d96f6d-4d24-449b-b86a-25718bc2e934",
+						"id": "5ab25c70-ddcc-41ac-a81b-d175452d23e6",
 						"exec": [
 							"pm.test(\"Status code is 200\", function () {",
 							"    pm.response.to.have.status(200);",
 							"});",
 							"",
-							"pm.test(\"Is an array\", function () {",
-							"    var jsonData = pm.response.json();",
-							"    pm.expect(jsonData).to.be.an('array');",
-							"});",
+							"    ",
 							""
 						],
 						"type": "text/javascript"
@@ -159,316 +156,35 @@
 					}
 				],
 				"url": {
-					"raw": "https://localhost:5001/Metadata/proceduretypes",
+					"raw": "https://localhost:5001/Outputs/Content/P",
 					"protocol": "https",
 					"host": [
 						"localhost"
 					],
 					"port": "5001",
 					"path": [
-						"Metadata",
-						"proceduretypes"
+						"Outputs",
+						"Content",
+						"P"
 					]
 				}
 			},
 			"response": []
 		},
 		{
-			"name": "Register new patient",
+			"name": "Get An State of an Output",
 			"event": [
 				{
 					"listen": "test",
 					"script": {
-						"id": "6d6b8f34-b70d-4b29-bdea-74a08687832f",
-						"exec": [
-							"pm.test(\"Successful POST request\", function () {",
-							"    pm.expect(pm.response.code).to.be.oneOf([201,202]);",
-							"});",
-							"",
-							"pm.test(\"Patient was created\", function () {",
-							"    var jsonData = pm.response.json();",
-							"    pm.expect(jsonData.name).to.eql(\"testing\");",
-							"    pm.expect(jsonData.lastName).to.eql(\"testing\");",
-							"    pm.expect(jsonData).to.have.property('id');",
-							"    pm.expect(jsonData).to.have.property('name');",
-							"    pm.expect(jsonData).to.have.property('lastName');",
-							"    pm.expect(jsonData).to.have.property('department');",
-							"    pm.expect(jsonData).to.have.property('gender');",
-							"});"
-						],
-						"type": "text/javascript"
-					}
-				}
-			],
-			"request": {
-				"auth": {
-					"type": "bearer",
-					"bearer": [
-						{
-							"key": "token",
-							"value": "{{CURRENT_ACCESS_TOKEN}}",
-							"type": "string"
-						}
-					]
-				},
-				"method": "POST",
-				"header": [
-					{
-						"key": "authority",
-						"value": "localhost:5001"
-					},
-					{
-						"key": "accept",
-						"value": "text/plain"
-					},
-					{
-						"key": "sec-fetch-dest",
-						"value": "empty"
-					},
-					{
-						"key": "user-agent",
-						"value": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.149 Safari/537.36"
-					},
-					{
-						"key": "content-type",
-						"value": "application/json"
-					},
-					{
-						"key": "origin",
-						"value": "https://localhost:5001"
-					},
-					{
-						"key": "sec-fetch-site",
-						"value": "same-origin"
-					},
-					{
-						"key": "sec-fetch-mode",
-						"value": "cors"
-					},
-					{
-						"key": "referer",
-						"value": "https://localhost:5001/swagger/index.html"
-					},
-					{
-						"key": "accept-language",
-						"value": "en,en-US;q=0.9"
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": "{\r\n  \"id\": \"string\",\r\n  \"name\": \"testing\",\r\n  \"lastName\": \"testing\",\r\n  \"dateOfBirth\": \"2020-02-13T15:04:32.364Z\",\r\n  \"gender\": \"string\"\r\n}"
-				},
-				"url": {
-					"raw": "https://localhost:5001/Patients",
-					"protocol": "https",
-					"host": [
-						"localhost"
-					],
-					"port": "5001",
-					"path": [
-						"Patients"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Quick patient registration",
-			"event": [
-				{
-					"listen": "test",
-					"script": {
-						"id": "224c96b7-ff7c-45fa-9c0a-a485bb415c86",
-						"exec": [
-							"pm.test(\"Successful POST request\", function () {",
-							"    pm.expect(pm.response.code).to.be.oneOf([201,202]);",
-							"});"
-						],
-						"type": "text/javascript"
-					}
-				}
-			],
-			"request": {
-				"auth": {
-					"type": "bearer",
-					"bearer": [
-						{
-							"key": "token",
-							"value": "{{CURRENT_ACCESS_TOKEN}}",
-							"type": "string"
-						}
-					]
-				},
-				"method": "POST",
-				"header": [
-					{
-						"key": "authority",
-						"value": "localhost:5001"
-					},
-					{
-						"key": "content-length",
-						"value": "0"
-					},
-					{
-						"key": "accept",
-						"value": "text/plain"
-					},
-					{
-						"key": "sec-fetch-dest",
-						"value": "empty"
-					},
-					{
-						"key": "user-agent",
-						"value": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.149 Safari/537.36"
-					},
-					{
-						"key": "origin",
-						"value": "https://localhost:5001"
-					},
-					{
-						"key": "sec-fetch-site",
-						"value": "same-origin"
-					},
-					{
-						"key": "sec-fetch-mode",
-						"value": "cors"
-					},
-					{
-						"key": "referer",
-						"value": "https://localhost:5001/swagger/index.html"
-					},
-					{
-						"key": "accept-language",
-						"value": "en,en-US;q=0.9"
-					}
-				],
-				"url": {
-					"raw": "https://localhost:5001/Patients/quick",
-					"protocol": "https",
-					"host": [
-						"localhost"
-					],
-					"port": "5001",
-					"path": [
-						"Patients",
-						"quick"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Search Patient",
-			"event": [
-				{
-					"listen": "test",
-					"script": {
-						"id": "f87ab289-94a9-482e-bc06-936b24929f6d",
+						"id": "87fddee2-ac2c-44c4-a9e5-50ef25a32705",
 						"exec": [
 							"pm.test(\"Status code is 200\", function () {",
 							"    pm.response.to.have.status(200);",
 							"});",
 							"",
-							"pm.test(\"Contains data for paging\", function () {",
-							"    var jsonData = pm.response.json();",
-							"    pm.expect(jsonData).to.have.a.property('items');",
-							"    pm.expect(jsonData).to.have.a.property('nextPage');",
-							"    pm.expect(jsonData).to.have.a.property('previousPage');",
-							"});"
-						],
-						"type": "text/javascript"
-					}
-				}
-			],
-			"request": {
-				"auth": {
-					"type": "bearer",
-					"bearer": [
-						{
-							"key": "token",
-							"value": "{{CURRENT_ACCESS_TOKEN}}",
-							"type": "string"
-						}
-					]
-				},
-				"method": "POST",
-				"header": [
-					{
-						"key": "authority",
-						"value": "localhost:5001"
-					},
-					{
-						"key": "accept",
-						"value": "text/plain"
-					},
-					{
-						"key": "sec-fetch-dest",
-						"value": "empty"
-					},
-					{
-						"key": "user-agent",
-						"value": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.149 Safari/537.36"
-					},
-					{
-						"key": "content-type",
-						"value": "application/json"
-					},
-					{
-						"key": "origin",
-						"value": "https://localhost:5001"
-					},
-					{
-						"key": "sec-fetch-site",
-						"value": "same-origin"
-					},
-					{
-						"key": "sec-fetch-mode",
-						"value": "cors"
-					},
-					{
-						"key": "referer",
-						"value": "https://localhost:5001/swagger/index.html"
-					},
-					{
-						"key": "accept-language",
-						"value": "en,en-US;q=0.9"
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": "{\"term\":\"string\",\"page\":0,\"limit\":0}"
-				},
-				"url": {
-					"raw": "https://localhost:5001/Patients/filtered",
-					"protocol": "https",
-					"host": [
-						"localhost"
-					],
-					"port": "5001",
-					"path": [
-						"Patients",
-						"filtered"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Get Physicians",
-			"event": [
-				{
-					"listen": "test",
-					"script": {
-						"id": "f41ac7f5-d2c4-494f-b826-d58f36780c2c",
-						"exec": [
-							"pm.test(\"Status code is 200\", function () {",
-							"    pm.response.to.have.status(200);",
-							"});",
-							"",
-							"pm.test(\"Is an array\", function () {",
-							"    var jsonData = pm.response.json();",
-							"    pm.expect(jsonData).to.be.an('array');",
-							"});"
+							"    ",
+							""
 						],
 						"type": "text/javascript"
 					}
@@ -521,14 +237,263 @@
 					}
 				],
 				"url": {
-					"raw": "https://localhost:5001/Physicians",
+					"raw": "https://localhost:5001/Outputs/1234/states/1",
 					"protocol": "https",
 					"host": [
 						"localhost"
 					],
 					"port": "5001",
 					"path": [
-						"Physicians"
+						"Outputs",
+						"1234",
+						"states",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get States of an Output",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "ae611c72-f69f-4230-861b-5e2ef6ed1914",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Is an array\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData).to.be.an('array');",
+							"});",
+							"",
+							"    ",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{CURRENT_ACCESS_TOKEN}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "authority",
+						"value": "localhost:5001"
+					},
+					{
+						"key": "accept",
+						"value": "text/plain"
+					},
+					{
+						"key": "sec-fetch-dest",
+						"value": "empty"
+					},
+					{
+						"key": "user-agent",
+						"value": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.149 Safari/537.36"
+					},
+					{
+						"key": "sec-fetch-site",
+						"value": "same-origin"
+					},
+					{
+						"key": "sec-fetch-mode",
+						"value": "cors"
+					},
+					{
+						"key": "referer",
+						"value": "https://localhost:5001/swagger/index.html"
+					},
+					{
+						"key": "accept-language",
+						"value": "en,en-US;q=0.9"
+					}
+				],
+				"url": {
+					"raw": "https://localhost:5001/Outputs/1234/states",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "5001",
+					"path": [
+						"Outputs",
+						"1234",
+						"states"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get All Outputs",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "d15a0d7b-48b0-4ea1-9135-d960ed42e166",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Is an array\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData).to.be.an('array');",
+							"});",
+							"",
+							"    ",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{CURRENT_ACCESS_TOKEN}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "authority",
+						"value": "localhost:5001"
+					},
+					{
+						"key": "accept",
+						"value": "text/plain"
+					},
+					{
+						"key": "sec-fetch-dest",
+						"value": "empty"
+					},
+					{
+						"key": "user-agent",
+						"value": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.149 Safari/537.36"
+					},
+					{
+						"key": "sec-fetch-site",
+						"value": "same-origin"
+					},
+					{
+						"key": "sec-fetch-mode",
+						"value": "cors"
+					},
+					{
+						"key": "referer",
+						"value": "https://localhost:5001/swagger/index.html"
+					},
+					{
+						"key": "accept-language",
+						"value": "en,en-US;q=0.9"
+					}
+				],
+				"url": {
+					"raw": "https://localhost:5001/Outputs/all",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "5001",
+					"path": [
+						"Outputs",
+						"all"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Save commands to an Ouput",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{CURRENT_ACCESS_TOKEN}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PUT",
+				"header": [
+					{
+						"key": "authority",
+						"value": "localhost:5001"
+					},
+					{
+						"key": "accept",
+						"value": "*/*"
+					},
+					{
+						"key": "sec-fetch-dest",
+						"value": "empty"
+					},
+					{
+						"key": "user-agent",
+						"value": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.149 Safari/537.36"
+					},
+					{
+						"key": "content-type",
+						"value": "application/json"
+					},
+					{
+						"key": "origin",
+						"value": "https://localhost:5001"
+					},
+					{
+						"key": "sec-fetch-site",
+						"value": "same-origin"
+					},
+					{
+						"key": "sec-fetch-mode",
+						"value": "cors"
+					},
+					{
+						"key": "referer",
+						"value": "https://localhost:5001/swagger/index.html"
+					},
+					{
+						"key": "accept-language",
+						"value": "en,en-US;q=0.9"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"commandType\":0,\"value\":\"string\",\"outputs\":[{\"id\":\"string\",\"name\":\"string\",\"preview\":\"string\",\"isActive\":true}]}"
+				},
+				"url": {
+					"raw": "https://localhost:5001/Outputs/commands",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "5001",
+					"path": [
+						"Outputs",
+						"commands"
 					]
 				}
 			},
@@ -539,7 +504,7 @@
 		{
 			"listen": "prerequest",
 			"script": {
-				"id": "c43fb4c4-d7c9-446c-97eb-0aadc5b1f313",
+				"id": "7413d826-4f7c-4df8-af66-5c5708e20f1d",
 				"type": "text/javascript",
 				"exec": [
 					"var request = {",
@@ -574,7 +539,7 @@
 		{
 			"listen": "test",
 			"script": {
-				"id": "ae0ed3b7-060e-4a04-a5b2-44e42bb11822",
+				"id": "0b5e821c-5d51-4520-9117-eca5094f80f3",
 				"type": "text/javascript",
 				"exec": [
 					""

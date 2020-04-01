@@ -36,17 +36,14 @@ namespace Avalanche.Api.Controllers.V1
         /// <summary>
         /// Returns the preview content according to the type sent
         /// </summary>
-        /// <param name="contentType">Content type Id</param>
-        /// <param name="env"></param>
-        /// <returns></returns>
         [HttpGet("Content/{contentType}")]
-        [Produces(typeof(Signal))]
-        public async Task<IActionResult> Get(string contentType, [FromServices]IWebHostEnvironment env)
+        [Produces(typeof(Content))]
+        public async Task<IActionResult> GetContentType(string contentType, [FromServices]IWebHostEnvironment env)
         {
             try
             {
                 _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
-                Signal result = await _outputsManager.GetContent(contentType);
+                Content result = await _outputsManager.GetContent(contentType);
                 return Ok(result);
             }
             catch (Exception exception)
@@ -60,7 +57,10 @@ namespace Avalanche.Api.Controllers.V1
             }
         }
 
-        [HttpGet("{id}/state/{stateType}")]
+        /// <summary>
+        /// Returns the state of a signal in an output
+        /// </summary>
+        [HttpGet("{id}/states/{stateType}")]
         [Produces(typeof(State))]
         public async Task<IActionResult> GetCurrentState(string id, StateTypes stateType, [FromServices]IWebHostEnvironment env)
         {
@@ -81,6 +81,33 @@ namespace Avalanche.Api.Controllers.V1
             }
         }
 
+        /// <summary>
+        /// Returns the state of all signals for an output
+        /// </summary>
+        [HttpGet("{id}/states")]
+        [Produces(typeof(List<State>))]
+        public async Task<IActionResult> GetCurrentStates(string id, [FromServices]IWebHostEnvironment env)
+        {
+            try
+            {
+                _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
+                List<State> result = await _outputsManager.GetCurrentStates(id);
+                return Ok(result);
+            }
+            catch (Exception exception)
+            {
+                _appLoggerService.LogError(LoggerHelper.GetLogMessage(DebugLogType.Exception), exception);
+                return new BadRequestObjectResult(exception.Get(env.IsDevelopment()));
+            }
+            finally
+            {
+                _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
+            }
+        }
+
+        /// <summary>
+        /// Returns all the outputs available to reproduce content
+        /// </summary>
         [HttpGet("all")]
         [Produces(typeof(List<Output>))]
         public async Task<IActionResult> GetAllAvailable([FromServices]IWebHostEnvironment env)
@@ -102,6 +129,9 @@ namespace Avalanche.Api.Controllers.V1
             }
         }
 
+        /// <summary>
+        /// Send a command to the output
+        /// </summary>
         [HttpPut("commands")]
         public async Task<IActionResult> SendCommand([FromBody]Command command, [FromServices]IWebHostEnvironment env)
         {

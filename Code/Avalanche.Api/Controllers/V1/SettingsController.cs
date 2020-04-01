@@ -34,6 +34,9 @@ namespace Avalanche.Api.Controllers.V1
             _settingsManager = settingsManager;
         }
 
+        /// <summary>
+        /// Get categories
+        /// </summary>
         [HttpGet("categories")]
         [Produces(typeof(List<SettingCategory>))]
         public async Task<IActionResult> GetCategories([FromServices]IWebHostEnvironment env)
@@ -55,6 +58,9 @@ namespace Avalanche.Api.Controllers.V1
             }
         }
 
+        /// <summary>
+        /// Get category using key
+        /// </summary>
         [HttpGet("categories/{key}")]
         [Produces(typeof(SettingCategoryViewModel))]
         public async Task<IActionResult> GetSettingsByCategory(string key, [FromServices]IWebHostEnvironment env)
@@ -75,6 +81,9 @@ namespace Avalanche.Api.Controllers.V1
             }
         }
 
+        /// <summary>
+        /// Save values from a category
+        /// </summary>
         [HttpPost("categories/{categoryKey}")]
         public async Task<IActionResult> SaveSettingsByCategory([FromServices]IWebHostEnvironment env)
         {
@@ -95,6 +104,9 @@ namespace Avalanche.Api.Controllers.V1
             }
         }
 
+        /// <summary>
+        /// Get sources from a category and a source key
+        /// </summary>
         [HttpGet("categories/{categoryKey}/sources/{sourcekey}")]
         [Produces(typeof(SettingCategoryViewModel))]
         public async Task<IActionResult> GetSettingsByCategory(string categoryKey, string sourcekey, [FromServices]IWebHostEnvironment env)

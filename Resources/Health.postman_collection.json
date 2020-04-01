@@ -1,17 +1,17 @@
 {
 	"info": {
-		"_postman_id": "8fd21f07-a928-4f50-8c87-d4a013198872",
-		"name": "Licensing",
+		"_postman_id": "241ec7df-41b1-4f6b-b930-22b9b293c1b3",
+		"name": "Health",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"item": [
 		{
-			"name": "Validate Licensing",
+			"name": "Health Check",
 			"event": [
 				{
 					"listen": "test",
 					"script": {
-						"id": "2e17061a-8ac8-4cce-ae9b-6ca074028473",
+						"id": "de5247e5-211b-4085-a6dd-ae1dcb2dd389",
 						"exec": [
 							"pm.test(\"Status code is 200\", function () {",
 							"    pm.response.to.have.status(200);",
@@ -19,58 +19,25 @@
 						],
 						"type": "text/javascript"
 					}
-				},
-				{
-					"listen": "prerequest",
-					"script": {
-						"id": "6fa96dcc-31ec-4023-ae73-38fb251e5d91",
-						"exec": [
-							""
-						],
-						"type": "text/javascript"
-					}
 				}
 			],
 			"request": {
 				"auth": {
-					"type": "bearer",
-					"bearer": [
-						{
-							"key": "token",
-							"value": "{{CURRENT_ACCESS_TOKEN}}",
-							"type": "string"
-						}
-					]
+					"type": "noauth"
 				},
-				"method": "POST",
+				"method": "GET",
 				"header": [
 					{
 						"key": "authority",
-						"value": "localhost:5001"
-					},
-					{
-						"key": "content-length",
-						"value": "0"
+						"value": "localhost:6001"
 					},
 					{
 						"key": "accept",
 						"value": "*/*"
 					},
 					{
-						"key": "sec-fetch-dest",
-						"value": "empty"
-					},
-					{
-						"key": "authorization",
-						"value": "Bearer ddd"
-					},
-					{
 						"key": "user-agent",
-						"value": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.149 Safari/537.36"
-					},
-					{
-						"key": "origin",
-						"value": "https://localhost:5001"
+						"value": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.34 Safari/537.36 Edg/81.0.416.20"
 					},
 					{
 						"key": "sec-fetch-site",
@@ -81,38 +48,68 @@
 						"value": "cors"
 					},
 					{
+						"key": "sec-fetch-dest",
+						"value": "empty"
+					},
+					{
 						"key": "referer",
-						"value": "https://localhost:5001/swagger/index.html"
+						"value": "https://localhost:6001/index.html"
 					},
 					{
 						"key": "accept-language",
-						"value": "en,en-US;q=0.9"
+						"value": "en-US,en;q=0.9,es;q=0.8,th;q=0.7"
 					}
 				],
 				"url": {
-					"raw": "https://localhost:5001/Licenses/11111",
+					"raw": "https://localhost:5001/Health/check/",
 					"protocol": "https",
 					"host": [
 						"localhost"
 					],
 					"port": "5001",
 					"path": [
-						"Licenses",
-						"11111"
+						"Health",
+						"check",
+						""
 					]
 				}
 			},
 			"response": []
 		},
 		{
-			"name": "Get All Software Installed",
+			"name": "Health Check Secure",
 			"event": [
 				{
 					"listen": "prerequest",
 					"script": {
-						"id": "4803cebb-4711-41f2-931f-e440096df988",
+						"id": "2341f58a-980e-400a-8fb8-06b78062ef36",
 						"exec": [
-							""
+							"var request = {",
+							"    url: pm.environment.get(\"LOGIN_URL\"),",
+							"    method: 'POST',",
+							"    header: 'Content-Type:application/json',",
+							"    body: {",
+							"        mode: 'application/json',",
+							"        raw: JSON.stringify(",
+							"            {",
+							"            \temail:pm.environment.get(\"ADMIN_USR\"),",
+							"            \tpassword: pm.environment.get(\"ADMIN_PASS\")",
+							"            })",
+							"  }",
+							"};",
+							"",
+							"pm.sendRequest(request, function (err, res) {",
+							"    console.log(err ? err : res.json());",
+							"    ",
+							"    if (err === null) {",
+							"        console.log('Saving the token')",
+							"        var responseJson = res.json();",
+							"        ",
+							"        console.log('Token: ' + responseJson.accessToken);",
+							"        ",
+							"        pm.environment.set('CURRENT_ACCESS_TOKEN', responseJson.accessToken)",
+							"    }",
+							"});"
 						],
 						"type": "text/javascript"
 					}
@@ -120,19 +117,11 @@
 				{
 					"listen": "test",
 					"script": {
-						"id": "97fb78b8-f77b-4218-b3a4-e744537b15e4",
+						"id": "8f20e7ce-bdb5-4274-aa60-d1e743dbadda",
 						"exec": [
 							"pm.test(\"Status code is 200\", function () {",
 							"    pm.response.to.have.status(200);",
-							"});",
-							"",
-							"pm.test(\"Is an array\", function () {",
-							"    var jsonData = pm.response.json();",
-							"    pm.expect(jsonData).to.be.an('array');",
-							"});",
-							"",
-							"    ",
-							""
+							"});"
 						],
 						"type": "text/javascript"
 					}
@@ -157,7 +146,7 @@
 					},
 					{
 						"key": "accept",
-						"value": "text/plain"
+						"value": "*/*"
 					},
 					{
 						"key": "sec-fetch-dest",
@@ -185,14 +174,16 @@
 					}
 				],
 				"url": {
-					"raw": "https://localhost:5001/Licenses",
+					"raw": "https://localhost:5001/Health/check/secure",
 					"protocol": "https",
 					"host": [
 						"localhost"
 					],
 					"port": "5001",
 					"path": [
-						"Licenses"
+						"Health",
+						"check",
+						"secure"
 					]
 				}
 			},
@@ -203,42 +194,17 @@
 		{
 			"listen": "prerequest",
 			"script": {
-				"id": "60520b73-58ae-4a6c-9345-48f863b53a84",
+				"id": "6e478541-6288-48ac-bf5f-6ea789dd7b8e",
 				"type": "text/javascript",
 				"exec": [
-					"var request = {",
-					"    url: pm.environment.get(\"LOGIN_URL\"),",
-					"    method: 'POST',",
-					"    header: 'Content-Type:application/json',",
-					"    body: {",
-					"        mode: 'application/json',",
-					"        raw: JSON.stringify(",
-					"            {",
-					"            \temail:pm.environment.get(\"ADMIN_USR\"),",
-					"            \tpassword: pm.environment.get(\"ADMIN_PASS\")",
-					"            })",
-					"  }",
-					"};",
-					"",
-					"pm.sendRequest(request, function (err, res) {",
-					"    console.log(err ? err : res.json());",
-					"    ",
-					"    if (err === null) {",
-					"        console.log('Saving the token')",
-					"        var responseJson = res.json();",
-					"        ",
-					"        console.log('Token: ' + responseJson.accessToken);",
-					"        ",
-					"        pm.environment.set('CURRENT_ACCESS_TOKEN', responseJson.accessToken)",
-					"    }",
-					"});"
+					""
 				]
 			}
 		},
 		{
 			"listen": "test",
 			"script": {
-				"id": "3a3a6e6b-9635-4bff-819e-c5592f1bc673",
+				"id": "a5abbd57-9e76-430b-b34f-01fb26729b4f",
 				"type": "text/javascript",
 				"exec": [
 					""

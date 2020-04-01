@@ -19,7 +19,6 @@ namespace Avalanche.Api.Controllers.V1
 {
     [Route("[controller]")]
     [ApiController]
-    [Authorize]
     [EnableCors]
     public class MetadataController : ControllerBase
     {
@@ -32,6 +31,10 @@ namespace Avalanche.Api.Controllers.V1
             _metadataManager = metadataManager;
         }
 
+        /// <summary>
+        /// Get content types for PGS 
+        /// </summary>
+        [Authorize]
         [HttpGet("contenttypes")]
         [Produces(typeof(List<KeyValuePairViewModel>))]
         public async Task<IActionResult> GetContentTypes([FromServices]IWebHostEnvironment env)
@@ -53,7 +56,10 @@ namespace Avalanche.Api.Controllers.V1
             }
         }
 
-        [EnableCors]
+        /// <summary>
+        /// Get content genders
+        /// </summary>
+        [Authorize]
         [HttpGet("genders")]
         [Produces(typeof(List<KeyValuePairViewModel>))]
         public async Task<IActionResult> GetGenders([FromServices]IWebHostEnvironment env)
@@ -75,7 +81,10 @@ namespace Avalanche.Api.Controllers.V1
             }
         }
 
-        [EnableCors]
+        /// <summary>
+        /// Get procedure types
+        /// </summary>
+        [Authorize]
         [HttpGet("proceduretypes")]
         [Produces(typeof(List<KeyValuePairViewModel>))]
         public async Task<IActionResult> GetProcedureTypes([FromServices]IWebHostEnvironment env)

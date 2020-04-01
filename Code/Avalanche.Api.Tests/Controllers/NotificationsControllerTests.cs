@@ -24,7 +24,7 @@ namespace Avalanche.Api.Tests.Controllers
         Mock<IBroadcastService> _broadcastService;
         Mock<IWebHostEnvironment> _environment;
         Mock<IRabbitMqClientService> _rabbitMqClientService;
-        Mock<IOptions<RabbitMqOptions>> _rabbitMqOptions;
+        IOptions<RabbitMqOptions> _rabbitMqOptions;
 
         NotificationsController _controller;
 
@@ -36,11 +36,11 @@ namespace Avalanche.Api.Tests.Controllers
             _appLoggerService = new Mock<ILogger<NotificationsController>>();
             _broadcastService = new Mock<IBroadcastService>();
             _rabbitMqClientService = new Mock<IRabbitMqClientService>();
-            _rabbitMqOptions = new Mock<IOptions<RabbitMqOptions>>();
+            _rabbitMqOptions = Options.Create(new RabbitMqOptions());
 
             _environment = new Mock<IWebHostEnvironment>();
 
-            _controller = new NotificationsController(_broadcastService.Object, _appLoggerService.Object, _rabbitMqOptions.Object, _rabbitMqClientService.Object);
+            _controller = new NotificationsController(_broadcastService.Object, _appLoggerService.Object, _rabbitMqOptions, _rabbitMqClientService.Object);
 
             OperatingSystem os = Environment.OSVersion;
 
@@ -49,7 +49,7 @@ namespace Avalanche.Api.Tests.Controllers
         }
 
         [Test]
-        public void BroadcastShouldReturnOkResult()
+        public void BroadcastDirectShouldReturnOkResult()
         {
             var message = new Ism.Broadcaster.Models.MessageRequest();
 
@@ -68,7 +68,7 @@ namespace Avalanche.Api.Tests.Controllers
         }
 
         [Test]
-        public void BroadcastShouldReturnBadResultIfFails()
+        public void BroadcastDirectShouldReturnBadResultIfFails()
         {
             _broadcastService.Setup(mock => mock.Broadcast(It.IsAny<Ism.Broadcaster.Models.MessageRequest>())).Throws(It.IsAny<Exception>());
 
@@ -80,6 +80,43 @@ namespace Avalanche.Api.Tests.Controllers
                 _appLoggerService.Verify(LogLevel.Error, $"Exception {_controller.GetType().Name}.BroadcastDirect", Times.Once());
                 _appLoggerService.Verify(LogLevel.Debug, $"Requested {_controller.GetType().Name}.BroadcastDirect", Times.Once());
                 _appLoggerService.Verify(LogLevel.Debug, $"Completed {_controller.GetType().Name}.BroadcastDirect", Times.Once());
+            }
+
+            Assert.IsInstanceOf<BadRequestObjectResult>(badResult);
+        }
+
+        [Test]
+        public void BroadcastShouldReturnOkResult()
+        {
+            var message = new Ism.Broadcaster.Models.MessageRequest();
+
+            _rabbitMqClientService.Setup(mock => mock.SendMessage(It.IsAny<string>(), It.IsAny<string>()));
+
+            var okResult = _controller.Broadcast(message, _environment.Object);
+
+            if (_checkLogger)
+            {
+                _appLoggerService.Verify(LogLevel.Error, $"Exception {_controller.GetType().Name}.Broadcast", Times.Never());
+                _appLoggerService.Verify(LogLevel.Debug, $"Requested {_controller.GetType().Name}.Broadcast", Times.Once());
+                _appLoggerService.Verify(LogLevel.Debug, $"Completed {_controller.GetType().Name}.Broadcast", Times.Once());
+            }
+
+            Assert.IsInstanceOf<AcceptedResult>(okResult);
+        }
+
+        [Test]
+        public void BroadcastShouldReturnBadResultIfFails()
+        {
+            _rabbitMqClientService.Setup(mock => mock.SendMessage(It.IsAny<string>(), It.IsAny<string>())).Throws(It.IsAny<Exception>());
+
+            var message = new Ism.Broadcaster.Models.MessageRequest();
+            var badResult = _controller.Broadcast(message, _environment.Object);
+
+            if (_checkLogger)
+            {
+                _appLoggerService.Verify(LogLevel.Error, $"Exception {_controller.GetType().Name}.Broadcast", Times.Once());
+                _appLoggerService.Verify(LogLevel.Debug, $"Requested {_controller.GetType().Name}.Broadcast", Times.Once());
+                _appLoggerService.Verify(LogLevel.Debug, $"Completed {_controller.GetType().Name}.Broadcast", Times.Once());
             }
 
             Assert.IsInstanceOf<BadRequestObjectResult>(badResult);

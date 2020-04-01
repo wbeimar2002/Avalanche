@@ -1,0 +1,207 @@
+{
+	"info": {
+		"_postman_id": "a7131395-9f1b-4b13-a653-c02d93c3def9",
+		"name": "Security",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Login",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "authority",
+						"value": "localhost:6001"
+					},
+					{
+						"key": "accept",
+						"value": "*/*"
+					},
+					{
+						"key": "sec-fetch-dest",
+						"value": "empty"
+					},
+					{
+						"key": "user-agent",
+						"value": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.149 Safari/537.36"
+					},
+					{
+						"key": "content-type",
+						"value": "application/json"
+					},
+					{
+						"key": "origin",
+						"value": "https://localhost:6001"
+					},
+					{
+						"key": "sec-fetch-site",
+						"value": "same-origin"
+					},
+					{
+						"key": "sec-fetch-mode",
+						"value": "cors"
+					},
+					{
+						"key": "referer",
+						"value": "https://localhost:6001/swagger/index.html"
+					},
+					{
+						"key": "accept-language",
+						"value": "en,en-US;q=0.9"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"email\":\"admin@admin.com\",\"password\":\"12345678\"}"
+				},
+				"url": {
+					"raw": "https://localhost:6001/api/login",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "6001",
+					"path": [
+						"api",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Refresh Token",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "authority",
+						"value": "localhost:6001"
+					},
+					{
+						"key": "accept",
+						"value": "*/*"
+					},
+					{
+						"key": "sec-fetch-dest",
+						"value": "empty"
+					},
+					{
+						"key": "user-agent",
+						"value": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.149 Safari/537.36"
+					},
+					{
+						"key": "content-type",
+						"value": "application/json"
+					},
+					{
+						"key": "origin",
+						"value": "https://localhost:6001"
+					},
+					{
+						"key": "sec-fetch-site",
+						"value": "same-origin"
+					},
+					{
+						"key": "sec-fetch-mode",
+						"value": "cors"
+					},
+					{
+						"key": "referer",
+						"value": "https://localhost:6001/swagger/index.html"
+					},
+					{
+						"key": "accept-language",
+						"value": "en,en-US;q=0.9"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"token\":\"ADMuePakwlLNCczUppYbZJYRiRio/0p9X3aBhvkGD1U4iApYm14tvFGDznvPzRWOIg==\",\"userEmail\":\"admin@admin.com\"}"
+				},
+				"url": {
+					"raw": "https://localhost:6001/api/token/refresh",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "6001",
+					"path": [
+						"api",
+						"token",
+						"refresh"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Revoke Token",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "authority",
+						"value": "localhost:6001"
+					},
+					{
+						"key": "accept",
+						"value": "*/*"
+					},
+					{
+						"key": "sec-fetch-dest",
+						"value": "empty"
+					},
+					{
+						"key": "user-agent",
+						"value": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.149 Safari/537.36"
+					},
+					{
+						"key": "content-type",
+						"value": "application/json"
+					},
+					{
+						"key": "origin",
+						"value": "https://localhost:6001"
+					},
+					{
+						"key": "sec-fetch-site",
+						"value": "same-origin"
+					},
+					{
+						"key": "sec-fetch-mode",
+						"value": "cors"
+					},
+					{
+						"key": "referer",
+						"value": "https://localhost:6001/swagger/index.html"
+					},
+					{
+						"key": "accept-language",
+						"value": "en,en-US;q=0.9"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"token\":\"APwdxIRujdFD5JQBLTgblJ8shzQx/pribQ0lxOXHq0QRzvixInG7pX4QupluXbW7Xw==\"}"
+				},
+				"url": {
+					"raw": "https://localhost:6001/api/token/revoke",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "6001",
+					"path": [
+						"api",
+						"token",
+						"revoke"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"protocolProfileBehavior": {}
+}

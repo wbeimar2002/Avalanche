@@ -10,8 +10,9 @@ namespace Avalanche.Api.Managers.Devices
     public interface IOutputsManager
     {
         Task<List<Output>> GetAllAvailable();
-        Task<State> GetCurrentState(string id, StateTypes commandType);
+        Task<State> GetCurrentState(string id, StateTypes stateType);
         Task SendCommand(Command command);
-        Task<Signal> GetContent(string contentType);
+        Task<Content> GetContent(string contentType);
+        Task<List<State>> GetCurrentStates(string id);
     }
 }

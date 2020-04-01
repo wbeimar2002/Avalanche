@@ -62,20 +62,25 @@ namespace Avalanche.Security.Server
 			var signingConfigurations = new SigningConfigurations(authSettings.SecretKey);
 			services.AddSingleton(signingConfigurations);
 
-			services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-				.AddJwtBearer(jwtBearerOptions =>
+			services.AddAuthentication(options =>
+			{
+				options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+				options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+				options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+			})
+			.AddJwtBearer(jwtBearerOptions =>
+			{
+				jwtBearerOptions.TokenValidationParameters = new TokenValidationParameters()
 				{
-					jwtBearerOptions.TokenValidationParameters = new TokenValidationParameters()
-					{
-						ValidateAudience = true,
-						ValidateLifetime = true,
-						ValidateIssuerSigningKey = true,
-						ValidIssuer = tokenOptions.Issuer,
-						ValidAudience = tokenOptions.Audience,
-						IssuerSigningKey = signingConfigurations.Key,
-						ClockSkew = TimeSpan.Zero
-					};
-				});
+					ValidateAudience = true,
+					ValidateLifetime = true,
+					ValidateIssuerSigningKey = true,
+					ValidIssuer = tokenOptions.Issuer,
+					ValidAudience = tokenOptions.Audience,
+					IssuerSigningKey = signingConfigurations.Key,
+					ClockSkew = TimeSpan.Zero
+				};
+			});
 
 			services.AddAutoMapper(this.GetType().Assembly);
 		}

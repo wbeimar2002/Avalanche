@@ -1,31 +1,21 @@
 {
 	"info": {
-		"_postman_id": "8fd21f07-a928-4f50-8c87-d4a013198872",
-		"name": "Licensing",
+		"_postman_id": "9ffc2a8d-117c-4b05-be38-41a33ee7b94f",
+		"name": "State Server",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"item": [
 		{
-			"name": "Validate Licensing",
+			"name": "Send Broadcast to RabbitMQ",
 			"event": [
 				{
 					"listen": "test",
 					"script": {
-						"id": "2e17061a-8ac8-4cce-ae9b-6ca074028473",
+						"id": "061c0b8d-8a7d-4258-8b67-ae2906367bb1",
 						"exec": [
-							"pm.test(\"Status code is 200\", function () {",
-							"    pm.response.to.have.status(200);",
+							"pm.test(\"Successful POST request\", function () {",
+							"    pm.expect(pm.response.code).to.be.oneOf([201,202]);",
 							"});"
-						],
-						"type": "text/javascript"
-					}
-				},
-				{
-					"listen": "prerequest",
-					"script": {
-						"id": "6fa96dcc-31ec-4023-ae73-38fb251e5d91",
-						"exec": [
-							""
 						],
 						"type": "text/javascript"
 					}
@@ -49,10 +39,6 @@
 						"value": "localhost:5001"
 					},
 					{
-						"key": "content-length",
-						"value": "0"
-					},
-					{
 						"key": "accept",
 						"value": "*/*"
 					},
@@ -61,12 +47,12 @@
 						"value": "empty"
 					},
 					{
-						"key": "authorization",
-						"value": "Bearer ddd"
-					},
-					{
 						"key": "user-agent",
 						"value": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.149 Safari/537.36"
+					},
+					{
+						"key": "content-type",
+						"value": "application/json"
 					},
 					{
 						"key": "origin",
@@ -89,50 +75,36 @@
 						"value": "en,en-US;q=0.9"
 					}
 				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"content\":\"string\",\"eventGroup\":0}"
+				},
 				"url": {
-					"raw": "https://localhost:5001/Licenses/11111",
+					"raw": "https://localhost:5001/Notifications/queue",
 					"protocol": "https",
 					"host": [
 						"localhost"
 					],
 					"port": "5001",
 					"path": [
-						"Licenses",
-						"11111"
+						"Notifications",
+						"queue"
 					]
 				}
 			},
 			"response": []
 		},
 		{
-			"name": "Get All Software Installed",
+			"name": "Send Broadcast Direct to Signal R",
 			"event": [
-				{
-					"listen": "prerequest",
-					"script": {
-						"id": "4803cebb-4711-41f2-931f-e440096df988",
-						"exec": [
-							""
-						],
-						"type": "text/javascript"
-					}
-				},
 				{
 					"listen": "test",
 					"script": {
-						"id": "97fb78b8-f77b-4218-b3a4-e744537b15e4",
+						"id": "489a6436-6979-4cc7-ba56-7bb9a4461408",
 						"exec": [
-							"pm.test(\"Status code is 200\", function () {",
-							"    pm.response.to.have.status(200);",
-							"});",
-							"",
-							"pm.test(\"Is an array\", function () {",
-							"    var jsonData = pm.response.json();",
-							"    pm.expect(jsonData).to.be.an('array');",
-							"});",
-							"",
-							"    ",
-							""
+							"pm.test(\"Successful POST request\", function () {",
+							"    pm.expect(pm.response.code).to.be.oneOf([201,202]);",
+							"});"
 						],
 						"type": "text/javascript"
 					}
@@ -149,7 +121,7 @@
 						}
 					]
 				},
-				"method": "GET",
+				"method": "POST",
 				"header": [
 					{
 						"key": "authority",
@@ -157,7 +129,7 @@
 					},
 					{
 						"key": "accept",
-						"value": "text/plain"
+						"value": "*/*"
 					},
 					{
 						"key": "sec-fetch-dest",
@@ -166,6 +138,14 @@
 					{
 						"key": "user-agent",
 						"value": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.149 Safari/537.36"
+					},
+					{
+						"key": "content-type",
+						"value": "application/json"
+					},
+					{
+						"key": "origin",
+						"value": "https://localhost:5001"
 					},
 					{
 						"key": "sec-fetch-site",
@@ -184,15 +164,20 @@
 						"value": "en,en-US;q=0.9"
 					}
 				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"content\":\"string\",\"eventGroup\":0}"
+				},
 				"url": {
-					"raw": "https://localhost:5001/Licenses",
+					"raw": "https://localhost:5001/Notifications/direct",
 					"protocol": "https",
 					"host": [
 						"localhost"
 					],
 					"port": "5001",
 					"path": [
-						"Licenses"
+						"Notifications",
+						"direct"
 					]
 				}
 			},
@@ -203,7 +188,7 @@
 		{
 			"listen": "prerequest",
 			"script": {
-				"id": "60520b73-58ae-4a6c-9345-48f863b53a84",
+				"id": "5cc30990-13b6-4cbc-85c4-15b1b663498a",
 				"type": "text/javascript",
 				"exec": [
 					"var request = {",
@@ -238,7 +223,7 @@
 		{
 			"listen": "test",
 			"script": {
-				"id": "3a3a6e6b-9635-4bff-819e-c5592f1bc673",
+				"id": "b7b0840f-6144-4c68-9399-d023a73ab0d5",
 				"type": "text/javascript",
 				"exec": [
 					""
