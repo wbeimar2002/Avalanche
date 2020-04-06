@@ -51,6 +51,8 @@ namespace Avalanche.Api.Controllers.V1
                 _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
             }
         }
+
+        [Authorize]
         [Route("check/secure")]
         [HttpGet]
         public IActionResult HealthCheckSecure([FromServices]IWebHostEnvironment env)
