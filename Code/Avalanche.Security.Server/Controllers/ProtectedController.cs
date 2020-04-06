@@ -7,7 +7,6 @@ namespace Avalanche.Security.Server.Controllers
     public class ProtectedController : Controller
     {
         [HttpGet]
-        [Authorize]
         [Route("/api/protectedforcommonusers")]
         public IActionResult GetProtectedData()
         {

@@ -19,8 +19,6 @@ namespace Avalanche.Api.Controllers.V1
 {
     [Route("[controller]")]
     [ApiController]
-    [Authorize]
-    [EnableCors]
     public class MetadataController : ControllerBase
     {
         readonly ILogger _appLoggerService;
@@ -53,7 +51,6 @@ namespace Avalanche.Api.Controllers.V1
             }
         }
 
-        [EnableCors]
         [HttpGet("genders")]
         [Produces(typeof(List<KeyValuePairViewModel>))]
         public async Task<IActionResult> GetGenders([FromServices]IWebHostEnvironment env)
@@ -75,7 +72,6 @@ namespace Avalanche.Api.Controllers.V1
             }
         }
 
-        [EnableCors]
         [HttpGet("proceduretypes")]
         [Produces(typeof(List<KeyValuePairViewModel>))]
         public async Task<IActionResult> GetProcedureTypes([FromServices]IWebHostEnvironment env)

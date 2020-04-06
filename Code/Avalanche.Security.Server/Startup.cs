@@ -83,10 +83,25 @@ namespace Avalanche.Security.Server
 			});
 
 			services.AddAutoMapper(this.GetType().Assembly);
+
+			services.AddCors(options =>
+			{
+				options.AddDefaultPolicy(
+				builder =>
+				{
+					builder.WithOrigins("https://localhost:4200",
+										"https://localhost")
+					.AllowAnyHeader()
+					.AllowAnyMethod()
+					.AllowCredentials();
+
+				});
+			});
 		}
 
 		public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
 		{
+			app.UseCors();
 			app.UseDeveloperExceptionPage();
 
 			app.UseRouting();
