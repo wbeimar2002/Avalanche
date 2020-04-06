@@ -145,7 +145,7 @@ namespace Avalanche.Api
                 //configSettings.IpAddress)
                 //.AllowAnyOrigin()
                 .SetIsOriginAllowed(s => true)
-                    .WithMethods("POST", "GET", "PUT", "PATCH", "DELETE", "OPTIONS")
+                    .AllowAnyMethod()
                     .AllowAnyHeader()
                     .AllowCredentials()
                     ;

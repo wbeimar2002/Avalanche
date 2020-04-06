@@ -20,6 +20,8 @@ namespace Avalanche.Api.Controllers.V1
 {
     [Route("[controller]")]
     [ApiController]
+    [Authorize]
+    
     public class OutputsController : ControllerBase
     {
         readonly ILogger _appLoggerService;
