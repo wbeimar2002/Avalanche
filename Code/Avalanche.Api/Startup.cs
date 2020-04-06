@@ -141,18 +141,21 @@ namespace Avalanche.Api
             services.AddCors(o => o.AddDefaultPolicy(builder =>
             {
                 builder
-                    .WithOrigins("http://localhost:4200") //Dev Mode
-                        //configSettings.IpAddress)
-                    //.AllowAnyOrigin()
+                //.WithOrigins("https://localhost:4200") //Dev Mode
+                //configSettings.IpAddress)
+                //.AllowAnyOrigin()
+                .SetIsOriginAllowed(s => true)
                     .AllowAnyMethod()
                     .AllowAnyHeader()
-                    .AllowCredentials();
+                    .AllowCredentials()
+                    ;
             }));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            app.UseCors();
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -168,7 +171,6 @@ namespace Avalanche.Api
             app.UseAuthentication();
             app.UseAuthorization();
 
-            app.UseCors();
             app.UseFileServer();
             
             app.UseEndpoints(endpoints =>

@@ -23,8 +23,7 @@ namespace Avalanche.Api.Controllers.V1
     [Route("[controller]")]
     [ApiController]
     [Authorize]
-    [EnableCors]
-    public class NotificationsController : ControllerBase
+        public class NotificationsController : ControllerBase
     {
         readonly ILogger _appLoggerService;
         readonly IRabbitMqClientService _rabbitMqClientService;
