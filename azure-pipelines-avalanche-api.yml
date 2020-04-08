@@ -43,10 +43,10 @@ stages:
         packageType: runtime
      
      - task: DotNetCoreCLI@2
-       displayName: 'Restore Avalanche.Api'
+       displayName: 'Restore Avalanche.Host.Service.csproj'
        inputs:
         command: restore
-        projects: '**/Code/Avalanche.Api/Avalanche.Api.csproj'
+        projects: '**/Code/Avalanche.Host.Service/Avalanche.Host.Service.csproj'
         nugetConfigPath: NuGet.config
         #restoreArguments: -nowarn:msb3202,nu1503
         arguments: -nowarn:msb3202,nu1503
