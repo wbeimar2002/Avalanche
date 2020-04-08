@@ -57,13 +57,13 @@ stages:
           SonarQube: 'sonarqube'
           scannerMode: 'CLI'
           configMode: 'manual'
-          cliProjectKey: 'avalanache-api'
-          cliProjectName: 'avalanache-api'
+          cliProjectKey: 'Avalanche.Host.Service'
+          cliProjectName: 'Avalanche.Host.Service'
           cliSources: '.'
      - task: DotNetCoreCLI@2
-       displayName: 'Build Avalanche.Api'
+       displayName: 'Build Avalanche.Host.Service'
        inputs:
-        projects: '**/Code/Avalanche.Api/Avalanche.Api.csproj'
+        projects: '**/Code/Avalanche.Host.Service/Avalanche.Host.Service.csproj'
         arguments: '--configuration $(BuildConfiguration)'
 
      - task: DotNetCoreCLI@2
@@ -72,6 +72,14 @@ stages:
         command: test
         projects: '**/Code/Avalanche.Api.Tests/Avalanche.Api.Tests.csproj'
         arguments: '--configuration $(buildConfiguration)'
+
+     - task: DotNetCoreCLI@2
+       displayName: 'Test Avalanche.Security.Server'
+       inputs:
+        command: test
+        projects: '**/Code/Avalanche.Security.Server.Tests/Avalanche.Security.Server.Tests.csproj'
+        arguments: '--configuration $(buildConfiguration)' 
+
      - task: SonarQubeAnalyze@4
     
      - task: SonarQubePublish@4
