@@ -48,11 +48,12 @@ stages:
           projectKey: 'avalanche-api'
           projectName: 'avalanche-api'
 
-     - task: VSBuild@1
-       displayName: 'Build solution Avalanche.Api.sln'
+     - task: DotNetCoreCLI@2
+       displayName: 'dotnet build'
        inputs:
-        solution: Code/Avalanche.Api.sln
-        msbuildArgs: '/p:configuration=Avalanche-Api-Sonar'
+        projects: Code/Avalanche.Api.sln
+        arguments: '--configuration=Avalanche-Api-Sonar'
+
      - task: VSTest@2
        displayName: 'VsTest - testAssemblies'
        inputs:
@@ -71,7 +72,7 @@ stages:
         workingDirectory: Code/Avalanche.Api.Tests
     
      - task: CopyFiles@2
-       displayName: 'Copy Files to: $(Agent.BuildDirectory)\TestResults copy'
+       displayName: 'Copy Files to: $(Agent.BuildDirectory)\TestResults'
        inputs:
           SourceFolder: '$(Agent.TempDirectory)'
           Contents: '*.trx'
