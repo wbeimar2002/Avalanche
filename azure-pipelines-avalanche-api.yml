@@ -54,15 +54,21 @@ stages:
         projects: Code/Avalanche.Api.sln
         arguments: '--configuration=Avalanche-Api-Sonar'
 
-     - task: VSTest@2
-       displayName: 'VsTest - testAssemblies'
+     
+     - task: DotNetCoreCLI@2
+       displayName: 'dotnet test'
        inputs:
-        codeCoverageEnabled: true
+        command: test
+        projects: Code/Avalanche.Api.Tests/Avalanche.Api.Tests.csproj
+        testRunTitle: TestResults
+        workingDirectory: Code/Avalanche.Api.Tests
      - task: CopyFiles@2
        displayName: 'Copy Files to: $(Agent.BuildDirectory)\TestResults'
        inputs:
-        SourceFolder: '$(Agent.TempDirectory)\TestResults'
+        SourceFolder: '$(Agent.TempDirectory)'
+        Contents: '*.trx'
         TargetFolder: '$(Agent.BuildDirectory)\TestResults'
+
      - task: DotNetCoreCLI@2
        displayName: 'dotnet test'
        inputs:
