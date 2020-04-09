@@ -69,7 +69,18 @@ stages:
         testRunTitle: TestResults
         #workingDirectory: Code/Avalanche.Security.Server
         configuration: Avalanche-Security-Server-Sonar
-
+     - task: CopyFiles@2
+       displayName: 'Copy Files to: $(Agent.BuildDirectory)\TestResults'
+       inputs:
+        SourceFolder: '$(Agent.TempDirectory)'
+        Contents: '*.trx'
+        TargetFolder: '$(Agent.BuildDirectory)\TestResults'
+     - task: SonarQubeAnalyze@4
+    
+     - task: SonarQubePublish@4
+       inputs:
+        pollingTimeoutSec: '300'
+            
      - task: DotNetCoreCLI@2
        displayName: 'Publish Avalanche.Security.Server'
        inputs:
