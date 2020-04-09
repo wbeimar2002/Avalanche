@@ -65,10 +65,11 @@ stages:
        displayName: 'dotnet test'
        inputs:
         command: test
-        projects: Code/Avalanche.Api.sln
+        projects: Code/Avalanche.Security.Server.Tests/Avalanche.Security.Server.Tests.csproj
         testRunTitle: TestResults
         #workingDirectory: Code/Avalanche.Security.Server
-        configuration: Avalanche-Security-Server-Sonar
+        #configuration: Avalanche-Security-Server-Sonar
+        arguments: –collect:”Code Coverage” 
      - task: CopyFiles@2
        displayName: 'Copy Files to: $(Agent.BuildDirectory)\TestResults'
        inputs:
@@ -80,7 +81,7 @@ stages:
      - task: SonarQubePublish@4
        inputs:
         pollingTimeoutSec: '300'
-            
+
      - task: DotNetCoreCLI@2
        displayName: 'Publish Avalanche.Security.Server'
        inputs:
