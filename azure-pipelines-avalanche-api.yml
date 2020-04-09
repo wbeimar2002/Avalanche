@@ -41,37 +41,48 @@ stages:
        inputs:
         version: '2.2.x'
         packageType: runtime
-     
-     - task: DotNetCoreCLI@2
-       displayName: 'Restore Avalanche.Api'
+     - task: SonarSource.sonarqube.15B84CA1-B62F-4A2A-A403-89B77A063157.SonarQubePrepare@4
+       displayName: 'Prepare analysis on SonarQube copy'
        inputs:
-        command: restore
-        projects: '**/Code/Avalanche.Api/Avalanche.Api.csproj'
-        nugetConfigPath: NuGet.config
-        #restoreArguments: -nowarn:msb3202,nu1503
-        arguments: -nowarn:msb3202,nu1503
-        vstsFeed: 'd61e3552-9162-4b94-9184-b843c159ef58'
-      
-     - task: SonarQubePrepare@4
-       inputs:
-          SonarQube: 'sonarqube'
-          scannerMode: 'CLI'
-          configMode: 'manual'
-          cliProjectKey: 'avalanache-api'
-          cliProjectName: 'avalanache-api'
-          cliSources: '.'
-     - task: DotNetCoreCLI@2
-       displayName: 'Build Avalanche.Api'
-       inputs:
-        projects: '**/Code/Avalanche.Api/Avalanche.Api.csproj'
-        arguments: '--configuration $(BuildConfiguration)'
+          SonarQube: sonarqube
+          projectKey: 'avalanche-api'
+          projectName: 'avalanche-api'
 
      - task: DotNetCoreCLI@2
-       displayName: 'Test Avalanche.Api.Tests'
+       displayName: 'dotnet build'
+       inputs:
+        projects: Code/Avalanche.Api.sln
+        arguments: '--configuration=Avalanche-Api-Sonar'
+
+     
+     - task: DotNetCoreCLI@2
+       displayName: 'dotnet test'
        inputs:
         command: test
-        projects: '**/Code/Avalanche.Api.Tests/Avalanche.Api.Tests.csproj'
-        arguments: '--configuration $(buildConfiguration)'
+        projects: Code/Avalanche.Api.Tests/Avalanche.Api.Tests.csproj
+        testRunTitle: TestResults
+        workingDirectory: Code/Avalanche.Api.Tests
+     - task: CopyFiles@2
+       displayName: 'Copy Files to: $(Agent.BuildDirectory)\TestResults'
+       inputs:
+        SourceFolder: '$(Agent.TempDirectory)'
+        Contents: '*.trx'
+        TargetFolder: '$(Agent.BuildDirectory)\TestResults'
+
+     - task: DotNetCoreCLI@2
+       displayName: 'dotnet test'
+       inputs:
+        command: test
+        projects: Code/Avalanche.Api.Tests/Avalanche.Api.Tests.csproj
+        testRunTitle: TestResults
+        workingDirectory: Code/Avalanche.Api.Tests
+    
+     - task: CopyFiles@2
+       displayName: 'Copy Files to: $(Agent.BuildDirectory)\TestResults'
+       inputs:
+          SourceFolder: '$(Agent.TempDirectory)'
+          Contents: '*.trx'
+          TargetFolder: '$(Agent.BuildDirectory)\TestResults'
      - task: SonarQubeAnalyze@4
     
      - task: SonarQubePublish@4
