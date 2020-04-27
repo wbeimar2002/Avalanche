@@ -15,9 +15,9 @@ namespace Avalanche.Api.Services.Media
     {
         public async Task<CommandResponse> Play(string sessionId, string streamId, string message)
         {
-            var endpoint = "localhost:7001";
+            var endpoint = "10.0.75.1:7001";
             var token = "Bearer SampleToken";
-            var certificatePath = @"C:\Olympus\certificates\serverl5.crt";
+            //var certificatePath = @"/certificates/serverl5.crt";
 
             List<Interceptor> interceptors = new List<Interceptor>();
             List<Func<Metadata, Metadata>> functionInterceptors = new List<Func<Metadata, Metadata>>();
@@ -25,15 +25,14 @@ namespace Avalanche.Api.Services.Media
             //var client = ClientHelper.GetSecureClient<WebRtcStreamer.WebRtcStreamerClient>(endpoint, certificatePath, token, interceptors, functionInterceptors);
             var client = ClientHelper.GetInsecureClient<WebRtcStreamer.WebRtcStreamerClient>(endpoint, token, interceptors, functionInterceptors);
 
-            var certificate = new X509Certificate2(certificatePath);
+            //var certificate = new X509Certificate2(certificatePath);
 
-            Metadata metadata = new Metadata();
-            metadata.Add(new Metadata.Entry("CertificateThumbprint", certificate.Thumbprint));
-            metadata.Add(new Metadata.Entry("CertificateSubjectName", certificate.SubjectName.Name));
+            //Metadata metadata = new Metadata();
+            //metadata.Add(new Metadata.Entry("CertificateThumbprint", certificate.Thumbprint));
+            //metadata.Add(new Metadata.Entry("CertificateSubjectName", certificate.SubjectName.Name));
             
-            //int val = 10;
-            //var pingResponse = client.Ping(new PingRequest { Value = val });
-            //Console.WriteLine($"Response: {pingResponse.Value}");
+            int val = 10;
+            var pingResponse = client.Ping(new PingRequest { Value = val });
 
             //var privacy = client.GetPrivacy(new GetPrivacyRequest { StreamId = streamId });
 
@@ -61,7 +60,7 @@ namespace Avalanche.Api.Services.Media
                     Type = string.Empty,
                     Message = message
                 }
-            }, metadata);
+            });
 
             var response = new CommandResponse()
             {
