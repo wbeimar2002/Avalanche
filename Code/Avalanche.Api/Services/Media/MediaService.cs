@@ -22,7 +22,8 @@ namespace Avalanche.Api.Services.Media
             List<Interceptor> interceptors = new List<Interceptor>();
             List<Func<Metadata, Metadata>> functionInterceptors = new List<Func<Metadata, Metadata>>();
 
-            var client = ClientHelper.GetSecureClient<WebRtcStreamer.WebRtcStreamerClient>(endpoint, certificatePath, token, interceptors, functionInterceptors);
+            //var client = ClientHelper.GetSecureClient<WebRtcStreamer.WebRtcStreamerClient>(endpoint, certificatePath, token, interceptors, functionInterceptors);
+            var client = ClientHelper.GetInsecureClient<WebRtcStreamer.WebRtcStreamerClient>(endpoint, token, interceptors, functionInterceptors);
 
             var certificate = new X509Certificate2(certificatePath);
 
