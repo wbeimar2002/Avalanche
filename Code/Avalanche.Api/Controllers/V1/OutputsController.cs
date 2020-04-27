@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Avalanche.Api.Managers.Devices;
+using Avalanche.Api.ViewModels;
 using Avalanche.Shared.Domain.Enumerations;
 using Avalanche.Shared.Domain.Models;
 using Avalanche.Shared.Infrastructure.Enumerations;
@@ -26,10 +27,12 @@ namespace Avalanche.Api.Controllers.V1
     {
         readonly ILogger _appLoggerService;
         readonly IOutputsManager _outputsManager;
+        readonly IMediaManager _mediaManager;
 
-        public OutputsController(IOutputsManager outputsManager, ILogger<OutputsController> logger)
+        public OutputsController(IOutputsManager outputsManager, IMediaManager mediaManager, ILogger<OutputsController> logger)
         {
             _appLoggerService = logger;
+            _mediaManager = mediaManager;
             _outputsManager = outputsManager;
         }
 
@@ -133,13 +136,13 @@ namespace Avalanche.Api.Controllers.V1
         /// Send a command to the output
         /// </summary>
         [HttpPut("commands")]
-        public async Task<IActionResult> SendCommand([FromBody]Command command, [FromServices]IWebHostEnvironment env)
+        public async Task<IActionResult> SendCommand([FromBody]CommandViewModel command, [FromServices]IWebHostEnvironment env)
         {
             try
             {
                 _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
-                await _outputsManager.SendCommand(command);
-                return Ok();
+                var response = await _mediaManager.SendCommand(command);
+                return Ok(response);
             }
             catch (Exception exception)
             {

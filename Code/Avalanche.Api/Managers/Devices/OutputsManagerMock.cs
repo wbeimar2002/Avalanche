@@ -147,10 +147,5 @@ namespace Avalanche.Api.Managers.Devices
 
             return Task.FromResult(states);
         }
-
-        public Task SendCommand(Command command)
-        {
-            return Task.CompletedTask;
-        }
     }
 }

@@ -27,7 +27,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Protobuf Include="Protos\authorizationservice.proto" />
+    <Compile Remove="Protos\WebRtcServiceExtensions.cs" />
   </ItemGroup>
 
   <ItemGroup>
@@ -40,6 +40,7 @@
     </PackageReference>
     <PackageReference Include="Ism.Broadcaster" Version="1.0.0-prerelease2" />
     <PackageReference Include="Ism.RabbitMq.Client" Version="1.0.0-prerelease1" />
+    <PackageReference Include="Ism.Security.Grpc" Version="1.0.0-prerelease3" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="3.1.2" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Cors" Version="2.2.0" />
     <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="3.1.2" />
@@ -58,5 +59,8 @@
     <ProjectReference Include="..\Avalanche.Shared.Infrastructure\Avalanche.Shared.Infrastructure.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Protobuf Include="Protos\WebRtcStreamer.proto" />
+  </ItemGroup>
 
 </Project>

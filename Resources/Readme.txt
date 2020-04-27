@@ -9,6 +9,17 @@ newman run Security.postman_collection.json -e environment.json --insecure
 newman run Setup.postman_collection.json -e environment.json --insecure
 newman run StateServer.postman_collection.json -e environment.json --insecure
 
+
+
+
+
+
+
+
+
+
+
+
 To run a collection for load testing
 Reference: https://blog.loadimpact.com/load-testing-with-postman-collections
 

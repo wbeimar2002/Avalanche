@@ -32,6 +32,7 @@ using Ism.RabbitMq.Client.Models;
 using Microsoft.Extensions.Options;
 using Microsoft.AspNetCore.SignalR;
 using Avalanche.Api.Managers.Devices;
+using Avalanche.Api.Services.Media;
 
 namespace Avalanche.Api
 {
@@ -64,7 +65,9 @@ namespace Avalanche.Api
             services.AddSingleton<IMetadataManager, MetadataManagerMock>();
             services.AddSingleton<ILicensingManager, LicensingManagerMock>();
             services.AddSingleton<IOutputsManager, OutputsManagerMock>();
-
+            services.AddSingleton<IMediaService, MediaService>();
+            services.AddSingleton<IMediaManager, MediaManager>();
+            
             services.AddSingleton<IBroadcastService, BroadcastService>();
 
             var hostName = configurationService.GetValue<string>("RabbitMqOptions:HostName");
