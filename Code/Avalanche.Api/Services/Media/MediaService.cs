@@ -1,4 +1,5 @@
-﻿using Avalanche.Shared.Domain.Models;
+﻿using Avalanche.Api.ViewModels;
+using Avalanche.Shared.Domain.Models;
 using Grpc.Core;
 using Grpc.Core.Interceptors;
 using Ism.Security.Grpc.Helpers;
@@ -13,7 +14,7 @@ namespace Avalanche.Api.Services.Media
 {
     public class MediaService : IMediaService
     {
-        public async Task<CommandResponse> Play(string sessionId, string streamId, string message)
+        public async Task<CommandResponseViewModel> Play(string sessionId, string streamId, string message, string type)
         {
             var endpoint = "10.0.75.1:7001";
             var token = "Bearer SampleToken";
@@ -57,12 +58,12 @@ namespace Avalanche.Api.Services.Media
                 {
                     Aor = "AOR",
                     BypassMaxStreamRestrictions = true,
-                    Type = string.Empty,
+                    Type = type,
                     Message = message
                 }
             });
 
-            var response = new CommandResponse()
+            var response = new CommandResponseViewModel()
             {
                 OutputId = streamId,
                 Messages = new List<string>()

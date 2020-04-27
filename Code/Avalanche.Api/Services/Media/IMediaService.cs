@@ -9,6 +9,6 @@ namespace Avalanche.Api.Services.Media
 {
     public interface IMediaService
     {
-        Task<CommandResponse> Play(string sessionId, string streamId, string message);
+        Task<CommandResponseViewModel> Play(string sessionId, string streamId, string message, string type);
     }
 }

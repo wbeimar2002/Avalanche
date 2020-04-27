@@ -9,6 +9,6 @@ namespace Avalanche.Api.Managers.Devices
 {
     public interface IMediaManager
     {
-        Task<List<CommandResponse>> SendCommand(CommandViewModel command);
+        Task<List<CommandResponseViewModel>> SendCommand(CommandViewModel command);
     }
 }

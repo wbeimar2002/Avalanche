@@ -137,7 +137,7 @@ namespace Avalanche.Api.Controllers.V1
         /// Send a command to the output
         /// </summary>
         [HttpPut("commands")]
-        [Produces(typeof(List<CommandResponse>))]
+        [Produces(typeof(List<CommandResponseViewModel>))]
         public async Task<IActionResult> SendCommand([FromBody]CommandViewModel command, [FromServices]IWebHostEnvironment env)
         {
             try

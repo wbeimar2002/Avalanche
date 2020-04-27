@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Avalanche.Shared.Domain.Models
+namespace Avalanche.Api.ViewModels
 {
-    public class CommandResponse
+    public class CommandResponseViewModel
     {
         public string OutputId { get; set; }
         public List<string> Messages { get; set; }
