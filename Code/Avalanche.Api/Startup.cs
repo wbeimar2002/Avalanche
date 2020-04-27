@@ -141,16 +141,20 @@ namespace Avalanche.Api
 
             // Add Cors
             // https://docs.microsoft.com/en-us/aspnet/core/security/cors?view=aspnetcore-3.1
-            services.AddCors(o => o.AddDefaultPolicy(builder =>
+            services.AddCors(options =>
             {
-                builder
-                    .WithOrigins("http://localhost:4200") //Dev Mode
-                        //configSettings.IpAddress)
-                    //.AllowAnyOrigin()
-                    .AllowAnyMethod()
-                    .AllowAnyHeader()
-                    .AllowCredentials();
-            }));
+                options.AddPolicy("CorsApiPolicy",
+                builder =>
+                {
+                    builder
+                        .WithOrigins("http://localhost:4200")
+                        .WithHeaders(new[] { "authorization", "content-type", "accept" })
+                        .WithMethods(new[] { "GET", "POST", "PUT", "DELETE", "OPTIONS" })
+                        //.AllowAnyOrigin()
+                        //.AllowAnyMethod()
+                        .AllowCredentials();
+                });
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -171,7 +175,7 @@ namespace Avalanche.Api
             app.UseAuthentication();
             app.UseAuthorization();
 
-            app.UseCors();
+            app.UseCors("CorsApiPolicy");
             app.UseFileServer();
             
             app.UseEndpoints(endpoints =>
