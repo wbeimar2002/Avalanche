@@ -20,14 +20,26 @@ namespace Avalanche.Api.Managers.Devices
         public async Task<List<CommandResponseViewModel>> SendCommand(CommandViewModel command)
         {
             List<CommandResponseViewModel> responses = new List<CommandResponseViewModel>();
-
-            foreach (var item in command.Outputs)
+            switch (command.CommandType)
             {
-                var response = await _mediaService.Play(command.SessionId, item.Id, command.Message, command.Type);
-                responses.Add(response);
+                case Shared.Domain.Enumerations.CommandTypes.Play:
+                    foreach (var item in command.Outputs)
+                    {
+                        var response = await _mediaService.Play(command.SessionId, item.Id, command.Message, command.Type);
+                        responses.Add(response);
+                    }
+                    return responses;
+                case Shared.Domain.Enumerations.CommandTypes.HandleMessage:
+                    
+                    foreach (var item in command.Outputs)
+                    {
+                        var handleMessageResponse = await _mediaService.HandleMesssage(command.SessionId, item.Id, command.Message, command.Type);
+                        responses.Add(handleMessageResponse);
+                    }
+                    return responses;
+                default:
+                    return new List<CommandResponseViewModel>();
             }
-
-            return responses;
         }
     }
 }

@@ -11,5 +11,6 @@ namespace Avalanche.Shared.Domain.Enumerations
         Mute,
         GetVolumeUp,
         GetVolumeDown,
+        HandleMessage,
     }
 }

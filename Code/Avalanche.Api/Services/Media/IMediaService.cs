@@ -10,5 +10,6 @@ namespace Avalanche.Api.Services.Media
     public interface IMediaService
     {
         Task<CommandResponseViewModel> Play(string sessionId, string streamId, string message, string type);
+        Task<CommandResponseViewModel> HandleMesssage(string sessionId, string streamId, string type, string message);
     }
 }

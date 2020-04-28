@@ -4,6 +4,8 @@ using Grpc.Core;
 using Grpc.Core.Interceptors;
 using Ism.Security.Grpc.Helpers;
 using Ism.Streaming.Common.Core;
+using Microsoft.AspNetCore.Mvc.Formatters;
+using Microsoft.VisualStudio.Web.CodeGeneration.Contracts.Messaging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,6 +16,38 @@ namespace Avalanche.Api.Services.Media
 {
     public class MediaService : IMediaService
     {
+        public async Task<CommandResponseViewModel> HandleMesssage(string sessionId, string streamId, string type, string message)
+        {
+            var endpoint = "10.0.75.1:7001";
+            var token = "Bearer SampleToken";
+            //var certificatePath = @"/certificates/serverl5.crt";
+
+            List<Interceptor> interceptors = new List<Interceptor>();
+            List<Func<Metadata, Metadata>> functionInterceptors = new List<Func<Metadata, Metadata>>();
+
+            //var client = ClientHelper.GetSecureClient<WebRtcStreamer.WebRtcStreamerClient>(endpoint, certificatePath, token, interceptors, functionInterceptors);
+            var client = ClientHelper.GetInsecureClient<WebRtcStreamer.WebRtcStreamerClient>(endpoint, token, interceptors, functionInterceptors);
+
+            var actionResponse = await client.HandleMessageAsync(new HandleMessageRequest()
+            {
+                SessionId = sessionId,
+                Offer = new WebRtcInfoMessage()
+                { 
+                    //Aor = "?",
+                    //BypassMaxStreamRestrictions = true, //?
+                    Message = message,
+                    Type = type,
+                }
+            });
+
+            return new CommandResponseViewModel()
+            {
+                SessionId = sessionId,
+                OutputId = streamId,
+                ResponseCode = (int)actionResponse.ResponseCode
+            }; 
+        }
+
         public async Task<CommandResponseViewModel> Play(string sessionId, string streamId, string message, string type)
         {
             var endpoint = "10.0.75.1:7001";
@@ -65,7 +99,9 @@ namespace Avalanche.Api.Services.Media
 
             var response = new CommandResponseViewModel()
             {
+                SessionId = sessionId,
                 OutputId = streamId,
+                ResponseCode = (int)actionResponse.ResponseCode,
                 Messages = new List<string>()
             };
 

@@ -8,5 +8,7 @@ namespace Avalanche.Api.ViewModels
     {
         public string OutputId { get; set; }
         public List<string> Messages { get; set; }
+        public string SessionId { get; internal set; }
+        public int ResponseCode { get; internal set; }
     }
 }
