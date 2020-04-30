@@ -48,12 +48,12 @@ stages:
         command: restore
         projects: '**/Code/Avalanche.Security.Server/Avalanche.Security.Server.csproj'
         vstsFeed: 'd61e3552-9162-4b94-9184-b843c159ef58'
-     - task: SonarSource.sonarqube.15B84CA1-B62F-4A2A-A403-89B77A063157.SonarQubePrepare@4
-       displayName: 'Prepare analysis on SonarQube'
-       inputs:
-          SonarQube: sonarqube
-          projectKey: 'avalanche-security-server'
-          projectName: 'avalanche-security-server'
+     #- task: SonarSource.sonarqube.15B84CA1-B62F-4A2A-A403-89B77A063157.SonarQubePrepare@4
+       #displayName: 'Prepare analysis on SonarQube'
+       #inputs:
+          #SonarQube: sonarqube
+          #projectKey: 'avalanche-security-server'
+          #projectName: 'avalanche-security-server'
 
      - task: DotNetCoreCLI@2
        displayName: 'dotnet build'
@@ -76,11 +76,11 @@ stages:
         SourceFolder: '$(Agent.TempDirectory)'
         Contents: '*.trx'
         TargetFolder: '$(Agent.BuildDirectory)\TestResults'
-     - task: SonarQubeAnalyze@4
+    # task: SonarQubeAnalyze@4
     
-     - task: SonarQubePublish@4
-       inputs:
-        pollingTimeoutSec: '300'
+    # - task: SonarQubePublish@4
+       #inputs:
+        #pollingTimeoutSec: '300'
 
      - task: DotNetCoreCLI@2
        displayName: 'Publish Avalanche.Security.Server'
@@ -158,15 +158,20 @@ stages:
           azureSubscription: $(azuresubscription)
           scriptPath: 'devops/resources/add-acr-firewall-ip.sh'
           arguments: '$(azuresubscription) $(acrname) $(ip)'
-          
        - task: Docker@1
          displayName: 'Run a Docker command -Push'
          inputs:
-          azureSubscriptionEndpoint: $(azuresubscription)
-          azureContainerRegistry: '$(acrname).azurecr.io'
-         
+          azureSubscriptionEndpoint: '7770e554-30b1-4187-b512-c68b0f1617b7'
+          azureContainerRegistry: 'acrdevavalancheglobal.azurecr.io'
           command: 'Push an image'
-          imageName: '$(acrname).azurecr.io/$(ImageNameLowercase):$(Build.BuildNumber)'
+          imageName: 'acrdevavalancheglobal.azurecr.io/avalanche-security-server:$(Build.BuildNumber)'   
+       #- task: Docker@1
+         #displayName: 'Run a Docker command -Push'
+        # inputs:
+          #azureSubscriptionEndpoint: $(azuresubscription)
+          #azureContainerRegistry: '$(acrname).azurecr.io'
+          #command: 'Push an image'
+          #imageName: '$(acrname).azurecr.io/$(ImageNameLowercase):$(Build.BuildNumber)'
           
        - task: AzureCLI@1
          displayName: 'Delete build server external ip from acr firewall'
