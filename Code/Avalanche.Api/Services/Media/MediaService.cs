@@ -1,106 +1,92 @@
-﻿using Avalanche.Api.ViewModels;
-using Avalanche.Shared.Domain.Models;
-using Grpc.Core;
-using Grpc.Core.Interceptors;
+﻿using Avalanche.Shared.Domain.Models;
 using Ism.Security.Grpc.Helpers;
 using Ism.Streaming.Common.Core;
-using Microsoft.AspNetCore.Mvc.Formatters;
-using Microsoft.VisualStudio.Web.CodeGeneration.Contracts.Messaging;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
-using System.Security.Cryptography.X509Certificates;
+using System.Net;
 using System.Threading.Tasks;
 
 namespace Avalanche.Api.Services.Media
 {
     public class MediaService : IMediaService
     {
-        public async Task<CommandResponseViewModel> HandleMesssage(string sessionId, string streamId, string type, string message)
+        private static void GetClient(out string hostIpAddress, out WebRtcStreamer.WebRtcStreamerClient client)
         {
-            var endpoint = "10.0.75.1:7001";
-            var token = "Bearer SampleToken";
-            //var certificatePath = @"/certificates/serverl5.crt";
+            hostIpAddress = Environment.GetEnvironmentVariable("hostIpAddress");
 
-            List<Interceptor> interceptors = new List<Interceptor>();
-            List<Func<Metadata, Metadata>> functionInterceptors = new List<Func<Metadata, Metadata>>();
+            var WebRTCGrpcPort = Environment.GetEnvironmentVariable("WebRTCGrpcPort");
+            var grpcCertificate = Environment.GetEnvironmentVariable("grpcCertificate");
+            var grpcPassword = Environment.GetEnvironmentVariable("grpcPassword");
 
-            //var client = ClientHelper.GetSecureClient<WebRtcStreamer.WebRtcStreamerClient>(endpoint, certificatePath, token, interceptors, functionInterceptors);
-            var client = ClientHelper.GetInsecureClient<WebRtcStreamer.WebRtcStreamerClient>(endpoint, token, interceptors, functionInterceptors);
+            var certificate = new System.Security.Cryptography.X509Certificates.X509Certificate2(grpcCertificate, grpcPassword);
+
+            client = ClientHelper.GetSecureClient<WebRtcStreamer.WebRtcStreamerClient>($"https://{hostIpAddress}:{WebRTCGrpcPort}", certificate);
+        }
+
+        public async Task<CommandResponse> HandleMesssage(Command command)
+        {
+            string hostIpAddress;
+            WebRtcStreamer.WebRtcStreamerClient client;
+
+            GetClient(out hostIpAddress, out client);
 
             var actionResponse = await client.HandleMessageAsync(new HandleMessageRequest()
             {
-                SessionId = sessionId,
+                SessionId = command.SessionId,
                 Offer = new WebRtcInfoMessage()
                 { 
-                    //Aor = "?",
-                    //BypassMaxStreamRestrictions = true, //?
-                    Message = message,
-                    Type = type,
+                    Message = command.Message,
+                    Type = command.Type,
                 }
             });
 
-            return new CommandResponseViewModel()
+            return new CommandResponse()
             {
-                SessionId = sessionId,
-                OutputId = streamId,
+                SessionId = command.SessionId,
+                OutputId = command.StreamId,
                 ResponseCode = (int)actionResponse.ResponseCode
             }; 
         }
 
-        public async Task<CommandResponseViewModel> Play(string sessionId, string streamId, string message, string type)
+        public async Task<CommandResponse> Play(Command command)
         {
-            var endpoint = "10.0.75.1:7001";
-            var token = "Bearer SampleToken";
-            //var certificatePath = @"/certificates/serverl5.crt";
+            string hostIpAddress;
+            WebRtcStreamer.WebRtcStreamerClient client;
 
-            List<Interceptor> interceptors = new List<Interceptor>();
-            List<Func<Metadata, Metadata>> functionInterceptors = new List<Func<Metadata, Metadata>>();
+            GetClient(out hostIpAddress, out client);
 
-            //var client = ClientHelper.GetSecureClient<WebRtcStreamer.WebRtcStreamerClient>(endpoint, certificatePath, token, interceptors, functionInterceptors);
-            var client = ClientHelper.GetInsecureClient<WebRtcStreamer.WebRtcStreamerClient>(endpoint, token, interceptors, functionInterceptors);
-
-            //var certificate = new X509Certificate2(certificatePath);
-
-            //Metadata metadata = new Metadata();
-            //metadata.Add(new Metadata.Entry("CertificateThumbprint", certificate.Thumbprint));
-            //metadata.Add(new Metadata.Entry("CertificateSubjectName", certificate.SubjectName.Name));
-            
-            int val = 10;
-            var pingResponse = client.Ping(new PingRequest { Value = val });
-
-            //var privacy = client.GetPrivacy(new GetPrivacyRequest { StreamId = streamId });
+            var applicationName = this.GetType().FullName;
 
             var actionResponse = await client.InitSessionAsync(new InitSessionRequest
             {
                 AccessInfo = new AccessInfoMessage
                 {
-                    //TODO: AccessInfo accessInfo = new AccessInfo(Communications.GetFirstLocalAdapterIPv4Address(Communications.DefaultNetworkInterfaceName), Environment.UserName, "StatusBoard", Environment.MachineName, "Initialize webrtc stream");
-                    ApplicationName = "Test",
-                    Details = "Details",
+                    ApplicationName = applicationName,
+                    Details = "Initialize webrtc stream",
                     Id = Guid.NewGuid().ToString(),
-                    Ip = "127.0.0.1",
-
+                    Ip = hostIpAddress,
                     MachineName = Environment.MachineName,
                     UserName = Environment.UserName
                 },
                 Quality = RxStreamQualityEnum.RxStreamQualityHdVideo,
                 RouteToStreamingEncoder = true,
-                StreamId = streamId,
-                SessionId = sessionId,
+                StreamId = command.StreamId,
+                SessionId = command.SessionId,
                 Offer = new WebRtcInfoMessage
                 {
                     Aor = "AOR",
                     BypassMaxStreamRestrictions = true,
-                    Type = type,
-                    Message = message
+                    Type = command.Type,
+                    Message = command.Message
                 }
-            });
+            }); ;
 
-            var response = new CommandResponseViewModel()
+            var response = new CommandResponse()
             {
-                SessionId = sessionId,
-                OutputId = streamId,
+                SessionId = command.SessionId,
+                OutputId = command.StreamId,
                 ResponseCode = (int)actionResponse.ResponseCode,
                 Messages = new List<string>()
             };
@@ -111,6 +97,26 @@ namespace Avalanche.Api.Services.Media
             }
 
             return response;
+        }
+
+        public async Task<CommandResponse> Stop(Command command)
+        {
+            string hostIpAddress;
+            WebRtcStreamer.WebRtcStreamerClient client;
+
+            GetClient(out hostIpAddress, out client);
+
+            var actionResponse = await client.DeInitSessionAsync(new DeInitSessionRequest()
+            {
+                SessionId = command.SessionId,
+            });
+
+            return new CommandResponse()
+            {
+                SessionId = command.SessionId,
+                OutputId = command.StreamId,
+                ResponseCode = (int)WebRtcApiErrorEnum.WebRtcApiErrorSuccess
+            };
         }
     }
 }

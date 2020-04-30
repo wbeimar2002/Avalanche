@@ -38,7 +38,6 @@ namespace Avalanche.Api
 {
     public class Startup
     {
-        
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
@@ -70,6 +69,7 @@ namespace Avalanche.Api
             
             services.AddSingleton<IBroadcastService, BroadcastService>();
 
+            //TOD: Check this. Should be env variables?
             var hostName = configurationService.GetValue<string>("RabbitMqOptions:HostName");
             var port = configurationService.GetValue<int>("RabbitMqOptions:Port");
             var managementPort = configurationService.GetValue<int>("RabbitMqOptions:ManagementPort");

@@ -17,15 +17,37 @@ namespace Avalanche.Api.Managers.Devices
             _mediaService = mediaService;
         }
 
-        public async Task<List<CommandResponseViewModel>> SendCommand(CommandViewModel command)
+        public async Task<List<CommandResponse>> SendCommand(CommandViewModel command)
         {
-            List<CommandResponseViewModel> responses = new List<CommandResponseViewModel>();
+            List<CommandResponse> responses = new List<CommandResponse>();
+            
             switch (command.CommandType)
             {
                 case Shared.Domain.Enumerations.CommandTypes.Play:
                     foreach (var item in command.Outputs)
                     {
-                        var response = await _mediaService.Play(command.SessionId, item.Id, command.Message, command.Type);
+                        var response = await _mediaService.Play(new Command()
+                        {
+                            StreamId = item.Id,
+                            Message = command.Message,
+                            SessionId = command.SessionId,
+                            Type = command.Type
+                        });
+
+                        responses.Add(response);
+                    }
+                    return responses;
+                case Shared.Domain.Enumerations.CommandTypes.Stop:
+                    foreach (var item in command.Outputs)
+                    {
+                        var response = await _mediaService.Stop(new Command()
+                        {
+                            StreamId = item.Id,
+                            Message = command.Message,
+                            SessionId = command.SessionId,
+                            Type = command.Type
+                        });
+
                         responses.Add(response);
                     }
                     return responses;
@@ -33,12 +55,19 @@ namespace Avalanche.Api.Managers.Devices
                     
                     foreach (var item in command.Outputs)
                     {
-                        var handleMessageResponse = await _mediaService.HandleMesssage(command.SessionId, item.Id, command.Message, command.Type);
+                        var handleMessageResponse = await _mediaService.HandleMesssage(new Command()
+                        {
+                            StreamId = item.Id,
+                            Message = command.Message,
+                            SessionId = command.SessionId,
+                            Type = command.Type
+                        });
+
                         responses.Add(handleMessageResponse);
                     }
                     return responses;
                 default:
-                    return new List<CommandResponseViewModel>();
+                    return new List<CommandResponse>();
             }
         }
     }

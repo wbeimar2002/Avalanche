@@ -42,6 +42,12 @@ services:
       volume:
         nocopy: true
     - type: bind
+      source: C:\Olympus\certificates
+      target: /certificates
+      read_only: true
+      volume:
+        nocopy: true
+    - type: bind
       source: C:\Olympus\apps\config\AvalancheApi
       target: /config
       read_only: false
@@ -51,6 +57,10 @@ services:
       app_net:
         ipv4_address: 192.168.1.60
     environment:
+      hostIpAddress: '10.0.75.1'
+      WebRTCGrpcPort: '8001'
+      grpcCertificate: '/certificates/grpc_localhost_root_l1.pfx' 
+      grpcPassword: '0123456789'
       seqUrl: 'http://seq:5341'
       logging:loglevel:default: 'debug'
       loggerFileName: 'avalancheapilogs.txt'
@@ -97,7 +107,6 @@ services:
       app_net:
         ipv4_address: 192.168.1.62
     environment:
-      hostIpAddress: '10.0.75.1:9012'
       seqUrl: 'http://seq:5341'
       logging:loglevel:default: 'debug'
       loggerFileName: 'avalanchesecurityserverlogs.txt'

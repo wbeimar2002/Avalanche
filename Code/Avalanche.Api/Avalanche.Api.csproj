@@ -34,13 +34,14 @@
     <PackageReference Include="AutoFixture" Version="4.11.0" />
     <PackageReference Include="Google.Protobuf" Version="3.11.4" />
     <PackageReference Include="Grpc.Core" Version="2.27.0" />
+    <PackageReference Include="Grpc.Net.Client" Version="2.28.0" />
     <PackageReference Include="Grpc.Tools" Version="2.27.0">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Ism.Broadcaster" Version="1.0.0-prerelease2" />
-    <PackageReference Include="Ism.RabbitMq.Client" Version="1.0.0-prerelease1" />
-    <PackageReference Include="Ism.Security.Grpc" Version="1.0.0-prerelease3" />
+    <PackageReference Include="Ism.Broadcaster" Version="1.0.0-prerelease3" />
+    <PackageReference Include="Ism.RabbitMq.Client" Version="1.0.0-prerelease2" />
+    <PackageReference Include="Ism.Security.Grpc" Version="1.0.0-prerelease5" />
     <PackageReference Include="Ism.Utility.Core" Version="1.0.1-prerelease8" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="3.1.2" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Cors" Version="2.2.0" />

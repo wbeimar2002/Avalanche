@@ -1,15 +1,12 @@
-﻿using Avalanche.Api.ViewModels;
-using Avalanche.Shared.Domain.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using Avalanche.Shared.Domain.Models;
 using System.Threading.Tasks;
 
 namespace Avalanche.Api.Services.Media
 {
     public interface IMediaService
     {
-        Task<CommandResponseViewModel> Play(string sessionId, string streamId, string message, string type);
-        Task<CommandResponseViewModel> HandleMesssage(string sessionId, string streamId, string type, string message);
+        Task<CommandResponse> Play(Command command);
+        Task<CommandResponse> HandleMesssage(Command command);
+        Task<CommandResponse> Stop(Command command);
     }
 }
