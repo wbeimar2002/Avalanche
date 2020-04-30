@@ -158,15 +158,20 @@ stages:
           azureSubscription: $(azuresubscription)
           scriptPath: 'devops/resources/add-acr-firewall-ip.sh'
           arguments: '$(azuresubscription) $(acrname) $(ip)'
-          
        - task: Docker@1
          displayName: 'Run a Docker command -Push'
          inputs:
-          azureSubscriptionEndpoint: $(azuresubscription)
-          azureContainerRegistry: '$(acrname).azurecr.io'
-         
+          azureSubscriptionEndpoint: '7770e554-30b1-4187-b512-c68b0f1617b7'
+          azureContainerRegistry: 'acrdevavalancheglobal.azurecr.io'
           command: 'Push an image'
-          imageName: '$(acrname).azurecr.io/$(ImageNameLowercase):$(Build.BuildNumber)'
+          imageName: 'acrdevavalancheglobal.azurecr.io/avalanche-security-server:$(Build.BuildNumber)'   
+       #- task: Docker@1
+         #displayName: 'Run a Docker command -Push'
+        # inputs:
+          #azureSubscriptionEndpoint: $(azuresubscription)
+          #azureContainerRegistry: '$(acrname).azurecr.io'
+          #command: 'Push an image'
+          #imageName: '$(acrname).azurecr.io/$(ImageNameLowercase):$(Build.BuildNumber)'
           
        - task: AzureCLI@1
          displayName: 'Delete build server external ip from acr firewall'
