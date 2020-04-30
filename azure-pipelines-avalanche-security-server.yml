@@ -79,8 +79,8 @@ stages:
     # task: SonarQubeAnalyze@4
     
     # - task: SonarQubePublish@4
-       inputs:
-        pollingTimeoutSec: '300'
+       #inputs:
+        #pollingTimeoutSec: '300'
 
      - task: DotNetCoreCLI@2
        displayName: 'Publish Avalanche.Security.Server'
