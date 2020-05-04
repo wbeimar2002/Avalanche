@@ -143,7 +143,7 @@ namespace Avalanche.Api.Controllers.V1
             try
             {
                 _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
-                var response = await _mediaManager.SendCommand(command);
+                var response = await _mediaManager.SendCommandAsync(command);
                 return Ok(response);
             }
             catch (Exception exception)

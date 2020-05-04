@@ -1,4 +1,5 @@
 ﻿using Avalanche.Shared.Domain.Models;
+using Avalanche.Shared.Infrastructure.Services.Settings;
 using Ism.Security.Grpc.Helpers;
 using Ism.Streaming.Common.Core;
 using System;
@@ -12,13 +13,20 @@ namespace Avalanche.Api.Services.Media
 {
     public class MediaService : IMediaService
     {
-        private static void GetClient(out string hostIpAddress, out WebRtcStreamer.WebRtcStreamerClient client)
-        {
-            hostIpAddress = Environment.GetEnvironmentVariable("hostIpAddress");
+        readonly IConfigurationService _configurationService;
 
-            var WebRTCGrpcPort = Environment.GetEnvironmentVariable("WebRTCGrpcPort");
-            var grpcCertificate = Environment.GetEnvironmentVariable("grpcCertificate");
-            var grpcPassword = Environment.GetEnvironmentVariable("grpcPassword");
+        public MediaService(IConfigurationService configurationService)
+        {
+            _configurationService = configurationService;
+        }
+
+        private void GetClient(out string hostIpAddress, out WebRtcStreamer.WebRtcStreamerClient client)
+        {
+            hostIpAddress = _configurationService.GetEnvironmentVariable("hostIpAddress");
+
+            var WebRTCGrpcPort = _configurationService.GetEnvironmentVariable("WebRTCGrpcPort");
+            var grpcCertificate = _configurationService.GetEnvironmentVariable("grpcCertificate");
+            var grpcPassword = _configurationService.GetEnvironmentVariable("grpcPassword");
 
             var certificate = new System.Security.Cryptography.X509Certificates.X509Certificate2(grpcCertificate, grpcPassword);
 
@@ -26,7 +34,7 @@ namespace Avalanche.Api.Services.Media
             client = ClientHelper.GetInsecureClient<WebRtcStreamer.WebRtcStreamerClient>($"https://{hostIpAddress}:{WebRTCGrpcPort}");
         }
 
-        public async Task<CommandResponse> HandleMesssage(Command command)
+        public async Task<CommandResponse> HandleMessageAsync(Command command)
         {
             string hostIpAddress;
             WebRtcStreamer.WebRtcStreamerClient client;
@@ -51,7 +59,7 @@ namespace Avalanche.Api.Services.Media
             }; 
         }
 
-        public async Task<CommandResponse> Play(Command command)
+        public async Task<CommandResponse> PlayAsync(Command command)
         {
             string hostIpAddress;
             WebRtcStreamer.WebRtcStreamerClient client;
@@ -100,7 +108,7 @@ namespace Avalanche.Api.Services.Media
             return response;
         }
 
-        public async Task<CommandResponse> Stop(Command command)
+        public async Task<CommandResponse> StopAsync(Command command)
         {
             string hostIpAddress;
             WebRtcStreamer.WebRtcStreamerClient client;

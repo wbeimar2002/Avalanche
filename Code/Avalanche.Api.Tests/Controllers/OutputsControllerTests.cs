@@ -185,13 +185,13 @@ namespace Avalanche.Api.Tests.Controllers
                 _appLoggerService.Verify(LogLevel.Debug, $"Completed {_controller.GetType().Name}.SendCommand", Times.Once());
             }
 
-            Assert.IsInstanceOf<OkResult>(okResult.Result);
+            Assert.IsInstanceOf<OkObjectResult>(okResult.Result);
         }
 
         [Test]
         public void SendCommandShouldReturnBadResultIfFails()
         {
-            _mediaManager.Setup(mock => mock.SendCommand(It.IsAny<CommandViewModel>())).Throws(It.IsAny<Exception>());
+            _mediaManager.Setup(mock => mock.SendCommandAsync(It.IsAny<CommandViewModel>())).Throws(It.IsAny<Exception>());
 
             var badResult = _controller.SendCommand(It.IsAny<CommandViewModel>(), _environment.Object);
 

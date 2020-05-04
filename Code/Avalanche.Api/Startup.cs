@@ -8,9 +8,7 @@ using Avalanche.Api.Managers.Health;
 using Avalanche.Api.Managers.Licensing;
 using Avalanche.Api.Managers.Metadata;
 using Avalanche.Api.Managers.Settings;
-using Avalanche.Api.Services.Configuration;
 using Avalanche.Shared.Infrastructure.Models;
-using Avalanche.Shared.Infrastructure.Services.Configuration;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -33,6 +31,8 @@ using Microsoft.Extensions.Options;
 using Microsoft.AspNetCore.SignalR;
 using Avalanche.Api.Managers.Devices;
 using Avalanche.Api.Services.Media;
+using Avalanche.Api.Services.Settings;
+using Avalanche.Shared.Infrastructure.Services.Settings;
 
 namespace Avalanche.Api
 {

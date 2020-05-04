@@ -17,7 +17,7 @@ namespace Avalanche.Api.Managers.Devices
             _mediaService = mediaService;
         }
 
-        public async Task<List<CommandResponse>> SendCommand(CommandViewModel command)
+        public async Task<List<CommandResponse>> SendCommandAsync(CommandViewModel command)
         {
             List<CommandResponse> responses = new List<CommandResponse>();
             
@@ -26,7 +26,7 @@ namespace Avalanche.Api.Managers.Devices
                 case Shared.Domain.Enumerations.CommandTypes.Play:
                     foreach (var item in command.Outputs)
                     {
-                        var response = await _mediaService.Play(new Command()
+                        var response = await _mediaService.PlayAsync(new Command()
                         {
                             StreamId = item.Id,
                             Message = command.Message,
@@ -40,7 +40,7 @@ namespace Avalanche.Api.Managers.Devices
                 case Shared.Domain.Enumerations.CommandTypes.Stop:
                     foreach (var item in command.Outputs)
                     {
-                        var response = await _mediaService.Stop(new Command()
+                        var response = await _mediaService.StopAsync(new Command()
                         {
                             StreamId = item.Id,
                             Message = command.Message,
@@ -55,7 +55,7 @@ namespace Avalanche.Api.Managers.Devices
                     
                     foreach (var item in command.Outputs)
                     {
-                        var handleMessageResponse = await _mediaService.HandleMesssage(new Command()
+                        var handleMessageResponse = await _mediaService.HandleMessageAsync(new Command()
                         {
                             StreamId = item.Id,
                             Message = command.Message,

@@ -5,8 +5,8 @@ namespace Avalanche.Api.Services.Media
 {
     public interface IMediaService
     {
-        Task<CommandResponse> Play(Command command);
-        Task<CommandResponse> HandleMesssage(Command command);
-        Task<CommandResponse> Stop(Command command);
+        Task<CommandResponse> PlayAsync(Command command);
+        Task<CommandResponse> HandleMessageAsync(Command command);
+        Task<CommandResponse> StopAsync(Command command);
     }
 }
