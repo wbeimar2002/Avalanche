@@ -1,5 +1,6 @@
 ﻿using Avalanche.Api.ViewModels;
 using Avalanche.Shared.Domain.Models;
+using Avalanche.Shared.Infrastructure.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,5 +11,6 @@ namespace Avalanche.Api.Managers.Devices
     public interface IMediaManager
     {
         Task<List<CommandResponse>> SendCommandAsync(CommandViewModel command);
+        Task<TimeoutSettings> GetTimeoutSource();
     }
 }

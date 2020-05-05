@@ -1,6 +1,8 @@
 ﻿using Avalanche.Api.Services.Media;
 using Avalanche.Api.ViewModels;
 using Avalanche.Shared.Domain.Models;
+using Avalanche.Shared.Infrastructure.Models;
+using Avalanche.Shared.Infrastructure.Services.Settings;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,10 +13,18 @@ namespace Avalanche.Api.Managers.Devices
     public class MediaManager : IMediaManager
     {
         readonly IMediaService _mediaService;
+        readonly IConfigurationService _configurationService;
 
-        public MediaManager(IMediaService mediaService)
+        public MediaManager(IMediaService mediaService, IConfigurationService _configurationService)
         {
             _mediaService = mediaService;
+        }
+
+        public async Task<TimeoutSettings> GetTimeoutSource()
+        {
+            //Just for check > var _files = Directory.EnumerateFiles("/config");
+            var settings = await _configurationService.LoadAsync<ConfigSettings>("/config/appsettings.json");
+            return settings.Timeout;
         }
 
         public async Task<List<CommandResponse>> SendCommandAsync(CommandViewModel command)

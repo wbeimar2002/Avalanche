@@ -2,6 +2,8 @@
 using Avalanche.Api.Services.Media;
 using Avalanche.Api.ViewModels;
 using Avalanche.Shared.Domain.Models;
+using Avalanche.Shared.Infrastructure.Services.Settings;
+using Castle.Core.Configuration;
 using Moq;
 using NUnit.Framework;
 using System;
@@ -14,6 +16,7 @@ namespace Avalanche.Api.Tests.Managers
     public class MediaManagerTests
     {
         Mock<IMediaService> _mediaService;
+        Mock<IConfigurationService> _configurationService;
 
         MediaManager _manager;
 
@@ -21,8 +24,9 @@ namespace Avalanche.Api.Tests.Managers
         public void Setup()
         {
             _mediaService = new Mock<IMediaService>();
+            _configurationService = new Mock<IConfigurationService>();
 
-            _manager = new MediaManager(_mediaService.Object);
+            _manager = new MediaManager(_mediaService.Object, _configurationService.Object);
         }
 
         [Test]
