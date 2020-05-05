@@ -11,6 +11,6 @@ namespace Avalanche.Api.Managers.Devices
     public interface IMediaManager
     {
         Task<List<CommandResponse>> SendCommandAsync(CommandViewModel command);
-        Task<TimeoutSettings> GetTimeoutSource();
+        Task<TimeoutSettings> GetTimeoutSettingsAsync();
     }
 }

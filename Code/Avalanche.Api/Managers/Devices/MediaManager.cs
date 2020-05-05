@@ -3,6 +3,8 @@ using Avalanche.Api.ViewModels;
 using Avalanche.Shared.Domain.Models;
 using Avalanche.Shared.Infrastructure.Models;
 using Avalanche.Shared.Infrastructure.Services.Settings;
+using Ism.Security.Grpc.Helpers;
+using Ism.Streaming.Common.Core;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,9 +22,9 @@ namespace Avalanche.Api.Managers.Devices
             _mediaService = mediaService;
         }
 
-        public async Task<TimeoutSettings> GetTimeoutSource()
+        public async Task<TimeoutSettings> GetTimeoutSettingsAsync()
         {
-            //Just for check > var _files = Directory.EnumerateFiles("/config");
+            //var _files = Directory.EnumerateFiles("/config");
             var settings = await _configurationService.LoadAsync<ConfigSettings>("/config/appsettings.json");
             return settings.Timeout;
         }

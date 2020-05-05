@@ -161,16 +161,14 @@ namespace Avalanche.Api.Controllers.V1
         /// <summary>
         /// Return the timeout file source
         /// </summary>
-        /// <param name="env"></param>
-        /// <returns></returns>
         [HttpPut("timeout/settings")]
         [Produces(typeof(TimeoutSettings))]
-        public async Task<IActionResult> GetTimeoutSource([FromServices]IWebHostEnvironment env)
+        public async Task<IActionResult> GetTimeoutSettings([FromServices]IWebHostEnvironment env)
         {
             try
             {
                 _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
-                var response = await _mediaManager.GetTimeoutSource();
+                var response = await _mediaManager.GetTimeoutSettingsAsync();
                 return Ok(response);
             }
             catch (Exception exception)

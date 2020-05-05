@@ -204,5 +204,39 @@ namespace Avalanche.Api.Tests.Controllers
 
             Assert.IsInstanceOf<BadRequestObjectResult>(badResult.Result);
         }
+
+        [Test]
+        public void GetTimeoutSettingsShouldReturnOkResult()
+        {
+            _mediaManager.Setup(mock => mock.GetTimeoutSettingsAsync());
+
+            var okResult = _controller.GetTimeoutSettings(_environment.Object);
+
+            if (_checkLogger)
+            {
+                _appLoggerService.Verify(LogLevel.Error, $"Exception {_controller.GetType().Name}.GetTimeoutSettings", Times.Never());
+                _appLoggerService.Verify(LogLevel.Debug, $"Requested {_controller.GetType().Name}.GetTimeoutSettings", Times.Once());
+                _appLoggerService.Verify(LogLevel.Debug, $"Completed {_controller.GetType().Name}.GetTimeoutSettings", Times.Once());
+            }
+
+            Assert.IsInstanceOf<OkObjectResult>(okResult.Result);
+        }
+
+        [Test]
+        public void GetTimeoutSettingsShouldReturnBadResultIfFails()
+        {
+            _mediaManager.Setup(mock => mock.GetTimeoutSettingsAsync()).Throws(It.IsAny<Exception>());
+
+            var badResult = _controller.GetTimeoutSettings(_environment.Object);
+
+            if (_checkLogger)
+            {
+                _appLoggerService.Verify(LogLevel.Error, $"Exception {_controller.GetType().Name}.GetTimeoutSettings", Times.Once());
+                _appLoggerService.Verify(LogLevel.Debug, $"Requested {_controller.GetType().Name}.GetTimeoutSettings", Times.Once());
+                _appLoggerService.Verify(LogLevel.Debug, $"Completed {_controller.GetType().Name}.GetTimeoutSettings", Times.Once());
+            }
+
+            Assert.IsInstanceOf<BadRequestObjectResult>(badResult.Result);
+        }
     }
 }

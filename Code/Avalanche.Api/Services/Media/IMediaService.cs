@@ -1,10 +1,13 @@
 ﻿using Avalanche.Shared.Domain.Models;
+using Ism.Streaming.Common.Core;
 using System.Threading.Tasks;
 
 namespace Avalanche.Api.Services.Media
 {
     public interface IMediaService
     {
+        WebRtcStreamer.WebRtcStreamerClient Client { get; set; }
+
         //Video
         Task<CommandResponse> PlayVideoAsync(Command command);
         Task<CommandResponse> HandleMessageAsync(Command command);
