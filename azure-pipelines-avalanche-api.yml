@@ -41,12 +41,14 @@ stages:
        inputs:
         version: '2.2.x'
         packageType: runtime
+
      - task: SonarSource.sonarqube.15B84CA1-B62F-4A2A-A403-89B77A063157.SonarQubePrepare@4
        displayName: 'Prepare analysis on SonarQube copy'
        inputs:
           SonarQube: sonarqube
           projectKey: 'avalanche-api'
           projectName: 'avalanche-api'
+       condition: and(succeeded(), eq(variables['Build.SourceBranchName'], 'dev'))
 
      - task: DotNetCoreCLI@2
        displayName: 'dotnet build'
@@ -83,9 +85,14 @@ stages:
           SourceFolder: '$(Agent.TempDirectory)'
           Contents: '*.trx'
           TargetFolder: '$(Agent.BuildDirectory)\TestResults'
+     
      - task: SonarQubeAnalyze@4
+       condition: and(succeeded(), eq(variables['Build.SourceBranchName'], 'dev'))
+
     
      - task: SonarQubePublish@4
+       condition: and(succeeded(), eq(variables['Build.SourceBranchName'], 'dev'))
+
        inputs:
         pollingTimeoutSec: '300'
      - task: DotNetCoreCLI@2
