@@ -48,12 +48,14 @@ stages:
         command: restore
         projects: '**/Code/Avalanche.Security.Server/Avalanche.Security.Server.csproj'
         vstsFeed: 'd61e3552-9162-4b94-9184-b843c159ef58'
-     #- task: SonarSource.sonarqube.15B84CA1-B62F-4A2A-A403-89B77A063157.SonarQubePrepare@4
-       #displayName: 'Prepare analysis on SonarQube'
-       #inputs:
-          #SonarQube: sonarqube
-          #projectKey: 'avalanche-security-server'
-          #projectName: 'avalanche-security-server'
+
+     - task: SonarSource.sonarqube.15B84CA1-B62F-4A2A-A403-89B77A063157.SonarQubePrepare@4
+       displayName: 'Prepare analysis on SonarQube'
+       inputs:
+          SonarQube: sonarqube
+          projectKey: 'avalanche-security-server'
+          projectName: 'avalanche-security-server'
+       condition: and(succeeded(), eq(variables['Build.SourceBranchName'], 'dev'))
 
      - task: DotNetCoreCLI@2
        displayName: 'dotnet build'
@@ -67,20 +69,24 @@ stages:
         command: test
         projects: Code/Avalanche.Security.Server.Tests/Avalanche.Security.Server.Tests.csproj
         testRunTitle: TestResults
-        #workingDirectory: Code/Avalanche.Security.Server
-        #configuration: Avalanche-Security-Server-Sonar
-        # arguments: –collect:”Code Coverage” 
+        workingDirectory: Code/Avalanche.Security.Server
+        configuration: Avalanche-Security-Server-Sonar
+        ## arguments: –collect:”Code Coverage” 
+
      - task: CopyFiles@2
        displayName: 'Copy Files to: $(Agent.BuildDirectory)\TestResults'
        inputs:
         SourceFolder: '$(Agent.TempDirectory)'
         Contents: '*.trx'
         TargetFolder: '$(Agent.BuildDirectory)\TestResults'
-    # task: SonarQubeAnalyze@4
+
+     - task: SonarQubeAnalyze@4
+       condition: and(succeeded(), eq(variables['Build.SourceBranchName'], 'dev'))
     
-    # - task: SonarQubePublish@4
-       #inputs:
-        #pollingTimeoutSec: '300'
+     - task: SonarQubePublish@4
+       inputs:
+        pollingTimeoutSec: '300'
+       condition: and(succeeded(), eq(variables['Build.SourceBranchName'], 'dev'))
 
      - task: DotNetCoreCLI@2
        displayName: 'Publish Avalanche.Security.Server'

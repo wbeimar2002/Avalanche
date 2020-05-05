@@ -41,12 +41,14 @@ stages:
        inputs:
         version: '2.2.x'
         packageType: runtime
+
      - task: SonarSource.sonarqube.15B84CA1-B62F-4A2A-A403-89B77A063157.SonarQubePrepare@4
-       displayName: 'Prepare analysis on SonarQube copy'
+       displayName: 'Prepare analysis on SonarQube'
        inputs:
           SonarQube: sonarqube
           projectKey: 'avalanche-api'
           projectName: 'avalanche-api'
+       condition: and(succeeded(), eq(variables['Build.SourceBranchName'], 'dev'))
 
      - task: DotNetCoreCLI@2
        displayName: 'dotnet build'
@@ -62,6 +64,7 @@ stages:
         projects: Code/Avalanche.Api.Tests/Avalanche.Api.Tests.csproj
         testRunTitle: TestResults
         workingDirectory: Code/Avalanche.Api.Tests
+     
      - task: CopyFiles@2
        displayName: 'Copy Files to: $(Agent.BuildDirectory)\TestResults'
        inputs:
@@ -69,13 +72,13 @@ stages:
         Contents: '*.trx'
         TargetFolder: '$(Agent.BuildDirectory)\TestResults'
 
-     - task: DotNetCoreCLI@2
-       displayName: 'dotnet test'
-       inputs:
-        command: test
-        projects: Code/Avalanche.Api.Tests/Avalanche.Api.Tests.csproj
-        testRunTitle: TestResults
-        workingDirectory: Code/Avalanche.Api.Tests
+     #- task: DotNetCoreCLI@2
+       #displayName: 'dotnet test Avalanche.Api.Tests.csproj'
+       #inputs:
+        #command: test
+        #projects: Code/Avalanche.Api.Tests/Avalanche.Api.Tests.csproj
+        #testRunTitle: TestResults
+        #workingDirectory: Code/Avalanche.Api.Tests
     
      - task: CopyFiles@2
        displayName: 'Copy Files to: $(Agent.BuildDirectory)\TestResults'
@@ -83,11 +86,16 @@ stages:
           SourceFolder: '$(Agent.TempDirectory)'
           Contents: '*.trx'
           TargetFolder: '$(Agent.BuildDirectory)\TestResults'
+     
      - task: SonarQubeAnalyze@4
+       condition: and(succeeded(), eq(variables['Build.SourceBranchName'], 'dev'))
+
     
      - task: SonarQubePublish@4
+       condition: and(succeeded(), eq(variables['Build.SourceBranchName'], 'dev'))
        inputs:
         pollingTimeoutSec: '300'
+
      - task: DotNetCoreCLI@2
        displayName: 'Publish Avalanche.Api'
        inputs:
