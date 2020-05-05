@@ -23,10 +23,10 @@ namespace Avalanche.Api.Managers.Devices
             
             switch (command.CommandType)
             {
-                case Shared.Domain.Enumerations.CommandTypes.Play:
+                case Shared.Domain.Enumerations.CommandTypes.PlayVideo:
                     foreach (var item in command.Outputs)
                     {
-                        var response = await _mediaService.PlayAsync(new Command()
+                        var response = await _mediaService.PlayVideoAsync(new Command()
                         {
                             StreamId = item.Id,
                             Message = command.Message,
@@ -37,10 +37,10 @@ namespace Avalanche.Api.Managers.Devices
                         responses.Add(response);
                     }
                     return responses;
-                case Shared.Domain.Enumerations.CommandTypes.Stop:
+                case Shared.Domain.Enumerations.CommandTypes.StopVideo:
                     foreach (var item in command.Outputs)
                     {
-                        var response = await _mediaService.StopAsync(new Command()
+                        var response = await _mediaService.StopVideoAsync(new Command()
                         {
                             StreamId = item.Id,
                             Message = command.Message,

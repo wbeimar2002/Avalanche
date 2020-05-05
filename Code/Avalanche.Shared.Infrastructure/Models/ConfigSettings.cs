@@ -7,7 +7,10 @@ namespace Avalanche.Shared.Infrastructure.Models
 {
     public class ConfigSettings
     {
-        [JsonProperty("api_address")]
-        public string IpAddress { get; set; }
+        [JsonProperty("api")]
+        public ApiSettings Api { get; set; }
+
+        [JsonProperty("timeout")]
+        public TimeoutSettings Timeout { get; set; }
     }
 }

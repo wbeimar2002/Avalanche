@@ -29,11 +29,11 @@ namespace Avalanche.Api.Tests.Managers
         public void ExecutePlayShouldReturnResponse()
         {
             CommandViewModel commandViewModel = new CommandViewModel();
-            commandViewModel.CommandType = Shared.Domain.Enumerations.CommandTypes.Play;
+            commandViewModel.CommandType = Shared.Domain.Enumerations.CommandTypes.PlayVideo;
 
             CommandResponse commandResponse = new CommandResponse();
 
-            _mediaService.Setup(mock => mock.PlayAsync(It.IsAny<Command>())).ReturnsAsync(commandResponse);
+            _mediaService.Setup(mock => mock.PlayVideoAsync(It.IsAny<Command>())).ReturnsAsync(commandResponse);
 
             var actionResult = _manager.SendCommandAsync(commandViewModel);
 
@@ -44,11 +44,11 @@ namespace Avalanche.Api.Tests.Managers
         public void ExecuteStopShouldReturnResponse()
         {
             CommandViewModel commandViewModel = new CommandViewModel();
-            commandViewModel.CommandType = Shared.Domain.Enumerations.CommandTypes.Stop;
+            commandViewModel.CommandType = Shared.Domain.Enumerations.CommandTypes.StopVideo;
 
             CommandResponse commandResponse = new CommandResponse();
 
-            _mediaService.Setup(mock => mock.StopAsync(It.IsAny<Command>())).ReturnsAsync(commandResponse);
+            _mediaService.Setup(mock => mock.StopVideoAsync(It.IsAny<Command>())).ReturnsAsync(commandResponse);
 
             var actionResult = _manager.SendCommandAsync(commandViewModel);
 

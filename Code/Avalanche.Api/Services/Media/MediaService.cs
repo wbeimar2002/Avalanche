@@ -59,7 +59,7 @@ namespace Avalanche.Api.Services.Media
             }; 
         }
 
-        public async Task<CommandResponse> PlayAsync(Command command)
+        public async Task<CommandResponse> PlayVideoAsync(Command command)
         {
             string hostIpAddress;
             WebRtcStreamer.WebRtcStreamerClient client;
@@ -108,7 +108,7 @@ namespace Avalanche.Api.Services.Media
             return response;
         }
 
-        public async Task<CommandResponse> StopAsync(Command command)
+        public async Task<CommandResponse> StopVideoAsync(Command command)
         {
             string hostIpAddress;
             WebRtcStreamer.WebRtcStreamerClient client;
@@ -125,6 +125,96 @@ namespace Avalanche.Api.Services.Media
                 SessionId = command.SessionId,
                 OutputId = command.StreamId,
                 ResponseCode = (int)WebRtcApiErrorEnum.WebRtcApiErrorSuccess
+            };
+        }
+
+        public async Task<CommandResponse> PlayAudioAsync(Command command)
+        {
+            return new CommandResponse()
+            {
+                SessionId = command.SessionId,
+                OutputId = command.StreamId,
+                ResponseCode = (int)WebRtcApiErrorEnum.WebRtcApiErrorUnknown
+            };
+        }
+
+        public async Task<CommandResponse> StopAudioAsync(Command command)
+        {
+            return new CommandResponse()
+            {
+                SessionId = command.SessionId,
+                OutputId = command.StreamId,
+                ResponseCode = (int)WebRtcApiErrorEnum.WebRtcApiErrorUnknown
+            };
+        }
+
+        public async Task<CommandResponse> MuteAudioAsync(Command command)
+        {
+            return new CommandResponse()
+            {
+                SessionId = command.SessionId,
+                OutputId = command.StreamId,
+                ResponseCode = (int)WebRtcApiErrorEnum.WebRtcApiErrorUnknown
+            };
+        }
+
+        public async Task<CommandResponse> GetVolumeUpAsync(Command command)
+        {
+            return new CommandResponse()
+            {
+                SessionId = command.SessionId,
+                OutputId = command.StreamId,
+                ResponseCode = (int)WebRtcApiErrorEnum.WebRtcApiErrorUnknown
+            };
+        }
+
+        public async Task<CommandResponse> GetVolumeDownAsync(Command command)
+        {
+            return new CommandResponse()
+            {
+                SessionId = command.SessionId,
+                OutputId = command.StreamId,
+                ResponseCode = (int)WebRtcApiErrorEnum.WebRtcApiErrorUnknown
+            };
+        }
+
+        public async Task<CommandResponse> PlaySlidesAsync(Command command)
+        {
+            return new CommandResponse()
+            {
+                SessionId = command.SessionId,
+                OutputId = command.StreamId,
+                ResponseCode = (int)WebRtcApiErrorEnum.WebRtcApiErrorUnknown
+            };
+        }
+
+        public async Task<CommandResponse> StopSlidesAsync(Command command)
+        {
+            return new CommandResponse()
+            {
+                SessionId = command.SessionId,
+                OutputId = command.StreamId,
+                ResponseCode = (int)WebRtcApiErrorEnum.WebRtcApiErrorUnknown
+            };
+        }
+
+        public async Task<CommandResponse> NextSlideAsync(Command command)
+        {
+            return new CommandResponse()
+            {
+                SessionId = command.SessionId,
+                OutputId = command.StreamId,
+                ResponseCode = (int)WebRtcApiErrorEnum.WebRtcApiErrorUnknown
+            };
+        }
+
+        public async Task<CommandResponse> PreviousSlideAsync(Command command)
+        {
+            return new CommandResponse()
+            {
+                SessionId = command.SessionId,
+                OutputId = command.StreamId,
+                ResponseCode = (int)WebRtcApiErrorEnum.WebRtcApiErrorUnknown
             };
         }
     }

@@ -6,11 +6,17 @@ namespace Avalanche.Shared.Domain.Enumerations
 {
     public enum CommandTypes
     {
-        Play,
-        Stop,
-        Mute,
+        PlayVideo,
+        StopVideo,
+        PlayAudio,
+        StopAudio,
+        MuteAudio,
+        HandleMessage,
         GetVolumeUp,
         GetVolumeDown,
-        HandleMessage,
+        PlaySlides,
+        StopSlides,
+        NextSlide,
+        PreviousSlide
     }
 }
