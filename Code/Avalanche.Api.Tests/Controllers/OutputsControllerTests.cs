@@ -1,6 +1,7 @@
 ﻿using Avalanche.Api.Controllers.V1;
 using Avalanche.Api.Managers.Devices;
 using Avalanche.Api.Tests.Extensions;
+using Avalanche.Api.ViewModels;
 using Avalanche.Shared.Domain.Enumerations;
 using Avalanche.Shared.Domain.Models;
 using Microsoft.AspNetCore.Hosting;
@@ -19,6 +20,7 @@ namespace Avalanche.Api.Tests.Controllers
     {
         Mock<ILogger<OutputsController>> _appLoggerService;
         Mock<IOutputsManager> _outputsManager;
+        Mock<IMediaManager> _mediaManager;
         Mock<IWebHostEnvironment> _environment;
 
         OutputsController _controller;
@@ -31,8 +33,9 @@ namespace Avalanche.Api.Tests.Controllers
             _appLoggerService = new Mock<ILogger<OutputsController>>();
             _outputsManager = new Mock<IOutputsManager>();
             _environment = new Mock<IWebHostEnvironment>();
+            _mediaManager = new Mock<IMediaManager>();
 
-            _controller = new OutputsController(_outputsManager.Object, _appLoggerService.Object);
+            _controller = new OutputsController(_outputsManager.Object, _mediaManager.Object, _appLoggerService.Object);
 
             OperatingSystem os = Environment.OSVersion;
 
@@ -173,7 +176,7 @@ namespace Avalanche.Api.Tests.Controllers
         [Test]
         public void SendCommandShouldReturnOkResult()
         {
-            var okResult = _controller.SendCommand(It.IsAny<Command>(), _environment.Object);
+            var okResult = _controller.SendCommand(It.IsAny<CommandViewModel>(), _environment.Object);
 
             if (_checkLogger)
             {
@@ -182,15 +185,15 @@ namespace Avalanche.Api.Tests.Controllers
                 _appLoggerService.Verify(LogLevel.Debug, $"Completed {_controller.GetType().Name}.SendCommand", Times.Once());
             }
 
-            Assert.IsInstanceOf<OkResult>(okResult.Result);
+            Assert.IsInstanceOf<OkObjectResult>(okResult.Result);
         }
 
         [Test]
         public void SendCommandShouldReturnBadResultIfFails()
         {
-            _outputsManager.Setup(mock => mock.SendCommand(It.IsAny<Command>())).Throws(It.IsAny<Exception>());
+            _mediaManager.Setup(mock => mock.SendCommandAsync(It.IsAny<CommandViewModel>())).Throws(It.IsAny<Exception>());
 
-            var badResult = _controller.SendCommand(It.IsAny<Command>(), _environment.Object);
+            var badResult = _controller.SendCommand(It.IsAny<CommandViewModel>(), _environment.Object);
 
             if (_checkLogger)
             {

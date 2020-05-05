@@ -11,7 +11,6 @@ namespace Avalanche.Api.Managers.Devices
     {
         Task<List<Output>> GetAllAvailable();
         Task<State> GetCurrentState(string id, StateTypes stateType);
-        Task SendCommand(Command command);
         Task<Content> GetContent(string contentType);
         Task<List<State>> GetCurrentStates(string id);
     }

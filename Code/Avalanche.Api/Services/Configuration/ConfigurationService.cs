@@ -1,4 +1,4 @@
-﻿using Avalanche.Shared.Infrastructure.Services.Configuration;
+﻿using Avalanche.Shared.Infrastructure.Services.Settings;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using System;
@@ -7,7 +7,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Avalanche.Api.Services.Configuration
+namespace Avalanche.Api.Services.Settings
 {
     public class ConfigurationService : IConfigurationService
     {
@@ -16,6 +16,11 @@ namespace Avalanche.Api.Services.Configuration
         public ConfigurationService(IConfiguration configuration)
         {
             _configuration = configuration;
+        }
+
+        public string GetEnvironmentVariable(string variableName)
+        {
+            return Environment.GetEnvironmentVariable(variableName);
         }
 
         public T GetValue<T>(string key)

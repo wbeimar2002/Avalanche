@@ -8,9 +8,7 @@ using Avalanche.Api.Managers.Health;
 using Avalanche.Api.Managers.Licensing;
 using Avalanche.Api.Managers.Metadata;
 using Avalanche.Api.Managers.Settings;
-using Avalanche.Api.Services.Configuration;
 using Avalanche.Shared.Infrastructure.Models;
-using Avalanche.Shared.Infrastructure.Services.Configuration;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -32,12 +30,14 @@ using Ism.RabbitMq.Client.Models;
 using Microsoft.Extensions.Options;
 using Microsoft.AspNetCore.SignalR;
 using Avalanche.Api.Managers.Devices;
+using Avalanche.Api.Services.Media;
+using Avalanche.Api.Services.Settings;
+using Avalanche.Shared.Infrastructure.Services.Settings;
 
 namespace Avalanche.Api
 {
     public class Startup
     {
-        
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
@@ -64,9 +64,12 @@ namespace Avalanche.Api
             services.AddSingleton<IMetadataManager, MetadataManagerMock>();
             services.AddSingleton<ILicensingManager, LicensingManagerMock>();
             services.AddSingleton<IOutputsManager, OutputsManagerMock>();
-
+            services.AddSingleton<IMediaService, MediaService>();
+            services.AddSingleton<IMediaManager, MediaManager>();
+            
             services.AddSingleton<IBroadcastService, BroadcastService>();
 
+            //TOD: Check this. Should be env variables?
             var hostName = configurationService.GetValue<string>("RabbitMqOptions:HostName");
             var port = configurationService.GetValue<int>("RabbitMqOptions:Port");
             var managementPort = configurationService.GetValue<int>("RabbitMqOptions:ManagementPort");
@@ -138,16 +141,20 @@ namespace Avalanche.Api
 
             // Add Cors
             // https://docs.microsoft.com/en-us/aspnet/core/security/cors?view=aspnetcore-3.1
-            services.AddCors(o => o.AddDefaultPolicy(builder =>
+            services.AddCors(options =>
             {
-                builder
-                    .WithOrigins("http://localhost:4200") //Dev Mode
-                        //configSettings.IpAddress)
-                    //.AllowAnyOrigin()
-                    .AllowAnyMethod()
-                    .AllowAnyHeader()
-                    .AllowCredentials();
-            }));
+                options.AddPolicy("CorsApiPolicy",
+                builder =>
+                {
+                    builder
+                        .WithOrigins("http://localhost:4200")
+                        .WithHeaders(new[] { "authorization", "content-type", "accept" })
+                        .WithMethods(new[] { "GET", "POST", "PUT", "DELETE", "OPTIONS" })
+                        //.AllowAnyOrigin()
+                        //.AllowAnyMethod()
+                        .AllowCredentials();
+                });
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -168,7 +175,7 @@ namespace Avalanche.Api
             app.UseAuthentication();
             app.UseAuthorization();
 
-            app.UseCors();
+            app.UseCors("CorsApiPolicy");
             app.UseFileServer();
             
             app.UseEndpoints(endpoints =>
