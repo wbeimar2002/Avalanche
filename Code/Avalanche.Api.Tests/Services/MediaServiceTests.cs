@@ -108,7 +108,7 @@ namespace Avalanche.Api.Tests.Services
 
             _service.Client = _mockGrpcClient.Object;
 
-            var actionResult = _service.HandleMessageAsync(command);
+            var actionResult = _service.HandleMessageForVideoAsync(command);
 
             Assert.AreSame(fakeCall, _mockGrpcClient.Object.HandleMessageAsync(new HandleMessageRequest()));
             Assert.AreEqual(actionResult.Result.ResponseCode, (int)expected.ResponseCode);

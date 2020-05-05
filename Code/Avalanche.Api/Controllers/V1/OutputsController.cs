@@ -161,7 +161,7 @@ namespace Avalanche.Api.Controllers.V1
         /// <summary>
         /// Return the timeout file source
         /// </summary>
-        [HttpPut("timeout/settings")]
+        [HttpGet("timeout/settings")]
         [Produces(typeof(TimeoutSettings))]
         public async Task<IActionResult> GetTimeoutSettings([FromServices]IWebHostEnvironment env)
         {

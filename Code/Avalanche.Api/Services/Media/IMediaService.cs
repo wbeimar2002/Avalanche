@@ -10,7 +10,7 @@ namespace Avalanche.Api.Services.Media
 
         //Video
         Task<CommandResponse> PlayVideoAsync(Command command);
-        Task<CommandResponse> HandleMessageAsync(Command command);
+        Task<CommandResponse> HandleMessageForVideoAsync(Command command);
         Task<CommandResponse> StopVideoAsync(Command command);
 
         //Audio

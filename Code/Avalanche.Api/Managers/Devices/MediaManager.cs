@@ -24,7 +24,6 @@ namespace Avalanche.Api.Managers.Devices
 
         public async Task<TimeoutSettings> GetTimeoutSettingsAsync()
         {
-            //var _files = Directory.EnumerateFiles("/config");
             var settings = await _configurationService.LoadAsync<ConfigSettings>("/config/appsettings.json");
             return settings.Timeout;
         }
@@ -32,54 +31,53 @@ namespace Avalanche.Api.Managers.Devices
         public async Task<List<CommandResponse>> SendCommandAsync(CommandViewModel command)
         {
             List<CommandResponse> responses = new List<CommandResponse>();
-            
-            switch (command.CommandType)
+
+            foreach (var item in command.Outputs)
+            {
+                CommandResponse response = await ExecuteCommandAsync(command.CommandType, new Command()
+                {
+                    StreamId = item.Id,
+                    Message = command.Message,
+                    SessionId = command.SessionId,
+                    Type = command.Type
+                });
+
+                responses.Add(response);
+            }
+
+            return responses;
+        }
+
+        private async Task<CommandResponse> ExecuteCommandAsync(Shared.Domain.Enumerations.CommandTypes commandType, Command command)
+        {
+            switch (commandType)
             {
                 case Shared.Domain.Enumerations.CommandTypes.PlayVideo:
-                    foreach (var item in command.Outputs)
-                    {
-                        var response = await _mediaService.PlayVideoAsync(new Command()
-                        {
-                            StreamId = item.Id,
-                            Message = command.Message,
-                            SessionId = command.SessionId,
-                            Type = command.Type
-                        });
-
-                        responses.Add(response);
-                    }
-                    return responses;
+                    return await _mediaService.PlayVideoAsync(command);
                 case Shared.Domain.Enumerations.CommandTypes.StopVideo:
-                    foreach (var item in command.Outputs)
-                    {
-                        var response = await _mediaService.StopVideoAsync(new Command()
-                        {
-                            StreamId = item.Id,
-                            Message = command.Message,
-                            SessionId = command.SessionId,
-                            Type = command.Type
-                        });
-
-                        responses.Add(response);
-                    }
-                    return responses;
-                case Shared.Domain.Enumerations.CommandTypes.HandleMessage:
-                    
-                    foreach (var item in command.Outputs)
-                    {
-                        var handleMessageResponse = await _mediaService.HandleMessageAsync(new Command()
-                        {
-                            StreamId = item.Id,
-                            Message = command.Message,
-                            SessionId = command.SessionId,
-                            Type = command.Type
-                        });
-
-                        responses.Add(handleMessageResponse);
-                    }
-                    return responses;
+                    return await _mediaService.StopVideoAsync(command);
+                case Shared.Domain.Enumerations.CommandTypes.PlayAudio:
+                    return await _mediaService.PlayAudioAsync(command);
+                case Shared.Domain.Enumerations.CommandTypes.StopAudio:
+                    return await _mediaService.StopAudioAsync(command);
+                case Shared.Domain.Enumerations.CommandTypes.MuteAudio:
+                    return await _mediaService.MuteAudioAsync(command);
+                case Shared.Domain.Enumerations.CommandTypes.HandleMessageForVideo:
+                    return await _mediaService.HandleMessageForVideoAsync(command);
+                case Shared.Domain.Enumerations.CommandTypes.PlaySlides:
+                    return await _mediaService.PlaySlidesAsync(command);
+                case Shared.Domain.Enumerations.CommandTypes.StopSlides:
+                    return await _mediaService.StopSlidesAsync(command);
+                case Shared.Domain.Enumerations.CommandTypes.NextSlide:
+                    return await _mediaService.NextSlideAsync(command);
+                case Shared.Domain.Enumerations.CommandTypes.PreviousSlide:
+                    return await _mediaService.PreviousSlideAsync(command);
+                case Shared.Domain.Enumerations.CommandTypes.GetVolumeUp:
+                    return await _mediaService.GetVolumeUpAsync(command);
+                case Shared.Domain.Enumerations.CommandTypes.GetVolumeDown:
+                    return await _mediaService.GetVolumeDownAsync(command);
                 default:
-                    return new List<CommandResponse>();
+                    return null;
             }
         }
     }

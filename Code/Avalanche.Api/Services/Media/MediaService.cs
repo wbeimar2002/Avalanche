@@ -34,7 +34,7 @@ namespace Avalanche.Api.Services.Media
             Client = ClientHelper.GetInsecureClient<WebRtcStreamer.WebRtcStreamerClient>($"https://{_hostIpAddress}:{WebRTCGrpcPort}");
         }
 
-        public async Task<CommandResponse> HandleMessageAsync(Command command)
+        public async Task<CommandResponse> HandleMessageForVideoAsync(Command command)
         {
             var actionResponse = await Client.HandleMessageAsync(new HandleMessageRequest()
             {
