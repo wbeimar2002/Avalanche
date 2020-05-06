@@ -12,6 +12,8 @@ using Grpc.Core;
 using Grpc.Core.Testing;
 using System.Threading.Tasks;
 using Google.Protobuf.WellKnownTypes;
+using System.IO;
+using System.Reflection;
 
 namespace Avalanche.Api.Tests.Services
 {
@@ -28,9 +30,11 @@ namespace Avalanche.Api.Tests.Services
             _configurationService = new Mock<IConfigurationService>();
             _mockGrpcClient = new Moq.Mock<WebRtcStreamer.WebRtcStreamerClient>();
 
+            var assemblyFolder = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+
             _configurationService.Setup(mock => mock.GetEnvironmentVariable("hostIpAddress")).Returns("10.0.75.1");
             _configurationService.Setup(mock => mock.GetEnvironmentVariable("WebRTCGrpcPort")).Returns("8001");
-            _configurationService.Setup(mock => mock.GetEnvironmentVariable("grpcCertificate")).Returns(@"C:\Olympus\certificates\grpc_localhost_root_l1.pfx");
+            _configurationService.Setup(mock => mock.GetEnvironmentVariable("grpcCertificate")).Returns(assemblyFolder + @"\grpc_localhost_root_l1.pfx");
             _configurationService.Setup(mock => mock.GetEnvironmentVariable("grpcPassword")).Returns("0123456789");
 
             _service = new MediaService(_configurationService.Object);

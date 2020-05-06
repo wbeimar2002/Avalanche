@@ -7,6 +7,16 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="grpc_localhost_root_l1.pfx" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="grpc_localhost_root_l1.pfx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Grpc.Core.Testing" Version="2.28.1" />
     <PackageReference Include="Microsoft.Extensions.Options" Version="3.1.2" />
     <PackageReference Include="Moq" Version="4.13.1" />
