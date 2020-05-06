@@ -189,6 +189,23 @@ namespace Avalanche.Api.Tests.Controllers
         }
 
         [Test]
+        public void SendCommandShouldReturnBadResultIfNoOutputs()
+        {
+            _mediaManager.Setup(mock => mock.SendCommandAsync(It.IsAny<CommandViewModel>())).Throws(It.IsAny<Exception>());
+
+            var badResult = _controller.SendCommand(It.IsAny<CommandViewModel>(), _environment.Object);
+
+            if (_checkLogger)
+            {
+                _appLoggerService.Verify(LogLevel.Error, $"Exception {_controller.GetType().Name}.SendCommand", Times.Once());
+                _appLoggerService.Verify(LogLevel.Debug, $"Requested {_controller.GetType().Name}.SendCommand", Times.Once());
+                _appLoggerService.Verify(LogLevel.Debug, $"Completed {_controller.GetType().Name}.SendCommand", Times.Once());
+            }
+
+            Assert.IsInstanceOf<BadRequestObjectResult>(badResult.Result);
+        }
+
+        [Test]
         public void SendCommandShouldReturnBadResultIfFails()
         {
             _mediaManager.Setup(mock => mock.SendCommandAsync(It.IsAny<CommandViewModel>())).Throws(It.IsAny<Exception>());

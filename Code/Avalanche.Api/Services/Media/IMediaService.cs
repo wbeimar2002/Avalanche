@@ -1,4 +1,5 @@
 ﻿using Avalanche.Shared.Domain.Models;
+using Avalanche.Shared.Infrastructure.Models;
 using Ism.Streaming.Common.Core;
 using System.Threading.Tasks;
 
@@ -6,7 +7,7 @@ namespace Avalanche.Api.Services.Media
 {
     public interface IMediaService
     {
-        WebRtcStreamer.WebRtcStreamerClient Client { get; set; }
+        WebRtcStreamer.WebRtcStreamerClient WebRtcStreamerClient { get; set; }
 
         //Video
         Task<CommandResponse> PlayVideoAsync(Command command);
@@ -25,5 +26,6 @@ namespace Avalanche.Api.Services.Media
         Task<CommandResponse> StopSlidesAsync(Command command);
         Task<CommandResponse> NextSlideAsync(Command command);
         Task<CommandResponse> PreviousSlideAsync(Command command);
+        Task<TimeoutSettings> GetTimeoutSettingsAsync();
     }
 }

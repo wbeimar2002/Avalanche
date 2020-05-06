@@ -26,7 +26,7 @@ namespace Avalanche.Api.Tests.Managers
             _mediaService = new Mock<IMediaService>();
             _configurationService = new Mock<IConfigurationService>();
 
-            _manager = new MediaManager(_mediaService.Object, _configurationService.Object);
+            _manager = new MediaManager(_mediaService.Object);
         }
 
         [Test]

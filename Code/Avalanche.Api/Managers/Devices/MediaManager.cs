@@ -15,17 +15,15 @@ namespace Avalanche.Api.Managers.Devices
     public class MediaManager : IMediaManager
     {
         readonly IMediaService _mediaService;
-        readonly IConfigurationService _configurationService;
 
-        public MediaManager(IMediaService mediaService, IConfigurationService _configurationService)
+        public MediaManager(IMediaService mediaService)
         {
             _mediaService = mediaService;
         }
 
         public async Task<TimeoutSettings> GetTimeoutSettingsAsync()
         {
-            var settings = await _configurationService.LoadAsync<ConfigSettings>("/config/appsettings.json");
-            return settings.Timeout;
+            return await _mediaService.GetTimeoutSettingsAsync();
         }
 
         public async Task<List<CommandResponse>> SendCommandAsync(CommandViewModel command)
