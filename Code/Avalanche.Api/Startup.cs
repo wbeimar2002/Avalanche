@@ -33,6 +33,7 @@ using Avalanche.Api.Managers.Devices;
 using Avalanche.Api.Services.Media;
 using Avalanche.Api.Services.Settings;
 using Avalanche.Shared.Infrastructure.Services.Settings;
+using Avalanche.Api.Services.Health;
 
 namespace Avalanche.Api
 {
@@ -58,7 +59,7 @@ namespace Avalanche.Api
             services.AddSingleton(c => configurationService);
 
             services.AddSingleton<ISettingsManager, SettingsManagerMock>();
-            services.AddSingleton<IPatientsManager, PatientsManagerMock>();
+            services.AddSingleton<IPatientsManager, PatientsManager>();
             services.AddSingleton<IPhysiciansManager, PhysiciansManagerMock>();
             services.AddSingleton<IProceduresManager, ProceduresManagerMock>();
             services.AddSingleton<IMetadataManager, MetadataManagerMock>();
@@ -66,7 +67,8 @@ namespace Avalanche.Api
             services.AddSingleton<IOutputsManager, OutputsManagerMock>();
             services.AddSingleton<IMediaService, MediaService>();
             services.AddSingleton<IMediaManager, MediaManager>();
-            
+            services.AddSingleton<IPieService, PieServiceMock>();
+
             services.AddSingleton<IBroadcastService, BroadcastService>();
 
             //TOD: Check this. Should be env variables?

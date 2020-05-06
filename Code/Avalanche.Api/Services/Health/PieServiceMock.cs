@@ -6,9 +6,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Avalanche.Api.Managers.Health
+namespace Avalanche.Api.Services.Health
 {
-    public class PatientsManagerMock : IPatientsManager
+    public class PieServiceMock : IPieService
     {
         public Task<List<Physician>> GetPhysiciansByPatient(string patiendId)
         {
@@ -37,7 +37,7 @@ namespace Avalanche.Api.Managers.Health
         public Task<List<Patient>> Search(PatientSearchFilterViewModel filter)
         {
             var fixture = new Fixture();
-            return Task.FromResult(fixture.CreateMany<Patient>(filter.Limit).ToList());
+            return Task.FromResult(fixture.CreateMany<Patient>(10).ToList());
         }
     }
 }

@@ -12,7 +12,7 @@ namespace Avalanche.Shared.Infrastructure.Extensions
             return JsonConvert.DeserializeObject<T>(json);
         }
 
-        public static string Json<T>(this T fullObject)
+        public static string Json(this object fullObject)
         {
             return JsonConvert.SerializeObject(fullObject);
         }
