@@ -105,7 +105,7 @@ stages:
         ArtifactName: app 
 
 - stage: dev
-  
+  condition: and(succeeded(), eq(variables['Build.SourceBranchName'], 'dev'))
   jobs:
      - job: push
        
