@@ -7,10 +7,17 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Services\MediaServiceTests.cs" />
+    <None Remove="grpc_localhost_root_l1.pfx" />
   </ItemGroup>
 
   <ItemGroup>
+    <Content Include="grpc_localhost_root_l1.pfx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Grpc.Core.Testing" Version="2.28.1" />
     <PackageReference Include="Microsoft.Extensions.Options" Version="3.1.2" />
     <PackageReference Include="Moq" Version="4.13.1" />
     <PackageReference Include="nunit" Version="3.12.0" />
@@ -26,10 +33,6 @@
     <ProjectReference Include="..\Avalanche.Api\Avalanche.Api.csproj" />
     <ProjectReference Include="..\Avalanche.Shared.Domain\Avalanche.Shared.Domain.csproj" />
     <ProjectReference Include="..\Avalanche.Shared.Infrastructure\Avalanche.Shared.Infrastructure.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Services\" />
   </ItemGroup>
 
 </Project>

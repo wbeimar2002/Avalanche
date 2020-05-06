@@ -25,11 +25,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Testers", "Testers", "{84FE
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Avalanche.Security.Server.Tests", "Avalanche.Security.Server.Tests\Avalanche.Security.Server.Tests.csproj", "{E99E1EB2-5D99-48A4-8009-6AC06963479F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Avalanche.Broadcaster.Tester", "Avalanche.Broadcaster.Tester\Avalanche.Broadcaster.Tester.csproj", "{1F97CAA2-B414-4C66-A209-CE46ED742772}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Avalanche.Broadcaster.Tester", "Avalanche.Broadcaster.Tester\Avalanche.Broadcaster.Tester.csproj", "{1F97CAA2-B414-4C66-A209-CE46ED742772}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Avalanche.GrpcClient.Tester", "Avalanche.GrpcClient.Tester\Avalanche.GrpcClient.Tester.csproj", "{FC230D53-8ABD-439D-A64C-FB9D96D57FE5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Avalanche.GrpcClient.Tester", "Avalanche.GrpcClient.Tester\Avalanche.GrpcClient.Tester.csproj", "{FC230D53-8ABD-439D-A64C-FB9D96D57FE5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Avalanche.Host.Service", "Avalanche.Host.Service\Avalanche.Host.Service.csproj", "{7041F882-4D55-4F76-AFD1-E2A75B2ECA5E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Avalanche.Host.Service", "Avalanche.Host.Service\Avalanche.Host.Service.csproj", "{7041F882-4D55-4F76-AFD1-E2A75B2ECA5E}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{694C7231-4426-427B-A66E-FCBF2959A040}"
 	ProjectSection(SolutionItems) = preProject

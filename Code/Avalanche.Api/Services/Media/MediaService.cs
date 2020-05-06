@@ -14,15 +14,15 @@ namespace Avalanche.Api.Services.Media
     public class MediaService : IMediaService
     {
         readonly IConfigurationService _configurationService;
+        readonly string _hostIpAddress;
+
+        public WebRtcStreamer.WebRtcStreamerClient Client { get; set; }
 
         public MediaService(IConfigurationService configurationService)
         {
             _configurationService = configurationService;
-        }
 
-        private void GetClient(out string hostIpAddress, out WebRtcStreamer.WebRtcStreamerClient client)
-        {
-            hostIpAddress = _configurationService.GetEnvironmentVariable("hostIpAddress");
+            _hostIpAddress = _configurationService.GetEnvironmentVariable("hostIpAddress");
 
             var WebRTCGrpcPort = _configurationService.GetEnvironmentVariable("WebRTCGrpcPort");
             var grpcCertificate = _configurationService.GetEnvironmentVariable("grpcCertificate");
@@ -30,18 +30,13 @@ namespace Avalanche.Api.Services.Media
 
             var certificate = new System.Security.Cryptography.X509Certificates.X509Certificate2(grpcCertificate, grpcPassword);
 
-            //client = ClientHelper.GetSecureClient<WebRtcStreamer.WebRtcStreamerClient>($"https://{hostIpAddress}:{WebRTCGrpcPort}", certificate);
-            client = ClientHelper.GetInsecureClient<WebRtcStreamer.WebRtcStreamerClient>($"https://{hostIpAddress}:{WebRTCGrpcPort}");
+            //Client = ClientHelper.GetSecureClient<WebRtcStreamer.WebRtcStreamerClient>($"https://{hostIpAddress}:{WebRTCGrpcPort}", certificate);
+            Client = ClientHelper.GetInsecureClient<WebRtcStreamer.WebRtcStreamerClient>($"https://{_hostIpAddress}:{WebRTCGrpcPort}");
         }
 
-        public async Task<CommandResponse> HandleMessageAsync(Command command)
+        public async Task<CommandResponse> HandleMessageForVideoAsync(Command command)
         {
-            string hostIpAddress;
-            WebRtcStreamer.WebRtcStreamerClient client;
-
-            GetClient(out hostIpAddress, out client);
-
-            var actionResponse = await client.HandleMessageAsync(new HandleMessageRequest()
+            var actionResponse = await Client.HandleMessageAsync(new HandleMessageRequest()
             {
                 SessionId = command.SessionId,
                 Offer = new WebRtcInfoMessage()
@@ -61,21 +56,16 @@ namespace Avalanche.Api.Services.Media
 
         public async Task<CommandResponse> PlayVideoAsync(Command command)
         {
-            string hostIpAddress;
-            WebRtcStreamer.WebRtcStreamerClient client;
-
-            GetClient(out hostIpAddress, out client);
-
             var applicationName = this.GetType().FullName;
 
-            var actionResponse = await client.InitSessionAsync(new InitSessionRequest
+            var actionResponse = await Client.InitSessionAsync(new InitSessionRequest
             {
                 AccessInfo = new AccessInfoMessage
                 {
                     ApplicationName = applicationName,
                     Details = "Initialize webrtc stream",
                     Id = Guid.NewGuid().ToString(),
-                    Ip = hostIpAddress,
+                    Ip = _hostIpAddress,
                     MachineName = Environment.MachineName,
                     UserName = Environment.UserName
                 },
@@ -90,7 +80,7 @@ namespace Avalanche.Api.Services.Media
                     Type = command.Type,
                     Message = command.Message
                 }
-            }); ;
+            });
 
             var response = new CommandResponse()
             {
@@ -110,12 +100,7 @@ namespace Avalanche.Api.Services.Media
 
         public async Task<CommandResponse> StopVideoAsync(Command command)
         {
-            string hostIpAddress;
-            WebRtcStreamer.WebRtcStreamerClient client;
-
-            GetClient(out hostIpAddress, out client);
-
-            var actionResponse = await client.DeInitSessionAsync(new DeInitSessionRequest()
+            var actionResponse = await Client.DeInitSessionAsync(new DeInitSessionRequest()
             {
                 SessionId = command.SessionId,
             });
