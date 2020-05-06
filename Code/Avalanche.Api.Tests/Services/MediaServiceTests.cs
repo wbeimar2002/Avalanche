@@ -31,10 +31,14 @@ namespace Avalanche.Api.Tests.Services
             _mockGrpcClient = new Moq.Mock<WebRtcStreamer.WebRtcStreamerClient>();
 
             var assemblyFolder = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+            var certificateFile = assemblyFolder + @"/grpc_localhost_root_l1.pfx";
+
+            if (!File.Exists(certificateFile))
+                Console.WriteLine("Test certificate can not be reached.");
 
             _configurationService.Setup(mock => mock.GetEnvironmentVariable("hostIpAddress")).Returns("10.0.75.1");
             _configurationService.Setup(mock => mock.GetEnvironmentVariable("WebRTCGrpcPort")).Returns("8001");
-            _configurationService.Setup(mock => mock.GetEnvironmentVariable("grpcCertificate")).Returns(assemblyFolder + @"\grpc_localhost_root_l1.pfx");
+            _configurationService.Setup(mock => mock.GetEnvironmentVariable("grpcCertificate")).Returns(certificateFile);
             _configurationService.Setup(mock => mock.GetEnvironmentVariable("grpcPassword")).Returns("0123456789");
 
             _service = new MediaService(_configurationService.Object);
