@@ -4,6 +4,7 @@ using Avalanche.Api.Tests.Extensions;
 using Avalanche.Api.ViewModels;
 using Avalanche.Shared.Domain.Enumerations;
 using Avalanche.Shared.Domain.Models;
+using Ism.Telemetry.RabbitMq.Models;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -46,7 +47,9 @@ namespace Avalanche.Api.Tests.Controllers
         [Test]
         public void GetContentTypeShouldReturnOkResult()
         {
-            var okResult = _controller.GetContentType(It.IsAny<string>(), _environment.Object);
+            var contentType = "Sample";
+
+            var okResult = _controller.GetContentType(contentType, _environment.Object);
 
             if (_checkLogger)
             {
@@ -62,8 +65,10 @@ namespace Avalanche.Api.Tests.Controllers
         public void GetContentTypeShouldReturnBadResultIfFails()
         {
             _outputsManager.Setup(mock => mock.GetContent(It.IsAny<string>())).Throws(It.IsAny<Exception>());
+            
+            var contentType = "Sample";
 
-            var badResult = _controller.GetContentType(It.IsAny<string>(), _environment.Object);
+            var badResult = _controller.GetContentType(contentType, _environment.Object);
 
             if (_checkLogger)
             {
@@ -112,7 +117,8 @@ namespace Avalanche.Api.Tests.Controllers
         [Test]
         public void GetCurrentStateShouldReturnOkResult()
         {
-            var okResult = _controller.GetCurrentState(It.IsAny<string>(), It.IsAny<StateTypes>(), _environment.Object);
+            string outputId = "Sample";
+            var okResult = _controller.GetCurrentState(outputId, It.IsAny<StateTypes>(), _environment.Object);
 
             if (_checkLogger)
             {
@@ -127,9 +133,10 @@ namespace Avalanche.Api.Tests.Controllers
         [Test]
         public void GetCurrentStateShouldReturnBadResultIfFails()
         {
+            string outputId = "Sample";
             _outputsManager.Setup(mock => mock.GetCurrentState(It.IsAny<string>(), It.IsAny<StateTypes>())).Throws(It.IsAny<Exception>());
 
-            var badResult = _controller.GetCurrentState(It.IsAny<string>(), It.IsAny<StateTypes>(), _environment.Object);
+            var badResult = _controller.GetCurrentState(outputId, It.IsAny<StateTypes>(), _environment.Object);
 
             if (_checkLogger)
             {
@@ -144,7 +151,8 @@ namespace Avalanche.Api.Tests.Controllers
         [Test]
         public void GetCurrentStatesShouldReturnOkResult()
         {
-            var okResult = _controller.GetCurrentStates(It.IsAny<string>(), _environment.Object);
+            string outputId = "Sample";
+            var okResult = _controller.GetCurrentStates(outputId, _environment.Object);
 
             if (_checkLogger)
             {
@@ -159,9 +167,10 @@ namespace Avalanche.Api.Tests.Controllers
         [Test]
         public void GetCurrentStatesShouldReturnBadResultIfFails()
         {
+            string outputId = "Sample";
             _outputsManager.Setup(mock => mock.GetCurrentStates(It.IsAny<string>())).Throws(It.IsAny<Exception>());
 
-            var badResult = _controller.GetCurrentStates(It.IsAny<string>(), _environment.Object);
+            var badResult = _controller.GetCurrentStates(outputId, _environment.Object);
 
             if (_checkLogger)
             {
@@ -176,7 +185,12 @@ namespace Avalanche.Api.Tests.Controllers
         [Test]
         public void SendCommandShouldReturnOkResult()
         {
-            var okResult = _controller.SendCommand(It.IsAny<CommandViewModel>(), _environment.Object);
+            var commandViewModel = new CommandViewModel()
+            {
+                Outputs = new List<Output>() { new Output() { Id = "Sample" } }
+            };
+
+            var okResult = _controller.SendCommand(commandViewModel, _environment.Object);
 
             if (_checkLogger)
             {
@@ -191,9 +205,14 @@ namespace Avalanche.Api.Tests.Controllers
         [Test]
         public void SendCommandShouldReturnBadResultIfNoOutputs()
         {
+            var commandViewModel = new CommandViewModel()
+            {
+                Outputs = new List<Output>() { new Output() { Id = "Sample" } }
+            };
+
             _mediaManager.Setup(mock => mock.SendCommandAsync(It.IsAny<CommandViewModel>())).Throws(It.IsAny<Exception>());
 
-            var badResult = _controller.SendCommand(It.IsAny<CommandViewModel>(), _environment.Object);
+            var badResult = _controller.SendCommand(commandViewModel, _environment.Object);
 
             if (_checkLogger)
             {
@@ -208,9 +227,14 @@ namespace Avalanche.Api.Tests.Controllers
         [Test]
         public void SendCommandShouldReturnBadResultIfFails()
         {
+            var commandViewModel = new CommandViewModel()
+            {
+                Outputs = new List<Output>() { new Output() { Id = "Sample" } }
+            };
+
             _mediaManager.Setup(mock => mock.SendCommandAsync(It.IsAny<CommandViewModel>())).Throws(It.IsAny<Exception>());
 
-            var badResult = _controller.SendCommand(It.IsAny<CommandViewModel>(), _environment.Object);
+            var badResult = _controller.SendCommand(commandViewModel, _environment.Object);
 
             if (_checkLogger)
             {
