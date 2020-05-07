@@ -27,10 +27,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Avalanche.Security.Server.T
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Avalanche.Broadcaster.Tester", "Avalanche.Broadcaster.Tester\Avalanche.Broadcaster.Tester.csproj", "{1F97CAA2-B414-4C66-A209-CE46ED742772}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Avalanche.GrpcClient.Tester", "Avalanche.GrpcClient.Tester\Avalanche.GrpcClient.Tester.csproj", "{FC230D53-8ABD-439D-A64C-FB9D96D57FE5}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Avalanche.Host.Service", "Avalanche.Host.Service\Avalanche.Host.Service.csproj", "{7041F882-4D55-4F76-AFD1-E2A75B2ECA5E}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{694C7231-4426-427B-A66E-FCBF2959A040}"
 	ProjectSection(SolutionItems) = preProject
 		NuGet.Config = NuGet.Config
@@ -74,14 +70,6 @@ Global
 		{1F97CAA2-B414-4C66-A209-CE46ED742772}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1F97CAA2-B414-4C66-A209-CE46ED742772}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1F97CAA2-B414-4C66-A209-CE46ED742772}.Release|Any CPU.Build.0 = Release|Any CPU
-		{FC230D53-8ABD-439D-A64C-FB9D96D57FE5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{FC230D53-8ABD-439D-A64C-FB9D96D57FE5}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{FC230D53-8ABD-439D-A64C-FB9D96D57FE5}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{FC230D53-8ABD-439D-A64C-FB9D96D57FE5}.Release|Any CPU.Build.0 = Release|Any CPU
-		{7041F882-4D55-4F76-AFD1-E2A75B2ECA5E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{7041F882-4D55-4F76-AFD1-E2A75B2ECA5E}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{7041F882-4D55-4F76-AFD1-E2A75B2ECA5E}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{7041F882-4D55-4F76-AFD1-E2A75B2ECA5E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -94,8 +82,6 @@ Global
 		{008B9FC4-11D2-471D-A092-E2623B7571E9} = {24C247C0-1728-41DE-AEE0-0BF32F2758C4}
 		{E99E1EB2-5D99-48A4-8009-6AC06963479F} = {907645CA-DE39-41DE-9B95-3C233CE26ABA}
 		{1F97CAA2-B414-4C66-A209-CE46ED742772} = {84FE2287-8F84-4EC4-8F7C-24F3A98F1ED6}
-		{FC230D53-8ABD-439D-A64C-FB9D96D57FE5} = {84FE2287-8F84-4EC4-8F7C-24F3A98F1ED6}
-		{7041F882-4D55-4F76-AFD1-E2A75B2ECA5E} = {84FE2287-8F84-4EC4-8F7C-24F3A98F1ED6}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {054B7929-176A-44EB-BF77-6C11E9C160D7}

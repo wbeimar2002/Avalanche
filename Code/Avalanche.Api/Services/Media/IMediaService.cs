@@ -1,4 +1,7 @@
-﻿using Avalanche.Shared.Domain.Models;
+﻿using Avalanche.Shared.Domain.Enumerations;
+using Avalanche.Shared.Domain.Models;
+using Avalanche.Shared.Infrastructure.Models;
+using Ism.PgsTimeout.Common.Core;
 using Ism.Streaming.Common.Core;
 using System.Threading.Tasks;
 
@@ -6,24 +9,25 @@ namespace Avalanche.Api.Services.Media
 {
     public interface IMediaService
     {
-        WebRtcStreamer.WebRtcStreamerClient Client { get; set; }
+        WebRtcStreamer.WebRtcStreamerClient WebRtcStreamerClient { get; set; }
+        PgsTimeout.PgsTimeoutClient PgsTimeoutClient { get; set; }
 
         //Video
-        Task<CommandResponse> PlayVideoAsync(Command command);
-        Task<CommandResponse> HandleMessageForVideoAsync(Command command);
-        Task<CommandResponse> StopVideoAsync(Command command);
+        Task<CommandResponse> PgsPlayVideoAsync(Command command);
+        Task<CommandResponse> PgsHandleMessageForVideoAsync(Command command);
+        Task<CommandResponse> PgsStopVideoAsync(Command command);
 
         //Audio
-        Task<CommandResponse> PlayAudioAsync(Command command);
-        Task<CommandResponse> StopAudioAsync(Command command);
-        Task<CommandResponse> MuteAudioAsync(Command command);
-        Task<CommandResponse> GetVolumeUpAsync(Command command);
-        Task<CommandResponse> GetVolumeDownAsync(Command command);
+        Task<CommandResponse> PgsPlayAudioAsync(Command command);
+        Task<CommandResponse> PgsStopAudioAsync(Command command);
+        Task<CommandResponse> PgsMuteAudioAsync(Command command);
+        Task<CommandResponse> PgsGetAudioVolumeUpAsync(Command command);
+        Task<CommandResponse> PgsGetAudioVolumeDownAsync(Command command);
 
         //Timeout PDF
-        Task<CommandResponse> PlaySlidesAsync(Command command);
-        Task<CommandResponse> StopSlidesAsync(Command command);
-        Task<CommandResponse> NextSlideAsync(Command command);
-        Task<CommandResponse> PreviousSlideAsync(Command command);
+        Task<CommandResponse> TimeoutSetModeAsync(Command command);
+        Task<CommandResponse> TimeoutSetPageAsync(Command command);
+        Task<CommandResponse> TimeoutNextSlideAsync(Command command);
+        Task<CommandResponse> TimeoutPreviousSlideAsync(Command command);
     }
 }

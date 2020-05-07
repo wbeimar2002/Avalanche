@@ -1,31 +1,38 @@
-﻿using Avalanche.Api.Services.Media;
+﻿using Avalanche.Api.Services.Configuration;
+using Avalanche.Api.Services.Media;
 using Avalanche.Api.ViewModels;
+using Avalanche.Shared.Domain.Enumerations;
 using Avalanche.Shared.Domain.Models;
 using Avalanche.Shared.Infrastructure.Models;
 using Avalanche.Shared.Infrastructure.Services.Settings;
 using Ism.Security.Grpc.Helpers;
 using Ism.Streaming.Common.Core;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Avalanche.Shared.Infrastructure.Extensions;
+using Avalanche.Shared.Infrastructure.Helpers;
 
 namespace Avalanche.Api.Managers.Devices
 {
     public class MediaManager : IMediaManager
     {
         readonly IMediaService _mediaService;
-        readonly IConfigurationService _configurationService;
+        readonly ISettingsService _settingsService;
+        ILogger<MediaManager> _appLoggerService;
 
-        public MediaManager(IMediaService mediaService, IConfigurationService _configurationService)
+        public MediaManager(IMediaService mediaService, ISettingsService settingsService, ILogger<MediaManager> appLoggerService)
         {
             _mediaService = mediaService;
+            _settingsService = settingsService;
+            _appLoggerService = appLoggerService;
         }
 
         public async Task<TimeoutSettings> GetTimeoutSettingsAsync()
         {
-            var settings = await _configurationService.LoadAsync<ConfigSettings>("/config/appsettings.json");
-            return settings.Timeout;
+            return await _settingsService.GetTimeoutSettingsAsync();
         }
 
         public async Task<List<CommandResponse>> SendCommandAsync(CommandViewModel command)
@@ -36,7 +43,7 @@ namespace Avalanche.Api.Managers.Devices
             {
                 CommandResponse response = await ExecuteCommandAsync(command.CommandType, new Command()
                 {
-                    StreamId = item.Id,
+                    OutputId = item.Id,
                     Message = command.Message,
                     SessionId = command.SessionId,
                     Type = command.Type
@@ -50,32 +57,60 @@ namespace Avalanche.Api.Managers.Devices
 
         private async Task<CommandResponse> ExecuteCommandAsync(Shared.Domain.Enumerations.CommandTypes commandType, Command command)
         {
+            _appLoggerService.LogInformation($"{commandType.GetDescription()} command executed on {command.OutputId} output.");
+
             switch (commandType)
             {
-                case Shared.Domain.Enumerations.CommandTypes.PlayVideo:
-                    return await _mediaService.PlayVideoAsync(command);
-                case Shared.Domain.Enumerations.CommandTypes.StopVideo:
-                    return await _mediaService.StopVideoAsync(command);
-                case Shared.Domain.Enumerations.CommandTypes.PlayAudio:
-                    return await _mediaService.PlayAudioAsync(command);
-                case Shared.Domain.Enumerations.CommandTypes.StopAudio:
-                    return await _mediaService.StopAudioAsync(command);
-                case Shared.Domain.Enumerations.CommandTypes.MuteAudio:
-                    return await _mediaService.MuteAudioAsync(command);
-                case Shared.Domain.Enumerations.CommandTypes.HandleMessageForVideo:
-                    return await _mediaService.HandleMessageForVideoAsync(command);
-                case Shared.Domain.Enumerations.CommandTypes.PlaySlides:
-                    return await _mediaService.PlaySlidesAsync(command);
-                case Shared.Domain.Enumerations.CommandTypes.StopSlides:
-                    return await _mediaService.StopSlidesAsync(command);
-                case Shared.Domain.Enumerations.CommandTypes.NextSlide:
-                    return await _mediaService.NextSlideAsync(command);
-                case Shared.Domain.Enumerations.CommandTypes.PreviousSlide:
-                    return await _mediaService.PreviousSlideAsync(command);
-                case Shared.Domain.Enumerations.CommandTypes.GetVolumeUp:
-                    return await _mediaService.GetVolumeUpAsync(command);
-                case Shared.Domain.Enumerations.CommandTypes.GetVolumeDown:
-                    return await _mediaService.GetVolumeDownAsync(command);
+                #region PGS Commands
+                case Shared.Domain.Enumerations.CommandTypes.PgsPlayVideo:
+                    Preconditions.ThrowIfNull(nameof(command.Message), command.Message);
+                    command.Message = ((int)TimeoutModes.Pgs).ToString();
+                    await _mediaService.TimeoutSetModeAsync(command);
+                    return await _mediaService.PgsPlayVideoAsync(command);
+
+                case Shared.Domain.Enumerations.CommandTypes.PgsStopVideo:
+                    return await _mediaService.PgsStopVideoAsync(command);
+
+                case Shared.Domain.Enumerations.CommandTypes.PgsPlayAudio:
+                    return await _mediaService.PgsPlayAudioAsync(command);
+
+                case Shared.Domain.Enumerations.CommandTypes.PgsStopAudio:
+                    return await _mediaService.PgsStopAudioAsync(command);
+
+                case Shared.Domain.Enumerations.CommandTypes.PgsMuteAudio:
+                    return await _mediaService.PgsMuteAudioAsync(command);
+
+                case Shared.Domain.Enumerations.CommandTypes.PgsHandleMessageForVideo:
+                    Preconditions.ThrowIfNull(nameof(command.Message), command.Message);
+                    return await _mediaService.PgsHandleMessageForVideoAsync(command);
+
+                case Shared.Domain.Enumerations.CommandTypes.PgsGetAudioVolumeUp:
+                    return await _mediaService.PgsGetAudioVolumeUpAsync(command);
+
+                case Shared.Domain.Enumerations.CommandTypes.PgsGetAudioVolumeDown:
+                    return await _mediaService.PgsGetAudioVolumeDownAsync(command);
+                #endregion
+
+                #region Timeout Commands
+                case Shared.Domain.Enumerations.CommandTypes.TimeoutPlayPdfSlides:
+                    command.Message = ((int)TimeoutModes.Timeout).ToString();
+                    return await _mediaService.TimeoutSetModeAsync(command);
+
+                case Shared.Domain.Enumerations.CommandTypes.TimeoutStopPdfSlides:
+                    command.Message = ((int)TimeoutModes.Idle).ToString();
+                    return await _mediaService.TimeoutSetModeAsync(command);
+
+                case Shared.Domain.Enumerations.CommandTypes.TimeoutNextPdfSlide:
+                    return await _mediaService.TimeoutNextSlideAsync(command);
+
+                case Shared.Domain.Enumerations.CommandTypes.TimeoutPreviousPdfSlide:
+                    return await _mediaService.TimeoutPreviousSlideAsync(command);
+
+                case Shared.Domain.Enumerations.CommandTypes.TimeoutSetCurrentSlide:
+                    Preconditions.ThrowIfStringIsNotNumber(nameof(command.Message), command.Message);
+                    return await _mediaService.TimeoutSetPageAsync(command); 
+                #endregion
+
                 default:
                     return null;
             }

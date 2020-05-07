@@ -1,22 +1,20 @@
 ﻿using Avalanche.Shared.Domain.Models;
 using Avalanche.Shared.Infrastructure.Services.Settings;
+using Ism.PgsTimeout.Common.Core;
 using Ism.Security.Grpc.Helpers;
 using Ism.Streaming.Common.Core;
 using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Net;
 using System.Threading.Tasks;
 
 namespace Avalanche.Api.Services.Media
 {
-    public class MediaService : IMediaService
+    public partial class MediaService : IMediaService
     {
         readonly IConfigurationService _configurationService;
         readonly string _hostIpAddress;
 
-        public WebRtcStreamer.WebRtcStreamerClient Client { get; set; }
+        public WebRtcStreamer.WebRtcStreamerClient WebRtcStreamerClient { get; set; }
 
         public MediaService(IConfigurationService configurationService)
         {
@@ -25,18 +23,22 @@ namespace Avalanche.Api.Services.Media
             _hostIpAddress = _configurationService.GetEnvironmentVariable("hostIpAddress");
 
             var WebRTCGrpcPort = _configurationService.GetEnvironmentVariable("WebRTCGrpcPort");
+            var PgsTimeoutGrpcPort = _configurationService.GetEnvironmentVariable("PgsTimeoutGrpcPort");
             var grpcCertificate = _configurationService.GetEnvironmentVariable("grpcCertificate");
             var grpcPassword = _configurationService.GetEnvironmentVariable("grpcPassword");
 
             var certificate = new System.Security.Cryptography.X509Certificates.X509Certificate2(grpcCertificate, grpcPassword);
 
             //Client = ClientHelper.GetSecureClient<WebRtcStreamer.WebRtcStreamerClient>($"https://{hostIpAddress}:{WebRTCGrpcPort}", certificate);
-            Client = ClientHelper.GetInsecureClient<WebRtcStreamer.WebRtcStreamerClient>($"https://{_hostIpAddress}:{WebRTCGrpcPort}");
+            WebRtcStreamerClient = ClientHelper.GetInsecureClient<WebRtcStreamer.WebRtcStreamerClient>($"https://{_hostIpAddress}:{WebRTCGrpcPort}");
+            PgsTimeoutClient = ClientHelper.GetInsecureClient<PgsTimeout.PgsTimeoutClient>($"https://{_hostIpAddress}:{PgsTimeoutGrpcPort}");
         }
 
-        public async Task<CommandResponse> HandleMessageForVideoAsync(Command command)
+        #region WebRTC
+
+        public async Task<CommandResponse> PgsHandleMessageForVideoAsync(Command command)
         {
-            var actionResponse = await Client.HandleMessageAsync(new HandleMessageRequest()
+            var actionResponse = await WebRtcStreamerClient.HandleMessageAsync(new HandleMessageRequest()
             {
                 SessionId = command.SessionId,
                 Offer = new WebRtcInfoMessage()
@@ -49,16 +51,16 @@ namespace Avalanche.Api.Services.Media
             return new CommandResponse()
             {
                 SessionId = command.SessionId,
-                OutputId = command.StreamId,
+                OutputId = command.OutputId,
                 ResponseCode = (int)actionResponse.ResponseCode
             }; 
         }
 
-        public async Task<CommandResponse> PlayVideoAsync(Command command)
+        public async Task<CommandResponse> PgsPlayVideoAsync(Command command)
         {
             var applicationName = this.GetType().FullName;
 
-            var actionResponse = await Client.InitSessionAsync(new InitSessionRequest
+            var actionResponse = await WebRtcStreamerClient.InitSessionAsync(new InitSessionRequest
             {
                 AccessInfo = new AccessInfoMessage
                 {
@@ -71,7 +73,7 @@ namespace Avalanche.Api.Services.Media
                 },
                 Quality = RxStreamQualityEnum.RxStreamQualityHdVideo,
                 RouteToStreamingEncoder = true,
-                StreamId = command.StreamId,
+                StreamId = command.OutputId,
                 SessionId = command.SessionId,
                 Offer = new WebRtcInfoMessage
                 {
@@ -85,7 +87,7 @@ namespace Avalanche.Api.Services.Media
             var response = new CommandResponse()
             {
                 SessionId = command.SessionId,
-                OutputId = command.StreamId,
+                OutputId = command.OutputId,
                 ResponseCode = (int)actionResponse.ResponseCode,
                 Messages = new List<string>()
             };
@@ -98,9 +100,9 @@ namespace Avalanche.Api.Services.Media
             return response;
         }
 
-        public async Task<CommandResponse> StopVideoAsync(Command command)
+        public async Task<CommandResponse> PgsStopVideoAsync(Command command)
         {
-            var actionResponse = await Client.DeInitSessionAsync(new DeInitSessionRequest()
+            var actionResponse = await WebRtcStreamerClient.DeInitSessionAsync(new DeInitSessionRequest()
             {
                 SessionId = command.SessionId,
             });
@@ -108,99 +110,61 @@ namespace Avalanche.Api.Services.Media
             return new CommandResponse()
             {
                 SessionId = command.SessionId,
-                OutputId = command.StreamId,
+                OutputId = command.OutputId,
                 ResponseCode = (int)WebRtcApiErrorEnum.WebRtcApiErrorSuccess
             };
         }
 
-        public async Task<CommandResponse> PlayAudioAsync(Command command)
+        public async Task<CommandResponse> PgsPlayAudioAsync(Command command)
         {
             return new CommandResponse()
             {
                 SessionId = command.SessionId,
-                OutputId = command.StreamId,
+                OutputId = command.OutputId,
                 ResponseCode = (int)WebRtcApiErrorEnum.WebRtcApiErrorUnknown
             };
         }
 
-        public async Task<CommandResponse> StopAudioAsync(Command command)
+        public async Task<CommandResponse> PgsStopAudioAsync(Command command)
         {
             return new CommandResponse()
             {
                 SessionId = command.SessionId,
-                OutputId = command.StreamId,
+                OutputId = command.OutputId,
                 ResponseCode = (int)WebRtcApiErrorEnum.WebRtcApiErrorUnknown
             };
         }
 
-        public async Task<CommandResponse> MuteAudioAsync(Command command)
+        public async Task<CommandResponse> PgsMuteAudioAsync(Command command)
         {
             return new CommandResponse()
             {
                 SessionId = command.SessionId,
-                OutputId = command.StreamId,
+                OutputId = command.OutputId,
                 ResponseCode = (int)WebRtcApiErrorEnum.WebRtcApiErrorUnknown
             };
         }
 
-        public async Task<CommandResponse> GetVolumeUpAsync(Command command)
+        public async Task<CommandResponse> PgsGetAudioVolumeUpAsync(Command command)
         {
             return new CommandResponse()
             {
                 SessionId = command.SessionId,
-                OutputId = command.StreamId,
+                OutputId = command.OutputId,
                 ResponseCode = (int)WebRtcApiErrorEnum.WebRtcApiErrorUnknown
             };
         }
 
-        public async Task<CommandResponse> GetVolumeDownAsync(Command command)
+        public async Task<CommandResponse> PgsGetAudioVolumeDownAsync(Command command)
         {
             return new CommandResponse()
             {
                 SessionId = command.SessionId,
-                OutputId = command.StreamId,
+                OutputId = command.OutputId,
                 ResponseCode = (int)WebRtcApiErrorEnum.WebRtcApiErrorUnknown
             };
         }
 
-        public async Task<CommandResponse> PlaySlidesAsync(Command command)
-        {
-            return new CommandResponse()
-            {
-                SessionId = command.SessionId,
-                OutputId = command.StreamId,
-                ResponseCode = (int)WebRtcApiErrorEnum.WebRtcApiErrorUnknown
-            };
-        }
-
-        public async Task<CommandResponse> StopSlidesAsync(Command command)
-        {
-            return new CommandResponse()
-            {
-                SessionId = command.SessionId,
-                OutputId = command.StreamId,
-                ResponseCode = (int)WebRtcApiErrorEnum.WebRtcApiErrorUnknown
-            };
-        }
-
-        public async Task<CommandResponse> NextSlideAsync(Command command)
-        {
-            return new CommandResponse()
-            {
-                SessionId = command.SessionId,
-                OutputId = command.StreamId,
-                ResponseCode = (int)WebRtcApiErrorEnum.WebRtcApiErrorUnknown
-            };
-        }
-
-        public async Task<CommandResponse> PreviousSlideAsync(Command command)
-        {
-            return new CommandResponse()
-            {
-                SessionId = command.SessionId,
-                OutputId = command.StreamId,
-                ResponseCode = (int)WebRtcApiErrorEnum.WebRtcApiErrorUnknown
-            };
-        }
+        #endregion WebRTC
     }
 }

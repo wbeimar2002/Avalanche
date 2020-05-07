@@ -6,7 +6,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Ism.Broadcaster" Version="1.0.0-prerelease2" />
+    <PackageReference Include="Ism.Broadcaster" Version="1.0.0-prerelease3" />
   </ItemGroup>
 
 </Project>

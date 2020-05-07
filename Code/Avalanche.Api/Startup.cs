@@ -34,6 +34,7 @@ using Avalanche.Api.Services.Media;
 using Avalanche.Api.Services.Settings;
 using Avalanche.Shared.Infrastructure.Services.Settings;
 using Avalanche.Api.Services.Health;
+using Avalanche.Api.Services.Configuration;
 
 namespace Avalanche.Api
 {
@@ -68,6 +69,7 @@ namespace Avalanche.Api
             services.AddSingleton<IMediaService, MediaService>();
             services.AddSingleton<IMediaManager, MediaManager>();
             services.AddSingleton<IPieService, PieServiceMock>();
+            services.AddSingleton<ISettingsService, SettingsService>();
 
             services.AddSingleton<IBroadcastService, BroadcastService>();
 

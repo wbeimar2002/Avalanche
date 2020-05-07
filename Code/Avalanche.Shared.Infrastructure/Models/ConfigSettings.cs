@@ -9,8 +9,5 @@ namespace Avalanche.Shared.Infrastructure.Models
     {
         [JsonProperty("api")]
         public ApiSettings Api { get; set; }
-
-        [JsonProperty("timeout")]
-        public TimeoutSettings Timeout { get; set; }
     }
 }
