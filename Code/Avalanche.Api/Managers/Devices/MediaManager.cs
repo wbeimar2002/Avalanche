@@ -7,10 +7,13 @@ using Avalanche.Shared.Infrastructure.Models;
 using Avalanche.Shared.Infrastructure.Services.Settings;
 using Ism.Security.Grpc.Helpers;
 using Ism.Streaming.Common.Core;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Avalanche.Shared.Infrastructure.Extensions;
+using Avalanche.Shared.Infrastructure.Helpers;
 
 namespace Avalanche.Api.Managers.Devices
 {
@@ -18,11 +21,13 @@ namespace Avalanche.Api.Managers.Devices
     {
         readonly IMediaService _mediaService;
         readonly ISettingsService _settingsService;
+        ILogger<MediaManager> _appLoggerService;
 
-        public MediaManager(IMediaService mediaService, ISettingsService settingsService)
+        public MediaManager(IMediaService mediaService, ISettingsService settingsService, ILogger<MediaManager> appLoggerService)
         {
             _mediaService = mediaService;
             _settingsService = settingsService;
+            _appLoggerService = appLoggerService;
         }
 
         public async Task<TimeoutSettings> GetTimeoutSettingsAsync()
@@ -38,7 +43,7 @@ namespace Avalanche.Api.Managers.Devices
             {
                 CommandResponse response = await ExecuteCommandAsync(command.CommandType, new Command()
                 {
-                    StreamId = item.Id,
+                    OutputId = item.Id,
                     Message = command.Message,
                     SessionId = command.SessionId,
                     Type = command.Type
@@ -52,9 +57,13 @@ namespace Avalanche.Api.Managers.Devices
 
         private async Task<CommandResponse> ExecuteCommandAsync(Shared.Domain.Enumerations.CommandTypes commandType, Command command)
         {
+            _appLoggerService.LogInformation($"{commandType.GetDescription()} command executed on {command.OutputId} output.");
+
             switch (commandType)
             {
+                #region PGS Commands
                 case Shared.Domain.Enumerations.CommandTypes.PgsPlayVideo:
+                    Preconditions.ThrowIfNull(nameof(command.Message), command.Message);
                     command.Message = ((int)TimeoutModes.Pgs).ToString();
                     await _mediaService.TimeoutSetModeAsync(command);
                     return await _mediaService.PgsPlayVideoAsync(command);
@@ -72,6 +81,7 @@ namespace Avalanche.Api.Managers.Devices
                     return await _mediaService.PgsMuteAudioAsync(command);
 
                 case Shared.Domain.Enumerations.CommandTypes.PgsHandleMessageForVideo:
+                    Preconditions.ThrowIfNull(nameof(command.Message), command.Message);
                     return await _mediaService.PgsHandleMessageForVideoAsync(command);
 
                 case Shared.Domain.Enumerations.CommandTypes.PgsGetAudioVolumeUp:
@@ -79,7 +89,9 @@ namespace Avalanche.Api.Managers.Devices
 
                 case Shared.Domain.Enumerations.CommandTypes.PgsGetAudioVolumeDown:
                     return await _mediaService.PgsGetAudioVolumeDownAsync(command);
+                #endregion
 
+                #region Timeout Commands
                 case Shared.Domain.Enumerations.CommandTypes.TimeoutPlayPdfSlides:
                     command.Message = ((int)TimeoutModes.Timeout).ToString();
                     return await _mediaService.TimeoutSetModeAsync(command);
@@ -95,7 +107,9 @@ namespace Avalanche.Api.Managers.Devices
                     return await _mediaService.TimeoutPreviousSlideAsync(command);
 
                 case Shared.Domain.Enumerations.CommandTypes.TimeoutSetCurrentSlide:
-                    return await _mediaService.TimeoutSetPageAsync(command);
+                    Preconditions.ThrowIfStringIsNotNumber(nameof(command.Message), command.Message);
+                    return await _mediaService.TimeoutSetPageAsync(command); 
+                #endregion
 
                 default:
                     return null;

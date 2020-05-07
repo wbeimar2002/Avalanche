@@ -33,7 +33,7 @@ namespace Avalanche.Api.Services.Media
 
             return new CommandResponse()
             {
-                OutputId = command.StreamId,
+                OutputId = command.OutputId,
                 ResponseCode = 0
             };
         }
@@ -55,7 +55,7 @@ namespace Avalanche.Api.Services.Media
 
             return new CommandResponse()
             {
-                OutputId = command.StreamId,
+                OutputId = command.OutputId,
                 ResponseCode = 0
             };
         }
@@ -74,7 +74,7 @@ namespace Avalanche.Api.Services.Media
 
             return new CommandResponse()
             {
-                OutputId = command.StreamId,
+                OutputId = command.OutputId,
                 ResponseCode = 0
             };
         }
@@ -93,7 +93,7 @@ namespace Avalanche.Api.Services.Media
 
             return new CommandResponse()
             {
-                OutputId = command.StreamId,
+                OutputId = command.OutputId,
                 ResponseCode = 0
             };
         }

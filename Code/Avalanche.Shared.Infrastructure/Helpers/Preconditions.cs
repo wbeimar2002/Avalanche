@@ -33,8 +33,22 @@ namespace Avalanche.Shared.Infrastructure.Helpers
             var count = enumerable.Count();
             if (count < expectedCount)
             {
-                throw new Exception($"Expected '{expectedCount}' item(s) in '{argumentName}', it has '{count}' item(s)");
+                throw new Exception($"Expected '{expectedCount}' item(s) in '{argumentName}', it has less than '{count}' item(s)");
             }
         }
+
+        public static void ThrowIfStringIsNotNumber(string argumentName, string value)
+        {
+            AssertValidArgumentName(argumentName);
+            ThrowIfNull(nameof(value), value);
+
+            var isValid = value.All(char.IsDigit);
+            if (!isValid)
+            {
+                throw new Exception($"String is not a valid number.");
+            }
+        }
+
+        
     }
 }

@@ -5,6 +5,7 @@ using Avalanche.Api.ViewModels;
 using Avalanche.Shared.Domain.Models;
 using Avalanche.Shared.Infrastructure.Services.Settings;
 using Castle.Core.Configuration;
+using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
 using System;
@@ -18,6 +19,7 @@ namespace Avalanche.Api.Tests.Managers
     {
         Mock<IMediaService> _mediaService;
         Mock<ISettingsService> _settingsService;
+        Mock<ILogger<MediaManager>> _appLoggerService;
 
         MediaManager _manager;
 
@@ -26,8 +28,9 @@ namespace Avalanche.Api.Tests.Managers
         {
             _mediaService = new Mock<IMediaService>();
             _settingsService = new Mock<ISettingsService>();
+            _appLoggerService = new Mock<ILogger<MediaManager>>();
 
-            _manager = new MediaManager(_mediaService.Object, _settingsService.Object);
+            _manager = new MediaManager(_mediaService.Object, _settingsService.Object, _appLoggerService.Object);
         }
 
         [Test]
@@ -36,6 +39,7 @@ namespace Avalanche.Api.Tests.Managers
             CommandViewModel commandViewModel = new CommandViewModel()
             {
                 CommandType = Shared.Domain.Enumerations.CommandTypes.PgsPlayVideo,
+                Message = "Sample",
                 Outputs = new List<Output>() { new Output() { Id = "Preview" } }
             };
 
@@ -76,6 +80,7 @@ namespace Avalanche.Api.Tests.Managers
             CommandViewModel commandViewModel = new CommandViewModel()
             {
                 CommandType = Shared.Domain.Enumerations.CommandTypes.PgsHandleMessageForVideo,
+                Message = "Sample",
                 Outputs = new List<Output>() { new Output() { Id = "Preview" } }
             };
 
@@ -208,6 +213,27 @@ namespace Avalanche.Api.Tests.Managers
             var actionResult = _manager.SendCommandAsync(commandViewModel);
 
             _mediaService.Verify(mock => mock.PgsStopAudioAsync(It.IsAny<Command>()), Times.Once);
+
+            Assert.IsNotNull(commandResponse);
+        }
+
+        [Test]
+        public void ExecuteSetPageShouldReturnResponse()
+        {
+            CommandViewModel commandViewModel = new CommandViewModel()
+            {
+                CommandType = Shared.Domain.Enumerations.CommandTypes.TimeoutSetCurrentSlide,
+                Outputs = new List<Output>() { new Output() { Id = "Testing" } },
+                Message = "0"
+            };
+
+            CommandResponse commandResponse = new CommandResponse();
+
+            _mediaService.Setup(mock => mock.TimeoutSetPageAsync(It.IsAny<Command>())).ReturnsAsync(commandResponse);
+
+            var actionResult = _manager.SendCommandAsync(commandViewModel);
+
+            _mediaService.Verify(mock => mock.TimeoutSetPageAsync(It.IsAny<Command>()), Times.Once);
 
             Assert.IsNotNull(commandResponse);
         }

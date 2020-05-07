@@ -51,7 +51,7 @@ namespace Avalanche.Api.Tests.Services
             {
                 Message = "Sample",
                 SessionId = Guid.NewGuid().ToString(),
-                StreamId = "Testing",
+                OutputId = "Testing",
                 Type = "sample.offer"
             };
 
@@ -80,7 +80,7 @@ namespace Avalanche.Api.Tests.Services
             {
                 Message = "Sample",
                 SessionId = Guid.NewGuid().ToString(),
-                StreamId = "Testing",
+                OutputId = "Testing",
                 Type = "sample.offer"
             };
 
@@ -106,7 +106,7 @@ namespace Avalanche.Api.Tests.Services
             {
                 Message = "Sample",
                 SessionId = Guid.NewGuid().ToString(),
-                StreamId = "Testing",
+                OutputId = "Testing",
                 Type = "sample.offer"
             };
 

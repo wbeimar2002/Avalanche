@@ -51,7 +51,7 @@ namespace Avalanche.Api.Services.Media
             return new CommandResponse()
             {
                 SessionId = command.SessionId,
-                OutputId = command.StreamId,
+                OutputId = command.OutputId,
                 ResponseCode = (int)actionResponse.ResponseCode
             }; 
         }
@@ -73,7 +73,7 @@ namespace Avalanche.Api.Services.Media
                 },
                 Quality = RxStreamQualityEnum.RxStreamQualityHdVideo,
                 RouteToStreamingEncoder = true,
-                StreamId = command.StreamId,
+                StreamId = command.OutputId,
                 SessionId = command.SessionId,
                 Offer = new WebRtcInfoMessage
                 {
@@ -87,7 +87,7 @@ namespace Avalanche.Api.Services.Media
             var response = new CommandResponse()
             {
                 SessionId = command.SessionId,
-                OutputId = command.StreamId,
+                OutputId = command.OutputId,
                 ResponseCode = (int)actionResponse.ResponseCode,
                 Messages = new List<string>()
             };
@@ -110,7 +110,7 @@ namespace Avalanche.Api.Services.Media
             return new CommandResponse()
             {
                 SessionId = command.SessionId,
-                OutputId = command.StreamId,
+                OutputId = command.OutputId,
                 ResponseCode = (int)WebRtcApiErrorEnum.WebRtcApiErrorSuccess
             };
         }
@@ -120,7 +120,7 @@ namespace Avalanche.Api.Services.Media
             return new CommandResponse()
             {
                 SessionId = command.SessionId,
-                OutputId = command.StreamId,
+                OutputId = command.OutputId,
                 ResponseCode = (int)WebRtcApiErrorEnum.WebRtcApiErrorUnknown
             };
         }
@@ -130,7 +130,7 @@ namespace Avalanche.Api.Services.Media
             return new CommandResponse()
             {
                 SessionId = command.SessionId,
-                OutputId = command.StreamId,
+                OutputId = command.OutputId,
                 ResponseCode = (int)WebRtcApiErrorEnum.WebRtcApiErrorUnknown
             };
         }
@@ -140,7 +140,7 @@ namespace Avalanche.Api.Services.Media
             return new CommandResponse()
             {
                 SessionId = command.SessionId,
-                OutputId = command.StreamId,
+                OutputId = command.OutputId,
                 ResponseCode = (int)WebRtcApiErrorEnum.WebRtcApiErrorUnknown
             };
         }
@@ -150,7 +150,7 @@ namespace Avalanche.Api.Services.Media
             return new CommandResponse()
             {
                 SessionId = command.SessionId,
-                OutputId = command.StreamId,
+                OutputId = command.OutputId,
                 ResponseCode = (int)WebRtcApiErrorEnum.WebRtcApiErrorUnknown
             };
         }
@@ -160,7 +160,7 @@ namespace Avalanche.Api.Services.Media
             return new CommandResponse()
             {
                 SessionId = command.SessionId,
-                OutputId = command.StreamId,
+                OutputId = command.OutputId,
                 ResponseCode = (int)WebRtcApiErrorEnum.WebRtcApiErrorUnknown
             };
         }
