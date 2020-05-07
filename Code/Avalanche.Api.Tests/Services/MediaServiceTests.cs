@@ -65,7 +65,7 @@ namespace Avalanche.Api.Tests.Services
 
             _service.WebRtcStreamerClient = _mockGrpcClient.Object;
 
-            var actionResult = _service.PlayVideoAsync(command);
+            var actionResult = _service.PgsPlayVideoAsync(command);
 
             _mockGrpcClient.Verify(mock => mock.InitSessionAsync(Moq.It.IsAny<InitSessionRequest>(), null, null, CancellationToken.None), Times.Once);
 
@@ -91,7 +91,7 @@ namespace Avalanche.Api.Tests.Services
 
             _service.WebRtcStreamerClient = _mockGrpcClient.Object;
 
-            var actionResult = _service.StopVideoAsync(command);
+            var actionResult = _service.PgsStopVideoAsync(command);
 
             _mockGrpcClient.Verify(mock => mock.DeInitSessionAsync(Moq.It.IsAny<DeInitSessionRequest>(), null, null, CancellationToken.None), Times.Once);
 
@@ -120,7 +120,7 @@ namespace Avalanche.Api.Tests.Services
 
             _service.WebRtcStreamerClient = _mockGrpcClient.Object;
 
-            var actionResult = _service.HandleMessageForVideoAsync(command);
+            var actionResult = _service.PgsHandleMessageForVideoAsync(command);
 
             _mockGrpcClient.Verify(mock => mock.HandleMessageAsync(Moq.It.IsAny<HandleMessageRequest>(), null, null, CancellationToken.None), Times.Once);
 
