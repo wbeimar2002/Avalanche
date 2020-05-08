@@ -18,7 +18,7 @@ namespace Avalanche.Api.Managers.Devices
                 Id = Guid.NewGuid().ToString(),
                 IsActive = true,
                 Name = "MAIN TV 1",
-                Preview = "https://www.olympus-oste.eu/media/innovations/images_5/2n_research_and_development/entwicklung_produktinnovationen_intro.jpg"
+                Thumbnail = "https://www.olympus-oste.eu/media/innovations/images_5/2n_research_and_development/entwicklung_produktinnovationen_intro.jpg"
             });
 
             outputs.Add(new Output()
@@ -26,7 +26,7 @@ namespace Avalanche.Api.Managers.Devices
                 Id = Guid.NewGuid().ToString(),
                 IsActive = false,
                 Name = "MAIN TV 2",
-                Preview = "https://www.olympus-oste.eu/media/innovations/images_5/2n_research_and_development/entwicklung_produktinnovationen_intro.jpg"
+                Thumbnail = "https://www.olympus-oste.eu/media/innovations/images_5/2n_research_and_development/entwicklung_produktinnovationen_intro.jpg"
             });
 
             outputs.Add(new Output()
@@ -34,7 +34,7 @@ namespace Avalanche.Api.Managers.Devices
                 Id = Guid.NewGuid().ToString(),
                 IsActive = true,
                 Name = "AUX TV 1",
-                Preview = "https://www.olympus-oste.eu/media/innovations/images_5/2n_research_and_development/entwicklung_produktinnovationen_systemintegration_6.jpg"
+                Thumbnail = "https://www.olympus-oste.eu/media/innovations/images_5/2n_research_and_development/entwicklung_produktinnovationen_systemintegration_6.jpg"
             });
 
             outputs.Add(new Output()
@@ -42,7 +42,7 @@ namespace Avalanche.Api.Managers.Devices
                 Id = Guid.NewGuid().ToString(),
                 IsActive = false,
                 Name = "MAIN TV 2",
-                Preview = "https://www.olympus-oste.eu/media/innovations/images_5/2n_research_and_development/entwicklung_produktinnovationen_systemintegration_6.jpg"
+                Thumbnail = "https://www.olympus-oste.eu/media/innovations/images_5/2n_research_and_development/entwicklung_produktinnovationen_systemintegration_6.jpg"
             });
 
 

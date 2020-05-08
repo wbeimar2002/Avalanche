@@ -14,21 +14,24 @@ using System.Threading.Tasks;
 using Google.Protobuf.WellKnownTypes;
 using System.IO;
 using System.Reflection;
+using Ism.PgsTimeout.Common.Core;
 
 namespace Avalanche.Api.Tests.Services
 {
     [TestFixture()]
-    public class MediaServiceTests
+    public partial class MediaServiceTests
     {
         Mock<IConfigurationService> _configurationService;
-        Moq.Mock<WebRtcStreamer.WebRtcStreamerClient> _mockGrpcClient;
+        Moq.Mock<WebRtcStreamer.WebRtcStreamerClient> _mockPgsGrpcClient;
+        Moq.Mock<PgsTimeout.PgsTimeoutClient> _mockPgsTimeoutClient;
         MediaService _service;
 
         [SetUp]
         public void Setup()
         {
             _configurationService = new Mock<IConfigurationService>();
-            _mockGrpcClient = new Moq.Mock<WebRtcStreamer.WebRtcStreamerClient>();
+            _mockPgsGrpcClient = new Moq.Mock<WebRtcStreamer.WebRtcStreamerClient>();
+            _mockPgsTimeoutClient = new Moq.Mock<PgsTimeout.PgsTimeoutClient>();
 
             var assemblyFolder = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
             var certificateFile = assemblyFolder + @"/grpc_localhost_root_l1.pfx";
@@ -60,16 +63,23 @@ namespace Avalanche.Api.Tests.Services
                 ResponseCode = WebRtcApiErrorEnum.WebRtcApiErrorSuccess,
             };
 
-            var fakeCall = TestCalls.AsyncUnaryCall(Task.FromResult(new InitSessionResponse()), Task.FromResult(new Metadata()), () => Status.DefaultSuccess, () => new Metadata(), () => { });
-            _mockGrpcClient.Setup(mock => mock.InitSessionAsync(Moq.It.IsAny<InitSessionRequest>(), null, null, CancellationToken.None)).Returns(fakeCall);
+            var response = new InitSessionResponse()
+            {
+                ResponseCode = WebRtcApiErrorEnum.WebRtcApiErrorSuccess,
+            };
 
-            _service.WebRtcStreamerClient = _mockGrpcClient.Object;
+            response.Answer.Add(new WebRtcInfoMessage() { Message = "Sample" });
+
+            var fakeCall = TestCalls.AsyncUnaryCall(Task.FromResult(response), Task.FromResult(new Metadata()), () => Status.DefaultSuccess, () => new Metadata(), () => { });
+            _mockPgsGrpcClient.Setup(mock => mock.InitSessionAsync(Moq.It.IsAny<InitSessionRequest>(), null, null, CancellationToken.None)).Returns(fakeCall);
+
+            _service.WebRtcStreamerClient = _mockPgsGrpcClient.Object;
 
             var actionResult = _service.PgsPlayVideoAsync(command);
 
-            _mockGrpcClient.Verify(mock => mock.InitSessionAsync(Moq.It.IsAny<InitSessionRequest>(), null, null, CancellationToken.None), Times.Once);
+            _mockPgsGrpcClient.Verify(mock => mock.InitSessionAsync(Moq.It.IsAny<InitSessionRequest>(), null, null, CancellationToken.None), Times.Once);
 
-            Assert.AreSame(fakeCall, _mockGrpcClient.Object.InitSessionAsync(new InitSessionRequest()));
+            Assert.AreSame(fakeCall, _mockPgsGrpcClient.Object.InitSessionAsync(new InitSessionRequest()));
             Assert.AreEqual(actionResult.Result.ResponseCode, (int)expected.ResponseCode);
         }
 
@@ -87,15 +97,15 @@ namespace Avalanche.Api.Tests.Services
             var expected = new Empty();
 
             var fakeCall = TestCalls.AsyncUnaryCall(Task.FromResult(new Empty()), Task.FromResult(new Metadata()), () => Status.DefaultSuccess, () => new Metadata(), () => { });
-            _mockGrpcClient.Setup(mock => mock.DeInitSessionAsync(Moq.It.IsAny<DeInitSessionRequest>(), null, null, CancellationToken.None)).Returns(fakeCall);
+            _mockPgsGrpcClient.Setup(mock => mock.DeInitSessionAsync(Moq.It.IsAny<DeInitSessionRequest>(), null, null, CancellationToken.None)).Returns(fakeCall);
 
-            _service.WebRtcStreamerClient = _mockGrpcClient.Object;
+            _service.WebRtcStreamerClient = _mockPgsGrpcClient.Object;
 
             var actionResult = _service.PgsStopVideoAsync(command);
 
-            _mockGrpcClient.Verify(mock => mock.DeInitSessionAsync(Moq.It.IsAny<DeInitSessionRequest>(), null, null, CancellationToken.None), Times.Once);
+            _mockPgsGrpcClient.Verify(mock => mock.DeInitSessionAsync(Moq.It.IsAny<DeInitSessionRequest>(), null, null, CancellationToken.None), Times.Once);
 
-            Assert.AreSame(fakeCall, _mockGrpcClient.Object.DeInitSessionAsync(new DeInitSessionRequest()));
+            Assert.AreSame(fakeCall, _mockPgsGrpcClient.Object.DeInitSessionAsync(new DeInitSessionRequest()));
             Assert.AreEqual(0, (int)actionResult.Result.ResponseCode);
         }
 
@@ -116,15 +126,15 @@ namespace Avalanche.Api.Tests.Services
             };
 
             var fakeCall = TestCalls.AsyncUnaryCall(Task.FromResult(new HandleMessageResponse()), Task.FromResult(new Metadata()), () => Status.DefaultSuccess, () => new Metadata(), () => { });
-            _mockGrpcClient.Setup(mock => mock.HandleMessageAsync(Moq.It.IsAny<HandleMessageRequest>(), null, null, CancellationToken.None)).Returns(fakeCall);
+            _mockPgsGrpcClient.Setup(mock => mock.HandleMessageAsync(Moq.It.IsAny<HandleMessageRequest>(), null, null, CancellationToken.None)).Returns(fakeCall);
 
-            _service.WebRtcStreamerClient = _mockGrpcClient.Object;
+            _service.WebRtcStreamerClient = _mockPgsGrpcClient.Object;
 
             var actionResult = _service.PgsHandleMessageForVideoAsync(command);
 
-            _mockGrpcClient.Verify(mock => mock.HandleMessageAsync(Moq.It.IsAny<HandleMessageRequest>(), null, null, CancellationToken.None), Times.Once);
+            _mockPgsGrpcClient.Verify(mock => mock.HandleMessageAsync(Moq.It.IsAny<HandleMessageRequest>(), null, null, CancellationToken.None), Times.Once);
 
-            Assert.AreSame(fakeCall, _mockGrpcClient.Object.HandleMessageAsync(new HandleMessageRequest()));
+            Assert.AreSame(fakeCall, _mockPgsGrpcClient.Object.HandleMessageAsync(new HandleMessageRequest()));
             Assert.AreEqual(actionResult.Result.ResponseCode, (int)expected.ResponseCode);
         }
     }

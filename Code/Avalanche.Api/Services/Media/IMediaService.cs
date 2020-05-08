@@ -11,6 +11,9 @@ namespace Avalanche.Api.Services.Media
     {
         WebRtcStreamer.WebRtcStreamerClient WebRtcStreamerClient { get; set; }
         PgsTimeout.PgsTimeoutClient PgsTimeoutClient { get; set; }
+        
+        //TODO: Temporary remove this when real server available
+        bool IgnorePgsTimeoutClientMocks { get; set; }
 
         //Video
         Task<CommandResponse> PgsPlayVideoAsync(Command command);
@@ -26,7 +29,7 @@ namespace Avalanche.Api.Services.Media
 
         //Timeout PDF
         Task<CommandResponse> TimeoutSetModeAsync(Command command);
-        Task<CommandResponse> TimeoutSetPageAsync(Command command);
+        Task<CommandResponse> TimeoutSetCurrentSlideAsync(Command command);
         Task<CommandResponse> TimeoutNextSlideAsync(Command command);
         Task<CommandResponse> TimeoutPreviousSlideAsync(Command command);
     }

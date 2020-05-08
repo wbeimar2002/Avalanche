@@ -108,7 +108,7 @@ namespace Avalanche.Api.Managers.Devices
 
                 case Shared.Domain.Enumerations.CommandTypes.TimeoutSetCurrentSlide:
                     Preconditions.ThrowIfStringIsNotNumber(nameof(command.Message), command.Message);
-                    return await _mediaService.TimeoutSetPageAsync(command); 
+                    return await _mediaService.TimeoutSetCurrentSlideAsync(command); 
                 #endregion
 
                 default:

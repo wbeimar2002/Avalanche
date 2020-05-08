@@ -229,11 +229,11 @@ namespace Avalanche.Api.Tests.Managers
 
             CommandResponse commandResponse = new CommandResponse();
 
-            _mediaService.Setup(mock => mock.TimeoutSetPageAsync(It.IsAny<Command>())).ReturnsAsync(commandResponse);
+            _mediaService.Setup(mock => mock.TimeoutSetCurrentSlideAsync(It.IsAny<Command>())).ReturnsAsync(commandResponse);
 
             var actionResult = _manager.SendCommandAsync(commandViewModel);
 
-            _mediaService.Verify(mock => mock.TimeoutSetPageAsync(It.IsAny<Command>()), Times.Once);
+            _mediaService.Verify(mock => mock.TimeoutSetCurrentSlideAsync(It.IsAny<Command>()), Times.Once);
 
             Assert.IsNotNull(commandResponse);
         }
