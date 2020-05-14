@@ -12,5 +12,7 @@ namespace Avalanche.Api.Managers.Settings
         Task<List<SettingCategory>> GetCategories();
         Task<SettingCategoryViewModel> GetSettingsByCategory(string categoryKey);
         List<KeyValuePairViewModel> GetSourceValuesByCategory(string categoryKey, string sourceKey);
+
+        Task SaveSettingsByCategory(string categoryKey, List<KeyValuePairViewModel> settings);
     }
 }

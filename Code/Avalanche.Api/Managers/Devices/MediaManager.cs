@@ -14,6 +14,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Avalanche.Shared.Infrastructure.Extensions;
 using Avalanche.Shared.Infrastructure.Helpers;
+using Microsoft.AspNetCore.Http;
 
 namespace Avalanche.Api.Managers.Devices
 {
@@ -33,6 +34,12 @@ namespace Avalanche.Api.Managers.Devices
         public async Task<TimeoutSettings> GetTimeoutSettingsAsync()
         {
             return await _settingsService.GetTimeoutSettingsAsync();
+        }
+
+        public async Task SaveFileAsync(IFormFile file)
+        {
+            //TODO: Pending Service that upload file
+            await Task.CompletedTask;
         }
 
         public async Task<List<CommandResponse>> SendCommandAsync(CommandViewModel command)

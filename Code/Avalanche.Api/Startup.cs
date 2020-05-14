@@ -35,6 +35,7 @@ using Avalanche.Api.Services.Settings;
 using Avalanche.Shared.Infrastructure.Services.Settings;
 using Avalanche.Api.Services.Health;
 using Avalanche.Api.Services.Configuration;
+using Microsoft.AspNetCore.Http.Features;
 
 namespace Avalanche.Api
 {
@@ -55,6 +56,11 @@ namespace Avalanche.Api
 
             services.AddCustomSwagger();
             services.AddHttpContextAccessor();
+
+            services.Configure<FormOptions>(x =>
+            {
+                x.MultipartBodyLengthLimit = 209715200;
+            });
 
             IConfigurationService configurationService = new ConfigurationService(Configuration);
             services.AddSingleton(c => configurationService);
@@ -168,6 +174,11 @@ namespace Avalanche.Api
             {
                 app.UseDeveloperExceptionPage();
             }
+            else
+            {
+                app.UseHsts();
+            } // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts
+
 
             app.UseSerilogRequestLogging();
 

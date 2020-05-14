@@ -19,7 +19,6 @@ namespace Avalanche.Api.Controllers.V1
 {
     [Route("[controller]")]
     [ApiController]
-    [EnableCors]
     [Authorize]
     public class LicensesController : ControllerBase
     {

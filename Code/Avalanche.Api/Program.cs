@@ -13,6 +13,7 @@ using Serilog.Events;
 using Avalanche.Shared.Infrastructure.Models;
 using Newtonsoft.Json;
 using Avalanche.Shared.Infrastructure.Helpers;
+using Microsoft.AspNetCore;
 
 namespace Avalanche.Api
 {
@@ -56,9 +57,7 @@ namespace Avalanche.Api
 
             try
             {
-                CreateHostBuilder(args)
-                    .Build()
-                    .Run(); 
+                CreateWebHostBuilder(args).Build().Run();
             }
             catch (Exception ex)
             {
@@ -71,12 +70,13 @@ namespace Avalanche.Api
             }
         }
 
-        public static IHostBuilder CreateHostBuilder(string[] args) =>
-            Microsoft.Extensions.Hosting.Host.CreateDefaultBuilder(args)
-                .UseSerilog() 
-                .ConfigureWebHostDefaults(webBuilder =>
+        public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
+            WebHost.CreateDefaultBuilder(args)
+                .UseSerilog()
+                .UseStartup<Startup>()
+                .UseKestrel(options =>
                 {
-                    webBuilder.UseStartup<Startup>();
+                    options.Limits.MaxRequestBodySize = 209715200;
                 });
     }
 }
