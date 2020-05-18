@@ -71,8 +71,9 @@ namespace Avalanche.Api.Managers.Devices
                 #region PGS Commands
                 case Shared.Domain.Enumerations.CommandTypes.PgsPlayVideo:
                     Preconditions.ThrowIfNull(nameof(command.Message), command.Message);
-                    command.Message = ((int)TimeoutModes.Pgs).ToString();
-                    await _mediaService.TimeoutSetModeAsync(command);
+                    // TODO make separate SetMode api endpoint
+                    //command.Message = ((int)TimeoutModes.Pgs).ToString();
+                    //await _mediaService.TimeoutSetModeAsync(command);
                     return await _mediaService.PgsPlayVideoAsync(command);
 
                 case Shared.Domain.Enumerations.CommandTypes.PgsStopVideo:
