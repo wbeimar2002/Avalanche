@@ -37,9 +37,15 @@ namespace Avalanche.Api.Managers.Health
             return await _pieService.RegisterQuickPatient();
         }
 
-        public async Task<List<Patient>> Search(PatientSearchFilterViewModel filter)
+        public async Task<List<Patient>> Search(PatientKeywordSearchFilterViewModel filter)
         {
             return await _pieService.Search(filter);
         }
+
+        public async Task<List<Patient>> Search(PatientDetailsSearchFilterViewModel filter)
+        {
+            return await _pieService.Search(filter);
+        }
+
     }
 }

@@ -6,13 +6,12 @@ using System.Threading.Tasks;
 
 namespace Avalanche.Api.ViewModels
 {
-    public class PatientSearchFilterViewModel : FilterViewModelBase
+    public class PatientKeywordSearchFilterViewModel : FilterViewModelBase
     {
         public string Term { get; set; }
 
-        public PatientSearchFilterViewModel() : base()
+        public PatientKeywordSearchFilterViewModel() : base()
         {
-            this.Limit = 3;
         }
 
 

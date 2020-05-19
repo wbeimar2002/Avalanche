@@ -89,7 +89,7 @@ namespace Avalanche.Api.Controllers.V1
         /// </summary>
         [HttpPost("filtered")]
         [Produces(typeof(PagedCollectionViewModel<Patient>))]
-        public async Task<IActionResult> Search([FromBody]PatientSearchFilterViewModel filter, [FromServices]IWebHostEnvironment env)
+        public async Task<IActionResult> Search([FromBody]PatientKeywordSearchFilterViewModel filter, [FromServices]IWebHostEnvironment env)
         {
             try
             {
@@ -98,19 +98,7 @@ namespace Avalanche.Api.Controllers.V1
                 var result = new PagedCollectionViewModel<Patient>();
                 result.Items = await _patientsManager.Search(filter);
 
-                //Get next page URL string  
-                PatientSearchFilterViewModel nextFilter = filter.Clone() as PatientSearchFilterViewModel;
-                nextFilter.Page += 1;
-                String nextUrl = result.Items.Count() <= 0 ? null : this.Url.Action("Get", null, nextFilter, Request.Scheme);
-
-                //Get previous page URL string  
-                PatientSearchFilterViewModel previousFilter = filter.Clone() as PatientSearchFilterViewModel;
-                previousFilter.Page -= 1;
-                String previousUrl = previousFilter.Page <= 0 ? null : this.Url.Action("Get", null, previousFilter, Request.Scheme);
-
-                result.NextPage = !String.IsNullOrWhiteSpace(nextUrl) ? new Uri(nextUrl) : null;
-                result.PreviousPage = !String.IsNullOrWhiteSpace(previousUrl) ? new Uri(previousUrl) : null;
-
+                AppendPagingContext(filter, result);
                 return Ok(result);
             }
             catch (Exception exception)
@@ -123,6 +111,35 @@ namespace Avalanche.Api.Controllers.V1
                 _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
             }
         }
+
+        /// <summary>
+        /// Search patient using criteria and paging
+        /// </summary>
+        [HttpPost("filteredDetailed")]
+        [Produces(typeof(PagedCollectionViewModel<Patient>))]
+        public async Task<IActionResult> SearchDetailed([FromBody]PatientDetailsSearchFilterViewModel filter, [FromServices]IWebHostEnvironment env)
+        {
+            try
+            {
+                _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
+
+                var result = new PagedCollectionViewModel<Patient>();
+                result.Items = await _patientsManager.Search(filter);
+
+                AppendPagingContext(filter, result);
+                return Ok(result);
+            }
+            catch (Exception exception)
+            {
+                _appLoggerService.LogError(LoggerHelper.GetLogMessage(DebugLogType.Exception), exception);
+                return new BadRequestObjectResult(exception.Get(env.IsDevelopment()));
+            }
+            finally
+            {
+                _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
+            }
+        }
+
 
         /// <summary>
         /// Get physiciansby patient
@@ -170,6 +187,26 @@ namespace Avalanche.Api.Controllers.V1
             {
                 _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
             }
+        }
+
+        private void AppendPagingContext<TFilterViewModel, TResult>(TFilterViewModel filter, PagedCollectionViewModel<TResult> result)
+            where TFilterViewModel : FilterViewModelBase
+            where TResult : class
+        {
+            //TODO: Not sure the UI is consuming this at the moment.  May need to revisit paging mechanism later depending on UI implementation?
+
+            //Get next page URL string  
+            TFilterViewModel nextFilter = filter.Clone() as TFilterViewModel;
+            nextFilter.Page += 1;
+            String nextUrl = result.Items.Count() <= 0 ? null : this.Url.Action("Get", null, nextFilter, Request.Scheme);
+
+            //Get previous page URL string  
+            TFilterViewModel previousFilter = filter.Clone() as TFilterViewModel;
+            previousFilter.Page -= 1;
+            String previousUrl = previousFilter.Page <= 0 ? null : this.Url.Action("Get", null, previousFilter, Request.Scheme);
+
+            result.NextPage = !String.IsNullOrWhiteSpace(nextUrl) ? new Uri(nextUrl) : null;
+            result.PreviousPage = !String.IsNullOrWhiteSpace(previousUrl) ? new Uri(previousUrl) : null;
         }
     }
 }

@@ -35,6 +35,9 @@ using Avalanche.Api.Services.Settings;
 using Avalanche.Shared.Infrastructure.Services.Settings;
 using Avalanche.Api.Services.Health;
 using Avalanche.Api.Services.Configuration;
+using Avalanche.Api.Utility;
+using Ism.IsmLogCommon.Core;
+using Avalanche.Api.Mapping.Health;
 
 namespace Avalanche.Api
 {
@@ -68,10 +71,15 @@ namespace Avalanche.Api
             services.AddSingleton<IOutputsManager, OutputsManagerMock>();
             services.AddSingleton<IMediaService, MediaService>();
             services.AddSingleton<IMediaManager, MediaManager>();
-            services.AddSingleton<IPieService, PieServiceMock>();
+            services.AddSingleton<IPieMapping, PieMapping>();
+            services.AddSingleton<IPieService, PieService>();
             services.AddSingleton<ISettingsService, SettingsService>();
 
             services.AddSingleton<IBroadcastService, BroadcastService>();
+
+            services.AddHttpContextAccessor();
+
+            services.AddSingleton<IAccessInfoFactory, AccessInfoFactory>();
 
             //TOD: Check this. Should be env variables?
             var hostName = configurationService.GetValue<string>("RabbitMqOptions:HostName");

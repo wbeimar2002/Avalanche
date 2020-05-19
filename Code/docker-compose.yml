@@ -60,6 +60,7 @@ services:
       hostIpAddress: '10.0.75.1'
       WebRTCGrpcPort: '8001'
       PgsTimeoutGrpcPort: '8002'
+      PatientInfoEngineGrpcPort: '9089'
       grpcCertificate: '/certificates/grpc_localhost_root_l1.pfx' 
       grpcPassword: '0123456789'
       seqUrl: 'http://seq:5341'
