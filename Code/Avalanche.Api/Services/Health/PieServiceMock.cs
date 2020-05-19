@@ -24,7 +24,7 @@ namespace Avalanche.Api.Services.Health
 
         public Task<Patient> RegisterPatient(Patient newPatient)
         {
-            newPatient.Id = Guid.NewGuid().ToString();
+            newPatient.Id = (ulong)new Random().Next(0, int.MaxValue);//Guid.NewGuid().ToString();
             return Task.FromResult(newPatient);
         }
 
@@ -34,7 +34,13 @@ namespace Avalanche.Api.Services.Health
             return Task.FromResult(fixture.Create<Patient>());
         }
 
-        public Task<List<Patient>> Search(PatientSearchFilterViewModel filter)
+        public Task<List<Patient>> Search(PatientKeywordSearchFilterViewModel filter)
+        {
+            var fixture = new Fixture();
+            return Task.FromResult(fixture.CreateMany<Patient>(10).ToList());
+        }
+
+        public Task<List<Patient>> Search(PatientDetailsSearchFilterViewModel filter)
         {
             var fixture = new Fixture();
             return Task.FromResult(fixture.CreateMany<Patient>(10).ToList());

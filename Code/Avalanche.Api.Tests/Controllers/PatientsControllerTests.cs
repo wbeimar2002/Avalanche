@@ -65,7 +65,7 @@ namespace Avalanche.Api.Tests.Controllers
             var fixture = new Fixture();
             List<Patient> list = fixture.CreateMany<Patient>(10).ToList();
 
-            var filter = new PatientSearchFilterViewModel()
+            var filter = new PatientKeywordSearchFilterViewModel()
             {
                 Limit = 10,
                 Page = 0,
@@ -91,7 +91,7 @@ namespace Avalanche.Api.Tests.Controllers
         {
             List<Patient> list = new List<Patient>();
 
-            var filter = new PatientSearchFilterViewModel()
+            var filter = new PatientKeywordSearchFilterViewModel()
             {
                 Limit = 10,
                 Page = 0,
@@ -115,9 +115,9 @@ namespace Avalanche.Api.Tests.Controllers
         [Test]
         public void SearchShouldReturnBadResultIfFails()
         {
-            _patientsManager.Setup(mock => mock.Search(It.IsAny<PatientSearchFilterViewModel>())).Throws(It.IsAny<Exception>());
+            _patientsManager.Setup(mock => mock.Search(It.IsAny<PatientKeywordSearchFilterViewModel>())).Throws(It.IsAny<Exception>());
 
-            var badResult = _controller.Search(It.IsAny<PatientSearchFilterViewModel>(), _environment.Object);
+            var badResult = _controller.Search(It.IsAny<PatientKeywordSearchFilterViewModel>(), _environment.Object);
 
             if (_checkLogger)
             {
