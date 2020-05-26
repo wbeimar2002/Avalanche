@@ -37,6 +37,19 @@ namespace Avalanche.Security.Server
 				options.UseInMemoryDatabase("Avalanche.Security.Server");
 			});*/
 
+			services.AddCors(o => o.AddDefaultPolicy(builder =>
+			{
+				builder
+				//.WithOrigins("https://localhost:4200") //Dev Mode
+				//configSettings.IpAddress)
+				//.AllowAnyOrigin()
+				.SetIsOriginAllowed(s => true)
+					.AllowAnyMethod()
+					.AllowAnyHeader()
+					.AllowCredentials();
+
+			}));
+
 			services.AddDbContext<AppDbContext>(options =>
 				  options.UseSqlite(Configuration.GetConnectionString("ConnectionSqlite")));
 
@@ -87,6 +100,7 @@ namespace Avalanche.Security.Server
 
 		public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
 		{
+			app.UseCors();
 			app.UseDeveloperExceptionPage();
 
 			app.UseRouting();
@@ -95,7 +109,6 @@ namespace Avalanche.Security.Server
 
 			app.UseAuthentication();
 			app.UseAuthorization();
-
 			app.UseEndpoints(endpoints =>
 			{
 				endpoints.MapControllers();
