@@ -80,7 +80,7 @@ namespace Avalanche.Api.Managers.Metadata
             {
                 Id = "P",
                 Value = "Pediatric",
-                TranslationKey = "pgsContentType.pedriatric"
+                TranslationKey = "pgsContentType.pediatric"
             });
 
             return list;
