@@ -1,0 +1,438 @@
+{
+	"info": {
+		"_postman_id": "486ff5e0-1f5c-4509-91c7-083d6ce02e90",
+		"name": "Timeout",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Send Play Slides Command",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "cfcc13e7-5b2e-4f52-b1f6-1c43fab307d9",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Is an array\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData).to.be.an('array');",
+							"});",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{CURRENT_ACCESS_TOKEN}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PUT",
+				"header": [
+					{
+						"key": "accept",
+						"value": "text/plain"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n   \"commandType\":8,\r\n   \"sessionId\":\"f0c81f47-4633-4418-9e27-472fb1ce3ec5\",\r\n   \"message\":\"\",\r\n   \"type\":\"\",\r\n   \"outputs\":[\r\n      {\r\n         \"id\":\"Timeout\",\r\n         \"name\":\"\",\r\n         \"preview\":\"\",\r\n         \"isActive\":true\r\n      }\r\n   ]\r\n}"
+				},
+				"url": {
+					"raw": "https://localhost:5001/Outputs/commands",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "5001",
+					"path": [
+						"Outputs",
+						"commands"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Send Stop Slides Command",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "2f4d8d57-682c-4289-a20b-897884794b2a",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Is an array\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData).to.be.an('array');",
+							"});",
+							"",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{CURRENT_ACCESS_TOKEN}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PUT",
+				"header": [
+					{
+						"key": "accept",
+						"value": "text/plain"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n   \"commandType\":9,\r\n   \"sessionId\":\"f0c81f47-4633-4418-9e27-472fb1ce3ec5\",\r\n   \"message\":\"\",\r\n   \"type\":\"\",\r\n   \"outputs\":[\r\n      {\r\n         \"id\":\"Timeout\",\r\n         \"name\":\"\",\r\n         \"preview\":\"\",\r\n         \"isActive\":true\r\n      }\r\n   ]\r\n}"
+				},
+				"url": {
+					"raw": "https://localhost:5001/Outputs/commands",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "5001",
+					"path": [
+						"Outputs",
+						"commands"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Send Next Slide Command",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "4cf6d870-50ef-4f84-9934-ce6feaefe1fa",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Is an array\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData).to.be.an('array');",
+							"});",
+							"",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{CURRENT_ACCESS_TOKEN}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PUT",
+				"header": [
+					{
+						"key": "accept",
+						"value": "text/plain"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n   \"commandType\":10,\r\n   \"sessionId\":\"f0c81f47-4633-4418-9e27-472fb1ce3ec5\",\r\n   \"message\":\"\",\r\n   \"type\":\"\",\r\n   \"outputs\":[\r\n      {\r\n         \"id\":\"Timeout\",\r\n         \"name\":\"\",\r\n         \"preview\":\"\",\r\n         \"isActive\":true\r\n      }\r\n   ]\r\n}"
+				},
+				"url": {
+					"raw": "https://localhost:5001/Outputs/commands",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "5001",
+					"path": [
+						"Outputs",
+						"commands"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Send Previous Slide Command",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "cfddf9b8-67d4-4bfb-b1d9-3dc16bdbe287",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Is an array\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData).to.be.an('array');",
+							"});",
+							"",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{CURRENT_ACCESS_TOKEN}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PUT",
+				"header": [
+					{
+						"key": "accept",
+						"value": "text/plain"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n   \"commandType\":11,\r\n   \"sessionId\":\"f0c81f47-4633-4418-9e27-472fb1ce3ec5\",\r\n   \"message\":\"\",\r\n   \"type\":\"\",\r\n   \"outputs\":[\r\n      {\r\n         \"id\":\"Timeout\",\r\n         \"name\":\"\",\r\n         \"preview\":\"\",\r\n         \"isActive\":true\r\n      }\r\n   ]\r\n}"
+				},
+				"url": {
+					"raw": "https://localhost:5001/Outputs/commands",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "5001",
+					"path": [
+						"Outputs",
+						"commands"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Set Current Page Command",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "34aef9ab-5010-4221-9826-d5b838d329d1",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Is an array\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData).to.be.an('array');",
+							"});",
+							"",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{CURRENT_ACCESS_TOKEN}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PUT",
+				"header": [
+					{
+						"key": "accept",
+						"value": "text/plain"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n   \"commandType\":12,\r\n   \"sessionId\":\"f0c81f47-4633-4418-9e27-472fb1ce3ec5\",\r\n   \"message\":\"12\",\r\n   \"type\":\"\",\r\n   \"outputs\":[\r\n      {\r\n         \"id\":\"Timeout\",\r\n         \"name\":\"\",\r\n         \"preview\":\"\",\r\n         \"isActive\":true\r\n      }\r\n   ]\r\n}"
+				},
+				"url": {
+					"raw": "https://localhost:5001/Outputs/commands",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "5001",
+					"path": [
+						"Outputs",
+						"commands"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Timeout Settings",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "21cac9ac-1e3d-46d9-b25e-52a7d6317e04",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{CURRENT_ACCESS_TOKEN}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "accept",
+						"value": "text/plain"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "https://localhost:5001/Outputs/timeout/settings",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "5001",
+					"path": [
+						"Outputs",
+						"timeout",
+						"settings"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"id": "a7f3dcfc-cb1a-47f5-adf4-91e9dabfca68",
+				"type": "text/javascript",
+				"exec": [
+					"var request = {",
+					"    url: pm.environment.get(\"LOGIN_URL\"),",
+					"    method: 'POST',",
+					"    header: 'Content-Type:application/json',",
+					"    body: {",
+					"        mode: 'application/json',",
+					"        raw: JSON.stringify(",
+					"            {",
+					"            \temail:pm.environment.get(\"ADMIN_USR\"),",
+					"            \tpassword: pm.environment.get(\"ADMIN_PASS\")",
+					"            })",
+					"  }",
+					"};",
+					"",
+					"pm.sendRequest(request, function (err, res) {",
+					"    console.log(err ? err : res.json());",
+					"    ",
+					"    if (err === null) {",
+					"        console.log('Saving the token')",
+					"        var responseJson = res.json();",
+					"        ",
+					"        console.log('Token: ' + responseJson.accessToken);",
+					"        ",
+					"        pm.environment.set('CURRENT_ACCESS_TOKEN', responseJson.accessToken)",
+					"    }",
+					"});"
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"id": "50cdb300-5c2e-443c-9f67-3764f89ede86",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"protocolProfileBehavior": {}
+}

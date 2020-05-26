@@ -14,6 +14,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Avalanche.Shared.Infrastructure.Extensions;
 using Avalanche.Shared.Infrastructure.Helpers;
+using Microsoft.AspNetCore.Http;
 
 namespace Avalanche.Api.Managers.Devices
 {
@@ -33,6 +34,12 @@ namespace Avalanche.Api.Managers.Devices
         public async Task<TimeoutSettings> GetTimeoutSettingsAsync()
         {
             return await _settingsService.GetTimeoutSettingsAsync();
+        }
+
+        public async Task SaveFileAsync(IFormFile file)
+        {
+            //TODO: Pending Service that upload file
+            await Task.CompletedTask;
         }
 
         public async Task<List<CommandResponse>> SendCommandAsync(CommandViewModel command)
@@ -64,8 +71,9 @@ namespace Avalanche.Api.Managers.Devices
                 #region PGS Commands
                 case Shared.Domain.Enumerations.CommandTypes.PgsPlayVideo:
                     Preconditions.ThrowIfNull(nameof(command.Message), command.Message);
-                    command.Message = ((int)TimeoutModes.Pgs).ToString();
-                    await _mediaService.TimeoutSetModeAsync(command);
+                    // TODO make separate SetMode api endpoint
+                    //command.Message = ((int)TimeoutModes.Pgs).ToString();
+                    //await _mediaService.TimeoutSetModeAsync(command);
                     return await _mediaService.PgsPlayVideoAsync(command);
 
                 case Shared.Domain.Enumerations.CommandTypes.PgsStopVideo:

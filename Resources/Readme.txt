@@ -35,6 +35,7 @@ postman-to-k6 PGS.postman_collection.json -i 1000 --environment environment.json
 postman-to-k6 Security.postman_collection.json -i 1000 --environment environment.json -o Security-k6-script.js
 postman-to-k6 Setup.postman_collection.json -i 1000 --environment environment.json -o Setup-k6-script.js
 postman-to-k6 StateServer.postman_collection.json -i 1000 --environment environment.json -o StateServer-k6-script.js
+postman-to-k6 Timeout.postman_collection.json -i 1000 --environment environment.json -o Timeout-k6-script.js
 
 ADD THIS IMPORTS TO THE SCRIPT HEADER
 
@@ -92,6 +93,7 @@ k6 run PGS-k6-script.js
 k6 run Security-k6-script.js
 k6 run Setup-k6-script.js
 k6 run StateServer-k6-script.js
+k6 run Timeout-k6-script.js
 
 3. Run the script with docker
 References: https://docs.k6.io/docs/running-k6

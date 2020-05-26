@@ -17,7 +17,6 @@ namespace Avalanche.Api.Controllers.V1
 {
     [Route("[controller]")]
     [ApiController]
-    [EnableCors]
     public class HealthController : ControllerBase
     {
         readonly ILogger _appLoggerService;

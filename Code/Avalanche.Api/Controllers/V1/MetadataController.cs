@@ -19,7 +19,7 @@ namespace Avalanche.Api.Controllers.V1
 {
     [Route("[controller]")]
     [ApiController]
-    [EnableCors]
+    [Authorize]
     public class MetadataController : ControllerBase
     {
         readonly ILogger _appLoggerService;

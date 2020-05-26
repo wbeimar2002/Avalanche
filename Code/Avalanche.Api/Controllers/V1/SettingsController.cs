@@ -21,7 +21,6 @@ namespace Avalanche.Api.Controllers.V1
     [Route("[controller]")]
     [ApiController]
     [Authorize]
-    [EnableCors]
     public class SettingsController : ControllerBase
     {
         readonly ILogger _appLoggerService;
@@ -85,12 +84,12 @@ namespace Avalanche.Api.Controllers.V1
         /// Save values from a category
         /// </summary>
         [HttpPost("categories/{categoryKey}")]
-        public async Task<IActionResult> SaveSettingsByCategory([FromServices]IWebHostEnvironment env)
+        public async Task<IActionResult> SaveSettingsByCategory(string categoryKey, [FromBody]List<KeyValuePairViewModel> settings, [FromServices]IWebHostEnvironment env)
         {
             try
             {
                 _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
-                await Task.CompletedTask;
+                await _settingsManager.SaveSettingsByCategory(categoryKey, settings);
                 return Ok();
             }
             catch (Exception exception)

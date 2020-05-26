@@ -17,6 +17,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 
 namespace Avalanche.Security.Server
@@ -87,7 +88,14 @@ namespace Avalanche.Security.Server
 
 		public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
 		{
-			app.UseDeveloperExceptionPage();
+			if (env.IsDevelopment())
+			{
+				app.UseDeveloperExceptionPage();
+			}
+			else
+			{
+				app.UseHsts();
+			} // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts
 
 			app.UseRouting();
 
