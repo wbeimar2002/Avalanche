@@ -14,7 +14,7 @@ namespace Avalanche.Api.Managers.Metadata
             switch (type)
             {
                 case Shared.Domain.Enumerations.MetadataTypes.Genders:
-                    return Task.FromResult(GetContentTypes());
+                    return Task.FromResult(GetGenderTypes());
                 case Shared.Domain.Enumerations.MetadataTypes.ProcedureTypes:
                     return Task.FromResult(GetProcedureTypes());
                 case Shared.Domain.Enumerations.MetadataTypes.ContentTypes:
@@ -37,25 +37,29 @@ namespace Avalanche.Api.Managers.Metadata
             list.Add(new KeyValuePairViewModel()
             {
                 Id = "F",
-                Value = "Female"
+                Value = "Female",
+                TranslationKey = "genre.female"
             });
 
             list.Add(new KeyValuePairViewModel()
             {
                 Id = "M",
-                Value = "Male"
+                Value = "Male",
+                TranslationKey = "genre.male"
             });
 
             list.Add(new KeyValuePairViewModel()
             {
                 Id = "O",
-                Value = "Other"
+                Value = "Other",
+                TranslationKey = "genre.other"
             });
 
             list.Add(new KeyValuePairViewModel()
             {
                 Id = "U",
-                Value = "Unspecified"
+                Value = "Unspecified",
+                TranslationKey = "genre.unspecified"
             });
 
             return list;
@@ -68,13 +72,15 @@ namespace Avalanche.Api.Managers.Metadata
             list.Add(new KeyValuePairViewModel()
             {
                 Id = "G",
-                Value = "General"
+                Value = "General",
+                TranslationKey = "pgsContentType.general"
             });
 
             list.Add(new KeyValuePairViewModel()
             {
                 Id = "P",
-                Value = "Pediatric"
+                Value = "Pediatric",
+                TranslationKey = "pgsContentType.pedriatric"
             });
 
             return list;
