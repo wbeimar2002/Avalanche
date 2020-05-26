@@ -85,5 +85,30 @@ namespace Avalanche.Api.Managers.Metadata
 
             return list;
         }
+
+        private List<KeyValuePairViewModel> GetSourceTypes()
+        {
+            var list = new List<KeyValuePairViewModel>();
+
+            list.Add(new KeyValuePairViewModel()
+            {
+                Id = "0",
+                Value = "Default"
+            });
+
+            list.Add(new KeyValuePairViewModel()
+            {
+                Id = "1",
+                Value = "Active Source"
+            });
+
+            list.Add(new KeyValuePairViewModel()
+            {
+                Id = "1",
+                Value = "Checklist PDF"
+            });
+
+            return list;
+        }
     }
 }

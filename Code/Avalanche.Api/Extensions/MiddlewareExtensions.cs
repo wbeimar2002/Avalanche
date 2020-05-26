@@ -49,9 +49,10 @@ namespace Avalanche.Api.Extensions
 				});
 
 				// Set the comments path for the Swagger JSON and UI.
-				var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
-				var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
-				cfg.IncludeXmlComments(xmlPath);
+				// TODO uncomment for PR to dev
+				//var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+				//var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+				//cfg.IncludeXmlComments(xmlPath);
 			});
 
 			return services;

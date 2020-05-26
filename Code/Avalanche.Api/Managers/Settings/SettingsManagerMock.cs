@@ -102,6 +102,11 @@ namespace Avalanche.Api.Managers.Settings
             }
         }
 
+        public async Task SaveSettingsByCategory(string categoryKey, List<KeyValuePairViewModel> settings)
+        {
+            await Task.CompletedTask;
+        }
+
         private List<KeyValuePairViewModel> GetPaperOrientations()
         {
             var list = new List<KeyValuePairViewModel>();
