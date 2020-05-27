@@ -14,6 +14,7 @@ service PgsTimeout{
     rpc SetPgsVideoFile (SetPgsVideoFileRequest) returns (google.protobuf.Empty);
     rpc GetPgsVideoFile (google.protobuf.Empty) returns (GetPgsVideoFileResponse);
     rpc SetCurrentVideoToRandomTime (google.protobuf.Empty) returns (google.protobuf.Empty);
+    rpc GetPgsAlwaysOnSetting (google.protobuf.Empty) returns (GetPgsAlwaysOnSettingResponse);
 
     // Timeout methods
     rpc GetTimeoutPdfPath (google.protobuf.Empty) returns (GetTimeoutPdfPathResponse);
@@ -22,6 +23,10 @@ service PgsTimeout{
     rpc SetTimeoutPage (SetTimeoutPageRequest) returns (google.protobuf.Empty);
     rpc NextPage (google.protobuf.Empty) returns (google.protobuf.Empty);
     rpc PreviousPage (google.protobuf.Empty) returns (google.protobuf.Empty);
+}
+
+message GetPgsAlwaysOnSettingResponse {
+    bool IsAlwaysOn = 1;
 }
 
 message SetPgsTimeoutModeRequest{

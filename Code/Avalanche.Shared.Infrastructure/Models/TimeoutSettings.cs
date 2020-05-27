@@ -9,5 +9,7 @@ namespace Avalanche.Shared.Infrastructure.Models
     {
         [JsonProperty("CheckListFileName")]
         public string CheckListFileName { get; set; }
+        [JsonProperty("PgsVideoAlwaysOn")]
+        public bool PgsVideoAlwaysOn { get; set; }
     }
 }

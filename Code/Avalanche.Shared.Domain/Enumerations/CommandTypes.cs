@@ -32,6 +32,8 @@ namespace Avalanche.Shared.Domain.Enumerations
         [Description("Timeout Previous Pdf Slide")]
         TimeoutPreviousPdfSlide = 11,
         [Description("Timeout Set Current Slide")]
-        TimeoutSetCurrentSlide = 12
+        TimeoutSetCurrentSlide = 12,
+        [Description("Initialization of PGS screen")]
+        PgsInit = 13
     }
 }
