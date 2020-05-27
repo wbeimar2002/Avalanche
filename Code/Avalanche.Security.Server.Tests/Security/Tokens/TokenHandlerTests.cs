@@ -9,7 +9,7 @@ using Microsoft.Extensions.Options;
 using Moq;
 using Xunit;
 
-namespace JWTPAPI.Tests.Security.Tokens
+namespace Avalanche.Security.Tests.Security.Tokens
 {
     public class TokenHandlerTests
     {

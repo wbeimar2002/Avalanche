@@ -21,7 +21,7 @@ namespace Avalanche.Api.Tests.Services
         {
             Command command = new Command()
             {
-                Message = ((int)TimeoutModes.Pgs).ToString(),
+                Message = ((int)TimeoutModes.Timeout).ToString(),
                 SessionId = Guid.NewGuid().ToString(),
                 OutputId = "Testing",
                 Type = "sample.offer"
@@ -37,7 +37,7 @@ namespace Avalanche.Api.Tests.Services
 
             var actionResult = _service.TimeoutSetModeAsync(command);
 
-            _mockPgsTimeoutClient.Verify(mock => mock.SetPgsTimeoutModeAsync(Moq.It.IsAny<SetPgsTimeoutModeRequest>(), null, null, CancellationToken.None), Times.Once);
+            _mockPgsTimeoutClient.Verify(mock => mock.SetPgsTimeoutModeAsync(Moq.It.Is<SetPgsTimeoutModeRequest>(arg => arg.Mode == PgsTimeoutModeEnum.PgsTimeoutModeTimeout ), null, null, CancellationToken.None), Times.Once);
 
             Assert.AreSame(fakeCall, _mockPgsTimeoutClient.Object.SetPgsTimeoutModeAsync(new SetPgsTimeoutModeRequest()));
             Assert.AreEqual(actionResult.Result.ResponseCode, 0);

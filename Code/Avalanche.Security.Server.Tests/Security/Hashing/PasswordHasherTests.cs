@@ -3,7 +3,7 @@ using Avalanche.Security.Server.Core.Security.Hashing;
 using Avalanche.Security.Server.Security.Hashing;
 using Xunit;
 
-namespace JWTPAPI.Tests.Security.Hashing
+namespace Avalanche.Security.Tests.Security.Hashing
 {
     public class PasswordHasherTests
     {

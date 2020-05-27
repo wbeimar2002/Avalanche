@@ -1,4 +1,5 @@
 ﻿using AutoFixture;
+using Avalanche.Api.Services.Configuration;
 using Avalanche.Api.ViewModels;
 using System;
 using System.Collections.Generic;
@@ -9,104 +10,143 @@ namespace Avalanche.Api.Managers.Metadata
 {
     public class MetadataManagerMock : IMetadataManager
     {
-        public Task<List<KeyValuePairViewModel>> GetMetadata(Shared.Domain.Enumerations.MetadataTypes type)
+        readonly IStorageService _storageService;
+
+        public MetadataManagerMock(IStorageService storageService)
+        {
+            _storageService = storageService;
+        }
+
+        public async Task<List<KeyValuePairViewModel>> GetMetadata(Shared.Domain.Enumerations.MetadataTypes type)
         {
             switch (type)
             {
                 case Shared.Domain.Enumerations.MetadataTypes.Genders:
-                    return Task.FromResult(GetGenderTypes());
+                    return await GetGenderTypes();
                 case Shared.Domain.Enumerations.MetadataTypes.ProcedureTypes:
-                    return Task.FromResult(GetProcedureTypes());
+                    return await GetProcedureTypes();
                 case Shared.Domain.Enumerations.MetadataTypes.ContentTypes:
-                    return Task.FromResult(GetContentTypes());
+                    return await GetContentTypes();
+                case Shared.Domain.Enumerations.MetadataTypes.SourceTypes:
+                    return await GetSourceTypes();
                 default:
-                    return Task.FromResult(new List<KeyValuePairViewModel>());
+                    return new List<KeyValuePairViewModel>();
             }
         }
 
-        private List<KeyValuePairViewModel> GetProcedureTypes()
+        private async Task<List<KeyValuePairViewModel>> GetProcedureTypes()
         {
-            var fixture = new Fixture();
-            return fixture.CreateMany<KeyValuePairViewModel>(10).ToList();
-        }
+            List<KeyValuePairViewModel> list = await _storageService.GetJson<List<KeyValuePairViewModel>>("ProcedureTypes");
 
-        private List<KeyValuePairViewModel> GetGenderTypes()
-        {
-            var list = new List<KeyValuePairViewModel>();
-            
-            list.Add(new KeyValuePairViewModel()
+            if (list == null || list.Count == 0)
             {
-                Id = "F",
-                Value = "Female",
-                TranslationKey = "genre.female"
-            });
+                var fixture = new Fixture();
+                list = fixture.CreateMany<KeyValuePairViewModel>(10).ToList();
 
-            list.Add(new KeyValuePairViewModel()
-            {
-                Id = "M",
-                Value = "Male",
-                TranslationKey = "genre.male"
-            });
-
-            list.Add(new KeyValuePairViewModel()
-            {
-                Id = "O",
-                Value = "Other",
-                TranslationKey = "genre.other"
-            });
-
-            list.Add(new KeyValuePairViewModel()
-            {
-                Id = "U",
-                Value = "Unspecified",
-                TranslationKey = "genre.unspecified"
-            });
+                await _storageService.SaveJson("ProcedureTypes", list);
+            }
 
             return list;
         }
 
-        private List<KeyValuePairViewModel> GetContentTypes()
+        private async Task<List<KeyValuePairViewModel>> GetGenderTypes()
         {
-            var list = new List<KeyValuePairViewModel>();
+            List<KeyValuePairViewModel> list = await _storageService.GetJson<List<KeyValuePairViewModel>>("GenderTypes");
 
-            list.Add(new KeyValuePairViewModel()
+            if (list == null || list.Count == 0)
             {
-                Id = "G",
-                Value = "General",
-                TranslationKey = "pgsContentType.general"
-            });
+                list = new List<KeyValuePairViewModel>();
 
-            list.Add(new KeyValuePairViewModel()
-            {
-                Id = "P",
-                Value = "Pediatric",
-                TranslationKey = "pgsContentType.pediatric"
-            });
+                list.Add(new KeyValuePairViewModel()
+                {
+                    Id = "F",
+                    Value = "Female",
+                    TranslationKey = "genre.female"
+                });
+
+                list.Add(new KeyValuePairViewModel()
+                {
+                    Id = "M",
+                    Value = "Male",
+                    TranslationKey = "genre.male"
+                });
+
+                list.Add(new KeyValuePairViewModel()
+                {
+                    Id = "O",
+                    Value = "Other",
+                    TranslationKey = "genre.other"
+                });
+
+                list.Add(new KeyValuePairViewModel()
+                {
+                    Id = "U",
+                    Value = "Unspecified",
+                    TranslationKey = "genre.unspecified"
+                });
+
+                await _storageService.SaveJson("GenderTypes", list);
+            }
 
             return list;
         }
 
-        private List<KeyValuePairViewModel> GetSourceTypes()
+        private async Task<List<KeyValuePairViewModel>> GetContentTypes()
         {
-            var list = new List<KeyValuePairViewModel>();
+            List<KeyValuePairViewModel> list = await _storageService.GetJson<List<KeyValuePairViewModel>>("ContentTypes");
 
-            list.Add(new KeyValuePairViewModel()
+            if (list == null || list.Count == 0)
             {
-                Id = "0",
-                Value = "Default"
-            });
+                list = new List<KeyValuePairViewModel>();
 
-            list.Add(new KeyValuePairViewModel()
-            {
-                Id = "1",
-                Value = "Active Source"
-            });
+                list.Add(new KeyValuePairViewModel()
+                {
+                    Id = "G",
+                    Value = "General",
+                    TranslationKey = "pgsContentType.general"
+                });
 
-            list.Add(new KeyValuePairViewModel()
+                list.Add(new KeyValuePairViewModel()
+                {
+                    Id = "P",
+                    Value = "Pediatric",
+                    TranslationKey = "pgsContentType.pediatric"
+                });
+
+                await _storageService.SaveJson("ContentTypes", list);
+            }
+
+            return list;
+        }
+
+        private async Task<List<KeyValuePairViewModel>> GetSourceTypes()
+        {
+            List<KeyValuePairViewModel> list = await _storageService.GetJson<List<KeyValuePairViewModel>>("SourceTypes");
+
+            if (list == null || list.Count == 0)
             {
-                Id = "1",
-                Value = "Checklist PDF"
-            });
+                list = new List<KeyValuePairViewModel>();
+
+                list.Add(new KeyValuePairViewModel()
+                {
+                    Id = "0",
+                    Value = "Default"
+                });
+
+                list.Add(new KeyValuePairViewModel()
+                {
+                    Id = "1",
+                    Value = "Active Source"
+                });
+
+                list.Add(new KeyValuePairViewModel()
+                {
+                    Id = "1",
+                    Value = "Checklist PDF"
+                });
+
+                await _storageService.SaveJson("SourceTypes", list);
+            }
 
             return list;
         }

@@ -15,6 +15,8 @@ using Google.Protobuf.WellKnownTypes;
 using System.IO;
 using System.Reflection;
 using Ism.PgsTimeout.Common.Core;
+using Avalanche.Api.Utility;
+using Ism.IsmLogCommon.Core;
 
 namespace Avalanche.Api.Tests.Services
 {
@@ -22,6 +24,8 @@ namespace Avalanche.Api.Tests.Services
     public partial class MediaServiceTests
     {
         Mock<IConfigurationService> _configurationService;
+        Mock<IAccessInfoFactory> _accessInfoFactory;
+
         Moq.Mock<WebRtcStreamer.WebRtcStreamerClient> _mockPgsGrpcClient;
         Moq.Mock<PgsTimeout.PgsTimeoutClient> _mockPgsTimeoutClient;
         MediaService _service;
@@ -30,6 +34,7 @@ namespace Avalanche.Api.Tests.Services
         public void Setup()
         {
             _configurationService = new Mock<IConfigurationService>();
+            _accessInfoFactory = new Mock<IAccessInfoFactory>();
             _mockPgsGrpcClient = new Moq.Mock<WebRtcStreamer.WebRtcStreamerClient>();
             _mockPgsTimeoutClient = new Moq.Mock<PgsTimeout.PgsTimeoutClient>();
 
@@ -44,7 +49,9 @@ namespace Avalanche.Api.Tests.Services
             _configurationService.Setup(mock => mock.GetEnvironmentVariable("grpcCertificate")).Returns(certificateFile);
             _configurationService.Setup(mock => mock.GetEnvironmentVariable("grpcPassword")).Returns("0123456789");
 
-            _service = new MediaService(_configurationService.Object);
+            _accessInfoFactory.Setup(mock => mock.GenerateAccessInfo(It.IsAny<string>())).Returns(new Ism.IsmLogCommon.Core.AccessInfo("192.168.0.1", "use", "app", "machine", "details", false));
+
+            _service = new MediaService(_configurationService.Object, _accessInfoFactory.Object);
         }
 
         [Test]

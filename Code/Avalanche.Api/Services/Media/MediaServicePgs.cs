@@ -1,4 +1,5 @@
-﻿using Avalanche.Shared.Domain.Models;
+﻿using Avalanche.Api.Utility;
+using Avalanche.Shared.Domain.Models;
 using Avalanche.Shared.Infrastructure.Services.Settings;
 using Ism.PgsTimeout.Common.Core;
 using Ism.Security.Grpc.Helpers;
@@ -12,13 +13,15 @@ namespace Avalanche.Api.Services.Media
     public partial class MediaService : IMediaService
     {
         readonly IConfigurationService _configurationService;
+        readonly IAccessInfoFactory _accessInfoFactory;
         readonly string _hostIpAddress;
 
         public WebRtcStreamer.WebRtcStreamerClient WebRtcStreamerClient { get; set; }
 
-        public MediaService(IConfigurationService configurationService)
+        public MediaService(IConfigurationService configurationService, IAccessInfoFactory accessInfoFactory)
         {
             _configurationService = configurationService;
+            _accessInfoFactory = accessInfoFactory;
 
             _hostIpAddress = _configurationService.GetEnvironmentVariable("hostIpAddress");
 
@@ -59,6 +62,7 @@ namespace Avalanche.Api.Services.Media
         public async Task<CommandResponse> PgsPlayVideoAsync(Command command)
         {
             var applicationName = this.GetType().FullName;
+            var accessInfo = _accessInfoFactory.GenerateAccessInfo();
 
             var actionResponse = await WebRtcStreamerClient.InitSessionAsync(new InitSessionRequest
             {
@@ -67,7 +71,7 @@ namespace Avalanche.Api.Services.Media
                     ApplicationName = applicationName,
                     Details = "Initialize webrtc stream",
                     Id = Guid.NewGuid().ToString(),
-                    Ip = _hostIpAddress,
+                    Ip = accessInfo.Ip,
                     MachineName = Environment.MachineName,
                     UserName = Environment.UserName
                 },

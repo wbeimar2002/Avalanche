@@ -39,6 +39,7 @@ using Avalanche.Api.Utility;
 using Ism.IsmLogCommon.Core;
 using Avalanche.Api.Mapping.Health;
 using Microsoft.AspNetCore.Http.Features;
+using Avalanche.Api.Utility.Files;
 
 namespace Avalanche.Api
 {
@@ -80,14 +81,14 @@ namespace Avalanche.Api
             services.AddSingleton<IPieMapping, PieMapping>();
             services.AddSingleton<IPieService, PieService>();
             services.AddSingleton<ISettingsService, SettingsService>();
-
+            services.AddSingleton<IStorageService, StorageService>();
+            services.AddSingleton<IFileService, FileService>();
             services.AddSingleton<IBroadcastService, BroadcastService>();
 
             services.AddHttpContextAccessor();
-
             services.AddSingleton<IAccessInfoFactory, AccessInfoFactory>();
 
-            //TOD: Check this. Should be env variables?
+            //TODO: Check this. Should be env variables?
             var hostName = configurationService.GetValue<string>("RabbitMqOptions:HostName");
             var port = configurationService.GetValue<int>("RabbitMqOptions:Port");
             var managementPort = configurationService.GetValue<int>("RabbitMqOptions:ManagementPort");
