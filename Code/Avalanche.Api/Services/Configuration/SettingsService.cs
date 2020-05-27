@@ -23,6 +23,8 @@ namespace Avalanche.Api.Services.Configuration
         public WebRtcStreamer.WebRtcStreamerClient WebRtcStreamerClient { get; set; }
         public PgsTimeout.PgsTimeoutClient PgsTimeoutClient { get; set; }
 
+        public bool IgnorePgsTimeoutClientMocks { get; set; }
+
         public SettingsService(IConfigurationService configurationService)
         {
             _configurationService = configurationService;
@@ -44,28 +46,30 @@ namespace Avalanche.Api.Services.Configuration
         public async Task<TimeoutSettings> GetTimeoutSettingsAsync()
         {
             //Faking calls while I have the real server
-            var mockResponseForPdf = new GetTimeoutPdfPathResponse()
+            if (!IgnorePgsTimeoutClientMocks)
             {
-                PdfPath = @"C:\Olympus\apps\config\AvalancheApi\safety_checklist.pdf"
-            };
+                var mockResponseForPdf = new GetTimeoutPdfPathResponse()
+                {
+                    PdfPath = @"C:\Olympus\apps\config\AvalancheApi\safety_checklist.pdf"
+                };
 
-            var mockResponseForAlwaysOn = new GetPgsAlwaysOnSettingResponse()
-            {
-                IsAlwaysOn = true
-            };
+                var mockResponseForAlwaysOn = new GetPgsAlwaysOnSettingResponse()
+                {
+                    IsAlwaysOn = true
+                };
 
-            Mock<PgsTimeout.PgsTimeoutClient> mockGrpcClient = new Mock<PgsTimeout.PgsTimeoutClient>();
+                Mock<PgsTimeout.PgsTimeoutClient> mockGrpcClient = new Mock<PgsTimeout.PgsTimeoutClient>();
 
-            var fakeCallForPdf = TestCalls.AsyncUnaryCall(Task.FromResult(mockResponseForPdf), Task.FromResult(new Metadata()), () => Status.DefaultSuccess, () => new Metadata(), () => { });
+                var fakeCallForPdf = TestCalls.AsyncUnaryCall(Task.FromResult(mockResponseForPdf), Task.FromResult(new Metadata()), () => Status.DefaultSuccess, () => new Metadata(), () => { });
 
-            var fakeCallForAlwaysOn = TestCalls.AsyncUnaryCall(Task.FromResult(mockResponseForAlwaysOn), Task.FromResult(new Metadata()), () => Status.DefaultSuccess, () => new Metadata(), () => { });
+                var fakeCallForAlwaysOn = TestCalls.AsyncUnaryCall(Task.FromResult(mockResponseForAlwaysOn), Task.FromResult(new Metadata()), () => Status.DefaultSuccess, () => new Metadata(), () => { });
 
-            mockGrpcClient.Setup(mock => mock.GetTimeoutPdfPathAsync(Moq.It.IsAny<Empty>(), null, null, CancellationToken.None)).Returns(fakeCallForPdf);
-            mockGrpcClient.Setup(mock => mock.GetPgsAlwaysOnSettingAsync(Moq.It.IsAny<Empty>(), null, null, CancellationToken.None)).Returns(fakeCallForAlwaysOn);
+                mockGrpcClient.Setup(mock => mock.GetTimeoutPdfPathAsync(Moq.It.IsAny<Empty>(), null, null, CancellationToken.None)).Returns(fakeCallForPdf);
+                mockGrpcClient.Setup(mock => mock.GetPgsAlwaysOnSettingAsync(Moq.It.IsAny<Empty>(), null, null, CancellationToken.None)).Returns(fakeCallForAlwaysOn);
 
-            PgsTimeoutClient = mockGrpcClient.Object;
-
-            //Real code starts
+                PgsTimeoutClient = mockGrpcClient.Object;
+            }
+          
             var actionResponseForPdf = await PgsTimeoutClient.GetTimeoutPdfPathAsync(new Empty());
             var actionResponseForAlwaysOn = await PgsTimeoutClient.GetPgsAlwaysOnSettingAsync(new Empty());
 
