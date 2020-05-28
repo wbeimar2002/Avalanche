@@ -15,7 +15,7 @@ using Google.Protobuf.WellKnownTypes;
 using System.IO;
 using System.Reflection;
 using Ism.PgsTimeout.Common.Core;
-using Avalanche.Api.Utility;
+using Avalanche.Api.Utilities;
 using Ism.IsmLogCommon.Core;
 
 namespace Avalanche.Api.Tests.Services
@@ -55,7 +55,7 @@ namespace Avalanche.Api.Tests.Services
         }
 
         [Test]
-        public void ExecutePlayShouldReturnResponse()
+        public void PgsExecutePlayVideoShouldReturnResponse()
         {
             Command command = new Command()
             {
@@ -91,7 +91,7 @@ namespace Avalanche.Api.Tests.Services
         }
 
         [Test]
-        public void ExecuteStopShouldReturnResponse()
+        public void PgsExecuteStopVideoShouldReturnResponse()
         {
             Command command = new Command()
             {
@@ -117,7 +117,7 @@ namespace Avalanche.Api.Tests.Services
         }
 
         [Test]
-        public void ExecuteHandleMessageShouldReturnResponse()
+        public void PgsExecuteHandleMessageForViewoShouldReturnResponse()
         {
             Command command = new Command()
             {

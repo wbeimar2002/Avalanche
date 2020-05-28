@@ -35,11 +35,11 @@ using Avalanche.Api.Services.Settings;
 using Avalanche.Shared.Infrastructure.Services.Settings;
 using Avalanche.Api.Services.Health;
 using Avalanche.Api.Services.Configuration;
-using Avalanche.Api.Utility;
+using Avalanche.Api.Utilities;
 using Ism.IsmLogCommon.Core;
 using Avalanche.Api.Mapping.Health;
 using Microsoft.AspNetCore.Http.Features;
-using Avalanche.Api.Utility.Files;
+using Avalanche.Api.Utilities.Files;
 
 namespace Avalanche.Api
 {
@@ -73,7 +73,7 @@ namespace Avalanche.Api
             services.AddSingleton<IPatientsManager, PatientsManager>();
             services.AddSingleton<IPhysiciansManager, PhysiciansManagerMock>();
             services.AddSingleton<IProceduresManager, ProceduresManagerMock>();
-            services.AddSingleton<IMetadataManager, MetadataManagerMock>();
+            services.AddSingleton<IMetadataManager, MetadataManager>();
             services.AddSingleton<ILicensingManager, LicensingManagerMock>();
             services.AddSingleton<IOutputsManager, OutputsManagerMock>();
             services.AddSingleton<IMediaService, MediaService>();

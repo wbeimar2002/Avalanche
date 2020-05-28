@@ -13,14 +13,13 @@ namespace Avalanche.Api.Services.Media
     public partial class MediaService : IMediaService
     {
         public PgsTimeout.PgsTimeoutClient PgsTimeoutClient { get; set; }
-        public bool IgnorePgsTimeoutClientMocks { get; set; }
 
         #region PgsTimeout
 
         public async Task<CommandResponse> TimeoutSetModeAsync(Command command)
         {
             //Faking calls while I have the real server
-            if (!IgnorePgsTimeoutClientMocks)
+            if (!IgnoreGrpcServicesMocks)
             {
                 Mock<PgsTimeout.PgsTimeoutClient> mockGrpcClient = new Mock<PgsTimeout.PgsTimeoutClient>();
                 var fakeCall = TestCalls.AsyncUnaryCall(Task.FromResult(new Empty()), Task.FromResult(new Metadata()), () => Status.DefaultSuccess, () => new Metadata(), () => { });
@@ -44,7 +43,7 @@ namespace Avalanche.Api.Services.Media
         public async Task<CommandResponse> TimeoutSetCurrentSlideAsync(Command command)
         {
             //Faking calls while I have the real server
-            if (!IgnorePgsTimeoutClientMocks)
+            if (!IgnoreGrpcServicesMocks)
             {
                 Mock<PgsTimeout.PgsTimeoutClient> mockGrpcClient = new Mock<PgsTimeout.PgsTimeoutClient>();
                 var fakeCall = TestCalls.AsyncUnaryCall(Task.FromResult(new Empty()), Task.FromResult(new Metadata()), () => Status.DefaultSuccess, () => new Metadata(), () => { });
@@ -68,7 +67,7 @@ namespace Avalanche.Api.Services.Media
         public async Task<CommandResponse> TimeoutNextSlideAsync(Command command)
         {
             //Faking calls while I have the real server
-            if (!IgnorePgsTimeoutClientMocks)
+            if (!IgnoreGrpcServicesMocks)
             {
                 Mock<PgsTimeout.PgsTimeoutClient> mockGrpcClient = new Mock<PgsTimeout.PgsTimeoutClient>();
                 var fakeCall = TestCalls.AsyncUnaryCall(Task.FromResult(new Empty()), Task.FromResult(new Metadata()), () => Status.DefaultSuccess, () => new Metadata(), () => { });
@@ -89,7 +88,7 @@ namespace Avalanche.Api.Services.Media
         public async Task<CommandResponse> TimeoutPreviousSlideAsync(Command command)
         {
             //Faking calls while I have the real server
-            if (!IgnorePgsTimeoutClientMocks)
+            if (!IgnoreGrpcServicesMocks)
             {
                 Mock<PgsTimeout.PgsTimeoutClient> mockGrpcClient = new Mock<PgsTimeout.PgsTimeoutClient>();
                 var fakeCall = TestCalls.AsyncUnaryCall(Task.FromResult(new Empty()), Task.FromResult(new Metadata()), () => Status.DefaultSuccess, () => new Metadata(), () => { });

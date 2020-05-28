@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Avalanche.Api.Utility.Files
+namespace Avalanche.Api.Utilities.Files
 {
     public interface IFileService
     {

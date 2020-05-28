@@ -5,7 +5,7 @@ using System.IO;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Avalanche.Api.Utility.Files
+namespace Avalanche.Api.Utilities.Files
 {
     public class FileService : IFileService
     {

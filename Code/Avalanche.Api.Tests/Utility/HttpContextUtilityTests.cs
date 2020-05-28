@@ -1,4 +1,4 @@
-﻿using Avalanche.Api.Utility;
+﻿using Avalanche.Api.Utilities;
 using Microsoft.AspNetCore.Http;
 using Moq;
 using NUnit.Framework;

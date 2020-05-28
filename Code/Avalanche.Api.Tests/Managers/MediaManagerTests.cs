@@ -35,8 +35,10 @@ namespace Avalanche.Api.Tests.Managers
             _manager = new MediaManager(_mediaService.Object, _settingsService.Object, _appLoggerService.Object);
         }
 
+        #region Pgs
+
         [Test]
-        public void ExecutePlayShouldReturnResponse()
+        public void PgsExecutePlayVideoShouldReturnResponse()
         {
             CommandViewModel commandViewModel = new CommandViewModel()
             {
@@ -57,7 +59,7 @@ namespace Avalanche.Api.Tests.Managers
         }
 
         [Test]
-        public void ExecuteStopShouldReturnResponse()
+        public void PgsExecuteStopVideoShouldReturnResponse()
         {
             CommandViewModel commandViewModel = new CommandViewModel()
             {
@@ -77,7 +79,7 @@ namespace Avalanche.Api.Tests.Managers
         }
 
         [Test]
-        public void ExecuteHandleMessageShouldReturnResponse()
+        public void PgsExecuteHandleMessageShouldReturnResponse()
         {
             CommandViewModel commandViewModel = new CommandViewModel()
             {
@@ -98,7 +100,105 @@ namespace Avalanche.Api.Tests.Managers
         }
 
         [Test]
-        public void ExecutePlaySlidesShouldReturnResponse()
+        public void PgsExecutePgsInitShouldSetTimeoutModePgsIfAlwaysOnIsTrue()
+        {
+            CommandViewModel commandViewModel = new CommandViewModel()
+            {
+                Message = "Sample",
+                CommandType = Shared.Domain.Enumerations.CommandTypes.PgsInit,
+                Outputs = new List<Output>() { new Output() { Id = "Pgs" } }
+            };
+
+            CommandResponse commandResponse = new CommandResponse();
+
+            TimeoutSettings timeoutSettings = new TimeoutSettings()
+            {
+                PgsVideoAlwaysOn = true
+            };
+
+            _settingsService.Setup(mock => mock.GetTimeoutSettingsAsync()).ReturnsAsync(timeoutSettings);
+            _mediaService.Setup(mock => mock.TimeoutSetModeAsync(It.IsAny<Command>())).ReturnsAsync(commandResponse);
+
+            var actionResult = _manager.SendCommandAsync(commandViewModel);
+
+            _mediaService.Verify(mock => mock.TimeoutSetModeAsync(It.Is<Command>(args => args.Message == ((int)TimeoutModes.Pgs).ToString())), Times.Once);
+
+            Assert.IsNotNull(commandResponse);
+        }
+
+        [Test]
+        public void PgsExecutePgsInitShouldSetTimeoutModeIdleIfAlwaysOnIsFalse()
+        {
+            CommandViewModel commandViewModel = new CommandViewModel()
+            {
+                Message = "Sample",
+                CommandType = Shared.Domain.Enumerations.CommandTypes.PgsInit,
+                Outputs = new List<Output>() { new Output() { Id = "Pgs" } }
+            };
+
+            CommandResponse commandResponse = new CommandResponse();
+
+            TimeoutSettings timeoutSettings = new TimeoutSettings()
+            {
+                PgsVideoAlwaysOn = false
+            };
+
+            _settingsService.Setup(mock => mock.GetTimeoutSettingsAsync()).ReturnsAsync(timeoutSettings);
+            _mediaService.Setup(mock => mock.TimeoutSetModeAsync(It.IsAny<Command>())).ReturnsAsync(commandResponse);
+
+            var actionResult = _manager.SendCommandAsync(commandViewModel);
+
+            _mediaService.Verify(mock => mock.TimeoutSetModeAsync(It.Is<Command>(args => args.Message == ((int)TimeoutModes.Idle).ToString())), Times.Once);
+
+            Assert.IsNotNull(commandResponse);
+        }
+
+
+        [Test]
+        public void PgsExecutePlayAudioShouldReturnResponse()
+        {
+            CommandViewModel commandViewModel = new CommandViewModel()
+            {
+                CommandType = Shared.Domain.Enumerations.CommandTypes.PgsPlayAudio,
+                Outputs = new List<Output>() { new Output() { Id = "Testing" } }
+            };
+
+            CommandResponse commandResponse = new CommandResponse();
+
+            _mediaService.Setup(mock => mock.PgsPlayAudioAsync(It.IsAny<Command>())).ReturnsAsync(commandResponse);
+
+            var actionResult = _manager.SendCommandAsync(commandViewModel);
+
+            _mediaService.Verify(mock => mock.PgsPlayAudioAsync(It.IsAny<Command>()), Times.Once);
+
+            Assert.IsNotNull(commandResponse);
+        }
+
+        [Test]
+        public void PgsExecuteStopAudioShouldReturnResponse()
+        {
+            CommandViewModel commandViewModel = new CommandViewModel()
+            {
+                CommandType = Shared.Domain.Enumerations.CommandTypes.PgsStopAudio,
+                Outputs = new List<Output>() { new Output() { Id = "Testing" } }
+            };
+
+            CommandResponse commandResponse = new CommandResponse();
+
+            _mediaService.Setup(mock => mock.PgsStopAudioAsync(It.IsAny<Command>())).ReturnsAsync(commandResponse);
+
+            var actionResult = _manager.SendCommandAsync(commandViewModel);
+
+            _mediaService.Verify(mock => mock.PgsStopAudioAsync(It.IsAny<Command>()), Times.Once);
+
+            Assert.IsNotNull(commandResponse);
+        }
+        #endregion Pgs
+
+        #region Timeout
+
+        [Test]
+        public void TimeoutExecutePlaySlidesShouldReturnResponse()
         {
             CommandViewModel commandViewModel = new CommandViewModel()
             {
@@ -118,61 +218,7 @@ namespace Avalanche.Api.Tests.Managers
         }
 
         [Test]
-        public void ExecutePgsInitShouldSetTimeoutModePgsIfAlwaysOnIsTrue()
-        {
-            CommandViewModel commandViewModel = new CommandViewModel()
-            {
-                Message = "Sample",
-                CommandType = Shared.Domain.Enumerations.CommandTypes.PgsInit,
-                Outputs = new List<Output>() { new Output() { Id = "Pgs" } }
-            };
-
-            CommandResponse commandResponse = new CommandResponse();
-
-            TimeoutSettings timeoutSettings = new TimeoutSettings()
-            {
-                PgsVideoAlwaysOn = true
-            };
-
-            _settingsService.Setup(mock => mock.GetTimeoutSettingsAsync()).ReturnsAsync(timeoutSettings);
-            _mediaService.Setup(mock => mock.TimeoutSetModeAsync(It.IsAny<Command>())).ReturnsAsync(commandResponse);
-
-            var actionResult = _manager.SendCommandAsync(commandViewModel);
-
-            _mediaService.Verify(mock => mock.TimeoutSetModeAsync(It.Is<Command>(args => args.Message == ((int)TimeoutModes.Pgs).ToString())), Times.Once);
-
-            Assert.IsNotNull(commandResponse);
-        }
-
-        [Test]
-        public void ExecutePgsInitShouldSetTimeoutModeIdleIfAlwaysOnIsFalse()
-        {
-            CommandViewModel commandViewModel = new CommandViewModel()
-            {
-                Message = "Sample",
-                CommandType = Shared.Domain.Enumerations.CommandTypes.PgsInit,
-                Outputs = new List<Output>() { new Output() { Id = "Pgs" } }
-            };
-
-            CommandResponse commandResponse = new CommandResponse();
-
-            TimeoutSettings timeoutSettings = new TimeoutSettings()
-            {
-                PgsVideoAlwaysOn = false
-            };
-
-            _settingsService.Setup(mock => mock.GetTimeoutSettingsAsync()).ReturnsAsync(timeoutSettings);
-            _mediaService.Setup(mock => mock.TimeoutSetModeAsync(It.IsAny<Command>())).ReturnsAsync(commandResponse);
-
-            var actionResult = _manager.SendCommandAsync(commandViewModel);
-
-            _mediaService.Verify(mock => mock.TimeoutSetModeAsync(It.Is<Command>(args => args.Message == ((int)TimeoutModes.Idle).ToString())), Times.Once);
-
-            Assert.IsNotNull(commandResponse);
-        }
-
-        [Test]
-        public void ExecuteStopSlidesShouldSetTimeoutModePgsIfAlwaysOnIsTrue()
+        public void TimeoutExecuteStopSlidesShouldSetTimeoutModePgsIfAlwaysOnIsTrue()
         {
             CommandViewModel commandViewModel = new CommandViewModel()
             {
@@ -198,7 +244,7 @@ namespace Avalanche.Api.Tests.Managers
         }
 
         [Test]
-        public void ExecuteStopSlidesShouldSetTimeoutModeIdleIfAlwaysOnIsFalse()
+        public void TimeoutExecuteStopSlidesShouldSetTimeoutModeIdleIfAlwaysOnIsFalse()
         {
             CommandViewModel commandViewModel = new CommandViewModel()
             {
@@ -224,7 +270,7 @@ namespace Avalanche.Api.Tests.Managers
         }
 
         [Test]
-        public void ExecuteNextSlideShouldReturnResponse()
+        public void TimeoutExecuteNextSlideShouldReturnResponse()
         {
             CommandViewModel commandViewModel = new CommandViewModel()
             {
@@ -245,7 +291,7 @@ namespace Avalanche.Api.Tests.Managers
 
 
         [Test]
-        public void ExecutePreviousSlideShouldReturnResponse()
+        public void TimeoutExecutePreviousSlideShouldReturnResponse()
         {
             CommandViewModel commandViewModel = new CommandViewModel()
             {
@@ -266,47 +312,7 @@ namespace Avalanche.Api.Tests.Managers
 
 
         [Test]
-        public void ExecutePlayAudioShouldReturnResponse()
-        {
-            CommandViewModel commandViewModel = new CommandViewModel()
-            {
-                CommandType = Shared.Domain.Enumerations.CommandTypes.PgsPlayAudio,
-                Outputs = new List<Output>() { new Output() { Id = "Testing" } }
-            };
-
-            CommandResponse commandResponse = new CommandResponse();
-
-            _mediaService.Setup(mock => mock.PgsPlayAudioAsync(It.IsAny<Command>())).ReturnsAsync(commandResponse);
-
-            var actionResult = _manager.SendCommandAsync(commandViewModel);
-
-            _mediaService.Verify(mock => mock.PgsPlayAudioAsync(It.IsAny<Command>()), Times.Once);
-
-            Assert.IsNotNull(commandResponse);
-        }
-
-        [Test]
-        public void ExecuteStopAudioShouldReturnResponse()
-        {
-            CommandViewModel commandViewModel = new CommandViewModel()
-            {
-                CommandType = Shared.Domain.Enumerations.CommandTypes.PgsStopAudio,
-                Outputs = new List<Output>() { new Output() { Id = "Testing" } }
-            };
-
-            CommandResponse commandResponse = new CommandResponse();
-
-            _mediaService.Setup(mock => mock.PgsStopAudioAsync(It.IsAny<Command>())).ReturnsAsync(commandResponse);
-
-            var actionResult = _manager.SendCommandAsync(commandViewModel);
-
-            _mediaService.Verify(mock => mock.PgsStopAudioAsync(It.IsAny<Command>()), Times.Once);
-
-            Assert.IsNotNull(commandResponse);
-        }
-
-        [Test]
-        public void ExecuteSetPageShouldReturnResponse()
+        public void TimeoutExecuteSetCurrentPageShouldReturnResponse()
         {
             CommandViewModel commandViewModel = new CommandViewModel()
             {
@@ -325,5 +331,6 @@ namespace Avalanche.Api.Tests.Managers
 
             Assert.IsNotNull(commandResponse);
         }
+        #endregion Timeout
     }
 }

@@ -69,6 +69,7 @@
   <ItemGroup>
     <Protobuf Include="Protos\WebRtcStreamer.proto" />
     <Protobuf Include="Protos\PgsTimeout.proto" />
+    <Protobuf Include="Protos\ConfigurationStorage.proto" />
   </ItemGroup>
 
   <ItemGroup>

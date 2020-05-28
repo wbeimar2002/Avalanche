@@ -8,11 +8,12 @@ using System.Threading.Tasks;
 
 namespace Avalanche.Api.Managers.Metadata
 {
-    public class MetadataManagerMock : IMetadataManager
+    public class MetadataManager : IMetadataManager
     {
         readonly IStorageService _storageService;
+        //TODO: Remove mock data when storage configuration service is running
 
-        public MetadataManagerMock(IStorageService storageService)
+        public MetadataManager(IStorageService storageService)
         {
             _storageService = storageService;
         }
