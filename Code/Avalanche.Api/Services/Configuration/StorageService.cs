@@ -46,21 +46,23 @@ namespace Avalanche.Api.Services.Configuration
 
         public async Task<T> GetJson<T>(string configurationKey, int version)
         {
+            var request = new GetConfigurationRequest()
+            {
+                Version = Convert.ToUInt32(version),
+                Section = configurationKey
+            };
+            
             //Faking calls while I have the real server
             if (!IgnoreGrpcServicesMocks)
             {
                 Mock<PatientListStorage.PatientListStorageClient> mockGrpcClient = new Mock<PatientListStorage.PatientListStorageClient>();
-                var fakeCall = TestCalls.AsyncUnaryCall(Task.FromResult(new GetConfigurationResponse()), Task.FromResult(new Metadata()), () => Status.DefaultSuccess, () => new Metadata(), () => { });
-                mockGrpcClient.Setup(mock => mock.GetConfigurationAsync(Moq.It.IsAny<GetConfigurationRequest>(), null, null, CancellationToken.None)).Returns(fakeCall);
+                var fakeCall = TestCalls.AsyncUnaryCall(Task.FromResult(new GetConfigurationResponse() { ConfigurationJson = string.Empty }), Task.FromResult(new Metadata()), () => Status.DefaultSuccess, () => new Metadata(), () => { });
+                mockGrpcClient.Setup(mock => mock.GetConfigurationAsync(request, null, null, CancellationToken.None)).Returns(fakeCall);
 
                 PatientListStorageClient = mockGrpcClient.Object;
             }
 
-            var actionResponse = await PatientListStorageClient.GetConfigurationAsync(new GetConfigurationRequest()
-            {
-                Version = Convert.ToUInt32(version),
-                Section = configurationKey
-            });
+            var actionResponse = await PatientListStorageClient.GetConfigurationAsync(request);
 
             return actionResponse.ConfigurationJson.Get<T>();
         }

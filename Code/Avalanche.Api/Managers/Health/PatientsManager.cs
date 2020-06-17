@@ -17,6 +17,11 @@ namespace Avalanche.Api.Managers.Health
             _pieService = pieService;
         }
 
+        public Task<Patient> DeletePatient(string id)
+        {
+            throw new NotImplementedException();
+        }
+
         public async Task<List<Physician>> GetPhysiciansByPatient(string patiendId)
         {
             return await _pieService.GetPhysiciansByPatient(patiendId);
@@ -47,5 +52,9 @@ namespace Avalanche.Api.Managers.Health
             return await _pieService.Search(filter);
         }
 
+        public Task<Patient> UpdatePatient(Patient existing)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

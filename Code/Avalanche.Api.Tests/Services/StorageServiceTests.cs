@@ -58,7 +58,8 @@ namespace Avalanche.Api.Tests.Services
 
             GetConfigurationRequest request = new GetConfigurationRequest()
             {
-                Section = "Genders"
+                Section = "Genders",
+                Version = 1
             };
 
             var fakeCall = TestCalls.AsyncUnaryCall(Task.FromResult(response), Task.FromResult(new Metadata()), () => Status.DefaultSuccess, () => new Metadata(), () => { });
@@ -66,7 +67,7 @@ namespace Avalanche.Api.Tests.Services
 
             _service.PatientListStorageClient = _mockGrpcClient.Object;
 
-            var actionResult = _service.GetJson<List<KeyValuePairViewModel>>("Genders");
+            var actionResult = _service.GetJson<List<KeyValuePairViewModel>>("Genders", 1);
 
             _mockGrpcClient.Verify(mock => mock.GetConfigurationAsync(It.IsAny<GetConfigurationRequest>(), null, null, CancellationToken.None), Times.Once);
 
