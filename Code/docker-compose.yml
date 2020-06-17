@@ -119,6 +119,7 @@ services:
       loggerRetainedFileCountLimit: 5
     depends_on:
       - seqserver
+
   seqserver:
     container_name: seq
     image: 'datalust/seq:latest'

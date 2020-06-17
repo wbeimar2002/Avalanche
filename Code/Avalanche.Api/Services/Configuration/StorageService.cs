@@ -12,6 +12,8 @@ using System.Threading;
 using System.Threading.Tasks;
 using Grpc.Core;
 using Avalanche.Shared.Infrastructure.Extensions;
+using Newtonsoft.Json;
+using System.IO;
 
 namespace Avalanche.Api.Services.Configuration
 {
@@ -42,7 +44,7 @@ namespace Avalanche.Api.Services.Configuration
             PatientListStorageClient = ClientHelper.GetInsecureClient<PatientListStorage.PatientListStorageClient>($"https://{_hostIpAddress}:{PatientListStoragePort}");
         }
 
-        public async Task<T> GetJson<T>(string configurationKey)
+        public async Task<T> GetJson<T>(string configurationKey, int version)
         {
             //Faking calls while I have the real server
             if (!IgnoreGrpcServicesMocks)
@@ -56,6 +58,7 @@ namespace Avalanche.Api.Services.Configuration
 
             var actionResponse = await PatientListStorageClient.GetConfigurationAsync(new GetConfigurationRequest()
             {
+                Version = Convert.ToUInt32(version),
                 Section = configurationKey
             });
 
@@ -72,6 +75,20 @@ namespace Avalanche.Api.Services.Configuration
                 mockGrpcClient.Setup(mock => mock.SaveConfigurationAsync(Moq.It.IsAny<SaveConfigurationRequest>(), null, null, CancellationToken.None)).Returns(fakeCall);
 
                 PatientListStorageClient = mockGrpcClient.Object;
+
+                //await Task.Run(() =>
+                //{
+                //    var fileName = $"/config/{configurationKey}.json";
+                //    var documentsPath = Environment.GetFolderPath(Environment.SpecialFolder.Personal);
+                //    var filePath = Path.Combine(documentsPath, fileName);
+
+                //    if (File.Exists(filePath))
+                //    {
+                //        File.Delete(filePath);
+                //    }
+                //    string result = JsonConvert.SerializeObject(jsonObject);
+                //    File.WriteAllText(filePath, result);
+                //});
             }
 
             var actionResponse = await PatientListStorageClient.SaveConfigurationAsync(new SaveConfigurationRequest()

@@ -37,7 +37,7 @@ namespace Avalanche.Api.Managers.Metadata
 
         private async Task<List<KeyValuePairViewModel>> GetProcedureTypes()
         {
-            List<KeyValuePairViewModel> list = await _storageService.GetJson<List<KeyValuePairViewModel>>("ProcedureTypes");
+            List<KeyValuePairViewModel> list = await _storageService.GetJson<List<KeyValuePairViewModel>>("ProcedureTypes", 1);
 
             if (list == null || list.Count == 0)
             {
@@ -52,7 +52,7 @@ namespace Avalanche.Api.Managers.Metadata
 
         private async Task<List<KeyValuePairViewModel>> GetGenderTypes()
         {
-            List<KeyValuePairViewModel> list = await _storageService.GetJson<List<KeyValuePairViewModel>>("GenderTypes");
+            List<KeyValuePairViewModel> list = await _storageService.GetJson<List<KeyValuePairViewModel>>("GenderTypes", 1);
 
             if (list == null || list.Count == 0)
             {
@@ -94,7 +94,7 @@ namespace Avalanche.Api.Managers.Metadata
 
         private async Task<List<KeyValuePairViewModel>> GetContentTypes()
         {
-            List<KeyValuePairViewModel> list = await _storageService.GetJson<List<KeyValuePairViewModel>>("ContentTypes");
+            List<KeyValuePairViewModel> list = await _storageService.GetJson<List<KeyValuePairViewModel>>("ContentTypes", 1);
 
             if (list == null || list.Count == 0)
             {
@@ -122,7 +122,7 @@ namespace Avalanche.Api.Managers.Metadata
 
         private async Task<List<KeyValuePairViewModel>> GetSourceTypes()
         {
-            List<KeyValuePairViewModel> list = await _storageService.GetJson<List<KeyValuePairViewModel>>("SourceTypes");
+            List<KeyValuePairViewModel> list = await _storageService.GetJson<List<KeyValuePairViewModel>>("SourceTypes", 1);
 
             if (list == null || list.Count == 0)
             {

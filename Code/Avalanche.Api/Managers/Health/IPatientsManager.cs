@@ -15,5 +15,7 @@ namespace Avalanche.Api.Managers.Health
         Task<List<Procedure>> GetProceduresByPhysicianAndPatient(string patiendId, string physicianId);
         Task<Patient> RegisterPatient(Patient newPatient);
         Task<Patient> RegisterQuickPatient();
+        Task<Patient> UpdatePatient(Patient existing);
+        Task<Patient> DeletePatient(string id);
     }
 }

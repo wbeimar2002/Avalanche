@@ -69,10 +69,6 @@ namespace Avalanche.Api.Managers.Devices
             switch (commandType)
             {
                 #region PGS Commands
-                case Shared.Domain.Enumerations.CommandTypes.PgsInit:
-                    Preconditions.ThrowIfNull(nameof(command.Message), command.Message);
-                    return await PlayPgsVideo(command);
-
                 case Shared.Domain.Enumerations.CommandTypes.TimeoutStopPdfSlides:
                     //TODO: if stop we can to restart the vide from the beginning or we should continue in the state before to start the timeout mode
                     return await PlayPgsVideo(command);
