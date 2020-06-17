@@ -12,7 +12,7 @@ using Avalanche.Api.Mapping.Health;
 using Ism.PatientInfoEngine.Common.Core.Models;
 using Ism.PatientInfoEngine.Common.Core;
 using Ism.PatientInfoEngine.Common.Core.proto;
-using Avalanche.Api.Utility;
+using Avalanche.Api.Utilities;
 
 namespace Avalanche.Api.Services.Health
 {

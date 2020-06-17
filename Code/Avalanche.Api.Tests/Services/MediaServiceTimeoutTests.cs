@@ -17,7 +17,35 @@ namespace Avalanche.Api.Tests.Services
     public partial class MediaServiceTests
     {
         [Test]
-        public void ExecutePlaySlidesShouldReturnResponse()
+        public void TimeoutExecutePlaySlidesShouldReturnResponse()
+        {
+            Command command = new Command()
+            {
+                Message = ((int)TimeoutModes.Timeout).ToString(),
+                SessionId = Guid.NewGuid().ToString(),
+                OutputId = "Testing",
+                Type = "sample.offer"
+            };
+
+            var expected = new Empty();
+
+            var fakeCall = TestCalls.AsyncUnaryCall(Task.FromResult(new Empty()), Task.FromResult(new Metadata()), () => Status.DefaultSuccess, () => new Metadata(), () => { });
+            _mockPgsTimeoutClient.Setup(mock => mock.SetPgsTimeoutModeAsync(Moq.It.IsAny<SetPgsTimeoutModeRequest>(), null, null, CancellationToken.None)).Returns(fakeCall);
+
+            _service.IgnoreGrpcServicesMocks = true;
+            _service.PgsTimeoutClient = _mockPgsTimeoutClient.Object;
+
+            var actionResult = _service.TimeoutSetModeAsync(command);
+
+            _mockPgsTimeoutClient.Verify(mock => mock.SetPgsTimeoutModeAsync(Moq.It.Is<SetPgsTimeoutModeRequest>(arg => arg.Mode == PgsTimeoutModeEnum.PgsTimeoutModeTimeout ), null, null, CancellationToken.None), Times.Once);
+
+            Assert.AreSame(fakeCall, _mockPgsTimeoutClient.Object.SetPgsTimeoutModeAsync(new SetPgsTimeoutModeRequest()));
+            Assert.AreEqual(actionResult.Result.ResponseCode, 0);
+        }
+
+
+        [Test]
+        public void TimeoutExecuteStopSlidesWithAlwaysOnShouldReturnResponse()
         {
             Command command = new Command()
             {
@@ -27,24 +55,22 @@ namespace Avalanche.Api.Tests.Services
                 Type = "sample.offer"
             };
 
-            var expected = new Empty();
-
             var fakeCall = TestCalls.AsyncUnaryCall(Task.FromResult(new Empty()), Task.FromResult(new Metadata()), () => Status.DefaultSuccess, () => new Metadata(), () => { });
             _mockPgsTimeoutClient.Setup(mock => mock.SetPgsTimeoutModeAsync(Moq.It.IsAny<SetPgsTimeoutModeRequest>(), null, null, CancellationToken.None)).Returns(fakeCall);
 
-            _service.IgnorePgsTimeoutClientMocks = true;
+            _service.IgnoreGrpcServicesMocks = true;
             _service.PgsTimeoutClient = _mockPgsTimeoutClient.Object;
 
             var actionResult = _service.TimeoutSetModeAsync(command);
 
-            _mockPgsTimeoutClient.Verify(mock => mock.SetPgsTimeoutModeAsync(Moq.It.IsAny<SetPgsTimeoutModeRequest>(), null, null, CancellationToken.None), Times.Once);
+            _mockPgsTimeoutClient.Verify(mock => mock.SetPgsTimeoutModeAsync(Moq.It.Is<SetPgsTimeoutModeRequest>(arg => arg.Mode == PgsTimeoutModeEnum.PgsTimeoutModePgs), null, null, CancellationToken.None), Times.Once);
 
             Assert.AreSame(fakeCall, _mockPgsTimeoutClient.Object.SetPgsTimeoutModeAsync(new SetPgsTimeoutModeRequest()));
             Assert.AreEqual(actionResult.Result.ResponseCode, 0);
         }
 
         [Test]
-        public void ExecuteStopSlidesShouldReturnResponse()
+        public void TimeoutExecuteStopSlidesWithoutAlwaysOnShouldReturnResponse()
         {
             Command command = new Command()
             {
@@ -54,24 +80,22 @@ namespace Avalanche.Api.Tests.Services
                 Type = "sample.offer"
             };
 
-            var expected = new Empty();
-
             var fakeCall = TestCalls.AsyncUnaryCall(Task.FromResult(new Empty()), Task.FromResult(new Metadata()), () => Status.DefaultSuccess, () => new Metadata(), () => { });
             _mockPgsTimeoutClient.Setup(mock => mock.SetPgsTimeoutModeAsync(Moq.It.IsAny<SetPgsTimeoutModeRequest>(), null, null, CancellationToken.None)).Returns(fakeCall);
 
-            _service.IgnorePgsTimeoutClientMocks = true;
+            _service.IgnoreGrpcServicesMocks = true;
             _service.PgsTimeoutClient = _mockPgsTimeoutClient.Object;
 
             var actionResult = _service.TimeoutSetModeAsync(command);
 
-            _mockPgsTimeoutClient.Verify(mock => mock.SetPgsTimeoutModeAsync(Moq.It.IsAny<SetPgsTimeoutModeRequest>(), null, null, CancellationToken.None), Times.Once);
+            _mockPgsTimeoutClient.Verify(mock => mock.SetPgsTimeoutModeAsync(Moq.It.Is<SetPgsTimeoutModeRequest>(arg => arg.Mode == PgsTimeoutModeEnum.PgsTimeoutModeIdle), null, null, CancellationToken.None), Times.Once);
 
             Assert.AreSame(fakeCall, _mockPgsTimeoutClient.Object.SetPgsTimeoutModeAsync(new SetPgsTimeoutModeRequest()));
             Assert.AreEqual(actionResult.Result.ResponseCode, 0);
         }
 
         [Test]
-        public void ExecuteNextSlideShouldReturnResponse()
+        public void TimeoutExecuteNextSlideShouldReturnResponse()
         {
             Command command = new Command()
             {
@@ -86,7 +110,7 @@ namespace Avalanche.Api.Tests.Services
             var fakeCall = TestCalls.AsyncUnaryCall(Task.FromResult(new Empty()), Task.FromResult(new Metadata()), () => Status.DefaultSuccess, () => new Metadata(), () => { });
             _mockPgsTimeoutClient.Setup(mock => mock.NextPageAsync(Moq.It.IsAny<Empty>(), null, null, CancellationToken.None)).Returns(fakeCall);
 
-            _service.IgnorePgsTimeoutClientMocks = true;
+            _service.IgnoreGrpcServicesMocks = true;
             _service.PgsTimeoutClient = _mockPgsTimeoutClient.Object;
 
             var actionResult = _service.TimeoutNextSlideAsync(command);
@@ -98,7 +122,7 @@ namespace Avalanche.Api.Tests.Services
         }
 
         [Test]
-        public void ExecutePreviousSlideShouldReturnResponse()
+        public void TimeoutExecutePreviousSlideShouldReturnResponse()
         {
             Command command = new Command()
             {
@@ -113,7 +137,7 @@ namespace Avalanche.Api.Tests.Services
             var fakeCall = TestCalls.AsyncUnaryCall(Task.FromResult(new Empty()), Task.FromResult(new Metadata()), () => Status.DefaultSuccess, () => new Metadata(), () => { });
             _mockPgsTimeoutClient.Setup(mock => mock.PreviousPageAsync(Moq.It.IsAny<Empty>(), null, null, CancellationToken.None)).Returns(fakeCall);
 
-            _service.IgnorePgsTimeoutClientMocks = true;
+            _service.IgnoreGrpcServicesMocks = true;
             _service.PgsTimeoutClient = _mockPgsTimeoutClient.Object;
 
             var actionResult = _service.TimeoutPreviousSlideAsync(command);
@@ -125,7 +149,7 @@ namespace Avalanche.Api.Tests.Services
         }
 
         [Test]
-        public void ExecuteSetCurrentSlideShouldReturnResponse()
+        public void TimeoutExecuteSetCurrentSlideShouldReturnResponse()
         {
             Command command = new Command()
             {
@@ -140,7 +164,7 @@ namespace Avalanche.Api.Tests.Services
             var fakeCall = TestCalls.AsyncUnaryCall(Task.FromResult(new Empty()), Task.FromResult(new Metadata()), () => Status.DefaultSuccess, () => new Metadata(), () => { });
             _mockPgsTimeoutClient.Setup(mock => mock.SetTimeoutPageAsync(Moq.It.IsAny<SetTimeoutPageRequest>(), null, null, CancellationToken.None)).Returns(fakeCall);
 
-            _service.IgnorePgsTimeoutClientMocks = true;
+            _service.IgnoreGrpcServicesMocks = true;
             _service.PgsTimeoutClient = _mockPgsTimeoutClient.Object;
 
             var actionResult = _service.TimeoutSetCurrentSlideAsync(command);

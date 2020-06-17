@@ -60,9 +60,11 @@ services:
       hostIpAddress: '10.0.75.1'
       WebRTCGrpcPort: '8001'
       PgsTimeoutGrpcPort: '8002'
+      PatientListStoragePort: '8003'
       PatientInfoEngineGrpcPort: '9089'
       grpcCertificate: '/certificates/grpc_localhost_root_l1.pfx' 
       grpcPassword: '0123456789'
+      IgnoreGrpcServicesMocks: 'false'
       seqUrl: 'http://seq:5341'
       logging:loglevel:default: 'debug'
       loggerFileName: 'avalancheapilogs.txt'
@@ -117,6 +119,7 @@ services:
       loggerRetainedFileCountLimit: 5
     depends_on:
       - seqserver
+
   seqserver:
     container_name: seq
     image: 'datalust/seq:latest'

@@ -23,6 +23,7 @@ namespace Avalanche.Api.Controllers.V1
     [Route("[controller]")]
     [ApiController]
     [Authorize]
+
     public class NotificationsController : ControllerBase
     {
         readonly ILogger _appLoggerService;

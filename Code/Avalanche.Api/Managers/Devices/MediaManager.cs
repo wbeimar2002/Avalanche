@@ -69,11 +69,14 @@ namespace Avalanche.Api.Managers.Devices
             switch (commandType)
             {
                 #region PGS Commands
+                case Shared.Domain.Enumerations.CommandTypes.TimeoutStopPdfSlides:
+                    //TODO: if stop we can to restart the vide from the beginning or we should continue in the state before to start the timeout mode
+                    return await PlayPgsVideo(command);
+
                 case Shared.Domain.Enumerations.CommandTypes.PgsPlayVideo:
                     Preconditions.ThrowIfNull(nameof(command.Message), command.Message);
-                    // TODO make separate SetMode api endpoint
-                    //command.Message = ((int)TimeoutModes.Pgs).ToString();
-                    //await _mediaService.TimeoutSetModeAsync(command);
+
+                    await SetMode(command.OutputId, TimeoutModes.Pgs);
                     return await _mediaService.PgsPlayVideoAsync(command);
 
                 case Shared.Domain.Enumerations.CommandTypes.PgsStopVideo:
@@ -101,11 +104,8 @@ namespace Avalanche.Api.Managers.Devices
 
                 #region Timeout Commands
                 case Shared.Domain.Enumerations.CommandTypes.TimeoutPlayPdfSlides:
+                    //TODO: What happens with the Pgs Tab??
                     command.Message = ((int)TimeoutModes.Timeout).ToString();
-                    return await _mediaService.TimeoutSetModeAsync(command);
-
-                case Shared.Domain.Enumerations.CommandTypes.TimeoutStopPdfSlides:
-                    command.Message = ((int)TimeoutModes.Idle).ToString();
                     return await _mediaService.TimeoutSetModeAsync(command);
 
                 case Shared.Domain.Enumerations.CommandTypes.TimeoutNextPdfSlide:
@@ -122,6 +122,33 @@ namespace Avalanche.Api.Managers.Devices
                 default:
                     return null;
             }
+        }
+
+        private async Task<CommandResponse> PlayPgsVideo(Command command)
+        {
+            var alwaysOnSettings = await _settingsService.GetTimeoutSettingsAsync();
+            await SetMode(command.OutputId, alwaysOnSettings.PgsVideoAlwaysOn ? TimeoutModes.Pgs : TimeoutModes.Idle);
+
+            if (alwaysOnSettings.PgsVideoAlwaysOn)
+                return await _mediaService.PgsPlayVideoAsync(command);
+            else
+                return new CommandResponse()
+                {
+                    OutputId = command.OutputId,
+                    ResponseCode = 0,
+                    SessionId = command.SessionId
+                };
+        }
+
+        private async Task SetMode(string outputId, TimeoutModes timeoutMode)
+        {
+            var setModeComment = new Command()
+            {
+                OutputId = outputId,
+                Message = ((int)timeoutMode).ToString()
+            };
+
+            await _mediaService.TimeoutSetModeAsync(setModeComment);
         }
     }
 }

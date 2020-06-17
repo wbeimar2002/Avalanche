@@ -19,7 +19,6 @@ namespace Avalanche.Api.Controllers.V1
 {
     [Route("[controller]")]
     [ApiController]
-    [Authorize]
     public class MetadataController : ControllerBase
     {
         readonly ILogger _appLoggerService;
@@ -32,9 +31,32 @@ namespace Avalanche.Api.Controllers.V1
         }
 
         /// <summary>
+        /// Get any metadata
+        /// </summary>
+        [HttpGet("{enumId}")]
+        [Produces(typeof(List<KeyValuePairViewModel>))]
+        public async Task<IActionResult> GetContentTypes(int enumId, [FromServices]IWebHostEnvironment env)
+        {
+            try
+            {
+                _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
+                var result = await _metadataManager.GetMetadata((Shared.Domain.Enumerations.MetadataTypes)enumId);
+                return Ok(result);
+            }
+            catch (Exception exception)
+            {
+                _appLoggerService.LogError(LoggerHelper.GetLogMessage(DebugLogType.Exception), exception);
+                return new BadRequestObjectResult(exception.Get(env.IsDevelopment()));
+            }
+            finally
+            {
+                _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
+            }
+        }
+
+        /// <summary>
         /// Get content types for PGS 
         /// </summary>
-        [Authorize]
         [HttpGet("contenttypes")]
         [Produces(typeof(List<KeyValuePairViewModel>))]
         public async Task<IActionResult> GetContentTypes([FromServices]IWebHostEnvironment env)
@@ -59,7 +81,6 @@ namespace Avalanche.Api.Controllers.V1
         /// <summary>
         /// Get content genders
         /// </summary>
-        [Authorize]
         [HttpGet("genders")]
         [Produces(typeof(List<KeyValuePairViewModel>))]
         public async Task<IActionResult> GetGenders([FromServices]IWebHostEnvironment env)
@@ -84,7 +105,6 @@ namespace Avalanche.Api.Controllers.V1
         /// <summary>
         /// Get procedure types
         /// </summary>
-        [Authorize]
         [HttpGet("proceduretypes")]
         [Produces(typeof(List<KeyValuePairViewModel>))]
         public async Task<IActionResult> GetProcedureTypes([FromServices]IWebHostEnvironment env)
@@ -93,6 +113,30 @@ namespace Avalanche.Api.Controllers.V1
             {
                 _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
                 var result = await _metadataManager.GetMetadata(Shared.Domain.Enumerations.MetadataTypes.ProcedureTypes);
+                return Ok(result);
+            }
+            catch (Exception exception)
+            {
+                _appLoggerService.LogError(LoggerHelper.GetLogMessage(DebugLogType.Exception), exception);
+                return new BadRequestObjectResult(exception.Get(env.IsDevelopment()));
+            }
+            finally
+            {
+                _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
+            }
+        }
+
+        /// <summary>
+        /// Get procedure types
+        /// </summary>
+        [HttpGet("sourcetypes")]
+        [Produces(typeof(List<KeyValuePairViewModel>))]
+        public async Task<IActionResult> GetSourceTypes([FromServices]IWebHostEnvironment env)
+        {
+            try
+            {
+                _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
+                var result = await _metadataManager.GetMetadata(Shared.Domain.Enumerations.MetadataTypes.SourceTypes);
                 return Ok(result);
             }
             catch (Exception exception)

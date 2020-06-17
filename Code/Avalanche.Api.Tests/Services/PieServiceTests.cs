@@ -1,6 +1,6 @@
 ﻿using Avalanche.Api.Mapping.Health;
 using Avalanche.Api.Services.Health;
-using Avalanche.Api.Utility;
+using Avalanche.Api.Utilities;
 using Avalanche.Api.ViewModels;
 using Avalanche.Shared.Domain.Models;
 using Avalanche.Shared.Infrastructure.Services.Settings;

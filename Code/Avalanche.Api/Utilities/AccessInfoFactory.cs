@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Avalanche.Api.Utility
+namespace Avalanche.Api.Utilities
 {
     public class AccessInfoFactory : IAccessInfoFactory
     {

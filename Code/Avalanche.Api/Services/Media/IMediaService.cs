@@ -13,7 +13,7 @@ namespace Avalanche.Api.Services.Media
         PgsTimeout.PgsTimeoutClient PgsTimeoutClient { get; set; }
         
         //TODO: Temporary remove this when real server available
-        bool IgnorePgsTimeoutClientMocks { get; set; }
+        bool IgnoreGrpcServicesMocks { get; set; }
 
         //Video
         Task<CommandResponse> PgsPlayVideoAsync(Command command);

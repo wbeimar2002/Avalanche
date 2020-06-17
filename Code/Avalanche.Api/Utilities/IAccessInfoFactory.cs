@@ -1,7 +1,7 @@
 ﻿using Ism.IsmLogCommon.Core;
 using System;
 
-namespace Avalanche.Api.Utility
+namespace Avalanche.Api.Utilities
 {
     public interface IAccessInfoFactory
     {

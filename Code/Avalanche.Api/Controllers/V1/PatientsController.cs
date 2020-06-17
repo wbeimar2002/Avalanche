@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using System.Security;
 using System.Threading.Tasks;
 using Avalanche.Api.Managers.Health;
 using Avalanche.Api.ViewModels;
@@ -22,6 +23,7 @@ namespace Avalanche.Api.Controllers.V1
     [Route("[controller]")]
     [ApiController]
     [Authorize]
+    
     public class PatientsController : ControllerBase
     {
         readonly ILogger _appLoggerService;
@@ -46,6 +48,50 @@ namespace Avalanche.Api.Controllers.V1
                 newPatient = await _patientsManager.RegisterPatient(newPatient);
                 
                 return new ObjectResult(newPatient) { StatusCode = StatusCodes.Status201Created };
+            }
+            catch (Exception exception)
+            {
+                _appLoggerService.LogError(LoggerHelper.GetLogMessage(DebugLogType.Exception), exception);
+                return new BadRequestObjectResult(exception.Get(env.IsDevelopment()));
+            }
+            finally
+            {
+                _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
+            }
+        }
+
+        [HttpPut("{id}")]
+        [Produces(typeof(Patient))]
+        public async Task<IActionResult> Put(Patient existing, [FromServices] IWebHostEnvironment env)
+        {
+            try
+            {
+                _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
+                existing = await _patientsManager.UpdatePatient(existing);
+
+                return new ObjectResult(existing) { StatusCode = StatusCodes.Status200OK };
+            }
+            catch (Exception exception)
+            {
+                _appLoggerService.LogError(LoggerHelper.GetLogMessage(DebugLogType.Exception), exception);
+                return new BadRequestObjectResult(exception.Get(env.IsDevelopment()));
+            }
+            finally
+            {
+                _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
+            }
+        }
+
+        [HttpDelete("{id}")]
+        [Produces(typeof(Patient))]
+        public async Task<IActionResult> Delete(string id, [FromServices] IWebHostEnvironment env)
+        {
+            try
+            {
+                _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
+                Patient deleted = await _patientsManager.DeletePatient(id);
+
+                return new ObjectResult(deleted) { StatusCode = StatusCodes.Status200OK };
             }
             catch (Exception exception)
             {

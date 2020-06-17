@@ -8,7 +8,7 @@ using Avalanche.Security.Server.Services;
 using Moq;
 using Xunit;
 
-namespace JWTPAPI.Tests.Services
+namespace Avalanche.Security.Tests.Services
 {
     public class UserServiceTests
     {

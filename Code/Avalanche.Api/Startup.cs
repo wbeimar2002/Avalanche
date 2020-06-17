@@ -35,10 +35,11 @@ using Avalanche.Api.Services.Settings;
 using Avalanche.Shared.Infrastructure.Services.Settings;
 using Avalanche.Api.Services.Health;
 using Avalanche.Api.Services.Configuration;
-using Avalanche.Api.Utility;
+using Avalanche.Api.Utilities;
 using Ism.IsmLogCommon.Core;
 using Avalanche.Api.Mapping.Health;
 using Microsoft.AspNetCore.Http.Features;
+using Avalanche.Api.Utilities.Files;
 
 namespace Avalanche.Api
 {
@@ -72,7 +73,7 @@ namespace Avalanche.Api
             services.AddSingleton<IPatientsManager, PatientsManager>();
             services.AddSingleton<IPhysiciansManager, PhysiciansManagerMock>();
             services.AddSingleton<IProceduresManager, ProceduresManagerMock>();
-            services.AddSingleton<IMetadataManager, MetadataManagerMock>();
+            services.AddSingleton<IMetadataManager, MetadataManager>();
             services.AddSingleton<ILicensingManager, LicensingManagerMock>();
             services.AddSingleton<IOutputsManager, OutputsManagerMock>();
             services.AddSingleton<IMediaService, MediaService>();
@@ -80,14 +81,14 @@ namespace Avalanche.Api
             services.AddSingleton<IPieMapping, PieMapping>();
             services.AddSingleton<IPieService, PieService>();
             services.AddSingleton<ISettingsService, SettingsService>();
-
+            services.AddSingleton<IStorageService, StorageService>();
+            services.AddSingleton<IFileService, FileService>();
             services.AddSingleton<IBroadcastService, BroadcastService>();
 
             services.AddHttpContextAccessor();
-
             services.AddSingleton<IAccessInfoFactory, AccessInfoFactory>();
 
-            //TOD: Check this. Should be env variables?
+            //TODO: Check this. Should be env variables?
             var hostName = configurationService.GetValue<string>("RabbitMqOptions:HostName");
             var port = configurationService.GetValue<int>("RabbitMqOptions:Port");
             var managementPort = configurationService.GetValue<int>("RabbitMqOptions:ManagementPort");
