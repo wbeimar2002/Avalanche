@@ -1,5 +1,4 @@
-﻿using Avalanche.Api.Utilities.Files;
-using Avalanche.Shared.Infrastructure.Services.Settings;
+﻿using Avalanche.Shared.Infrastructure.Services.Settings;
 using Google.Protobuf.WellKnownTypes;
 using Grpc.Core.Testing;
 using Ism.Security.Grpc.Helpers;
@@ -24,7 +23,7 @@ namespace Avalanche.Api.Services.Configuration
 
         public bool IgnoreGrpcServicesMocks { get; set; }
 
-        public PatientListStorage.PatientListStorageClient PatientListStorageClient { get; set; }
+        public ConfigurationStorageService.ConfigurationStorageServiceClient ConfigurationStorageService { get; set; }
 
         public StorageService(IConfigurationService configurationService)
         {
@@ -41,7 +40,7 @@ namespace Avalanche.Api.Services.Configuration
             var certificate = new System.Security.Cryptography.X509Certificates.X509Certificate2(grpcCertificate, grpcPassword);
 
             //Client = ClientHelper.GetSecureClient<WebRtcStreamer.WebRtcStreamerClient>($"https://{hostIpAddress}:{WebRTCGrpcPort}", certificate);
-            PatientListStorageClient = ClientHelper.GetInsecureClient<PatientListStorage.PatientListStorageClient>($"https://{_hostIpAddress}:{PatientListStoragePort}");
+            ConfigurationStorageService = ClientHelper.GetInsecureClient<ConfigurationStorageService.ConfigurationStorageServiceClient>($"https://{_hostIpAddress}:{PatientListStoragePort}");
         }
 
         public async Task<T> GetJson<T>(string configurationKey, int version)
@@ -55,14 +54,14 @@ namespace Avalanche.Api.Services.Configuration
             //Faking calls while I have the real server
             if (!IgnoreGrpcServicesMocks)
             {
-                Mock<PatientListStorage.PatientListStorageClient> mockGrpcClient = new Mock<PatientListStorage.PatientListStorageClient>();
+                Mock<ConfigurationStorageService.ConfigurationStorageServiceClient> mockGrpcClient = new Mock<ConfigurationStorageService.ConfigurationStorageServiceClient>();
                 var fakeCall = TestCalls.AsyncUnaryCall(Task.FromResult(new GetConfigurationResponse() { ConfigurationJson = string.Empty }), Task.FromResult(new Metadata()), () => Status.DefaultSuccess, () => new Metadata(), () => { });
                 mockGrpcClient.Setup(mock => mock.GetConfigurationAsync(request, null, null, CancellationToken.None)).Returns(fakeCall);
 
-                PatientListStorageClient = mockGrpcClient.Object;
+                ConfigurationStorageService = mockGrpcClient.Object;
             }
 
-            var actionResponse = await PatientListStorageClient.GetConfigurationAsync(request);
+            var actionResponse = await ConfigurationStorageService.GetConfigurationAsync(request);
 
             return actionResponse.ConfigurationJson.Get<T>();
         }
@@ -72,28 +71,14 @@ namespace Avalanche.Api.Services.Configuration
             //Faking calls while I have the real server
             if (!IgnoreGrpcServicesMocks)
             {
-                Mock<PatientListStorage.PatientListStorageClient> mockGrpcClient = new Mock<PatientListStorage.PatientListStorageClient>();
+                Mock<ConfigurationStorageService.ConfigurationStorageServiceClient> mockGrpcClient = new Mock<ConfigurationStorageService.ConfigurationStorageServiceClient>();
                 var fakeCall = TestCalls.AsyncUnaryCall(Task.FromResult(new Empty()), Task.FromResult(new Metadata()), () => Status.DefaultSuccess, () => new Metadata(), () => { });
                 mockGrpcClient.Setup(mock => mock.SaveConfigurationAsync(Moq.It.IsAny<SaveConfigurationRequest>(), null, null, CancellationToken.None)).Returns(fakeCall);
 
-                PatientListStorageClient = mockGrpcClient.Object;
-
-                //await Task.Run(() =>
-                //{
-                //    var fileName = $"/config/{configurationKey}.json";
-                //    var documentsPath = Environment.GetFolderPath(Environment.SpecialFolder.Personal);
-                //    var filePath = Path.Combine(documentsPath, fileName);
-
-                //    if (File.Exists(filePath))
-                //    {
-                //        File.Delete(filePath);
-                //    }
-                //    string result = JsonConvert.SerializeObject(jsonObject);
-                //    File.WriteAllText(filePath, result);
-                //});
+                ConfigurationStorageService = mockGrpcClient.Object;
             }
 
-            var actionResponse = await PatientListStorageClient.SaveConfigurationAsync(new SaveConfigurationRequest()
+            var actionResponse = await ConfigurationStorageService.SaveConfigurationAsync(new SaveConfigurationRequest()
             {
                 Section = configurationKey,
                 ConfigurationJson = jsonObject.Json()

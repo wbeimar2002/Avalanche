@@ -27,6 +27,7 @@ namespace Avalanche.Api.Controllers.V1
     public class OutputsController : ControllerBase
     {
         readonly ILogger _appLoggerService;
+
         readonly IOutputsManager _outputsManager;
         readonly IMediaManager _mediaManager;
 

@@ -76,7 +76,7 @@ namespace Avalanche.Api.Tests.Services
                 .Setup(mock => mock.Search(It.IsAny<PatientSearchFields>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<AccessInfo>()))
                 .ReturnsAsync(response);
 
-            _service.Client= _mockPatListClient.Object;
+            _service.PatientListServiceClient= _mockPatListClient.Object;
 
             var actionResult = _service.Search(search);
 

@@ -1,0 +1,452 @@
+syntax = "proto3";
+import "google/protobuf/empty.proto";
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/wrappers.proto";
+
+package Ism.PatientInfoEngine.Common.Core;
+
+
+service PatientInfoEngineService{
+    rpc CheckConnectivity (CheckConnectivityRequest) returns (CheckConnectivityResponse);
+    rpc GetSettings (GetSettingsRequest) returns (GetSettingsResponse);
+    rpc SetSettings (SetSettingsRequest) returns (google.protobuf.Empty);
+    rpc SubscribeToEvents (SubscribeToEventsRequest) returns (stream RoomUpdate);
+
+    //rpc GetCodedDataList (GetCodedDataListRequest) returns (GetCodedDataListResponse) {}
+    //rpc RegisterClient (RegisterClientRequest) returns (RegisterClientResponse){}
+    //rpc UnRegisterClient(UnRegisterClientRequest) returns (UnRegisterClientResponse) {}
+}
+
+service PatientListService{
+    rpc GetActivePatient (GetActivePatientRequest) returns (GetActivePatientResponse);
+    rpc ChangeTriggerForDmag (ChangeTriggerForDmagRequest) returns (google.protobuf.Empty);
+    rpc Search (SearchRequest) returns (SearchResponse);
+}
+
+service ExporterService{
+    rpc ExportHL7 (ExportHL7Request) returns (google.protobuf.Empty);
+    rpc ExportDicom (ExportDicomRequest) returns (ExportDicomResponse);
+    rpc GetDicomInfo (GetDicomInfoRequest) returns (GetDicomInfoResponse);
+}
+
+message ConnectivityPair{
+    bool Key = 1;
+    string Value = 2;
+}
+
+enum PieTask
+{
+    DICOMExport = 0;
+    DICOMImport = 1;
+    HL7Export = 2;
+    HL7Import = 3;
+}
+
+message PieTaskPair{
+    PieTask Key = 1;
+    ConnectivityPair Value = 2;
+}
+
+message CheckConnectivityRequest{
+    
+}
+
+message CheckConnectivityResponse{
+    repeated PieTaskPair State = 1;
+}
+
+message GetSettingsRequest{
+
+}
+
+message SettingPair{
+    string Key = 1;
+    string Value = 2;
+}
+
+message GetSettingsResponse{
+    repeated SettingPair Settings = 1;
+}
+
+message SetSettingsRequest{
+    repeated SettingPair Settings = 1;
+}
+
+/*
+message SetSettingsResponse{
+    int32 ResponseCode = 1;
+    string Err = 2;
+ }
+ */
+ /*
+ message GetCodedDataListRequest{
+     repeated int32 Codes = 1;
+ }
+
+ message GetCodedDataListResponse{
+     int32 ResponseCode = 1;
+     repeated IssDataMessage Data =2;
+     string Err = 3;
+ }
+ */
+
+ message RegisterClientRequest{
+     string Name = 1; 
+ }
+
+ message RegisterClientResponse{
+     int32 ResponseCode = 1;
+     int32 SubscriberId =2;
+     string Err = 3;
+ }
+
+ message SubscribeToEventsRequest{
+     int32 SubscriberId = 1;
+     string Filter = 2;
+ }
+
+ message RoomUpdate {
+    PatientRecordMessage PatientList = 1; // TODO - Objects
+    string Room = 2;
+    AccessInfoMessage AccessInfo = 3;
+ }
+
+ message UnRegisterClientRequest{
+     int32 SubscriberId = 1;
+ }
+
+ message UnRegisterClientResponse{
+     int32 ResponseCode = 1;
+     string Err = 2;
+ }
+
+ message GetActivePatientRequest{
+     string Room = 1;
+     AccessInfoMessage AccessInfo = 2;
+ }
+
+ message GetActivePatientResponse{
+     PatientRecordMessage Patient = 1;
+ }
+
+ message ChangeTriggerForDmagRequest{
+    IsmDmagMessage dmagContent = 1;
+    Triggers trigger = 2;
+    AccessInfoMessage accessInfo = 3;
+ }
+
+ message SearchPair{
+    string Key = 1;
+    string Value = 2;
+ }
+
+ message PatientSearchFieldsMessage {
+    google.protobuf.StringValue RoomName = 1;
+    google.protobuf.StringValue LastName = 2;
+    google.protobuf.StringValue MRN = 3;
+    google.protobuf.Timestamp MinDate = 4;
+    google.protobuf.Timestamp MaxDate = 5;
+    google.protobuf.StringValue Accession = 6;
+    google.protobuf.StringValue Keyword = 7;
+    google.protobuf.StringValue Department = 8;
+    google.protobuf.StringValue Procedure_Id = 9;
+ }
+
+ message SearchRequest{
+    PatientSearchFieldsMessage SearchFields = 1;
+
+    int32 FirstRecordIndex = 2;
+    int32 MaxResults = 3;
+    string SearchCultureName = 4;
+    AccessInfoMessage AccessInfo = 5;
+ }
+
+ message SearchResponse{
+     repeated PatientRecordMessage UpdatedPatList = 1;
+ }
+
+ message ExportDicomRequest{
+     string DmagContent = 1;
+     string LibPath = 2;
+     repeated string  ItemsToExport = 3;
+     string AECalledTitle = 4;
+     AccessInfoMessage AccessInfo = 5;
+ }
+
+ enum JobStatus
+ {
+    Idle = 0;
+    Sending = 1;
+    Success = 101;
+    Cancel = 1001;
+    ErrorNoSpace = 1002;
+    ErrorOther = 1003;
+    ErrorDestinationUnavailable = 1004;
+ }
+
+ message ExportDicomResponse{
+     string DmagContent = 1;
+     JobStatus Status = 2;
+ }
+
+ message GetDicomInfoRequest{
+ 
+ }
+
+ message TitlePair{
+     string Key = 1;
+     bool Value = 2;
+ }
+
+ message GetDicomInfoResponse{
+    string Modalities = 1;
+    repeated TitlePair Titles2Available = 2;
+ }
+
+enum Triggers
+{
+    ADMIT = 0;
+    DISCHARGE = 1;
+    IMPLICIT_DISCHARGE = 2;
+    Error = 3;
+    Finished = 4;
+    None = 5;
+}
+
+message ExportHL7Request{
+    string DmagContent = 1;
+    string ReportName = 2;
+    AccessInfoMessage AccessInfo = 3;
+}
+
+message ProcedureIdMessage{
+    string LibId = 1;
+    string LibName = 2;
+    string VolName = 3;
+}
+
+message AccessInfoMessage{
+    string id = 7;
+    google.protobuf.StringValue ip = 8;
+    google.protobuf.StringValue userName = 9; 
+    google.protobuf.StringValue applicationName = 10; 
+    google.protobuf.StringValue machineName = 11;
+    google.protobuf.StringValue details = 12;
+}
+
+message DateStringMessage{
+    string TimeStamp = 1;
+    string Server = 2;
+}
+
+message IsmDmagForwardMessage{
+    string TimeStamp = 1;
+    string Server = 2;
+    string Client = 3;
+    string ServerLibName = 4;
+}
+
+message IsmDmagHistoryMessage{
+    string Created = 1;
+    string DicomSubmit = 2;
+    string HL7Export = 3; 
+    string VideoDeleted = 4;
+    string Submitted = 5;
+    DateStringMessage LastAccessed = 6;
+    repeated DateStringMessage CopiedTo = 7;
+    IsmDmagForwardMessage Forwarded = 8;
+    DateStringMessage VideoEdited = 9;
+}
+
+message PersonNameDataMessage{
+    string FirstName = 1;
+    string LastName = 2; 
+    string Login = 3;
+}
+
+message FixedDateMessage{
+    int32 Year = 1;
+    int32 Month = 2;
+    int32 Day = 3;
+}
+
+message ClinInfoDataMessage{
+    string Accession = 1;
+    FixedDateMessage Dob = 2;
+    string ExternalProcId = 3;
+    PersonNameDataMessage PatName = 4;
+    string ScheduleId = 5;
+    string Sex = 6;
+    string ProcType =7;
+}
+
+message NoteMessage{
+    string Name = 1;
+    string Value = 2;
+}
+
+message ChannelInfoMessage{
+    string Channel = 1;
+    string Modality = 2;
+}
+
+message IsmDmagPathMessage{
+    string Created = 1;
+    string FileSaved = 2; 
+    string ThumbName = 3;
+    string Modality = 4;
+    string RelativePath = 5; 
+    string Description = 6;
+    string Stream = 7;
+}
+
+message MovieMessage{
+    string Created = 1;
+    string FileSaved = 2; 
+    string ThumbName = 3;
+    string Modality = 4;
+    string RelativePath = 5; 
+    string Description = 6;
+    string Stream = 7;
+    double Length = 8;
+}
+
+message MovieListMessage{
+    repeated MovieMessage Movies = 1;
+}
+
+message PictureMessage{
+    string Created = 1;
+    string FileSaved = 2; 
+    string ThumbName = 3;
+    string Modality = 4;
+    string RelativePath = 5; 
+    string Description = 6;
+    string Stream = 7;
+    bool RawExists =8;
+}
+
+message PictureListMessage{
+    repeated PictureMessage Pictures = 1;
+}
+
+message MarkerMessage{
+    string MarkerType = 1;
+    string Annotations = 2;
+    string Created =3;
+}
+
+message MarkerListMessage{
+    repeated MarkerMessage Markers = 1;
+}
+
+message ProcMovieActionMessage{
+    string ActionKind = 1;
+    string Label = 2; 
+    string RelativePath = 3;
+    string Start = 4;
+    string Stop = 5;
+}
+
+message ProcMovieMessage{
+    string Created = 1;
+    string FileSaved = 2; 
+    string ThumbName = 3;
+    string Modality = 4;
+    string RelativePath = 5; 
+    string Description = 6;
+    string Stream = 7;
+    double Length = 8;
+    repeated ProcMovieActionMessage Actions = 9;
+}
+
+message ContentMessage{
+    repeated ChannelInfoMessage Channels = 1;
+    MovieListMessage Movies = 2;
+    PictureListMessage Pictures = 3;
+    repeated IsmDmagPathMessage Reports = 4; 
+    MarkerListMessage Markers = 5;
+    repeated ProcMovieMessage ProcMovies = 6;
+}
+
+message AutoEditSettingsMessage{
+    string VideoEditStatus = 1;
+    string AEGenerationMode = 2;
+    double AEPreLenSecs = 3;
+    double AEPostLenSecs = 4;
+    bool AutoClip = 5;
+}
+
+message IsmDmagMessage{
+    ProcedureIdMessage ProcId = 1;
+    bool IsClinical = 2;
+    IsmDmagHistoryMessage History = 3;
+    PersonNameDataMessage Physician = 4;
+    repeated string AdditionalUsers = 5;
+    ClinInfoDataMessage Procedure = 6;
+    repeated NoteMessage Notes = 7;
+    ContentMessage Content = 8;
+    AutoEditSettingsMessage AutoEditSettings = 9;
+}
+
+enum AdmissionStatus{
+    Admission_None = 0;
+    Admission_Admit = 1;
+    Admission_Discharge = 2;
+    Admission_ImplicitDischarge = 3;
+    Admission_Error = 4;
+    Admission_Finished = 5;
+    Admission_CancelOrder = 6;
+}
+
+enum Sex {
+    M = 0;
+    F = 1;
+    U = 2;
+}
+
+message PatientMessage {
+    google.protobuf.StringValue FirstName = 1;
+    google.protobuf.StringValue LastName = 2;
+    FixedDateMessage Dob = 3;
+    Sex Sex = 4;
+}
+
+message PhysicianMessage {
+    google.protobuf.StringValue FirstName = 1;
+    google.protobuf.StringValue LastName = 2;
+    google.protobuf.StringValue UserId = 3;
+}
+
+message SecondaryPhysicianMessage {
+    google.protobuf.StringValue FirstName = 1;
+    google.protobuf.StringValue LastName = 2;
+    google.protobuf.StringValue UserId = 3;
+    google.protobuf.StringValue Role = 4;
+}
+
+message PatientRecordMessage {
+    google.protobuf.StringValue AccessionNumber = 1;
+    AdmissionStatus AdmissionStatus = 2;
+    google.protobuf.StringValue Department = 3;
+    uint64 InternalId = 4;
+    google.protobuf.StringValue MRN = 5;
+    PatientMessage Patient = 6;
+    PhysicianMessage PerformingPhysician = 7;
+    google.protobuf.StringValue ProcedureType = 8;
+    map<string, string> Properties = 9;
+    google.protobuf.StringValue Room = 10;
+    google.protobuf.Timestamp Scheduled = 11;
+    repeated SecondaryPhysicianMessage SecondaryPhysicians = 12;
+}
+
+/*
+message IssDataMessage{
+    int32 Code = 1;
+    string Dt = 2;
+    bool IsValid = 3;
+    int32 Owner = 4;
+    string SerializedObj = 5;
+    string ObjType = 6;
+}
+*/

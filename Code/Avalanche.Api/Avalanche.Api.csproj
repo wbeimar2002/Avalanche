@@ -70,35 +70,13 @@
     <Protobuf Include="Protos\WebRtcStreamer.proto" />
     <Protobuf Include="Protos\PgsTimeout.proto" />
     <Protobuf Include="Protos\ConfigurationStorage.proto" />
+    <Protobuf Include="Protos\PatientListStorage.proto" />
+    <Protobuf Include="Protos\PatInfo.proto" />
   </ItemGroup>
 
   <ItemGroup>
-    <Reference Include="IIsmStateServer.Core">
-      <HintPath>..\HackyDllDumpingGround\IIsmStateServer.Core.dll</HintPath>
-    </Reference>
-    <Reference Include="Ism.Common.Core">
-      <HintPath>..\HackyDllDumpingGround\Ism.Common.Core.dll</HintPath>
-    </Reference>
-    <Reference Include="Ism.Dmag.Core">
-      <HintPath>..\HackyDllDumpingGround\Ism.Dmag.Core.dll</HintPath>
-    </Reference>
     <Reference Include="Ism.Log.Common.Core">
       <HintPath>..\HackyDllDumpingGround\Ism.Log.Common.Core.dll</HintPath>
-    </Reference>
-    <Reference Include="Ism.PatientInfoEngine.Client.Core">
-      <HintPath>..\HackyDllDumpingGround\Ism.PatientInfoEngine.Client.Core.dll</HintPath>
-    </Reference>
-    <Reference Include="Ism.PatientInfoEngine.Common.Core">
-      <HintPath>..\HackyDllDumpingGround\Ism.PatientInfoEngine.Common.Core.dll</HintPath>
-    </Reference>
-    <Reference Include="Ism.Storage.Common.Core">
-      <HintPath>..\HackyDllDumpingGround\Ism.Storage.Common.Core.dll</HintPath>
-    </Reference>
-    <Reference Include="Ism.Utility.Core">
-      <HintPath>..\HackyDllDumpingGround\Ism.Utility.Core.dll</HintPath>
-    </Reference>
-    <Reference Include="Ism.Utility.Windows.Core">
-      <HintPath>..\HackyDllDumpingGround\Ism.Utility.Windows.Core.dll</HintPath>
     </Reference>
   </ItemGroup>
 

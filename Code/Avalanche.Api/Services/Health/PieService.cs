@@ -1,92 +1,126 @@
-﻿using Avalanche.Api.ViewModels;
-using Avalanche.Shared.Domain.Models;
+﻿using Avalanche.Shared.Domain.Models;
 using Avalanche.Shared.Infrastructure.Services.Settings;
-using System;
+using Ism.IsmLogCommon.Core;
+using Ism.PatientInfoEngine.Common.Core;
+using Ism.Security.Grpc.Helpers;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Ism.PatientInfoEngine.Client.Core;
-using Ism.Security.Grpc.Helpers;
-using System.Globalization;
-using Avalanche.Api.Mapping.Health;
-using Ism.PatientInfoEngine.Common.Core.Models;
-using Ism.PatientInfoEngine.Common.Core;
-using Ism.PatientInfoEngine.Common.Core.proto;
-using Avalanche.Api.Utilities;
+using System;
+using Ism.Storage.Common.Core.PatientList.Proto;
+using Avalanche.Api.Helpers;
 
 namespace Avalanche.Api.Services.Health
 {
     public class PieService : IPieService
     {
         readonly IConfigurationService _configurationService;
-        readonly IPieMapping _pieMapping;
         readonly string _hostIpAddress;
-        readonly IAccessInfoFactory _accessInfoFactory;
 
-        public IPatientList Client { get; set; }
+        public PatientListService.PatientListServiceClient PatientListServiceClient { get; set; }
+        public PatientListStorage.PatientListStorageClient PatientListStorageClient { get; set; }
 
-        public PieService(IConfigurationService configurationService, IPieMapping pieMapping, IAccessInfoFactory accessInfoFactory)
+        public PieService(IConfigurationService configurationService)
         {
             _configurationService = configurationService;
-            _pieMapping = pieMapping;
-            _accessInfoFactory = accessInfoFactory;
 
             _hostIpAddress = _configurationService.GetEnvironmentVariable("hostIpAddress");
 
-            var patientInfoEngineGrpcPort = _configurationService.GetEnvironmentVariable("PatientInfoEngineGrpcPort");
+            var patientListServiceGrpcPort = _configurationService.GetEnvironmentVariable("PatientListServiceGrpcPort");
+            var patientListStorageGrpcPort = _configurationService.GetEnvironmentVariable("PatientListStorageGrpcPort");
+
             var grpcCertificate = _configurationService.GetEnvironmentVariable("grpcCertificate");
             var grpcPassword = _configurationService.GetEnvironmentVariable("grpcPassword");
 
             var certificate = new System.Security.Cryptography.X509Certificates.X509Certificate2(grpcCertificate, grpcPassword);
 
-            var client = ClientHelper.GetInsecureClient<PatientListService.PatientListServiceClient>($"https://{_hostIpAddress}:{patientInfoEngineGrpcPort}");
-            Client = new PatientListClient(client);
+            PatientListServiceClient = ClientHelper.GetInsecureClient<PatientListService.PatientListServiceClient>($"https://{_hostIpAddress}:{patientListServiceGrpcPort}");
+            PatientListStorageClient = ClientHelper.GetInsecureClient<PatientListStorage.PatientListStorageClient>($"https://{_hostIpAddress}:{patientListStorageGrpcPort}");
         }
 
-        public Task<List<Physician>> GetPhysiciansByPatient(string patientId)
+        public async Task<IEnumerable<Patient>> Search(PatientSearchFieldsMessage searchFields, int firstRecordIndex, int maxResults, string searchCultureName, AccessInfo accessInfo)
         {
-            throw new NotImplementedException();
+            var accessInfoMessage = new Ism.PatientInfoEngine.Common.Core.AccessInfoMessage()
+            {
+                ApplicationName = accessInfo.ApplicationName,
+                Ip = accessInfo.Ip,
+                Id = accessInfo.Id.ToString(),
+                Details = accessInfo.Details,
+                MachineName = accessInfo.MachineName,
+                UserName = accessInfo.UserName
+            };
+
+            var request = new SearchRequest
+            {
+                FirstRecordIndex = firstRecordIndex,
+                MaxResults = maxResults,
+                SearchCultureName = searchCultureName,
+                AccessInfo = accessInfoMessage,
+                SearchFields = searchFields
+            };
+
+            var reply = await PatientListServiceClient.SearchAsync(request);
+            return reply?.UpdatedPatList.Select(pieRecord => new Patient()
+            {
+                AccessionNumber = pieRecord.AccessionNumber,
+                DateOfBirth = new DateTime(pieRecord.Patient.Dob.Year, pieRecord.Patient.Dob.Month, pieRecord.Patient.Dob.Day),
+                Department = pieRecord.Department,
+                Gender = pieRecord.Patient.Sex.ToString(),
+                Id = pieRecord.InternalId,
+                MRN = pieRecord.MRN,
+                LastName = pieRecord.Patient.LastName,
+                Name = pieRecord.Patient.FirstName,
+                ProcedureType = pieRecord.ProcedureType,
+                Room = pieRecord.Room
+            });
         }
 
-        public Task<List<Procedure>> GetProceduresByPhysicianAndPatient(string patientId, string physicianId)
+        public async Task<Patient> RegisterPatient(Patient newPatient, AccessInfo accessInfo)
         {
-            throw new NotImplementedException();
+            var accessInfoMessage = GrpcModelsMappingHelper.GetAccessInfoMessage(accessInfo);
+
+            //TODO: Add data
+            var response = await PatientListStorageClient.AddPatientRecordAsync(new AddPatientRecordRequest()
+            { 
+            });
+
+            var pieRecord = response.PatientRecord;
+
+            return new Patient()
+            {
+                AccessionNumber = pieRecord.AccessionNumber,
+                DateOfBirth = new DateTime(pieRecord.Patient.Dob.Year, pieRecord.Patient.Dob.Month, pieRecord.Patient.Dob.Day),
+                Department = pieRecord.Department,
+                Gender = pieRecord.Patient.Sex.ToString(),
+                Id = pieRecord.InternalId,
+                MRN = pieRecord.Mrn,
+                LastName = pieRecord.Patient.LastName,
+                Name = pieRecord.Patient.FirstName,
+                ProcedureType = pieRecord.ProcedureType,
+                Room = pieRecord.Room
+            };
         }
 
-        public Task<Patient> RegisterPatient(Patient newPatient)
+        public async Task UpdatePatient(Patient existingPatient, AccessInfo accessInfo)
         {
-            throw new NotImplementedException();
+            var accessInfoMessage = GrpcModelsMappingHelper.GetAccessInfoMessage(accessInfo);
+
+            //TODO: Add data
+            var response = await PatientListStorageClient.UpdatePatientRecordAsync(new UpdatePatientRecordRequest()
+            {
+                AccessInfo = accessInfoMessage,
+            });
         }
 
-        public Task<Patient> RegisterQuickPatient()
+        public async Task DeletePatient(ulong patiendId, AccessInfo accessInfo)
         {
-            throw new NotImplementedException();
-        }
+            var accessInfoMessage = GrpcModelsMappingHelper.GetAccessInfoMessage(accessInfo);
 
-        public async Task<List<Patient>> Search(PatientKeywordSearchFilterViewModel filter)
-        {
-            var accessInfo = _accessInfoFactory.GenerateAccessInfo();
-            var search = new PatientSearchFields(null, null, null, null, null, null, filter.Term, null, null);
-
-            // TODO - get valid culture (either system configuration or passed in via caller)
-            var cultureName = CultureInfo.CurrentCulture.Name;
-            cultureName = string.IsNullOrEmpty(cultureName) ? "en-US" : cultureName;
-
-            var response = await Client.Search(search, filter.Page * filter.Limit, filter.Limit, cultureName, accessInfo);
-            return response.Select(p => _pieMapping.ToApiPatient(p)).ToList();
-        }
-
-        public async Task<List<Patient>> Search(PatientDetailsSearchFilterViewModel filter)
-        {
-            var accessInfo = _accessInfoFactory.GenerateAccessInfo();
-            var search = _pieMapping.GetDetailsSearchFields(filter);
-
-            // TODO - get valid culture (either system configuration or passed in via caller)
-            var cultureName = CultureInfo.CurrentCulture.Name;
-            cultureName = string.IsNullOrEmpty(cultureName) ? "en-US" : cultureName;
-
-            var response = await Client.Search(search, filter.Page * filter.Limit, filter.Limit, cultureName, accessInfo);
-            return response.Select(p => _pieMapping.ToApiPatient(p)).ToList();
+            var response = await PatientListStorageClient.DeletePatientRecordAsync(new DeletePatientRecordRequest()
+            {
+                AccessInfo = accessInfoMessage,
+                PatientRecordId = patiendId
+            });
         }
     }
 }

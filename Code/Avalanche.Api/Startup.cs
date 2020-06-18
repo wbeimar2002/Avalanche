@@ -36,10 +36,8 @@ using Avalanche.Shared.Infrastructure.Services.Settings;
 using Avalanche.Api.Services.Health;
 using Avalanche.Api.Services.Configuration;
 using Avalanche.Api.Utilities;
-using Ism.IsmLogCommon.Core;
-using Avalanche.Api.Mapping.Health;
 using Microsoft.AspNetCore.Http.Features;
-using Avalanche.Api.Utilities.Files;
+using Avalanche.Api.Services.Files;
 
 namespace Avalanche.Api
 {
@@ -78,7 +76,6 @@ namespace Avalanche.Api
             services.AddSingleton<IOutputsManager, OutputsManagerMock>();
             services.AddSingleton<IMediaService, MediaService>();
             services.AddSingleton<IMediaManager, MediaManager>();
-            services.AddSingleton<IPieMapping, PieMapping>();
             services.AddSingleton<IPieService, PieService>();
             services.AddSingleton<ISettingsService, SettingsService>();
             services.AddSingleton<IStorageService, StorageService>();

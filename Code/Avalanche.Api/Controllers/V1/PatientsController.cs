@@ -67,9 +67,9 @@ namespace Avalanche.Api.Controllers.V1
             try
             {
                 _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
-                existing = await _patientsManager.UpdatePatient(existing);
+                await _patientsManager.UpdatePatient(existing);
 
-                return new ObjectResult(existing) { StatusCode = StatusCodes.Status200OK };
+                return Ok();
             }
             catch (Exception exception)
             {
@@ -84,14 +84,14 @@ namespace Avalanche.Api.Controllers.V1
 
         [HttpDelete("{id}")]
         [Produces(typeof(Patient))]
-        public async Task<IActionResult> Delete(string id, [FromServices] IWebHostEnvironment env)
+        public async Task<IActionResult> Delete(ulong id, [FromServices] IWebHostEnvironment env)
         {
             try
             {
                 _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
-                Patient deleted = await _patientsManager.DeletePatient(id);
+                await _patientsManager.DeletePatient(id);
 
-                return new ObjectResult(deleted) { StatusCode = StatusCodes.Status200OK };
+                return Ok();
             }
             catch (Exception exception)
             {
@@ -172,55 +172,6 @@ namespace Avalanche.Api.Controllers.V1
                 result.Items = await _patientsManager.Search(filter);
 
                 AppendPagingContext(filter, result);
-                return Ok(result);
-            }
-            catch (Exception exception)
-            {
-                _appLoggerService.LogError(LoggerHelper.GetLogMessage(DebugLogType.Exception), exception);
-                return new BadRequestObjectResult(exception.Get(env.IsDevelopment()));
-            }
-            finally
-            {
-                _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
-            }
-        }
-
-
-        /// <summary>
-        /// Get physiciansby patient
-        /// </summary>
-        [HttpGet("{patiendId}/physicians/")]
-        [Produces(typeof(List<Physician>))]
-        public async Task<IActionResult> GetPhysiciansByPatient(string patiendId, [FromServices]IWebHostEnvironment env)
-        {
-            try
-            {
-                _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
-                var result = await _patientsManager.GetPhysiciansByPatient(patiendId);
-                return Ok(result);
-            }
-            catch (Exception exception)
-            {
-                _appLoggerService.LogError(LoggerHelper.GetLogMessage(DebugLogType.Exception), exception);
-                return new BadRequestObjectResult(exception.Get(env.IsDevelopment()));
-            }
-            finally
-            {
-                _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
-            }
-        }
-
-        /// <summary>
-        /// Get procedures by patient and physician
-        /// </summary>
-        [HttpGet("{patientId}/physicians/{physicianId}/procedures")]
-        [Produces(typeof(List<Procedure>))]
-        public async Task<IActionResult> GetProceduresByPhysicianAndPatient(string patiendId, string physicianId, [FromServices]IWebHostEnvironment env)
-        {
-            try
-            {
-                _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
-                var result = await _patientsManager.GetProceduresByPhysicianAndPatient(patiendId, physicianId);
                 return Ok(result);
             }
             catch (Exception exception)

@@ -6,7 +6,7 @@ option csharp_namespace = "Ism.Storage.Common.Core.Configuration.Proto";
 
 package storage;
 
-service PatientListStorage {
+service ConfigurationStorageService {
   rpc GetConfiguration (GetConfigurationRequest) returns (GetConfigurationResponse);
   rpc SaveConfiguration (SaveConfigurationRequest) returns (google.protobuf.Empty);
 }
