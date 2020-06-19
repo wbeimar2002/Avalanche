@@ -73,10 +73,7 @@ namespace Avalanche.Api.Managers.Health
             var cultureName = CultureInfo.CurrentCulture.Name;
             cultureName = string.IsNullOrEmpty(cultureName) ? "en-US" : cultureName;
 
-            var response = await _pieService.Search(search, filter.Page * filter.Limit, filter.Limit, cultureName, accessInfo);
-            //return response.Select(p => _pieMapping.ToApiPatient(p)).ToList();
-
-            throw new NotImplementedException();
+            return await _pieService.Search(search, filter.Page * filter.Limit, filter.Limit, cultureName, accessInfo);
         }
 
         public async Task<List<Shared.Domain.Models.Patient>> Search(PatientDetailsSearchFilterViewModel filter)
@@ -89,10 +86,7 @@ namespace Avalanche.Api.Managers.Health
             var cultureName = CultureInfo.CurrentCulture.Name;
             cultureName = string.IsNullOrEmpty(cultureName) ? "en-US" : cultureName;
 
-            var response = await _pieService.Search(search, filter.Page * filter.Limit, filter.Limit, cultureName, accessInfo);
-            //return response.Select(p => _pieMapping.ToApiPatient(p)).ToList();
-
-            throw new NotImplementedException();
+            return await _pieService.Search(search, filter.Page * filter.Limit, filter.Limit, cultureName, accessInfo);
         }
     }
 }

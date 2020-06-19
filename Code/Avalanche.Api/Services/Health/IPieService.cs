@@ -11,9 +11,9 @@ namespace Avalanche.Api.Services.Health
 {
     public interface IPieService
     {
-        Task<IEnumerable<Patient>> Search(PatientSearchFieldsMessage searchFields, int firstRecordIndex, int maxResults, string searchCultureName, AccessInfo accessInfo);
+        Task<List<Patient>> Search(PatientSearchFieldsMessage searchFields, int firstRecordIndex, int maxResults, string searchCultureName, AccessInfo accessInfo);
         Task<Patient> RegisterPatient(Patient newPatient, AccessInfo accessInfo);
         Task UpdatePatient(Patient existingPatient, AccessInfo accessInfo);
-        Task DeletePatient(ulong patiendId, AccessInfo accessInfo);
+        Task<int> DeletePatient(ulong patiendId, AccessInfo accessInfo);
     }
 }
