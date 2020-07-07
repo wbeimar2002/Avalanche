@@ -46,7 +46,7 @@ stages:
           projectKey: 'avalanche-api'
           projectName: 'avalanche-api'
 
-     #build          
+     # build          
      - task: DotNetCoreCLI@2
        displayName: 'dotnet build'
        inputs:
@@ -54,7 +54,7 @@ stages:
         #projects: $(Repo)/$(ProjectSolution)
         arguments: '--configuration=Avalanche-Api-Sonar'
 
-     #test step 1 of 2
+     # test step 1 of 2
      - task: DotNetCoreCLI@2
        displayName: 'dotnet test'
        inputs:
@@ -64,7 +64,7 @@ stages:
         testRunTitle: TestResults
         #workingDirectory: $(Repo)/Code/Avalanche.Api.Tests
      
-     #test step 2 of 2
+     # test step 2 of 2
      - task: CopyFiles@2
        displayName: 'Copy Files to: $(Agent.BuildDirectory)\TestResults'
        inputs:
@@ -81,7 +81,7 @@ stages:
        condition: and(succeeded(), eq(variables['Build.SourceBranchName'], 'dev'))
        inputs:
         pollingTimeoutSec: '300'
-
+    # publish
      - task: DotNetCoreCLI@2
        displayName: 'Publish Avalanche.Api'
        inputs:
