@@ -46,13 +46,13 @@ stages:
      - task: Bash@3
        inputs:
         targetType: 'inline'
-        script: 'ls $(Project)/$(Repo)'
-        workingDirectory: '$(Project)/$(Repo)'
+        script: 'ls $(Repo)'
+        workingDirectory: '$(Repo)'
         
      - task: DotNetCoreCLI@2
        displayName: 'dotnet build'
        inputs:
-        projects: $(Project)/$(Repo)/Code/Avalanche.Api.sln
+        projects: $(Repo)/Code/Avalanche.Api.sln
         arguments: '--configuration=Avalanche-Api-Sonar'
 
      
