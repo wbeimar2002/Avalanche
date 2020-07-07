@@ -1,4 +1,4 @@
-name: $(Date:yyyyMMdd)$(Rev:.rr)
+name: avalanche-web-$(majorversion).$(minorversion).$(patch).$(releasestage)_$(majorversion).$(minorversion).$(Date:yyMM).$(Date:dd)$(Rev:rr)
 
 trigger:
   - dev
