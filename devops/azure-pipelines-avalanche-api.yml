@@ -47,7 +47,7 @@ stages:
        inputs:
         targetType: 'inline'
         script: 'ls .'
-        workingDirectory: '$(Repo)'
+        workingDirectory: '.'
         
      - task: DotNetCoreCLI@2
        displayName: 'dotnet build'
