@@ -1,7 +1,7 @@
 name: avalanche-web-$(majorversion).$(minorversion).$(patch).$(releasestage)_$(majorversion).$(minorversion).$(Date:yyMM).$(Date:dd)$(Rev:rr)
 
 trigger:
-  - $(branchTrigger)
+  - $(BranchTrigger)
 
 variables:
   - group: vg_dev_avalanche_api
