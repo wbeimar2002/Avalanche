@@ -5,8 +5,8 @@ trigger:
 
 variables:
   - group: vg_dev_avalanche_api
-  - template: pipeline-bug-workaround.yml
-  
+  #- template: pipeline-bug-workaround.yml
+
 pool:
   vmImage: $(VmImage)
 
