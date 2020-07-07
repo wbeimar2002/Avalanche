@@ -20,7 +20,7 @@ stages:
   - job: build_test_publish
     steps:
 
-     - checkout: git://(Project)/$(Repo)@$(branch)
+     - checkout: git://$(Project)/$(Repo)@$(branch)
      - checkout: git://$(Project)/$(RepoDevop)s@master
                  
      - task: UseDotNet@2
