@@ -45,14 +45,16 @@ stages:
           SonarQube: sonarqube
           projectKey: 'avalanche-api'
           projectName: 'avalanche-api'
-               
+
+     #build          
      - task: DotNetCoreCLI@2
        displayName: 'dotnet build'
        inputs:
         projects: '**/$(ProjectSolution)'
         #projects: $(Repo)/$(ProjectSolution)
         arguments: '--configuration=Avalanche-Api-Sonar'
-
+        
+     #test
      - task: DotNetCoreCLI@2
        displayName: 'dotnet test'
        inputs:
