@@ -19,7 +19,7 @@ pool:
   vmImage: $(VmImage)
 
 variables:
-
+  - group: vg_dev_avalanche_api
   - template: pipeline-bug-workaround.yml
   - name: BuildConfiguration
     value: 'Release'
