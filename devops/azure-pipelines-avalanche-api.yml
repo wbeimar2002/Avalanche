@@ -16,8 +16,8 @@ stages:
   - job: build_test_publish
     steps:
 
-     - checkout: git://$(Project)/$(Repo)@$(branch)
-     - checkout: git://$(Project)/$(RepoDevops)@master
+     - checkout: git://$(AdoProject)/$(Repo)@$(branch)
+     - checkout: git://$(AdoProject)/$(RepoDevops)@master
                  
      - task: UseDotNet@2
        displayName: 'use dotnet 3.1.x'
@@ -39,7 +39,7 @@ stages:
 
      # sonar analysis step 1 of 3   
      - task: SonarSource.sonarqube.15B84CA1-B62F-4A2A-A403-89B77A063157.SonarQubePrepare@4
-       condition: and(succeeded(), eq(variables['Build.SourceBranchName'], 'dev'))
+       condition: and(succeeded(), eq(variables['Build.SourceBranchName'], '$(DefaultBranch)'))
        displayName: 'Prepare analysis on SonarQube'
        inputs:
           SonarQube: sonarqube
@@ -74,20 +74,22 @@ stages:
 
      # sonar analysis step 2 of 3   
      - task: SonarQubeAnalyze@4
-       condition: and(succeeded(), eq(variables['Build.SourceBranchName'], 'dev'))
+       condition: and(succeeded(), eq(variables['Build.SourceBranchName'], '$(DefaultBranch)'))
 
     # sonar analysis step 3 of 3   
      - task: SonarQubePublish@4
-       condition: and(succeeded(), eq(variables['Build.SourceBranchName'], 'dev'))
+       condition: and(succeeded(), eq(variables['Build.SourceBranchName'], '$(DefaultBranch)'))
        inputs:
         pollingTimeoutSec: '300'
+
     # publish
      - task: DotNetCoreCLI@2
        displayName: 'Publish Avalanche.Api'
        inputs:
         command: publish
         publishWebProjects: false
-        projects: '**/Code/Avalanche.Api/Avalanche.Api.csproj'
+        projects: '**/$(VSProject)'
+        #projects: '**/Code/Avalanche.Api/Avalanche.Api.csproj'
         arguments: '-c $(BuildConfiguration)  -o app'
         zipAfterPublish: false
         modifyOutputPath: false
