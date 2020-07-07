@@ -85,7 +85,7 @@ stages:
 
     # publish
      - task: DotNetCoreCLI@2
-       displayName: 'Publish Avalanche.Api'
+       displayName: 'Publish $(VSProject)'
        inputs:
         command: publish
         publishWebProjects: false
