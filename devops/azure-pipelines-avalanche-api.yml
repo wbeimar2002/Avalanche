@@ -21,7 +21,7 @@ stages:
     steps:
 
      - checkout: git://$(Project)/$(Repo)@$(branch)
-     - checkout: git://$(Project)/$(RepoDevops)s@master
+     - checkout: git://$(Project)/$(RepoDevops)@master
                  
      - task: UseDotNet@2
        displayName: 'use dotnet 3.1.x'
