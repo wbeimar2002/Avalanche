@@ -8,12 +8,12 @@ resources:
   
   - repository: $(Repo)
     type: git
-    name: avalanche-api/$(Repo)
+    name: avalanche/$(Repo)
     ref: $(Branch)
 
   - repository: $(RepoDevops)
     type: git
-    name: avalanche-api/$(RepoDevops)
+    name: avalanche/$(RepoDevops)
 
 pool:
   vmImage: $(VmImage)
