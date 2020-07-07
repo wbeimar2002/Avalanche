@@ -12,8 +12,6 @@ variables:
 pool:
   vmImage: $(VmImage)
 
-
-
 stages:
 - stage: build
   jobs:
