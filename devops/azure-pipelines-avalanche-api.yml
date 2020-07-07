@@ -6,17 +6,17 @@ trigger:
 resources:
   repositories:
   
-  - repository: avalanche-api
+  - repository: $(Repo)
     type: git
-    name: avalanche/avalanche-api
-    ref: dev
+    name: $(Project)/$(Repo)
+    ref: $(Branch)
 
-  - repository: devops
+  - repository: $(RepoDevops)
     type: git
-    name: avalanche/devops
+    name: $(Project)/$(RepoDevops)
 
 pool:
-  vmImage: 'ubuntu-latest'
+  vmImage: $(VmImage)
 
 variables:
 
