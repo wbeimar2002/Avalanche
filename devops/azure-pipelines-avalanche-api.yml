@@ -19,6 +19,7 @@ stages:
      - checkout: git://$(AdoProject)/$(Repo)@$(branch)
      - checkout: git://$(AdoProject)/$(RepoDevops)@master
                  
+     # use the following .net frameworks
      - task: UseDotNet@2
        displayName: 'use dotnet 3.1.x'
        inputs:
