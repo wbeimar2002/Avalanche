@@ -33,7 +33,7 @@ stages:
     steps:
 
      - checkout: git://(Project)/$(Repo)@$(branch)
-     - checkout: git://$(Project)/$(RepoDevops@master
+     - checkout: git://$(Project)/$(RepoDevop)s@master
                  
      - task: UseDotNet@2
        displayName: 'use dotnet 3.1.x'
