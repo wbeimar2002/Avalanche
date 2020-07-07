@@ -8,19 +8,7 @@ variables:
   - template: pipeline-bug-workaround.yml
   - name: BuildConfiguration
     value: 'Release'
-
-resources:
-  repositories:
-  
-  - repository: $(Repo)
-    type: git
-    name: avalanche/$(Repo)
-    ref: $(Branch)
-
-  - repository: $(RepoDevops)
-    type: git
-    name: avalanche/$(RepoDevops)
-
+    
 pool:
   vmImage: $(VmImage)
 
