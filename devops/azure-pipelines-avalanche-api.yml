@@ -32,7 +32,13 @@ stages:
        inputs:
         version: '2.2.x'
         packageType: runtime
-
+     - task: Bash@3
+       displayName: 'List dir of cheked out repos'
+       inputs:
+        targetType: 'inline'
+        script: 'ls .'
+        workingDirectory: '.'
+     # sonar analysis step 1 of 3   
      - task: SonarSource.sonarqube.15B84CA1-B62F-4A2A-A403-89B77A063157.SonarQubePrepare@4
        condition: and(succeeded(), eq(variables['Build.SourceBranchName'], 'dev'))
        displayName: 'Prepare analysis on SonarQube'
@@ -40,15 +46,7 @@ stages:
           SonarQube: sonarqube
           projectKey: 'avalanche-api'
           projectName: 'avalanche-api'
-       
-      
-     - task: Bash@3
-       displayName: 'List dir of cheked out repos'
-       inputs:
-        targetType: 'inline'
-        script: 'ls .'
-        workingDirectory: '.'
-        
+               
      - task: DotNetCoreCLI@2
        displayName: 'dotnet build'
        inputs:
