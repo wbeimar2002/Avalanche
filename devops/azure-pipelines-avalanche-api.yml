@@ -46,8 +46,7 @@ stages:
      - task: DotNetCoreCLI@2
        displayName: 'dotnet build'
        inputs:
-       projects: $(Project)/$(Repo)/Code/Avalanche.Api.sln
-        #projects: Code/Avalanche.Api.sln
+        projects: $(Project)/$(Repo)/Code/Avalanche.Api.sln
         arguments: '--configuration=Avalanche-Api-Sonar'
 
      
