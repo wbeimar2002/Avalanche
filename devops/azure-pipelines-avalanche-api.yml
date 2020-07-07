@@ -42,7 +42,13 @@ stages:
           projectKey: 'avalanche-api'
           projectName: 'avalanche-api'
        condition: and(succeeded(), eq(variables['Build.SourceBranchName'], 'dev'))
-
+      
+     - task: Bash@3
+       inputs:
+        targetType: 'inline'
+        script: 'ls $(Project)/$(Repo)'
+        workingDirectory: '$(Project)/$(Repo)'
+        
      - task: DotNetCoreCLI@2
        displayName: 'dotnet build'
        inputs:
