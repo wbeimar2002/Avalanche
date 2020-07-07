@@ -53,8 +53,8 @@ stages:
         projects: '**/$(ProjectSolution)'
         #projects: $(Repo)/$(ProjectSolution)
         arguments: '--configuration=Avalanche-Api-Sonar'
-        
-     #test
+
+     #test step 1 of 2
      - task: DotNetCoreCLI@2
        displayName: 'dotnet test'
        inputs:
@@ -64,6 +64,7 @@ stages:
         testRunTitle: TestResults
         #workingDirectory: $(Repo)/Code/Avalanche.Api.Tests
      
+     #test step 2 of 2
      - task: CopyFiles@2
        displayName: 'Copy Files to: $(Agent.BuildDirectory)\TestResults'
        inputs:
