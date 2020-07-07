@@ -2,6 +2,12 @@ name: avalanche-web-$(majorversion).$(minorversion).$(patch).$(releasestage)_$(m
 
 trigger:
   - dev
+  
+variables:
+  - group: vg_dev_avalanche_api
+  - template: pipeline-bug-workaround.yml
+  - name: BuildConfiguration
+    value: 'Release'
 
 resources:
   repositories:
@@ -18,11 +24,7 @@ resources:
 pool:
   vmImage: $(VmImage)
 
-variables:
-  - group: vg_dev_avalanche_api
-  - template: pipeline-bug-workaround.yml
-  - name: BuildConfiguration
-    value: 'Release'
+
 
 stages:
 - stage: build
