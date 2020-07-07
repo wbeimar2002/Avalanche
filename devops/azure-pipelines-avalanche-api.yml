@@ -83,11 +83,12 @@ stages:
           SourceFolder: '$(Agent.TempDirectory)'
           Contents: '*.trx'
           TargetFolder: '$(Agent.BuildDirectory)\TestResults'
-     
+
+     # sonar analysis step 2 of 3   
      - task: SonarQubeAnalyze@4
        condition: and(succeeded(), eq(variables['Build.SourceBranchName'], 'dev'))
 
-    
+    # sonar analysis step 3 of 3   
      - task: SonarQubePublish@4
        condition: and(succeeded(), eq(variables['Build.SourceBranchName'], 'dev'))
        inputs:
