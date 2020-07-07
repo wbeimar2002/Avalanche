@@ -95,6 +95,7 @@ stages:
         zipAfterPublish: false
         modifyOutputPath: false
  
+    # store build output artiifcats
      - task: PublishBuildArtifacts@1
        displayName: 'Publish Build Artifacts'
        inputs:
