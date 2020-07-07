@@ -38,6 +38,7 @@ stages:
         targetType: 'inline'
         script: 'ls .'
         workingDirectory: '.'
+
      # sonar analysis step 1 of 3   
      - task: SonarSource.sonarqube.15B84CA1-B62F-4A2A-A403-89B77A063157.SonarQubePrepare@4
        condition: and(succeeded(), eq(variables['Build.SourceBranchName'], 'dev'))
@@ -53,7 +54,6 @@ stages:
         projects: $(Repo)/$(ProjectSolution)
         arguments: '--configuration=Avalanche-Api-Sonar'
 
-     
      - task: DotNetCoreCLI@2
        displayName: 'dotnet test'
        inputs:
@@ -69,14 +69,6 @@ stages:
         Contents: '*.trx'
         TargetFolder: '$(Agent.BuildDirectory)\TestResults'
 
-     #- task: DotNetCoreCLI@2
-       #displayName: 'dotnet test Avalanche.Api.Tests.csproj'
-       #inputs:
-        #command: test
-        #projects: Code/Avalanche.Api.Tests/Avalanche.Api.Tests.csproj
-        #testRunTitle: TestResults
-        #workingDirectory: Code/Avalanche.Api.Tests
-    
      - task: CopyFiles@2
        displayName: 'Copy Files to: $(Agent.BuildDirectory)\TestResults'
        inputs:
@@ -107,7 +99,7 @@ stages:
      - task: PublishBuildArtifacts@1
        displayName: 'Publish Build Artifacts'
        inputs:
-        PathtoPublish: 'app'
-        ArtifactName: app 
+        PathtoPublish: $(PathtoPublish)
+        ArtifactName: $(PathtoPublish)
 
 
