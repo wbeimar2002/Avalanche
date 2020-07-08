@@ -17,7 +17,7 @@ stages:
     steps:
 
      - checkout: git://$(AdoProject)/$(Repo)@$(branch)
-     - checkout: git://$(AdoProject)/$(RepoDevops)@master
+     - checkout: git://$(AdoProject)/$(RepoDevops)@$(BranchDevOps)
                  
      # use the following .net frameworks
      - task: UseDotNet@2
