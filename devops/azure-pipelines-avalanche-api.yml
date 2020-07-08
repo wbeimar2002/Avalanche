@@ -44,8 +44,8 @@ stages:
        displayName: 'Prepare analysis on SonarQube'
        inputs:
           SonarQube: sonarqube
-          projectKey: 'avalanche-api'
-          projectName: 'avalanche-api'
+          projectKey: '$(Repo)'
+          projectName: '$(Repo)'
 
      # build          
      - task: DotNetCoreCLI@2
