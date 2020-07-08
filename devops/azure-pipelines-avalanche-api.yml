@@ -21,7 +21,7 @@ stages:
      - checkout: git://$(AdoProject)/$(RepoDevops)@$(BranchDevOps)
                  
      # use the following .net frameworks
-     - template: '$(Repo)/devops/templates/use-dotnet.yml'
+     - template: 'avalanch-api/devops/templates/use-dotnet.yml'
      - task: UseDotNet@2
        displayName: 'use dotnet 3.1.x'
        inputs:
