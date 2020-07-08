@@ -22,6 +22,8 @@ stages:
                  
      # use the following .net frameworks
      - template: 'templates/use-dotnet.yml'
+       parameters:
+        yesNo: false
      - task: UseDotNet@2
        displayName: 'use dotnet 3.1.x'
        inputs:
