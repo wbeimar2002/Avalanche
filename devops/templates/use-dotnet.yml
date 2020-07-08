@@ -1,3 +1,8 @@
+parameters:
+- name: yesNo # name of the parameter; required
+  type: boolean # data type of the parameter; required
+  default: false
+
 steps:
 - task: UseDotNet@2
   displayName: 'use dotnet 3.1.x'
