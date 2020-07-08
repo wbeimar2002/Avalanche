@@ -1,7 +1,7 @@
 parameters:
 - name: version # name of the parameter; required
   type: string # data type of the parameter; required
-  default: []]
+  default: []
 
 steps:
 - task: UseDotNet@2
