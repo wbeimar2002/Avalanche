@@ -1,3 +1,5 @@
+steps:
+- task: UseDotNet@2
   displayName: 'use dotnet 3.1.x'
   inputs:
    version: '3.1.x'
