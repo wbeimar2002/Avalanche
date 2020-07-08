@@ -20,7 +20,7 @@ stages:
      - checkout: git://$(AdoProject)/$(RepoDevops)@$(BranchDevOps)
                  
      # use the following .net frameworks
-     - template: templates/use-dotnet.yml
+     #- template: templates/use-dotnet.yml
      - task: UseDotNet@2
        displayName: 'use dotnet 3.1.x'
        inputs:
