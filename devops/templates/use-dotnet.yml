@@ -1,9 +1,5 @@
-- name: dotnetVersion # name of the parameter; required
-  type: string
-  default: []
-
 - task: UseDotNet@2
-       displayName: 'use dotnet ${{ parameters.yesNo }}'
-       inputs:
-        version: ${{ parameters.yesNo }}
-        packageType: runtime
+  displayName: 'use dotnet 3.1.x'
+  inputs:
+   version: '3.1.x'
+   packageType: runtime
