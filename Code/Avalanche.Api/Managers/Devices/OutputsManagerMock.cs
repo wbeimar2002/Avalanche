@@ -1,13 +1,16 @@
 ﻿using AutoFixture;
 using Avalanche.Shared.Domain.Enumerations;
 using Avalanche.Shared.Domain.Models;
+using Avalanche.Shared.Infrastructure.Helpers;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
 
 namespace Avalanche.Api.Managers.Devices
 {
+    [ExcludeFromCodeCoverage]
     public class OutputsManagerMock : IOutputsManager
     {
         public Task<List<Output>> GetAllAvailable()
@@ -51,6 +54,8 @@ namespace Avalanche.Api.Managers.Devices
 
         public Task<Content> GetContent(string contentType)
         {
+            Preconditions.ThrowIfNull<string>(nameof(contentType), contentType);
+
             Content content;
             switch (contentType)
             {
@@ -88,6 +93,8 @@ namespace Avalanche.Api.Managers.Devices
 
         public Task<State> GetCurrentState(string id, StateTypes stateType)
         {
+            Preconditions.ThrowIfNull<string>(nameof(id), id);
+
             State state;
             switch (stateType)
             {
@@ -126,6 +133,8 @@ namespace Avalanche.Api.Managers.Devices
 
         public Task<List<State>> GetCurrentStates(string id)
         {
+            Preconditions.ThrowIfNull<string>(nameof(id), id);
+
             List<State> states = new List<State>();
             states.Add(new State()
             {

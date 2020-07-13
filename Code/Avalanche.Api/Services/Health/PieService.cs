@@ -14,12 +14,14 @@ using Grpc.Core.Testing;
 using Grpc.Core;
 using System.Threading;
 using Google.Protobuf.WellKnownTypes;
+using Avalanche.Api.Utilities;
 
 namespace Avalanche.Api.Services.Health
 {
     public class PieService : IPieService
     {
         readonly IConfigurationService _configurationService;
+        readonly IAccessInfoFactory _accessInfoFactory;
         readonly string _hostIpAddress;
 
         public bool IgnoreGrpcServicesMocks { get; set; }
@@ -27,10 +29,10 @@ namespace Avalanche.Api.Services.Health
         public PatientListService.PatientListServiceClient PatientListServiceClient { get; set; }
         public PatientListStorage.PatientListStorageClient PatientListStorageClient { get; set; }
 
-        public PieService(IConfigurationService configurationService)
+        public PieService(IConfigurationService configurationService, IAccessInfoFactory accessInfoFactory)
         {
             _configurationService = configurationService;
-
+            _accessInfoFactory = accessInfoFactory;
             _hostIpAddress = _configurationService.GetEnvironmentVariable("hostIpAddress");
 
             var patientListServiceGrpcPort = _configurationService.GetEnvironmentVariable("PatientListServiceGrpcPort");
@@ -45,8 +47,10 @@ namespace Avalanche.Api.Services.Health
             PatientListStorageClient = ClientHelper.GetInsecureClient<PatientListStorage.PatientListStorageClient>($"https://{_hostIpAddress}:{patientListStorageGrpcPort}");
         }
 
-        public async Task<List<Patient>> Search(PatientSearchFieldsMessage searchFields, int firstRecordIndex, int maxResults, string searchCultureName, AccessInfo accessInfo)
+        public async Task<List<Patient>> Search(PatientSearchFieldsMessage searchFields, int firstRecordIndex, int maxResults, string searchCultureName)
         {
+            var accessInfo = _accessInfoFactory.GenerateAccessInfo();
+
             var accessInfoMessage = new Ism.PatientInfoEngine.Common.Core.AccessInfoMessage()
             {
                 ApplicationName = accessInfo.ApplicationName,
@@ -86,14 +90,16 @@ namespace Avalanche.Api.Services.Health
                 Id = pieRecord.InternalId,
                 MRN = pieRecord.MRN,
                 LastName = pieRecord.Patient.LastName,
-                Name = pieRecord.Patient.FirstName,
+                FirstName = pieRecord.Patient.FirstName,
                 ProcedureType = pieRecord.ProcedureType,
                 Room = pieRecord.Room
             }).ToList();
         }
 
-        public async Task<Patient> RegisterPatient(Patient newPatient, AccessInfo accessInfo)
+        public async Task<Patient> RegisterPatient(Patient newPatient)
         {
+            var accessInfo = _accessInfoFactory.GenerateAccessInfo();
+
             //Faking calls while I have the real server
             if (!IgnoreGrpcServicesMocks)
             {
@@ -122,14 +128,16 @@ namespace Avalanche.Api.Services.Health
                 Id = pieRecord.InternalId,
                 MRN = pieRecord.Mrn,
                 LastName = pieRecord.Patient.LastName,
-                Name = pieRecord.Patient.FirstName,
+                FirstName = pieRecord.Patient.FirstName,
                 ProcedureType = pieRecord.ProcedureType,
                 Room = pieRecord.Room
             };
         }
 
-        public async Task UpdatePatient(Patient existingPatient, AccessInfo accessInfo)
+        public async Task UpdatePatient(Patient existingPatient)
         {
+            var accessInfo = _accessInfoFactory.GenerateAccessInfo();
+
             //Faking calls while I have the real server
             if (!IgnoreGrpcServicesMocks)
             {
@@ -149,8 +157,10 @@ namespace Avalanche.Api.Services.Health
             });
         }
 
-        public async Task<int> DeletePatient(ulong patiendId, AccessInfo accessInfo)
+        public async Task<int> DeletePatient(ulong patiendId)
         {
+            var accessInfo = _accessInfoFactory.GenerateAccessInfo();
+
             //Faking calls while I have the real server
             if (!IgnoreGrpcServicesMocks)
             {

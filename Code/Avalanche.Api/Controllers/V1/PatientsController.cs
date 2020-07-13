@@ -40,14 +40,14 @@ namespace Avalanche.Api.Controllers.V1
         /// </summary>
         [HttpPost("")]
         [Produces(typeof(Patient))]
-        public async Task<IActionResult> Post(Patient newPatient, [FromServices]IWebHostEnvironment env)
+        public async Task<IActionResult> Post(PatientViewModel newPatient, [FromServices]IWebHostEnvironment env)
         {
             try
             {
                 _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
-                newPatient = await _patientsManager.RegisterPatient(newPatient);
+                var patientRegistered = await _patientsManager.RegisterPatient(newPatient);
                 
-                return new ObjectResult(newPatient) { StatusCode = StatusCodes.Status201Created };
+                return new ObjectResult(patientRegistered) { StatusCode = StatusCodes.Status201Created };
             }
             catch (Exception exception)
             {
@@ -62,7 +62,7 @@ namespace Avalanche.Api.Controllers.V1
 
         [HttpPut("{id}")]
         [Produces(typeof(Patient))]
-        public async Task<IActionResult> Put(Patient existing, [FromServices] IWebHostEnvironment env)
+        public async Task<IActionResult> Put(PatientViewModel existing, [FromServices] IWebHostEnvironment env)
         {
             try
             {

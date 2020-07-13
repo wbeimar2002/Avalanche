@@ -14,9 +14,11 @@ using Avalanche.Shared.Infrastructure.Models;
 using Newtonsoft.Json;
 using Avalanche.Shared.Infrastructure.Helpers;
 using Microsoft.AspNetCore;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Avalanche.Api
 {
+    [ExcludeFromCodeCoverage]
     public class Program
     {
         public static void Main(string[] args)

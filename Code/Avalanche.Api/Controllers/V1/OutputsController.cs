@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Avalanche.Api.Managers.Devices;
+﻿using Avalanche.Api.Managers.Devices;
 using Avalanche.Api.ViewModels;
 using Avalanche.Shared.Domain.Enumerations;
 using Avalanche.Shared.Domain.Models;
@@ -11,12 +7,14 @@ using Avalanche.Shared.Infrastructure.Extensions;
 using Avalanche.Shared.Infrastructure.Helpers;
 using Avalanche.Shared.Infrastructure.Models;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Avalanche.Api.Controllers.V1
 {
@@ -47,9 +45,8 @@ namespace Avalanche.Api.Controllers.V1
         {
             try
             {
-                Preconditions.ThrowIfNull<string>(nameof(contentType), contentType);
-
                 _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
+
                 Content result = await _outputsManager.GetContent(contentType);
                 return Ok(result);
             }
@@ -73,9 +70,8 @@ namespace Avalanche.Api.Controllers.V1
         {
             try
             {
-                Preconditions.ThrowIfNull<string>(nameof(id), id);
-
                 _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
+
                 State result = await _outputsManager.GetCurrentState(id, stateType);
                 return Ok(result);
             }
@@ -99,10 +95,9 @@ namespace Avalanche.Api.Controllers.V1
         {
             try
             {
-                Preconditions.ThrowIfNull<string>(nameof(id), id);
-
                 _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
                 List<State> result = await _outputsManager.GetCurrentStates(id);
+
                 return Ok(result);
             }
             catch (Exception exception)
@@ -126,6 +121,7 @@ namespace Avalanche.Api.Controllers.V1
             try
             {
                 _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
+
                 var result = await _outputsManager.GetAllAvailable();
                 return Ok(result);
             }
@@ -149,10 +145,10 @@ namespace Avalanche.Api.Controllers.V1
         {
             try
             {
-                Preconditions.ThrowIfCountIsLessThan<Output>(nameof(command.Outputs), command.Outputs, 1);
-
                 _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
+
                 var response = await _mediaManager.SendCommandAsync(command);
+
                 return Ok(response);
             }
             catch (Exception exception)
@@ -176,7 +172,9 @@ namespace Avalanche.Api.Controllers.V1
             try
             {
                 _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
+
                 var response = await _mediaManager.GetTimeoutSettingsAsync();
+
                 return Ok(response);
             }
             catch (Exception exception)

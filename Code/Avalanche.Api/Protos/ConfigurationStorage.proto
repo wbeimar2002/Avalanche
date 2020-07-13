@@ -6,7 +6,7 @@ option csharp_namespace = "Ism.Storage.Common.Core.Configuration.Proto";
 
 package storage;
 
-service ConfigurationStorageService {
+service ConfigurationStorage {
   rpc GetConfiguration (GetConfigurationRequest) returns (GetConfigurationResponse);
   rpc SaveConfiguration (SaveConfigurationRequest) returns (google.protobuf.Empty);
 }
@@ -21,7 +21,7 @@ message ConfigurationContextMessage {
 
 message ConfigurationSaveContextMessage {
     ConfigurationKindMessage kind = 1;
-    string configurationJson = 2;
+    google.protobuf.StringValue id = 2;
 }
 
 // Enums
@@ -51,5 +51,6 @@ message SaveConfigurationRequest {
 // Response Messages
 
 message GetConfigurationResponse {
-    string configurationJson = 1;
+    bool success = 1;
+    google.protobuf.StringValue configurationJson = 2;
 }

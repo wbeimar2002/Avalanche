@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
 using Avalanche.Api.Managers.Devices;
@@ -23,7 +24,7 @@ namespace Avalanche.Api.Controllers.V1
     {
         readonly ISourcesManager _sourcesManager;
         readonly ILogger _appLoggerService;
-
+        [ExcludeFromCodeCoverage]
         public SourcesController(ISourcesManager sourcesManager, ILogger<SourcesController> appLoggerService)
         {
             _sourcesManager = sourcesManager;

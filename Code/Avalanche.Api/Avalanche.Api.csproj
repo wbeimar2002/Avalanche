@@ -69,12 +69,12 @@
   <ItemGroup>
     <Protobuf Include="Protos\WebRtcStreamer.proto" />
     <Protobuf Include="Protos\PgsTimeout.proto" />
-    <Protobuf Include="Protos\ConfigurationStorage.proto" />
     <Protobuf Include="Protos\PatientListStorage.proto" />
     <Protobuf Include="Protos\PatInfo.proto" />
-  </ItemGroup>
+    <Protobuf Include="Protos\ConfigurationStorage.proto" />
+  </ItemGroup> 
 
-  <ItemGroup>
+    <ItemGroup>
     <Reference Include="Ism.Log.Common.Core">
       <HintPath>..\HackyDllDumpingGround\Ism.Log.Common.Core.dll</HintPath>
     </Reference>

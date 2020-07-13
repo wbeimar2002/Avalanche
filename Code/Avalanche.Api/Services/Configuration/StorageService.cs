@@ -23,7 +23,7 @@ namespace Avalanche.Api.Services.Configuration
 
         public bool IgnoreGrpcServicesMocks { get; set; }
 
-        public ConfigurationStorageService.ConfigurationStorageServiceClient ConfigurationStorageService { get; set; }
+        public ConfigurationStorage.ConfigurationStorageClient ConfigurationStorageService { get; set; }
 
         public StorageService(IConfigurationService configurationService)
         {
@@ -40,7 +40,7 @@ namespace Avalanche.Api.Services.Configuration
             var certificate = new System.Security.Cryptography.X509Certificates.X509Certificate2(grpcCertificate, grpcPassword);
 
             //Client = ClientHelper.GetSecureClient<WebRtcStreamer.WebRtcStreamerClient>($"https://{hostIpAddress}:{WebRTCGrpcPort}", certificate);
-            ConfigurationStorageService = ClientHelper.GetInsecureClient<ConfigurationStorageService.ConfigurationStorageServiceClient>($"https://{_hostIpAddress}:{PatientListStoragePort}");
+            ConfigurationStorageService = ClientHelper.GetInsecureClient<ConfigurationStorage.ConfigurationStorageClient>($"https://{_hostIpAddress}:{PatientListStoragePort}");
         }
 
         public async Task<T> GetJson<T>(string configurationKey, int version)
@@ -54,7 +54,7 @@ namespace Avalanche.Api.Services.Configuration
             //Faking calls while I have the real server
             if (!IgnoreGrpcServicesMocks)
             {
-                Mock<ConfigurationStorageService.ConfigurationStorageServiceClient> mockGrpcClient = new Mock<ConfigurationStorageService.ConfigurationStorageServiceClient>();
+                Mock<ConfigurationStorage.ConfigurationStorageClient> mockGrpcClient = new Mock<ConfigurationStorage.ConfigurationStorageClient>();
                 var fakeCall = TestCalls.AsyncUnaryCall(Task.FromResult(new GetConfigurationResponse() { ConfigurationJson = string.Empty }), Task.FromResult(new Metadata()), () => Status.DefaultSuccess, () => new Metadata(), () => { });
                 mockGrpcClient.Setup(mock => mock.GetConfigurationAsync(request, null, null, CancellationToken.None)).Returns(fakeCall);
 
@@ -71,7 +71,7 @@ namespace Avalanche.Api.Services.Configuration
             //Faking calls while I have the real server
             if (!IgnoreGrpcServicesMocks)
             {
-                Mock<ConfigurationStorageService.ConfigurationStorageServiceClient> mockGrpcClient = new Mock<ConfigurationStorageService.ConfigurationStorageServiceClient>();
+                Mock<ConfigurationStorage.ConfigurationStorageClient> mockGrpcClient = new Mock<ConfigurationStorage.ConfigurationStorageClient>();
                 var fakeCall = TestCalls.AsyncUnaryCall(Task.FromResult(new Empty()), Task.FromResult(new Metadata()), () => Status.DefaultSuccess, () => new Metadata(), () => { });
                 mockGrpcClient.Setup(mock => mock.SaveConfigurationAsync(Moq.It.IsAny<SaveConfigurationRequest>(), null, null, CancellationToken.None)).Returns(fakeCall);
 

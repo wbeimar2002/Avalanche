@@ -128,5 +128,42 @@ namespace Avalanche.Api.Tests.Controllers
 
             Assert.IsInstanceOf<BadRequestObjectResult>(badResult.Result);
         }
+
+        [Test]
+        public void PostShouldReturnOkWithNewPatientInfo()
+        {
+            PatientViewModel patient = new PatientViewModel();
+            _patientsManager.Setup(mock => mock.RegisterPatient(patient)).ReturnsAsync(new Patient());
+
+            var okResult = _controller.Post(patient, _environment.Object);
+
+            if (_checkLogger)
+            {
+                _appLoggerService.Verify(LogLevel.Error, $"Exception {_controller.GetType().Name}.Post", Times.Never());
+                _appLoggerService.Verify(LogLevel.Debug, $"Requested {_controller.GetType().Name}.Post", Times.Once());
+                _appLoggerService.Verify(LogLevel.Debug, $"Completed {_controller.GetType().Name}.Post", Times.Once());
+            }
+
+            Assert.IsInstanceOf<ObjectResult>(okResult.Result);
+        }
+
+        [Test]
+        public void PostShouldReturnBadResultIfFails()
+        {
+            _patientsManager.Setup(mock => mock.RegisterPatient(It.IsAny<PatientViewModel>())).Throws(It.IsAny<Exception>());
+
+            var badResult = _controller.Post(It.IsAny<PatientViewModel>(), _environment.Object);
+
+            if (_checkLogger)
+            {
+                _appLoggerService.Verify(LogLevel.Error, $"Exception {_controller.GetType().Name}.Post", Times.Once());
+                _appLoggerService.Verify(LogLevel.Debug, $"Requested {_controller.GetType().Name}.Post", Times.Once());
+                _appLoggerService.Verify(LogLevel.Debug, $"Completed {_controller.GetType().Name}.Post", Times.Once());
+            }
+
+            Assert.IsInstanceOf<BadRequestObjectResult>(badResult.Result);
+        }
+
+
     }
 }

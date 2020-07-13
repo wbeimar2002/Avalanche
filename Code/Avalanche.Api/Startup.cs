@@ -38,9 +38,11 @@ using Avalanche.Api.Services.Configuration;
 using Avalanche.Api.Utilities;
 using Microsoft.AspNetCore.Http.Features;
 using Avalanche.Api.Services.Files;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Avalanche.Api
 {
+    [ExcludeFromCodeCoverage]
     public class Startup
     {
         public Startup(IConfiguration configuration)

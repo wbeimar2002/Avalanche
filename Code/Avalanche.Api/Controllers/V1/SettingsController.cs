@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
 using Avalanche.Api.Managers.Settings;
@@ -21,7 +22,7 @@ namespace Avalanche.Api.Controllers.V1
     [Route("[controller]")]
     [ApiController]
     [Authorize]
-    
+    [ExcludeFromCodeCoverage]
     public class SettingsController : ControllerBase
     {
         readonly ILogger _appLoggerService;

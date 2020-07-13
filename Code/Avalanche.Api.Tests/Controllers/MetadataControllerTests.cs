@@ -134,5 +134,37 @@ namespace Avalanche.Api.Tests.Controllers
 
             Assert.IsInstanceOf<BadRequestObjectResult>(badResult.Result);
         }
+
+        [Test]
+        public void GetSourceTypesShouldReturnOkResult()
+        {
+            var okResult = _controller.GetSourceTypes(_environment.Object);
+
+            if (_checkLogger)
+            {
+                _appLoggerService.Verify(LogLevel.Error, $"Exception {_controller.GetType().Name}.GetSourceTypes", Times.Never());
+                _appLoggerService.Verify(LogLevel.Debug, $"Requested {_controller.GetType().Name}.GetSourceTypes", Times.Once());
+                _appLoggerService.Verify(LogLevel.Debug, $"Completed {_controller.GetType().Name}.GetSourceTypes", Times.Once());
+            }
+
+            Assert.IsInstanceOf<OkObjectResult>(okResult.Result);
+        }
+
+        [Test]
+        public void GetSourceTypesShouldReturnBadResultIfFails()
+        {
+            _metadataManager.Setup(mock => mock.GetMetadata(MetadataTypes.SourceTypes)).Throws(It.IsAny<Exception>());
+
+            var badResult = _controller.GetSourceTypes(_environment.Object);
+
+            if (_checkLogger)
+            {
+                _appLoggerService.Verify(LogLevel.Error, $"Exception {_controller.GetType().Name}.GetSourceTypes", Times.Once());
+                _appLoggerService.Verify(LogLevel.Debug, $"Requested {_controller.GetType().Name}.GetSourceTypes", Times.Once());
+                _appLoggerService.Verify(LogLevel.Debug, $"Completed {_controller.GetType().Name}.GetSourceTypes", Times.Once());
+            }
+
+            Assert.IsInstanceOf<BadRequestObjectResult>(badResult.Result);
+        }
     }
 }

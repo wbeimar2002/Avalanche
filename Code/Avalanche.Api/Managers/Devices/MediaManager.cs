@@ -44,6 +44,8 @@ namespace Avalanche.Api.Managers.Devices
 
         public async Task<List<CommandResponse>> SendCommandAsync(CommandViewModel command)
         {
+            Preconditions.ThrowIfCountIsLessThan<Output>(nameof(command.Outputs), command.Outputs, 1);
+
             List<CommandResponse> responses = new List<CommandResponse>();
 
             foreach (var item in command.Outputs)

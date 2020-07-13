@@ -15,55 +15,57 @@ namespace Avalanche.Api.Managers.Health
     public class PatientsManager : IPatientsManager
     {
         readonly IPieService _pieService;
-        readonly IAccessInfoFactory _accessInfoFactory;
-
-        public PatientsManager(IPieService pieService, IAccessInfoFactory accessInfoFactory)
+        public PatientsManager(IPieService pieService)
         {
             _pieService = pieService;
-            _accessInfoFactory = accessInfoFactory;
         }
 
-        public async Task<Shared.Domain.Models.Patient> RegisterPatient(Shared.Domain.Models.Patient newPatient)
+        public async Task<Shared.Domain.Models.Patient> RegisterPatient(PatientViewModel newPatient)
         {
             Preconditions.ThrowIfNull(nameof(newPatient), newPatient);
-            var accessInfo = _accessInfoFactory.GenerateAccessInfo();
-
-            return await _pieService.RegisterPatient(newPatient, accessInfo);
+            return await _pieService.RegisterPatient(new Patient()
+            {
+                MRN = newPatient.MRN,
+                DateOfBirth = newPatient.DateOfBirth,
+                FirstName = newPatient.FirstName,
+                LastName = newPatient.LastName,
+                Gender = newPatient.Gender.Id,
+            });
         }
 
         public async Task<Shared.Domain.Models.Patient> RegisterQuickPatient()
         {
-            var accessInfo = _accessInfoFactory.GenerateAccessInfo();
-
             //TODO Generate fake info
             var newPatient = new Patient()
             { 
             };
 
-            return await _pieService.RegisterPatient(newPatient, accessInfo);
+            return await _pieService.RegisterPatient(newPatient);
         }
 
-        public async Task UpdatePatient(Shared.Domain.Models.Patient existingPatient)
+        public async Task UpdatePatient(PatientViewModel existingPatient)
         {
             Preconditions.ThrowIfNull(nameof(existingPatient), existingPatient);
-            var accessInfo = _accessInfoFactory.GenerateAccessInfo();
-
-            await _pieService.UpdatePatient(existingPatient, accessInfo);
+            await _pieService.UpdatePatient(new Patient()
+            {
+                Id = existingPatient.Id,
+                MRN = existingPatient.MRN,
+                DateOfBirth = existingPatient.DateOfBirth,
+                FirstName = existingPatient.FirstName,
+                LastName = existingPatient.LastName,
+                Gender = existingPatient.Gender.Id,
+            });
         }
 
         public async Task DeletePatient(ulong id)
         {
             Preconditions.ThrowIfNull(nameof(id), id);
-            var accessInfo = _accessInfoFactory.GenerateAccessInfo();
-
-            await _pieService.DeletePatient(id, accessInfo);
+            await _pieService.DeletePatient(id);
         }
 
         public async Task<List<Shared.Domain.Models.Patient>> Search(PatientKeywordSearchFilterViewModel filter)
         {
             Preconditions.ThrowIfNull(nameof(filter), filter);
-
-            var accessInfo = _accessInfoFactory.GenerateAccessInfo();
 
             //TODO: Validate this with Zac
             var search = new PatientSearchFieldsMessage();
@@ -73,12 +75,11 @@ namespace Avalanche.Api.Managers.Health
             var cultureName = CultureInfo.CurrentCulture.Name;
             cultureName = string.IsNullOrEmpty(cultureName) ? "en-US" : cultureName;
 
-            return await _pieService.Search(search, filter.Page * filter.Limit, filter.Limit, cultureName, accessInfo);
+            return await _pieService.Search(search, filter.Page * filter.Limit, filter.Limit, cultureName);
         }
 
         public async Task<List<Shared.Domain.Models.Patient>> Search(PatientDetailsSearchFilterViewModel filter)
         {
-            var accessInfo = _accessInfoFactory.GenerateAccessInfo();
             var search = new PatientSearchFieldsMessage();
             //TODO: Other fields
 
@@ -86,7 +87,7 @@ namespace Avalanche.Api.Managers.Health
             var cultureName = CultureInfo.CurrentCulture.Name;
             cultureName = string.IsNullOrEmpty(cultureName) ? "en-US" : cultureName;
 
-            return await _pieService.Search(search, filter.Page * filter.Limit, filter.Limit, cultureName, accessInfo);
+            return await _pieService.Search(search, filter.Page * filter.Limit, filter.Limit, cultureName);
         }
     }
 }

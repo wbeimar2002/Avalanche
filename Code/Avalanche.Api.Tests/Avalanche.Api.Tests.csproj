@@ -36,14 +36,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Reference Include="Ism.PatientInfoEngine.Common.Core">
-      <HintPath>..\HackyDllDumpingGround\Ism.PatientInfoEngine.Common.Core.dll</HintPath>
-    </Reference>
     <Reference Include="Ism.Log.Common.Core">
       <HintPath>..\HackyDllDumpingGround\Ism.Log.Common.Core.dll</HintPath>
-    </Reference>
-    <Reference Include="Ism.Storage.Common.Core">
-      <HintPath>..\HackyDllDumpingGround\Ism.Storage.Common.Core.dll</HintPath>
     </Reference>
   </ItemGroup>
 
