@@ -104,7 +104,26 @@ namespace Avalanche.Api.Services.Health
             if (!IgnoreGrpcServicesMocks)
             {
                 Mock<PatientListStorage.PatientListStorageClient> mockGrpcClient = new Mock<PatientListStorage.PatientListStorageClient>();
-                var fakeCall = TestCalls.AsyncUnaryCall(Task.FromResult(Moq.It.IsAny<AddPatientRecordResponse>()), Task.FromResult(new Metadata()), () => Status.DefaultSuccess, () => new Metadata(), () => { });
+                var fakeCall = TestCalls.AsyncUnaryCall(Task.FromResult(new AddPatientRecordResponse()
+                {
+                    PatientRecord = new Ism.Storage.Common.Core.PatientList.Proto.PatientRecordMessage()
+                    {
+                        InternalId = 0,
+                        Mrn = newPatient.MRN,
+                        Patient = new Ism.Storage.Common.Core.PatientList.Proto.PatientMessage()
+                        {
+                            Dob = new Ism.Storage.Common.Core.PatientList.Proto.FixedDateMessage()
+                            {
+                                Day = newPatient.DateOfBirth.Day,
+                                Month = newPatient.DateOfBirth.Month,
+                                Year = newPatient.DateOfBirth.Year
+                            },
+                            FirstName = newPatient.FirstName,
+                            LastName = newPatient.LastName,
+                            Sex = GrpcModelsMappingHelper.GetGender(newPatient.Gender),
+                        }
+                    }
+                }), Task.FromResult(new Metadata()), () => Status.DefaultSuccess, () => new Metadata(), () => { });
                 mockGrpcClient.Setup(mock => mock.AddPatientRecordAsync(Moq.It.IsAny<AddPatientRecordRequest>(), null, null, CancellationToken.None)).Returns(fakeCall);
 
                 PatientListStorageClient = mockGrpcClient.Object;
@@ -129,7 +148,6 @@ namespace Avalanche.Api.Services.Health
                         FirstName = newPatient.FirstName,
                         LastName = newPatient.LastName,
                         Sex = GrpcModelsMappingHelper.GetGender(newPatient.Gender),
-                        
                     }
                 }
             });
