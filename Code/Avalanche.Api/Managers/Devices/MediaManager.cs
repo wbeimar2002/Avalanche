@@ -15,6 +15,7 @@ using System.Threading.Tasks;
 using Avalanche.Shared.Infrastructure.Extensions;
 using Avalanche.Shared.Infrastructure.Helpers;
 using Microsoft.AspNetCore.Http;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Avalanche.Api.Managers.Devices
 {
@@ -31,11 +32,13 @@ namespace Avalanche.Api.Managers.Devices
             _appLoggerService = appLoggerService;
         }
 
+        [ExcludeFromCodeCoverage]
         public async Task<TimeoutSettings> GetTimeoutSettingsAsync()
         {
             return await _settingsService.GetTimeoutSettingsAsync();
         }
 
+        [ExcludeFromCodeCoverage]
         public async Task SaveFileAsync(IFormFile file)
         {
             //TODO: Pending Service that upload file
@@ -89,18 +92,19 @@ namespace Avalanche.Api.Managers.Devices
                 case Shared.Domain.Enumerations.CommandTypes.PgsStopAudio:
                     return await _mediaService.PgsStopAudioAsync(command);
 
-                case Shared.Domain.Enumerations.CommandTypes.PgsMuteAudio:
-                    return await _mediaService.PgsMuteAudioAsync(command);
-
                 case Shared.Domain.Enumerations.CommandTypes.PgsHandleMessageForVideo:
                     Preconditions.ThrowIfNull(nameof(command.Message), command.Message);
                     return await _mediaService.PgsHandleMessageForVideoAsync(command);
 
-                case Shared.Domain.Enumerations.CommandTypes.PgsGetAudioVolumeUp:
-                    return await _mediaService.PgsGetAudioVolumeUpAsync(command);
+                //TODO: Still not used
+                //case Shared.Domain.Enumerations.CommandTypes.PgsMuteAudio:
+                //    return await _mediaService.PgsMuteAudioAsync(command);
 
-                case Shared.Domain.Enumerations.CommandTypes.PgsGetAudioVolumeDown:
-                    return await _mediaService.PgsGetAudioVolumeDownAsync(command);
+                //case Shared.Domain.Enumerations.CommandTypes.PgsGetAudioVolumeUp:
+                //    return await _mediaService.PgsGetAudioVolumeUpAsync(command);
+
+                //case Shared.Domain.Enumerations.CommandTypes.PgsGetAudioVolumeDown:
+                //    return await _mediaService.PgsGetAudioVolumeDownAsync(command);
                 #endregion
 
                 #region Timeout Commands

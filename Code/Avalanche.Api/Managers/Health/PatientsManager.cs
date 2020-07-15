@@ -1,4 +1,5 @@
-﻿using Avalanche.Api.Services.Health;
+﻿using AutoFixture;
+using Avalanche.Api.Services.Health;
 using Avalanche.Api.Utilities;
 using Avalanche.Api.ViewModels;
 using Avalanche.Shared.Domain.Models;
@@ -23,6 +24,13 @@ namespace Avalanche.Api.Managers.Health
         public async Task<Shared.Domain.Models.Patient> RegisterPatient(PatientViewModel newPatient)
         {
             Preconditions.ThrowIfNull(nameof(newPatient), newPatient);
+            Preconditions.ThrowIfNull(nameof(newPatient.MRN), newPatient.MRN);
+            Preconditions.ThrowIfNull(nameof(newPatient.DateOfBirth), newPatient.DateOfBirth);
+            Preconditions.ThrowIfNull(nameof(newPatient.FirstName), newPatient.FirstName);
+            Preconditions.ThrowIfNull(nameof(newPatient.LastName), newPatient.LastName);
+            Preconditions.ThrowIfNull(nameof(newPatient.Gender), newPatient.Gender);
+            Preconditions.ThrowIfNull(nameof(newPatient.Gender.Id), newPatient.Gender.Id);
+
             return await _pieService.RegisterPatient(new Patient()
             {
                 MRN = newPatient.MRN,
@@ -35,17 +43,23 @@ namespace Avalanche.Api.Managers.Health
 
         public async Task<Shared.Domain.Models.Patient> RegisterQuickPatient()
         {
-            //TODO Generate fake info
-            var newPatient = new Patient()
-            { 
-            };
-
+            //TODO Generate fake info with business rules
+            Fixture fixture = new Fixture();
+            var newPatient = fixture.Create<Patient>();
             return await _pieService.RegisterPatient(newPatient);
         }
 
         public async Task UpdatePatient(PatientViewModel existingPatient)
         {
             Preconditions.ThrowIfNull(nameof(existingPatient), existingPatient);
+            Preconditions.ThrowIfNull(nameof(existingPatient.Id), existingPatient.Id);
+            Preconditions.ThrowIfNull(nameof(existingPatient.MRN), existingPatient.MRN);
+            Preconditions.ThrowIfNull(nameof(existingPatient.DateOfBirth), existingPatient.DateOfBirth);
+            Preconditions.ThrowIfNull(nameof(existingPatient.FirstName), existingPatient.FirstName);
+            Preconditions.ThrowIfNull(nameof(existingPatient.LastName), existingPatient.LastName);
+            Preconditions.ThrowIfNull(nameof(existingPatient.Gender), existingPatient.Gender);
+            Preconditions.ThrowIfNull(nameof(existingPatient.Gender.Id), existingPatient.Gender.Id);
+
             await _pieService.UpdatePatient(new Patient()
             {
                 Id = existingPatient.Id,
@@ -66,6 +80,7 @@ namespace Avalanche.Api.Managers.Health
         public async Task<List<Shared.Domain.Models.Patient>> Search(PatientKeywordSearchFilterViewModel filter)
         {
             Preconditions.ThrowIfNull(nameof(filter), filter);
+            Preconditions.ThrowIfNull(nameof(filter.Term), filter.Term);
 
             //TODO: Validate this with Zac
             var search = new PatientSearchFieldsMessage();

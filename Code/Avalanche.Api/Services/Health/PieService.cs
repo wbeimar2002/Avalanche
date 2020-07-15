@@ -112,9 +112,26 @@ namespace Avalanche.Api.Services.Health
 
             var accessInfoMessage = GrpcModelsMappingHelper.GetAccessInfoMessage(accessInfo);
 
-            //TODO: Add data
             var response = await PatientListStorageClient.AddPatientRecordAsync(new AddPatientRecordRequest()
-            { 
+            {
+                AccessInfo = accessInfoMessage,
+                PatientRecord = new Ism.Storage.Common.Core.PatientList.Proto.PatientRecordMessage()
+                {
+                    Mrn = newPatient.MRN,
+                    Patient = new Ism.Storage.Common.Core.PatientList.Proto.PatientMessage()
+                    {
+                        Dob = new Ism.Storage.Common.Core.PatientList.Proto.FixedDateMessage()
+                        {
+                            Day = newPatient.DateOfBirth.Day,
+                            Month = newPatient.DateOfBirth.Month,
+                            Year = newPatient.DateOfBirth.Year
+                        },
+                        FirstName = newPatient.FirstName,
+                        LastName = newPatient.LastName,
+                        Sex = GrpcModelsMappingHelper.GetGender(newPatient.Gender),
+                        
+                    }
+                }
             });
 
             var pieRecord = response.PatientRecord;

@@ -20,6 +20,7 @@ namespace Avalanche.Api.Controllers.V1
     [Route("[controller]")]
     [ApiController]
     [Authorize]
+    [ExcludeFromCodeCoverage]
     public class SourcesController : ControllerBase
     {
         readonly ISourcesManager _sourcesManager;

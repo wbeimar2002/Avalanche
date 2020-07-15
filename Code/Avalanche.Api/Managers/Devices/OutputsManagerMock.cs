@@ -63,7 +63,7 @@ namespace Avalanche.Api.Managers.Devices
                     content = new Content()
                     {
                         Copyright = "All rights reserved",
-                        Description = "Sample for content for kids",
+                        Description = "Sample of content for kids",
                         Title = "Pediatric content",
                         Url = "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4"
                     };
