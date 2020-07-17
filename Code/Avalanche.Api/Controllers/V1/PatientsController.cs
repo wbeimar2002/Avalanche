@@ -40,7 +40,7 @@ namespace Avalanche.Api.Controllers.V1
         /// </summary>
         [HttpPost("")]
         [Produces(typeof(Patient))]
-        public async Task<IActionResult> ManualPatientRegistration(NewPatientViewModel newPatient, [FromServices]IWebHostEnvironment env)
+        public async Task<IActionResult> ManualPatientRegistration(PatientViewModel newPatient, [FromServices]IWebHostEnvironment env)
         {
             try
             {
@@ -62,7 +62,7 @@ namespace Avalanche.Api.Controllers.V1
 
         [HttpPut("{id}")]
         [Produces(typeof(Patient))]
-        public async Task<IActionResult> UpdatePatient(NewPatientViewModel existing, [FromServices] IWebHostEnvironment env)
+        public async Task<IActionResult> UpdatePatient(PatientViewModel existing, [FromServices] IWebHostEnvironment env)
         {
             try
             {
@@ -114,7 +114,7 @@ namespace Avalanche.Api.Controllers.V1
             try
             {
                 _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
-                var newPatient = await _patientsManager.RegisterQuickPatient();
+                var newPatient = await _patientsManager.QuickPatientRegistration();
 
                 return new ObjectResult(newPatient) { StatusCode = StatusCodes.Status201Created };
             }
