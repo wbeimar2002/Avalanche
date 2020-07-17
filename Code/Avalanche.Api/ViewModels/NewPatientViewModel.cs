@@ -5,9 +5,8 @@ using System.Threading.Tasks;
 
 namespace Avalanche.Api.ViewModels
 {
-    public class PatientViewModel
+    public class NewPatientViewModel
     {
-        public ulong Id { get; set; }
         public string MRN { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }

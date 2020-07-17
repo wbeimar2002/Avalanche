@@ -21,7 +21,7 @@ namespace Avalanche.Api.Managers.Health
             _pieService = pieService;
         }
 
-        public async Task<Shared.Domain.Models.Patient> RegisterPatient(PatientViewModel newPatient)
+        public async Task<Shared.Domain.Models.Patient> RegisterPatient(NewPatientViewModel newPatient)
         {
             Preconditions.ThrowIfNull(nameof(newPatient), newPatient);
             Preconditions.ThrowIfNull(nameof(newPatient.MRN), newPatient.MRN);
@@ -49,10 +49,9 @@ namespace Avalanche.Api.Managers.Health
             return await _pieService.RegisterPatient(newPatient);
         }
 
-        public async Task UpdatePatient(PatientViewModel existingPatient)
+        public async Task UpdatePatient(NewPatientViewModel existingPatient)
         {
             Preconditions.ThrowIfNull(nameof(existingPatient), existingPatient);
-            Preconditions.ThrowIfNull(nameof(existingPatient.Id), existingPatient.Id);
             Preconditions.ThrowIfNull(nameof(existingPatient.MRN), existingPatient.MRN);
             Preconditions.ThrowIfNull(nameof(existingPatient.DateOfBirth), existingPatient.DateOfBirth);
             Preconditions.ThrowIfNull(nameof(existingPatient.FirstName), existingPatient.FirstName);
@@ -62,7 +61,6 @@ namespace Avalanche.Api.Managers.Health
 
             await _pieService.UpdatePatient(new Patient()
             {
-                Id = existingPatient.Id,
                 MRN = existingPatient.MRN,
                 DateOfBirth = existingPatient.DateOfBirth,
                 FirstName = existingPatient.FirstName,

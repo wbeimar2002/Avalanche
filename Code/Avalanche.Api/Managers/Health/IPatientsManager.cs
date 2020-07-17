@@ -11,9 +11,9 @@ namespace Avalanche.Api.Managers.Health
     {
         Task<List<Patient>> Search(PatientKeywordSearchFilterViewModel filter);
         Task<List<Patient>> Search(PatientDetailsSearchFilterViewModel filter);
-        Task<Patient> RegisterPatient(PatientViewModel newPatient);
+        Task<Patient> RegisterPatient(NewPatientViewModel newPatient);
         Task<Patient> RegisterQuickPatient();
-        Task UpdatePatient(PatientViewModel existing);
+        Task UpdatePatient(NewPatientViewModel existing);
         Task DeletePatient(ulong id);
     }
 }

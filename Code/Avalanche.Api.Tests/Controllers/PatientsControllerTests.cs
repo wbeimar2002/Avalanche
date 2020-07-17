@@ -200,7 +200,7 @@ namespace Avalanche.Api.Tests.Controllers
         [Test]
         public void RegisterPatientShouldReturnOkWithNewPatientInfo()
         {
-            PatientViewModel patient = new PatientViewModel();
+            NewPatientViewModel patient = new NewPatientViewModel();
             _patientsManager.Setup(mock => mock.RegisterPatient(patient)).ReturnsAsync(new Patient());
 
             var okResult = _controller.ManualPatientRegistration(patient, _environment.Object);
@@ -218,9 +218,9 @@ namespace Avalanche.Api.Tests.Controllers
         [Test]
         public void RegisterPatientShouldReturnBadResultIfFails()
         {
-            _patientsManager.Setup(mock => mock.RegisterPatient(It.IsAny<PatientViewModel>())).Throws(It.IsAny<Exception>());
+            _patientsManager.Setup(mock => mock.RegisterPatient(It.IsAny<NewPatientViewModel>())).Throws(It.IsAny<Exception>());
 
-            var badResult = _controller.ManualPatientRegistration(It.IsAny<PatientViewModel>(), _environment.Object);
+            var badResult = _controller.ManualPatientRegistration(It.IsAny<NewPatientViewModel>(), _environment.Object);
 
             if (_checkLogger)
             {
@@ -269,7 +269,7 @@ namespace Avalanche.Api.Tests.Controllers
         [Test]
         public void UpdatePatientShouldReturnOk()
         {
-            PatientViewModel patientUpdated = new PatientViewModel();
+            NewPatientViewModel patientUpdated = new NewPatientViewModel();
             _patientsManager.Setup(mock => mock.UpdatePatient(patientUpdated));
 
             var okResult = _controller.UpdatePatient(patientUpdated, _environment.Object);
@@ -287,9 +287,9 @@ namespace Avalanche.Api.Tests.Controllers
         [Test]
         public void UpdatePatientShouldReturnBadResultIfFails()
         {
-            _patientsManager.Setup(mock => mock.UpdatePatient(It.IsAny<PatientViewModel>())).Throws(It.IsAny<Exception>());
+            _patientsManager.Setup(mock => mock.UpdatePatient(It.IsAny<NewPatientViewModel>())).Throws(It.IsAny<Exception>());
 
-            var badResult = _controller.UpdatePatient(It.IsAny<PatientViewModel>(), _environment.Object);
+            var badResult = _controller.UpdatePatient(It.IsAny<NewPatientViewModel>(), _environment.Object);
 
             if (_checkLogger)
             {
