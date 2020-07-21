@@ -4,6 +4,7 @@ using Avalanche.Api.Utilities;
 using Avalanche.Api.ViewModels;
 using Avalanche.Shared.Domain.Models;
 using Avalanche.Shared.Infrastructure.Helpers;
+using Google.Protobuf.WellKnownTypes;
 using Ism.PatientInfoEngine.Common.Core;
 using System;
 using System.Collections.Generic;
@@ -81,7 +82,6 @@ namespace Avalanche.Api.Managers.Health
             Preconditions.ThrowIfNull(nameof(filter), filter);
             Preconditions.ThrowIfNull(nameof(filter.Term), filter.Term);
 
-            //TODO: Validate this with Zac
             var search = new PatientSearchFieldsMessage();
             search.Keyword = filter.Term;
 
@@ -94,8 +94,20 @@ namespace Avalanche.Api.Managers.Health
 
         public async Task<List<Shared.Domain.Models.Patient>> Search(PatientDetailsSearchFilterViewModel filter)
         {
-            var search = new PatientSearchFieldsMessage();
-            //TODO: Other fields
+            Preconditions.ThrowIfNull(nameof(filter), filter);
+
+            var search = new PatientSearchFieldsMessage()
+            {
+                RoomName = filter.RoomName,
+                LastName = filter.LastName,
+                MRN = filter.MRN,
+                MinDate = filter.MinDate?.ToTimestamp(),
+                MaxDate = filter.MaxDate?.ToTimestamp(),
+                Accession = filter.AccessionNumber,
+                Keyword = null,
+                Department = filter.DepartmentName,
+                ProcedureId = filter.ProcedureId,
+            };
 
             // TODO - get valid culture (either system configuration or passed in via caller)
             var cultureName = CultureInfo.CurrentCulture.Name;

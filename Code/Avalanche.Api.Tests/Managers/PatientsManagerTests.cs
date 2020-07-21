@@ -4,12 +4,14 @@ using Avalanche.Api.Services.Health;
 using Avalanche.Api.Utilities;
 using Avalanche.Api.ViewModels;
 using Avalanche.Shared.Domain.Models;
+using Ism.PatientInfoEngine.Common.Core;
 using Ism.Telemetry.RabbitMq.Models;
 using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -268,6 +270,66 @@ namespace Avalanche.Api.Tests.Managers
             var result = _manager.UpdatePatient(patient);
 
             _pieService.Verify(mock => mock.UpdatePatient(It.IsAny<Patient>()), Times.Once);
+        }
+
+        [Test]
+        public void DeleteWorks()
+        {
+            _pieService.Setup(mock => mock.DeletePatient(It.IsAny<ulong>()));
+
+            var result = _manager.DeletePatient(It.IsAny<ulong>());
+
+            _pieService.Verify(mock => mock.DeletePatient(It.IsAny<ulong>()), Times.Once);
+        }
+
+
+        [Test]
+        public void ExecuteSearchKeywordShouldReturnResponse()
+        {
+            PatientKeywordSearchFilterViewModel filter = new PatientKeywordSearchFilterViewModel()
+            {
+                Limit = 10,
+                Page = 0,
+                Term = "name"
+            };
+
+            var cultureName = CultureInfo.CurrentCulture.Name;
+            cultureName = string.IsNullOrEmpty(cultureName) ? "en-US" : cultureName;
+
+            List<Patient> response = new List<Patient>();
+
+            _pieService.Setup(mock => mock.Search(It.IsAny<PatientSearchFieldsMessage>(), filter.Page * filter.Limit, filter.Limit, cultureName)).ReturnsAsync(response);
+
+            var actionResult = _manager.Search(filter);
+
+            _pieService.Verify(mock => mock.Search(It.IsAny<PatientSearchFieldsMessage>(), filter.Page * filter.Limit, filter.Limit, cultureName), Times.Once);
+
+            Assert.IsNotNull(response);
+        }
+
+        [Test]
+        public void ExecuteSearchDetailsShouldReturnResponse()
+        {
+            PatientDetailsSearchFilterViewModel filter = new PatientDetailsSearchFilterViewModel()
+            {
+                Limit = 10,
+                Page = 0,
+                LastName = "Name",
+                RoomName = "Room",
+            };
+
+            var cultureName = CultureInfo.CurrentCulture.Name;
+            cultureName = string.IsNullOrEmpty(cultureName) ? "en-US" : cultureName;
+
+            List<Patient> response = new List<Patient>();
+
+            _pieService.Setup(mock => mock.Search(It.IsAny<PatientSearchFieldsMessage>(), filter.Page * filter.Limit, filter.Limit, cultureName)).ReturnsAsync(response);
+
+            var actionResult = _manager.Search(filter);
+
+            _pieService.Verify(mock => mock.Search(It.IsAny<PatientSearchFieldsMessage>(), filter.Page * filter.Limit, filter.Limit, cultureName), Times.Once);
+
+            Assert.IsNotNull(response);
         }
     }
 }
