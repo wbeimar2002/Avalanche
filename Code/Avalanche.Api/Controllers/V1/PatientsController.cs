@@ -22,8 +22,7 @@ namespace Avalanche.Api.Controllers.V1
 {
     [Route("[controller]")]
     [ApiController]
-    //[Authorize]
-    
+    [Authorize]
     public class PatientsController : ControllerBase
     {
         readonly ILogger _appLoggerService;
@@ -92,6 +91,31 @@ namespace Avalanche.Api.Controllers.V1
                 await _patientsManager.DeletePatient(id);
 
                 return Ok();
+            }
+            catch (Exception exception)
+            {
+                _appLoggerService.LogError(LoggerHelper.GetLogMessage(DebugLogType.Exception), exception);
+                return new BadRequestObjectResult(exception.Get(env.IsDevelopment()));
+            }
+            finally
+            {
+                _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
+            }
+        }
+
+        /// <summary>
+        /// Return the timeout file source
+        /// </summary>
+        [HttpGet("settings")]
+        public async Task<IActionResult> GetPatientsSetupSettingsAsync([FromServices] IWebHostEnvironment env)
+        {
+            try
+            {
+                _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
+
+                var response = await _patientsManager.GetPatientsSetupSettingsAsync();
+
+                return Ok(response);
             }
             catch (Exception exception)
             {

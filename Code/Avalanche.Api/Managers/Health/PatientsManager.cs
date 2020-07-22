@@ -1,13 +1,16 @@
 ﻿using AutoFixture;
+using Avalanche.Api.Services.Configuration;
 using Avalanche.Api.Services.Health;
 using Avalanche.Api.Utilities;
 using Avalanche.Api.ViewModels;
 using Avalanche.Shared.Domain.Models;
 using Avalanche.Shared.Infrastructure.Helpers;
+using Avalanche.Shared.Infrastructure.Models;
 using Google.Protobuf.WellKnownTypes;
 using Ism.PatientInfoEngine.Common.Core;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
@@ -17,9 +20,17 @@ namespace Avalanche.Api.Managers.Health
     public class PatientsManager : IPatientsManager
     {
         readonly IPieService _pieService;
-        public PatientsManager(IPieService pieService)
+        readonly ISettingsService _settingsService;
+        public PatientsManager(IPieService pieService, ISettingsService settingsService)
         {
             _pieService = pieService;
+            _settingsService = settingsService;
+        }
+
+        [ExcludeFromCodeCoverage]
+        public async Task<PatientsSetupSettings> GetPatientsSetupSettingsAsync()
+        {
+            return await _settingsService.GetPatientsSetupSettingsAsync();
         }
 
         public async Task<Shared.Domain.Models.Patient> RegisterPatient(PatientViewModel newPatient)
@@ -44,10 +55,21 @@ namespace Avalanche.Api.Managers.Health
 
         public async Task<Shared.Domain.Models.Patient> QuickPatientRegistration()
         {
-            //TODO Generate fake info with business rules
-            Fixture fixture = new Fixture();
-            var newPatient = fixture.Create<Patient>();
-            return await _pieService.RegisterPatient(newPatient);
+            //TODO:Validate this
+            //Performing physician is administrator by default
+            //Configurable in maintenance (on/off) - user logged in is auto-filled as physician when doing manual registration
+            //Patient last name and MRN is of the local date, room name and time in the following format:  YYYY_mm_DD_HH_SS_MS_RM
+
+            string formattedDate = DateTime.UtcNow.ToString("yyyy_MM_dd_HH_mm_ss_ff_");
+
+            return await _pieService.RegisterPatient(new Patient()
+            {
+                MRN = $"{formattedDate}MRN",
+                DateOfBirth = DateTime.UtcNow,
+                FirstName = $"{formattedDate}FirstName",
+                LastName = $"{formattedDate}LastName",
+                Gender = "U",
+            });
         }
 
         public async Task UpdatePatient(PatientViewModel existingPatient)
