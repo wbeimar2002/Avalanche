@@ -40,7 +40,7 @@ stages:
 - stage: build
 
   jobs:
-  
+
   - job: build_test_publish
     
     steps:
@@ -51,7 +51,7 @@ stages:
      - task: NuGetCommand@2
        displayName: 'NuGet restore **/*.sln'
        inputs:
-          restoreSolution: '**/*.sln'
+          restoreSolution: '$(ProjectSolution)'
           feedsToUse: 'select'
           vstsFeed: '$(VstsFeed)'
     
@@ -78,7 +78,7 @@ stages:
      - task: DotNetCoreCLI@2
        displayName: 'dotnet build **/*.sln'
        inputs:
-          projects: '**/*.sln'
+          projects: '$(ProjectSolution)'
           #arguments: '--configuration=Avalanche-Api-Sonar'
           vstsFeed: '$(VstsFeed)'
      #- task: DotNetCoreCLI@2
