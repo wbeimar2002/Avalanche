@@ -1,8 +1,5 @@
 name: $(Date:yyyyMMdd)$(Rev:.rr)
 
-trigger:
-  - dev
-
 resources:
   repositories:
   
@@ -30,17 +27,21 @@ stages:
   - job: build_test_publish
     steps:
 
-     - task: UseDotNet@2
-       displayName: 'use dotnet 3.1.x'
+     - task: NuGetCommand@2
+       displayName: 'NuGet restore'
        inputs:
-        version: '3.1.x'
-        packageType: runtime
+          vstsFeed: '0b214fa2-b3b1-42b0-b0e3-ab1d83cc701f/a3df6df2-e351-48be-9590-ce52438af6bc'
+     #- task: UseDotNet@2
+       #displayName: 'use dotnet 3.1.x'
+       #inputs:
+        #version: '3.1.x'
+        #packageType: runtime
         
-     - task: UseDotNet@2
-       displayName: 'use dotnet 2.2.x'
-       inputs:
-        version: '2.2.x'
-        packageType: runtime
+     #- task: UseDotNet@2
+       #displayName: 'use dotnet 2.2.x'
+       #inputs:
+        #version: '2.2.x'
+        #packageType: runtime
 
      - task: SonarSource.sonarqube.15B84CA1-B62F-4A2A-A403-89B77A063157.SonarQubePrepare@4
        displayName: 'Prepare analysis on SonarQube'
