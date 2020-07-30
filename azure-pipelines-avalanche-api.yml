@@ -136,7 +136,7 @@ stages:
         pollingTimeoutSec: '300'
   
 
-    # publish app to be used by docker later
+    # make artifacts
      - task: DotNetCoreCLI@2
        displayName: 'Publish Avalanche.Api'
        inputs:
@@ -146,7 +146,8 @@ stages:
         arguments: '-c $(BuildConfiguration)  -o app'
         zipAfterPublish: false
         modifyOutputPath: false
- 
+
+    # store artifacts
      - task: PublishBuildArtifacts@1
        displayName: 'Publish Build Artifacts'
        inputs:
