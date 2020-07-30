@@ -25,7 +25,7 @@ pool:
   vmImage: 'windows-latest'
 
 variables:
-  - group: 'vg-nuget-ffmpegutils'
+  - group: 'vg-dev-avalanche-api'
   #- template: pipeline-bug-workaround.yml
   #- name: BuildConfiguration
     #value: 'Release'
