@@ -1,4 +1,6 @@
-name: avalanche-api-$(majorversion).$(minorversion).$(patch).$(releasestage)_$(majorversion).$(minorversion).$(Date:yyMM).$(Date:dd)$(Rev:rr)
+name: $(build_number_prefix)-$(major).$(minor).$(patch).$(prerelease)_$(nuget).$(nuget).$(Date:yyMM).$(Date:dd)$(Rev:rr)
+#name: avalanche-web-$(majorversion).$(minorversion).$(patch).$(releasestage)_$(majorversion).$(minorversion).$(Date:yyMM).$(Date:dd)$(Rev:rr)
+#name: avalanche-api-$(majorversion).$(minorversion).$(patch).$(releasestage)_$(majorversion).$(minorversion).$(Date:yyMM).$(Date:dd)$(Rev:rr)
 #name: $(Date:yyyyMMdd)$(Rev:.rr)
 
 resources:
