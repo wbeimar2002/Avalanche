@@ -69,6 +69,7 @@ stages:
         #version: '2.2.x'
         #packageType: runtime
 
+    # sonar 1 of 3
      - task: SonarSource.sonarqube.15B84CA1-B62F-4A2A-A403-89B77A063157.SonarQubePrepare@4
        condition: and(succeeded(), eq(variables['Build.SourceBranchName'], 'dev'))
        displayName: 'Prepare analysis on SonarQube'
@@ -124,16 +125,18 @@ stages:
           Contents: '*.trx'
           TargetFolder: '$(Agent.BuildDirectory)\TestResults'
      
+     # sonar 2 of 3
      - task: SonarQubeAnalyze@4
        condition: and(succeeded(), eq(variables['Build.SourceBranchName'], 'dev'))
 
-    
+    # sonar 3 of 3
      - task: SonarQubePublish@4
        condition: and(succeeded(), eq(variables['Build.SourceBranchName'], 'dev'))
        inputs:
         pollingTimeoutSec: '300'
   
-    # publish api project 
+
+    # publish app to be used by docker later
      - task: DotNetCoreCLI@2
        displayName: 'Publish Avalanche.Api'
        inputs:
