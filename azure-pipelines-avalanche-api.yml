@@ -136,13 +136,15 @@ stages:
   jobs:
      - job: push
        
-       variables:
+       #variables:
 
-       - template: vg-dev-avalanche-api.yml
+       #- template: vg-dev-avalanche-api.yml
 
        steps:  
-       - checkout: avalanche-api
+       - checkout: self
        - checkout: devops
+       #- checkout: avalanche-api
+       #- checkout: devops
        
        - task: DownloadBuildArtifacts@0
          displayName: 'Download Build Artifacts'
