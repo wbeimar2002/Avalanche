@@ -27,7 +27,7 @@ resources:
 
 pool:
 
-  vmImage: 'windows-latest'
+  vmImage: '$(pool_vm_image)'
 
 variables:
 
