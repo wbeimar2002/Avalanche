@@ -1,4 +1,5 @@
-name: $(Date:yyyyMMdd)$(Rev:.rr)
+name: avalanche-api-$(majorversion).$(minorversion).$(patch).$(releasestage)_$(majorversion).$(minorversion).$(Date:yyMM).$(Date:dd)$(Rev:rr)
+#name: $(Date:yyyyMMdd)$(Rev:.rr)
 
 resources:
   repositories:
