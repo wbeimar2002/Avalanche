@@ -70,7 +70,7 @@ stages:
        displayName: 'dotnet build'
        inputs:
           projects: '**/*.sln'
-          arguments: '--configuration=Avalanche-Api-Sonar'
+          #arguments: '--configuration=Avalanche-Api-Sonar'
           vstsFeed: '0b214fa2-b3b1-42b0-b0e3-ab1d83cc701f/a3df6df2-e351-48be-9590-ce52438af6bc'
      #- task: DotNetCoreCLI@2
        #displayName: 'dotnet build'
