@@ -36,7 +36,11 @@ stages:
 - stage: build
   jobs:
   - job: build_test_publish
+    
     steps:
+     
+     - checkout: self
+     - checkout: devops
 
      - task: NuGetCommand@2
        displayName: 'NuGet restore'
@@ -65,7 +69,7 @@ stages:
      - task: DotNetCoreCLI@2
        displayName: 'dotnet build'
        inputs:
-        projects: Code/Avalanche.Api.sln
+        projects: avalance-api/Code/Avalanche.Api.sln
         arguments: '--configuration=Avalanche-Api-Sonar'
         vstsFeed: '0b214fa2-b3b1-42b0-b0e3-ab1d83cc701f/a3df6df2-e351-48be-9590-ce52438af6bc'
 
@@ -74,9 +78,9 @@ stages:
        displayName: 'dotnet test'
        inputs:
         command: test
-        projects: Code/Avalanche.Api.Tests/Avalanche.Api.Tests.csproj
+        projects: avalanche-api/Code/Avalanche.Api.Tests/Avalanche.Api.Tests.csproj
         testRunTitle: TestResults
-        workingDirectory: Code/Avalanche.Api.Tests
+        workingDirectory: avalanche-api/Code/Avalanche.Api.Tests
         vstsFeed: '0b214fa2-b3b1-42b0-b0e3-ab1d83cc701f/a3df6df2-e351-48be-9590-ce52438af6bc'
      
      - task: CopyFiles@2
