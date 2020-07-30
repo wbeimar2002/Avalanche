@@ -93,7 +93,7 @@ stages:
        displayName: 'dotnet test'
        inputs:
         command: test
-        projects: avalanche-api/Code/Avalanche.Api.Tests/Avalanche.Api.Tests.csproj
+        projects: '$(TestProject)'
         testRunTitle: TestResults
         workingDirectory: avalanche-api/Code/Avalanche.Api.Tests
         vstsFeed: '$(VstsFeed)'
