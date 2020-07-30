@@ -70,7 +70,7 @@ stages:
        condition: and(succeeded(), eq(variables['Build.SourceBranchName'], 'dev'))
      
      - task: DotNetCoreCLI@2
-       displayName: 'dotnet build'
+       displayName: 'dotnet build **/*.sln'
        inputs:
           projects: '**/*.sln'
           #arguments: '--configuration=Avalanche-Api-Sonar'
