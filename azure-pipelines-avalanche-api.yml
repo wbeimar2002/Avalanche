@@ -145,8 +145,8 @@ stages:
      - task: PublishBuildArtifacts@1
        displayName: 'Publish Build Artifacts'
        inputs:
-        PathtoPublish: 'app'
-        ArtifactName: app 
+        PathtoPublish: '$(PathtoPublish)'
+        ArtifactName: '$(PathtoPublish)'
 
 
 - stage: dev
