@@ -47,7 +47,7 @@ stages:
        inputs:
           restoreSolution: '**/*.sln'
           feedsToUse: 'select'
-          vstsFeed: '0b214fa2-b3b1-42b0-b0e3-ab1d83cc701f/a3df6df2-e351-48be-9590-ce52438af6bc'
+          vstsFeed: '$(VstsFeed)'
     
      #- task: UseDotNet@2
        #displayName: 'use dotnet 3.1.x'
@@ -74,7 +74,7 @@ stages:
        inputs:
           projects: '**/*.sln'
           #arguments: '--configuration=Avalanche-Api-Sonar'
-          vstsFeed: '0b214fa2-b3b1-42b0-b0e3-ab1d83cc701f/a3df6df2-e351-48be-9590-ce52438af6bc'
+          vstsFeed: '$(VstsFeed)'
      #- task: DotNetCoreCLI@2
        #displayName: 'dotnet build'
        #inputs:
@@ -90,7 +90,7 @@ stages:
         projects: avalanche-api/Code/Avalanche.Api.Tests/Avalanche.Api.Tests.csproj
         testRunTitle: TestResults
         workingDirectory: avalanche-api/Code/Avalanche.Api.Tests
-        vstsFeed: '0b214fa2-b3b1-42b0-b0e3-ab1d83cc701f/a3df6df2-e351-48be-9590-ce52438af6bc'
+        vstsFeed: '$(VstsFeed)'
      
      - task: CopyFiles@2
        displayName: 'Copy Files to: $(Agent.BuildDirectory)\TestResults'
