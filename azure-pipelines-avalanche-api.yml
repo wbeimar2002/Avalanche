@@ -6,7 +6,7 @@ name: $(build_number_prefix)-$(majorversion).$(minorversion).$(patch).$(Releases
 resources:
 
   repositories:
-  
+
   - repository: devops
     type: git
     name: devops
@@ -70,12 +70,13 @@ stages:
         #packageType: runtime
 
      - task: SonarSource.sonarqube.15B84CA1-B62F-4A2A-A403-89B77A063157.SonarQubePrepare@4
+       condition: and(succeeded(), eq(variables['Build.SourceBranchName'], 'dev'))
        displayName: 'Prepare analysis on SonarQube'
        inputs:
           SonarQube: sonarqube
           projectKey: 'avalanche-api'
           projectName: 'avalanche-api'
-       condition: and(succeeded(), eq(variables['Build.SourceBranchName'], 'dev'))
+       
      
      # build solution
      - task: DotNetCoreCLI@2
