@@ -16,7 +16,7 @@ resources:
     name: avalanche/devops
 
 pool:
-  vmImage: 'ubuntu-latest'
+  vmImage: 'windows-latest'
 
 variables:
 
