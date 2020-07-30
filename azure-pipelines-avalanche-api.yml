@@ -25,6 +25,10 @@ stages:
 
   - job: build_test_publish
     
+    pool:
+
+      vmImage: '$(pool_vm_image)'
+    
     steps:
      
      - checkout: self
