@@ -6,6 +6,7 @@ name: $(build_number_prefix)-$(majorversion).$(minorversion).$(patch).$(Releases
 resources:
 
   repositories:
+  
   - repository: devops
     type: git
     name: devops
