@@ -48,6 +48,7 @@ stages:
      - checkout: self
      - checkout: devops
 
+    # resore solution
      - task: NuGetCommand@2
        displayName: 'NuGet restore **/*.sln'
        inputs:
@@ -75,6 +76,7 @@ stages:
           projectName: 'avalanche-api'
        condition: and(succeeded(), eq(variables['Build.SourceBranchName'], 'dev'))
      
+     # build solution
      - task: DotNetCoreCLI@2
        displayName: 'dotnet build **/*.sln'
        inputs:
@@ -88,7 +90,7 @@ stages:
         #arguments: '--configuration=Avalanche-Api-Sonar'
         #vstsFeed: '0b214fa2-b3b1-42b0-b0e3-ab1d83cc701f/a3df6df2-e351-48be-9590-ce52438af6bc'
 
-     
+     # test project 
      - task: DotNetCoreCLI@2
        displayName: 'dotnet test'
        inputs:
@@ -128,13 +130,14 @@ stages:
        condition: and(succeeded(), eq(variables['Build.SourceBranchName'], 'dev'))
        inputs:
         pollingTimeoutSec: '300'
-
+  
+    # publish api project 
      - task: DotNetCoreCLI@2
        displayName: 'Publish Avalanche.Api'
        inputs:
         command: publish
         publishWebProjects: false
-        projects: '**/Code/Avalanche.Api/Avalanche.Api.csproj'
+        projects: '$(CsProject)'
         arguments: '-c $(BuildConfiguration)  -o app'
         zipAfterPublish: false
         modifyOutputPath: false
