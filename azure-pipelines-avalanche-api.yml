@@ -1,7 +1,4 @@
 name: $(build_number_prefix)-$(majorversion).$(minorversion).$(patch).$(Releasestage)_$(majorversion).$(minorversion).$(Date:yyMM).$(Date:dd)$(Rev:rr)
-#name: avalanche-web-$(majorversion).$(minorversion).$(patch).$(releasestage)_$(majorversion).$(minorversion).$(Date:yyMM).$(Date:dd)$(Rev:rr)
-#name: avalanche-api-$(majorversion).$(minorversion).$(patch).$(releasestage)_$(majorversion).$(minorversion).$(Date:yyMM).$(Date:dd)$(Rev:rr)
-#name: $(Date:yyyyMMdd)$(Rev:.rr)
 
 resources:
 
@@ -12,19 +9,6 @@ resources:
     name: devops
     ref: nh-pipeline-add-restore-build-test-yml
 
-#resources:
-
-  #repositories:
-  
-  #- repository: avalanche-api
-    #type: git
-    #name: avalanche/avalanche-api
-    #ref: dev
-
-  #- repository: devops
-    #ype: git
-    #name: avalanche/devops
-
 pool:
 
   vmImage: '$(pool_vm_image)'
@@ -32,10 +16,7 @@ pool:
 variables:
 
   - group: 'vg-dev-avalanche-api'
-  #- template: pipeline-bug-workaround.yml
-  #- name: BuildConfiguration
-    #value: 'Release'
-
+  
 stages:
 
 - stage: build
@@ -56,18 +37,6 @@ stages:
           restoreSolution: '$(ProjectSolution)'
           feedsToUse: 'select'
           vstsFeed: '$(VstsFeed)'
-    
-     #- task: UseDotNet@2
-       #displayName: 'use dotnet 3.1.x'
-       #inputs:
-        #version: '3.1.x'
-        #packageType: runtime
-        
-     #- task: UseDotNet@2
-       #displayName: 'use dotnet 2.2.x'
-       #inputs:
-        #version: '2.2.x'
-        #packageType: runtime
 
     # sonar 1 of 3
      - task: SonarSource.sonarqube.15B84CA1-B62F-4A2A-A403-89B77A063157.SonarQubePrepare@4
@@ -86,13 +55,7 @@ stages:
           projects: '$(ProjectSolution)'
           #arguments: '--configuration=Avalanche-Api-Sonar'
           vstsFeed: '$(VstsFeed)'
-     #- task: DotNetCoreCLI@2
-       #displayName: 'dotnet build'
-       #inputs:
-        #projects: avalance-api/Code/Avalanche.Api.sln
-        #arguments: '--configuration=Avalanche-Api-Sonar'
-        #vstsFeed: '0b214fa2-b3b1-42b0-b0e3-ab1d83cc701f/a3df6df2-e351-48be-9590-ce52438af6bc'
-
+     
      # test project 
      - task: DotNetCoreCLI@2
        displayName: 'dotnet test'
@@ -109,14 +72,6 @@ stages:
         SourceFolder: '$(Agent.TempDirectory)'
         Contents: '*.trx'
         TargetFolder: '$(Agent.BuildDirectory)\TestResults'
-
-     #- task: DotNetCoreCLI@2
-       #displayName: 'dotnet test Avalanche.Api.Tests.csproj'
-       #inputs:
-        #command: test
-        #projects: Code/Avalanche.Api.Tests/Avalanche.Api.Tests.csproj
-        #testRunTitle: TestResults
-        #workingDirectory: Code/Avalanche.Api.Tests
     
      - task: CopyFiles@2
        displayName: 'Copy Files to: $(Agent.BuildDirectory)\TestResults'
