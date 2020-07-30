@@ -4,6 +4,7 @@ name: $(ImageName)-$(majorversion).$(minorversion).$(patch).$(Releasestage)_$(ma
 #name: $(Date:yyyyMMdd)$(Rev:.rr)
 
 resources:
+
   repositories:
   - repository: devops
     type: git
@@ -24,17 +25,22 @@ resources:
     #name: avalanche/devops
 
 pool:
+
   vmImage: 'windows-latest'
 
 variables:
+
   - group: 'vg-dev-avalanche-api'
   #- template: pipeline-bug-workaround.yml
   #- name: BuildConfiguration
     #value: 'Release'
 
 stages:
+
 - stage: build
+
   jobs:
+  
   - job: build_test_publish
     
     steps:
