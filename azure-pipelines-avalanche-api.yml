@@ -3,24 +3,32 @@ name: avalanche-api-$(majorversion).$(minorversion).$(patch).$(releasestage)_$(m
 
 resources:
   repositories:
-  
-  - repository: avalanche-api
-    type: git
-    name: avalanche/avalanche-api
-    ref: dev
-
   - repository: devops
     type: git
-    name: avalanche/devops
+    name: devops
+    ref: nh-pipeline-add-restore-build-test-yml
+
+#resources:
+
+  #repositories:
+  
+  #- repository: avalanche-api
+    #type: git
+    #name: avalanche/avalanche-api
+    #ref: dev
+
+  #- repository: devops
+    #ype: git
+    #name: avalanche/devops
 
 pool:
   vmImage: 'windows-latest'
 
 variables:
-
-  - template: pipeline-bug-workaround.yml
-  - name: BuildConfiguration
-    value: 'Release'
+  - group: 'vg-nuget-ffmpegutils'
+  #- template: pipeline-bug-workaround.yml
+  #- name: BuildConfiguration
+    #value: 'Release'
 
 stages:
 - stage: build
