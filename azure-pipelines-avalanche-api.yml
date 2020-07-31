@@ -71,7 +71,7 @@ stages:
        displayName: 'Build solution Code/Avalanche.Api.sln'
        inputs:
           solution: avalanche-api/Code/Avalanche.Api.sln
-          msbuildArgs: '/p:Configuration=Avalanche-Api-Sonar'
+          msbuildArgs: '/p:Configuration=release'
           clean: true
 
      #- task: MSBuild@1
