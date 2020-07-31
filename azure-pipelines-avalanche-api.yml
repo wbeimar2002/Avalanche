@@ -58,8 +58,9 @@ stages:
        inputs:
           projects: '$(ProjectSolution)'
           #arguments: '--configuration=Avalanche-Api-Sonar'
-          arguments: '-c $(BuildConfiguration)'
+          #arguments: '-c $(BuildConfiguration)'
           vstsFeed: '$(VstsFeed)'
+          configuration: 'release'
      
      # test project 
      - task: DotNetCoreCLI@2
