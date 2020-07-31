@@ -119,7 +119,7 @@ stages:
 
     # make artifacts
      - task: DotNetCoreCLI@2
-       displayName: 'Publish Avalanche.Api'
+       displayName: 'Publish project'
        inputs:
         command: publish
         publishWebProjects: false
