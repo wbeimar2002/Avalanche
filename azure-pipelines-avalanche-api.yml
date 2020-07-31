@@ -54,14 +54,20 @@ stages:
      
      # build solution
      - task: DotNetCoreCLI@2
-       displayName: 'dotnet build **/*.sln'
+       displayName: 'dotnet build'
        inputs:
-          projects: '$(ProjectSolution)'
-          #arguments: '/p:Configuration=release'
-          #arguments: '--configuration=Avalanche-Api-Sonar'
+          projects: avalanche-api/Code/Avalanche.Api.Dev.sln
           arguments: '-c release'
-          vstsFeed: '$(VstsFeed)'
-          #configuration: 'release'
+
+     #- task: DotNetCoreCLI@2
+       #displayName: 'dotnet build **/*.sln'
+       #inputs:
+          #projects: '$(ProjectSolution)'
+          ##arguments: '/p:Configuration=release'
+          ##arguments: '--configuration=Avalanche-Api-Sonar'
+          #arguments: '-c release'
+          #vstsFeed: '$(VstsFeed)'
+          ##configuration: 'release'
      
      # test project 
      - task: DotNetCoreCLI@2
