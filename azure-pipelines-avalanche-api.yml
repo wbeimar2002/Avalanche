@@ -185,6 +185,7 @@ stages:
           addPipelineData: false
        
        # get ip so acr can give access for push
+       # ip of the router if server is behing a firewall
        - bash: |
           source devops/common/commonfunctions.sh
           ip=$(get_ext_ip)
@@ -202,7 +203,7 @@ stages:
           #arguments: '$(azuresubscription) $(AcrRepository) $(ip)'
 
        - task: Docker@1
-         displayName: 'Run a Docker command -Push'
+         displayName: 'Docker push'
          inputs:
           azureSubscriptionEndpoint: $(azuresubscription)
           azureContainerRegistry: '$(acrname).azurecr.io'
