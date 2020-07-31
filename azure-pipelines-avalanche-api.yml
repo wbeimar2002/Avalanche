@@ -165,7 +165,7 @@ stages:
        - task: Docker@0
          displayName: 'Docker command -Build'
          inputs:
-          action: 'Docker build'
+          action: 'Build an image'
           customCommand: 'build -t $(ImageNameLowercase) . -f avalanche-api/Code/Avalanche.Api/DokerfileForAdoPipeline' 
        
        - bash: |
@@ -179,8 +179,9 @@ stages:
        - task: Docker@2
          displayName: 'Docker image -Tag'
          inputs:
-          command: 'tag'
-          arguments: '$(ImageNameLowercase) $(acrname).azurecr.io/$(ImageNameLowercase):$(Build.BuildNumber)'
+          tags: '$(ImageNameLowercase) $(acrname).azurecr.io/$(ImageNameLowercase):$(Build.BuildNumber)'
+          #command: 'tag'
+          #arguments: '$(ImageNameLowercase) $(acrname).azurecr.io/$(ImageNameLowercase):$(Build.BuildNumber)'
           #arguments: '$(ImageNameLowercase) $(AcrRepository).azurecr.io/$(ImageNameLowercase):$(Build.BuildNumber)'
           addPipelineData: false
        
