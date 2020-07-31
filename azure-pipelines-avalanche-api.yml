@@ -26,8 +26,8 @@ stages:
   - job: build_test_publish
     
     pool:
-      name: 'ism-build-pool-on-prem'
-      #vmImage: '$(pool_vm_image)'
+      #name: 'ism-build-pool-on-prem'
+      vmImage: '$(pool_vm_image)'
     
     steps:
      
