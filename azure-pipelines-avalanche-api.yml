@@ -51,18 +51,14 @@ stages:
           projectKey: 'avalanche-api'
           projectName: 'avalanche-api'
        
-     - task: MSBuild@1
-       displayName: 'Build solution Code/Avalanche.Api.Dev.sln'
-       inputs:
-          solution: avalanche-api/Code/Avalanche.Api.sln
-          configuration: release
+     
 
      # build solution
-     - task: DotNetCoreCLI@2
-       displayName: 'dotnet build'
+     - task: MSBuild@1
+       displayName: 'Build solution Code/Avalanche.Api.sln'
        inputs:
-          projects: avalanche-api/Code/Avalanche.Api.sln
-          arguments: '-c release'
+        solution: avalanche-api/Code/Avalanche.Api.sln
+        msbuildArguments: '/p:Configuration=Avalanche-Api-Sonar'
 
      #- task: DotNetCoreCLI@2
        #displayName: 'dotnet build **/*.sln'
