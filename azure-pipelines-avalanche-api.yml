@@ -35,10 +35,23 @@ stages:
      - checkout: devops
 
     # resore solution
+
+     - task: UseDotNet@2
+       displayName: 'use dotnet 3.1.x'
+       inputs:
+        version: '3.1.x'
+        packageType: runtime
+        
+     - task: UseDotNet@2
+       displayName: 'use dotnet 2.2.x'
+       inputs:
+        version: '2.2.x'
+        packageType: runtime
+
      - task: NuGetCommand@2
        displayName: 'NuGet restore **/*.sln'
        inputs:
-          restoreSolution: '$(ProjectSolution)'
+          restoreSolution: 'avalanche-api/Code/Avalanche.Api.sln'
           feedsToUse: 'select'
           vstsFeed: '$(VstsFeed)'
 
@@ -57,7 +70,7 @@ stages:
      - task: MSBuild@1
        displayName: 'Build solution Code/Avalanche.Api.sln'
        inputs:
-        solution: avalanche-api/Code/Avalanche.Api.sln
+        solution: 'avalanche-api/Code/Avalanche.Api.sln'
         msbuildArguments: '/p:Configuration=Avalanche-Api-Sonar'
 
      #- task: DotNetCoreCLI@2
