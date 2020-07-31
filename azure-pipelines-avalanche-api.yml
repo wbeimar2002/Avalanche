@@ -57,7 +57,7 @@ stages:
        displayName: 'dotnet build **/*.sln'
        inputs:
           projects: '$(ProjectSolution)'
-          #arguments: '--configuration=Avalanche-Api-Sonar'
+          arguments: '--configuration=Avalanche-Api-Sonar'
           vstsFeed: '$(VstsFeed)'
      
      # test project 
