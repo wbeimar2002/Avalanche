@@ -42,7 +42,8 @@ stages:
      - task: NuGetCommand@2
        displayName: 'NuGet restore **/*.sln'
        inputs:
-          restoreSolution: 'avalanche-api/Code/Avalanche.Api.sln'
+          restoreSolution: '$(ProjectSolution)'
+          #restoreSolution: 'avalanche-api/Code/Avalanche.Api.sln'
           feedsToUse: 'select'
           vstsFeed: '$(VstsFeed)'
 
