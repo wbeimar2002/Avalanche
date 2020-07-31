@@ -57,9 +57,9 @@ stages:
        displayName: 'dotnet build **/*.sln'
        inputs:
           projects: '$(ProjectSolution)'
-          arguments: '/p:Configuration=release'
+          #arguments: '/p:Configuration=release'
           #arguments: '--configuration=Avalanche-Api-Sonar'
-          #arguments: '-c $(BuildConfiguration)'
+          arguments: '-c release'
           vstsFeed: '$(VstsFeed)'
           #configuration: 'release'
      
