@@ -179,9 +179,9 @@ stages:
        - task: Docker@2
          displayName: 'Docker image -Tag'
          inputs:
-          tags: '$(ImageNameLowercase) $(acrname).azurecr.io/$(ImageNameLowercase):$(Build.BuildNumber)'
-          #command: 'tag'
-          #arguments: '$(ImageNameLowercase) $(acrname).azurecr.io/$(ImageNameLowercase):$(Build.BuildNumber)'
+          #tags: '$(ImageNameLowercase) $(acrname).azurecr.io/$(ImageNameLowercase):$(Build.BuildNumber)'
+          command: 'tag'
+          arguments: '$(ImageNameLowercase) $(acrname).azurecr.io/$(ImageNameLowercase):$(Build.BuildNumber)'
           #arguments: '$(ImageNameLowercase) $(AcrRepository).azurecr.io/$(ImageNameLowercase):$(Build.BuildNumber)'
           addPipelineData: false
        
