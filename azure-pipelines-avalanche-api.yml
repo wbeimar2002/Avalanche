@@ -36,17 +36,7 @@ stages:
 
     # resore solution
 
-     - task: UseDotNet@2
-       displayName: 'use dotnet 3.1.x'
-       inputs:
-        version: '3.1.x'
-        packageType: runtime
-        
-     - task: UseDotNet@2
-       displayName: 'use dotnet 2.2.x'
-       inputs:
-        version: '2.2.x'
-        packageType: runtime
+     
 
      - task: NuGetCommand@2
        displayName: 'NuGet restore **/*.sln'
