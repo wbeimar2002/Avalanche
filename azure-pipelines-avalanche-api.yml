@@ -58,7 +58,7 @@ stages:
        inputs:
           projects: '$(ProjectSolution)'
           #arguments: '--configuration=Avalanche-Api-Sonar'
-          arguments: '--configuration=$(BuildConfiguration)'
+          arguments: '-c $(BuildConfiguration)'
           vstsFeed: '$(VstsFeed)'
      
      # test project 
