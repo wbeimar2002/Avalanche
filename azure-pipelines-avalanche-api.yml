@@ -51,12 +51,17 @@ stages:
           projectKey: 'avalanche-api'
           projectName: 'avalanche-api'
        
-     
+     - task: MSBuild@1
+       displayName: 'Build solution Code/Avalanche.Api.Dev.sln'
+       inputs:
+          solution: avalanche-api/Code/Avalanche.Api.sln
+          configuration: release
+
      # build solution
      - task: DotNetCoreCLI@2
        displayName: 'dotnet build'
        inputs:
-          projects: avalanche-api/Code/Avalanche.Api.Dev.sln
+          projects: avalanche-api/Code/Avalanche.Api.sln
           arguments: '-c release'
 
      #- task: DotNetCoreCLI@2
