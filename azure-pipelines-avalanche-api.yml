@@ -132,7 +132,7 @@ stages:
        - task: DownloadBuildArtifacts@0
          displayName: 'Download Build Artifacts'
          inputs:
-          artifactName: app
+          artifactName: $(PathtoPublish)
           downloadPath: '.'
        
        - powershell: |
