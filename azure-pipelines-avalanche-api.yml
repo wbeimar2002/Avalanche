@@ -9,10 +9,10 @@ resources:
     name: devops
     ref: nh-pipeline-add-restore-build-test-yml
 
-pool: #'ism-build-pool-on-prem'
+#pool: #'ism-build-pool-on-prem'
   
   # use only ubuntu-latest
-  vmImage: '$(pool_vm_image)'
+  #vmImage: '$(pool_vm_image)'
 
 variables:
 
