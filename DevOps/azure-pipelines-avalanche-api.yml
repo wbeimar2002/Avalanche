@@ -129,6 +129,7 @@ stages:
         ArtifactName: certificates
 
 - stage: push_to_acr
+  dependsOn: 'build'
   condition: and(succeeded(), eq(variables['Build.SourceBranchName'], 'dev'))
   jobs:
      - job: push
