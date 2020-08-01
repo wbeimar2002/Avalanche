@@ -222,7 +222,7 @@ stages:
           arguments: '$(azuresubscription) $(acrname) $(ip)'
           
 - stage: te
-  dependsOn: push_to_acr
+  #dependsOn: push_to_acr
   #condition: and(succeeded(), eq(variables['publish_te_to_octopus'], 'true'))
   
   jobs:
