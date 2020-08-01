@@ -270,7 +270,7 @@ stages:
     - task: 'octopusdeploy.octopus-deploy-build-release-tasks.octopus-pack.OctopusPack@4'
       displayName: 'Package avalanche-dicom'
       inputs:
-        PackageId: 'avalanche-web'
+        PackageId: '$(Repo)'
         PackageFormat: Zip
         PackageVersion: '$(PackageVersion)'
         SourcePath: '$(System.DefaultWorkingDirectory)/drop'
@@ -289,7 +289,7 @@ stages:
       inputs:
        OctoConnectedServiceName: 'Octopus Server'
        Space: 'Default'
-       ProjectName: 'avalanche-web'
+       ProjectName: '$(Repo)'
        ReleaseNumber: '$(PackageVersion)'
        #Channel: 'Channels-167'
        
