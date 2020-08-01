@@ -221,7 +221,7 @@ stages:
           scriptPath: 'devops/resources/delete-acr-firewall-ip.sh'
           arguments: '$(azuresubscription) $(acrname) $(ip)'
           
-- stage: te
+- stage: te1
   
   #condition: and(succeeded(), eq(variables['publish_te_to_octopus'], 'true'))
   
