@@ -240,8 +240,8 @@ stages:
       inputs:
         buildType: specific
         project: '0b214fa2-b3b1-42b0-b0e3-ab1d83cc701f'
-        definition: 356
-        artifactName: certificates
+        definition: $(BuildDefId)
+        artifactName: 'certificates'
         targetPath: '$(System.DefaultWorkingDirectory)\$(PathtoPublish)'
      
      
@@ -273,7 +273,7 @@ stages:
         PackageId: '$(Repo)'
         PackageFormat: Zip
         PackageVersion: '$(PackageVersion)'
-        SourcePath: '$(System.DefaultWorkingDirectory)/drop'
+        SourcePath: '$(System.DefaultWorkingDirectory)/$(PathToCerificates)'
         #SourcePath: '$(System.DefaultWorkingDirectory)/_avalanche-dicom/drop/Ism.Dicom/bin/Release'
         OutputPath: '$(RELEASE.PRIMARYARTIFACTSOURCEALIAS)/Packages'
 
@@ -282,7 +282,7 @@ stages:
       inputs:
         OctoConnectedServiceName: 'Octopus Server'
         Space: 'Spaces-1'
-        Package: '$(RELEASE.PRIMARYARTIFACTSOURCEALIAS)/Packages/avalanche-web.$(PackageVersion).zip'
+        Package: '$(RELEASE.PRIMARYARTIFACTSOURCEALIAS)/Packages/$(Repo).$(PackageVersion).zip'
 
     - task: octopusdeploy.octopus-deploy-build-release-tasks.octopus-create-release.OctopusCreateRelease@4
       displayName: 'Create Octopus Release'
