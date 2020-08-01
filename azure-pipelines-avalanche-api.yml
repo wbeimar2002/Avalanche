@@ -230,7 +230,9 @@ stages:
           azureSubscriptionEndpoint: $(azuresubscription)
           azureContainerRegistry: '$(acrname).azurecr.io'
           command: 'Push an image'
-          imageName: '$(acrname).azurecr.io/$(ImageNameLowercase):$(Build.BuildNumber)'
+          imageName: '$(acrname).azurecr.io/$(ImageNameLowercase):$(tag)'
+          #imageName: '$(acrname).azurecr.io/$(ImageNameLowercase):$(Build.BuildNumber)'
+          
 
        - task: AzureCLI@1
          displayName: 'Delete build server external ip from acr firewall'
