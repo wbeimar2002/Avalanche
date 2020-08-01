@@ -1,69 +1,77 @@
-name: $(Date:yyyyMMdd)$(Rev:.rr)
-
-trigger:
-  - dev
+name: $(build_number_prefix)-$(majorversion).$(minorversion).$(patch).$(Releasestage)_$(majorversion).$(minorversion).$(Date:yyMM).$(Date:dd)$(Rev:rr)
 
 resources:
+
   repositories:
-  
-  - repository: avalanche-api
-    type: git
-    name: avalanche/avalanche-api
-    ref: dev
 
   - repository: devops
     type: git
-    name: avalanche/devops
+    name: devops
+    ref: nh-pipeline-add-restore-build-test-yml
 
-pool:
-  vmImage: 'ubuntu-latest'
+#pool: #'ism-build-pool-on-prem'
+  
+  # use only ubuntu-latest
+  #vmImage: '$(pool_vm_image)'
 
 variables:
 
-  - template: pipeline-bug-workaround.yml
-  - name: BuildConfiguration
-    value: 'Release'
-
+  - group: 'vg-dev-avalanche-api'
+  
 stages:
+
 - stage: build
+
   jobs:
+
   - job: build_test_publish
+    
+    pool:
+    
+      vmImage: '$(pool_vm_image)'
+    
     steps:
+     
+     - checkout: self
+     - checkout: devops
 
-     - task: UseDotNet@2
-       displayName: 'use dotnet 3.1.x'
-       inputs:
-        version: '3.1.x'
-        packageType: runtime
-        
-     - task: UseDotNet@2
-       displayName: 'use dotnet 2.2.x'
-       inputs:
-        version: '2.2.x'
-        packageType: runtime
+    # resore solution
 
+     - task: NuGetCommand@2
+       displayName: 'NuGet restore **/*.sln'
+       inputs:
+          restoreSolution: '$(ProjectSolution)'
+          feedsToUse: 'select'
+          vstsFeed: '$(VstsFeed)'
+
+    # sonar 1 of 3
      - task: SonarSource.sonarqube.15B84CA1-B62F-4A2A-A403-89B77A063157.SonarQubePrepare@4
+       condition: and(succeeded(), eq(variables['Build.SourceBranchName'], 'dev'))
        displayName: 'Prepare analysis on SonarQube'
        inputs:
           SonarQube: sonarqube
-          projectKey: 'avalanche-api'
-          projectName: 'avalanche-api'
-       condition: and(succeeded(), eq(variables['Build.SourceBranchName'], 'dev'))
-
+          projectKey: '$(SonarProject)'
+          projectName: '$(SonarProject)'
+   
      - task: DotNetCoreCLI@2
-       displayName: 'dotnet build'
+       displayName: 'dotnet build **/*.sln'
        inputs:
-        projects: Code/Avalanche.Api.sln
-        arguments: '--configuration=Avalanche-Api-Sonar'
-
+          projects: '$(ProjectSolution)'
+          ##arguments: '/p:Configuration=release'
+          #arguments: '--configuration=Avalanche-Api-Sonar'
+          arguments: '-c Avalanche-Api-Sonar'
+          vstsFeed: '$(VstsFeed)'
+          ##configuration: 'release'
      
+     # test project 
      - task: DotNetCoreCLI@2
        displayName: 'dotnet test'
        inputs:
         command: test
-        projects: Code/Avalanche.Api.Tests/Avalanche.Api.Tests.csproj
+        projects: '$(TestProject)'
         testRunTitle: TestResults
-        workingDirectory: Code/Avalanche.Api.Tests
+        workingDirectory: avalanche-api/Code/Avalanche.Api.Tests
+        vstsFeed: '$(VstsFeed)'
      
      - task: CopyFiles@2
        displayName: 'Copy Files to: $(Agent.BuildDirectory)\TestResults'
@@ -71,14 +79,6 @@ stages:
         SourceFolder: '$(Agent.TempDirectory)'
         Contents: '*.trx'
         TargetFolder: '$(Agent.BuildDirectory)\TestResults'
-
-     #- task: DotNetCoreCLI@2
-       #displayName: 'dotnet test Avalanche.Api.Tests.csproj'
-       #inputs:
-        #command: test
-        #projects: Code/Avalanche.Api.Tests/Avalanche.Api.Tests.csproj
-        #testRunTitle: TestResults
-        #workingDirectory: Code/Avalanche.Api.Tests
     
      - task: CopyFiles@2
        displayName: 'Copy Files to: $(Agent.BuildDirectory)\TestResults'
@@ -87,49 +87,48 @@ stages:
           Contents: '*.trx'
           TargetFolder: '$(Agent.BuildDirectory)\TestResults'
      
+     # sonar 2 of 3
      - task: SonarQubeAnalyze@4
        condition: and(succeeded(), eq(variables['Build.SourceBranchName'], 'dev'))
 
-    
+    # sonar 3 of 3
      - task: SonarQubePublish@4
        condition: and(succeeded(), eq(variables['Build.SourceBranchName'], 'dev'))
        inputs:
         pollingTimeoutSec: '300'
+  
 
+    # make artifacts
      - task: DotNetCoreCLI@2
-       displayName: 'Publish Avalanche.Api'
+       displayName: 'Publish project'
        inputs:
         command: publish
         publishWebProjects: false
-        projects: '**/Code/Avalanche.Api/Avalanche.Api.csproj'
+        projects: '$(CsProject)'
         arguments: '-c $(BuildConfiguration)  -o app'
         zipAfterPublish: false
         modifyOutputPath: false
- 
+
+    # store artifacts
      - task: PublishBuildArtifacts@1
        displayName: 'Publish Build Artifacts'
        inputs:
-        PathtoPublish: 'app'
-        ArtifactName: app 
-
+        PathtoPublish: '$(PathtoPublish)'
+        ArtifactName: '$(PathtoPublish)'
 
 - stage: dev
   condition: and(succeeded(), eq(variables['Build.SourceBranchName'], 'dev'))
   jobs:
      - job: push
-       
-       variables:
-
-       - template: vg-dev-avalanche-api.yml
-
+      
        steps:  
-       - checkout: avalanche-api
+       - checkout: self
        - checkout: devops
        
        - task: DownloadBuildArtifacts@0
          displayName: 'Download Build Artifacts'
          inputs:
-          artifactName: app
+          artifactName: $(PathtoPublish)
           downloadPath: '.'
        
        - powershell: |
@@ -142,22 +141,44 @@ stages:
          displayName: 'Docker command -Build'
          inputs:
           action: 'Run a Docker command'
-          customCommand: 'build -t $(ImageNameLowercase) . -f avalanche-api/Code/Avalanche.Api/DokerfileForAdoPipeline' 
+          customCommand: 'build -t $(ImageNameLowercase) . -f $(DockerFile)' 
        
        - bash: |
-          acrname='acr$(env)$(platform)global'
+          #acrname='acr$(env)$(platform)global'
+          acrname='acr$(env)$(AppPlatform)global'
+          
           echo 'target acr name' $acrname
           echo "##vso[task.setvariable variable=acrname]$acrname"
          displayName: 'Set acr name'
 
+       - powershell: |
+            $tag =""
+            $buildnumber = $Env:BUILD_BUILDNUMBER
+            #e.g $releaseName = "avalanchec-dicom-1.0.0.0_20.3.30.02"
+            write-host "buildnumber="$buildnumber 
+            $tempString=$buildnumber.split("_")
+            $tag = $tempString[1]
+            
+            if($tag)
+            {
+            write-host "tag="$tag 
+            Write-Host "##vso[task.setvariable variable=tag;]$tag"
+            }
+            else
+            {
+            Throw("package version variable is empty")
+            }
+         displayName: "Set environment variable tag number"
+
        - task: Docker@2
-         displayName: 'Docker command -Tag'
+         displayName: 'Docker image -Tag'
          inputs:
           command: 'tag'
-          arguments: '$(ImageNameLowercase) $(acrname).azurecr.io/$(ImageNameLowercase):$(Build.BuildNumber)'
-          #arguments: '$(ImageNameLowercase) $(AcrRepository).azurecr.io/$(ImageNameLowercase):$(Build.BuildNumber)'
+          arguments: '$(ImageNameLowercase) $(acrname).azurecr.io/$(ImageNameLowercase):$(tag)'
           addPipelineData: false
        
+       # get ip so acr can give access for push
+       # ip of the router if server is behing a firewall
        - bash: |
           source devops/common/commonfunctions.sh
           ip=$(get_ext_ip)
@@ -166,31 +187,27 @@ stages:
           echo 'variable ip ' $(ip)
          displayName: 'Get build server external ip'
 
-       
        - task: AzureCLI@1
          displayName: 'Add build server external ip to acr firewall'
          inputs:
           azureSubscription: $(azuresubscription)
           scriptPath: 'devops/resources/add-acr-firewall-ip.sh'
           arguments: '$(azuresubscription) $(acrname) $(ip)'
-          #arguments: '$(azuresubscription) $(AcrRepository) $(ip)'
 
        - task: Docker@1
-         displayName: 'Run a Docker command -Push'
+         displayName: 'Docker push'
          inputs:
           azureSubscriptionEndpoint: $(azuresubscription)
           azureContainerRegistry: '$(acrname).azurecr.io'
-          #azureContainerRegistry: '$(AcrRepository).azurecr.io'
           command: 'Push an image'
-          imageName: '$(acrname).azurecr.io/$(ImageNameLowercase):$(Build.BuildNumber)'
-          #imageName: '$(AcrRepository).azurecr.io/$(ImageNameLowercase):$(Build.BuildNumber)'
-
+          imageName: '$(acrname).azurecr.io/$(ImageNameLowercase):$(tag)'
+          
        - task: AzureCLI@1
          displayName: 'Delete build server external ip from acr firewall'
          inputs:
           azureSubscription: $(azuresubscription)
           scriptPath: 'devops/resources/delete-acr-firewall-ip.sh'
           arguments: '$(azuresubscription) $(acrname) $(ip)'
-          #arguments: '$(azuresubscription) $(AcrRepository) $(ip)'
+          
 
        
