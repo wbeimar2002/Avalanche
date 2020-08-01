@@ -117,7 +117,7 @@ stages:
         ArtifactName: '$(PathtoPublish)'
 
 - stage: dev
-  #condition: and(succeeded(), eq(variables['Build.SourceBranchName'], 'dev'))
+  condition: and(succeeded(), eq(variables['Build.SourceBranchName'], 'dev'))
   jobs:
      - job: push
       
