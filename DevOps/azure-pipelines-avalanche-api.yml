@@ -98,7 +98,7 @@ stages:
         pollingTimeoutSec: '300'
   
 
-    # make artifacts
+    # make app artifacts
      - task: DotNetCoreCLI@2
        displayName: 'Publish project'
        inputs:
@@ -113,8 +113,20 @@ stages:
      - task: PublishBuildArtifacts@1
        displayName: 'Publish Build Artifacts'
        inputs:
-        PathtoPublish: '$(PathtoPublish)'
-        ArtifactName: '$(PathtoPublish)'
+        PathtoPublish: '$(PathtoApp)'
+        ArtifactName: '$(PathtoApp)'
+    
+     - task: CopyFiles@2
+       inputs:
+        SourceFolder: '$(Repo)/DevOps/certificates'
+        Contents: '**'
+        TargetFolder: 'certificates'
+
+     - task: PublishBuildArtifacts@1
+       displayName: 'Publish Certiifcates'
+       inputs:
+        PathtoPublish: '$(Repo)/DevOps/certificates'
+        ArtifactName: certificates
 
 - stage: push_to_acr
   condition: and(succeeded(), eq(variables['Build.SourceBranchName'], 'dev'))
