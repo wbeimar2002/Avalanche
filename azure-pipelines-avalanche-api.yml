@@ -27,7 +27,7 @@ stages:
   - job: build_test_publish
     
     pool:
-      #name: 'ism-build-pool-on-prem'
+    
       vmImage: '$(pool_vm_image)'
     
     steps:
@@ -37,13 +37,10 @@ stages:
 
     # resore solution
 
-     
-
      - task: NuGetCommand@2
        displayName: 'NuGet restore **/*.sln'
        inputs:
           restoreSolution: '$(ProjectSolution)'
-          #restoreSolution: 'avalanche-api/Code/Avalanche.Api.sln'
           feedsToUse: 'select'
           vstsFeed: '$(VstsFeed)'
 
@@ -55,23 +52,7 @@ stages:
           SonarQube: sonarqube
           projectKey: 'avalanche-api'
           projectName: 'avalanche-api'
-       
-     
-
-     # build solution
-     #- task: VSBuild@1
-       #displayName: 'Build solution Code/Avalanche.Api.sln'
-       #inputs:
-          #solution: avalanche-api/Code/Avalanche.Api.sln
-          #msbuildArgs: '/p:Configuration=release'
-          #clean: true
-
-     #- task: MSBuild@1
-       #displayName: 'Build solution Code/Avalanche.Api.sln'
-       #inputs:
-        #solution: 'avalanche-api/Code/Avalanche.Api.sln'
-        #msbuildArguments: '/p:Configuration=Avalanche-Api-Sonar'
-
+   
      - task: DotNetCoreCLI@2
        displayName: 'dotnet build **/*.sln'
        inputs:
@@ -135,21 +116,14 @@ stages:
         PathtoPublish: '$(PathtoPublish)'
         ArtifactName: '$(PathtoPublish)'
 
-
 - stage: dev
   #condition: and(succeeded(), eq(variables['Build.SourceBranchName'], 'dev'))
   jobs:
      - job: push
-       
-       #variables:
-
-       #- template: vg-dev-avalanche-api.yml
-
+      
        steps:  
        - checkout: self
        - checkout: devops
-       #- checkout: avalanche-api
-       #- checkout: devops
        
        - task: DownloadBuildArtifacts@0
          displayName: 'Download Build Artifacts'
@@ -168,7 +142,6 @@ stages:
          inputs:
           action: 'Run a Docker command'
           customCommand: 'build -t $(ImageNameLowercase) . -f $(DockerFile)' 
-          #customCommand: 'build -t $(ImageNameLowercase) . -f avalanche-api/Code/Avalanche.Api/DokerfileForAdoPipeline' 
        
        - bash: |
           #acrname='acr$(env)$(platform)global'
@@ -200,11 +173,8 @@ stages:
        - task: Docker@2
          displayName: 'Docker image -Tag'
          inputs:
-          #tags: '$(ImageNameLowercase) $(acrname).azurecr.io/$(ImageNameLowercase):$(Build.BuildNumber)'
           command: 'tag'
-          #arguments: '$(ImageNameLowercase) $(acrname).azurecr.io/$(ImageNameLowercase):$(Build.BuildNumber)'
           arguments: '$(ImageNameLowercase) $(acrname).azurecr.io/$(ImageNameLowercase):$(tag)'
-          #arguments: '$(ImageNameLowercase) $(AcrRepository).azurecr.io/$(ImageNameLowercase):$(Build.BuildNumber)'
           addPipelineData: false
        
        # get ip so acr can give access for push
@@ -231,9 +201,7 @@ stages:
           azureContainerRegistry: '$(acrname).azurecr.io'
           command: 'Push an image'
           imageName: '$(acrname).azurecr.io/$(ImageNameLowercase):$(tag)'
-          #imageName: '$(acrname).azurecr.io/$(ImageNameLowercase):$(Build.BuildNumber)'
           
-
        - task: AzureCLI@1
          displayName: 'Delete build server external ip from acr firewall'
          inputs:
