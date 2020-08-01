@@ -129,7 +129,7 @@ stages:
         ArtifactName: certificates
 
 - stage: push_to_acr
-  dependsOn: 'build'
+  
   condition: and(succeeded(), eq(variables['Build.SourceBranchName'], 'dev'))
   jobs:
      - job: push
@@ -222,8 +222,8 @@ stages:
           scriptPath: 'devops/resources/delete-acr-firewall-ip.sh'
           arguments: '$(azuresubscription) $(acrname) $(ip)'
           
-- stage: te1
-  
+- stage: te
+  dependsOn: 'build'
   #condition: and(succeeded(), eq(variables['publish_te_to_octopus'], 'true'))
   
   jobs:
