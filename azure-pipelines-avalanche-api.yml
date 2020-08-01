@@ -195,7 +195,7 @@ stages:
             {
             Throw("package version variable is empty")
             }
-      displayName: "Set environment variable package number"
+         displayName: "Set environment variable package number"
 
        - task: Docker@2
          displayName: 'Docker image -Tag'
