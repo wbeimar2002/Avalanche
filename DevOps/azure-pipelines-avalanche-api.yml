@@ -280,7 +280,7 @@ stages:
       inputs:
         OctoConnectedServiceName: 'Octopus Server'
         Space: 'Spaces-1'
-        Package: '$(RELEASE.PRIMARYARTIFACTSOURCEALIAS)/Packages/$(Repo).$(PackageVersion).zip'
+        Package: '$(RELEASE.PRIMARYARTIFACTSOURCEALIAS)/Packages/$(OctopusProject).$(PackageVersion).zip'
 
     - task: octopusdeploy.octopus-deploy-build-release-tasks.octopus-create-release.OctopusCreateRelease@4
       displayName: 'Create Octopus Release'
