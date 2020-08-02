@@ -232,8 +232,6 @@ stages:
         - msbuild
     steps:
   
-
-    steps:
     - download: current
       artifact: 'certificates'
      
