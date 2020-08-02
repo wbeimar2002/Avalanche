@@ -208,3 +208,68 @@ stages:
         scriptPath: 'devops/resources/delete-acr-firewall-ip.sh'
         arguments: '$(azuresubscription) $(acrname) $(ip)'        
 
+- stage: octopus_release
+  dependsOn: 'build'
+#condition: and(succeeded(), eq(variables['publish_te_to_octopus'], 'true'))
+
+  jobs:
+  - job: push_certifcates_to_octopus
+
+  pool:
+    name: agent-pool-copy-titan-to-octopus-onpremises
+    demands: 
+      - msbuild
+    steps:
+
+  
+   
+    - powershell: |
+          $package_version =""
+          $buildnumber = $Env:BUILD_BUILDNUMBER
+          #e.g $releaseName = "avalanchec-dicom-1.0.0.0_20.3.30.02"
+          write-host "buildnumber="$buildnumber 
+          $tempString=$buildnumber.split("_")
+          $package_version = $tempString[1]
+          
+          if($package_version)
+          {
+          write-host "package version="$package_version 
+          Write-Host "##vso[task.setvariable variable=PackageVersion;]$package_version"
+          }
+          else
+          {
+          Throw("package version variable is empty")
+          }
+      displayName: "Set environment variable package number"
+
+    - powershell: |
+        write-host "package version="$ENV:PACKAGEVERSION
+      displayName: 'Print package version'
+  
+    - task: 'octopusdeploy.octopus-deploy-build-release-tasks.octopus-pack.OctopusPack@4'
+      displayName: 'Package avalanche-dicom'
+      inputs:
+        PackageId: '$(OctopusProject)'
+        PackageFormat: Zip
+        PackageVersion: '$(PackageVersion)'
+        SourcePath: '$(Pipeline.Workspace)/$(PathToCerificates)'
+        #SourcePath: '$(System.DefaultWorkingDirectory)/$(PathToCerificates)'
+        #SourcePath: '$(System.DefaultWorkingDirectory)/_avalanche-dicom/drop/Ism.Dicom/bin/Release'
+        OutputPath: '$(RELEASE.PRIMARYARTIFACTSOURCEALIAS)/Packages'
+
+    - task: octopusdeploy.octopus-deploy-build-release-tasks.octopus-push.OctopusPush@4
+      displayName: 'Push Packages to Octopus'
+      inputs:
+        OctoConnectedServiceName: 'Octopus Server'
+        Space: 'Spaces-1'
+        Package: '$(RELEASE.PRIMARYARTIFACTSOURCEALIAS)/Packages/$(OctopusProject).$(PackageVersion).zip'
+
+    - task: octopusdeploy.octopus-deploy-build-release-tasks.octopus-create-release.OctopusCreateRelease@4
+      displayName: 'Create Octopus Release'
+      inputs:
+      OctoConnectedServiceName: 'Octopus Server'
+      Space: 'Default'
+      ProjectName: '$(OctopusProject)'
+      ReleaseNumber: '$(PackageVersion)'
+      #Channel: 'Channels-167'
+     
