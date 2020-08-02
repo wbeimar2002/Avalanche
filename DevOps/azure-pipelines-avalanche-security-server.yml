@@ -246,24 +246,6 @@ stages:
         write-host "package version="$ENV:PACKAGEVERSION
       displayName: 'Print package version'
   
-    - task: 'octopusdeploy.octopus-deploy-build-release-tasks.octopus-pack.OctopusPack@4'
-      displayName: 'Package avalanche-dicom'
-      inputs:
-        PackageId: '$(OctopusProject)'
-        PackageFormat: Zip
-        PackageVersion: '$(PackageVersion)'
-        SourcePath: '$(Pipeline.Workspace)/$(PathToCerificates)'
-        #SourcePath: '$(System.DefaultWorkingDirectory)/$(PathToCerificates)'
-        #SourcePath: '$(System.DefaultWorkingDirectory)/_avalanche-dicom/drop/Ism.Dicom/bin/Release'
-        OutputPath: '$(RELEASE.PRIMARYARTIFACTSOURCEALIAS)/Packages'
-
-    - task: octopusdeploy.octopus-deploy-build-release-tasks.octopus-push.OctopusPush@4
-      displayName: 'Push Packages to Octopus'
-      inputs:
-        OctoConnectedServiceName: 'Octopus Server'
-        Space: 'Spaces-1'
-        Package: '$(RELEASE.PRIMARYARTIFACTSOURCEALIAS)/Packages/$(OctopusProject).$(PackageVersion).zip'
-
     - task: octopusdeploy.octopus-deploy-build-release-tasks.octopus-create-release.OctopusCreateRelease@4
       displayName: 'Create Octopus Release'
       inputs:
