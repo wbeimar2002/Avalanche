@@ -1,0 +1,130 @@
+name: $(build_number_prefix)-$(majorversion).$(minorversion).$(patch).$(Releasestage)_$(majorversion).$(minorversion).$(Date:yyMM).$(Date:dd)$(Rev:rr)
+
+resources:
+
+  repositories:
+
+  - repository: devops
+    type: git
+    name: devops
+    ref: nh-pipeline-add-restore-build-test-yml
+
+#pool: #'ism-build-pool-on-prem'
+  
+  # use only ubuntu-latest
+  #vmImage: '$(pool_vm_image)'
+
+variables:
+
+  - group: 'vg-dev-avalanche-security-server'
+  
+stages:
+
+- stage: build
+
+  jobs:
+
+  - job: build_test_publish
+    
+    pool:
+    
+      vmImage: '$(pool_vm_image)'
+    
+    steps:
+     
+     - checkout: self
+     - checkout: devops
+
+    # resore solution
+
+     - task: NuGetCommand@2
+       displayName: 'NuGet restore **/*.sln'
+       inputs:
+          restoreSolution: '$(ProjectSolution)'
+          feedsToUse: 'select'
+          vstsFeed: '$(VstsFeed)'
+
+    # sonar 1 of 3
+     - task: SonarSource.sonarqube.15B84CA1-B62F-4A2A-A403-89B77A063157.SonarQubePrepare@4
+       condition: and(succeeded(), eq(variables['Build.SourceBranchName'], 'dev'))
+       displayName: 'Prepare analysis on SonarQube'
+       inputs:
+          SonarQube: sonarqube
+          projectKey: '$(SonarProject)'
+          projectName: '$(SonarProject)'
+   
+     - task: DotNetCoreCLI@2
+       displayName: 'dotnet build **/*.sln'
+       inputs:
+          projects: '$(ProjectSolution)'
+          ##arguments: '/p:Configuration=release'
+          #arguments: '--configuration=Avalanche-Api-Sonar'
+          arguments: '-c Avalanche-Api-Sonar'
+          vstsFeed: '$(VstsFeed)'
+          ##configuration: 'release'
+     
+     # test project 
+     - task: DotNetCoreCLI@2
+       displayName: 'dotnet test'
+       inputs:
+        command: test
+        projects: '$(TestProject)'
+        testRunTitle: TestResults
+        workingDirectory: avalanche-api/Code/Avalanche.Security.Server
+        #workingDirectory: avalanche-api/Code/Avalanche.Api.Tests
+        vstsFeed: '$(VstsFeed)'
+     
+     - task: CopyFiles@2
+       displayName: 'Copy Files to: $(Agent.BuildDirectory)\TestResults'
+       inputs:
+        SourceFolder: '$(Agent.TempDirectory)'
+        Contents: '*.trx'
+        TargetFolder: '$(Agent.BuildDirectory)\TestResults'
+    
+     - task: CopyFiles@2
+       displayName: 'Copy Files to: $(Agent.BuildDirectory)\TestResults'
+       inputs:
+          SourceFolder: '$(Agent.TempDirectory)'
+          Contents: '*.trx'
+          TargetFolder: '$(Agent.BuildDirectory)\TestResults'
+     
+     # sonar 2 of 3
+     - task: SonarQubeAnalyze@4
+       condition: and(succeeded(), eq(variables['Build.SourceBranchName'], 'dev'))
+
+    # sonar 3 of 3
+     - task: SonarQubePublish@4
+       condition: and(succeeded(), eq(variables['Build.SourceBranchName'], 'dev'))
+       inputs:
+        pollingTimeoutSec: '300'
+  
+
+    # make app artifacts
+     - task: DotNetCoreCLI@2
+       displayName: 'Publish project'
+       inputs:
+        command: publish
+        publishWebProjects: false
+        projects: '$(CsProject)'
+        arguments: '-c $(BuildConfiguration)  -o app'
+        zipAfterPublish: false
+        modifyOutputPath: false
+
+    # store artifacts
+     - task: PublishBuildArtifacts@1
+       displayName: 'Publish Build Artifacts'
+       inputs:
+        PathtoPublish: '$(PathtoApp)'
+        ArtifactName: '$(PathtoApp)'
+    
+     - task: CopyFiles@2
+       inputs:
+        SourceFolder: '$(Repo)/DevOps/certificates'
+        Contents: '**'
+        TargetFolder: 'certificates'
+
+     - task: PublishBuildArtifacts@1
+       displayName: 'Publish Certiifcates'
+       inputs:
+        PathtoPublish: '$(Repo)/DevOps/certificates'
+        ArtifactName: certificates
