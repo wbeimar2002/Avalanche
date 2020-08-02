@@ -209,6 +209,7 @@ stages:
         arguments: '$(azuresubscription) $(acrname) $(ip)'        
 
 - stage: test
+  dependsOn: build
 
   jobs:
    - job: push
