@@ -120,7 +120,7 @@ stages:
 - stage: push_to_acr
   
 #condition: and(succeeded(), eq(variables['Build.SourceBranchName'], 'dev'))
-jobs:
+  jobs:
    - job: push
     
      steps:  
