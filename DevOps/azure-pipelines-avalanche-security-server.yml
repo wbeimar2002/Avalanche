@@ -117,14 +117,4 @@ stages:
         PathtoPublish: '$(PathtoApp)'
         ArtifactName: '$(PathtoApp)'
     
-     - task: CopyFiles@2
-       inputs:
-        SourceFolder: '$(Repo)/DevOps/certificates'
-        Contents: '**'
-        TargetFolder: 'certificates'
-
-     - task: PublishBuildArtifacts@1
-       displayName: 'Publish Certiifcates'
-       inputs:
-        PathtoPublish: '$(Repo)/DevOps/certificates'
-        ArtifactName: certificates
+     
