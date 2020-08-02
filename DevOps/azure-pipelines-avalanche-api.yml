@@ -129,8 +129,8 @@ stages:
         ArtifactName: certificates
 
 - stage: push_to_acr
-  
-  #condition: and(succeeded(), eq(variables['Build.SourceBranchName'], 'dev'))
+
+  condition: and(succeeded(), eq(variables['Build.SourceBranchName'], 'dev'))
   jobs:
      - job: push
       
@@ -220,7 +220,7 @@ stages:
           arguments: '$(azuresubscription) $(acrname) $(ip)'
           
 - stage: te
-  dependsOn: 'build'
+  dependsOn: 'push_to_acr'
   #condition: and(succeeded(), eq(variables['publish_te_to_octopus'], 'true'))
   
   jobs:
