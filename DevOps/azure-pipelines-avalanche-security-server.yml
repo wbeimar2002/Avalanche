@@ -221,35 +221,11 @@ stages:
       - msbuild
     steps:
     
-    - powershell: |
-          $package_version =""
-          $buildnumber = $Env:BUILD_BUILDNUMBER
-          #e.g $releaseName = "avalanchec-dicom-1.0.0.0_20.3.30.02"
-          write-host "buildnumber="$buildnumber 
-          $tempString=$buildnumber.split("_")
-          $package_version = $tempString[1]
-          
-          if($package_version)
-          {
-          write-host "package version="$package_version 
-          Write-Host "##vso[task.setvariable variable=PackageVersion;]$package_version"
-          }
-          else
-          {
-          Throw("package version variable is empty")
-          }
-      displayName: "Set environment variable package number"
-
-    - powershell: |
-        write-host "package version="$ENV:PACKAGEVERSION
-      displayName: 'Print package version'
-  
-    - task: octopusdeploy.octopus-deploy-build-release-tasks.octopus-create-release.OctopusCreateRelease@4
-      displayName: 'Create Octopus Release'
+    - task: PowerShell@2
       inputs:
-      OctoConnectedServiceName: 'Octopus Server'
-      Space: 'Default'
-      ProjectName: '$(OctopusProject)'
-      ReleaseNumber: '$(PackageVersion)'
-      #Channel: 'Channels-167'
-     
+        targetType: 'inline'
+        script: |
+          # Write your PowerShell commands here.
+          
+          Write-Host "Hello World"
+   
