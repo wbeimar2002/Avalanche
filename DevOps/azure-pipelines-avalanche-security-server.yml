@@ -243,5 +243,7 @@ stages:
           }
        displayName: "Set environment variable package number"
 
-
+     - powershell: |
+        write-host "package version="$ENV:PACKAGEVERSION
+        displayName: 'Print package version'
    
