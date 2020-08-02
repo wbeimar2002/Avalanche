@@ -268,7 +268,7 @@ stages:
     - task: 'octopusdeploy.octopus-deploy-build-release-tasks.octopus-pack.OctopusPack@4'
       displayName: 'Package avalanche-dicom'
       inputs:
-        PackageId: '$(Repo)'
+        PackageId: '$(OctopusProject)'
         PackageFormat: Zip
         PackageVersion: '$(PackageVersion)'
         SourcePath: '$(System.DefaultWorkingDirectory)/$(PathToCerificates)'
