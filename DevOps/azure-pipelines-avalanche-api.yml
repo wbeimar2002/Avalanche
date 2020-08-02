@@ -234,6 +234,7 @@ stages:
   
     - download: current
       artifact: 'certificates'
+       
      
      
     - powershell: |
@@ -264,7 +265,8 @@ stages:
         PackageId: '$(OctopusProject)'
         PackageFormat: Zip
         PackageVersion: '$(PackageVersion)'
-        SourcePath: '$(System.DefaultWorkingDirectory)/$(PathToCerificates)'
+        SourcePath: '$(Agent.WorkFolder)/$(PathToCerificates)'
+        #SourcePath: '$(System.DefaultWorkingDirectory)/$(PathToCerificates)'
         #SourcePath: '$(System.DefaultWorkingDirectory)/_avalanche-dicom/drop/Ism.Dicom/bin/Release'
         OutputPath: '$(RELEASE.PRIMARYARTIFACTSOURCEALIAS)/Packages'
 
