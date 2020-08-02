@@ -208,24 +208,22 @@ stages:
         scriptPath: 'devops/resources/delete-acr-firewall-ip.sh'
         arguments: '$(azuresubscription) $(acrname) $(ip)'        
 
-- stage: octopus_release
-  dependsOn: 'build'
-#condition: and(succeeded(), eq(variables['publish_te_to_octopus'], 'true'))
+- stage: test
 
   jobs:
-  - job: push_certifcates_to_octopus
-
-  pool:
-    name: agent-pool-copy-titan-to-octopus-onpremises
-    demands: 
-      - msbuild
-    steps:
+   - job: push
     
-    - task: PowerShell@2
-      inputs:
-        targetType: 'inline'
-        script: |
-          # Write your PowerShell commands here.
-          
-          Write-Host "Hello World"
+     steps:  
+
+     - task: PowerShell@2
+       inputs:
+         targetType: 'inline'
+         script: |
+           # Write your PowerShell commands here.
+           
+           Write-Host "Hello World"
+
+  
+
+
    
