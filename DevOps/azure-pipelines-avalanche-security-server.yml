@@ -220,9 +220,7 @@ stages:
     demands: 
       - msbuild
     steps:
-
-  
-   
+    
     - powershell: |
           $package_version =""
           $buildnumber = $Env:BUILD_BUILDNUMBER
