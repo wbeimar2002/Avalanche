@@ -208,8 +208,9 @@ stages:
         scriptPath: 'devops/resources/delete-acr-firewall-ip.sh'
         arguments: '$(azuresubscription) $(acrname) $(ip)'        
 
-- stage: test
-  dependsOn: build
+- stage: octopus_release
+  dependsOn: push_to_acr
+
 
   jobs:
    - job: push
