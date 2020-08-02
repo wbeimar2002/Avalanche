@@ -245,7 +245,8 @@ stages:
 
      - powershell: |
         write-host "package version="$ENV:PACKAGEVERSION
-        displayName: 'Print package version'
+       displayName: 'Print package version'
+       
      - task: octopusdeploy.octopus-deploy-build-release-tasks.octopus-create-release.OctopusCreateRelease@4
        displayName: 'Create Octopus Release'
        inputs:
