@@ -240,7 +240,7 @@ stages:
         project: '0b214fa2-b3b1-42b0-b0e3-ab1d83cc701f'
         definition: $(BuildDefId)
         artifactName: 'drop'
-        targetPath: '$(System.DefaultWorkingDirectory)\$(PathToCerificates)'
+        targetPath: '$(System.DefaultWorkingDirectory)'
      
      
     - powershell: |
