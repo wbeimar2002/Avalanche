@@ -265,7 +265,7 @@ stages:
         PackageId: '$(OctopusProject)'
         PackageFormat: Zip
         PackageVersion: '$(PackageVersion)'
-        SourcePath: '$(Build.Repository.Tfvc.Workspace)/$(PathToCerificates)'
+        SourcePath: '$(Pipeline.Workspace)/$(PathToCerificates)'
         #SourcePath: '$(System.DefaultWorkingDirectory)/$(PathToCerificates)'
         #SourcePath: '$(System.DefaultWorkingDirectory)/_avalanche-dicom/drop/Ism.Dicom/bin/Release'
         OutputPath: '$(RELEASE.PRIMARYARTIFACTSOURCEALIAS)/Packages'
