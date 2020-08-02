@@ -224,7 +224,24 @@ stages:
            
            Write-Host "Hello World"
 
-  
+     - powershell: |
+          $package_version =""
+          $buildnumber = $Env:BUILD_BUILDNUMBER
+          #e.g $releaseName = "avalanchec-dicom-1.0.0.0_20.3.30.02"
+          write-host "buildnumber="$buildnumber 
+          $tempString=$buildnumber.split("_")
+          $package_version = $tempString[1]
+          
+          if($package_version)
+          {
+          write-host "package version="$package_version 
+          Write-Host "##vso[task.setvariable variable=PackageVersion;]$package_version"
+          }
+          else
+          {
+          Throw("package version variable is empty")
+          }
+       displayName: "Set environment variable package number"
 
 
    
