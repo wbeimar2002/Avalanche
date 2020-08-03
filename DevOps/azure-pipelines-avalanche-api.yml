@@ -129,7 +129,7 @@ stages:
         ArtifactName: certificates
 
 - stage: push_to_acr
-  
+
   #condition: and(succeeded(), eq(variables['Build.SourceBranchName'], 'dev'))
   jobs:
      - job: push
@@ -219,8 +219,8 @@ stages:
           scriptPath: 'devops/resources/delete-acr-firewall-ip.sh'
           arguments: '$(azuresubscription) $(acrname) $(ip)'
           
-- stage: te
-  dependsOn: 'build'
+- stage: octopus_release
+  dependsOn: 'push_to_acr'
   #condition: and(succeeded(), eq(variables['publish_te_to_octopus'], 'true'))
   
   jobs:
@@ -232,15 +232,9 @@ stages:
         - msbuild
     steps:
   
-
-    - task: DownloadPipelineArtifact@2
-      displayName: 'Download Pipeline Artifact'
-      inputs:
-        buildType: specific
-        project: '0b214fa2-b3b1-42b0-b0e3-ab1d83cc701f'
-        definition: $(BuildDefId)
-        artifactName: 'certificates'
-        targetPath: '$(System.DefaultWorkingDirectory)\$(PathToCerificates)'
+    - download: current
+      artifact: 'certificates'
+       
      
      
     - powershell: |
@@ -271,7 +265,8 @@ stages:
         PackageId: '$(OctopusProject)'
         PackageFormat: Zip
         PackageVersion: '$(PackageVersion)'
-        SourcePath: '$(System.DefaultWorkingDirectory)/$(PathToCerificates)'
+        SourcePath: '$(Pipeline.Workspace)/$(PathToCerificates)'
+        #SourcePath: '$(System.DefaultWorkingDirectory)/$(PathToCerificates)'
         #SourcePath: '$(System.DefaultWorkingDirectory)/_avalanche-dicom/drop/Ism.Dicom/bin/Release'
         OutputPath: '$(RELEASE.PRIMARYARTIFACTSOURCEALIAS)/Packages'
 
