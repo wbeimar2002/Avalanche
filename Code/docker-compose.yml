@@ -62,7 +62,7 @@ services:
       PgsTimeoutGrpcPort: '8002'
       PatientListStoragePort: '8003'
       PatientListServiceGrpcPort: '9089'
-      PatientListStorageGrpcPort: '9089'
+      PatientListStorageGrpcPort: '5011'
       grpcCertificate: '/certificates/grpc_localhost_root_l1.pfx' 
       grpcPassword: '0123456789'
       IgnoreGrpcServicesMocks: 'false'

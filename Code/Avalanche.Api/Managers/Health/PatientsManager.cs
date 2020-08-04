@@ -8,6 +8,7 @@ using Avalanche.Shared.Infrastructure.Helpers;
 using Avalanche.Shared.Infrastructure.Models;
 using Google.Protobuf.WellKnownTypes;
 using Ism.PatientInfoEngine.Common.Core;
+using Ism.PatientInfoEngine.Common.Core.Protos;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;

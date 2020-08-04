@@ -11,11 +11,9 @@ service PatientListStorage {
   rpc AddPatientList (AddPatientListRequest) returns (google.protobuf.Empty);
   rpc AddPatientRecord (AddPatientRecordRequest) returns (AddPatientRecordResponse);
   rpc DeletePatientRecord (DeletePatientRecordRequest) returns (DeletePatientRecordResponse);
-
   rpc GetActivePatients (GetActivePatientsRequest) returns (GetActivePatientsResponse);
   rpc GetPatientRecord (GetPatientRecordRequest) returns (GetPatientRecordResponse);
   rpc HandleAdmissionStatusChange (HandleAdmissionStatusChangeRequest) returns (google.protobuf.Empty);
-
   rpc SearchPatientList (SearchPatientListRequest) returns (SearchPatientListResponse);
   rpc UpdatePatientRecord (UpdatePatientRecordRequest) returns (google.protobuf.Empty);
 }

@@ -5,16 +5,13 @@ import "google/protobuf/wrappers.proto";
 
 package Ism.PatientInfoEngine.Common.Core;
 
+option csharp_namespace = "Ism.PatientInfoEngine.Common.Core.Protos";
 
 service PatientInfoEngineService{
     rpc CheckConnectivity (CheckConnectivityRequest) returns (CheckConnectivityResponse);
     rpc GetSettings (GetSettingsRequest) returns (GetSettingsResponse);
     rpc SetSettings (SetSettingsRequest) returns (google.protobuf.Empty);
     rpc SubscribeToEvents (SubscribeToEventsRequest) returns (stream RoomUpdate);
-
-    //rpc GetCodedDataList (GetCodedDataListRequest) returns (GetCodedDataListResponse) {}
-    //rpc RegisterClient (RegisterClientRequest) returns (RegisterClientResponse){}
-    //rpc UnRegisterClient(UnRegisterClientRequest) returns (UnRegisterClientResponse) {}
 }
 
 service PatientListService{
@@ -71,24 +68,6 @@ message GetSettingsResponse{
 message SetSettingsRequest{
     repeated SettingPair Settings = 1;
 }
-
-/*
-message SetSettingsResponse{
-    int32 ResponseCode = 1;
-    string Err = 2;
- }
- */
- /*
- message GetCodedDataListRequest{
-     repeated int32 Codes = 1;
- }
-
- message GetCodedDataListResponse{
-     int32 ResponseCode = 1;
-     repeated IssDataMessage Data =2;
-     string Err = 3;
- }
- */
 
  message RegisterClientRequest{
      string Name = 1; 
@@ -439,14 +418,3 @@ message PatientRecordMessage {
     google.protobuf.Timestamp Scheduled = 11;
     repeated SecondaryPhysicianMessage SecondaryPhysicians = 12;
 }
-
-/*
-message IssDataMessage{
-    int32 Code = 1;
-    string Dt = 2;
-    bool IsValid = 3;
-    int32 Owner = 4;
-    string SerializedObj = 5;
-    string ObjType = 6;
-}
-*/

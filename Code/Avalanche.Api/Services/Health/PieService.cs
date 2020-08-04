@@ -15,6 +15,7 @@ using Grpc.Core;
 using System.Threading;
 using Google.Protobuf.WellKnownTypes;
 using Avalanche.Api.Utilities;
+using Ism.PatientInfoEngine.Common.Core.Protos;
 
 namespace Avalanche.Api.Services.Health
 {
@@ -51,7 +52,7 @@ namespace Avalanche.Api.Services.Health
         {
             var accessInfo = _accessInfoFactory.GenerateAccessInfo();
 
-            var accessInfoMessage = new Ism.PatientInfoEngine.Common.Core.AccessInfoMessage()
+            var accessInfoMessage = new Ism.PatientInfoEngine.Common.Core.Protos.AccessInfoMessage
             {
                 ApplicationName = accessInfo.ApplicationName,
                 Ip = accessInfo.Ip,
@@ -70,15 +71,15 @@ namespace Avalanche.Api.Services.Health
                 SearchFields = searchFields
             };
 
-            //Faking calls while I have the real server
-            if (!IgnoreGrpcServicesMocks)
-            {
-                Mock<PatientListService.PatientListServiceClient> mockGrpcClient = new Mock<PatientListService.PatientListServiceClient>();
-                var fakeCall = TestCalls.AsyncUnaryCall(Task.FromResult(Moq.It.IsAny<SearchResponse>()), Task.FromResult(new Metadata()), () => Status.DefaultSuccess, () => new Metadata(), () => { });
-                mockGrpcClient.Setup(mock => mock.SearchAsync(Moq.It.IsAny<SearchRequest>(), null, null, CancellationToken.None)).Returns(fakeCall);
+            ////Faking calls while I have the real server
+            //if (!IgnoreGrpcServicesMocks)
+            //{
+            //    Mock<PatientListService.PatientListServiceClient> mockGrpcClient = new Mock<PatientListService.PatientListServiceClient>();
+            //    var fakeCall = TestCalls.AsyncUnaryCall(Task.FromResult(Moq.It.IsAny<SearchResponse>()), Task.FromResult(new Metadata()), () => Status.DefaultSuccess, () => new Metadata(), () => { });
+            //    mockGrpcClient.Setup(mock => mock.SearchAsync(Moq.It.IsAny<SearchRequest>(), null, null, CancellationToken.None)).Returns(fakeCall);
 
-                PatientListServiceClient = mockGrpcClient.Object;
-            }
+            //    PatientListServiceClient = mockGrpcClient.Object;
+            //}
 
             var response = await PatientListServiceClient.SearchAsync(request);
             return response?.UpdatedPatList.Select(pieRecord => new Patient()

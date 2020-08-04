@@ -2,6 +2,7 @@
 using Avalanche.Shared.Domain.Models;
 using Ism.IsmLogCommon.Core;
 using Ism.PatientInfoEngine.Common.Core;
+using Ism.PatientInfoEngine.Common.Core.Protos;
 using System;
 using System.Collections.Generic;
 using System.Linq;

@@ -2,11 +2,11 @@ syntax = "proto3";
 import "google/protobuf/empty.proto";
 import "google/protobuf/wrappers.proto";
 
-option csharp_namespace = "Ism.Storage.Common.Core.Configuration.Proto";
+option csharp_namespace = "Ism.Storage.Common.Core.Configuration.Protos";
 
 package storage;
 
-service ConfigurationStorage {
+service ConfigurationService {
   rpc GetConfiguration (GetConfigurationRequest) returns (GetConfigurationResponse);
   rpc SaveConfiguration (SaveConfigurationRequest) returns (google.protobuf.Empty);
 }
@@ -27,10 +27,12 @@ message ConfigurationSaveContextMessage {
 // Enums
 
 enum ConfigurationKindMessage {
-    Site = 0;
-    Department = 1;
-    System = 2;
-    User = 3;
+    Undefined = 0;
+    IDN = 1;
+    Site = 2;
+    Department = 3;
+    System = 4;
+    User = 5;
 }
 
 // Request Messages

@@ -22,7 +22,7 @@ namespace Avalanche.Api.Controllers.V1
 {
     [Route("[controller]")]
     [ApiController]
-    [Authorize]
+    //[Authorize]
     public class PatientsController : ControllerBase
     {
         readonly ILogger _appLoggerService;
