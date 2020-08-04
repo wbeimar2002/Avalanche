@@ -71,16 +71,6 @@ namespace Avalanche.Api.Services.Health
                 SearchFields = searchFields
             };
 
-            ////Faking calls while I have the real server
-            //if (!IgnoreGrpcServicesMocks)
-            //{
-            //    Mock<PatientListService.PatientListServiceClient> mockGrpcClient = new Mock<PatientListService.PatientListServiceClient>();
-            //    var fakeCall = TestCalls.AsyncUnaryCall(Task.FromResult(Moq.It.IsAny<SearchResponse>()), Task.FromResult(new Metadata()), () => Status.DefaultSuccess, () => new Metadata(), () => { });
-            //    mockGrpcClient.Setup(mock => mock.SearchAsync(Moq.It.IsAny<SearchRequest>(), null, null, CancellationToken.None)).Returns(fakeCall);
-
-            //    PatientListServiceClient = mockGrpcClient.Object;
-            //}
-
             var response = await PatientListServiceClient.SearchAsync(request);
             return response?.UpdatedPatList.Select(pieRecord => new Patient()
             {
@@ -100,35 +90,6 @@ namespace Avalanche.Api.Services.Health
         public async Task<Patient> RegisterPatient(Patient newPatient)
         {
             var accessInfo = _accessInfoFactory.GenerateAccessInfo();
-
-            //Faking calls while I have the real server
-            if (!IgnoreGrpcServicesMocks)
-            {
-                Mock<PatientListStorage.PatientListStorageClient> mockGrpcClient = new Mock<PatientListStorage.PatientListStorageClient>();
-                var fakeCall = TestCalls.AsyncUnaryCall(Task.FromResult(new AddPatientRecordResponse()
-                {
-                    PatientRecord = new Ism.Storage.Common.Core.PatientList.Proto.PatientRecordMessage()
-                    {
-                        InternalId = 0,
-                        Mrn = newPatient.MRN,
-                        Patient = new Ism.Storage.Common.Core.PatientList.Proto.PatientMessage()
-                        {
-                            Dob = new Ism.Storage.Common.Core.PatientList.Proto.FixedDateMessage()
-                            {
-                                Day = newPatient.DateOfBirth.Day,
-                                Month = newPatient.DateOfBirth.Month,
-                                Year = newPatient.DateOfBirth.Year
-                            },
-                            FirstName = newPatient.FirstName,
-                            LastName = newPatient.LastName,
-                            Sex = GrpcModelsMappingHelper.GetGender(newPatient.Gender),
-                        }
-                    }
-                }), Task.FromResult(new Metadata()), () => Status.DefaultSuccess, () => new Metadata(), () => { });
-                mockGrpcClient.Setup(mock => mock.AddPatientRecordAsync(Moq.It.IsAny<AddPatientRecordRequest>(), null, null, CancellationToken.None)).Returns(fakeCall);
-
-                PatientListStorageClient = mockGrpcClient.Object;
-            }
 
             var accessInfoMessage = GrpcModelsMappingHelper.GetAccessInfoMessage(accessInfo);
 
@@ -174,38 +135,32 @@ namespace Avalanche.Api.Services.Health
         {
             var accessInfo = _accessInfoFactory.GenerateAccessInfo();
 
-            //Faking calls while I have the real server
-            if (!IgnoreGrpcServicesMocks)
-            {
-                Mock<PatientListStorage.PatientListStorageClient> mockGrpcClient = new Mock<PatientListStorage.PatientListStorageClient>();
-                var fakeCall = TestCalls.AsyncUnaryCall(Task.FromResult(new Empty()), Task.FromResult(new Metadata()), () => Status.DefaultSuccess, () => new Metadata(), () => { });
-                mockGrpcClient.Setup(mock => mock.UpdatePatientRecordAsync(Moq.It.IsAny<UpdatePatientRecordRequest>(), null, null, CancellationToken.None)).Returns(fakeCall);
-
-                PatientListStorageClient = mockGrpcClient.Object;
-            }
-
             var accessInfoMessage = GrpcModelsMappingHelper.GetAccessInfoMessage(accessInfo);
 
-            //TODO: Add data
             var response = await PatientListStorageClient.UpdatePatientRecordAsync(new UpdatePatientRecordRequest()
             {
                 AccessInfo = accessInfoMessage,
+                PatientRecord = new Ism.Storage.Common.Core.PatientList.Proto.PatientRecordMessage() {
+                    Mrn = existingPatient.MRN,
+                    Patient = new Ism.Storage.Common.Core.PatientList.Proto.PatientMessage()
+                    {
+                        Dob = new Ism.Storage.Common.Core.PatientList.Proto.FixedDateMessage()
+                        {
+                            Day = existingPatient.DateOfBirth.Day,
+                            Month = existingPatient.DateOfBirth.Month,
+                            Year = existingPatient.DateOfBirth.Year
+                        },
+                        FirstName = existingPatient.FirstName,
+                        LastName = existingPatient.LastName,
+                        Sex = GrpcModelsMappingHelper.GetGender(existingPatient.Gender),
+                    }
+                }
             });
         }
 
         public async Task<int> DeletePatient(ulong patiendId)
         {
             var accessInfo = _accessInfoFactory.GenerateAccessInfo();
-
-            //Faking calls while I have the real server
-            if (!IgnoreGrpcServicesMocks)
-            {
-                Mock<PatientListStorage.PatientListStorageClient> mockGrpcClient = new Mock<PatientListStorage.PatientListStorageClient>();
-                var fakeCall = TestCalls.AsyncUnaryCall(Task.FromResult(Moq.It.IsAny<DeletePatientRecordResponse>()), Task.FromResult(new Metadata()), () => Status.DefaultSuccess, () => new Metadata(), () => { });
-                mockGrpcClient.Setup(mock => mock.DeletePatientRecordAsync(Moq.It.IsAny<DeletePatientRecordRequest>(), null, null, CancellationToken.None)).Returns(fakeCall);
-
-                PatientListStorageClient = mockGrpcClient.Object;
-            }
 
             var accessInfoMessage = GrpcModelsMappingHelper.GetAccessInfoMessage(accessInfo);
 
