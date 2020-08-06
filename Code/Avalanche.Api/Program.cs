@@ -15,6 +15,7 @@ using Newtonsoft.Json;
 using Avalanche.Shared.Infrastructure.Helpers;
 using Microsoft.AspNetCore;
 using System.Diagnostics.CodeAnalysis;
+using System.Security.Cryptography.X509Certificates;
 
 namespace Avalanche.Api
 {
@@ -38,7 +39,6 @@ namespace Avalanche.Api
 #if DEBUG
             level = LogEventLevel.Debug;
 #endif
-
             Log.Logger = new LoggerConfiguration()
                 .ReadFrom.AppSettings()
                 .Enrich.With(new ApplicationNameEnricher("Avalanche.Api"))

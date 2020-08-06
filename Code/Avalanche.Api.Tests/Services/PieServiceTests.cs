@@ -8,6 +8,7 @@ using Grpc.Core;
 using Grpc.Core.Testing;
 using Ism.IsmLogCommon.Core;
 using Ism.PatientInfoEngine.Common.Core;
+using Ism.PatientInfoEngine.Common.Core.Protos;
 using Ism.Storage.Common.Core.PatientList.Proto;
 using Moq;
 using NUnit.Framework;

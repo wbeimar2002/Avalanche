@@ -39,6 +39,7 @@ using Avalanche.Api.Utilities;
 using Microsoft.AspNetCore.Http.Features;
 using Avalanche.Api.Services.Files;
 using System.Diagnostics.CodeAnalysis;
+using System.Security.Cryptography.X509Certificates;
 
 namespace Avalanche.Api
 {
@@ -109,6 +110,23 @@ namespace Avalanche.Api
 
             ConfigureAuthorization(services);
             ConfigureCorsPolicy(services, configurationService);
+            ConfigureCertificate(configurationService);
+        }
+
+        private void ConfigureCertificate(IConfigurationService configurationService)
+        {
+            var store = new X509Store(StoreName.My, StoreLocation.CurrentUser);
+            store.Open(OpenFlags.ReadWrite);
+
+            var grpcCertificate = configurationService.GetEnvironmentVariable("grpcCertificate");
+            var grpcPassword = configurationService.GetEnvironmentVariable("grpcPassword");
+            var grpcThumprint = configurationService.GetEnvironmentVariable("grpcThumprint");
+
+            var certificates = store.Certificates.Find(X509FindType.FindByThumbprint, grpcThumprint, false);
+            if (certificates.Count <= 0)
+            {
+                store.Add(new X509Certificate2(grpcCertificate, grpcPassword, X509KeyStorageFlags.PersistKeySet));
+            }
         }
 
         private void ConfigureAuthorization(IServiceCollection services)

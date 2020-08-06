@@ -16,6 +16,7 @@ using System.Threading;
 using Google.Protobuf.WellKnownTypes;
 using Avalanche.Api.Utilities;
 using Ism.PatientInfoEngine.Common.Core.Protos;
+using System.Runtime.ConstrainedExecution;
 
 namespace Avalanche.Api.Services.Health
 {
@@ -44,47 +45,59 @@ namespace Avalanche.Api.Services.Health
 
             var certificate = new System.Security.Cryptography.X509Certificates.X509Certificate2(grpcCertificate, grpcPassword);
 
-            PatientListServiceClient = ClientHelper.GetInsecureClient<PatientListService.PatientListServiceClient>($"https://{_hostIpAddress}:{patientListServiceGrpcPort}");
-            PatientListStorageClient = ClientHelper.GetInsecureClient<PatientListStorage.PatientListStorageClient>($"https://{_hostIpAddress}:{patientListStorageGrpcPort}");
+            //PatientListServiceClient = ClientHelper.GetInsecureClient<PatientListService.PatientListServiceClient>($"https://{_hostIpAddress}:{patientListServiceGrpcPort}");
+            //PatientListStorageClient = ClientHelper.GetInsecureClient<PatientListStorage.PatientListStorageClient>($"https://{_hostIpAddress}:{patientListStorageGrpcPort}");
+
+            PatientListServiceClient = ClientHelper.GetSecureClient<PatientListService.PatientListServiceClient>($"https://{_hostIpAddress}:{patientListServiceGrpcPort}", certificate);
+            PatientListStorageClient = ClientHelper.GetSecureClient<PatientListStorage.PatientListStorageClient>($"https://{_hostIpAddress}:{patientListStorageGrpcPort}", certificate);
         }
 
         public async Task<List<Patient>> Search(PatientSearchFieldsMessage searchFields, int firstRecordIndex, int maxResults, string searchCultureName)
         {
-            var accessInfo = _accessInfoFactory.GenerateAccessInfo();
-
-            var accessInfoMessage = new Ism.PatientInfoEngine.Common.Core.Protos.AccessInfoMessage
+            try
             {
-                ApplicationName = accessInfo.ApplicationName,
-                Ip = accessInfo.Ip,
-                Id = accessInfo.Id.ToString(),
-                Details = accessInfo.Details,
-                MachineName = accessInfo.MachineName,
-                UserName = accessInfo.UserName
-            };
+                AppContext.SetSwitch("System.Net.Http.SocketsHttpHandler.Http2UnencryptedSupport", true);
 
-            var request = new SearchRequest
-            {
-                FirstRecordIndex = firstRecordIndex,
-                MaxResults = maxResults,
-                SearchCultureName = searchCultureName,
-                AccessInfo = accessInfoMessage,
-                SearchFields = searchFields
-            };
+                var accessInfo = _accessInfoFactory.GenerateAccessInfo();
 
-            var response = await PatientListServiceClient.SearchAsync(request);
-            return response?.UpdatedPatList.Select(pieRecord => new Patient()
+                var accessInfoMessage = new Ism.PatientInfoEngine.Common.Core.Protos.AccessInfoMessage
+                {
+                    ApplicationName = accessInfo.ApplicationName,
+                    Ip = accessInfo.Ip,
+                    Id = accessInfo.Id.ToString(),
+                    Details = accessInfo.Details,
+                    MachineName = accessInfo.MachineName,
+                    UserName = accessInfo.UserName
+                };
+
+                var request = new SearchRequest
+                {
+                    FirstRecordIndex = firstRecordIndex,
+                    MaxResults = maxResults,
+                    SearchCultureName = searchCultureName,
+                    AccessInfo = accessInfoMessage,
+                    SearchFields = searchFields
+                };
+
+                var response = await PatientListServiceClient.SearchAsync(request);
+                return response?.UpdatedPatList.Select(pieRecord => new Patient()
+                {
+                    AccessionNumber = pieRecord.AccessionNumber,
+                    DateOfBirth = new DateTime(pieRecord.Patient.Dob.Year, pieRecord.Patient.Dob.Month, pieRecord.Patient.Dob.Day),
+                    Department = pieRecord.Department,
+                    Gender = pieRecord.Patient.Sex.ToString(),
+                    Id = pieRecord.InternalId,
+                    MRN = pieRecord.MRN,
+                    LastName = pieRecord.Patient.LastName,
+                    FirstName = pieRecord.Patient.FirstName,
+                    ProcedureType = pieRecord.ProcedureType,
+                    Room = pieRecord.Room
+                }).ToList();
+            }
+            catch (Exception ex)
             {
-                AccessionNumber = pieRecord.AccessionNumber,
-                DateOfBirth = new DateTime(pieRecord.Patient.Dob.Year, pieRecord.Patient.Dob.Month, pieRecord.Patient.Dob.Day),
-                Department = pieRecord.Department,
-                Gender = pieRecord.Patient.Sex.ToString(),
-                Id = pieRecord.InternalId,
-                MRN = pieRecord.MRN,
-                LastName = pieRecord.Patient.LastName,
-                FirstName = pieRecord.Patient.FirstName,
-                ProcedureType = pieRecord.ProcedureType,
-                Room = pieRecord.Room
-            }).ToList();
+                throw;
+            }
         }
 
         public async Task<Patient> RegisterPatient(Patient newPatient)

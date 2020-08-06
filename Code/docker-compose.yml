@@ -65,6 +65,7 @@ services:
       PatientListStorageGrpcPort: '5011'
       grpcCertificate: '/certificates/grpc_localhost_root_l1.pfx' 
       grpcPassword: '0123456789'
+      grpcThumprint: '86CD34D2FADDFFE00D31F4C12294782ECCB9041F'
       IgnoreGrpcServicesMocks: 'false'
       seqUrl: 'http://seq:5341'
       logging:loglevel:default: 'debug'

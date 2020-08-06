@@ -2,7 +2,6 @@
 using Avalanche.Shared.Infrastructure.Services.Settings;
 using Grpc.Core.Testing;
 using Grpc.Core;
-using Ism.Storage.Common.Core.Configuration.Proto;
 using Moq;
 using NUnit.Framework;
 using System;
@@ -15,6 +14,7 @@ using System.Threading.Tasks;
 using Avalanche.Api.ViewModels;
 using Google.Protobuf.WellKnownTypes;
 using Newtonsoft.Json;
+using Ism.Storage.Common.Core.Configuration.Protos;
 
 namespace Avalanche.Api.Tests.Services
 {
@@ -23,7 +23,7 @@ namespace Avalanche.Api.Tests.Services
     {
         Mock<IConfigurationService> _configurationService;
 
-        Moq.Mock<ConfigurationStorage.ConfigurationStorageClient> _mockGrpcClient;
+        Moq.Mock<ConfigurationService.ConfigurationServiceClient> _mockGrpcClient;
         StorageService _service;
 
         [SetUp]
@@ -31,7 +31,7 @@ namespace Avalanche.Api.Tests.Services
         {
             _configurationService = new Mock<IConfigurationService>();
 
-            _mockGrpcClient = new Moq.Mock<ConfigurationStorage.ConfigurationStorageClient>();
+            _mockGrpcClient = new Moq.Mock<ConfigurationService.ConfigurationServiceClient>();
 
             var assemblyFolder = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
             var certificateFile = assemblyFolder + @"/grpc_localhost_root_l1.pfx";

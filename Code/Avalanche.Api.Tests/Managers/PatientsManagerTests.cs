@@ -1,10 +1,12 @@
 ﻿using Avalanche.Api.Managers.Health;
+using Avalanche.Api.Managers.Settings;
 using Avalanche.Api.Services.Configuration;
 using Avalanche.Api.Services.Health;
 using Avalanche.Api.Utilities;
 using Avalanche.Api.ViewModels;
 using Avalanche.Shared.Domain.Models;
 using Ism.PatientInfoEngine.Common.Core;
+using Ism.PatientInfoEngine.Common.Core.Protos;
 using Ism.Telemetry.RabbitMq.Models;
 using Microsoft.Extensions.Logging;
 using Moq;
@@ -22,14 +24,15 @@ namespace Avalanche.Api.Tests.Managers
     public class PatientsManagerTests
     {
         Mock<IPieService> _pieService;
-
+        Mock<ISettingsService> _settingsService;
         PatientsManager _manager;
 
         [SetUp]
         public void Setup()
         {
             _pieService = new Mock<IPieService>();
-            _manager = new PatientsManager(_pieService.Object);
+            _settingsService = new Mock<ISettingsService>();
+            _manager = new PatientsManager(_pieService.Object, _settingsService.Object);
         }
 
         public static IEnumerable<TestCaseData> NewPatientViewModelWrongDataTestCases
