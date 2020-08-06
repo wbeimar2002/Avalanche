@@ -8,6 +8,7 @@ EXPOSE 444
 FROM mcr.microsoft.com/dotnet/core/sdk:3.1-buster AS build
 WORKDIR /src
 COPY ["Avalanche.Security.Server/Avalanche.Security.Server.csproj", "Avalanche.Security.Server/"]
+COPY ["Avalanche.Shared.Infrastructure/Avalanche.Shared.Infrastructure.csproj", "Avalanche.Shared.Infrastructure/"]
 RUN dotnet restore "Avalanche.Security.Server/Avalanche.Security.Server.csproj"
 
 COPY . .
