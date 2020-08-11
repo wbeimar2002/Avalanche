@@ -45,11 +45,11 @@ namespace Avalanche.Api.Services.Health
 
             var certificate = new System.Security.Cryptography.X509Certificates.X509Certificate2(grpcCertificate, grpcPassword);
 
-            //PatientListServiceClient = ClientHelper.GetInsecureClient<PatientListService.PatientListServiceClient>($"https://{_hostIpAddress}:{patientListServiceGrpcPort}");
-            //PatientListStorageClient = ClientHelper.GetInsecureClient<PatientListStorage.PatientListStorageClient>($"https://{_hostIpAddress}:{patientListStorageGrpcPort}");
+            PatientListServiceClient = ClientHelper.GetInsecureClient<PatientListService.PatientListServiceClient>($"https://{_hostIpAddress}:{patientListServiceGrpcPort}");
+            PatientListStorageClient = ClientHelper.GetInsecureClient<PatientListStorage.PatientListStorageClient>($"https://{_hostIpAddress}:{patientListStorageGrpcPort}");
 
-            PatientListServiceClient = ClientHelper.GetSecureClient<PatientListService.PatientListServiceClient>($"https://{_hostIpAddress}:{patientListServiceGrpcPort}", certificate);
-            PatientListStorageClient = ClientHelper.GetSecureClient<PatientListStorage.PatientListStorageClient>($"https://{_hostIpAddress}:{patientListStorageGrpcPort}", certificate);
+            //PatientListServiceClient = ClientHelper.GetSecureClient<PatientListService.PatientListServiceClient>($"https://{_hostIpAddress}:{patientListServiceGrpcPort}", certificate);
+            //PatientListStorageClient = ClientHelper.GetSecureClient<PatientListStorage.PatientListStorageClient>($"https://{_hostIpAddress}:{patientListStorageGrpcPort}", certificate);
         }
 
         public async Task<List<Patient>> Search(PatientSearchFieldsMessage searchFields, int firstRecordIndex, int maxResults, string searchCultureName)
@@ -111,6 +111,23 @@ namespace Avalanche.Api.Services.Health
                 AccessInfo = accessInfoMessage,
                 PatientRecord = new Ism.Storage.Common.Core.PatientList.Proto.PatientRecordMessage()
                 {
+                    AccessionNumber = "Sample",
+                    Department = "Sample",
+                    AdmissionStatus = new AdmissionStatusMessage()
+                    {
+                        
+                    },
+                    InternalId = 0,
+                    PerformingPhysician = new Ism.Storage.Common.Core.PatientList.Proto.PhysicianMessage()
+                    { 
+                        FirstName = "Sample",
+                        LastName = "Sample",
+                        UserId = "Sample",
+                    },
+                    ProcedureId = "Sample",
+                    ProcedureType = "Sample",
+                    Room = "Sample",
+                    Scheduled = new Timestamp(),
                     Mrn = newPatient.MRN,
                     Patient = new Ism.Storage.Common.Core.PatientList.Proto.PatientMessage()
                     {
