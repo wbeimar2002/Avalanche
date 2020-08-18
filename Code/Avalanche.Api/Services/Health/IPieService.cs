@@ -13,7 +13,7 @@ namespace Avalanche.Api.Services.Health
     public interface IPieService
     {
         Task<List<Patient>> Search(PatientSearchFieldsMessage searchFields, int firstRecordIndex, int maxResults, string searchCultureName);
-        Task<Patient> RegisterPatient(Patient newPatient);
+        Task<Patient> RegisterPatient(Patient newPatient, ProcedureType procedureType, Physician physician);
         Task UpdatePatient(Patient existingPatient);
         Task<int> DeletePatient(ulong patiendId);
     }

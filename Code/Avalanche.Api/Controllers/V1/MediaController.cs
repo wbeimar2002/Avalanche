@@ -34,32 +34,6 @@ namespace Avalanche.Api.Controllers.V1
         }
 
         /// <summary>
-        /// Send a command to the output
-        /// </summary>
-        [HttpPut("commands")]
-        [Produces(typeof(List<CommandResponse>))]
-        public async Task<IActionResult> SendCommand([FromBody]CommandViewModel command, [FromServices]IWebHostEnvironment env)
-        {
-            try
-            {
-                _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
-
-                var response = await _mediaManager.SendCommandAsync(command);
-
-                return Ok(response);
-            }
-            catch (Exception exception)
-            {
-                _appLoggerService.LogError(LoggerHelper.GetLogMessage(DebugLogType.Exception), exception);
-                return new BadRequestObjectResult(exception.Get(env.IsDevelopment()));
-            }
-            finally
-            {
-                _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
-            }
-        }
-
-        /// <summary>
         /// Return the timeout file source
         /// </summary>
         [HttpGet("timeout/settings")]

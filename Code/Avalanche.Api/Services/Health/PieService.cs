@@ -54,53 +54,42 @@ namespace Avalanche.Api.Services.Health
 
         public async Task<List<Patient>> Search(PatientSearchFieldsMessage searchFields, int firstRecordIndex, int maxResults, string searchCultureName)
         {
-            try
+            AppContext.SetSwitch("System.Net.Http.SocketsHttpHandler.Http2UnencryptedSupport", true);
+
+            var accessInfo = _accessInfoFactory.GenerateAccessInfo();
+
+            var accessInfoMessage = new Ism.PatientInfoEngine.Common.Core.Protos.AccessInfoMessage
             {
-                AppContext.SetSwitch("System.Net.Http.SocketsHttpHandler.Http2UnencryptedSupport", true);
+                ApplicationName = accessInfo.ApplicationName,
+                Ip = accessInfo.Ip,
+                Id = accessInfo.Id.ToString(),
+                Details = accessInfo.Details,
+                MachineName = accessInfo.MachineName,
+                UserName = accessInfo.UserName
+            };
 
-                var accessInfo = _accessInfoFactory.GenerateAccessInfo();
-
-                var accessInfoMessage = new Ism.PatientInfoEngine.Common.Core.Protos.AccessInfoMessage
-                {
-                    ApplicationName = accessInfo.ApplicationName,
-                    Ip = accessInfo.Ip,
-                    Id = accessInfo.Id.ToString(),
-                    Details = accessInfo.Details,
-                    MachineName = accessInfo.MachineName,
-                    UserName = accessInfo.UserName
-                };
-
-                var request = new SearchRequest
-                {
-                    FirstRecordIndex = firstRecordIndex,
-                    MaxResults = maxResults,
-                    SearchCultureName = searchCultureName,
-                    AccessInfo = accessInfoMessage,
-                    SearchFields = searchFields
-                };
-
-                var response = await PatientListServiceClient.SearchAsync(request);
-                return response?.UpdatedPatList.Select(pieRecord => new Patient()
-                {
-                    AccessionNumber = pieRecord.AccessionNumber,
-                    DateOfBirth = new DateTime(pieRecord.Patient.Dob.Year, pieRecord.Patient.Dob.Month, pieRecord.Patient.Dob.Day),
-                    Department = pieRecord.Department,
-                    Gender = pieRecord.Patient.Sex.ToString(),
-                    Id = pieRecord.InternalId,
-                    MRN = pieRecord.MRN,
-                    LastName = pieRecord.Patient.LastName,
-                    FirstName = pieRecord.Patient.FirstName,
-                    ProcedureType = pieRecord.ProcedureType,
-                    Room = pieRecord.Room
-                }).ToList();
-            }
-            catch (Exception ex)
+            var request = new SearchRequest
             {
-                throw;
-            }
+                FirstRecordIndex = firstRecordIndex,
+                MaxResults = maxResults,
+                SearchCultureName = searchCultureName,
+                AccessInfo = accessInfoMessage,
+                SearchFields = searchFields
+            };
+
+            var response = await PatientListServiceClient.SearchAsync(request);
+            return response?.UpdatedPatList.Select(pieRecord => new Patient()
+            {
+                DateOfBirth = new DateTime(pieRecord.Patient.Dob.Year, pieRecord.Patient.Dob.Month, pieRecord.Patient.Dob.Day),
+                Gender = pieRecord.Patient.Sex.ToString(),
+                Id = pieRecord.InternalId,
+                MRN = pieRecord.MRN,
+                LastName = pieRecord.Patient.LastName,
+                FirstName = pieRecord.Patient.FirstName,
+            }).ToList();
         }
 
-        public async Task<Patient> RegisterPatient(Patient newPatient)
+        public async Task<Patient> RegisterPatient(Patient newPatient, ProcedureType procedureType, Physician physician)
         {
             var accessInfo = _accessInfoFactory.GenerateAccessInfo();
 
@@ -111,23 +100,15 @@ namespace Avalanche.Api.Services.Health
                 AccessInfo = accessInfoMessage,
                 PatientRecord = new Ism.Storage.Common.Core.PatientList.Proto.PatientRecordMessage()
                 {
-                    AccessionNumber = "Sample",
-                    Department = "Sample",
-                    AdmissionStatus = new AdmissionStatusMessage()
-                    {
-                        
-                    },
+                    //TODO: Validate this default data
+                    AccessionNumber = "Unknown",
+                    Department = "Unknown",
+                    AdmissionStatus = new AdmissionStatusMessage(),
                     InternalId = 0,
-                    PerformingPhysician = new Ism.Storage.Common.Core.PatientList.Proto.PhysicianMessage()
-                    { 
-                        FirstName = "Sample",
-                        LastName = "Sample",
-                        UserId = "Sample",
-                    },
-                    ProcedureId = "Sample",
-                    ProcedureType = "Sample",
-                    Room = "Sample",
+                    Room = "Unknown",
                     Scheduled = new Timestamp(),
+                    ProcedureId = "Unknown",
+
                     Mrn = newPatient.MRN,
                     Patient = new Ism.Storage.Common.Core.PatientList.Proto.PatientMessage()
                     {
@@ -140,6 +121,13 @@ namespace Avalanche.Api.Services.Health
                         FirstName = newPatient.FirstName,
                         LastName = newPatient.LastName,
                         Sex = GrpcModelsMappingHelper.GetGender(newPatient.Gender),
+                    },
+                    ProcedureType = procedureType.Id,
+                    PerformingPhysician = new Ism.Storage.Common.Core.PatientList.Proto.PhysicianMessage()
+                    {
+                        UserId = physician.Id,
+                        FirstName = physician.FirstName,
+                        LastName = physician.LastName,
                     }
                 }
             });
@@ -148,16 +136,12 @@ namespace Avalanche.Api.Services.Health
 
             return new Patient()
             {
-                AccessionNumber = pieRecord.AccessionNumber,
                 DateOfBirth = new DateTime(pieRecord.Patient.Dob.Year, pieRecord.Patient.Dob.Month, pieRecord.Patient.Dob.Day),
-                Department = pieRecord.Department,
                 Gender = pieRecord.Patient.Sex.ToString(),
                 Id = pieRecord.InternalId,
                 MRN = pieRecord.Mrn,
                 LastName = pieRecord.Patient.LastName,
                 FirstName = pieRecord.Patient.FirstName,
-                ProcedureType = pieRecord.ProcedureType,
-                Room = pieRecord.Room
             };
         }
 

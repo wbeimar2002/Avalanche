@@ -15,6 +15,6 @@ namespace Avalanche.Api.ViewModels
         public string Message { get; set; }
         public string Type { get; set; }
 
-        public List<Output> Outputs { get; set; }
+        public List<Device> Devices { get; set; }
     }
 }

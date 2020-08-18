@@ -51,7 +51,12 @@ namespace Avalanche.Api.Managers.Health
                 FirstName = newPatient.FirstName,
                 LastName = newPatient.LastName,
                 Gender = newPatient.Gender.Id,
-            });
+            },
+            new ProcedureType()
+            { 
+                Id = newPatient.ProcedureType.Id
+            }, 
+            newPatient.Physician);
         }
 
         public async Task<Shared.Domain.Models.Patient> QuickPatientRegistration()
@@ -70,6 +75,15 @@ namespace Avalanche.Api.Managers.Health
                 FirstName = $"{formattedDate}FirstName",
                 LastName = $"{formattedDate}LastName",
                 Gender = "U",
+            },
+            new ProcedureType()
+            {
+                Id = "Unknown",
+            },
+            new Physician()
+            {
+                Id = "Unknown",
+                FirstName = "Admin"
             });
         }
 

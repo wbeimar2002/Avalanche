@@ -77,6 +77,7 @@ namespace Avalanche.Api
             services.AddSingleton<IMetadataManager, MetadataManager>();
             services.AddSingleton<ILicensingManager, LicensingManagerMock>();
             services.AddSingleton<IMediaService, MediaService>();
+            services.AddSingleton<IDevicesManager, DevicesManager>();
             services.AddSingleton<IMediaManager, MediaManager>();
             services.AddSingleton<IPieService, PieService>();
             services.AddSingleton<ISettingsService, SettingsService>();
