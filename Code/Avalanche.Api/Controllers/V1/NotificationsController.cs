@@ -17,6 +17,7 @@ using Ism.RabbitMq.Client;
 using Microsoft.Extensions.Options;
 using Ism.RabbitMq.Client.Models;
 using Microsoft.AspNetCore.Cors;
+using Avalanche.Api.Managers.Notifications;
 
 namespace Avalanche.Api.Controllers.V1
 {
@@ -27,32 +28,26 @@ namespace Avalanche.Api.Controllers.V1
     public class NotificationsController : ControllerBase
     {
         readonly ILogger _appLoggerService;
-        readonly IRabbitMqClientService _rabbitMqClientService;
-        readonly IBroadcastService _broadcastService;
-        readonly RabbitMqOptions _rabbitMqOptions;
+        readonly INotificationsManager _notificationsManager;
 
-        public NotificationsController(IBroadcastService broadcastService,
+        public NotificationsController(
             ILogger<NotificationsController> appLoggerService,
-            IOptions<RabbitMqOptions> rabbitMqOptions,
-            IRabbitMqClientService rabbitMqClient)
+            INotificationsManager notificationsManager)
         {
+            _notificationsManager = notificationsManager;
             _appLoggerService = appLoggerService;
-            _rabbitMqClientService = rabbitMqClient;
-            _rabbitMqOptions = rabbitMqOptions.Value;
-            _broadcastService = broadcastService;
         }
 
         /// <summary>
         /// Send broadcast to Signal R using RabbitMQ
         /// </summary>
         [HttpPost("queue")]
-        public IActionResult Broadcast([FromBody]Ism.Broadcaster.Models.MessageRequest messageRequest, [FromServices]IWebHostEnvironment env)
+        public IActionResult SendDirectMessage([FromBody]Ism.Broadcaster.Models.MessageRequest messageRequest, [FromServices]IWebHostEnvironment env)
         {
             try
             {
                 _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
-
-                _rabbitMqClientService.SendMessage(_rabbitMqOptions.QueueName, messageRequest.Json());
+                _notificationsManager.SendQueuedMessage(messageRequest);
 
                 return Accepted();
             }
@@ -76,7 +71,7 @@ namespace Avalanche.Api.Controllers.V1
             try
             {
                 _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
-                _broadcastService.Broadcast(messageRequest);
+                _notificationsManager.SendDirectMessage(messageRequest);
 
                 return Accepted();
             }

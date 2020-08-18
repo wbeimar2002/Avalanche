@@ -28,6 +28,7 @@ namespace Avalanche.Api.Tests.Services
 
         Moq.Mock<WebRtcStreamer.WebRtcStreamerClient> _mockPgsGrpcClient;
         Moq.Mock<PgsTimeout.PgsTimeoutClient> _mockPgsTimeoutClient;
+
         MediaService _service;
 
         [SetUp]

@@ -2,7 +2,6 @@
 using Avalanche.Shared.Infrastructure.Services.Settings;
 using Grpc.Core.Testing;
 using Grpc.Core;
-using Ism.Storage.Common.Core.Configuration.Proto;
 using Moq;
 using NUnit.Framework;
 using System;
@@ -15,6 +14,7 @@ using System.Threading.Tasks;
 using Avalanche.Api.ViewModels;
 using Google.Protobuf.WellKnownTypes;
 using Newtonsoft.Json;
+using Ism.Storage.Common.Core.Configuration.Protos;
 
 namespace Avalanche.Api.Tests.Services
 {
@@ -23,7 +23,7 @@ namespace Avalanche.Api.Tests.Services
     {
         Mock<IConfigurationService> _configurationService;
 
-        Moq.Mock<PatientListStorage.PatientListStorageClient> _mockGrpcClient;
+        Moq.Mock<ConfigurationService.ConfigurationServiceClient> _mockGrpcClient;
         StorageService _service;
 
         [SetUp]
@@ -31,7 +31,7 @@ namespace Avalanche.Api.Tests.Services
         {
             _configurationService = new Mock<IConfigurationService>();
 
-            _mockGrpcClient = new Moq.Mock<PatientListStorage.PatientListStorageClient>();
+            _mockGrpcClient = new Moq.Mock<ConfigurationService.ConfigurationServiceClient>();
 
             var assemblyFolder = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
             var certificateFile = assemblyFolder + @"/grpc_localhost_root_l1.pfx";
@@ -65,7 +65,7 @@ namespace Avalanche.Api.Tests.Services
             var fakeCall = TestCalls.AsyncUnaryCall(Task.FromResult(response), Task.FromResult(new Metadata()), () => Status.DefaultSuccess, () => new Metadata(), () => { });
             _mockGrpcClient.Setup(mock => mock.GetConfigurationAsync(request, null, null, CancellationToken.None)).Returns(fakeCall);
 
-            _service.PatientListStorageClient = _mockGrpcClient.Object;
+            _service.ConfigurationStorageService = _mockGrpcClient.Object;
 
             var actionResult = _service.GetJson<List<KeyValuePairViewModel>>("Genders", 1);
 
@@ -97,7 +97,7 @@ namespace Avalanche.Api.Tests.Services
             var fakeCall = TestCalls.AsyncUnaryCall(Task.FromResult(new Empty()), Task.FromResult(new Metadata()), () => Status.DefaultSuccess, () => new Metadata(), () => { });
             _mockGrpcClient.Setup(mock => mock.SaveConfigurationAsync(request, null, null, CancellationToken.None)).Returns(fakeCall);
 
-            _service.PatientListStorageClient = _mockGrpcClient.Object;
+            _service.ConfigurationStorageService = _mockGrpcClient.Object;
 
             var actionResult = _service.SaveJson("Sample", fakeData);
 

@@ -15,9 +15,11 @@ using Ism.RabbitMq.Client;
 using Avalanche.Api.Handlers;
 using Ism.RabbitMq.Client.Models;
 using Microsoft.Extensions.Options;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Avalanche.Api.Hubs
 {
+    [ExcludeFromCodeCoverage]
     public class BroadcastHub : Hub
     {
         #region Constructor

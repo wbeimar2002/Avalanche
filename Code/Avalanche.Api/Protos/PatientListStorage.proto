@@ -1,0 +1,172 @@
+syntax = "proto3";
+import "google/protobuf/empty.proto";
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/wrappers.proto";
+
+option csharp_namespace = "Ism.Storage.Common.Core.PatientList.Proto";
+
+package storage;
+
+service PatientListStorage {
+  rpc AddPatientList (AddPatientListRequest) returns (google.protobuf.Empty);
+  rpc AddPatientRecord (AddPatientRecordRequest) returns (AddPatientRecordResponse);
+  rpc DeletePatientRecord (DeletePatientRecordRequest) returns (DeletePatientRecordResponse);
+  rpc GetActivePatients (GetActivePatientsRequest) returns (GetActivePatientsResponse);
+  rpc GetPatientRecord (GetPatientRecordRequest) returns (GetPatientRecordResponse);
+  rpc HandleAdmissionStatusChange (HandleAdmissionStatusChangeRequest) returns (google.protobuf.Empty);
+  rpc SearchPatientList (SearchPatientListRequest) returns (SearchPatientListResponse);
+  rpc UpdatePatientRecord (UpdatePatientRecordRequest) returns (google.protobuf.Empty);
+}
+
+// Type Messages
+
+message AccessInfoMessage {
+    string id = 1;
+    google.protobuf.StringValue ip = 2;
+    google.protobuf.StringValue userName = 3; 
+    google.protobuf.StringValue applicationName = 4; 
+    google.protobuf.StringValue machineName = 5;
+    google.protobuf.StringValue details = 6;
+}
+
+message FixedDateMessage {
+    int32 year = 1;
+    int32 month = 2;
+    int32 day = 3;
+}
+
+message PatientMessage {
+    string firstName = 1;
+    string lastName = 2;
+    FixedDateMessage dob = 3;
+    SexMessage sex = 4;
+}
+
+message PatientRecordMessage {
+    google.protobuf.StringValue accessionNumber = 1;
+    AdmissionStatusMessage admissionStatus = 2;
+    google.protobuf.StringValue department = 3;
+    uint64 internalId = 4;
+    google.protobuf.StringValue mrn = 5;
+    PatientMessage patient = 6;
+    PhysicianMessage performingPhysician = 7;
+    google.protobuf.StringValue procedureId = 8;
+    google.protobuf.StringValue procedureType = 9;
+    map<string, string> properties = 10;
+    google.protobuf.StringValue room = 11;
+    google.protobuf.Timestamp scheduled = 12;
+    repeated SecondaryPhysicianMessage secondaryPhysicians = 13;
+}
+
+message PatientSearchParametersMessage {
+    google.protobuf.StringValue accession = 1;
+    google.protobuf.StringValue department = 2;
+    google.protobuf.StringValue keyword = 3;
+    google.protobuf.StringValue mrn = 4;
+    google.protobuf.StringValue patientLastName = 5;
+    google.protobuf.StringValue procedureId = 6;
+    google.protobuf.StringValue room = 7;
+    google.protobuf.Timestamp scheduledLowerBoundary = 8;
+    google.protobuf.Timestamp scheduledUpperBoundary = 9;
+}
+
+message PhysicianMessage {
+    string firstName = 1;
+    string lastName = 2;
+    string userId = 3;
+}
+
+message SecondaryPhysicianMessage {
+    PhysicianMessage physician = 1;
+    string role = 2;
+}
+
+// Enums
+
+enum AdmissionStatusMessage {
+    None = 0;
+    Admit = 1;
+    Discharge = 2;
+    ImplicitDischarge = 3;
+    Error = 4;
+    Finished = 5;
+    CancelOrder = 6;
+}
+
+enum SexMessage {
+    M = 0;
+    F = 1;
+    U = 2;
+}
+
+enum SearchTypeMessage {
+    DicomList = 0;
+    DicomDirect = 1;
+    HL7List = 2;
+    LibraryList = 3;
+}
+
+// Request Messages
+
+message AddPatientListRequest {
+	repeated PatientRecordMessage patientList = 1;
+    AccessInfoMessage accessInfo = 2;
+}
+
+message AddPatientRecordRequest {
+	PatientRecordMessage patientRecord = 1;
+    AccessInfoMessage accessInfo = 2;
+}
+
+message DeletePatientRecordRequest {
+	uint64 patientRecordId = 1;
+    AccessInfoMessage accessInfo = 2;
+}
+
+message GetActivePatientsRequest {
+	string room = 1;
+}
+
+message GetPatientRecordRequest {
+	uint64 patientRecordId = 1;
+    AccessInfoMessage accessInfo = 2;
+}
+
+message HandleAdmissionStatusChangeRequest {
+	SearchTypeMessage searchType = 1;
+    PatientRecordMessage patientRecord = 2;
+    AccessInfoMessage accessInfo = 3;
+}
+
+message SearchPatientListRequest {
+	PatientSearchParametersMessage searchParameters = 1;
+    int32 page = 2;
+    int32 pageSize = 3;
+}
+
+message UpdatePatientRecordRequest {
+	PatientRecordMessage patientRecord = 1;
+    AccessInfoMessage accessInfo = 2;
+}
+
+// Response Messages
+
+message AddPatientRecordResponse {
+	PatientRecordMessage patientRecord = 1;
+}
+
+message DeletePatientRecordResponse {
+	int32 recordsDeleted = 1;
+}
+
+message GetActivePatientsResponse {
+	repeated PatientRecordMessage activePatientRecords = 1;
+}
+
+message GetPatientRecordResponse {
+	PatientRecordMessage patientRecord = 1;
+}
+
+message SearchPatientListResponse {
+	repeated PatientRecordMessage searchResults = 1;
+}

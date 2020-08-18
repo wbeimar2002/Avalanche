@@ -79,5 +79,10 @@ namespace Avalanche.Api.Services.Configuration
                 PgsVideoAlwaysOn = actionResponseForAlwaysOn.IsAlwaysOn
             };
         }
+
+        public Task<PatientsSetupSettings> GetPatientsSetupSettingsAsync()
+        {
+            return Task.FromResult(new PatientsSetupSettings() { QuickRegistrationAllowed = true });
+        }
     }
 }
