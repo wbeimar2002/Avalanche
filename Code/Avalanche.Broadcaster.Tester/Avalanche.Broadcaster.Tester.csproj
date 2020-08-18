@@ -7,6 +7,8 @@
 
   <ItemGroup>
     <PackageReference Include="Ism.Broadcaster" Version="1.0.0-prerelease3" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="3.1.7" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="3.1.7" />
   </ItemGroup>
 
 </Project>

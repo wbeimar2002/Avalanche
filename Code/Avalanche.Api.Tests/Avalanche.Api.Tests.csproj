@@ -7,6 +7,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Controllers\NotificationsControllerTests.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Remove="grpc_localhost_root_l1.pfx" />
   </ItemGroup>
 
