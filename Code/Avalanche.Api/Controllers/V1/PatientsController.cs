@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Security;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using Avalanche.Api.Managers.Health;
 using Avalanche.Api.ViewModels;
@@ -138,7 +139,8 @@ namespace Avalanche.Api.Controllers.V1
             try
             {
                 _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
-                var newPatient = await _patientsManager.QuickPatientRegistration();
+
+                var newPatient = await _patientsManager.QuickPatientRegistration(User);
 
                 return new ObjectResult(newPatient) { StatusCode = StatusCodes.Status201Created };
             }

@@ -14,6 +14,7 @@ using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -232,7 +233,7 @@ namespace Avalanche.Api.Tests.Managers
         {
             _pieService.Setup(mock => mock.RegisterPatient(It.IsAny<Patient>(), It.IsAny<ProcedureType>(), It.IsAny<Physician>())).ReturnsAsync(new Patient());
 
-            var result = _manager.QuickPatientRegistration();
+            var result = _manager.QuickPatientRegistration(It.IsAny<ClaimsPrincipal>());
 
             _pieService.Verify(mock => mock.RegisterPatient(It.IsAny<Patient>(), It.IsAny<ProcedureType>(), It.IsAny<Physician>()), Times.Once);
         }

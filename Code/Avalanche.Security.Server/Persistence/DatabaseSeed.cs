@@ -33,8 +33,8 @@ namespace Avalanche.Security.Server.Persistence
             {
                 var users = new List<User>
                 {
-                    new User { Email = "admin@admin.com", Password = passwordHasher.HashPassword("12345678") },
-                    new User { Email = "common@common.com", Password = passwordHasher.HashPassword("12345678") },
+                    new User { FirstName = "Main", LastName ="Administrator", Email = "admin@admin.com", Password = passwordHasher.HashPassword("12345678") },
+                    new User { FirstName = "Common", LastName ="User", Email = "common@common.com", Password = passwordHasher.HashPassword("12345678") },
                 };
 
                 users[0].UserRoles.Add(new UserRole

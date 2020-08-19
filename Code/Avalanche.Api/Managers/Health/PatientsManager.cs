@@ -14,6 +14,7 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace Avalanche.Api.Managers.Health
@@ -59,7 +60,7 @@ namespace Avalanche.Api.Managers.Health
             newPatient.Physician);
         }
 
-        public async Task<Shared.Domain.Models.Patient> QuickPatientRegistration()
+        public async Task<Shared.Domain.Models.Patient> QuickPatientRegistration(System.Security.Claims.ClaimsPrincipal user)
         {
             //TODO:Validate this
             //Performing physician is administrator by default
@@ -80,10 +81,11 @@ namespace Avalanche.Api.Managers.Health
             {
                 Id = "Unknown",
             },
-            new Physician()
+            new Physician() 
             {
-                Id = "Unknown",
-                FirstName = "Admin"
+                Id = user.FindFirst("Id")?.Value,
+                FirstName = user.FindFirst("FirstName")?.Value,
+                LastName = user.FindFirst("LastName")?.Value,
             });
         }
 
