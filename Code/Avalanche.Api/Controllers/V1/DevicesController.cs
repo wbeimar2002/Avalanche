@@ -61,14 +61,14 @@ namespace Avalanche.Api.Controllers.V1
         /// <summary>
         /// Returns all the destinations for setup 
         /// </summary>
-        [HttpGet("destinations/setup")]
-        [Produces(typeof(List<Device>))]
-        public async Task<IActionResult> GetSetupDestinations([FromServices] IWebHostEnvironment env)
+        [HttpGet("outputs/pgs")]
+        [Produces(typeof(List<Output>))]
+        public async Task<IActionResult> GetPGSOutputs([FromServices] IWebHostEnvironment env)
         {
             try
             {
                 _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
-                var result = await _devicesManager.GetSetupDestinations();
+                var result = await _devicesManager.GetPGSOutputs();
                 return Ok(result);
             }
             catch (Exception exception)
@@ -85,14 +85,14 @@ namespace Avalanche.Api.Controllers.V1
         /// <summary>
         /// Returns all the destinations for timeout 
         /// </summary>
-        [HttpGet("destinations/timeout")]
-        [Produces(typeof(List<Device>))]
-        public async Task<IActionResult> GetTimeoutDestinations([FromServices] IWebHostEnvironment env)
+        [HttpGet("outputs/timeout")]
+        [Produces(typeof(List<Output>))]
+        public async Task<IActionResult> GetTimeoutOuputs([FromServices] IWebHostEnvironment env)
         {
             try
             {
                 _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
-                var result = await _devicesManager.GetTimeoutDestinations();
+                var result = await _devicesManager.GetTimeoutOutputs();
                 return Ok(result);
             }
             catch (Exception exception)
@@ -109,14 +109,14 @@ namespace Avalanche.Api.Controllers.V1
         /// <summary>
         /// Returns all the destinations for operations 
         /// </summary>
-        [HttpGet("destinations/operations")]
-        [Produces(typeof(List<Device>))]
-        public async Task<IActionResult> GetOperationsDestinations([FromServices] IWebHostEnvironment env)
+        [HttpGet("outputs/operations")]
+        [Produces(typeof(List<Output>))]
+        public async Task<IActionResult> GetOperationsOuputs([FromServices] IWebHostEnvironment env)
         {
             try
             {
                 _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
-                var result = await _devicesManager.GetOperationsDestinations();
+                var result = await _devicesManager.GetOperationsOutputs();
                 return Ok(result);
             }
             catch (Exception exception)
@@ -134,7 +134,7 @@ namespace Avalanche.Api.Controllers.V1
         /// Returns all the destinations for operations 
         /// </summary>
         [HttpGet("sources/operations")]
-        [Produces(typeof(List<Device>))]
+        [Produces(typeof(List<Source>))]
         public async Task<IActionResult> GetOperationsSources([FromServices] IWebHostEnvironment env)
         {
             try

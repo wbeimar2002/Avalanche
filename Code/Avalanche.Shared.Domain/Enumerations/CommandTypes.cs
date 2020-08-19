@@ -32,6 +32,10 @@ namespace Avalanche.Shared.Domain.Enumerations
         [Description("Timeout Previous Pdf Slide")]
         TimeoutPreviousPdfSlide = 11,
         [Description("Timeout Set Current Slide")]
-        TimeoutSetCurrentSlide = 12
+        TimeoutSetCurrentSlide = 12,
+        [Description("Fullscreen Mode")]
+        FullScreen = 13,
+        [Description("Exit Fullscreen Mode")]
+        ExitFullScreen = 14
     }
 }

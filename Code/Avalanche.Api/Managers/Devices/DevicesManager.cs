@@ -143,31 +143,181 @@ namespace Avalanche.Api.Managers.Devices
             await _mediaService.TimeoutSetModeAsync(setModeComment);
         }
 
-        public Task<List<Device>> GetOperationsSources()
+        public Task<List<Source>> GetOperationsSources()
         {
-            List<Device> outputs = new List<Device>();
-            outputs.Add(new Device()
+            List<Source> outputs = new List<Source>();
+            outputs.Add(new Source()
+            { 
+                Id = Guid.NewGuid().ToString(),
+                IsActive = true,
+                Name = "Room Cam",
+                Type = SourceType.RoomCamera,
+                Group = "A"
+            });
+
+            outputs.Add(new Source()
+            {
+                Id = Guid.NewGuid().ToString(),
+                IsActive = false,
+                Name = "Endo 001",
+                Type = SourceType.Endoscope,
+                Group = "A"
+            });
+
+            outputs.Add(new Source()
+            {
+                Id = Guid.NewGuid().ToString(),
+                IsActive = true,
+                Name = "Laparoscope",
+                Type = SourceType.Laparoscope,
+                Group = "A"
+            });
+
+            outputs.Add(new Source()
+            {
+                Id = Guid.NewGuid().ToString(),
+                IsActive = false,
+                Name = "C-arm",
+                Type = SourceType.CArm,
+                Group = "A"
+            });
+
+            outputs.Add(new Source()
+            {
+                Id = Guid.NewGuid().ToString(),
+                IsActive = false,
+                Name = "X-ray",
+                Type = SourceType.XRay,
+                Group = "A"
+            });
+
+            outputs.Add(new Source()
+            {
+                Id = Guid.NewGuid().ToString(),
+                IsActive = false,
+                Name = "Light Cam",
+                Type = SourceType.RoomCamera,
+                Group = "A"
+            });
+
+            outputs.Add(new Source()
+            {
+                Id = Guid.NewGuid().ToString(),
+                IsActive = false,
+                Name = "MedPresence",
+                Type = SourceType.MedPresence,
+                Group = "A"
+            });
+
+            outputs.Add(new Source()
+            {
+                Id = Guid.NewGuid().ToString(),
+                IsActive = false,
+                Name = "Phys. PC",
+                Type = SourceType.PC,
+                Group = "A"
+            });
+
+            outputs.Add(new Source()
+            {
+                Id = Guid.NewGuid().ToString(),
+                IsActive = false,
+                Name = "PTZ Cam",
+                Type = SourceType.WebCamera,
+                Group = "A"
+            });
+
+            outputs.Add(new Source()
+            {
+                Id = Guid.NewGuid().ToString(),
+                IsActive = false,
+                Name = "Nurse PC",
+                Type = SourceType.PC,
+                Group = "A"
+            });
+
+            outputs.Add(new Source()
+            {
+                Id = Guid.NewGuid().ToString(),
+                IsActive = false,
+                Name = "Surg. Micro.",
+                Type = SourceType.MicroscopeSurgical,
+                Group = "B"
+            });
+
+            outputs.Add(new Source()
+            {
+                Id = Guid.NewGuid().ToString(),
+                IsActive = false,
+                Name = "EasySuite",
+                Type = SourceType.EasySuite,
+                Group = "A"
+            });
+
+            outputs.Add(new Source()
+            {
+                Id = Guid.NewGuid().ToString(),
+                IsActive = false,
+                Name = "Bronch. Scp.",
+                Type = SourceType.Bronchoscope,
+                Group = "B"
+            });
+
+            outputs.Add(new Source()
+            {
+                Id = Guid.NewGuid().ToString(),
+                IsActive = false,
+                Name = "EasyView",
+                Type = SourceType.EasyView,
+                Group = "A"
+            });
+
+            outputs.Add(new Source()
+            {
+                Id = Guid.NewGuid().ToString(),
+                IsActive = false,
+                Name = "Tiles",
+                Type = SourceType.Tiles,
+                Group = "A"
+            });
+
+            outputs.Add(new Source()
+            {
+                Id = Guid.NewGuid().ToString(),
+                IsActive = false,
+                Name = "Endo 002",
+                Type = SourceType.Endoscope,
+                Group = "A"
+            });
+
+            return Task.FromResult(outputs);
+        }
+
+        public Task<List<Output>> GetOperationsOutputs()
+        {
+            List<Output> outputs = new List<Output>();
+            outputs.Add(new Output()
             {
                 Id = Guid.NewGuid().ToString(),
                 IsActive = true,
                 Name = "MAIN TV 1",
             });
 
-            outputs.Add(new Device()
+            outputs.Add(new Output()
             {
                 Id = Guid.NewGuid().ToString(),
                 IsActive = false,
                 Name = "MAIN TV 2",
             });
 
-            outputs.Add(new Device()
+            outputs.Add(new Output()
             {
                 Id = Guid.NewGuid().ToString(),
                 IsActive = true,
                 Name = "AUX TV 1",
             });
 
-            outputs.Add(new Device()
+            outputs.Add(new Output()
             {
                 Id = Guid.NewGuid().ToString(),
                 IsActive = false,
@@ -177,10 +327,10 @@ namespace Avalanche.Api.Managers.Devices
             return Task.FromResult(outputs);
         }
 
-        public Task<List<Device>> GetOperationsDestinations()
+        public Task<List<Output>> GetPGSOutputs()
         {
-            List<Device> outputs = new List<Device>();
-            outputs.Add(new Device()
+            List<Output> outputs = new List<Output>();
+            outputs.Add(new Output()
             {
                 Id = Guid.NewGuid().ToString(),
                 IsActive = true,
@@ -188,7 +338,7 @@ namespace Avalanche.Api.Managers.Devices
                 Thumbnail = "https://www.olympus-oste.eu/media/innovations/images_5/2n_research_and_development/entwicklung_produktinnovationen_intro.jpg"
             });
 
-            outputs.Add(new Device()
+            outputs.Add(new Output()
             {
                 Id = Guid.NewGuid().ToString(),
                 IsActive = false,
@@ -196,7 +346,7 @@ namespace Avalanche.Api.Managers.Devices
                 Thumbnail = "https://www.olympus-oste.eu/media/innovations/images_5/2n_research_and_development/entwicklung_produktinnovationen_intro.jpg"
             });
 
-            outputs.Add(new Device()
+            outputs.Add(new Output()
             {
                 Id = Guid.NewGuid().ToString(),
                 IsActive = true,
@@ -204,45 +354,7 @@ namespace Avalanche.Api.Managers.Devices
                 Thumbnail = "https://www.olympus-oste.eu/media/innovations/images_5/2n_research_and_development/entwicklung_produktinnovationen_systemintegration_6.jpg"
             });
 
-            outputs.Add(new Device()
-            {
-                Id = Guid.NewGuid().ToString(),
-                IsActive = false,
-                Name = "MAIN TV 2",
-                Thumbnail = "https://www.olympus-oste.eu/media/innovations/images_5/2n_research_and_development/entwicklung_produktinnovationen_systemintegration_6.jpg"
-            });
-
-            return Task.FromResult(outputs);
-        }
-
-        public Task<List<Device>> GetSetupDestinations()
-        {
-            List<Device> outputs = new List<Device>();
-            outputs.Add(new Device()
-            {
-                Id = Guid.NewGuid().ToString(),
-                IsActive = true,
-                Name = "MAIN TV 1",
-                Thumbnail = "https://www.olympus-oste.eu/media/innovations/images_5/2n_research_and_development/entwicklung_produktinnovationen_intro.jpg"
-            });
-
-            outputs.Add(new Device()
-            {
-                Id = Guid.NewGuid().ToString(),
-                IsActive = false,
-                Name = "MAIN TV 2",
-                Thumbnail = "https://www.olympus-oste.eu/media/innovations/images_5/2n_research_and_development/entwicklung_produktinnovationen_intro.jpg"
-            });
-
-            outputs.Add(new Device()
-            {
-                Id = Guid.NewGuid().ToString(),
-                IsActive = true,
-                Name = "AUX TV 1",
-                Thumbnail = "https://www.olympus-oste.eu/media/innovations/images_5/2n_research_and_development/entwicklung_produktinnovationen_systemintegration_6.jpg"
-            });
-
-            outputs.Add(new Device()
+            outputs.Add(new Output()
             {
                 Id = Guid.NewGuid().ToString(),
                 IsActive = false,
@@ -254,31 +366,31 @@ namespace Avalanche.Api.Managers.Devices
             return Task.FromResult(outputs);
         }
 
-        public Task<List<Device>> GetTimeoutDestinations()
+        public Task<List<Output>> GetTimeoutOutputs()
         {
-            List<Device> sources = new List<Device>();
-            sources.Add(new Device()
+            List<Output> outputs = new List<Output>();
+            outputs.Add(new Output()
             {
                 Id = Guid.NewGuid().ToString(),
                 IsActive = true,
                 Name = "Charting System",
             });
 
-            sources.Add(new Device()
+            outputs.Add(new Output()
             {
                 Id = Guid.NewGuid().ToString(),
                 IsActive = true,
                 Name = "Nurse PC",
             });
 
-            sources.Add(new Device()
+            outputs.Add(new Output()
             {
                 Id = Guid.NewGuid().ToString(),
                 IsActive = true,
                 Name = "Phys. PC",
             });
 
-            return Task.FromResult(sources);
+            return Task.FromResult(outputs);
         }
     }
 }

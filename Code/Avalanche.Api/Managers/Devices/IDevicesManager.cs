@@ -12,9 +12,9 @@ namespace Avalanche.Api.Managers.Devices
     public interface IDevicesManager
     {
         Task<List<CommandResponse>> SendCommandAsync(CommandViewModel command);
-        Task<List<Device>> GetOperationsSources();
-        Task<List<Device>> GetOperationsDestinations();
-        Task<List<Device>> GetSetupDestinations();
-        Task<List<Device>> GetTimeoutDestinations();
+        Task<List<Source>> GetOperationsSources();
+        Task<List<Output>> GetOperationsOutputs();
+        Task<List<Output>> GetPGSOutputs();
+        Task<List<Output>> GetTimeoutOutputs();
     }
 }
