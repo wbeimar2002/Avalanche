@@ -40,8 +40,8 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Ism.Broadcaster" Version="1.0.0-prerelease3" />
-    <PackageReference Include="Ism.RabbitMq.Client" Version="1.0.0-prerelease2" />
+    <PackageReference Include="Ism.Broadcaster" Version="1.0.0-prerelease4" />
+    <PackageReference Include="Ism.RabbitMq.Client" Version="1.0.0-prerelease3" />
     <PackageReference Include="Ism.Security.Grpc" Version="1.0.0-prerelease5" />
     <!--<PackageReference Include="Ism.PatientInfoEngine.Client.Core" Version="1.0.0-prerelease3" />-->
     <!--<PackageReference Include="Ism.Utility.Core" Version="1.0.1-prerelease9" />-->

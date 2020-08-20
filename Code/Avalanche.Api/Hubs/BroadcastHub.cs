@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Ism.Broadcaster.Enumerations;
 using Ism.Broadcaster.EventArgs;
 using Ism.Broadcaster.Models;
 using Ism.Broadcaster.Services;
@@ -24,61 +23,62 @@ namespace Avalanche.Api.Hubs
     {
         #region Constructor
 
-        readonly IHubContext<BroadcastHub> _hubContext;
         readonly ILogger _appLoggerService;
         readonly RabbitMqOptions _rabbitMqOptions;
+        readonly IBroadcastService _broadcastService;
+        readonly IRabbitMqClientService _rabbitMqClientService;
+        readonly IHubContext<BroadcastHub> _hubContext;
 
-        public BroadcastHub(IBroadcastService broadcaster,
-            IRabbitMqClientService rabbitMqClientService,
-            ILogger<BroadcastHub> appLoggerService,
+        public BroadcastHub(IHubContext<BroadcastHub> hubContext,
             IOptions<RabbitMqOptions> rabbitMqOptions,
-            IHubContext<BroadcastHub> hubContext)
+            IBroadcastService broadcastService,
+            IRabbitMqClientService rabbitMqClientService,
+            ILogger<BroadcastHub> appLoggerService)
         {
+            _broadcastService = broadcastService;
+            _rabbitMqClientService = rabbitMqClientService;
             _hubContext = hubContext;
-            _appLoggerService = appLoggerService;
             _rabbitMqOptions = rabbitMqOptions.Value;
+            _appLoggerService = appLoggerService;
 
-            if (broadcaster == null)
-                throw new ArgumentNullException("Broadcast object is null!");
+            if (broadcastService == null)
+                throw new ArgumentNullException("BroadCast object is null !");
 
-            BeginBroadcast(broadcaster, rabbitMqClientService); //This will avoid an explicit call to initialize a hub by message broadcaster client
+            BeginBroadcast(); // This will avoid an explicit call to initialize a hub by message broadcaster client
+
+            _rabbitMqClientService.SubscribeToDirectMessages(_rabbitMqOptions.QueueName, ProcessMessage);
         }
 
         #endregion
 
         #region Private Methods
 
-        public override Task OnConnectedAsync()
+        private void ProcessMessage(Ism.RabbitMq.Client.Models.MessageRequest messageRequest, ulong deliveryTag)
         {
-            ConnectionsHandler.ConnectedIds.Add(Context.ConnectionId);
-            return base.OnConnectedAsync();
+            var message = (messageRequest.Json().Get<Ism.Broadcaster.Models.MessageRequest>());
+            _broadcastService.Broadcast(message);
+            //Here we can take the decision of preserve or discard the message from RabbitMq
+            _rabbitMqClientService.SetAcknowledge(deliveryTag, true);
         }
 
-        public override Task OnDisconnectedAsync(Exception exception)
+        /// <summary>
+        /// Begin broadCast message
+        /// </summary>
+        /// <param name="broadCast">IBroadCast value</param>
+        private void BeginBroadcast()
         {
-            ConnectionsHandler.ConnectedIds.Remove(Context.ConnectionId);
-            return base.OnDisconnectedAsync(exception);
-        }
-
-        private void BeginBroadcast(IBroadcastService broadcastService, IRabbitMqClientService rabbitMqClientService)
-        {
-            rabbitMqClientService.SubscribeToDirectMessages(_rabbitMqOptions.QueueName, (messageRequest, deliveryTag) =>
-            {
-                broadcastService.Broadcast((messageRequest.Json().Get<Ism.Broadcaster.Models.MessageRequest>()));
-                //Here we can take the decision of preserve or discard the message from RabbitMq
-                rabbitMqClientService.SetAcknowledge(deliveryTag, true);
-            });
-
             // Register/Attach broadcast listener event
-            broadcastService.MessageListened += (sender, broadcastArgs) =>
+            _broadcastService.MessageListened += (sender, broadCastArgs)
+                =>
             {
-                RegisterMessageEvents(broadcastArgs);
+                RegisterMessageEvents(broadCastArgs);
             };
 
             // Unregister/detach broadcast listener event
-            broadcastService.MessageListened -= (sender, broadcastArgs) =>
+            _broadcastService.MessageListened -= (sender, broadCastArgs)
+               =>
             {
-                RegisterMessageEvents(broadcastArgs);
+                RegisterMessageEvents(broadCastArgs);
             };
         }
 
@@ -92,15 +92,15 @@ namespace Avalanche.Api.Hubs
                 {
                     IClientProxy clientProxy = _hubContext.Clients.All;
 
-                    if (messageRequest.EventGroup == EventGroupEnum.Unknown)
+                    if (string.IsNullOrEmpty(messageRequest.EventName))
                     {
                         string errorMessage = "Unknown or empty event name is requested!";
-                        clientProxy.SendAsync(EventGroupEnum.OnException.EnumDescription(), errorMessage); // Goes to the listener
+                        clientProxy.SendAsync("OnException", errorMessage); // Goes to the listener
                         throw new Exception(errorMessage); // Goes to the broadcaster
                     }
                     else
                     {
-                        clientProxy.SendAsync(messageRequest.EventGroup.EnumDescription(), messageRequest.Content);
+                        clientProxy.SendAsync(messageRequest.EventName, messageRequest.Content);
                     }
                 }
             }

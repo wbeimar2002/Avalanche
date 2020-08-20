@@ -1,29 +1,19 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Ism.Broadcaster.Models;
-using Ism.Broadcaster.Services;
+﻿using Avalanche.Api.Managers.Notifications;
 using Avalanche.Shared.Infrastructure.Enumerations;
 using Avalanche.Shared.Infrastructure.Extensions;
 using Avalanche.Shared.Infrastructure.Helpers;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using Ism.RabbitMq.Client;
-using Microsoft.Extensions.Options;
-using Ism.RabbitMq.Client.Models;
-using Microsoft.AspNetCore.Cors;
-using Avalanche.Api.Managers.Notifications;
+using System;
 
 namespace Avalanche.Api.Controllers.V1
 {
     [Route("[controller]")]
     [ApiController]
-    [Authorize]
+    //[Authorize]
 
     public class NotificationsController : ControllerBase
     {
@@ -41,7 +31,7 @@ namespace Avalanche.Api.Controllers.V1
         /// <summary>
         /// Send broadcast to Signal R using RabbitMQ
         /// </summary>
-        [HttpPost("queue")]
+        [HttpPost("queued")]
         public IActionResult SendDirectMessage([FromBody]Ism.Broadcaster.Models.MessageRequest messageRequest, [FromServices]IWebHostEnvironment env)
         {
             try
