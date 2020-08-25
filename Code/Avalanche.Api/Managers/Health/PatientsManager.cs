@@ -29,12 +29,6 @@ namespace Avalanche.Api.Managers.Health
             _settingsService = settingsService;
         }
 
-        [ExcludeFromCodeCoverage]
-        public async Task<PatientsSetupSettings> GetPatientsSetupSettingsAsync()
-        {
-            return await _settingsService.GetPatientsSetupSettingsAsync();
-        }
-
         public async Task<Shared.Domain.Models.Patient> RegisterPatient(PatientViewModel newPatient)
         {
             Preconditions.ThrowIfNull(nameof(newPatient), newPatient);

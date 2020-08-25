@@ -1,6 +1,8 @@
-﻿using Avalanche.Api.ViewModels;
+﻿using Avalanche.Api.Services.Configuration;
+using Avalanche.Api.ViewModels;
 using Avalanche.Shared.Domain.Enumerations;
 using Avalanche.Shared.Domain.Models;
+using Avalanche.Shared.Infrastructure.Models;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
@@ -12,6 +14,22 @@ namespace Avalanche.Api.Managers.Settings
     [ExcludeFromCodeCoverage]
     public class SettingsManagerMock : ISettingsManager
     {
+        readonly ISettingsService _settingsService;
+        public SettingsManagerMock(ISettingsService settingsService)
+        {
+            _settingsService = settingsService;
+        }
+
+        public async Task<TimeoutSettings> GetTimeoutSettingsAsync()
+        {
+            return await _settingsService.GetTimeoutSettingsAsync();
+        }
+
+        public async Task<SetupSettings> GetSetupSettingsAsync()
+        {
+            return await _settingsService.GetSetupSettingsAsync();
+        }
+
         public Task<List<SettingCategory>> GetCategories()
         {
             var mock = new List<SettingCategory>();

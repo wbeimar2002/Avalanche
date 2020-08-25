@@ -9,6 +9,7 @@ namespace Avalanche.Shared.Domain.Enumerations
         Genders,
         ProcedureTypes,
         ContentTypes,
-        SourceTypes
+        SourceTypes,
+        Departments,
     }
 }

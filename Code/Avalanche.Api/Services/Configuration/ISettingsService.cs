@@ -9,6 +9,6 @@ namespace Avalanche.Api.Services.Configuration
     public interface ISettingsService
     {
         Task<TimeoutSettings> GetTimeoutSettingsAsync();
-        Task<PatientsSetupSettings> GetPatientsSetupSettingsAsync();
+        Task<SetupSettings> GetSetupSettingsAsync();
     }
 }

@@ -9,6 +9,7 @@ using Avalanche.Shared.Domain.Models;
 using Avalanche.Shared.Infrastructure.Enumerations;
 using Avalanche.Shared.Infrastructure.Extensions;
 using Avalanche.Shared.Infrastructure.Helpers;
+using Avalanche.Shared.Infrastructure.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Hosting;
@@ -28,11 +29,60 @@ namespace Avalanche.Api.Controllers.V1
         readonly ILogger _appLoggerService;
         readonly ISettingsManager _settingsManager;
 
-        public SettingsController(ILogger<SettingsController> appLoggerService,
-            ISettingsManager settingsManager)
+        public SettingsController(ISettingsManager settingsManager, ILogger<SettingsController> logger)
         {
-            _appLoggerService = appLoggerService;
+            _appLoggerService = logger;
             _settingsManager = settingsManager;
+        }
+
+        /// <summary>
+        /// Return the timeout file source
+        /// </summary>
+        [HttpGet("setup/settings")]
+        [Produces(typeof(SetupSettings))]
+        public async Task<IActionResult> GetSetupSettings([FromServices] IWebHostEnvironment env)
+        {
+            try
+            {
+                _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
+                var response = await _settingsManager.GetSetupSettingsAsync();
+                return Ok(response);
+            }
+            catch (Exception exception)
+            {
+                _appLoggerService.LogError(LoggerHelper.GetLogMessage(DebugLogType.Exception), exception);
+                return new BadRequestObjectResult(exception.Get(env.IsDevelopment()));
+            }
+            finally
+            {
+                _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
+            }
+        }
+
+        /// <summary>
+        /// Return the timeout file source
+        /// </summary>
+        [HttpGet("timeout/settings")]
+        [Produces(typeof(TimeoutSettings))]
+        public async Task<IActionResult> GetTimeoutSettings([FromServices] IWebHostEnvironment env)
+        {
+            try
+            {
+                _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
+
+                var response = await _settingsManager.GetTimeoutSettingsAsync();
+
+                return Ok(response);
+            }
+            catch (Exception exception)
+            {
+                _appLoggerService.LogError(LoggerHelper.GetLogMessage(DebugLogType.Exception), exception);
+                return new BadRequestObjectResult(exception.Get(env.IsDevelopment()));
+            }
+            finally
+            {
+                _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
+            }
         }
 
         /// <summary>

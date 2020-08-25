@@ -27,7 +27,7 @@ namespace Avalanche.Api.Controllers.V1
 
         readonly IDevicesManager _devicesManager;
 
-        public DevicesController(IDevicesManager devicesManager, ILogger<MediaController> logger)
+        public DevicesController(IDevicesManager devicesManager, ILogger<DevicesController> logger)
         {
             _appLoggerService = logger;
             _devicesManager = devicesManager;

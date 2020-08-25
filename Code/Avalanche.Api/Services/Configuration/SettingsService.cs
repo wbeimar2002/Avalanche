@@ -80,9 +80,14 @@ namespace Avalanche.Api.Services.Configuration
             };
         }
 
-        public Task<PatientsSetupSettings> GetPatientsSetupSettingsAsync()
+        public Task<SetupSettings> GetSetupSettingsAsync()
         {
-            return Task.FromResult(new PatientsSetupSettings() { QuickRegistrationAllowed = true });
+            //TODO: Validate this source with Gabe
+            return Task.FromResult(new SetupSettings()
+            {
+                Mode = Shared.Infrastructure.Enumerations.SetupMode.DicomHL7,
+                QuickRegistrationAllowed = true
+            });
         }
     }
 }

@@ -9,7 +9,6 @@ namespace Avalanche.Api.Managers.Devices
 {
     public interface IMediaManager
     {
-        Task<TimeoutSettings> GetTimeoutSettingsAsync();
         Task SaveFileAsync(IFormFile file);
     }
 }

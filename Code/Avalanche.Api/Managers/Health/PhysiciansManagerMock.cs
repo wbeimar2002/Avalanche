@@ -16,5 +16,11 @@ namespace Avalanche.Api.Managers.Health
             var fixture = new Fixture();
             return Task.FromResult(fixture.CreateMany<Physician>(10).ToList());
         }
+
+        public Task<List<Preset>> GetPresetsByPhysician(string id)
+        {
+            var fixture = new Fixture();
+            return Task.FromResult(fixture.CreateMany<Preset>(10).ToList());
+        }
     }
 }

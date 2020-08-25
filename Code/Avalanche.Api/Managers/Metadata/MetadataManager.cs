@@ -30,9 +30,26 @@ namespace Avalanche.Api.Managers.Metadata
                     return await GetContentTypes();
                 case Shared.Domain.Enumerations.MetadataTypes.SourceTypes:
                     return await GetSourceTypes();
+                case Shared.Domain.Enumerations.MetadataTypes.Departments:
+                    return await GetDepartments();
                 default:
                     return new List<KeyValuePairViewModel>();
             }
+        }
+
+        private async Task<List<KeyValuePairViewModel>> GetDepartments()
+        {
+            List<KeyValuePairViewModel> list = await _storageService.GetJson<List<KeyValuePairViewModel>>("Departments", 1);
+
+            if (list == null || list.Count == 0)
+            {
+                var fixture = new Fixture();
+                list = fixture.CreateMany<KeyValuePairViewModel>(10).ToList();
+
+                await _storageService.SaveJson("Departments", list);
+            }
+
+            return list;
         }
 
         private async Task<List<KeyValuePairViewModel>> GetProcedureTypes()

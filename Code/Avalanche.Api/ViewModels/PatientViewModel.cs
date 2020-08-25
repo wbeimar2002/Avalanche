@@ -16,5 +16,7 @@ namespace Avalanche.Api.ViewModels
         public KeyValuePairViewModel Gender { get; set; }
         public KeyValuePairViewModel ProcedureType { get; set; }
         public Physician Physician { get; set; }
+        public string ScopeSerialNumber { get; set; }
+        public List<Preset> Presets { get; set; }
     }
 }

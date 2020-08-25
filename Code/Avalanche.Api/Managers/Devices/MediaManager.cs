@@ -22,11 +22,6 @@ namespace Avalanche.Api.Managers.Devices
             _settingsService = settingsService;
         }
 
-        public async Task<TimeoutSettings> GetTimeoutSettingsAsync()
-        {
-            return await _settingsService.GetTimeoutSettingsAsync();
-        }
-        
         public async Task SaveFileAsync(IFormFile file)
         {
             //TODO: Pending Service that upload file
