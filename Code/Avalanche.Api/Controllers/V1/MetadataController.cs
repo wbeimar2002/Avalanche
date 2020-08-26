@@ -154,29 +154,5 @@ namespace Avalanche.Api.Controllers.V1
                 _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
             }
         }
-
-        /// <summary>
-        /// Get video routing presets
-        /// </summary>
-        [HttpGet("departments")]
-        [Produces(typeof(List<KeyValuePairViewModel>))]
-        public async Task<IActionResult> GetVideoRoutingPresets([FromServices] IWebHostEnvironment env)
-        {
-            try
-            {
-                _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
-                var result = await _settingsManager.GetSetupSettingsAsync();
-                return Ok(result);
-            }
-            catch (Exception exception)
-            {
-                _appLoggerService.LogError(LoggerHelper.GetLogMessage(DebugLogType.Exception), exception);
-                return new BadRequestObjectResult(exception.Get(env.IsDevelopment()));
-            }
-            finally
-            {
-                _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
-            }
-        }
     }
 }

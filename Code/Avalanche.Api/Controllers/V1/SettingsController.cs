@@ -69,9 +69,7 @@ namespace Avalanche.Api.Controllers.V1
             try
             {
                 _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
-
                 var response = await _settingsManager.GetTimeoutSettingsAsync();
-
                 return Ok(response);
             }
             catch (Exception exception)

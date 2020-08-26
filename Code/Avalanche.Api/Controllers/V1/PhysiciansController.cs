@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Avalanche.Api.Managers.Health;
 using Avalanche.Api.ViewModels;
+using Avalanche.Shared.Domain.Enumerations;
 using Avalanche.Shared.Domain.Models;
 using Avalanche.Shared.Infrastructure.Enumerations;
 using Avalanche.Shared.Infrastructure.Extensions;
@@ -82,15 +83,14 @@ namespace Avalanche.Api.Controllers.V1
             }
         }
 
-
         [HttpGet("{id}/videorouting/presets")]
         [Produces(typeof(List<KeyValuePairViewModel>))]
-        public async Task<IActionResult> GetPresetsByPhysician(string id, [FromServices] IWebHostEnvironment env)
+        public async Task<IActionResult> GetVideoRoutingPresetsByPhysician(string id, [FromServices] IWebHostEnvironment env)
         {
             try
             {
                 _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
-                var result = await _physiciansManager.GetPresetsByPhysician(id);
+                var result = await _physiciansManager.GetPresetsByPhysician(id, PresetTypes.VideoRouting);
                 return Ok(result);
             }
             catch (Exception exception)
@@ -104,6 +104,26 @@ namespace Avalanche.Api.Controllers.V1
             }
         }
 
+        [HttpGet("{id}/printing/presets")]
+        [Produces(typeof(List<KeyValuePairViewModel>))]
+        public async Task<IActionResult> GetPrintingPresetsByPhysician(string id, [FromServices] IWebHostEnvironment env)
+        {
+            try
+            {
+                _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
+                var result = await _physiciansManager.GetPresetsByPhysician(id, PresetTypes.Printing);
+                return Ok(result);
+            }
+            catch (Exception exception)
+            {
+                _appLoggerService.LogError(LoggerHelper.GetLogMessage(DebugLogType.Exception), exception);
+                return new BadRequestObjectResult(exception.Get(env.IsDevelopment()));
+            }
+            finally
+            {
+                _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
+            }
+        }
 
         /// <summary>
         /// Register physician

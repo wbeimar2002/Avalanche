@@ -1,4 +1,5 @@
 ﻿using AutoFixture;
+using Avalanche.Shared.Domain.Enumerations;
 using Avalanche.Shared.Domain.Models;
 using System;
 using System.Collections.Generic;
@@ -17,7 +18,7 @@ namespace Avalanche.Api.Managers.Health
             return Task.FromResult(fixture.CreateMany<Physician>(10).ToList());
         }
 
-        public Task<List<Preset>> GetPresetsByPhysician(string id)
+        public Task<List<Preset>> GetPresetsByPhysician(string id, PresetTypes presetType)
         {
             var fixture = new Fixture();
             return Task.FromResult(fixture.CreateMany<Preset>(10).ToList());

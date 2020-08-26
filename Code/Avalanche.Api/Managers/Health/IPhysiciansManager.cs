@@ -1,4 +1,5 @@
-﻿using Avalanche.Shared.Domain.Models;
+﻿using Avalanche.Shared.Domain.Enumerations;
+using Avalanche.Shared.Domain.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,6 +10,6 @@ namespace Avalanche.Api.Managers.Health
     public interface IPhysiciansManager
     {
         Task<List<Physician>> GetAllPhysicians();
-        Task<List<Preset>> GetPresetsByPhysician(string id);
+        Task<List<Preset>> GetPresetsByPhysician(string id, PresetTypes presetType);
     }
 }
