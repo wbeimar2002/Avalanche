@@ -26,13 +26,11 @@ namespace Avalanche.Api.Controllers.V1
     {
         readonly ILogger _appLoggerService;
         readonly IMetadataManager _metadataManager;
-        readonly ISettingsManager _settingsManager;
 
-        public MetadataController(ILogger<MetadataController> appLoggerService, IMetadataManager metadataManager, ISettingsManager settingsManager)
+        public MetadataController(ILogger<MetadataController> appLoggerService, IMetadataManager metadataManager)
         {
             _appLoggerService = appLoggerService;
             _metadataManager = metadataManager;
-            _settingsManager = settingsManager;
         }
 
         /// <summary>
