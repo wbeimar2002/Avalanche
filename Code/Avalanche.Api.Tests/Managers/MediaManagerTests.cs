@@ -23,7 +23,7 @@ namespace Avalanche.Api.Tests.Managers
         Mock<ISettingsService> _settingsService;
         Mock<ILogger<MediaManager>> _appLoggerService;
 
-        MediaManager _manager;
+        DevicesManager _manager;
 
         [SetUp]
         public void Setup()
@@ -32,7 +32,7 @@ namespace Avalanche.Api.Tests.Managers
             _settingsService = new Mock<ISettingsService>();
             _appLoggerService = new Mock<ILogger<MediaManager>>();
 
-            _manager = new MediaManager(_mediaService.Object, _settingsService.Object, _appLoggerService.Object);
+            _manager = new DevicesManager(_mediaService.Object, _settingsService.Object, _appLoggerService.Object);
         }
 
         #region Pgs
@@ -44,7 +44,7 @@ namespace Avalanche.Api.Tests.Managers
             {
                 CommandType = Shared.Domain.Enumerations.CommandTypes.PgsPlayVideo,
                 Message = "Sample",
-                Outputs = new List<Output>() { new Output() { Id = "Preview" } }
+                Devices = new List<Device>() { new Device() { Id = "Preview" } }
             };
 
             CommandResponse commandResponse = new CommandResponse();
@@ -64,7 +64,7 @@ namespace Avalanche.Api.Tests.Managers
             CommandViewModel commandViewModel = new CommandViewModel()
             {
                 CommandType = Shared.Domain.Enumerations.CommandTypes.PgsStopVideo,
-                Outputs = new List<Output>() { new Output() { Id = "Preview" } }
+                Devices = new List<Device>() { new Device() { Id = "Preview" } }
             };
 
             CommandResponse commandResponse = new CommandResponse();
@@ -85,7 +85,7 @@ namespace Avalanche.Api.Tests.Managers
             {
                 CommandType = Shared.Domain.Enumerations.CommandTypes.PgsHandleMessageForVideo,
                 Message = "Sample",
-                Outputs = new List<Output>() { new Output() { Id = "Preview" } }
+                Devices = new List<Device>() { new Device() { Id = "Preview" } }
             };
 
             CommandResponse commandResponse = new CommandResponse();
@@ -105,7 +105,7 @@ namespace Avalanche.Api.Tests.Managers
             CommandViewModel commandViewModel = new CommandViewModel()
             {
                 CommandType = Shared.Domain.Enumerations.CommandTypes.PgsPlayAudio,
-                Outputs = new List<Output>() { new Output() { Id = "Testing" } }
+                Devices = new List<Device>() { new Device() { Id = "Testing" } }
             };
 
             CommandResponse commandResponse = new CommandResponse();
@@ -125,7 +125,7 @@ namespace Avalanche.Api.Tests.Managers
             CommandViewModel commandViewModel = new CommandViewModel()
             {
                 CommandType = Shared.Domain.Enumerations.CommandTypes.PgsStopAudio,
-                Outputs = new List<Output>() { new Output() { Id = "Testing" } }
+                Devices = new List<Device>() { new Device() { Id = "Testing" } }
             };
 
             CommandResponse commandResponse = new CommandResponse();
@@ -148,7 +148,7 @@ namespace Avalanche.Api.Tests.Managers
             CommandViewModel commandViewModel = new CommandViewModel()
             {
                 CommandType = Shared.Domain.Enumerations.CommandTypes.TimeoutPlayPdfSlides,
-                Outputs = new List<Output>() { new Output() { Id = "Timeout" } }
+                Devices = new List<Device>() { new Device() { Id = "Timeout" } }
             };
 
             CommandResponse commandResponse = new CommandResponse();
@@ -168,7 +168,7 @@ namespace Avalanche.Api.Tests.Managers
             CommandViewModel commandViewModel = new CommandViewModel()
             {
                 CommandType = Shared.Domain.Enumerations.CommandTypes.TimeoutStopPdfSlides,
-                Outputs = new List<Output>() { new Output() { Id = "Timeout" } }
+                Devices = new List<Device>() { new Device() { Id = "Timeout" } }
             };
 
             CommandResponse commandResponse = new CommandResponse();
@@ -194,7 +194,7 @@ namespace Avalanche.Api.Tests.Managers
             CommandViewModel commandViewModel = new CommandViewModel()
             {
                 CommandType = Shared.Domain.Enumerations.CommandTypes.TimeoutStopPdfSlides,
-                Outputs = new List<Output>() { new Output() { Id = "Timeout" } }
+                Devices = new List<Device>() { new Device() { Id = "Timeout" } }
             };
 
             CommandResponse commandResponse = new CommandResponse();
@@ -220,7 +220,7 @@ namespace Avalanche.Api.Tests.Managers
             CommandViewModel commandViewModel = new CommandViewModel()
             {
                 CommandType = Shared.Domain.Enumerations.CommandTypes.TimeoutNextPdfSlide,
-                Outputs = new List<Output>() { new Output() { Id = "Timeout" } }
+                Devices = new List<Device>() { new Device() { Id = "Timeout" } }
             };
 
             CommandResponse commandResponse = new CommandResponse();
@@ -241,7 +241,7 @@ namespace Avalanche.Api.Tests.Managers
             CommandViewModel commandViewModel = new CommandViewModel()
             {
                 CommandType = Shared.Domain.Enumerations.CommandTypes.TimeoutPreviousPdfSlide,
-                Outputs = new List<Output>() { new Output() { Id = "Timeout" } }
+                Devices = new List<Device>() { new Device() { Id = "Timeout" } }
             };
 
             CommandResponse commandResponse = new CommandResponse();
@@ -262,7 +262,7 @@ namespace Avalanche.Api.Tests.Managers
             CommandViewModel commandViewModel = new CommandViewModel()
             {
                 CommandType = Shared.Domain.Enumerations.CommandTypes.TimeoutSetCurrentSlide,
-                Outputs = new List<Output>() { new Output() { Id = "Testing" } },
+                Devices = new List<Device>() { new Device() { Id = "Testing" } },
                 Message = "0"
             };
 

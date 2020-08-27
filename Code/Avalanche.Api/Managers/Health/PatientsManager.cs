@@ -14,6 +14,7 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace Avalanche.Api.Managers.Health
@@ -26,12 +27,6 @@ namespace Avalanche.Api.Managers.Health
         {
             _pieService = pieService;
             _settingsService = settingsService;
-        }
-
-        [ExcludeFromCodeCoverage]
-        public async Task<PatientsSetupSettings> GetPatientsSetupSettingsAsync()
-        {
-            return await _settingsService.GetPatientsSetupSettingsAsync();
         }
 
         public async Task<Shared.Domain.Models.Patient> RegisterPatient(PatientViewModel newPatient)
@@ -51,10 +46,15 @@ namespace Avalanche.Api.Managers.Health
                 FirstName = newPatient.FirstName,
                 LastName = newPatient.LastName,
                 Gender = newPatient.Gender.Id,
-            });
+            },
+            new ProcedureType()
+            { 
+                Id = newPatient.ProcedureType.Id
+            }, 
+            newPatient.Physician);
         }
 
-        public async Task<Shared.Domain.Models.Patient> QuickPatientRegistration()
+        public async Task<Shared.Domain.Models.Patient> QuickPatientRegistration(System.Security.Claims.ClaimsPrincipal user)
         {
             //TODO:Validate this
             //Performing physician is administrator by default
@@ -70,6 +70,16 @@ namespace Avalanche.Api.Managers.Health
                 FirstName = $"{formattedDate}FirstName",
                 LastName = $"{formattedDate}LastName",
                 Gender = "U",
+            },
+            new ProcedureType()
+            {
+                Id = "Unknown",
+            },
+            new Physician() 
+            {
+                Id = user.FindFirst("Id")?.Value,
+                FirstName = user.FindFirst("FirstName")?.Value,
+                LastName = user.FindFirst("LastName")?.Value,
             });
         }
 

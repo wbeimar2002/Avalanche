@@ -6,5 +6,6 @@ namespace Avalanche.Shared.Domain.Models
 {
     public class Procedure
     {
+        public string Id { get; set; }
     }
 }

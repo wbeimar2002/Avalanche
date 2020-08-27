@@ -14,6 +14,7 @@ using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -194,12 +195,12 @@ namespace Avalanche.Api.Tests.Managers
         
         public void RegisterPatientShouldFailIfNullOrIncompleteData(PatientViewModel patient)
         {
-            _pieService.Setup(mock => mock.RegisterPatient(It.IsAny<Patient>())).ReturnsAsync(new Patient());
+            _pieService.Setup(mock => mock.RegisterPatient(It.IsAny<Patient>(), It.IsAny<ProcedureType>(), It.IsAny<Physician>())).ReturnsAsync(new Patient());
 
             Task Act() => _manager.RegisterPatient(patient);
             Assert.That(Act, Throws.TypeOf<ArgumentNullException>());
 
-            _pieService.Verify(mock => mock.RegisterPatient(It.IsAny<Patient>()), Times.Never);            
+            _pieService.Verify(mock => mock.RegisterPatient(It.IsAny<Patient>(), It.IsAny<ProcedureType>(), It.IsAny<Physician>()), Times.Never);            
         }
 
         [Test]
@@ -220,21 +221,21 @@ namespace Avalanche.Api.Tests.Managers
                 }
             };
 
-            _pieService.Setup(mock => mock.RegisterPatient(It.IsAny<Patient>())).ReturnsAsync(new Patient());
+            _pieService.Setup(mock => mock.RegisterPatient(It.IsAny<Patient>(), It.IsAny<ProcedureType>(), It.IsAny<Physician>())).ReturnsAsync(new Patient());
 
             var result = _manager.RegisterPatient(patient);
 
-            _pieService.Verify(mock => mock.RegisterPatient(It.IsAny<Patient>()), Times.Once);
+            _pieService.Verify(mock => mock.RegisterPatient(It.IsAny<Patient>(), It.IsAny<ProcedureType>(), It.IsAny<Physician>()), Times.Once);
         }
 
         [Test]
         public void QuickPatientRegistrationWorks()
         {
-            _pieService.Setup(mock => mock.RegisterPatient(It.IsAny<Patient>())).ReturnsAsync(new Patient());
+            _pieService.Setup(mock => mock.RegisterPatient(It.IsAny<Patient>(), It.IsAny<ProcedureType>(), It.IsAny<Physician>())).ReturnsAsync(new Patient());
 
-            var result = _manager.QuickPatientRegistration();
+            var result = _manager.QuickPatientRegistration(It.IsAny<ClaimsPrincipal>());
 
-            _pieService.Verify(mock => mock.RegisterPatient(It.IsAny<Patient>()), Times.Once);
+            _pieService.Verify(mock => mock.RegisterPatient(It.IsAny<Patient>(), It.IsAny<ProcedureType>(), It.IsAny<Physician>()), Times.Once);
         }
 
         [Test, TestCaseSource(nameof(PatientUpdateViewModelWrongDataTestCases))]

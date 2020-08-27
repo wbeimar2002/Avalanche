@@ -95,8 +95,6 @@ namespace Avalanche.Api.Tests.Services
             { 
                 FirstName = "Sample",
                 DateOfBirth = DateTime.Now,
-                Department = "Sample",
-                AccessionNumber = "Sample",
                 Gender = "U",
                 LastName = "Sample",
                 MRN = "MRN",
@@ -107,7 +105,7 @@ namespace Avalanche.Api.Tests.Services
 
             _service.PatientListStorageClient = _mockListStorageClient.Object;
 
-            var actionResult = _service.RegisterPatient(newPatient);
+            var actionResult = _service.RegisterPatient(newPatient, new ProcedureType() { Id = "Unknown" }, new Physician() { Id = "Unknown" });
 
             _mockListStorageClient.Verify(mock => mock.AddPatientRecordAsync(It.IsAny<AddPatientRecordRequest>(), null, null, CancellationToken.None), Times.Once);
 
@@ -121,8 +119,6 @@ namespace Avalanche.Api.Tests.Services
             {
                 FirstName = "Sample",
                 DateOfBirth = DateTime.Now,
-                Department = "Sample",
-                AccessionNumber = "Sample",
                 Gender = "U",
                 LastName = "Sample",
                 MRN = "MRN",

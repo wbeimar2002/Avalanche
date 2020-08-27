@@ -14,6 +14,7 @@ using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Text;
 
 namespace Avalanche.Api.Tests.Controllers
@@ -235,7 +236,7 @@ namespace Avalanche.Api.Tests.Controllers
         [Test]
         public void QuickRegistrationShouldReturnOkWithNewPatientInfo()
         {
-            _patientsManager.Setup(mock => mock.QuickPatientRegistration()).ReturnsAsync(new Patient());
+            _patientsManager.Setup(mock => mock.QuickPatientRegistration(It.IsAny<ClaimsPrincipal>())).ReturnsAsync(new Patient());
 
             var okResult = _controller.QuickPatientRegistration(_environment.Object);
 
@@ -252,7 +253,7 @@ namespace Avalanche.Api.Tests.Controllers
         [Test]
         public void QuickRegistrationShouldReturnBadResultIfFails()
         {
-            _patientsManager.Setup(mock => mock.QuickPatientRegistration()).Throws(It.IsAny<Exception>());
+            _patientsManager.Setup(mock => mock.QuickPatientRegistration(It.IsAny<ClaimsPrincipal>())).Throws(It.IsAny<Exception>());
 
             var badResult = _controller.QuickPatientRegistration(_environment.Object);
 

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Security;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using Avalanche.Api.Managers.Health;
 using Avalanche.Api.ViewModels;
@@ -104,31 +105,6 @@ namespace Avalanche.Api.Controllers.V1
         }
 
         /// <summary>
-        /// Return the timeout file source
-        /// </summary>
-        [HttpGet("settings")]
-        public async Task<IActionResult> GetPatientsSetupSettingsAsync([FromServices] IWebHostEnvironment env)
-        {
-            try
-            {
-                _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
-
-                var response = await _patientsManager.GetPatientsSetupSettingsAsync();
-
-                return Ok(response);
-            }
-            catch (Exception exception)
-            {
-                _appLoggerService.LogError(LoggerHelper.GetLogMessage(DebugLogType.Exception), exception);
-                return new BadRequestObjectResult(exception.Get(env.IsDevelopment()));
-            }
-            finally
-            {
-                _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
-            }
-        }
-
-        /// <summary>
         /// Get a quick patient registration
         /// </summary>
         [HttpPost("quick")]
@@ -138,7 +114,8 @@ namespace Avalanche.Api.Controllers.V1
             try
             {
                 _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
-                var newPatient = await _patientsManager.QuickPatientRegistration();
+
+                var newPatient = await _patientsManager.QuickPatientRegistration(User);
 
                 return new ObjectResult(newPatient) { StatusCode = StatusCodes.Status201Created };
             }

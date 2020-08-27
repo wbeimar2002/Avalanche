@@ -1,7 +1,11 @@
-﻿using Avalanche.Shared.Infrastructure.Extensions;
+﻿using Avalanche.Api.Hubs;
+using Avalanche.Shared.Infrastructure.Extensions;
+using Ism.Broadcaster.EventArgs;
 using Ism.Broadcaster.Services;
 using Ism.RabbitMq.Client;
 using Ism.RabbitMq.Client.Models;
+using Microsoft.AspNetCore.SignalR;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
@@ -12,17 +16,23 @@ namespace Avalanche.Api.Managers.Notifications
 {
     public class NotificationsManager : INotificationsManager
     {
-        readonly IRabbitMqClientService _rabbitMqClientService;
-        readonly IBroadcastService _broadcastService;
+        readonly ILogger _appLoggerService;
         readonly RabbitMqOptions _rabbitMqOptions;
+        readonly IBroadcastService _broadcastService;
+        readonly IRabbitMqClientService _rabbitMqClientService;
+        readonly IHubContext<BroadcastHub> _hubContext;
 
-        public NotificationsManager(IBroadcastService broadcastService,
+        public NotificationsManager(IHubContext<BroadcastHub> hubContext,
             IOptions<RabbitMqOptions> rabbitMqOptions,
-            IRabbitMqClientService rabbitMqClient)
+            IBroadcastService broadcastService,
+            IRabbitMqClientService rabbitMqClientService,
+            ILogger<BroadcastHub> appLoggerService)
         {
-            _rabbitMqClientService = rabbitMqClient;
-            _rabbitMqOptions = rabbitMqOptions.Value;
             _broadcastService = broadcastService;
+            _rabbitMqClientService = rabbitMqClientService;
+            _hubContext = hubContext;
+            _rabbitMqOptions = rabbitMqOptions.Value;
+            _appLoggerService = appLoggerService;
         }
 
         public void SendDirectMessage(Ism.Broadcaster.Models.MessageRequest messageRequest)

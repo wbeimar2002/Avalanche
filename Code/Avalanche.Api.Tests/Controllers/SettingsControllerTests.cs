@@ -26,7 +26,7 @@ namespace Avalanche.Api.Tests.Controllers
             _environment = new Mock<IWebHostEnvironment>();
             _settingsManager = new Mock<ISettingsManager>();
 
-            _controller = new SettingsController(_appLoggerService.Object, _settingsManager.Object);
+            _controller = new SettingsController(_settingsManager.Object, _appLoggerService.Object);
         }
 
        

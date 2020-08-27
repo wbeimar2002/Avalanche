@@ -1,11 +1,12 @@
-﻿using System;
+﻿using Avalanche.Shared.Domain.Enumerations;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
 namespace Avalanche.Shared.Domain.Models
 {
-    public class Source
+    public class Source : Device
     {
-        public string Name { get; set; }
+        public SourceType Type { get; set; }
     }
 }

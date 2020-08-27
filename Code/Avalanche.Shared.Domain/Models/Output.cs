@@ -4,13 +4,8 @@ using System.Text;
 
 namespace Avalanche.Shared.Domain.Models
 {
-    public class Output
+    public class Output : Device
     {
-        public string Id { get; set; }
-        public string Name { get; set; }
         public string Thumbnail { get; set; }
-        public bool IsActive { get; set; }
-
-        List<State> States { get; set; }
     }
 }

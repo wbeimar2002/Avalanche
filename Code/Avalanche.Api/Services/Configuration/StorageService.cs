@@ -31,7 +31,7 @@ namespace Avalanche.Api.Services.Configuration
 
             _hostIpAddress = _configurationService.GetEnvironmentVariable("hostIpAddress");
 
-            var PatientListStoragePort = _configurationService.GetEnvironmentVariable("PatientListStoragePort");
+            var storageServiceGrpcPort = _configurationService.GetEnvironmentVariable("storageServiceGrpcPort");
             var grpcCertificate = _configurationService.GetEnvironmentVariable("grpcCertificate");
             var grpcPassword = _configurationService.GetEnvironmentVariable("grpcPassword");
 
@@ -40,7 +40,7 @@ namespace Avalanche.Api.Services.Configuration
             var certificate = new System.Security.Cryptography.X509Certificates.X509Certificate2(grpcCertificate, grpcPassword);
 
             //Client = ClientHelper.GetSecureClient<WebRtcStreamer.WebRtcStreamerClient>($"https://{hostIpAddress}:{WebRTCGrpcPort}", certificate);
-            ConfigurationStorageService = ClientHelper.GetInsecureClient<ConfigurationService.ConfigurationServiceClient>($"https://{_hostIpAddress}:{PatientListStoragePort}");
+            ConfigurationStorageService = ClientHelper.GetInsecureClient<ConfigurationService.ConfigurationServiceClient>($"https://{_hostIpAddress}:{storageServiceGrpcPort}");
         }
 
         public async Task<T> GetJson<T>(string configurationKey, int version)

@@ -58,11 +58,9 @@ services:
         ipv4_address: 192.168.1.60
     environment:
       hostIpAddress: '10.0.75.1'
-      WebRTCGrpcPort: '8001'
-      PgsTimeoutGrpcPort: '8002'
-      PatientListStoragePort: '8003'
-      PatientListServiceGrpcPort: '9089'
-      PatientListStorageGrpcPort: '5011'
+      mediaServiceGrpcPort: '8002'
+      pieServiceGrpcPort: '9089'
+      storageServiceGrpcPort: '5011'
       grpcCertificate: '/certificates/grpc_localhost_root_l1.pfx' 
       grpcPassword: '0123456789'
       grpcThumprint: '86CD34D2FADDFFE00D31F4C12294782ECCB9041F'
