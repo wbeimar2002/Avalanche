@@ -1,3 +1,4 @@
+using AutoMapper;
 using Avalanche.Api.Extensions;
 using Avalanche.Api.Hubs;
 using Avalanche.Api.Managers.Devices;
@@ -74,6 +75,7 @@ namespace Avalanche.Api
             services.AddSingleton<IFileService, FileService>();
             services.AddSingleton<IBroadcastService, BroadcastService>();
             services.AddSingleton<INotificationsManager, NotificationsManager>();
+            services.AddSingleton<IRoutingService, RoutingService>();
 
             services.AddHttpContextAccessor();
             services.AddSingleton<IAccessInfoFactory, AccessInfoFactory>();
@@ -97,6 +99,8 @@ namespace Avalanche.Api
             });
 
             services.AddSingleton<IRabbitMqClientService, RabbitMqClientService>();
+
+            services.AddAutoMapper(typeof(Startup));
 
             ConfigureAuthorization(services);
             ConfigureCorsPolicy(services, configurationService);

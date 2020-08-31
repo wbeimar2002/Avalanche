@@ -61,7 +61,8 @@ namespace Avalanche.Api.Managers.Health
             //Configurable in maintenance (on/off) - user logged in is auto-filled as physician when doing manual registration
             //Patient last name and MRN is of the local date, room name and time in the following format:  YYYY_mm_DD_HH_SS_MS_RM
 
-            string formattedDate = DateTime.UtcNow.ToString("yyyy_MM_dd_HH_mm_ss_ff_");
+            //TODO: This format should come from a configuration setting?
+            string formattedDate = DateTime.UtcNow.ToString("yyyy_MM_dd_T_HH_mm_ss_ff");
 
             return await _pieService.RegisterPatient(new Patient()
             {
@@ -75,12 +76,18 @@ namespace Avalanche.Api.Managers.Health
             {
                 Id = "Unknown",
             },
-            new Physician() 
+            new Physician()
             {
-                Id = user.FindFirst("Id")?.Value,
-                FirstName = user.FindFirst("FirstName")?.Value,
-                LastName = user.FindFirst("LastName")?.Value,
+                Id = "Admin",
+                FirstName = "Admin",
+                LastName = "Admin",
             });
+            //new Physician() 
+            //{
+            //    Id = user.FindFirst("Id")?.Value,
+            //    FirstName = user.FindFirst("FirstName")?.Value,
+            //    LastName = user.FindFirst("LastName")?.Value,
+            //});
         }
 
         public async Task UpdatePatient(PatientViewModel existingPatient)

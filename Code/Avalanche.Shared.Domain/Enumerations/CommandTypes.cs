@@ -34,7 +34,7 @@ namespace Avalanche.Shared.Domain.Enumerations
         [Description("Timeout Set Current Slide")]
         TimeoutSetCurrentSlide = 12,
         [Description("Fullscreen Mode")]
-        FullScreen = 13,
+        EnterFullScreen = 13,
         [Description("Exit Fullscreen Mode")]
         ExitFullScreen = 14
     }

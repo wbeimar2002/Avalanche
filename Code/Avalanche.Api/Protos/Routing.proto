@@ -1,0 +1,171 @@
+﻿syntax = "proto3";
+import "google/protobuf/empty.proto";
+import "google/protobuf/duration.proto";  
+
+option csharp_namespace = "Ism.Routing.Common.Core";
+
+package routing;
+
+service Routing{
+	rpc RouteVideo (RouteVideoRequest) returns (google.protobuf.Empty);
+	rpc RouteVideoTiling (RouteVideoTilingRequest) returns (google.protobuf.Empty);
+	
+	rpc SetTileLayout (SetTileLayoutRequest) returns (google.protobuf.Empty);
+	rpc GetTileLayout (GetTileLayoutRequest) returns (GetTileLayoutResponse);
+	rpc GetTileLayoutsForSink (GetTileLayoutsForSinkRequest) returns (GetTileLayoutsForSinkResponse);
+
+	rpc EnterFullScreen (EnterFullScreenRequest) returns (google.protobuf.Empty);
+	rpc ExitFullScreen (ExitFullScreenRequest) returns (google.protobuf.Empty);
+
+	rpc SetVideoOutEnabled (SetVideoOutEnabledRequest) returns (google.protobuf.Empty);
+
+	rpc GetVideoSources (google.protobuf.Empty) returns (GetVideoSourcesResponse);
+	rpc GetVideoSinks (google.protobuf.Empty) returns (GetVideoSinksResponse);
+	rpc GetAlternativeVideoSource (GetAlternativeVideoSourceRequest) returns (GetAlternativeVideoSourceResponse);
+
+	rpc GetCurrentRoutes (google.protobuf.Empty) returns (GetCurrentRoutesResponse);	
+
+	rpc GetVideoStateForSource (GetVideoStateForSourceRequest) returns (GetVideoStateForSourceResponse);
+
+	rpc GetRouteForSink (GetRouteForSinkRequest) returns (GetRouteForSinkResponse);
+	rpc GetTileRouteForSink (GetTileRouteForSinkRequest) returns (GetTileRouteForSinkResponse);
+}
+
+
+message RouteVideoRequest{
+	AliasIndexMessage source = 1;
+	AliasIndexMessage sink = 2;
+}
+
+message RouteVideoTilingRequest{
+	AliasIndexMessage source = 1;
+	AliasIndexMessage sink = 2;
+	int32 viewportIndex = 3;
+}
+
+message SetTileLayoutRequest{
+	AliasIndexMessage sink = 1;
+	string layoutName = 2;
+}
+
+message GetTileLayoutRequest{
+	AliasIndexMessage sink = 1;
+}
+
+message GetTileLayoutResponse{
+	TileLayoutMessage layout = 1;
+}
+
+message GetTileLayoutsForSinkRequest{
+	AliasIndexMessage sink = 1;
+}
+
+message GetTileLayoutsForSinkResponse{
+	repeated TileLayoutMessage layouts = 1;
+}
+
+message EnterFullScreenRequest{
+	AliasIndexMessage source = 1;
+	int32 userInterfaceId = 2;
+}
+
+message ExitFullScreenRequest{
+	int32 userInterfaceId = 1;
+}
+
+message SetVideoOutEnabledRequest{
+	bool enabled = 1;
+}
+
+message GetVideoStateForSourceRequest{
+	AliasIndexMessage source = 1;
+}
+
+message GetVideoStateForSourceResponse{
+	bool hasVideo = 1;
+}
+
+message GetRouteForSinkRequest{
+	AliasIndexMessage sink = 1;
+}
+
+message GetRouteForSinkResponse{
+	VideoRouteMessage route = 1;
+}
+
+message GetTileRouteForSinkRequest{
+	AliasIndexMessage sink = 1;
+}
+
+message GetTileRouteForSinkResponse{
+	TileVideoRouteMessage route = 1;
+}
+
+
+message GetVideoSourcesResponse{
+	repeated VideoSourceMessage videoSources = 1;
+}
+
+message GetVideoSinksResponse{
+	repeated VideoSinkMessage videoSinks = 1;
+}
+
+message GetCurrentRoutesResponse{
+	repeated VideoRouteMessage routes = 1;
+}
+
+message GetAlternativeVideoSourceRequest{
+	AliasIndexMessage source = 1;
+}
+
+message GetAlternativeVideoSourceResponse{
+	VideoSourceMessage source = 1;
+}
+
+message VideoSourceMessage{
+	AliasIndexMessage source = 1;
+	string friendlyName = 2;
+	string videoSourceType = 3;
+	int32 buttonIndex = 4;
+	bool showInUi = 5;
+	bool isDynamic = 6;
+}
+
+message VideoSinkMessage{
+	AliasIndexMessage sink = 1;
+	string friendlyName = 2;
+	string videoSinkType = 3;
+	int32 buttonIndex = 4;
+	bool showInUi = 5;
+}
+
+message VideoRouteMessage{
+	AliasIndexMessage source = 1;
+	AliasIndexMessage sink = 2;
+}
+
+message TileVideoRouteMessage{
+	repeated AliasIndexMessage sources = 1;
+	AliasIndexMessage sink = 2;
+	string layoutName = 3;
+	int32 sourceCount = 4;
+}
+
+message TileLayoutMessage{
+	string layoutName = 1;
+	int32 numViewports = 2;
+	repeated TileViewportMessage viewports = 3;
+}
+
+message TileViewportMessage{
+	int32 layer = 1;
+	double x = 2;
+	double y = 3;
+	double width = 4;
+	double height = 5;
+}
+
+message AliasIndexMessage{
+	string alias = 1;
+	int32 index = 2;
+}

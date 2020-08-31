@@ -16,6 +16,8 @@ using Avalanche.Shared.Infrastructure.Extensions;
 using Avalanche.Shared.Infrastructure.Helpers;
 using Microsoft.AspNetCore.Http;
 using System.Diagnostics.CodeAnalysis;
+using Ism.Routing.Common.Core;
+using AutoMapper;
 
 namespace Avalanche.Api.Managers.Devices
 {
@@ -23,13 +25,21 @@ namespace Avalanche.Api.Managers.Devices
     {
         readonly IMediaService _mediaService;
         readonly ISettingsService _settingsService;
-        ILogger<MediaManager> _appLoggerService;
+        readonly IRoutingService _routingService;
+        readonly ILogger<MediaManager> _appLoggerService;
+        readonly IMapper _mapper;
 
-        public DevicesManager(IMediaService mediaService, ISettingsService settingsService, ILogger<MediaManager> appLoggerService)
+        public DevicesManager(IMediaService mediaService, 
+            ISettingsService settingsService, 
+            IRoutingService routingService, 
+            ILogger<MediaManager> appLoggerService, 
+            IMapper mapper)
         {
             _mediaService = mediaService;
             _settingsService = settingsService;
+            _routingService = routingService;
             _appLoggerService = appLoggerService;
+            _mapper = mapper;
         }
 
         public async Task<List<CommandResponse>> SendCommandAsync(CommandViewModel command)
@@ -42,7 +52,7 @@ namespace Avalanche.Api.Managers.Devices
             {
                 CommandResponse response = await ExecuteCommandAsync(command.CommandType, new Command()
                 {
-                    OutputId = item.Id,
+                    Alias = item.Id,
                     Message = command.Message,
                     SessionId = command.SessionId,
                     Type = command.Type
@@ -56,7 +66,7 @@ namespace Avalanche.Api.Managers.Devices
 
         private async Task<CommandResponse> ExecuteCommandAsync(Shared.Domain.Enumerations.CommandTypes commandType, Command command)
         {
-            _appLoggerService.LogInformation($"{commandType.GetDescription()} command executed on {command.OutputId} output.");
+            _appLoggerService.LogInformation($"{commandType.GetDescription()} command executed on {command.Alias} output.");
 
             switch (commandType)
             {
@@ -67,7 +77,7 @@ namespace Avalanche.Api.Managers.Devices
 
                 case Shared.Domain.Enumerations.CommandTypes.PgsPlayVideo:
                     Preconditions.ThrowIfNull(nameof(command.Message), command.Message);
-                    await SetMode(command.OutputId, TimeoutModes.Pgs);
+                    await SetMode(command.Alias, TimeoutModes.Pgs);
                     return await _mediaService.PgsPlayVideoAsync(command);
 
                 case Shared.Domain.Enumerations.CommandTypes.PgsStopVideo:
@@ -84,14 +94,14 @@ namespace Avalanche.Api.Managers.Devices
                     return await _mediaService.PgsHandleMessageForVideoAsync(command);
 
                 //TODO: Still not used
-                //case Shared.Domain.Enumerations.CommandTypes.PgsMuteAudio:
-                //    return await _mediaService.PgsMuteAudioAsync(command);
+                case Shared.Domain.Enumerations.CommandTypes.PgsMuteAudio:
+                    return await _mediaService.PgsMuteAudioAsync(command);
 
-                //case Shared.Domain.Enumerations.CommandTypes.PgsGetAudioVolumeUp:
-                //    return await _mediaService.PgsGetAudioVolumeUpAsync(command);
+                case Shared.Domain.Enumerations.CommandTypes.PgsGetAudioVolumeUp:
+                    return await _mediaService.PgsGetAudioVolumeUpAsync(command);
 
-                //case Shared.Domain.Enumerations.CommandTypes.PgsGetAudioVolumeDown:
-                //    return await _mediaService.PgsGetAudioVolumeDownAsync(command);
+                case Shared.Domain.Enumerations.CommandTypes.PgsGetAudioVolumeDown:
+                    return await _mediaService.PgsGetAudioVolumeDownAsync(command);
                 #endregion
 
                 #region Timeout Commands
@@ -108,25 +118,66 @@ namespace Avalanche.Api.Managers.Devices
 
                 case Shared.Domain.Enumerations.CommandTypes.TimeoutSetCurrentSlide:
                     Preconditions.ThrowIfStringIsNotNumber(nameof(command.Message), command.Message);
-                    return await _mediaService.TimeoutSetCurrentSlideAsync(command); 
+                    return await _mediaService.TimeoutSetCurrentSlideAsync(command);
                 #endregion
+
+                #region Operate Commands
+                case Shared.Domain.Enumerations.CommandTypes.EnterFullScreen:
+                    return await EnterFullScreen(command);
+
+                case Shared.Domain.Enumerations.CommandTypes.ExitFullScreen:
+                    return await ExitFullScreen(command);
+                #endregion Operate Commands
 
                 default:
                     return null;
             }
         }
 
+        private async Task<CommandResponse> ExitFullScreen(Command command)
+        {
+            await _routingService.ExitFullScreen(new ExitFullScreenRequest()
+            {
+                UserInterfaceId = 0 //TODO: What is this?
+            });
+
+            return new CommandResponse()
+            {
+                OutputId = command.Alias,
+                ResponseCode = 0,
+            };
+        }
+
+        private async Task<CommandResponse> EnterFullScreen(Command command)
+        {
+            await _routingService.EnterFullScreen(new EnterFullScreenRequest()
+            {
+                Source = new AliasIndexMessage()
+                {
+                    Alias = command.Alias,
+                    Index = command.Index
+                },
+                UserInterfaceId = 0 //TODO: What is this?
+            });
+
+            return new CommandResponse()
+            {
+                OutputId = command.Alias,
+                ResponseCode = 0,
+            };
+        }
+
         private async Task<CommandResponse> PlayPgsVideo(Command command)
         {
             var alwaysOnSettings = await _settingsService.GetTimeoutSettingsAsync();
-            await SetMode(command.OutputId, alwaysOnSettings.PgsVideoAlwaysOn ? TimeoutModes.Pgs : TimeoutModes.Idle);
+            await SetMode(command.Alias, alwaysOnSettings.PgsVideoAlwaysOn ? TimeoutModes.Pgs : TimeoutModes.Idle);
 
             if (alwaysOnSettings.PgsVideoAlwaysOn)
                 return await _mediaService.PgsPlayVideoAsync(command);
             else
                 return new CommandResponse()
                 {
-                    OutputId = command.OutputId,
+                    OutputId = command.Alias,
                     ResponseCode = 0,
                     SessionId = command.SessionId
                 };
@@ -136,195 +187,30 @@ namespace Avalanche.Api.Managers.Devices
         {
             var setModeComment = new Command()
             {
-                OutputId = outputId,
+                Alias = outputId,
                 Message = ((int)timeoutMode).ToString()
             };
 
             await _mediaService.TimeoutSetModeAsync(setModeComment);
         }
 
-        public Task<List<Source>> GetOperationsSources()
+        public async Task<IList<Source>> GetOperationsSources()
         {
-            List<Source> outputs = new List<Source>();
-            outputs.Add(new Source()
-            { 
-                Id = Guid.NewGuid().ToString(),
-                IsActive = true,
-                Name = "Room Cam",
-                Type = SourceType.RoomCamera,
-                Group = "A"
-            });
+            var sources = await _routingService.GetVideoSources();
+            var currentRoutes = await _routingService.GetCurrentRoutes();
 
-            outputs.Add(new Source()
-            {
-                Id = Guid.NewGuid().ToString(),
-                IsActive = false,
-                Name = "Endo 001",
-                Type = SourceType.Endoscope,
-                Group = "A"
-            });
+            IList<Source> listResult = _mapper.Map<IList<VideoSourceMessage>, IList<Source>>(sources.VideoSources);
+            //listResult = _mapper.Map<IList<VideoRouteMessage>, IList<Source>>(listResult);
 
-            outputs.Add(new Source()
-            {
-                Id = Guid.NewGuid().ToString(),
-                IsActive = true,
-                Name = "Laparoscope",
-                Type = SourceType.Laparoscope,
-                Group = "A"
-            });
-
-            outputs.Add(new Source()
-            {
-                Id = Guid.NewGuid().ToString(),
-                IsActive = false,
-                Name = "C-arm",
-                Type = SourceType.CArm,
-                Group = "A"
-            });
-
-            outputs.Add(new Source()
-            {
-                Id = Guid.NewGuid().ToString(),
-                IsActive = false,
-                Name = "X-ray",
-                Type = SourceType.XRay,
-                Group = "A"
-            });
-
-            outputs.Add(new Source()
-            {
-                Id = Guid.NewGuid().ToString(),
-                IsActive = false,
-                Name = "Light Cam",
-                Type = SourceType.RoomCamera,
-                Group = "A"
-            });
-
-            outputs.Add(new Source()
-            {
-                Id = Guid.NewGuid().ToString(),
-                IsActive = false,
-                Name = "MedPresence",
-                Type = SourceType.MedPresence,
-                Group = "A"
-            });
-
-            outputs.Add(new Source()
-            {
-                Id = Guid.NewGuid().ToString(),
-                IsActive = false,
-                Name = "Phys. PC",
-                Type = SourceType.PC,
-                Group = "A"
-            });
-
-            outputs.Add(new Source()
-            {
-                Id = Guid.NewGuid().ToString(),
-                IsActive = false,
-                Name = "PTZ Cam",
-                Type = SourceType.WebCamera,
-                Group = "A"
-            });
-
-            outputs.Add(new Source()
-            {
-                Id = Guid.NewGuid().ToString(),
-                IsActive = false,
-                Name = "Nurse PC",
-                Type = SourceType.PC,
-                Group = "A"
-            });
-
-            outputs.Add(new Source()
-            {
-                Id = Guid.NewGuid().ToString(),
-                IsActive = false,
-                Name = "Surg. Micro.",
-                Type = SourceType.MicroscopeSurgical,
-                Group = "B"
-            });
-
-            outputs.Add(new Source()
-            {
-                Id = Guid.NewGuid().ToString(),
-                IsActive = false,
-                Name = "EasySuite",
-                Type = SourceType.EasySuite,
-                Group = "A"
-            });
-
-            outputs.Add(new Source()
-            {
-                Id = Guid.NewGuid().ToString(),
-                IsActive = false,
-                Name = "Bronch. Scp.",
-                Type = SourceType.Bronchoscope,
-                Group = "B"
-            });
-
-            outputs.Add(new Source()
-            {
-                Id = Guid.NewGuid().ToString(),
-                IsActive = false,
-                Name = "EasyView",
-                Type = SourceType.EasyView,
-                Group = "A"
-            });
-
-            outputs.Add(new Source()
-            {
-                Id = Guid.NewGuid().ToString(),
-                IsActive = false,
-                Name = "Tiles",
-                Type = SourceType.Tiles,
-                Group = "A"
-            });
-
-            outputs.Add(new Source()
-            {
-                Id = Guid.NewGuid().ToString(),
-                IsActive = false,
-                Name = "Endo 002",
-                Type = SourceType.Endoscope,
-                Group = "A"
-            });
-
-            return Task.FromResult(outputs);
+            return listResult;
         }
 
-        public Task<List<Output>> GetOperationsOutputs()
+        public async Task<IList<Output>> GetOperationsOutputs()
         {
-            List<Output> outputs = new List<Output>();
-            outputs.Add(new Output()
-            {
-                Id = Guid.NewGuid().ToString(),
-                IsActive = true,
-                Name = "MAIN TV 1",
-            });
+            var outputs = await _routingService.GetVideoSinks();
+            IList<Output> listResult = _mapper.Map<IList<VideoSinkMessage>, IList<Output>>(outputs.VideoSinks);
 
-            outputs.Add(new Output()
-            {
-                Id = Guid.NewGuid().ToString(),
-                IsActive = false,
-                Name = "MAIN TV 2",
-            });
-
-            outputs.Add(new Output()
-            {
-                Id = Guid.NewGuid().ToString(),
-                IsActive = true,
-                Name = "AUX TV 1",
-            });
-
-            outputs.Add(new Output()
-            {
-                Id = Guid.NewGuid().ToString(),
-                IsActive = false,
-                Name = "MAIN TV 2",
-            });
-
-            return Task.FromResult(outputs);
+            return listResult;
         }
 
         public Task<List<Output>> GetPGSOutputs()
