@@ -44,15 +44,15 @@ namespace Avalanche.Api.Managers.Devices
 
         public async Task<List<CommandResponse>> SendCommandAsync(CommandViewModel command)
         {
-            Preconditions.ThrowIfCountIsLessThan<Device>(nameof(command.Devices), command.Devices, 1);
+            Preconditions.ThrowIfCountIsLessThan<Device>(nameof(command.Sources), command.Sources, 1);
 
             List<CommandResponse> responses = new List<CommandResponse>();
 
-            foreach (var item in command.Devices)
+            foreach (var item in command.Sources)
             {
                 CommandResponse response = await ExecuteCommandAsync(command.CommandType, new Command()
                 {
-                    Alias = item.Id,
+                    Source = (Source)item,
                     Message = command.Message,
                     SessionId = command.SessionId,
                     Type = command.Type
@@ -66,7 +66,7 @@ namespace Avalanche.Api.Managers.Devices
 
         private async Task<CommandResponse> ExecuteCommandAsync(Shared.Domain.Enumerations.CommandTypes commandType, Command command)
         {
-            _appLoggerService.LogInformation($"{commandType.GetDescription()} command executed on {command.Alias} output.");
+            _appLoggerService.LogInformation($"{commandType.GetDescription()} command executed on {command.Source.Id} device.");
 
             switch (commandType)
             {
@@ -77,7 +77,7 @@ namespace Avalanche.Api.Managers.Devices
 
                 case Shared.Domain.Enumerations.CommandTypes.PgsPlayVideo:
                     Preconditions.ThrowIfNull(nameof(command.Message), command.Message);
-                    await SetMode(command.Alias, TimeoutModes.Pgs);
+                    await SetMode(command.Source, TimeoutModes.Pgs);
                     return await _mediaService.PgsPlayVideoAsync(command);
 
                 case Shared.Domain.Enumerations.CommandTypes.PgsStopVideo:
@@ -127,11 +127,61 @@ namespace Avalanche.Api.Managers.Devices
 
                 case Shared.Domain.Enumerations.CommandTypes.ExitFullScreen:
                     return await ExitFullScreen(command);
+
+                case Shared.Domain.Enumerations.CommandTypes.RouteVideoSource:
+                    return await RouteVideoSoure(command);
+
+                case Shared.Domain.Enumerations.CommandTypes.UnrouteVideoSource:
+                    return await UnrouteVideoSoure(command);
                 #endregion Operate Commands
 
                 default:
                     return null;
             }
+        }
+
+        private async Task<CommandResponse> RouteVideoSoure(Command command)
+        {
+            //TODO: Change this for auto mapper?
+            await _routingService.RouteVideo(new RouteVideoRequest()
+            {
+                Sink = new AliasIndexMessage()
+                {
+                    Alias = command.Output.Id,
+                    Index = command.Output.InternalIndex
+                },
+                Source = new AliasIndexMessage()
+                {
+                    Alias = command.Source.Id,
+                    Index = command.Source.InternalIndex
+                }
+            });
+
+            return new CommandResponse()
+            {
+                Device = command.Source,
+                ResponseCode = 0,
+            };
+        }
+
+        private async Task<CommandResponse> UnrouteVideoSoure(Command command)
+        {
+            //TODO: Change this for auto mapper?
+            await _routingService.RouteVideo(new RouteVideoRequest()
+            {
+                Sink = null,
+                Source = new AliasIndexMessage()
+                {
+                    Alias = command.Source.Id,
+                    Index = command.Source.InternalIndex
+                }
+            });
+
+            return new CommandResponse()
+            {
+                Device = command.Source,
+                ResponseCode = 0,
+            };
         }
 
         private async Task<CommandResponse> ExitFullScreen(Command command)
@@ -143,7 +193,7 @@ namespace Avalanche.Api.Managers.Devices
 
             return new CommandResponse()
             {
-                OutputId = command.Alias,
+                Device = command.Source,
                 ResponseCode = 0,
             };
         }
@@ -154,15 +204,15 @@ namespace Avalanche.Api.Managers.Devices
             {
                 Source = new AliasIndexMessage()
                 {
-                    Alias = command.Alias,
-                    Index = command.Index
+                    Alias = command.Source.Id,
+                    Index = command.Source.InternalIndex
                 },
                 UserInterfaceId = 0 //TODO: What is this?
             });
 
             return new CommandResponse()
             {
-                OutputId = command.Alias,
+                Device = command.Source,
                 ResponseCode = 0,
             };
         }
@@ -170,24 +220,24 @@ namespace Avalanche.Api.Managers.Devices
         private async Task<CommandResponse> PlayPgsVideo(Command command)
         {
             var alwaysOnSettings = await _settingsService.GetTimeoutSettingsAsync();
-            await SetMode(command.Alias, alwaysOnSettings.PgsVideoAlwaysOn ? TimeoutModes.Pgs : TimeoutModes.Idle);
+            await SetMode(command.Source, alwaysOnSettings.PgsVideoAlwaysOn ? TimeoutModes.Pgs : TimeoutModes.Idle);
 
             if (alwaysOnSettings.PgsVideoAlwaysOn)
                 return await _mediaService.PgsPlayVideoAsync(command);
             else
                 return new CommandResponse()
                 {
-                    OutputId = command.Alias,
+                    Device = command.Source,
                     ResponseCode = 0,
                     SessionId = command.SessionId
                 };
         }
 
-        private async Task SetMode(string outputId, TimeoutModes timeoutMode)
+        private async Task SetMode(Source source, TimeoutModes timeoutMode)
         {
             var setModeComment = new Command()
             {
-                Alias = outputId,
+                Source = source,
                 Message = ((int)timeoutMode).ToString()
             };
 
@@ -200,7 +250,12 @@ namespace Avalanche.Api.Managers.Devices
             var currentRoutes = await _routingService.GetCurrentRoutes();
 
             IList<Source> listResult = _mapper.Map<IList<VideoSourceMessage>, IList<Source>>(sources.VideoSources);
-            //listResult = _mapper.Map<IList<VideoRouteMessage>, IList<Source>>(listResult);
+
+            /* TODO: How this need to be mixed
+             * 	rpc GetCurrentRoutes (google.protobuf.Empty) returns (GetCurrentRoutesResponse);	
+	            rpc GetVideoStateForSource (GetVideoStateForSourceRequest) returns (GetVideoStateForSourceResponse);
+	            rpc GetRouteForSink (GetRouteForSinkRequest) returns (GetRouteForSinkResponse);
+             */
 
             return listResult;
         }

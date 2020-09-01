@@ -8,14 +8,14 @@ using System.Threading.Tasks;
 
 namespace Avalanche.Api.MappingConfigurations
 {
-    public class MediaMappingConfigurations : Profile
+    public class VideoRotingMappingConfigurations : Profile
     {
-        public MediaMappingConfigurations()
+        public VideoRotingMappingConfigurations()
         {
             CreateMap<Ism.Routing.Common.Core.VideoSourceMessage, Source>()
-                .ForMember(dest =>
-                    dest.Group,
-                    opt => opt.MapFrom(src => GetRandomCharacter("AB", new Random())))
+                //.ForMember(dest =>
+                //    dest.Group,
+                //    opt => opt.MapFrom(src => GetRandomCharacter("AB", new Random())))
                 .ForMember(dest =>
                     dest.Id,
                     opt => opt.MapFrom(src => src.Source.Alias))
@@ -40,9 +40,9 @@ namespace Avalanche.Api.MappingConfigurations
                 .ReverseMap();
 
             CreateMap<Ism.Routing.Common.Core.VideoSinkMessage, Output>()
-                .ForMember(dest =>
-                    dest.Group,
-                    opt => opt.MapFrom(src => GetRandomCharacter("AB", new Random())))
+                //.ForMember(dest =>
+                //    dest.Group,
+                //    opt => opt.MapFrom(src => GetRandomCharacter("AB", new Random())))
                 .ForMember(dest =>
                     dest.Id,
                     opt => opt.MapFrom(src => src.Sink.Alias))
@@ -60,14 +60,14 @@ namespace Avalanche.Api.MappingConfigurations
                     opt => opt.MapFrom(src => src.ShowInUi))
                 .ReverseMap();
 
-            //CreateMap<Ism.Routing.Common.Core.VideoRouteMessage, Source>()
-            //    .ForMember(dest =>
-            //        dest.Output.Id,
-            //        opt => opt.MapFrom(src => src.Sink.Alias))
-            //    .ForMember(dest =>
-            //        dest.Output.InternalIndex,
-            //        opt => opt.MapFrom(src => src.Sink.Index))
-            //    .ReverseMap();
+            CreateMap<Ism.Routing.Common.Core.VideoRouteMessage, Source>()
+                .ForMember(dest =>
+                    dest.Output.Id,
+                    opt => opt.MapFrom(src => src.Sink.Alias))
+                .ForMember(dest =>
+                    dest.Output.InternalIndex,
+                    opt => opt.MapFrom(src => src.Sink.Index))
+                .ReverseMap();
         }
 
         private SourceType GetVideoSourceTypeEnum(string videoSourceType)
@@ -91,10 +91,11 @@ namespace Avalanche.Api.MappingConfigurations
             }
         }
 
-        public char GetRandomCharacter(string text, Random rng)
-        {
-            int index = rng.Next(text.Length);
-            return text[index];
-        }
+        //TODO: Remove this
+        //public char GetRandomCharacter(string text, Random rng)
+        //{
+        //    int index = rng.Next(text.Length);
+        //    return text[index];
+        //}
     }
 }

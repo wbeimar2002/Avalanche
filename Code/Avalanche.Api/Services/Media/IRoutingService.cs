@@ -12,7 +12,9 @@ namespace Avalanche.Api.Services.Media
         Task<GetVideoSinksResponse> GetVideoSinks();
         Task<GetCurrentRoutesResponse> GetCurrentRoutes();
         Task<GetVideoStateForSourceResponse> GetVideoStateForSource(GetVideoStateForSourceRequest getVideoStateForSourceRequest);
+        Task<GetRouteForSinkResponse> GetRouteForSink(GetRouteForSinkRequest getRouteForSinkRequest);
         Task EnterFullScreen(EnterFullScreenRequest enterFullScreenRequest);
         Task ExitFullScreen(ExitFullScreenRequest exitFullScreenRequest);
+        Task RouteVideo(RouteVideoRequest routeVideoRequest);
     }
 }

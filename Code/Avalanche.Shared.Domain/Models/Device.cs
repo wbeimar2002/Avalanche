@@ -13,6 +13,7 @@ namespace Avalanche.Shared.Domain.Models
         public bool IsActive { get; set; }
         public int PositionInScreen { get; set; }
         public int InternalIndex { get; set; }
-        public string Group { get; set; }
+        //TODO: Removed by Gabe and Pavel
+        //public string Group { get; set; }
     }
 }

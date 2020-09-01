@@ -10,8 +10,8 @@ namespace Avalanche.Api.Managers.Health
 {
     public interface IPatientsManager
     {
-        Task<List<Patient>> Search(PatientKeywordSearchFilterViewModel filter);
-        Task<List<Patient>> Search(PatientDetailsSearchFilterViewModel filter);
+        Task<IList<Patient>> Search(PatientKeywordSearchFilterViewModel filter);
+        Task<IList<Patient>> Search(PatientDetailsSearchFilterViewModel filter);
         Task<Patient> RegisterPatient(PatientViewModel newPatient);
         Task<Patient> QuickPatientRegistration(System.Security.Claims.ClaimsPrincipal user);
         Task UpdatePatient(PatientViewModel existing);

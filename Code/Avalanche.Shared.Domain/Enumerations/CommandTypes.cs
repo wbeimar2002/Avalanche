@@ -36,6 +36,10 @@ namespace Avalanche.Shared.Domain.Enumerations
         [Description("Fullscreen Mode")]
         EnterFullScreen = 13,
         [Description("Exit Fullscreen Mode")]
-        ExitFullScreen = 14
+        ExitFullScreen = 14,
+        [Description("Route Video Source")]
+        RouteVideoSource = 15,
+        [Description("Unroute Video Source")]
+        UnrouteVideoSource = 16
     }
 }

@@ -66,5 +66,15 @@ namespace Avalanche.Api.Services.Media
         {
             await RoutingClient.ExitFullScreenAsync(exitFullScreenRequest);
         }
+
+        public async Task<GetRouteForSinkResponse> GetRouteForSink(GetRouteForSinkRequest getRouteForSinkRequest)
+        {
+            return await RoutingClient.GetRouteForSinkAsync(getRouteForSinkRequest);
+        }
+
+        public async Task RouteVideo(RouteVideoRequest routeVideoRequest)
+        {
+            await RoutingClient.RouteVideoAsync(routeVideoRequest);
+        }
     }
 }
