@@ -21,6 +21,15 @@ namespace Avalanche.Api.MappingConfigurations
             CreateMap<Device, Source>();
             CreateMap<Device, Output>();
 
+            CreateMap<Device, AliasIndexMessage>()
+                .ForMember(dest =>
+                    dest.Alias,
+                    opt => opt.MapFrom(src => src.Id))
+                .ForMember(dest =>
+                    dest.Index,
+                    opt => opt.MapFrom(src => src.InternalIndex))
+                .ReverseMap();
+
             CreateMap<Source, AliasIndexMessage>()
                 .ForMember(dest =>
                     dest.Alias,

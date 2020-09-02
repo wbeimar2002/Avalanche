@@ -39,16 +39,16 @@ namespace Avalanche.Api.Managers.Devices
 
         public async Task<List<CommandResponse>> SendCommandAsync(CommandViewModel command)
         {
-            Preconditions.ThrowIfCountIsLessThan(nameof(command.Sources), command.Sources, 1);
+            Preconditions.ThrowIfCountIsLessThan(nameof(command.Devices), command.Devices, 1);
 
             List<CommandResponse> responses = new List<CommandResponse>();
 
-            foreach (var item in command.Sources)
+            foreach (var item in command.Devices)
             {
                 CommandResponse response = await ExecuteCommandAsync(command.CommandType, new Command()
                 {
                     Source = _mapper.Map<Device, Source>(item),
-                    Outputs = command.Outputs,
+                    Destinations = command.Destinations,
                     Message = command.Message,
                     AdditionalInfo = command.AdditionalInfo,
                     Type = command.Type
@@ -165,11 +165,11 @@ namespace Avalanche.Api.Managers.Devices
 
         private async Task<CommandResponse> RouteVideoSoure(Command command)
         {
-            foreach (var item in command.Outputs)
+            foreach (var item in command.Destinations)
             {
                 await _routingService.RouteVideo(new RouteVideoRequest()
                 {
-                    Sink = _mapper.Map<Output, AliasIndexMessage>(item),
+                    Sink = _mapper.Map<Device, AliasIndexMessage>(item),
                     Source = _mapper.Map<Source, AliasIndexMessage>(command.Source),
                 }); 
             }
