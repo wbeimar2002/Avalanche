@@ -47,7 +47,7 @@ namespace Avalanche.Api.Managers.Devices
             {
                 CommandResponse response = await ExecuteCommandAsync(command.CommandType, new Command()
                 {
-                    Source = (Source)item,
+                    Source = _mapper.Map<Device, Source>(item),
                     Outputs = command.Outputs,
                     Message = command.Message,
                     AdditionalInfo = command.AdditionalInfo,
@@ -149,7 +149,7 @@ namespace Avalanche.Api.Managers.Devices
             {
                 var source = listResult.Where(s => s.Id.Equals(item.Source.Alias) && s.InternalIndex.Equals(item.Source.Index)).SingleOrDefault();
                 if (source != null)
-                    source.Output = (Output)_mapper.Map<AliasIndexMessage, Device>(item.Sink);
+                    source.Output = _mapper.Map<AliasIndexMessage, Output>(item.Sink);
             }
 
             return listResult;
@@ -169,8 +169,8 @@ namespace Avalanche.Api.Managers.Devices
             {
                 await _routingService.RouteVideo(new RouteVideoRequest()
                 {
-                    Sink = _mapper.Map<Device, AliasIndexMessage>(command.Source),
-                    Source = _mapper.Map<Device, AliasIndexMessage>(item),
+                    Sink = _mapper.Map<Output, AliasIndexMessage>(item),
+                    Source = _mapper.Map<Source, AliasIndexMessage>(command.Source),
                 }); 
             }
 
@@ -186,7 +186,7 @@ namespace Avalanche.Api.Managers.Devices
             await _routingService.RouteVideo(new RouteVideoRequest()
             {
                 Sink = null,
-                Source = _mapper.Map<Device, AliasIndexMessage>(command.Source),
+                Source = _mapper.Map<Source, AliasIndexMessage>(command.Source),
             });
 
             return new CommandResponse()
@@ -214,7 +214,7 @@ namespace Avalanche.Api.Managers.Devices
         {
             await _routingService.EnterFullScreen(new EnterFullScreenRequest()
             {
-                Source = _mapper.Map<Device, AliasIndexMessage>(command.Source),
+                Source = _mapper.Map<Source, AliasIndexMessage>(command.Source),
                 UserInterfaceId = Convert.ToInt32(command.AdditionalInfo)
             });
 

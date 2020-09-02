@@ -18,8 +18,19 @@ namespace Avalanche.Api.MappingConfigurations
         {
             CreateMap<AccessInfo, Ism.Storage.Common.Core.PatientList.Proto.AccessInfoMessage>();
             CreateMap<AccessInfo, Ism.Storage.Common.Core.PatientList.Proto.AccessInfoMessage>();
+            CreateMap<Device, Source>();
+            CreateMap<Device, Output>();
 
-            CreateMap<Device, AliasIndexMessage>()
+            CreateMap<Source, AliasIndexMessage>()
+                .ForMember(dest =>
+                    dest.Alias,
+                    opt => opt.MapFrom(src => src.Id))
+                .ForMember(dest =>
+                    dest.Index,
+                    opt => opt.MapFrom(src => src.InternalIndex))
+                .ReverseMap();
+
+            CreateMap<Output, AliasIndexMessage>()
                 .ForMember(dest =>
                     dest.Alias,
                     opt => opt.MapFrom(src => src.Id))
@@ -74,25 +85,25 @@ namespace Avalanche.Api.MappingConfigurations
                 .ForMember(dest =>
                     dest.ProcedureId,
                     opt => opt.MapFrom(src => "Unknown"))
-                .ForMember(dest =>
+                .ForPath(dest =>
                     dest.Patient.FirstName,
                     opt => opt.MapFrom(src => src.FirstName))
-                .ForMember(dest =>
+                .ForPath(dest =>
                     dest.Patient.LastName,
                     opt => opt.MapFrom(src => src.LastName))
-                .ForMember(dest =>
+                .ForPath(dest =>
                     dest.Patient.Sex,
                     opt => opt.MapFrom(src => GetSex(src.Sex.Id)))
-                .ForMember(dest =>
+                .ForPath(dest =>
                     dest.Patient.Dob,
-                    opt => opt.MapFrom(src => src.DateOfBirth))
-                .ForMember(dest =>
+                    opt => opt.MapFrom(src => GetFixedDateMessage(src.DateOfBirth))) 
+                .ForPath(dest =>
                     dest.PerformingPhysician.UserId,
                     opt => opt.MapFrom(src => src.Physician.Id))
-                .ForMember(dest =>
+                .ForPath(dest =>
                     dest.PerformingPhysician.FirstName,
                     opt => opt.MapFrom(src => src.Physician.FirstName))
-                .ForMember(dest =>
+                .ForPath(dest =>
                     dest.PerformingPhysician.LastName,
                     opt => opt.MapFrom(src => src.Physician.LastName))
                 .ReverseMap();
@@ -122,29 +133,34 @@ namespace Avalanche.Api.MappingConfigurations
                 //.ForMember(dest =>
                 //    dest.ProcedureId,
                 //    opt => opt.MapFrom(src => "Unknown"))
-                .ForMember(dest =>
+                .ForPath(dest =>
                     dest.Patient.FirstName,
                     opt => opt.MapFrom(src => src.FirstName))
-                .ForMember(dest =>
+                .ForPath(dest =>
                     dest.Patient.LastName,
                     opt => opt.MapFrom(src => src.LastName))
-                .ForMember(dest =>
+                .ForPath(dest =>
                     dest.Patient.Sex,
                     opt => opt.MapFrom(src => GetSex(src.Sex.Id)))
-                .ForMember(dest =>
+                .ForPath(dest =>
                     dest.Patient.Dob,
-                    opt => opt.MapFrom(src => src.DateOfBirth))
-                .ForMember(dest =>
+                    opt => opt.MapFrom(src => GetFixedDateMessage(src.DateOfBirth)))
+                .ForPath(dest =>
                     dest.PerformingPhysician.UserId,
                     opt => opt.MapFrom(src => src.Physician.Id))
-                .ForMember(dest =>
+                .ForPath(dest =>
                     dest.PerformingPhysician.FirstName,
                     opt => opt.MapFrom(src => src.Physician.FirstName))
-                .ForMember(dest =>
+                .ForPath(dest =>
                     dest.PerformingPhysician.LastName,
                     opt => opt.MapFrom(src => src.Physician.LastName))
                 .ReverseMap();
 
+        }
+
+        private FixedDateMessage GetFixedDateMessage(DateTime dateOfBirth)
+        {
+            return new FixedDateMessage { Day = dateOfBirth.Day, Month = dateOfBirth.Month, Year = dateOfBirth.Year };
         }
 
         private SexMessage GetSex(string gender)
