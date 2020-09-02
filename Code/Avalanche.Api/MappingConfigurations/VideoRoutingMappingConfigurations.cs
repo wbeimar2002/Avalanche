@@ -59,15 +59,6 @@ namespace Avalanche.Api.MappingConfigurations
                     dest.IsActive,
                     opt => opt.MapFrom(src => src.ShowInUi))
                 .ReverseMap();
-
-            CreateMap<Ism.Routing.Common.Core.VideoRouteMessage, Source>()
-                .ForMember(dest =>
-                    dest.Output.Id,
-                    opt => opt.MapFrom(src => src.Sink.Alias))
-                .ForMember(dest =>
-                    dest.Output.InternalIndex,
-                    opt => opt.MapFrom(src => src.Sink.Index))
-                .ReverseMap();
         }
 
         private SourceType GetVideoSourceTypeEnum(string videoSourceType)

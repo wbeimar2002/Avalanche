@@ -3,6 +3,7 @@ using Avalanche.Api.ViewModels;
 using Avalanche.Shared.Domain.Models;
 using Google.Protobuf.WellKnownTypes;
 using Ism.IsmLogCommon.Core;
+using Ism.Routing.Common.Core;
 using Ism.Storage.Common.Core.PatientList.Proto;
 using System;
 using System.Collections.Generic;
@@ -17,7 +18,16 @@ namespace Avalanche.Api.MappingConfigurations
         {
             CreateMap<AccessInfo, Ism.Storage.Common.Core.PatientList.Proto.AccessInfoMessage>();
             CreateMap<AccessInfo, Ism.Storage.Common.Core.PatientList.Proto.AccessInfoMessage>();
-            
+
+            CreateMap<Device, AliasIndexMessage>()
+                .ForMember(dest =>
+                    dest.Alias,
+                    opt => opt.MapFrom(src => src.Id))
+                .ForMember(dest =>
+                    dest.Index,
+                    opt => opt.MapFrom(src => src.InternalIndex))
+                .ReverseMap();
+
             CreateMap<Ism.PatientInfoEngine.Common.Core.Protos.PatientRecordMessage, Shared.Domain.Models.Patient>()
                 .ForMember(dest =>
                     dest.FirstName,

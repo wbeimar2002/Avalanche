@@ -46,7 +46,7 @@ namespace Avalanche.Api.Services.Media
         {
             var actionResponse = await WebRtcStreamerClient.HandleMessageAsync(new HandleMessageRequest()
             {
-                SessionId = command.SessionId,
+                SessionId = command.AdditionalInfo,
                 Offer = new WebRtcInfoMessage()
                 { 
                     Message = command.Message,
@@ -56,7 +56,7 @@ namespace Avalanche.Api.Services.Media
 
             return new CommandResponse()
             {
-                SessionId = command.SessionId,
+                SessionId = command.AdditionalInfo,
                 Device = command.Source,
                 ResponseCode = (int)actionResponse.ResponseCode
             }; 
@@ -81,7 +81,7 @@ namespace Avalanche.Api.Services.Media
                 Quality = RxStreamQualityEnum.RxStreamQualityHdVideo,
                 RouteToStreamingEncoder = true,
                 StreamId = command.Source.Id,
-                SessionId = command.SessionId,
+                SessionId = command.AdditionalInfo,
                 Offer = new WebRtcInfoMessage
                 {
                     Aor = "AOR",
@@ -93,7 +93,7 @@ namespace Avalanche.Api.Services.Media
 
             var response = new CommandResponse()
             {
-                SessionId = command.SessionId,
+                SessionId = command.AdditionalInfo,
                 Device = command.Source,
                 ResponseCode = (int)actionResponse.ResponseCode,
                 Messages = new List<string>()
@@ -111,12 +111,12 @@ namespace Avalanche.Api.Services.Media
         {
             var actionResponse = await WebRtcStreamerClient.DeInitSessionAsync(new DeInitSessionRequest()
             {
-                SessionId = command.SessionId,
+                SessionId = command.AdditionalInfo,
             });
 
             return new CommandResponse()
             {
-                SessionId = command.SessionId,
+                SessionId = command.AdditionalInfo,
                 Device = command.Source,
                 ResponseCode = (int)WebRtcApiErrorEnum.WebRtcApiErrorSuccess
             };
@@ -126,7 +126,7 @@ namespace Avalanche.Api.Services.Media
         {
             return new CommandResponse()
             {
-                SessionId = command.SessionId,
+                SessionId = command.AdditionalInfo,
                 Device = command.Source,
                 ResponseCode = (int)WebRtcApiErrorEnum.WebRtcApiErrorUnknown
             };
@@ -136,7 +136,7 @@ namespace Avalanche.Api.Services.Media
         {
             return new CommandResponse()
             {
-                SessionId = command.SessionId,
+                SessionId = command.AdditionalInfo,
                 Device = command.Source,
                 ResponseCode = (int)WebRtcApiErrorEnum.WebRtcApiErrorUnknown
             };
@@ -146,7 +146,7 @@ namespace Avalanche.Api.Services.Media
         {
             return new CommandResponse()
             {
-                SessionId = command.SessionId,
+                SessionId = command.AdditionalInfo,
                 Device = command.Source,
                 ResponseCode = (int)WebRtcApiErrorEnum.WebRtcApiErrorUnknown
             };
@@ -156,7 +156,7 @@ namespace Avalanche.Api.Services.Media
         {
             return new CommandResponse()
             {
-                SessionId = command.SessionId,
+                SessionId = command.AdditionalInfo,
                 Device = command.Source,
                 ResponseCode = (int)WebRtcApiErrorEnum.WebRtcApiErrorUnknown
             };
@@ -166,7 +166,7 @@ namespace Avalanche.Api.Services.Media
         {
             return new CommandResponse()
             {
-                SessionId = command.SessionId,
+                SessionId = command.AdditionalInfo,
                 Device = command.Source,
                 ResponseCode = (int)WebRtcApiErrorEnum.WebRtcApiErrorUnknown
             };
