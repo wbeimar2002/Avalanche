@@ -26,11 +26,13 @@ namespace Avalanche.Api.Controllers.V1
     {
         readonly ILogger _appLoggerService;
         readonly IMetadataManager _metadataManager;
+        readonly IMediaManager _mediaManager;
 
-        public MetadataController(ILogger<MetadataController> appLoggerService, IMetadataManager metadataManager)
+        public MetadataController(ILogger<MetadataController> appLoggerService, IMetadataManager metadataManager, IMediaManager mediaManager)
         {
             _appLoggerService = appLoggerService;
             _metadataManager = metadataManager;
+            _mediaManager = mediaManager;
         }
 
         /// <summary>
@@ -44,6 +46,30 @@ namespace Avalanche.Api.Controllers.V1
             {
                 _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
                 var result = await _metadataManager.GetMetadata(Shared.Domain.Enumerations.MetadataTypes.ContentTypes);
+                return Ok(result);
+            }
+            catch (Exception exception)
+            {
+                _appLoggerService.LogError(LoggerHelper.GetLogMessage(DebugLogType.Exception), exception);
+                return new BadRequestObjectResult(exception.Get(env.IsDevelopment()));
+            }
+            finally
+            {
+                _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
+            }
+        }
+
+        /// <summary>
+        /// Get content by type for PGS 
+        /// </summary>
+        [HttpGet("content/{contentTypeId}")]
+        [Produces(typeof(List<KeyValuePairViewModel>))]
+        public async Task<IActionResult> GetContentByType(string contentTypeId, [FromServices] IWebHostEnvironment env)
+        {
+            try
+            {
+                _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
+                var result = await _mediaManager.GetContent(contentTypeId);
                 return Ok(result);
             }
             catch (Exception exception)
