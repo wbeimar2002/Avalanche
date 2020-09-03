@@ -1,14 +1,8 @@
 ﻿using AutoMapper;
 using Avalanche.Api.ViewModels;
-using Avalanche.Shared.Domain.Models;
 using Google.Protobuf.WellKnownTypes;
 using Ism.IsmLogCommon.Core;
-using Ism.Routing.Common.Core;
-using Ism.Storage.Common.Core.PatientList.Proto;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Avalanche.Api.MappingConfigurations
 {
@@ -16,36 +10,28 @@ namespace Avalanche.Api.MappingConfigurations
     {
         public PieMappingConfigurations()
         {
+            CreateMap<AccessInfo, Ism.PatientInfoEngine.Common.Core.Protos.AccessInfoMessage>();
             CreateMap<AccessInfo, Ism.Storage.Common.Core.PatientList.Proto.AccessInfoMessage>();
-            CreateMap<AccessInfo, Ism.Storage.Common.Core.PatientList.Proto.AccessInfoMessage>();
-            CreateMap<Device, Source>();
-            CreateMap<Device, Output>();
 
-            CreateMap<Device, AliasIndexMessage>()
+            CreateMap<Ism.Storage.Common.Core.PatientList.Proto.PatientRecordMessage, Shared.Domain.Models.Patient>()
                 .ForMember(dest =>
-                    dest.Alias,
-                    opt => opt.MapFrom(src => src.Id))
+                    dest.FirstName,
+                    opt => opt.MapFrom(src => src.Patient.FirstName))
                 .ForMember(dest =>
-                    dest.Index,
-                    opt => opt.MapFrom(src => src.InternalIndex))
-                .ReverseMap();
-
-            CreateMap<Source, AliasIndexMessage>()
+                    dest.LastName,
+                    opt => opt.MapFrom(src => src.Patient.LastName))
                 .ForMember(dest =>
-                    dest.Alias,
-                    opt => opt.MapFrom(src => src.Id))
+                    dest.Id,
+                    opt => opt.MapFrom(src => src.InternalId))
                 .ForMember(dest =>
-                    dest.Index,
-                    opt => opt.MapFrom(src => src.InternalIndex))
-                .ReverseMap();
-
-            CreateMap<Output, AliasIndexMessage>()
+                    dest.DateOfBirth,
+                    opt => opt.MapFrom(src => new DateTime(src.Patient.Dob.Year, src.Patient.Dob.Month, src.Patient.Dob.Day)))
                 .ForMember(dest =>
-                    dest.Alias,
-                    opt => opt.MapFrom(src => src.Id))
+                    dest.MRN,
+                    opt => opt.MapFrom(src => src.Mrn))
                 .ForMember(dest =>
-                    dest.Index,
-                    opt => opt.MapFrom(src => src.InternalIndex))
+                    dest.Gender,
+                    opt => opt.MapFrom(src => GetSex(src.Patient.Sex)))
                 .ReverseMap();
 
             CreateMap<Ism.PatientInfoEngine.Common.Core.Protos.PatientRecordMessage, Shared.Domain.Models.Patient>()
@@ -78,7 +64,7 @@ namespace Avalanche.Api.MappingConfigurations
                     opt => opt.MapFrom(src => "Unknown"))
                 .ForMember(dest =>
                     dest.AdmissionStatus,
-                    opt => opt.MapFrom(src => new AdmissionStatusMessage()))
+                    opt => opt.MapFrom(src => new Ism.Storage.Common.Core.PatientList.Proto.AdmissionStatusMessage()))
                 .ForMember(dest =>
                     dest.InternalId,
                     opt => opt.MapFrom(src => 0))
@@ -126,7 +112,7 @@ namespace Avalanche.Api.MappingConfigurations
                     opt => opt.MapFrom(src => "Unknown"))
                 .ForMember(dest =>
                     dest.AdmissionStatus,
-                    opt => opt.MapFrom(src => new AdmissionStatusMessage()))
+                    opt => opt.MapFrom(src => new Ism.Storage.Common.Core.PatientList.Proto.AdmissionStatusMessage()))
                 .ForMember(dest =>
                     dest.InternalId,
                     opt => opt.MapFrom(src => 0))
@@ -167,23 +153,37 @@ namespace Avalanche.Api.MappingConfigurations
 
         }
 
-        private FixedDateMessage GetFixedDateMessage(DateTime dateOfBirth)
+        private object GetSex(Ism.Storage.Common.Core.PatientList.Proto.SexMessage sex)
         {
-            return new FixedDateMessage { Day = dateOfBirth.Day, Month = dateOfBirth.Month, Year = dateOfBirth.Year };
+            switch (sex)
+            {
+                case Ism.Storage.Common.Core.PatientList.Proto.SexMessage.M:
+                    return "M";
+                case Ism.Storage.Common.Core.PatientList.Proto.SexMessage.F:
+                    return "F";
+                case Ism.Storage.Common.Core.PatientList.Proto.SexMessage.U:
+                default:
+                    return "U";
+            }
         }
 
-        private SexMessage GetSex(string gender)
+        private Ism.Storage.Common.Core.PatientList.Proto.FixedDateMessage GetFixedDateMessage(DateTime dateOfBirth)
+        {
+            return new Ism.Storage.Common.Core.PatientList.Proto.FixedDateMessage { Day = dateOfBirth.Day, Month = dateOfBirth.Month, Year = dateOfBirth.Year };
+        }
+
+        private Ism.Storage.Common.Core.PatientList.Proto.SexMessage GetSex(string gender)
         {
             switch (gender)
             {
                 case "F":
-                    return SexMessage.F;
+                    return Ism.Storage.Common.Core.PatientList.Proto.SexMessage.F;
                 case "M":
-                    return SexMessage.M;
+                    return Ism.Storage.Common.Core.PatientList.Proto.SexMessage.M;
                 case "O":
                 case "U":
                 default:
-                    return SexMessage.U;
+                    return Ism.Storage.Common.Core.PatientList.Proto.SexMessage.U;
             }
         }
 

@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Avalanche.Shared.Domain.Enumerations;
 using Avalanche.Shared.Domain.Models;
+using Ism.Routing.Common.Core;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,6 +13,36 @@ namespace Avalanche.Api.MappingConfigurations
     {
         public VideoRotingMappingConfigurations()
         {
+            CreateMap<Device, Source>();
+            CreateMap<Device, Output>();
+
+            CreateMap<Device, AliasIndexMessage>()
+                .ForMember(dest =>
+                    dest.Alias,
+                    opt => opt.MapFrom(src => src.Id))
+                .ForMember(dest =>
+                    dest.Index,
+                    opt => opt.MapFrom(src => src.InternalIndex))
+                .ReverseMap();
+
+            CreateMap<Source, AliasIndexMessage>()
+                .ForMember(dest =>
+                    dest.Alias,
+                    opt => opt.MapFrom(src => src.Id))
+                .ForMember(dest =>
+                    dest.Index,
+                    opt => opt.MapFrom(src => src.InternalIndex))
+                .ReverseMap();
+
+            CreateMap<Output, AliasIndexMessage>()
+                .ForMember(dest =>
+                    dest.Alias,
+                    opt => opt.MapFrom(src => src.Id))
+                .ForMember(dest =>
+                    dest.Index,
+                    opt => opt.MapFrom(src => src.InternalIndex))
+                .ReverseMap();
+
             CreateMap<Ism.Routing.Common.Core.VideoSourceMessage, Source>()
                 //.ForMember(dest =>
                 //    dest.Group,

@@ -92,7 +92,7 @@ namespace Avalanche.Api.Managers.Health
                     //LastName = user.FindFirst("LastName")?.Value,
                 }
             };
-
+            
             var patient = _mapper.Map<PatientViewModel, Ism.Storage.Common.Core.PatientList.Proto.PatientRecordMessage>(newPatient);
 
             var result = await _pieService.RegisterPatient(patient, accessInfoMessage);
