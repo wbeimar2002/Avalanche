@@ -165,6 +165,7 @@ namespace Avalanche.Api.Managers.Devices
 
         private async Task<CommandResponse> RouteVideoSoure(Command command)
         {
+            Preconditions.ThrowIfCountIsLessThan(nameof(command.Destinations), command.Destinations, 1);
             foreach (var item in command.Destinations)
             {
                 await _routingService.RouteVideo(new RouteVideoRequest()
