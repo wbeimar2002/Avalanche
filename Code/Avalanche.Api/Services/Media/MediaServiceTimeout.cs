@@ -35,7 +35,7 @@ namespace Avalanche.Api.Services.Media
 
             return new CommandResponse()
             {
-                Device = command.Source,
+                Device = command.Device,
                 ResponseCode = 0
             };
         }
@@ -59,7 +59,7 @@ namespace Avalanche.Api.Services.Media
 
             return new CommandResponse()
             {
-                Device = command.Source,
+                Device = command.Device,
                 ResponseCode = 0
             };
         }
@@ -80,7 +80,7 @@ namespace Avalanche.Api.Services.Media
 
             return new CommandResponse()
             {
-                Device = command.Source,
+                Device = command.Device,
                 ResponseCode = 0
             };
         }
@@ -101,7 +101,7 @@ namespace Avalanche.Api.Services.Media
 
             return new CommandResponse()
             {
-                Device = command.Source,
+                Device = command.Device,
                 ResponseCode = 0
             };
         }
