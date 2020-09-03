@@ -44,9 +44,6 @@ namespace Avalanche.Api.MappingConfigurations
                 .ReverseMap();
 
             CreateMap<Ism.Routing.Common.Core.VideoSourceMessage, Source>()
-                //.ForMember(dest =>
-                //    dest.Group,
-                //    opt => opt.MapFrom(src => GetRandomCharacter("AB", new Random())))
                 .ForMember(dest =>
                     dest.Id,
                     opt => opt.MapFrom(src => src.Source.Alias))
@@ -67,13 +64,10 @@ namespace Avalanche.Api.MappingConfigurations
                     opt => opt.MapFrom(src => src.IsDynamic))
                 .ForMember(dest =>
                     dest.Type,
-                    opt => opt.MapFrom(src => GetVideoSourceTypeEnum(src.VideoSourceType)))
+                    opt => opt.MapFrom(src => src.VideoSourceType))
                 .ReverseMap();
 
             CreateMap<Ism.Routing.Common.Core.VideoSinkMessage, Output>()
-                //.ForMember(dest =>
-                //    dest.Group,
-                //    opt => opt.MapFrom(src => GetRandomCharacter("AB", new Random())))
                 .ForMember(dest =>
                     dest.Id,
                     opt => opt.MapFrom(src => src.Sink.Alias))
@@ -87,37 +81,12 @@ namespace Avalanche.Api.MappingConfigurations
                     dest.PositionInScreen,
                     opt => opt.MapFrom(src => src.ButtonIndex))
                 .ForMember(dest =>
+                    dest.Type,
+                    opt => opt.MapFrom(src => src.VideoSinkType))
+                .ForMember(dest =>
                     dest.IsActive,
                     opt => opt.MapFrom(src => src.ShowInUi))
                 .ReverseMap();
         }
-
-        private SourceType GetVideoSourceTypeEnum(string videoSourceType)
-        {
-            switch (videoSourceType)
-            {
-                case "ptz":
-                    return SourceType.Unknown;
-                case "strobe":
-                    return SourceType.Unknown;
-                case "Endo":
-                    return SourceType.Endoscope;
-                case "Aux":
-                    return SourceType.Unknown;
-                case "PGS":
-                    return SourceType.Unknown;
-                case "pc":
-                    return SourceType.PC;
-                default:
-                    return SourceType.Unknown;
-            }
-        }
-
-        //TODO: Remove this
-        //public char GetRandomCharacter(string text, Random rng)
-        //{
-        //    int index = rng.Next(text.Length);
-        //    return text[index];
-        //}
     }
 }
