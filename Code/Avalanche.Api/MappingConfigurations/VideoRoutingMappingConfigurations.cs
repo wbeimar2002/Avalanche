@@ -13,8 +13,38 @@ namespace Avalanche.Api.MappingConfigurations
     {
         public VideoRotingMappingConfigurations()
         {
-            CreateMap<Device, Source>();
-            CreateMap<Device, Output>();
+            CreateMap<Device, Output>()
+                .ForMember(dest =>
+                    dest.Id,
+                    opt => opt.MapFrom(src => src.Id))
+                .ForMember(dest =>
+                    dest.InternalIndex,
+                    opt => opt.MapFrom(src => src.InternalIndex))
+                .ForMember(dest =>
+                    dest.IsActive,
+                    opt => opt.MapFrom(src => src.IsActive))
+                .ForMember(dest =>
+                    dest.Thumbnail,
+                    opt => opt.Ignore())
+                .ReverseMap();
+
+            CreateMap<Device, Source>()
+                .ForMember(dest =>
+                    dest.Id,
+                    opt => opt.MapFrom(src => src.Id))
+                .ForMember(dest =>
+                    dest.InternalIndex,
+                    opt => opt.MapFrom(src => src.InternalIndex))
+                .ForMember(dest =>
+                    dest.Output,
+                    opt => opt.Ignore())
+                .ForMember(dest =>
+                    dest.IsActive,
+                    opt => opt.MapFrom(src => src.IsActive))
+                .ForMember(dest =>
+                    dest.IsDynamic,
+                    opt => opt.Ignore())
+                .ReverseMap();
 
             CreateMap<Device, AliasIndexMessage>()
                 .ForMember(dest =>
@@ -65,6 +95,9 @@ namespace Avalanche.Api.MappingConfigurations
                 .ForMember(dest =>
                     dest.Type,
                     opt => opt.MapFrom(src => src.VideoSourceType))
+                .ForMember(dest =>
+                    dest.Output,
+                    opt => opt.Ignore())
                 .ReverseMap();
 
             CreateMap<Ism.Routing.Common.Core.VideoSinkMessage, Output>()
@@ -86,6 +119,9 @@ namespace Avalanche.Api.MappingConfigurations
                 .ForMember(dest =>
                     dest.IsActive,
                     opt => opt.MapFrom(src => src.ShowInUi))
+                .ForMember(dest =>
+                    dest.Thumbnail,
+                    opt => opt.Ignore())
                 .ReverseMap();
         }
     }

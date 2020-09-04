@@ -1,4 +1,5 @@
 ﻿using Avalanche.Api.Controllers.V1;
+using Avalanche.Api.Managers.Devices;
 using Avalanche.Api.Managers.Metadata;
 using Avalanche.Api.Tests.Extensions;
 using Avalanche.Shared.Domain.Enumerations;
@@ -19,6 +20,7 @@ namespace Avalanche.Api.Tests.Controllers
         Mock<ILogger<MetadataController>> _appLoggerService;
         Mock<IWebHostEnvironment> _environment;
         Mock<IMetadataManager> _metadataManager;
+        Mock<IMediaManager> _mediaManager;
 
         MetadataController _controller;
 
@@ -30,8 +32,9 @@ namespace Avalanche.Api.Tests.Controllers
             _appLoggerService = new Mock<ILogger<MetadataController>>();
             _environment = new Mock<IWebHostEnvironment>();
             _metadataManager = new Mock<IMetadataManager>();
+            _mediaManager = new Mock<IMediaManager>();
 
-            _controller = new MetadataController(_appLoggerService.Object, _metadataManager.Object);
+            _controller = new MetadataController(_appLoggerService.Object, _metadataManager.Object, _mediaManager.Object);
 
             OperatingSystem os = Environment.OSVersion;
 

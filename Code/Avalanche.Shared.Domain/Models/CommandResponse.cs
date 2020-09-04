@@ -8,7 +8,6 @@ namespace Avalanche.Shared.Domain.Models
     {
         public Device Device { get; set; }
         public List<string> Messages { get; set; }
-        public string SessionId { get; set; }
         public int ResponseCode { get; set; }
     }
 }

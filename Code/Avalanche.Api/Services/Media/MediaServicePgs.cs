@@ -56,7 +56,6 @@ namespace Avalanche.Api.Services.Media
 
             return new CommandResponse()
             {
-                SessionId = command.AdditionalInfo,
                 Device = command.Device,
                 ResponseCode = (int)actionResponse.ResponseCode
             }; 
@@ -93,7 +92,6 @@ namespace Avalanche.Api.Services.Media
 
             var response = new CommandResponse()
             {
-                SessionId = command.AdditionalInfo,
                 Device = command.Device,
                 ResponseCode = (int)actionResponse.ResponseCode,
                 Messages = new List<string>()
@@ -116,7 +114,6 @@ namespace Avalanche.Api.Services.Media
 
             return new CommandResponse()
             {
-                SessionId = command.AdditionalInfo,
                 Device = command.Device,
                 ResponseCode = (int)WebRtcApiErrorEnum.WebRtcApiErrorSuccess
             };
@@ -126,7 +123,6 @@ namespace Avalanche.Api.Services.Media
         {
             return new CommandResponse()
             {
-                SessionId = command.AdditionalInfo,
                 Device = command.Device,
                 ResponseCode = (int)WebRtcApiErrorEnum.WebRtcApiErrorUnknown
             };
@@ -136,7 +132,6 @@ namespace Avalanche.Api.Services.Media
         {
             return new CommandResponse()
             {
-                SessionId = command.AdditionalInfo,
                 Device = command.Device,
                 ResponseCode = (int)WebRtcApiErrorEnum.WebRtcApiErrorUnknown
             };
@@ -146,7 +141,6 @@ namespace Avalanche.Api.Services.Media
         {
             return new CommandResponse()
             {
-                SessionId = command.AdditionalInfo,
                 Device = command.Device,
                 ResponseCode = (int)WebRtcApiErrorEnum.WebRtcApiErrorUnknown
             };
@@ -156,7 +150,6 @@ namespace Avalanche.Api.Services.Media
         {
             return new CommandResponse()
             {
-                SessionId = command.AdditionalInfo,
                 Device = command.Device,
                 ResponseCode = (int)WebRtcApiErrorEnum.WebRtcApiErrorUnknown
             };
@@ -166,7 +159,6 @@ namespace Avalanche.Api.Services.Media
         {
             return new CommandResponse()
             {
-                SessionId = command.AdditionalInfo,
                 Device = command.Device,
                 ResponseCode = (int)WebRtcApiErrorEnum.WebRtcApiErrorUnknown
             };

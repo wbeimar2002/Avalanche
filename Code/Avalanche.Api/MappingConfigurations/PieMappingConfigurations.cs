@@ -91,7 +91,12 @@ namespace Avalanche.Api.MappingConfigurations
                     opt => opt.MapFrom(src => GetSex(src.Sex.Id)))
                 .ForPath(dest =>
                     dest.Patient.Dob,
-                    opt => opt.MapFrom(src => GetFixedDateMessage(src.DateOfBirth))) 
+                    opt => opt.MapFrom(src => new Ism.Storage.Common.Core.PatientList.Proto.FixedDateMessage 
+                    { 
+                        Day = src.DateOfBirth.Day, 
+                        Month = src.DateOfBirth.Month, 
+                        Year = src.DateOfBirth.Year 
+                    })) 
                 .ForPath(dest =>
                     dest.PerformingPhysician.UserId,
                     opt => opt.MapFrom(src => src.Physician.Id))
@@ -101,6 +106,12 @@ namespace Avalanche.Api.MappingConfigurations
                 .ForPath(dest =>
                     dest.PerformingPhysician.LastName,
                     opt => opt.MapFrom(src => src.Physician.LastName))
+                .ForMember(dest =>
+                    dest.SecondaryPhysicians,
+                    opt => opt.Ignore())
+                .ForMember(dest =>
+                    dest.Properties,
+                    opt => opt.Ignore())
                 .ReverseMap();
 
             CreateMap<PatientViewModel, Ism.PatientInfoEngine.Common.Core.Protos.PatientRecordMessage>()
@@ -112,7 +123,7 @@ namespace Avalanche.Api.MappingConfigurations
                     opt => opt.MapFrom(src => "Unknown"))
                 .ForMember(dest =>
                     dest.AdmissionStatus,
-                    opt => opt.MapFrom(src => new Ism.Storage.Common.Core.PatientList.Proto.AdmissionStatusMessage()))
+                    opt => opt.MapFrom(src => new Ism.PatientInfoEngine.Common.Core.Protos.AdmissionStatus()))
                 .ForMember(dest =>
                     dest.InternalId,
                     opt => opt.MapFrom(src => 0))
@@ -139,7 +150,12 @@ namespace Avalanche.Api.MappingConfigurations
                     opt => opt.MapFrom(src => GetSex(src.Sex.Id)))
                 .ForPath(dest =>
                     dest.Patient.Dob,
-                    opt => opt.MapFrom(src => GetFixedDateMessage(src.DateOfBirth)))
+                    opt => opt.MapFrom(src => new Ism.PatientInfoEngine.Common.Core.Protos.FixedDateMessage
+                    {
+                        Day = src.DateOfBirth.Day,
+                        Month = src.DateOfBirth.Month,
+                        Year = src.DateOfBirth.Year
+                    }))
                 .ForPath(dest =>
                     dest.PerformingPhysician.UserId,
                     opt => opt.MapFrom(src => src.Physician.Id))
@@ -149,8 +165,13 @@ namespace Avalanche.Api.MappingConfigurations
                 .ForPath(dest =>
                     dest.PerformingPhysician.LastName,
                     opt => opt.MapFrom(src => src.Physician.LastName))
+                .ForMember(dest =>
+                    dest.SecondaryPhysicians,
+                    opt => opt.Ignore())
+                .ForMember(dest =>
+                    dest.Properties,
+                    opt => opt.Ignore())
                 .ReverseMap();
-
         }
 
         private object GetSex(Ism.Storage.Common.Core.PatientList.Proto.SexMessage sex)
@@ -165,11 +186,6 @@ namespace Avalanche.Api.MappingConfigurations
                 default:
                     return "U";
             }
-        }
-
-        private Ism.Storage.Common.Core.PatientList.Proto.FixedDateMessage GetFixedDateMessage(DateTime dateOfBirth)
-        {
-            return new Ism.Storage.Common.Core.PatientList.Proto.FixedDateMessage { Day = dateOfBirth.Day, Month = dateOfBirth.Month, Year = dateOfBirth.Year };
         }
 
         private Ism.Storage.Common.Core.PatientList.Proto.SexMessage GetSex(string gender)

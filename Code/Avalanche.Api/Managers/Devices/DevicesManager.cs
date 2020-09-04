@@ -12,7 +12,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Linq;
 
 namespace Avalanche.Api.Managers.Devices
 {
@@ -175,11 +174,7 @@ namespace Avalanche.Api.Managers.Devices
                 }); 
             }
 
-            return new CommandResponse()
-            {
-                Device = command.Device,
-                ResponseCode = 0,
-            };
+            return GetSuccessfulCommandReponse(command);
         }
 
         private async Task<CommandResponse> UnrouteVideoSoure(Command command)
@@ -190,11 +185,12 @@ namespace Avalanche.Api.Managers.Devices
                 Source = new AliasIndexMessage(),
             });
 
-            return new CommandResponse()
-            {
-                Device = command.Device,
-                ResponseCode = 0,
-            };
+            return GetSuccessfulCommandReponse(command);
+        }
+
+        private static CommandResponse GetSuccessfulCommandReponse(Command command)
+        {
+            return GetSuccessfulCommandReponse(command);
         }
 
         private async Task<CommandResponse> ExitFullScreen(Command command)
@@ -204,11 +200,7 @@ namespace Avalanche.Api.Managers.Devices
                 UserInterfaceId = Convert.ToInt32(command.AdditionalInfo)
             });
 
-            return new CommandResponse()
-            {
-                Device = command.Device,
-                ResponseCode = 0,
-            };
+            return GetSuccessfulCommandReponse(command);
         }
 
         private async Task<CommandResponse> EnterFullScreen(Command command)
@@ -219,11 +211,7 @@ namespace Avalanche.Api.Managers.Devices
                 UserInterfaceId = Convert.ToInt32(command.AdditionalInfo)
             });
 
-            return new CommandResponse()
-            {
-                Device = command.Device,
-                ResponseCode = 0,
-            };
+            return GetSuccessfulCommandReponse(command);
         }
         #endregion Routing
 
@@ -236,12 +224,7 @@ namespace Avalanche.Api.Managers.Devices
             if (alwaysOnSettings.PgsVideoAlwaysOn)
                 return await _mediaService.PgsPlayVideoAsync(command);
             else
-                return new CommandResponse()
-                {
-                    Device = command.Device,
-                    ResponseCode = 0,
-                    SessionId = command.AdditionalInfo
-                };
+                return GetSuccessfulCommandReponse(command);
         }
 
         private async Task SetMode(Device source, TimeoutModes timeoutMode)
@@ -254,7 +237,6 @@ namespace Avalanche.Api.Managers.Devices
 
             await _mediaService.TimeoutSetModeAsync(setModeCommand);
         }
-
 
         public Task<List<Output>> GetPGSOutputs()
         {
