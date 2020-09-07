@@ -14,6 +14,7 @@ namespace Avalanche.Api.ViewModels
         public string LastName { get; set; }
         public DateTime DateOfBirth { get; set; }
         public KeyValuePairViewModel Sex { get; set; }
+        public KeyValuePairViewModel Department { get; set; }
         public KeyValuePairViewModel ProcedureType { get; set; }
         public Physician Physician { get; set; }
         public string ScopeSerialNumber { get; set; }

@@ -30,7 +30,7 @@ namespace Avalanche.Api.MappingConfigurations
                     dest.MRN,
                     opt => opt.MapFrom(src => src.Mrn))
                 .ForMember(dest =>
-                    dest.Gender,
+                    dest.Sex,
                     opt => opt.MapFrom(src => GetSex(src.Patient.Sex)))
                 .ReverseMap();
 
@@ -51,7 +51,10 @@ namespace Avalanche.Api.MappingConfigurations
                     dest.MRN,
                     opt => opt.MapFrom(src => src.MRN))
                 .ForMember(dest =>
-                    dest.Gender,
+                    dest.Department,
+                    opt => opt.MapFrom(src => GetSex(src.Department)))
+                .ForMember(dest =>
+                    dest.Sex,
                     opt => opt.MapFrom(src => GetSex(src.Patient.Sex)))
                 .ReverseMap();
 
@@ -61,7 +64,7 @@ namespace Avalanche.Api.MappingConfigurations
                     opt => opt.MapFrom(src => "Unknown"))
                 .ForMember(dest =>
                     dest.Department,
-                    opt => opt.MapFrom(src => "Unknown"))
+                    opt => opt.MapFrom(src => src.Department.Id))
                 .ForMember(dest =>
                     dest.AdmissionStatus,
                     opt => opt.MapFrom(src => new Ism.Storage.Common.Core.PatientList.Proto.AdmissionStatusMessage()))
@@ -120,7 +123,7 @@ namespace Avalanche.Api.MappingConfigurations
                     opt => opt.MapFrom(src => "Unknown"))
                 .ForMember(dest =>
                     dest.Department,
-                    opt => opt.MapFrom(src => "Unknown"))
+                    opt => opt.MapFrom(src => src.Department.Id))
                 .ForMember(dest =>
                     dest.AdmissionStatus,
                     opt => opt.MapFrom(src => new Ism.PatientInfoEngine.Common.Core.Protos.AdmissionStatus()))

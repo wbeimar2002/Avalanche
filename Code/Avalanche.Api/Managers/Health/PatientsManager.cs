@@ -78,6 +78,10 @@ namespace Avalanche.Api.Managers.Health
                 {
                     Id = "U"
                 },
+                Department = new KeyValuePairViewModel()
+                {
+                    Id = "Unknown"
+                },
                 ProcedureType = new KeyValuePairViewModel()
                 {
                     Id =  "Unknown"
