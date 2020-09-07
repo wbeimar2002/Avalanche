@@ -38,7 +38,7 @@ namespace Avalanche.Api.Controllers.V1
         /// <summary>
         /// Return the timeout file source
         /// </summary>
-        [HttpGet("setup/settings")]
+        [HttpGet("setup")]
         [Produces(typeof(SetupSettings))]
         public async Task<IActionResult> GetSetupSettings([FromServices] IWebHostEnvironment env)
         {
@@ -62,7 +62,7 @@ namespace Avalanche.Api.Controllers.V1
         /// <summary>
         /// Return the timeout file source
         /// </summary>
-        [HttpGet("timeout/settings")]
+        [HttpGet("timeout")]
         [Produces(typeof(TimeoutSettings))]
         public async Task<IActionResult> GetTimeoutSettings([FromServices] IWebHostEnvironment env)
         {
