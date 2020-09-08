@@ -188,9 +188,13 @@ namespace Avalanche.Api.Managers.Devices
             return GetSuccessfulCommandReponse(command);
         }
 
-        private static CommandResponse GetSuccessfulCommandReponse(Command command)
+        private CommandResponse GetSuccessfulCommandReponse(Command command)
         {
-            return GetSuccessfulCommandReponse(command);
+            return new CommandResponse()
+            {
+                Device = command.Device,
+                ResponseCode = 0,
+            };
         }
 
         private async Task<CommandResponse> ExitFullScreen(Command command)
