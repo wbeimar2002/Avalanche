@@ -231,8 +231,6 @@ stages:
     - download: current
       artifact: 'certificates'
        
-     
-     
     - powershell: |
             $package_version =""
             $buildnumber = $Env:BUILD_BUILDNUMBER
@@ -255,15 +253,14 @@ stages:
     - powershell: |
         write-host "package version="$ENV:PACKAGEVERSION
       displayName: 'Print package version'
+
     - task: 'octopusdeploy.octopus-deploy-build-release-tasks.octopus-pack.OctopusPack@4'
-      displayName: 'Package avalanche-dicom'
+      displayName: 'Package Avalanche-Api'
       inputs:
         PackageId: '$(OctopusProject)'
         PackageFormat: Zip
         PackageVersion: '$(PackageVersion)'
         SourcePath: '$(Pipeline.Workspace)/$(PathToCerificates)'
-        #SourcePath: '$(System.DefaultWorkingDirectory)/$(PathToCerificates)'
-        #SourcePath: '$(System.DefaultWorkingDirectory)/_avalanche-dicom/drop/Ism.Dicom/bin/Release'
         OutputPath: '$(RELEASE.PRIMARYARTIFACTSOURCEALIAS)/Packages'
 
     - task: octopusdeploy.octopus-deploy-build-release-tasks.octopus-push.OctopusPush@4
