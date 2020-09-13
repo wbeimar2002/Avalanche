@@ -1,9 +1,7 @@
 name: $(build_number_prefix)-$(majorversion).$(minorversion).$(patch).$(Releasestage)_$(majorversion).$(minorversion).$(Date:yyMM).$(Date:dd)$(Rev:rr)
 
 resources:
-
   repositories:
-
   - repository: devops
     type: git
     name: devops
@@ -15,7 +13,6 @@ resources:
   #vmImage: '$(pool_vm_image)'
 
 variables:
-
   - group: 'vg-dev-avalanche-api'
   
 stages:
@@ -36,7 +33,6 @@ stages:
      - checkout: devops
 
     # resore solution
-
      - task: NuGetCommand@2
        displayName: 'NuGet restore **/*.sln'
        inputs:
@@ -53,6 +49,7 @@ stages:
           projectKey: '$(SonarProject)'
           projectName: '$(SonarProject)'
    
+     # build solution
      - task: DotNetCoreCLI@2
        displayName: 'dotnet build **/*.sln'
        inputs:
