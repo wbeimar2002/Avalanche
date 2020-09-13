@@ -88,7 +88,7 @@ stages:
      - task: SonarQubeAnalyze@4
        condition: and(succeeded(), eq(variables['Build.SourceBranchName'], 'dev'))
 
-    # sonar 3 of 3
+     # sonar 3 of 3
      - task: SonarQubePublish@4
        condition: and(succeeded(), eq(variables['Build.SourceBranchName'], 'dev'))
        inputs:
