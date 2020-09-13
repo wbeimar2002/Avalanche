@@ -94,7 +94,6 @@ stages:
        inputs:
         pollingTimeoutSec: '300'
   
-
     # make app artifacts
      - task: DotNetCoreCLI@2
        displayName: 'Publish project'
