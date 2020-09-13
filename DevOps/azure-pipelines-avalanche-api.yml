@@ -105,18 +105,18 @@ stages:
         zipAfterPublish: false
         modifyOutputPath: false
 
-    # store artifacts
+    # create artifacts
      - task: PublishBuildArtifacts@1
        displayName: 'Publish Build Artifacts'
        inputs:
         PathtoPublish: '$(PathtoApp)'
         ArtifactName: '$(PathtoApp)'
     
-     - task: CopyFiles@2
-       inputs:
-        SourceFolder: '$(Repo)/DevOps/certificates'
-        Contents: '**'
-        TargetFolder: 'certificates'
+     #- task: CopyFiles@2
+       #inputs:
+        #SourceFolder: '$(Repo)/DevOps/certificates'
+        #Contents: '**'
+        #TargetFolder: 'certificates'
 
      - task: PublishBuildArtifacts@1
        displayName: 'Publish Certiifcates'
