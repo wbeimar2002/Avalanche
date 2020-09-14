@@ -229,7 +229,7 @@ stages:
     steps:
   
     - task: DownloadBuildArtifacts@0
-      displayName: 'Download Build Avalanche-Web Artifacts'
+      displayName: 'Download Build Avalanche-api Artifacts'
       inputs:
         artifactName: '$(PathToApp)'  
         
