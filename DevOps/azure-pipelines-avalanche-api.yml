@@ -267,7 +267,7 @@ stages:
         PackageId: '$(OctopusProject)'
         PackageFormat: Zip
         PackageVersion: '$(PackageVersion)'
-        SourcePath: '$(Pipeline.Workspace)/$(PathtoApp)'
+        SourcePath: '$(System.ArtifactsDirectory)/$(PathtoApp)'
         OutputPath: '$(RELEASE.PRIMARYARTIFACTSOURCEALIAS)/Packages'
 
     - task: octopusdeploy.octopus-deploy-build-release-tasks.octopus-push.OctopusPush@4
