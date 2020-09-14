@@ -122,7 +122,7 @@ stages:
        displayName: 'Publish Certiifcates'
        inputs:
         PathtoPublish: '$(Repo)/DevOps/certificates'
-        ArtifactName: certificates
+        ArtifactName: '$(PathToCerificates)'
 
 - stage: push_to_acr
 
@@ -228,8 +228,15 @@ stages:
         - msbuild
     steps:
   
-    - download: current
-      artifact: 'certificates'
+    - task: DownloadBuildArtifacts@0
+      displayName: 'Download Build Avalanche-Web Artifacts'
+      inputs:
+        artifactName: '$(PathToApp)'  
+        
+    - task: DownloadBuildArtifacts@0
+      displayName: 'Download Build Certificates Artifacts'
+      inputs:
+        artifactName: '$(PathToCerificates)'
        
     - powershell: |
             $package_version =""
@@ -260,7 +267,7 @@ stages:
         PackageId: '$(OctopusProject)'
         PackageFormat: Zip
         PackageVersion: '$(PackageVersion)'
-        SourcePath: '$(Pipeline.Workspace)/$(PathToCerificates)'
+        SourcePath: '$(Pipeline.Workspace)/$(PathtoApp)'
         OutputPath: '$(RELEASE.PRIMARYARTIFACTSOURCEALIAS)/Packages'
 
     - task: octopusdeploy.octopus-deploy-build-release-tasks.octopus-push.OctopusPush@4
@@ -282,7 +289,7 @@ stages:
     - task: 'octopusdeploy.octopus-deploy-build-release-tasks.octopus-pack.OctopusPack@4'
       displayName: 'Package avalanche-api-certificates'
       inputs:
-        PackageId: 'avalanche-api-certificates'
+        PackageId: '$(CertificatePackageId)'
         PackageFormat: Zip
         PackageVersion: '$(PackageVersion)'
         SourcePath: '$(System.ArtifactsDirectory)/certificates'
