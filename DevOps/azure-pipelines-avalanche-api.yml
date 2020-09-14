@@ -278,4 +278,20 @@ stages:
        ProjectName: '$(OctopusProject)'
        ReleaseNumber: '$(PackageVersion)'
        #Channel: 'Channels-167'
+
+    - task: 'octopusdeploy.octopus-deploy-build-release-tasks.octopus-pack.OctopusPack@4'
+      displayName: 'Package avalanche-api-certificates'
+      inputs:
+        PackageId: 'avalanche-api-certificates'
+        PackageFormat: Zip
+        PackageVersion: '$(PackageVersion)'
+        SourcePath: '$(System.ArtifactsDirectory)/certificates'
+        OutputPath: '$(RELEASE.PRIMARYARTIFACTSOURCEALIAS)/Packages'
+
+    - task: octopusdeploy.octopus-deploy-build-release-tasks.octopus-push.OctopusPush@4
+      displayName: 'Push avalanche-api-certificates package to octopus'
+      inputs:
+        OctoConnectedServiceName: 'Octopus Server'
+        Space: 'Spaces-1'
+        Package: '$(RELEASE.PRIMARYARTIFACTSOURCEALIAS)/Packages/$(CertificatePackageId).$(PackageVersion).zip'
        
