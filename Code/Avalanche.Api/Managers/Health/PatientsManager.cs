@@ -35,7 +35,7 @@ namespace Avalanche.Api.Managers.Health
             _mapper = mapper;
         }
 
-        public async Task<Shared.Domain.Models.Patient> RegisterPatient(PatientViewModel newPatient)
+        public async Task<Shared.Domain.Models.Patient> RegisterPatient(PatientViewModel newPatient, System.Security.Claims.ClaimsPrincipal user)
         {
             Preconditions.ThrowIfNull(nameof(newPatient), newPatient);
             Preconditions.ThrowIfNull(nameof(newPatient.MRN), newPatient.MRN);
@@ -48,6 +48,17 @@ namespace Avalanche.Api.Managers.Health
             var accessInfo = _accessInfoFactory.GenerateAccessInfo();
             var accessInfoMessage = _mapper.Map<Ism.Storage.Common.Core.PatientList.Proto.AccessInfoMessage>(accessInfo);
 
+            //TODO: Configurable in maintenance (on/off) - user logged in is auto-filled as physician when doing manual registration
+            if (newPatient.Physician == null)
+            {
+                newPatient.Physician = new Physician()
+                {
+                    Id = user.FindFirst("Id")?.Value,
+                    FirstName = user.FindFirst("FirstName")?.Value,
+                    LastName = user.FindFirst("LastName")?.Value,
+                };
+            }
+
             var patient = _mapper.Map<PatientViewModel, Ism.Storage.Common.Core.PatientList.Proto.PatientRecordMessage>(newPatient);
 
             var result = await _pieService.RegisterPatient(patient, accessInfoMessage);
@@ -56,13 +67,10 @@ namespace Avalanche.Api.Managers.Health
 
         public async Task<Shared.Domain.Models.Patient> QuickPatientRegistration(System.Security.Claims.ClaimsPrincipal user)
         {
-            //TODO:Validate this
-            //Performing physician is administrator by default
-            //Configurable in maintenance (on/off) - user logged in is auto-filled as physician when doing manual registration
-            //Patient last name and MRN is of the local date, room name and time in the following format:  YYYY_mm_DD_HH_SS_MS_RM
-
+            //TODO: Local date? Issue with docker
             //TODO: This format should come from a configuration setting?
-            string formattedDate = DateTime.UtcNow.ToString("yyyy_MM_dd_T_HH_mm_ss_ff");
+            string quickRegistrationDateFormat = "yyyy_MM_dd_T_HH_mm_ss_ff";
+            string formattedDate = DateTime.Now.ToString(quickRegistrationDateFormat);
 
             var accessInfo = _accessInfoFactory.GenerateAccessInfo();
             var accessInfoMessage = _mapper.Map<Ism.Storage.Common.Core.PatientList.Proto.AccessInfoMessage>(accessInfo);
@@ -86,14 +94,13 @@ namespace Avalanche.Api.Managers.Health
                 {
                     Id =  "Unknown"
                 },
-                Physician = new Physician()
+                //TODO: Performing physician is administrator by default
+                //Which are the values?
+                Physician = new Physician() 
                 {
-                    Id = "Admin",
-                    FirstName = "Admin",
-                    LastName = "Admin",
-                    //Id = user.FindFirst("Id")?.Value,
-                    //FirstName = user.FindFirst("FirstName")?.Value,
-                    //LastName = user.FindFirst("LastName")?.Value,
+                    Id = user.FindFirst("Id")?.Value,
+                    FirstName = user.FindFirst("FirstName")?.Value,
+                    LastName = user.FindFirst("LastName")?.Value,
                 }
             };
             

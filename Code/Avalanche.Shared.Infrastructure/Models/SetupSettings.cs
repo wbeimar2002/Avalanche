@@ -11,7 +11,14 @@ namespace Avalanche.Shared.Infrastructure.Models
     {
         [JsonProperty("Mode")]
         public SetupModes Mode { get; set; }
+
         [JsonProperty("QuickRegistrationAllowed")]
         public bool QuickRegistrationAllowed { get; set; }
+
+        [JsonProperty("AutoFillPhysician")]
+        public bool AutoFillPhysician { get; set; }
+
+        [JsonProperty("QuickRegistrationDateFormat")]
+        public string QuickRegistrationDateFormat { get; set; }
     }
 }

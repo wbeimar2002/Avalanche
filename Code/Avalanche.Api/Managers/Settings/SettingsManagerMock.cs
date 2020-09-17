@@ -20,6 +20,12 @@ namespace Avalanche.Api.Managers.Settings
             _settingsService = settingsService;
         }
 
+        public async Task<VideoRoutingSettings> GetVideoRoutingSettingsAsync()
+        {
+            return await _settingsService.GetVideoRoutingSettingsAsync();
+        }
+
+
         public async Task<TimeoutSettings> GetTimeoutSettingsAsync()
         {
             return await _settingsService.GetTimeoutSettingsAsync();

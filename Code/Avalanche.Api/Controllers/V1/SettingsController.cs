@@ -36,7 +36,31 @@ namespace Avalanche.Api.Controllers.V1
         }
 
         /// <summary>
-        /// Return the timeout file source
+        /// Return the video routing settings
+        /// </summary>
+        [HttpGet("videorouting")]
+        [Produces(typeof(VideoRoutingSettings))]
+        public async Task<IActionResult> GetVideoRoutingSettings([FromServices] IWebHostEnvironment env)
+        {
+            try
+            {
+                _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
+                var response = await _settingsManager.GetVideoRoutingSettingsAsync();
+                return Ok(response);
+            }
+            catch (Exception exception)
+            {
+                _appLoggerService.LogError(LoggerHelper.GetLogMessage(DebugLogType.Exception), exception);
+                return new BadRequestObjectResult(exception.Get(env.IsDevelopment()));
+            }
+            finally
+            {
+                _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
+            }
+        }
+
+        /// <summary>
+        /// Return the setup settings
         /// </summary>
         [HttpGet("setup")]
         [Produces(typeof(SetupSettings))]
@@ -60,7 +84,7 @@ namespace Avalanche.Api.Controllers.V1
         }
 
         /// <summary>
-        /// Return the timeout file source
+        /// Return the timeout settings
         /// </summary>
         [HttpGet("timeout")]
         [Produces(typeof(TimeoutSettings))]

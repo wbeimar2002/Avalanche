@@ -40,6 +40,12 @@ namespace Avalanche.Shared.Domain.Enumerations
         [Description("Route Video Source")]
         RouteVideoSource = 15,
         [Description("Unroute Video Source")]
-        UnrouteVideoSource = 16
+        UnrouteVideoSource = 16,
+        [Description("Start recording")]
+        StartRecording = 17,
+        [Description("Stop Recording")]
+        StopRecording = 18,
+        [Description("Show video routing preview")]
+        ShowVideoRoutingPreview = 19
     }
 }

@@ -17,7 +17,7 @@ using System.Text;
 namespace Avalanche.Api.Tests.Managers
 {
     [TestFixture()]
-    public class MediaManagerTests
+    public class DeviceManagerTests
     {
         Mock<IMediaService> _mediaService;
         Mock<ISettingsService> _settingsService;

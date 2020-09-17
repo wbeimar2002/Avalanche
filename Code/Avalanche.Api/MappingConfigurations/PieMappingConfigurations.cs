@@ -191,9 +191,9 @@ namespace Avalanche.Api.MappingConfigurations
             }
         }
 
-        private Ism.Storage.Common.Core.PatientList.Proto.SexMessage GetSex(string gender)
+        private Ism.Storage.Common.Core.PatientList.Proto.SexMessage GetSex(string sex)
         {
-            switch (gender)
+            switch (sex)
             {
                 case "F":
                     return Ism.Storage.Common.Core.PatientList.Proto.SexMessage.F;

@@ -128,11 +128,33 @@ namespace Avalanche.Api.Managers.Devices
 
                 case Shared.Domain.Enumerations.CommandTypes.UnrouteVideoSource:
                     return await UnrouteVideoSoure(command);
+
+                case Shared.Domain.Enumerations.CommandTypes.StartRecording:
+                    return await StartRecording(command);
+
+                case Shared.Domain.Enumerations.CommandTypes.StopRecording:
+                    return await StopRecording(command);
+
+                case Shared.Domain.Enumerations.CommandTypes.ShowVideoRoutingPreview:
+                    return await ShowVideoRoutingPreview(command);
+
                 #endregion Operate Commands
 
                 default:
                     return null;
             }
+        }
+
+        private async Task<CommandResponse> StopRecording(Command command)
+        {
+            //TODO: Pending call
+            return GetSuccessfulCommandReponse(command);
+        }
+
+        private async Task<CommandResponse> StartRecording(Command command)
+        {
+            //TODO: Pending call
+            return GetSuccessfulCommandReponse(command);
         }
 
         #region Routing
@@ -215,6 +237,12 @@ namespace Avalanche.Api.Managers.Devices
                 UserInterfaceId = Convert.ToInt32(command.AdditionalInfo)
             });
 
+            return GetSuccessfulCommandReponse(command);
+        }
+
+        private async Task<CommandResponse> ShowVideoRoutingPreview(Command command)
+        {
+            //TODO: Pending call
             return GetSuccessfulCommandReponse(command);
         }
         #endregion Routing

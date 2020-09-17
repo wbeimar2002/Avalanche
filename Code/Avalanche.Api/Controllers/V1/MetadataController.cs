@@ -84,16 +84,16 @@ namespace Avalanche.Api.Controllers.V1
         }
 
         /// <summary>
-        /// Get content genders
+        /// Get content sexes
         /// </summary>
-        [HttpGet("genders")]
+        [HttpGet("sexes")]
         [Produces(typeof(List<KeyValuePairViewModel>))]
-        public async Task<IActionResult> GetGenders([FromServices]IWebHostEnvironment env)
+        public async Task<IActionResult> GetSexes([FromServices]IWebHostEnvironment env)
         {
             try
             {
                 _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
-                var result = await _metadataManager.GetMetadata(Shared.Domain.Enumerations.MetadataTypes.Genders);
+                var result = await _metadataManager.GetMetadata(Shared.Domain.Enumerations.MetadataTypes.Sex);
                 return Ok(result);
             }
             catch (Exception exception)

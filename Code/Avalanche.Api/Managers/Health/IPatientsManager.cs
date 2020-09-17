@@ -12,7 +12,7 @@ namespace Avalanche.Api.Managers.Health
     {
         Task<IList<Patient>> Search(PatientKeywordSearchFilterViewModel filter);
         Task<IList<Patient>> Search(PatientDetailsSearchFilterViewModel filter);
-        Task<Patient> RegisterPatient(PatientViewModel newPatient);
+        Task<Patient> RegisterPatient(PatientViewModel newPatient, System.Security.Claims.ClaimsPrincipal user);
         Task<Patient> QuickPatientRegistration(System.Security.Claims.ClaimsPrincipal user);
         Task UpdatePatient(PatientViewModel existing);
         Task DeletePatient(ulong id);

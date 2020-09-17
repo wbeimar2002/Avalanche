@@ -89,5 +89,11 @@ namespace Avalanche.Api.Services.Configuration
             string path = "/config/PatientsSetupSettings.json";
             return await _fileService.LoadAsync<SetupSettings>(path);
         }
+
+        public async Task<VideoRoutingSettings> GetVideoRoutingSettingsAsync()
+        {
+            string path = "/config/VideoRoutingSettings.json";
+            return await _fileService.LoadAsync<VideoRoutingSettings>(path);
+        }
     }
 }

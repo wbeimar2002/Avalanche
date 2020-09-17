@@ -1,19 +1,12 @@
 ﻿using Avalanche.Api.Controllers.V1;
+using Avalanche.Api.Managers.Notifications;
+using Avalanche.Api.Tests.Extensions;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
 using System;
-using Avalanche.Api.Tests.Extensions;
-using System.Collections.Generic;
-using System.Text;
-using System.Threading.Tasks;
-using Ism.Broadcaster.Services;
-using Ism.Broadcaster.Models;
-using Ism.RabbitMq.Client;
-using Ism.RabbitMq.Client.Models;
-using Microsoft.Extensions.Options;
 
 namespace Avalanche.Api.Tests.Controllers
 {
@@ -21,10 +14,8 @@ namespace Avalanche.Api.Tests.Controllers
     public class NotificationsControllerTests
     {
         Mock<ILogger<NotificationsController>> _appLoggerService;
-        Mock<IBroadcastService> _broadcastService;
         Mock<IWebHostEnvironment> _environment;
-        Mock<IRabbitMqClientService> _rabbitMqClientService;
-        IOptions<RabbitMqOptions> _rabbitMqOptions;
+        Mock<INotificationsManager> _notificationsManager;
 
         NotificationsController _controller;
 
@@ -34,13 +25,10 @@ namespace Avalanche.Api.Tests.Controllers
         public void Setup()
         {
             _appLoggerService = new Mock<ILogger<NotificationsController>>();
-            _broadcastService = new Mock<IBroadcastService>();
-            _rabbitMqClientService = new Mock<IRabbitMqClientService>();
-            _rabbitMqOptions = Options.Create(new RabbitMqOptions());
-
+            _notificationsManager = new Mock<INotificationsManager>();
             _environment = new Mock<IWebHostEnvironment>();
 
-            _controller = new NotificationsController(_broadcastService.Object, _appLoggerService.Object, _rabbitMqOptions, _rabbitMqClientService.Object);
+            _controller = new NotificationsController(_appLoggerService.Object, _notificationsManager.Object);
 
             OperatingSystem os = Environment.OSVersion;
 
@@ -49,74 +37,72 @@ namespace Avalanche.Api.Tests.Controllers
         }
 
         [Test]
-        public void BroadcastDirectShouldReturnOkResult()
+        public void SendDirectMessageShouldReturnOkResult()
         {
             var message = new Ism.Broadcaster.Models.MessageRequest();
+            _notificationsManager.Setup(mock => mock.SendDirectMessage(It.IsAny<Ism.Broadcaster.Models.MessageRequest>()));
 
-            _broadcastService.Setup(mock => mock.Broadcast(It.IsAny<Ism.Broadcaster.Models.MessageRequest>()));
-
-            var okResult = _controller.BroadcastDirect(message, _environment.Object);
+            var okResult = _controller.SendDirectMessage(message, _environment.Object);
 
             if (_checkLogger)
             {
-                _appLoggerService.Verify(LogLevel.Error, $"Exception {_controller.GetType().Name}.BroadcastDirect", Times.Never());
-                _appLoggerService.Verify(LogLevel.Debug, $"Requested {_controller.GetType().Name}.BroadcastDirect", Times.Once());
-                _appLoggerService.Verify(LogLevel.Debug, $"Completed {_controller.GetType().Name}.BroadcastDirect", Times.Once());
+                _appLoggerService.Verify(LogLevel.Error, $"Exception {_controller.GetType().Name}.SendDirectMessage", Times.Never());
+                _appLoggerService.Verify(LogLevel.Debug, $"Requested {_controller.GetType().Name}.SendDirectMessage", Times.Once());
+                _appLoggerService.Verify(LogLevel.Debug, $"Completed {_controller.GetType().Name}.SendDirectMessage", Times.Once());
             }
 
             Assert.IsInstanceOf<AcceptedResult>(okResult);
         }
 
         [Test]
-        public void BroadcastDirectShouldReturnBadResultIfFails()
+        public void SendDirectMessageShouldReturnBadResultIfFails()
         {
-            _broadcastService.Setup(mock => mock.Broadcast(It.IsAny<Ism.Broadcaster.Models.MessageRequest>())).Throws(It.IsAny<Exception>());
+            _notificationsManager.Setup(mock => mock.SendDirectMessage(It.IsAny<Ism.Broadcaster.Models.MessageRequest>())).Throws(It.IsAny<Exception>());
 
             var message = new Ism.Broadcaster.Models.MessageRequest();
-            var badResult = _controller.BroadcastDirect(message, _environment.Object);
+            var badResult = _controller.SendDirectMessage(message, _environment.Object);
 
             if (_checkLogger)
             {
-                _appLoggerService.Verify(LogLevel.Error, $"Exception {_controller.GetType().Name}.BroadcastDirect", Times.Once());
-                _appLoggerService.Verify(LogLevel.Debug, $"Requested {_controller.GetType().Name}.BroadcastDirect", Times.Once());
-                _appLoggerService.Verify(LogLevel.Debug, $"Completed {_controller.GetType().Name}.BroadcastDirect", Times.Once());
+                _appLoggerService.Verify(LogLevel.Error, $"Exception {_controller.GetType().Name}.SendDirectMessage", Times.Once());
+                _appLoggerService.Verify(LogLevel.Debug, $"Requested {_controller.GetType().Name}.SendDirectMessage", Times.Once());
+                _appLoggerService.Verify(LogLevel.Debug, $"Completed {_controller.GetType().Name}.SendDirectMessage", Times.Once());
             }
 
             Assert.IsInstanceOf<BadRequestObjectResult>(badResult);
         }
 
         [Test]
-        public void BroadcastShouldReturnOkResult()
+        public void SendQueuedMessageQueuedShouldReturnOkResult()
         {
             var message = new Ism.Broadcaster.Models.MessageRequest();
+            _notificationsManager.Setup(mock => mock.SendQueuedMessage(message));
 
-            _rabbitMqClientService.Setup(mock => mock.SendMessage(It.IsAny<string>(), It.IsAny<string>()));
-
-            var okResult = _controller.Broadcast(message, _environment.Object);
+            var okResult = _controller.SendQueuedMessage(message, _environment.Object);
 
             if (_checkLogger)
             {
-                _appLoggerService.Verify(LogLevel.Error, $"Exception {_controller.GetType().Name}.Broadcast", Times.Never());
-                _appLoggerService.Verify(LogLevel.Debug, $"Requested {_controller.GetType().Name}.Broadcast", Times.Once());
-                _appLoggerService.Verify(LogLevel.Debug, $"Completed {_controller.GetType().Name}.Broadcast", Times.Once());
+                _appLoggerService.Verify(LogLevel.Error, $"Exception {_controller.GetType().Name}.SendQueuedMessage", Times.Never());
+                _appLoggerService.Verify(LogLevel.Debug, $"Requested {_controller.GetType().Name}.SendQueuedMessage", Times.Once());
+                _appLoggerService.Verify(LogLevel.Debug, $"Completed {_controller.GetType().Name}.SendQueuedMessage", Times.Once());
             }
 
             Assert.IsInstanceOf<AcceptedResult>(okResult);
         }
 
         [Test]
-        public void BroadcastShouldReturnBadResultIfFails()
+        public void SendQueuedMessageQueuedShouldReturnBadResultIfFails()
         {
-            _rabbitMqClientService.Setup(mock => mock.SendMessage(It.IsAny<string>(), It.IsAny<string>())).Throws(It.IsAny<Exception>());
+            _notificationsManager.Setup(mock => mock.SendQueuedMessage(It.IsAny<Ism.Broadcaster.Models.MessageRequest>())).Throws(It.IsAny<Exception>()); 
 
             var message = new Ism.Broadcaster.Models.MessageRequest();
-            var badResult = _controller.Broadcast(message, _environment.Object);
+            var badResult = _controller.SendQueuedMessage(message, _environment.Object);
 
             if (_checkLogger)
             {
-                _appLoggerService.Verify(LogLevel.Error, $"Exception {_controller.GetType().Name}.Broadcast", Times.Once());
-                _appLoggerService.Verify(LogLevel.Debug, $"Requested {_controller.GetType().Name}.Broadcast", Times.Once());
-                _appLoggerService.Verify(LogLevel.Debug, $"Completed {_controller.GetType().Name}.Broadcast", Times.Once());
+                _appLoggerService.Verify(LogLevel.Error, $"Exception {_controller.GetType().Name}.SendQueuedMessage", Times.Once());
+                _appLoggerService.Verify(LogLevel.Debug, $"Requested {_controller.GetType().Name}.SendQueuedMessage", Times.Once());
+                _appLoggerService.Verify(LogLevel.Debug, $"Completed {_controller.GetType().Name}.SendQueuedMessage", Times.Once());
             }
 
             Assert.IsInstanceOf<BadRequestObjectResult>(badResult);

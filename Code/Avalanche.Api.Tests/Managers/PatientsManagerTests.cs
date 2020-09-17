@@ -46,7 +46,7 @@ namespace Avalanche.Api.Tests.Managers
             });
 
             _mapper = config.CreateMapper();
-            _manager = new PatientsManager(_pieService.Object, _settingsService.Object, _accessInfoFactory.Object, mapper);
+            _manager = new PatientsManager(_pieService.Object, _settingsService.Object, _accessInfoFactory.Object, _mapper);
         }
 
         public static IEnumerable<TestCaseData> NewPatientViewModelWrongDataTestCases
@@ -60,7 +60,7 @@ namespace Avalanche.Api.Tests.Managers
                     DateOfBirth = DateTime.Today,
                     FirstName = "Sample",
                     LastName = "Sample",
-                    Gender = new KeyValuePairViewModel()
+                    Sex = new KeyValuePairViewModel()
                     {
                         Id = "S",
                         TranslationKey = "SampleKey",
@@ -73,7 +73,7 @@ namespace Avalanche.Api.Tests.Managers
                     DateOfBirth = DateTime.Today,
                     FirstName = null,
                     LastName = "Sample",
-                    Gender = new KeyValuePairViewModel()
+                    Sex = new KeyValuePairViewModel()
                     {
                         Id = "S",
                         TranslationKey = "SampleKey",
@@ -86,7 +86,7 @@ namespace Avalanche.Api.Tests.Managers
                     DateOfBirth = DateTime.Today,
                     FirstName = "Sample",
                     LastName = null,
-                    Gender = new KeyValuePairViewModel()
+                    Sex = new KeyValuePairViewModel()
                     {
                         Id = "S",
                         TranslationKey = "SampleKey",
@@ -99,7 +99,7 @@ namespace Avalanche.Api.Tests.Managers
                     DateOfBirth = DateTime.Today,
                     FirstName = "Sample",
                     LastName = "Sample",
-                    Gender = null
+                    Sex = null
                 });
                 yield return new TestCaseData(new PatientViewModel()
                 {
@@ -107,7 +107,7 @@ namespace Avalanche.Api.Tests.Managers
                     DateOfBirth = DateTime.Today,
                     FirstName = "Sample",
                     LastName = "Sample",
-                    Gender = new KeyValuePairViewModel()
+                    Sex = new KeyValuePairViewModel()
                     {
                         Id = null,
                         TranslationKey = "SampleKey",
