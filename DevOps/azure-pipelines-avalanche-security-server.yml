@@ -46,7 +46,7 @@ stages:
 
     # sonar 1 of 3
      - task: SonarSource.sonarqube.15B84CA1-B62F-4A2A-A403-89B77A063157.SonarQubePrepare@4
-       condition: and(succeeded(), eq(variables['Build.SourceBranchName'], 'dev'))
+       #condition: and(succeeded(), eq(variables['Build.SourceBranchName'], 'dev'))
        displayName: 'Prepare analysis on SonarQube'
        inputs:
           SonarQube: sonarqube
@@ -92,11 +92,11 @@ stages:
      
      # sonar 2 of 3
      - task: SonarQubeAnalyze@4
-       condition: and(succeeded(), eq(variables['Build.SourceBranchName'], 'dev'))
+       #condition: and(succeeded(), eq(variables['Build.SourceBranchName'], 'dev'))
 
     # sonar 3 of 3
      - task: SonarQubePublish@4
-       condition: and(succeeded(), eq(variables['Build.SourceBranchName'], 'dev'))
+       #condition: and(succeeded(), eq(variables['Build.SourceBranchName'], 'dev'))
        inputs:
         pollingTimeoutSec: '300'
   
