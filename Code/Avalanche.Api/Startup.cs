@@ -76,6 +76,8 @@ namespace Avalanche.Api
             services.AddSingleton<IBroadcastService, BroadcastService>();
             services.AddSingleton<INotificationsManager, NotificationsManager>();
             services.AddSingleton<IRoutingService, RoutingService>();
+            services.AddSingleton<IAvidisService, AvidisService>();
+            services.AddSingleton<IRecorderService, RecorderService>();
 
             services.AddHttpContextAccessor();
             services.AddSingleton<IAccessInfoFactory, AccessInfoFactory>();

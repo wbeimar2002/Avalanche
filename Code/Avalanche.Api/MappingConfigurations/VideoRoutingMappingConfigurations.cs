@@ -1,7 +1,6 @@
 ﻿using AutoMapper;
 using Avalanche.Shared.Domain.Enumerations;
 using Avalanche.Shared.Domain.Models;
-using Ism.Routing.Common.Core;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -46,7 +45,7 @@ namespace Avalanche.Api.MappingConfigurations
                     opt => opt.Ignore())
                 .ReverseMap();
 
-            CreateMap<Device, AliasIndexMessage>()
+            CreateMap<Device, Ism.Routing.Common.Core.AliasIndexMessage>()
                 .ForMember(dest =>
                     dest.Alias,
                     opt => opt.MapFrom(src => src.Id))
@@ -55,7 +54,7 @@ namespace Avalanche.Api.MappingConfigurations
                     opt => opt.MapFrom(src => src.InternalIndex))
                 .ReverseMap();
 
-            CreateMap<Source, AliasIndexMessage>()
+            CreateMap<Source, Ism.Routing.Common.Core.AliasIndexMessage>()
                 .ForMember(dest =>
                     dest.Alias,
                     opt => opt.MapFrom(src => src.Id))
@@ -64,7 +63,25 @@ namespace Avalanche.Api.MappingConfigurations
                     opt => opt.MapFrom(src => src.InternalIndex))
                 .ReverseMap();
 
-            CreateMap<Output, AliasIndexMessage>()
+            CreateMap<Output, Ism.Routing.Common.Core.AliasIndexMessage>()
+                .ForMember(dest =>
+                    dest.Alias,
+                    opt => opt.MapFrom(src => src.Id))
+                .ForMember(dest =>
+                    dest.Index,
+                    opt => opt.MapFrom(src => src.InternalIndex))
+                .ReverseMap();
+
+            CreateMap<Source, AvidisDeviceInterface.Proto.AliasIndexMessage>()
+                .ForMember(dest =>
+                    dest.Alias,
+                    opt => opt.MapFrom(src => src.Id))
+                .ForMember(dest =>
+                    dest.Index,
+                    opt => opt.MapFrom(src => src.InternalIndex))
+                .ReverseMap();
+
+            CreateMap<Device, AvidisDeviceInterface.Proto.AliasIndexMessage>()
                 .ForMember(dest =>
                     dest.Alias,
                     opt => opt.MapFrom(src => src.Id))

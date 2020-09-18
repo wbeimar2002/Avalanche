@@ -6,8 +6,8 @@ using Avalanche.Shared.Domain.Enumerations;
 using Avalanche.Shared.Domain.Models;
 using Avalanche.Shared.Infrastructure.Extensions;
 using Avalanche.Shared.Infrastructure.Helpers;
-using Ism.Routing.Common.Core;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,18 +17,24 @@ namespace Avalanche.Api.Managers.Devices
 {
     public class DevicesManager : IDevicesManager
     {
+        readonly IAvidisService _avidisService;
+        readonly IRecorderService _recorderService;
         readonly IMediaService _mediaService;
         readonly ISettingsService _settingsService;
         readonly IRoutingService _routingService;
         readonly ILogger<MediaManager> _appLoggerService;
         readonly IMapper _mapper;
 
-        public DevicesManager(IMediaService mediaService, 
-            ISettingsService settingsService, 
-            IRoutingService routingService, 
-            ILogger<MediaManager> appLoggerService, 
+        public DevicesManager(IMediaService mediaService,
+            ISettingsService settingsService,
+            IRoutingService routingService,
+            ILogger<MediaManager> appLoggerService,
+            IAvidisService avidisService,
+            IRecorderService recorderService,
             IMapper mapper)
         {
+            _recorderService = recorderService;
+            _avidisService = avidisService;
             _mediaService = mediaService;
             _settingsService = settingsService;
             _routingService = routingService;
@@ -129,32 +135,23 @@ namespace Avalanche.Api.Managers.Devices
                 case Shared.Domain.Enumerations.CommandTypes.UnrouteVideoSource:
                     return await UnrouteVideoSoure(command);
 
-                case Shared.Domain.Enumerations.CommandTypes.StartRecording:
-                    return await StartRecording(command);
-
-                case Shared.Domain.Enumerations.CommandTypes.StopRecording:
-                    return await StopRecording(command);
-
                 case Shared.Domain.Enumerations.CommandTypes.ShowVideoRoutingPreview:
                     return await ShowVideoRoutingPreview(command);
 
                 #endregion Operate Commands
 
+                #region Recorder Commands
+
+                case Shared.Domain.Enumerations.CommandTypes.StartRecording:
+                    return await StartRecording(command);
+
+                case Shared.Domain.Enumerations.CommandTypes.StopRecording:
+                    return await StopRecording(command);
+                #endregion
+
                 default:
                     return null;
             }
-        }
-
-        private async Task<CommandResponse> StopRecording(Command command)
-        {
-            //TODO: Pending call
-            return GetSuccessfulCommandReponse(command);
-        }
-
-        private async Task<CommandResponse> StartRecording(Command command)
-        {
-            //TODO: Pending call
-            return GetSuccessfulCommandReponse(command);
         }
 
         #region Routing
@@ -164,13 +161,13 @@ namespace Avalanche.Api.Managers.Devices
             var sources = await _routingService.GetVideoSources();
             var currentRoutes = await _routingService.GetCurrentRoutes();
 
-            IList<Source> listResult = _mapper.Map<IList<VideoSourceMessage>, IList<Source>>(sources.VideoSources);
+            IList<Source> listResult = _mapper.Map<IList<Ism.Routing.Common.Core.VideoSourceMessage>, IList<Source>>(sources.VideoSources);
 
             foreach (var item in currentRoutes.Routes)
             {
                 var source = listResult.Where(s => s.Id.Equals(item.Source.Alias) && s.InternalIndex.Equals(item.Source.Index)).SingleOrDefault();
                 if (source != null)
-                    source.Output = _mapper.Map<AliasIndexMessage, Output>(item.Sink);
+                    source.Output = _mapper.Map<Ism.Routing.Common.Core.AliasIndexMessage, Output>(item.Sink);
             }
 
             return listResult;
@@ -179,7 +176,7 @@ namespace Avalanche.Api.Managers.Devices
         public async Task<IList<Output>> GetOperationsOutputs()
         {
             var outputs = await _routingService.GetVideoSinks();
-            IList<Output> listResult = _mapper.Map<IList<VideoSinkMessage>, IList<Output>>(outputs.VideoSinks);
+            IList<Output> listResult = _mapper.Map<IList<Ism.Routing.Common.Core.VideoSinkMessage>, IList<Output>>(outputs.VideoSinks);
 
             return listResult;
         }
@@ -189,10 +186,10 @@ namespace Avalanche.Api.Managers.Devices
             Preconditions.ThrowIfCountIsLessThan(nameof(command.Destinations), command.Destinations, 1);
             foreach (var item in command.Destinations)
             {
-                await _routingService.RouteVideo(new RouteVideoRequest()
+                await _routingService.RouteVideo(new Ism.Routing.Common.Core.RouteVideoRequest()
                 {
-                    Sink = _mapper.Map<Device, AliasIndexMessage>(item),
-                    Source = _mapper.Map<Device, AliasIndexMessage>(command.Device),
+                    Sink = _mapper.Map<Device, Ism.Routing.Common.Core.AliasIndexMessage>(item),
+                    Source = _mapper.Map<Device, Ism.Routing.Common.Core.AliasIndexMessage>(command.Device),
                 }); 
             }
 
@@ -201,10 +198,10 @@ namespace Avalanche.Api.Managers.Devices
 
         private async Task<CommandResponse> UnrouteVideoSoure(Command command)
         {
-            await _routingService.RouteVideo(new RouteVideoRequest()
+            await _routingService.RouteVideo(new Ism.Routing.Common.Core.RouteVideoRequest()
             {
-                Sink = _mapper.Map<Device, AliasIndexMessage>(command.Device),
-                Source = new AliasIndexMessage(),
+                Sink = _mapper.Map<Device, Ism.Routing.Common.Core.AliasIndexMessage>(command.Device),
+                Source = new Ism.Routing.Common.Core.AliasIndexMessage(),
             });
 
             return GetSuccessfulCommandReponse(command);
@@ -221,7 +218,7 @@ namespace Avalanche.Api.Managers.Devices
 
         private async Task<CommandResponse> ExitFullScreen(Command command)
         {
-            await _routingService.ExitFullScreen(new ExitFullScreenRequest()
+            await _routingService.ExitFullScreen(new Ism.Routing.Common.Core.ExitFullScreenRequest()
             {
                 UserInterfaceId = Convert.ToInt32(command.AdditionalInfo)
             });
@@ -231,9 +228,9 @@ namespace Avalanche.Api.Managers.Devices
 
         private async Task<CommandResponse> EnterFullScreen(Command command)
         {
-            await _routingService.EnterFullScreen(new EnterFullScreenRequest()
+            await _routingService.EnterFullScreen(new Ism.Routing.Common.Core.EnterFullScreenRequest()
             {
-                Source = _mapper.Map<Device, AliasIndexMessage>(command.Device),
+                Source = _mapper.Map<Device, Ism.Routing.Common.Core.AliasIndexMessage>(command.Device),
                 UserInterfaceId = Convert.ToInt32(command.AdditionalInfo)
             });
 
@@ -242,8 +239,42 @@ namespace Avalanche.Api.Managers.Devices
 
         private async Task<CommandResponse> ShowVideoRoutingPreview(Command command)
         {
-            //TODO: Pending call
+            var config = await _settingsService.GetVideoRoutingSettingsAsync();
+            var region = JsonConvert.DeserializeObject<Region>(command.AdditionalInfo);
+
+            if (config.Mode == VideoRoutingModes.Hardware)
+            {
+                await _avidisService.SetPreviewRegion(new AvidisDeviceInterface.Proto.SetPreviewRegionRequest()
+                {
+                    PreviewIndex = 0, //TODO: Temporary value
+                    Height = region.Height,
+                    Width = region.Width,
+                    X = region.X,
+                    Y = region.Y,
+                });
+
+                await RoutePreview(command);
+
+                await _avidisService.SetPreviewVisible(new AvidisDeviceInterface.Proto.SetPreviewVisibleRequest()
+                {
+                    PreviewIndex = 0, //TODO: Temporary values
+                    Visible = command.Device.IsActive
+                });
+            }
+
+            if (config.Mode == VideoRoutingModes.Software)
+                await RoutePreview(command);
+
             return GetSuccessfulCommandReponse(command);
+        }
+
+        private async Task RoutePreview(Command command)
+        {
+            await _avidisService.RoutePreview(new AvidisDeviceInterface.Proto.RoutePreviewRequest()
+            {
+                PreviewIndex = 0, //TODO: Temporary value
+                Source = _mapper.Map<Device, AvidisDeviceInterface.Proto.AliasIndexMessage>(command.Device),
+            });
         }
         #endregion Routing
 
@@ -338,5 +369,20 @@ namespace Avalanche.Api.Managers.Devices
 
         #endregion PGS - Timeout
 
+        #region Recording
+
+        private async Task<CommandResponse> StartRecording(Command command)
+        {
+            await _recorderService.StartRecording();
+            return GetSuccessfulCommandReponse(command);
+        }
+
+        private async Task<CommandResponse> StopRecording(Command command)
+        {
+            await _recorderService.StopRecording();
+            return GetSuccessfulCommandReponse(command);
+        }
+
+        #endregion
     }
 }
