@@ -53,40 +53,12 @@ stages:
           projectKey: '$(SonarProject)'
           projectName: '$(SonarProject)'
    
-     - task: DotNetCoreCLI@2
-       displayName: 'dotnet build **/*.sln'
-       inputs:
-          projects: '$(ProjectSolution)'
-          ##arguments: '/p:Configuration=release'
-          #arguments: '--configuration=Avalanche-Api-Sonar'
-          arguments: '-c $(BuildConfiguration)'
-          vstsFeed: '$(VstsFeed)'
-          ##configuration: 'release'
+    
      
      # test project 
-     - task: DotNetCoreCLI@2
-       displayName: 'dotnet test'
-       inputs:
-        command: test
-        projects: '$(TestProject)'
-        testRunTitle: TestResults
-        workingDirectory: avalanche-api/Code/Avalanche.Api.Tests
-        vstsFeed: '$(VstsFeed)'
+
      
-     - task: CopyFiles@2
-       displayName: 'Copy Files to: $(Agent.BuildDirectory)\TestResults'
-       inputs:
-        SourceFolder: '$(Agent.TempDirectory)'
-        Contents: '*.trx'
-        TargetFolder: '$(Agent.BuildDirectory)\TestResults'
-    
-     - task: CopyFiles@2
-       displayName: 'Copy Files to: $(Agent.BuildDirectory)\TestResults'
-       inputs:
-          SourceFolder: '$(Agent.TempDirectory)'
-          Contents: '*.trx'
-          TargetFolder: '$(Agent.BuildDirectory)\TestResults'
-     
+
      # sonar 2 of 3
      - task: SonarQubeAnalyze@4
        condition: and(succeeded(), eq(variables['Build.SourceBranchName'], 'dev'))
