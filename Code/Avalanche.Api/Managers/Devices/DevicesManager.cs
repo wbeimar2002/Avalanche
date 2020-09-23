@@ -165,7 +165,7 @@ namespace Avalanche.Api.Managers.Devices
 
             foreach (var item in currentRoutes.Routes)
             {
-                var source = listResult.Where(s => s.Id.Equals(item.Source.Alias) && s.InternalIndex.Equals(item.Source.Index)).SingleOrDefault();
+                var source = listResult.Where(s => s.Id.Equals(item.Source.Alias) && s.InternalIndex.Equals(item.Source.Index)).FirstOrDefault();
                 if (source != null)
                     source.Output = _mapper.Map<Ism.Routing.Common.Core.AliasIndexMessage, Output>(item.Sink);
             }

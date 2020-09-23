@@ -1,6 +1,6 @@
 ﻿syntax = "proto3";
 import "google/protobuf/empty.proto";
-import "google/protobuf/duration.proto";  
+import "google/protobuf/duration.proto"; 
 
 option csharp_namespace = "Ism.Routing.Common.Core";
 
@@ -31,6 +31,11 @@ service Routing{
 	rpc GetTileRouteForSink (GetTileRouteForSinkRequest) returns (GetTileRouteForSinkResponse);
 }
 
+
+message AliasIndexMessage{
+	string alias = 1;
+	int32 index = 2;
+}
 
 message RouteVideoRequest{
 	AliasIndexMessage source = 1;
@@ -163,9 +168,4 @@ message TileViewportMessage{
 	double y = 3;
 	double width = 4;
 	double height = 5;
-}
-
-message AliasIndexMessage{
-	string alias = 1;
-	int32 index = 2;
 }
