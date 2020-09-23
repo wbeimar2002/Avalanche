@@ -6,6 +6,7 @@ using Ism.Security.Grpc.Helpers;
 using Ism.Streaming.Common.Core;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Avalanche.Api.Services.Media
@@ -41,6 +42,12 @@ namespace Avalanche.Api.Services.Media
         }
 
         #region WebRTC
+
+        public async Task<List<WebRtcSourceMessage>> GetSourceStreams()
+        {
+            var result = await WebRtcStreamerClient.GetSourceStreamsAsync(new Google.Protobuf.WellKnownTypes.Empty());
+            return result.Sources.ToList();
+        }
 
         public async Task<CommandResponse> PgsHandleMessageForVideoAsync(Command command)
         {

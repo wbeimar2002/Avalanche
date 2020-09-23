@@ -3,6 +3,7 @@ using Avalanche.Shared.Domain.Models;
 using Avalanche.Shared.Infrastructure.Models;
 using Ism.PgsTimeout.Common.Core;
 using Ism.Streaming.Common.Core;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Avalanche.Api.Services.Media
@@ -14,6 +15,9 @@ namespace Avalanche.Api.Services.Media
         
         //TODO: Temporary remove this when real server available
         bool IgnoreGrpcServicesMocks { get; set; }
+
+        //General
+        Task<List<WebRtcSourceMessage>> GetSourceStreams();
 
         //Video
         Task<CommandResponse> PgsPlayVideoAsync(Command command);

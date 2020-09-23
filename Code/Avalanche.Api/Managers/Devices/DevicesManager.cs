@@ -177,7 +177,6 @@ namespace Avalanche.Api.Managers.Devices
         {
             var outputs = await _routingService.GetVideoSinks();
             IList<Output> listResult = _mapper.Map<IList<Ism.Routing.Common.Core.VideoSinkMessage>, IList<Output>>(outputs.VideoSinks);
-
             return listResult;
         }
 
