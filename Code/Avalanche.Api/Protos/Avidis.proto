@@ -1,0 +1,36 @@
+﻿syntax = "proto3";
+import "google/protobuf/empty.proto";
+import "google/protobuf/duration.proto";  
+
+option csharp_namespace = "AvidisDeviceInterface.Proto";
+
+package avidis;
+
+service Avidis{
+	rpc SetPreviewVisible (SetPreviewVisibleRequest) returns (google.protobuf.Empty);
+	rpc SetPreviewRegion (SetPreviewRegionRequest) returns (google.protobuf.Empty);
+	rpc RoutePreview (RoutePreviewRequest) returns (google.protobuf.Empty);
+}
+
+message AliasIndexMessage{
+	string alias = 1;
+	int32 index = 2;
+}
+
+message SetPreviewVisibleRequest{
+	int32 previewIndex = 1;
+	bool visible = 2;
+}
+
+message SetPreviewRegionRequest{
+	int32 previewIndex = 1;
+	int32 x = 2;
+	int32 y = 3;
+	int32 width = 4;
+	int32 height = 5;
+}
+
+message RoutePreviewRequest{
+	int32 previewIndex = 1;
+	AliasIndexMessage source = 2;
+}

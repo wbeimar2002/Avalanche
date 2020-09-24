@@ -4,12 +4,9 @@ using System.Text;
 
 namespace Avalanche.Shared.Domain.Enumerations
 {
-    public enum MetadataTypes
+    public enum SetupModes
     {
-        Sex,
-        ProcedureTypes,
-        ContentTypes,
-        SourceTypes,
-        Departments,
+        StandAlone = 0,
+        DicomHL7 = 1 ,
     }
 }

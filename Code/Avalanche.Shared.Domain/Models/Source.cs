@@ -7,6 +7,7 @@ namespace Avalanche.Shared.Domain.Models
 {
     public class Source : Device
     {
-        public SourceType Type { get; set; }
+        public Output Output { get; set; }
+        public bool IsDynamic { get; set; }
     }
 }

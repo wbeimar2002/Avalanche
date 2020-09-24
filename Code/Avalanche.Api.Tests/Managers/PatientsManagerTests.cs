@@ -1,5 +1,7 @@
-﻿using Avalanche.Api.Managers.Health;
+﻿using AutoMapper;
+using Avalanche.Api.Managers.Health;
 using Avalanche.Api.Managers.Settings;
+using Avalanche.Api.MappingConfigurations;
 using Avalanche.Api.Services.Configuration;
 using Avalanche.Api.Services.Health;
 using Avalanche.Api.Utilities;
@@ -26,6 +28,9 @@ namespace Avalanche.Api.Tests.Managers
     {
         Mock<IPieService> _pieService;
         Mock<ISettingsService> _settingsService;
+        Mock<IAccessInfoFactory> _accessInfoFactory;
+
+        IMapper _mapper;
         PatientsManager _manager;
 
         [SetUp]
@@ -33,7 +38,15 @@ namespace Avalanche.Api.Tests.Managers
         {
             _pieService = new Mock<IPieService>();
             _settingsService = new Mock<ISettingsService>();
-            _manager = new PatientsManager(_pieService.Object, _settingsService.Object);
+            _accessInfoFactory = new Mock<IAccessInfoFactory>();
+
+            var config = new MapperConfiguration(cfg =>
+            {
+                cfg.AddProfile(new PieMappingConfigurations());
+            });
+
+            _mapper = config.CreateMapper();
+            _manager = new PatientsManager(_pieService.Object, _settingsService.Object, _accessInfoFactory.Object, _mapper);
         }
 
         public static IEnumerable<TestCaseData> NewPatientViewModelWrongDataTestCases
@@ -47,7 +60,7 @@ namespace Avalanche.Api.Tests.Managers
                     DateOfBirth = DateTime.Today,
                     FirstName = "Sample",
                     LastName = "Sample",
-                    Gender = new KeyValuePairViewModel()
+                    Sex = new KeyValuePairViewModel()
                     {
                         Id = "S",
                         TranslationKey = "SampleKey",
@@ -60,7 +73,7 @@ namespace Avalanche.Api.Tests.Managers
                     DateOfBirth = DateTime.Today,
                     FirstName = null,
                     LastName = "Sample",
-                    Gender = new KeyValuePairViewModel()
+                    Sex = new KeyValuePairViewModel()
                     {
                         Id = "S",
                         TranslationKey = "SampleKey",
@@ -73,7 +86,7 @@ namespace Avalanche.Api.Tests.Managers
                     DateOfBirth = DateTime.Today,
                     FirstName = "Sample",
                     LastName = null,
-                    Gender = new KeyValuePairViewModel()
+                    Sex = new KeyValuePairViewModel()
                     {
                         Id = "S",
                         TranslationKey = "SampleKey",
@@ -86,7 +99,7 @@ namespace Avalanche.Api.Tests.Managers
                     DateOfBirth = DateTime.Today,
                     FirstName = "Sample",
                     LastName = "Sample",
-                    Gender = null
+                    Sex = null
                 });
                 yield return new TestCaseData(new PatientViewModel()
                 {
@@ -94,7 +107,7 @@ namespace Avalanche.Api.Tests.Managers
                     DateOfBirth = DateTime.Today,
                     FirstName = "Sample",
                     LastName = "Sample",
-                    Gender = new KeyValuePairViewModel()
+                    Sex = new KeyValuePairViewModel()
                     {
                         Id = null,
                         TranslationKey = "SampleKey",
@@ -116,7 +129,7 @@ namespace Avalanche.Api.Tests.Managers
                     DateOfBirth = DateTime.Today,
                     FirstName = "Sample",
                     LastName = "Sample",
-                    Gender = new KeyValuePairViewModel()
+                    Sex = new KeyValuePairViewModel()
                     {
                         Id = "S",
                         TranslationKey = "SampleKey",
@@ -130,7 +143,7 @@ namespace Avalanche.Api.Tests.Managers
                     DateOfBirth = DateTime.Today,
                     FirstName = "Sample",
                     LastName = "Sample",
-                    Gender = new KeyValuePairViewModel()
+                    Sex = new KeyValuePairViewModel()
                     {
                         Id = "S",
                         TranslationKey = "SampleKey",
@@ -144,7 +157,7 @@ namespace Avalanche.Api.Tests.Managers
                     DateOfBirth = DateTime.Today,
                     FirstName = null,
                     LastName = "Sample",
-                    Gender = new KeyValuePairViewModel()
+                    Sex = new KeyValuePairViewModel()
                     {
                         Id = "S",
                         TranslationKey = "SampleKey",
@@ -158,7 +171,7 @@ namespace Avalanche.Api.Tests.Managers
                     DateOfBirth = DateTime.Today,
                     FirstName = "Sample",
                     LastName = null,
-                    Gender = new KeyValuePairViewModel()
+                    Sex = new KeyValuePairViewModel()
                     {
                         Id = "S",
                         TranslationKey = "SampleKey",
@@ -172,7 +185,7 @@ namespace Avalanche.Api.Tests.Managers
                     DateOfBirth = DateTime.Today,
                     FirstName = "Sample",
                     LastName = "Sample",
-                    Gender = null
+                    Sex = null
                 });
                 yield return new TestCaseData(new PatientViewModel()
                 {
@@ -181,7 +194,7 @@ namespace Avalanche.Api.Tests.Managers
                     DateOfBirth = DateTime.Today,
                     FirstName = "Sample",
                     LastName = "Sample",
-                    Gender = new KeyValuePairViewModel()
+                    Sex = new KeyValuePairViewModel()
                     {
                         Id = null,
                         TranslationKey = "SampleKey",
@@ -193,14 +206,18 @@ namespace Avalanche.Api.Tests.Managers
 
         [Test, TestCaseSource(nameof(NewPatientViewModelWrongDataTestCases))]
         
-        public void RegisterPatientShouldFailIfNullOrIncompleteData(PatientViewModel patient)
+        public void RegisterPatientShouldFailIfNullOrIncompleteData(PatientViewModel newPatient)
         {
-            _pieService.Setup(mock => mock.RegisterPatient(It.IsAny<Patient>(), It.IsAny<ProcedureType>(), It.IsAny<Physician>())).ReturnsAsync(new Patient());
+            var patient = _mapper.Map<PatientViewModel, Ism.Storage.Common.Core.PatientList.Proto.PatientRecordMessage>(newPatient);
+            var accessInfo = _accessInfoFactory.Object.GenerateAccessInfo();
+            var accessInfoMessage = _mapper.Map<Ism.Storage.Common.Core.PatientList.Proto.AccessInfoMessage>(accessInfo);
 
-            Task Act() => _manager.RegisterPatient(patient);
+            _pieService.Setup(mock => mock.RegisterPatient(patient, accessInfoMessage));
+
+            Task Act() => _manager.RegisterPatient(newPatient);
             Assert.That(Act, Throws.TypeOf<ArgumentNullException>());
 
-            _pieService.Verify(mock => mock.RegisterPatient(It.IsAny<Patient>(), It.IsAny<ProcedureType>(), It.IsAny<Physician>()), Times.Never);            
+            _pieService.Verify(mock => mock.RegisterPatient(patient, accessInfoMessage), Times.Never);            
         }
 
         [Test]
@@ -213,7 +230,7 @@ namespace Avalanche.Api.Tests.Managers
                 DateOfBirth = DateTime.Today,
                 FirstName = "Sample",
                 LastName = "Sample",
-                Gender = new KeyValuePairViewModel()
+                Sex = new KeyValuePairViewModel()
                 {
                     Id = "S",
                     TranslationKey = "SampleKey",

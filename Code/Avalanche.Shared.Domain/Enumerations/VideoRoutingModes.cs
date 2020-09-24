@@ -4,12 +4,9 @@ using System.Text;
 
 namespace Avalanche.Shared.Domain.Enumerations
 {
-    public enum MetadataTypes
+    public enum VideoRoutingModes
     {
-        Sex,
-        ProcedureTypes,
-        ContentTypes,
-        SourceTypes,
-        Departments,
+        Hardware,
+        Software
     }
 }

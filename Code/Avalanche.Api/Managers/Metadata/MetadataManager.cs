@@ -22,8 +22,8 @@ namespace Avalanche.Api.Managers.Metadata
         {
             switch (type)
             {
-                case Shared.Domain.Enumerations.MetadataTypes.Genders:
-                    return await GetGenderTypes();
+                case Shared.Domain.Enumerations.MetadataTypes.Sex:
+                    return await GetSexsTypes();
                 case Shared.Domain.Enumerations.MetadataTypes.ProcedureTypes:
                     return await GetProcedureTypes();
                 case Shared.Domain.Enumerations.MetadataTypes.ContentTypes:
@@ -67,9 +67,9 @@ namespace Avalanche.Api.Managers.Metadata
             return list;
         }
 
-        private async Task<List<KeyValuePairViewModel>> GetGenderTypes()
+        private async Task<List<KeyValuePairViewModel>> GetSexsTypes()
         {
-            List<KeyValuePairViewModel> list = await _storageService.GetJson<List<KeyValuePairViewModel>>("GenderTypes", 1);
+            List<KeyValuePairViewModel> list = await _storageService.GetJson<List<KeyValuePairViewModel>>("SexTypes", 1);
 
             if (list == null || list.Count == 0)
             {
@@ -79,31 +79,31 @@ namespace Avalanche.Api.Managers.Metadata
                 {
                     Id = "F",
                     Value = "Female",
-                    TranslationKey = "genre.female"
+                    TranslationKey = "sex.female"
                 });
 
                 list.Add(new KeyValuePairViewModel()
                 {
                     Id = "M",
                     Value = "Male",
-                    TranslationKey = "genre.male"
+                    TranslationKey = "sex.male"
                 });
 
                 list.Add(new KeyValuePairViewModel()
                 {
                     Id = "O",
                     Value = "Other",
-                    TranslationKey = "genre.other"
+                    TranslationKey = "sex.other"
                 });
 
                 list.Add(new KeyValuePairViewModel()
                 {
                     Id = "U",
                     Value = "Unspecified",
-                    TranslationKey = "genre.unspecified"
+                    TranslationKey = "sex.unspecified"
                 });
 
-                await _storageService.SaveJson("GenderTypes", list);
+                await _storageService.SaveJson("SexTypes", list);
             }
 
             return list;

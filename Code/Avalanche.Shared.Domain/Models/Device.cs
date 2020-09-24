@@ -11,6 +11,8 @@ namespace Avalanche.Shared.Domain.Models
         public string Id { get; set; }
         public string Name { get; set; }
         public bool IsActive { get; set; }
-        public string Group { get; set; } //TODO: Confirm with Gabe
+        public int PositionInScreen { get; set; }
+        public int InternalIndex { get; set; }
+        public string Type { get; set; }
     }
 }

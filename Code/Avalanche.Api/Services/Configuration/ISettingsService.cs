@@ -10,5 +10,6 @@ namespace Avalanche.Api.Services.Configuration
     {
         Task<TimeoutSettings> GetTimeoutSettingsAsync();
         Task<SetupSettings> GetSetupSettingsAsync();
+        Task<VideoRoutingSettings> GetVideoRoutingSettingsAsync();
     }
 }

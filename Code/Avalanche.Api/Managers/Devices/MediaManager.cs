@@ -1,8 +1,11 @@
-﻿using Avalanche.Api.Services.Configuration;
+﻿using AutoMapper;
+using Avalanche.Api.Services.Configuration;
+using Avalanche.Api.Services.Media;
 using Avalanche.Shared.Domain.Models;
 using Avalanche.Shared.Infrastructure.Helpers;
 using Avalanche.Shared.Infrastructure.Models;
 using Ism.IsmLogCommon.Core;
+using Ism.Streaming.Common.Core;
 using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
@@ -15,17 +18,30 @@ namespace Avalanche.Api.Managers.Devices
     [ExcludeFromCodeCoverage]
     public class MediaManager : IMediaManager
     {
-        private readonly ISettingsService _settingsService;
+        readonly ISettingsService _settingsService;
+        readonly IMediaService _mediaService;
+        readonly IMapper _mapper;
 
-        public MediaManager(ISettingsService settingsService)
+        public MediaManager(ISettingsService settingsService, 
+            IMediaService mediaService,
+            IMapper mapper)
         {
             _settingsService = settingsService;
+            _mediaService = mediaService;
+            _mapper = mapper;
         }
 
         public async Task SaveFileAsync(IFormFile file)
         {
             //TODO: Pending Service that upload file
             await Task.CompletedTask;
+        }
+
+        public async Task<IList<Device>> GetSourceStreams()
+        {
+            var result = await _mediaService.GetSourceStreams();
+            IList<Device> listResult = _mapper.Map<IList<WebRtcSourceMessage>, IList<Device>>(result);
+            return listResult;
         }
 
         public Task<Content> GetContent(string contentType)

@@ -1,4 +1,5 @@
 ﻿using Avalanche.Api.Controllers.V1;
+using Avalanche.Api.Managers.Devices;
 using Avalanche.Api.Managers.Metadata;
 using Avalanche.Api.Tests.Extensions;
 using Avalanche.Shared.Domain.Enumerations;
@@ -19,6 +20,7 @@ namespace Avalanche.Api.Tests.Controllers
         Mock<ILogger<MetadataController>> _appLoggerService;
         Mock<IWebHostEnvironment> _environment;
         Mock<IMetadataManager> _metadataManager;
+        Mock<IMediaManager> _mediaManager;
 
         MetadataController _controller;
 
@@ -30,8 +32,9 @@ namespace Avalanche.Api.Tests.Controllers
             _appLoggerService = new Mock<ILogger<MetadataController>>();
             _environment = new Mock<IWebHostEnvironment>();
             _metadataManager = new Mock<IMetadataManager>();
+            _mediaManager = new Mock<IMediaManager>();
 
-            _controller = new MetadataController(_appLoggerService.Object, _metadataManager.Object);
+            _controller = new MetadataController(_appLoggerService.Object, _metadataManager.Object, _mediaManager.Object);
 
             OperatingSystem os = Environment.OSVersion;
 
@@ -40,32 +43,32 @@ namespace Avalanche.Api.Tests.Controllers
         }
 
         [Test]
-        public void GetGendersShouldReturnOkResult()
+        public void GetSexesShouldReturnOkResult()
         {
-            var okResult = _controller.GetGenders(_environment.Object);
+            var okResult = _controller.GetSexes(_environment.Object);
 
             if (_checkLogger)
             {
-                _appLoggerService.Verify(LogLevel.Error, $"Exception {_controller.GetType().Name}.GetGenders", Times.Never());
-                _appLoggerService.Verify(LogLevel.Debug, $"Requested {_controller.GetType().Name}.GetGenders", Times.Once());
-                _appLoggerService.Verify(LogLevel.Debug, $"Completed {_controller.GetType().Name}.GetGenders", Times.Once());
+                _appLoggerService.Verify(LogLevel.Error, $"Exception {_controller.GetType().Name}.GetSexes", Times.Never());
+                _appLoggerService.Verify(LogLevel.Debug, $"Requested {_controller.GetType().Name}.GetSexes", Times.Once());
+                _appLoggerService.Verify(LogLevel.Debug, $"Completed {_controller.GetType().Name}.GetSexes", Times.Once());
             }
 
             Assert.IsInstanceOf<OkObjectResult>(okResult.Result);
         }
 
         [Test]
-        public void GetGendersShouldReturnBadResultIfFails()
+        public void GetSexesShouldReturnBadResultIfFails()
         {
-            _metadataManager.Setup(mock => mock.GetMetadata(MetadataTypes.Genders)).Throws(It.IsAny<Exception>());
+            _metadataManager.Setup(mock => mock.GetMetadata(MetadataTypes.Sex)).Throws(It.IsAny<Exception>());
 
-            var badResult = _controller.GetGenders(_environment.Object);
+            var badResult = _controller.GetSexes(_environment.Object);
 
             if (_checkLogger)
             {
-                _appLoggerService.Verify(LogLevel.Error, $"Exception {_controller.GetType().Name}.GetGenders", Times.Once());
-                _appLoggerService.Verify(LogLevel.Debug, $"Requested {_controller.GetType().Name}.GetGenders", Times.Once());
-                _appLoggerService.Verify(LogLevel.Debug, $"Completed {_controller.GetType().Name}.GetGenders", Times.Once());
+                _appLoggerService.Verify(LogLevel.Error, $"Exception {_controller.GetType().Name}.GetSexes", Times.Once());
+                _appLoggerService.Verify(LogLevel.Debug, $"Requested {_controller.GetType().Name}.GetSexes", Times.Once());
+                _appLoggerService.Verify(LogLevel.Debug, $"Completed {_controller.GetType().Name}.GetSexes", Times.Once());
             }
 
             Assert.IsInstanceOf<BadRequestObjectResult>(badResult.Result);
@@ -162,6 +165,38 @@ namespace Avalanche.Api.Tests.Controllers
                 _appLoggerService.Verify(LogLevel.Error, $"Exception {_controller.GetType().Name}.GetSourceTypes", Times.Once());
                 _appLoggerService.Verify(LogLevel.Debug, $"Requested {_controller.GetType().Name}.GetSourceTypes", Times.Once());
                 _appLoggerService.Verify(LogLevel.Debug, $"Completed {_controller.GetType().Name}.GetSourceTypes", Times.Once());
+            }
+
+            Assert.IsInstanceOf<BadRequestObjectResult>(badResult.Result);
+        }
+
+        [Test]
+        public void GetDepartmentsShouldReturnOkResult()
+        {
+            var okResult = _controller.GetDepartments(_environment.Object);
+
+            if (_checkLogger)
+            {
+                _appLoggerService.Verify(LogLevel.Error, $"Exception {_controller.GetType().Name}.GetDepartments", Times.Never());
+                _appLoggerService.Verify(LogLevel.Debug, $"Requested {_controller.GetType().Name}.GetDepartments", Times.Once());
+                _appLoggerService.Verify(LogLevel.Debug, $"Completed {_controller.GetType().Name}.GetDepartments", Times.Once());
+            }
+
+            Assert.IsInstanceOf<OkObjectResult>(okResult.Result);
+        }
+
+        [Test]
+        public void GetDepartmentsShouldReturnBadResultIfFails()
+        {
+            _metadataManager.Setup(mock => mock.GetMetadata(MetadataTypes.Departments)).Throws(It.IsAny<Exception>());
+
+            var badResult = _controller.GetDepartments(_environment.Object);
+
+            if (_checkLogger)
+            {
+                _appLoggerService.Verify(LogLevel.Error, $"Exception {_controller.GetType().Name}.GetDepartments", Times.Once());
+                _appLoggerService.Verify(LogLevel.Debug, $"Requested {_controller.GetType().Name}.GetDepartments", Times.Once());
+                _appLoggerService.Verify(LogLevel.Debug, $"Completed {_controller.GetType().Name}.GetDepartments", Times.Once());
             }
 
             Assert.IsInstanceOf<BadRequestObjectResult>(badResult.Result);

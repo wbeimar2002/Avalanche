@@ -1,4 +1,5 @@
-﻿using Avalanche.Shared.Infrastructure.Models;
+﻿using Avalanche.Api.Services.Files;
+using Avalanche.Shared.Infrastructure.Models;
 using Avalanche.Shared.Infrastructure.Services.Settings;
 using Google.Protobuf.WellKnownTypes;
 using Grpc.Core;
@@ -18,6 +19,8 @@ namespace Avalanche.Api.Services.Configuration
     public class SettingsService : ISettingsService
     {
         readonly IConfigurationService _configurationService;
+        readonly IFileService _fileService;
+
         readonly string _hostIpAddress;
 
         public WebRtcStreamer.WebRtcStreamerClient WebRtcStreamerClient { get; set; }
@@ -25,9 +28,10 @@ namespace Avalanche.Api.Services.Configuration
 
         public bool IgnorePgsTimeoutClientMocks { get; set; }
 
-        public SettingsService(IConfigurationService configurationService)
+        public SettingsService(IConfigurationService configurationService, IFileService fileService)
         {
             _configurationService = configurationService;
+            _fileService = fileService;
 
             _hostIpAddress = _configurationService.GetEnvironmentVariable("hostIpAddress");
 
@@ -80,14 +84,16 @@ namespace Avalanche.Api.Services.Configuration
             };
         }
 
-        public Task<SetupSettings> GetSetupSettingsAsync()
+        public async Task<SetupSettings> GetSetupSettingsAsync()
         {
-            //TODO: Validate this source with Gabe
-            return Task.FromResult(new SetupSettings()
-            {
-                Mode = Shared.Infrastructure.Enumerations.SetupMode.DicomHL7,
-                QuickRegistrationAllowed = true
-            });
+            string path = "/config/PatientsSetupSettings.json";
+            return await _fileService.LoadAsync<SetupSettings>(path);
+        }
+
+        public async Task<VideoRoutingSettings> GetVideoRoutingSettingsAsync()
+        {
+            string path = "/config/VideoRoutingSettings.json";
+            return await _fileService.LoadAsync<VideoRoutingSettings>(path);
         }
     }
 }

@@ -10,12 +10,12 @@ service WebRtcStreamer{
         rpc HandleMessage (HandleMessageRequest) returns (HandleMessageResponse);
         rpc InitSession (InitSessionRequest) returns (InitSessionResponse);
         rpc DeInitSession (DeInitSessionRequest) returns (google.protobuf.Empty);
+        rpc GetSourceStreams (google.protobuf.Empty) returns (GetSourceStreamsResponse);
 
         rpc CurrentRequestedSources (CurrentRequestedSourcesRequest) returns (google.protobuf.Empty);
         rpc DeInitAudio (DeInitAudioRequest) returns (google.protobuf.Empty);
         rpc GetDefaultSourceId (google.protobuf.Empty) returns (GetDefaultSourceIdResponse);
         rpc GetEncoderBySessionId (GetEncoderBySessionIdRequest) returns (GetEncoderBySessionIdResponse);
-        rpc GetListOfSourceId (google.protobuf.Empty) returns (GetListOfSourceIdResponse);
         rpc GetPreferredAudioCodec (GetPreferredAudioCodecRequest) returns (GetPreferredAudioCodecResponse);
         rpc GetPrivacy (GetPrivacyRequest) returns (GetPrivacyResponse);
         rpc GetRemoteClients (google.protobuf.Empty) returns (GetRemoteClientsResponse);
@@ -63,8 +63,14 @@ message GetEncoderBySessionIdResponse{
     string encoderId = 1;
 }
 
-message GetListOfSourceIdResponse{
-    repeated string sourceList = 1;
+message GetSourceStreamsResponse{
+    repeated WebRtcSourceMessage sources = 1;
+}
+
+message WebRtcSourceMessage{
+    string streamName = 1;
+    WebRtcStreamTypeEnum streamType = 2;
+    int32 previewIndex = 3;
 }
 
 message GetPreferredAudioCodecRequest{
@@ -190,4 +196,10 @@ enum RxStreamQualityEnum{
     RX_STREAM_QUALITY_HD_VIDEO = 0;
     RX_STREAM_QUALITY_SD_VIDEO = 1;
     RX_STREAM_QUALITY_LD_VIDEO = 2;
+}
+
+enum WebRtcStreamTypeEnum{
+    WEB_RTC_STREAM_TYPE_UNKNOWN = 0;
+    WEB_RTC_STREAM_TYPE_STREAMING = 1;
+    WEB_RTC_STREAM_TYPE_PREVIEW = 2;
 }

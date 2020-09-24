@@ -18,10 +18,10 @@ namespace Avalanche.Api.Managers.Health
             return Task.FromResult(fixture.CreateMany<Physician>(10).ToList());
         }
 
-        public Task<List<Preset>> GetPresetsByPhysician(string id, PresetTypes presetType)
+        public Task<List<Source>> GetPresetsByPhysician(string id, PresetTypes presetType)
         {
             var fixture = new Fixture();
-            return Task.FromResult(fixture.CreateMany<Preset>(10).ToList());
+            return Task.FromResult(fixture.CreateMany<Source>(10).ToList());
         }
     }
 }

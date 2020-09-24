@@ -32,6 +32,7 @@
 
   <ItemGroup>
     <PackageReference Include="AutoFixture" Version="4.13.0" />
+    <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="8.0.1" />
     <PackageReference Include="Google.Protobuf" Version="3.13.0" />
     <PackageReference Include="Grpc.Core" Version="2.31.0" />
     <PackageReference Include="Grpc.Core.Testing" Version="2.31.0" />
@@ -71,6 +72,9 @@
     <Protobuf Include="Protos\ConfigurationService.proto" />
     <Protobuf Include="Protos\PatientInfoEngineService.proto" />
     <Protobuf Include="Protos\PatientListStorage.proto" />
+    <Protobuf Include="Protos\Routing.proto" />
+    <Protobuf Include="Protos\Avidis.proto" />
+    <Protobuf Include="Protos\Recorder.proto" />
   </ItemGroup> 
 
     <ItemGroup>

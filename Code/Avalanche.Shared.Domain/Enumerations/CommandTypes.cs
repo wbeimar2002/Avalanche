@@ -34,8 +34,18 @@ namespace Avalanche.Shared.Domain.Enumerations
         [Description("Timeout Set Current Slide")]
         TimeoutSetCurrentSlide = 12,
         [Description("Fullscreen Mode")]
-        FullScreen = 13,
+        EnterFullScreen = 13,
         [Description("Exit Fullscreen Mode")]
-        ExitFullScreen = 14
+        ExitFullScreen = 14,
+        [Description("Route Video Source")]
+        RouteVideoSource = 15,
+        [Description("Unroute Video Source")]
+        UnrouteVideoSource = 16,
+        [Description("Start recording")]
+        StartRecording = 17,
+        [Description("Stop Recording")]
+        StopRecording = 18,
+        [Description("Show video routing preview")]
+        ShowVideoRoutingPreview = 19
     }
 }
