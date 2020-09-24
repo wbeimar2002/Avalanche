@@ -78,6 +78,7 @@ namespace Avalanche.Api.Managers.Devices
 
                 case Shared.Domain.Enumerations.CommandTypes.PgsPlayVideo:
                     Preconditions.ThrowIfNull(nameof(command.Message), command.Message);
+                    Preconditions.ThrowIfNull(nameof(command.AdditionalInfo), command.AdditionalInfo);
                     await SetMode(command.Device, TimeoutModes.Pgs);
                     return await _mediaService.PgsPlayVideoAsync(command);
 

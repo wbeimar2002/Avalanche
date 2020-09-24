@@ -18,6 +18,18 @@ namespace Avalanche.Api.MappingConfigurations
                 .ForMember(dest =>
                     dest.Name,
                     opt => opt.MapFrom(src => src.StreamName))
+                .ForMember(dest =>
+                    dest.IsActive,
+                    opt => opt.MapFrom(src => true))
+                .ForMember(dest =>
+                    dest.PositionInScreen,
+                    opt => opt.MapFrom(src => 0))
+                .ForMember(dest =>
+                    dest.Id,
+                    opt => opt.MapFrom(src => string.Empty))
+                .ForMember(dest =>
+                    dest.Type,
+                    opt => opt.MapFrom(src => src.StreamType))
                 .ReverseMap();
         }
     }
