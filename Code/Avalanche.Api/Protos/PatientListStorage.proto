@@ -19,7 +19,6 @@ service PatientListStorage {
 }
 
 // Type Messages
-
 message AccessInfoMessage {
     string id = 1;
     google.protobuf.StringValue ip = 2;

@@ -19,7 +19,7 @@ namespace Avalanche.Api.Services.Configuration
     public class SettingsService : ISettingsService
     {
         readonly IConfigurationService _configurationService;
-        readonly IFileService _fileService;
+        readonly IStorageService _storageService;
 
         readonly string _hostIpAddress;
 
@@ -28,10 +28,10 @@ namespace Avalanche.Api.Services.Configuration
 
         public bool IgnorePgsTimeoutClientMocks { get; set; }
 
-        public SettingsService(IConfigurationService configurationService, IFileService fileService)
+        public SettingsService(IConfigurationService configurationService, IStorageService storageService)
         {
             _configurationService = configurationService;
-            _fileService = fileService;
+            _storageService = storageService;
 
             _hostIpAddress = _configurationService.GetEnvironmentVariable("hostIpAddress");
 
@@ -86,14 +86,12 @@ namespace Avalanche.Api.Services.Configuration
 
         public async Task<SetupSettings> GetSetupSettingsAsync()
         {
-            string path = "/config/PatientsSetupSettings.json";
-            return await _fileService.LoadAsync<SetupSettings>(path);
+            return await _storageService.GetJson<SetupSettings>("PatientsSetupSettings", 1);
         }
 
         public async Task<VideoRoutingSettings> GetVideoRoutingSettingsAsync()
         {
-            string path = "/config/VideoRoutingSettings.json";
-            return await _fileService.LoadAsync<VideoRoutingSettings>(path);
+            return await _storageService.GetJson<VideoRoutingSettings>("VideoRoutingSettings", 1);
         }
     }
 }

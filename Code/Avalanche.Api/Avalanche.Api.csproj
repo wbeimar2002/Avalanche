@@ -75,6 +75,7 @@
     <Protobuf Include="Protos\Routing.proto" />
     <Protobuf Include="Protos\Avidis.proto" />
     <Protobuf Include="Protos\Recorder.proto" />
+    <Protobuf Include="Protos\LibraryIndexStorage.proto" />  
   </ItemGroup> 
 
     <ItemGroup>

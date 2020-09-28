@@ -12,6 +12,12 @@ namespace Avalanche.Shared.Infrastructure.Models
         [JsonProperty("Mode")]
         public SetupModes Mode { get; set; }
 
+        [JsonProperty("CacheDuration")]
+        public long CacheDuration { get; set; }
+
+        [JsonProperty("DepartmentsSupported")]
+        public bool DepartmentsSupported { get; set; }
+
         [JsonProperty("QuickRegistrationAllowed")]
         public bool QuickRegistrationAllowed { get; set; }
 

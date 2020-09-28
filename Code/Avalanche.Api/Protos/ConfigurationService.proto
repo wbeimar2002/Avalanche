@@ -2,7 +2,7 @@ syntax = "proto3";
 import "google/protobuf/empty.proto";
 import "google/protobuf/wrappers.proto";
 
-option csharp_namespace = "Ism.Storage.Common.Core.Configuration.Protos";
+option csharp_namespace = "Ism.Storage.Core.Configuration.V1.Protos";
 
 package storage;
 
@@ -14,9 +14,11 @@ service ConfigurationService {
 // Type Messages
 
 message ConfigurationContextMessage {
-    google.protobuf.StringValue departmentId = 1;
-    google.protobuf.StringValue systemId = 2;
-    google.protobuf.StringValue userId = 3;
+    google.protobuf.StringValue idnId = 1;
+    google.protobuf.StringValue siteId = 2;
+    google.protobuf.StringValue departmentId = 3;
+    google.protobuf.StringValue systemId = 4;
+    google.protobuf.StringValue userId = 5;
 }
 
 message ConfigurationSaveContextMessage {
