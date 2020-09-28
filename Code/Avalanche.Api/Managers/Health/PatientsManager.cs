@@ -48,15 +48,24 @@ namespace Avalanche.Api.Managers.Health
             var accessInfo = _accessInfoFactory.GenerateAccessInfo();
             var accessInfoMessage = _mapper.Map<Ism.Storage.Common.Core.PatientList.Proto.AccessInfoMessage>(accessInfo);
 
+            var setupSettings = await _settingsService.GetSetupSettingsAsync();
             //TODO: Configurable in maintenance (on/off) - user logged in is auto-filled as physician when doing manual registration
+            //TODO: What about the procedure type and department. How this should be filled?
             if (newPatient.Physician == null)
             {
-                newPatient.Physician = new Physician()
+                if (setupSettings.AutoFillPhysician)
                 {
-                    Id = user.FindFirst("Id")?.Value,
-                    FirstName = user.FindFirst("FirstName")?.Value,
-                    LastName = user.FindFirst("LastName")?.Value,
-                };
+                    newPatient.Physician = new Physician()
+                    {
+                        Id = user.FindFirst("Id")?.Value,
+                        FirstName = user.FindFirst("FirstName")?.Value,
+                        LastName = user.FindFirst("LastName")?.Value,
+                    };
+                }
+                else
+                {
+                    newPatient.Physician = newPatient.Physician;
+                }
             }
 
             var patient = _mapper.Map<PatientViewModel, Ism.Storage.Common.Core.PatientList.Proto.PatientRecordMessage>(newPatient);
@@ -68,8 +77,8 @@ namespace Avalanche.Api.Managers.Health
         public async Task<Shared.Domain.Models.Patient> QuickPatientRegistration(System.Security.Claims.ClaimsPrincipal user)
         {
             //TODO: Local date? Issue with docker
-            //TODO: This format should come from a configuration setting?
-            string quickRegistrationDateFormat = "yyyy_MM_dd_T_HH_mm_ss_ff";
+            var setupSettings = await _settingsService.GetSetupSettingsAsync();
+            string quickRegistrationDateFormat = setupSettings.QuickRegistrationDateFormat;
             string formattedDate = DateTime.Now.ToString(quickRegistrationDateFormat);
 
             var accessInfo = _accessInfoFactory.GenerateAccessInfo();
