@@ -76,10 +76,9 @@ namespace Avalanche.Api.Managers.Health
 
         public async Task<Shared.Domain.Models.Patient> QuickPatientRegistration(System.Security.Claims.ClaimsPrincipal user)
         {
-            //TODO: Local date? Issue with docker
             var setupSettings = await _settingsService.GetSetupSettingsAsync();
             string quickRegistrationDateFormat = setupSettings.QuickRegistrationDateFormat;
-            string formattedDate = DateTime.Now.ToString(quickRegistrationDateFormat);
+            string formattedDate = DateTime.UtcNow.ToLocalTime().ToString(quickRegistrationDateFormat);
 
             var accessInfo = _accessInfoFactory.GenerateAccessInfo();
             var accessInfoMessage = _mapper.Map<Ism.Storage.Common.Core.PatientList.Proto.AccessInfoMessage>(accessInfo);

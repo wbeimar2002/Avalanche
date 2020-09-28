@@ -41,7 +41,8 @@ namespace Avalanche.Api.Controllers.V1
                 
                 return new OkObjectResult(new
                 {
-                    DateTime = DateTime.UtcNow
+                    UtcDateTime = DateTime.UtcNow,
+                    LocalDateTime = DateTime.UtcNow.ToLocalTime()
                 });
             }
             catch (Exception exception)
@@ -71,7 +72,8 @@ namespace Avalanche.Api.Controllers.V1
 
                 return new OkObjectResult(new
                 {
-                    DateTime = DateTime.UtcNow
+                    UtcDateTime = DateTime.UtcNow,
+                    LocalDateTime = DateTime.UtcNow.ToLocalTime()
                 });
             }
             catch (Exception exception)

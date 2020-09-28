@@ -71,6 +71,7 @@ services:
       loggerFolder: '/logs'
       loggerFileSizeLimit: 209715200
       loggerRetainedFileCountLimit: 5
+      TZ: "America/Los_Angeles"
     depends_on:
       - seqserver
       - rabbitmq
