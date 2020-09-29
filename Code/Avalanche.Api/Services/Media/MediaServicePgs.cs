@@ -3,7 +3,6 @@ using Avalanche.Shared.Domain.Models;
 using Avalanche.Shared.Infrastructure.Services.Settings;
 using Ism.PgsTimeout.Common.Core;
 using Ism.Security.Grpc.Helpers;
-using Ism.Streaming.Common.Core;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,9 +16,7 @@ namespace Avalanche.Api.Services.Media
         readonly IAccessInfoFactory _accessInfoFactory;
         readonly string _hostIpAddress;
 
-        public bool IgnoreGrpcServicesMocks { get; set; }
-
-        public WebRtcStreamer.WebRtcStreamerClient WebRtcStreamerClient { get; set; }
+        public Ism.Streaming.V1.Protos.WebRtcStreamer.WebRtcStreamerClient WebRtcStreamerClient { get; set; }
 
         public MediaService(IConfigurationService configurationService, IAccessInfoFactory accessInfoFactory)
         {
@@ -32,143 +29,33 @@ namespace Avalanche.Api.Services.Media
             var grpcCertificate = _configurationService.GetEnvironmentVariable("grpcCertificate");
             var grpcPassword = _configurationService.GetEnvironmentVariable("grpcPassword");
 
-            IgnoreGrpcServicesMocks = Convert.ToBoolean(_configurationService.GetEnvironmentVariable("IgnoreGrpcServicesMocks"));
-
             var certificate = new System.Security.Cryptography.X509Certificates.X509Certificate2(grpcCertificate, grpcPassword);
 
             //Client = ClientHelper.GetSecureClient<WebRtcStreamer.WebRtcStreamerClient>($"https://{hostIpAddress}:{mediaServiceGrpcPort}", certificate);
-            WebRtcStreamerClient = ClientHelper.GetInsecureClient<WebRtcStreamer.WebRtcStreamerClient>($"https://{_hostIpAddress}:{mediaServiceGrpcPort}");
+            WebRtcStreamerClient = ClientHelper.GetInsecureClient<Ism.Streaming.V1.Protos.WebRtcStreamer.WebRtcStreamerClient>($"https://{_hostIpAddress}:{mediaServiceGrpcPort}");
             PgsTimeoutClient = ClientHelper.GetInsecureClient<PgsTimeout.PgsTimeoutClient>($"https://{_hostIpAddress}:{mediaServiceGrpcPort}");
         }
 
         #region WebRTC
 
-        public async Task<List<WebRtcSourceMessage>> GetSourceStreams()
+        public async Task<Ism.Streaming.V1.Protos.GetSourceStreamsResponse> GetSourceStreamsAsync()
         {
-            var result = await WebRtcStreamerClient.GetSourceStreamsAsync(new Google.Protobuf.WellKnownTypes.Empty());
-            return result.Sources.ToList();
+            return await WebRtcStreamerClient.GetSourceStreamsAsync(new Google.Protobuf.WellKnownTypes.Empty());
         }
 
-        public async Task<CommandResponse> PgsHandleMessageForVideoAsync(Command command)
+        public async Task<Google.Protobuf.WellKnownTypes.Empty> HandleMessageAsync(Ism.Streaming.V1.Protos.HandleMessageRequest handleMessageRequest)
         {
-            var actionResponse = await WebRtcStreamerClient.HandleMessageAsync(new HandleMessageRequest()
-            {
-                SessionId = command.AdditionalInfo,
-                Offer = new WebRtcInfoMessage()
-                { 
-                    Message = command.Message,
-                    Type = command.Type,
-                }
-            });
-
-            return new CommandResponse()
-            {
-                Device = command.Device,
-                ResponseCode = (int)actionResponse.ResponseCode
-            }; 
+            return await WebRtcStreamerClient.HandleMessageAsync(handleMessageRequest);
         }
 
-        public async Task<CommandResponse> PgsPlayVideoAsync(Command command)
+        public async Task<Ism.Streaming.V1.Protos.InitSessionResponse> InitSessionAsync(Ism.Streaming.V1.Protos.InitSessionRequest initSessionRequest)
         {
-            var applicationName = this.GetType().FullName;
-            var accessInfo = _accessInfoFactory.GenerateAccessInfo();
-
-            var actionResponse = await WebRtcStreamerClient.InitSessionAsync(new InitSessionRequest
-            {
-                AccessInfo = new AccessInfoMessage
-                {
-                    ApplicationName = applicationName,
-                    Details = "Initialize webrtc stream",
-                    Id = Guid.NewGuid().ToString(),
-                    Ip = accessInfo.Ip,
-                    MachineName = Environment.MachineName,
-                    UserName = Environment.UserName
-                },
-                Quality = RxStreamQualityEnum.RxStreamQualityHdVideo,
-                RouteToStreamingEncoder = true,
-                StreamId = command.Device.Id,
-                SessionId = command.AdditionalInfo,
-                Offer = new WebRtcInfoMessage
-                {
-                    Aor = "AOR",
-                    BypassMaxStreamRestrictions = true,
-                    Type = command.Type,
-                    Message = command.Message
-                }
-            });
-
-            var response = new CommandResponse()
-            {
-                Device = command.Device,
-                ResponseCode = (int)actionResponse.ResponseCode,
-                Messages = new List<string>()
-            };
-
-            foreach (var item in actionResponse.Answer)
-            {
-                response.Messages.Add(item.Message);
-            }
-
-            return response;
+            return await WebRtcStreamerClient.InitSessionAsync(initSessionRequest);
         }
 
-        public async Task<CommandResponse> PgsStopVideoAsync(Command command)
+        public async Task<Google.Protobuf.WellKnownTypes.Empty> DeInitSessionAsync(Ism.Streaming.V1.Protos.DeInitSessionRequest deInitSessionRequest)
         {
-            var actionResponse = await WebRtcStreamerClient.DeInitSessionAsync(new DeInitSessionRequest()
-            {
-                SessionId = command.AdditionalInfo,
-            });
-
-            return new CommandResponse()
-            {
-                Device = command.Device,
-                ResponseCode = (int)WebRtcApiErrorEnum.WebRtcApiErrorSuccess
-            };
-        }
-
-        public async Task<CommandResponse> PgsPlayAudioAsync(Command command)
-        {
-            return new CommandResponse()
-            {
-                Device = command.Device,
-                ResponseCode = (int)WebRtcApiErrorEnum.WebRtcApiErrorUnknown
-            };
-        }
-
-        public async Task<CommandResponse> PgsStopAudioAsync(Command command)
-        {
-            return new CommandResponse()
-            {
-                Device = command.Device,
-                ResponseCode = (int)WebRtcApiErrorEnum.WebRtcApiErrorUnknown
-            };
-        }
-
-        public async Task<CommandResponse> PgsMuteAudioAsync(Command command)
-        {
-            return new CommandResponse()
-            {
-                Device = command.Device,
-                ResponseCode = (int)WebRtcApiErrorEnum.WebRtcApiErrorUnknown
-            };
-        }
-
-        public async Task<CommandResponse> PgsGetAudioVolumeUpAsync(Command command)
-        {
-            return new CommandResponse()
-            {
-                Device = command.Device,
-                ResponseCode = (int)WebRtcApiErrorEnum.WebRtcApiErrorUnknown
-            };
-        }
-
-        public async Task<CommandResponse> PgsGetAudioVolumeDownAsync(Command command)
-        {
-            return new CommandResponse()
-            {
-                Device = command.Device,
-                ResponseCode = (int)WebRtcApiErrorEnum.WebRtcApiErrorUnknown
-            };
+            return await WebRtcStreamerClient.DeInitSessionAsync(deInitSessionRequest);
         }
 
         #endregion WebRTC

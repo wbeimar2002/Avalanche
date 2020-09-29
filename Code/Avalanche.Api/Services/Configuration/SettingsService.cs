@@ -6,7 +6,6 @@ using Grpc.Core;
 using Grpc.Core.Testing;
 using Ism.PgsTimeout.Common.Core;
 using Ism.Security.Grpc.Helpers;
-using Ism.Streaming.Common.Core;
 using Moq;
 using System;
 using System.Collections.Generic;
@@ -23,7 +22,7 @@ namespace Avalanche.Api.Services.Configuration
 
         readonly string _hostIpAddress;
 
-        public WebRtcStreamer.WebRtcStreamerClient WebRtcStreamerClient { get; set; }
+        public Ism.Streaming.V1.Protos.WebRtcStreamer.WebRtcStreamerClient WebRtcStreamerClient { get; set; }
         public PgsTimeout.PgsTimeoutClient PgsTimeoutClient { get; set; }
 
         public bool IgnorePgsTimeoutClientMocks { get; set; }
@@ -43,7 +42,7 @@ namespace Avalanche.Api.Services.Configuration
             var certificate = new System.Security.Cryptography.X509Certificates.X509Certificate2(grpcCertificate, grpcPassword);
 
             //Client = ClientHelper.GetSecureClient<WebRtcStreamer.WebRtcStreamerClient>($"https://{hostIpAddress}:{WebRTCGrpcPort}", certificate);
-            WebRtcStreamerClient = ClientHelper.GetInsecureClient<WebRtcStreamer.WebRtcStreamerClient>($"https://{_hostIpAddress}:{WebRTCGrpcPort}");
+            WebRtcStreamerClient = ClientHelper.GetInsecureClient<Ism.Streaming.V1.Protos.WebRtcStreamer.WebRtcStreamerClient>($"https://{_hostIpAddress}:{WebRTCGrpcPort}");
             PgsTimeoutClient = ClientHelper.GetInsecureClient<PgsTimeout.PgsTimeoutClient>($"https://{_hostIpAddress}:{PgsTimeoutGrpcPort}");
         }
 

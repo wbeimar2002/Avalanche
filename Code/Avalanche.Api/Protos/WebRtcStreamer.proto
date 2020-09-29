@@ -1,66 +1,19 @@
 syntax = "proto3";
 import "google/protobuf/empty.proto";
 
-option csharp_namespace = "Ism.Streaming.Common.Core";
+option csharp_namespace = "Ism.Streaming.V1.Protos";
 
 package webRtcStreamer;
 
 service WebRtcStreamer{
-        // these 3 methods are the important ones
-        rpc HandleMessage (HandleMessageRequest) returns (HandleMessageResponse);
+        rpc HandleMessage (HandleMessageRequest) returns (google.protobuf.Empty);
         rpc InitSession (InitSessionRequest) returns (InitSessionResponse);
         rpc DeInitSession (DeInitSessionRequest) returns (google.protobuf.Empty);
         rpc GetSourceStreams (google.protobuf.Empty) returns (GetSourceStreamsResponse);
-
-        rpc CurrentRequestedSources (CurrentRequestedSourcesRequest) returns (google.protobuf.Empty);
-        rpc DeInitAudio (DeInitAudioRequest) returns (google.protobuf.Empty);
-        rpc GetDefaultSourceId (google.protobuf.Empty) returns (GetDefaultSourceIdResponse);
-        rpc GetEncoderBySessionId (GetEncoderBySessionIdRequest) returns (GetEncoderBySessionIdResponse);
-        rpc GetPreferredAudioCodec (GetPreferredAudioCodecRequest) returns (GetPreferredAudioCodecResponse);
-        rpc GetPrivacy (GetPrivacyRequest) returns (GetPrivacyResponse);
-        rpc GetRemoteClients (google.protobuf.Empty) returns (GetRemoteClientsResponse);
-        rpc GetWebRtcOnAir (google.protobuf.Empty) returns (GetWebRtcOnAirResponse);
-        rpc InitializeAudio (InitializeAudioRequest) returns (google.protobuf.Empty);
-        rpc ManageActiveStreamsList (google.protobuf.Empty) returns (google.protobuf.Empty);
-        rpc PlayRawAudio (PlayRawAudioRequest) returns (google.protobuf.Empty);
-        rpc RefreshStreams (RefreshStreamsRequest) returns (google.protobuf.Empty);
-        rpc SendCommand (SendCommandReqtest) returns (google.protobuf.Empty);
-        rpc SetBoardIdForSession (SetBoardIdForSessionRequest) returns (google.protobuf.Empty);
-        rpc ViewContentByContentId (ViewContentByContentIdRequest) returns (google.protobuf.Empty);
-
-        rpc Ping (PingRequest) returns (PingResponse);
-}
-
-message PingRequest{
-    int32 value = 1;
-}
-
-message PingResponse{
-    int32 value = 1;
-}
-
-message CurrentRequestedSourcesRequest{
-    repeated string sources = 1;
-}
-
-message DeInitAudioRequest{
-    string identifier = 1;
 }
 
 message DeInitSessionRequest{
     string sessionId = 1;
-}
-
-message GetDefaultSourceIdResponse{
-    string sourceId = 1;
-}
-
-message GetEncoderBySessionIdRequest{
-    string sessionId = 1;
-}
-
-message GetEncoderBySessionIdResponse{
-    string encoderId = 1;
 }
 
 message GetSourceStreamsResponse{
@@ -73,67 +26,10 @@ message WebRtcSourceMessage{
     int32 previewIndex = 3;
 }
 
-message GetPreferredAudioCodecRequest{
-    string streamId = 1;
-}
-
-message GetPreferredAudioCodecResponse{
-    string audioCodec = 1;
-}
-
-message GetPrivacyRequest{
-    string streamId = 1;
-}
-
-message GetPrivacyResponse{
-    bool privacyState = 1;
-}
-
-message GetWebRtcOnAirResponse{
-    bool onAir = 1;
-}
-
-message InitializeAudioRequest{
-    string identifier = 1;
-    int32 sampleRate = 2;
-    int32 numChannels = 3;
-    int32 bufferSize = 4;
-}
-
-message PlayRawAudioRequest{
-    string identifier = 1;
-    bytes data = 2;
-    int32 dataLength = 3;
-}
-
-message RefreshStreamsRequest{
-    string streamId = 1;
-}
-
 message SendCommandReqtest{
     string identifier = 1;
     string type = 2;
     string value = 3;
-}
-
-message SetBoardIdForSessionRequest{
-    string sessionId = 1;
-    string streamId = 2;
-}
-
-message ViewContentByContentIdRequest{
-    string sessionId = 1;
-    string contentId = 2;
-    ViewableContentTypeEnum contentType = 3;
-}
-
-message RemoteClientInfoMessage{
-    string ip = 1;
-    string username = 2;
-}
-
-message GetRemoteClientsResponse{
-    repeated RemoteClientInfoMessage clients = 1;
 }
 
 message HandleMessageRequest{
@@ -141,24 +37,15 @@ message HandleMessageRequest{
     WebRtcInfoMessage offer = 2;
 }
 
-message HandleMessageResponse{
-    WebRtcApiErrorEnum responseCode = 1;
-    string error = 2;
-}
-
 message InitSessionRequest{
     string sessionId = 1;
     string streamId = 2;
-    bool routeToStreamingEncoder = 3;
-    WebRtcInfoMessage offer = 4;
-    RxStreamQualityEnum quality = 5;
-    AccessInfoMessage accessInfo = 6;
+    WebRtcInfoMessage offer = 3;
+    AccessInfoMessage accessInfo = 4;
 }
 
 message InitSessionResponse{
-    WebRtcApiErrorEnum responseCode = 1;
-    string error = 2;
-    repeated WebRtcInfoMessage answer = 3;
+    repeated WebRtcInfoMessage answer = 1;
 }
 
 message WebRtcInfoMessage{
@@ -175,27 +62,6 @@ message AccessInfoMessage {
 	string applicationName = 4; 
 	string machineName = 5;
 	string details = 6;
-}
-
-enum ViewableContentTypeEnum{
-    VIEWABLE_CONTENT_TYPE_DISPLAY = 0;
-    VIEWABLE_CONTENT_TYPE_SOURCE = 1;
-    VIEWABLE_CONTENT_TYPE_ENCODER = 2;
-}
-
-enum WebRtcApiErrorEnum{
-    WEB_RTC_API_ERROR_SUCCESS = 0;
-    WEB_RTC_API_ERROR_MAX_STREAMS_REACHED = 1;
-    WEB_RTC_API_ERROR_DUPLICATE_SESSION = 2;
-    WEB_RTC_API_ERROR_UNKNOWN_SESSION = 3;
-    WEB_RTC_API_ERROR_INVALID_MESSAGE_TYPE = 4;
-    WEB_RTC_API_ERROR_UNKNOWN = 5;
-}
-
-enum RxStreamQualityEnum{
-    RX_STREAM_QUALITY_HD_VIDEO = 0;
-    RX_STREAM_QUALITY_SD_VIDEO = 1;
-    RX_STREAM_QUALITY_LD_VIDEO = 2;
 }
 
 enum WebRtcStreamTypeEnum{

@@ -11,7 +11,7 @@ namespace Avalanche.Api.Managers.Devices
 {
     public interface IDevicesManager
     {
-        Task<List<CommandResponse>> SendCommandAsync(CommandViewModel command);
+        Task SendCommandAsync(CommandViewModel command);
         Task<IList<Source>> GetOperationsSources();
         Task<IList<Output>> GetOperationsOutputs();
         Task<List<Output>> GetPGSOutputs();
