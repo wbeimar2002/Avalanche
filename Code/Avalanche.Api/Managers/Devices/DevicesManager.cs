@@ -48,14 +48,17 @@ namespace Avalanche.Api.Managers.Devices
             _mapper = mapper;
         }
 
-        public async Task SendCommandAsync(CommandViewModel command)
+        public async Task<List<CommandResponse>> SendCommandAsync(CommandViewModel command)
         {
             Preconditions.ThrowIfCountIsLessThan(nameof(command.Devices), command.Devices, 1);
+
+            List<CommandResponse> responses = new List<CommandResponse>();
+
             foreach (var item in command.Devices)
             {
                 var accessInfo = _accessInfoFactory.GenerateAccessInfo();
 
-                await ExecuteCommandAsync(command.CommandType, new Command()
+                CommandResponse response = await ExecuteCommandAsync(command.CommandType, new Command()
                 {
                     Device = _mapper.Map<Device, Source>(item),
                     Destinations = command.Destinations,
@@ -72,81 +75,70 @@ namespace Avalanche.Api.Managers.Devices
                         UserName = accessInfo.UserName
                     },
                 });
+
+                responses.Add(response);
             }
+
+            return responses;
         }
 
-        private async Task ExecuteCommandAsync(CommandTypes commandType, Command command)
+        private async Task<CommandResponse> ExecuteCommandAsync(CommandTypes commandType, Command command)
         {
             _appLoggerService.LogInformation($"{commandType.GetDescription()} command executed on {command.Device.Id} device.");
 
             switch (commandType)
             {
                 #region PGS Commands
-                case CommandTypes.TimeoutStopPdfSlides:
-                    //TODO: if stop we can to restart the vide from the beginning or we should continue 
-                    //in the state before to start the timeout mode. How to do this?
-                    await ResumeVideo(command);
-                    break;
                 case CommandTypes.PgsPlayVideo:
-                    await InitializeVideo(command);
-                    break;
+                    return await InitializeVideo(command);
                 case CommandTypes.PgsStopVideo:
-                    await StopVideo(command);
-                    break;
+                    return await StopVideo(command);
                 case CommandTypes.PgsHandleMessageForVideo:
-                    await HandleMessageForVideo(command);
-                    break;
+                    return await HandleMessageForVideo(command);
                 #endregion
 
                 #region Timeout Commands
                 case CommandTypes.TimeoutPlayPdfSlides:
                     //TODO: What happens with the Pgs Tab??
-                    await PlayTimeoutSlides(command);
-                    break;
+                    return await PlayTimeoutSlides(command);
+                case CommandTypes.TimeoutStopPdfSlides:
+                    //TODO: if stop we can to restart the vide from the beginning or we should continue 
+                    //in the state before to start the timeout mode. How to do this?
+                    return await StopSlidesAndResumeVideo(command);
                 case CommandTypes.TimeoutNextPdfSlide:
-                    await GoToNextTimeoutSlide(command);
-                    break;
+                    return await GoToNextTimeoutSlide(command);
                 case CommandTypes.TimeoutPreviousPdfSlide:
-                    await GoToPreviousTimeoutSlide(command);
-                    break;
-
+                    return await GoToPreviousTimeoutSlide(command);
                 case CommandTypes.TimeoutSetCurrentSlide:
-                    await SetTimeoutCurrentSlide(command);
-                    break;
+                    return await SetTimeoutCurrentSlide(command);
                 case CommandTypes.SetTimeoutMode:
-                    await SetTimeoutMode(command);
-                    break;
+                    return await SetTimeoutMode(command);
                 #endregion
 
                 #region Operate Commands
                 case CommandTypes.EnterFullScreen:
-                    await EnterFullScreen(command);
-                    break;
+                    return await EnterFullScreen(command);
                 case CommandTypes.ExitFullScreen:
-                    await ExitFullScreen(command);
-                    break;
+                    return await ExitFullScreen(command);
                 case CommandTypes.RouteVideoSource:
-                    await RouteVideoSource(command);
-                    break;
+                    return await RouteVideoSource(command);
                 case CommandTypes.UnrouteVideoSource:
-                    await UnrouteVideoSource(command);
-                    break;
+                    return await UnrouteVideoSource(command);
                 case CommandTypes.ShowVideoRoutingPreview:
-                    await ShowVideoRoutingPreview(command);
-                    break;
+                    return await ShowVideoRoutingPreview(command);
                 case CommandTypes.HideVideoRoutingPreview:
-                    await HideVideoRoutingPreview(command);
-                    break;
+                    return await HideVideoRoutingPreview(command);
                 #endregion Operate Commands
 
                 #region Recorder Commands
                 case CommandTypes.StartRecording:
-                    await _recorderService.StartRecording();
-                    break;
+                    return await StartRecording(command);
                 case CommandTypes.StopRecording:
-                    await _recorderService.StopRecording();
-                    break;
+                    return await StopRecording(command);
                 #endregion
+
+                default:
+                    throw new NotImplementedException();
             }
         }
 

@@ -20,28 +20,32 @@ namespace Avalanche.Api.Managers.Devices
 {
     public partial class DevicesManager : IDevicesManager
     {
-        private async Task SetTimeoutMode(Command command)
+        private async Task<CommandResponse> SetTimeoutMode(Command command)
         {
             await _mediaService.SetPgsTimeoutModeAsync(_mapper.Map<Command, SetPgsTimeoutModeRequest>(command));
+            return new CommandResponse(command.Device);
         }
 
-        private async Task SetTimeoutCurrentSlide(Command command)
+        private async Task<CommandResponse> SetTimeoutCurrentSlide(Command command)
         {
             Preconditions.ThrowIfStringIsNotNumber(nameof(command.Message), command.Message);
             await _mediaService.SetTimeoutPageAsync(_mapper.Map<Command, SetTimeoutPageRequest>(command));
+            return new CommandResponse(command.Device);
         }
 
-        private async Task GoToPreviousTimeoutSlide(Command command)
+        private async Task<CommandResponse> GoToPreviousTimeoutSlide(Command command)
         {
             await _mediaService.PreviousPageAsync(command);
+            return new CommandResponse(command.Device);
         }
 
-        private async Task GoToNextTimeoutSlide(Command command)
+        private async Task<CommandResponse> GoToNextTimeoutSlide(Command command)
         {
             await _mediaService.NextPageAsync(command);
+            return new CommandResponse(command.Device);
         }
 
-        private async Task PlayTimeoutSlides(Command command)
+        private async Task<CommandResponse> PlayTimeoutSlides(Command command)
         {
             command.Message = ((int)TimeoutModes.Timeout).ToString();
             var setTimeOutModeCommand = new Command()
@@ -51,6 +55,7 @@ namespace Avalanche.Api.Managers.Devices
             };
 
             await _mediaService.SetPgsTimeoutModeAsync(_mapper.Map<Command, SetPgsTimeoutModeRequest>(command));
+            return new CommandResponse(command.Device);
         }
     }
 }
