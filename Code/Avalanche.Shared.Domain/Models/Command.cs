@@ -11,5 +11,6 @@ namespace Avalanche.Shared.Domain.Models
         public string AdditionalInfo { get; set; }
         public string Message { get; set; }
         public string Type { get; set; }
+        public AccessInfo AccessInformation { get; set; }
     }
 }

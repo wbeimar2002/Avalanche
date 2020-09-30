@@ -10,6 +10,25 @@ namespace Avalanche.Api.MappingConfigurations
 {
     public class VideoRotingMappingConfigurations : Profile
     {
+
+        /*
+new AvidisDeviceInterface.V1.Protos.ShowPreviewRequest()
+                {
+                    PreviewIndex = 0, //TODO: Temporary value
+                    Height = region.Height,
+                    Width = region.Width,
+                    X = region.X,
+                    Y = region.Y,
+                }
+
+
+new AvidisDeviceInterface.V1.Protos.RoutePreviewRequest()
+            {
+                PreviewIndex = 0, //TODO: Temporary value
+                Source = _mapper.Map<Device, AvidisDeviceInterface.V1.Protos.AliasIndexMessage>(command.Device),
+            }
+         */
+
         public VideoRotingMappingConfigurations()
         {
             CreateMap<Device, Output>()

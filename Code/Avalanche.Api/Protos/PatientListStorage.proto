@@ -3,7 +3,7 @@ import "google/protobuf/empty.proto";
 import "google/protobuf/timestamp.proto";
 import "google/protobuf/wrappers.proto";
 
-option csharp_namespace = "Ism.Storage.Common.Core.PatientList.Proto";
+option csharp_namespace = "Ism.Storage.Core.PatientList.V1.Protos";
 
 package storage;
 

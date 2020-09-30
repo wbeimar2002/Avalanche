@@ -14,7 +14,7 @@ namespace Avalanche.Api.Managers.Devices
         Task SendCommandAsync(CommandViewModel command);
         Task<IList<Source>> GetOperationsSources();
         Task<IList<Output>> GetOperationsOutputs();
-        Task<List<Output>> GetPGSOutputs();
+        Task<List<Output>> GetPgsOutputs();
         Task<List<Output>> GetTimeoutOutputs();
     }
 }

@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace Avalanche.Api.ViewModels
@@ -18,5 +19,8 @@ namespace Avalanche.Api.ViewModels
         public KeyValuePairViewModel ProcedureType { get; set; }
         public Physician Physician { get; set; }
         public string ScopeSerialNumber { get; set; }
+
+        [JsonIgnore]
+        public AccessInfo AccessInformation { get; set; }
     }
 }

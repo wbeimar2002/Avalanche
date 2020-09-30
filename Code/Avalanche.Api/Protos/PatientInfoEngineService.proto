@@ -3,9 +3,9 @@ import "google/protobuf/empty.proto";
 import "google/protobuf/timestamp.proto";
 import "google/protobuf/wrappers.proto";
 
-package Ism.PatientInfoEngine.Common.Core;
+package Ism.PatientInfoEngine.v1;
 
-option csharp_namespace = "Ism.PatientInfoEngine.Common.Core.Protos";
+option csharp_namespace = "Ism.PatientInfoEngine.V1.Protos";
 
 service PatientInfoEngineService{
     rpc CheckConnectivity (CheckConnectivityRequest) returns (CheckConnectivityResponse);

@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Avalanche.Api.Services.Configuration;
 using Avalanche.Api.Services.Media;
+using Avalanche.Api.Utilities;
 using Avalanche.Api.ViewModels;
 using Avalanche.Shared.Domain.Enumerations;
 using Avalanche.Shared.Domain.Models;
@@ -17,7 +18,7 @@ using System.Threading.Tasks;
 
 namespace Avalanche.Api.Managers.Devices
 {
-    public class DevicesManager : IDevicesManager
+    public partial class DevicesManager : IDevicesManager
     {
         readonly IAvidisService _avidisService;
         readonly IRecorderService _recorderService;
@@ -26,6 +27,7 @@ namespace Avalanche.Api.Managers.Devices
         readonly IRoutingService _routingService;
         readonly ILogger<MediaManager> _appLoggerService;
         readonly IMapper _mapper;
+        readonly IAccessInfoFactory _accessInfoFactory;
 
         public DevicesManager(IMediaService mediaService,
             ISettingsService settingsService,
@@ -33,6 +35,7 @@ namespace Avalanche.Api.Managers.Devices
             ILogger<MediaManager> appLoggerService,
             IAvidisService avidisService,
             IRecorderService recorderService,
+            IAccessInfoFactory accessInfoFactory,
             IMapper mapper)
         {
             _recorderService = recorderService;
@@ -41,6 +44,7 @@ namespace Avalanche.Api.Managers.Devices
             _settingsService = settingsService;
             _routingService = routingService;
             _appLoggerService = appLoggerService;
+            _accessInfoFactory = accessInfoFactory;
             _mapper = mapper;
         }
 
@@ -49,13 +53,24 @@ namespace Avalanche.Api.Managers.Devices
             Preconditions.ThrowIfCountIsLessThan(nameof(command.Devices), command.Devices, 1);
             foreach (var item in command.Devices)
             {
+                var accessInfo = _accessInfoFactory.GenerateAccessInfo();
+
                 await ExecuteCommandAsync(command.CommandType, new Command()
                 {
                     Device = _mapper.Map<Device, Source>(item),
                     Destinations = command.Destinations,
                     Message = command.Message,
                     AdditionalInfo = command.AdditionalInfo,
-                    Type = command.Type
+                    Type = command.Type,
+                    AccessInformation = new AccessInfo
+                    {
+                        ApplicationName = accessInfo.ApplicationName,
+                        Details = command.CommandType.GetDescription(),
+                        Id = accessInfo.Id,
+                        Ip = accessInfo.Ip,
+                        MachineName = accessInfo.MachineName,
+                        UserName = accessInfo.UserName
+                    },
                 });
             }
         }
@@ -68,69 +83,38 @@ namespace Avalanche.Api.Managers.Devices
             {
                 #region PGS Commands
                 case CommandTypes.TimeoutStopPdfSlides:
-                    //TODO: if stop we can to restart the vide from the beginning or we should continue in the state before to start the timeout mode
-                    await PlayPgsVideo(command);
+                    //TODO: if stop we can to restart the vide from the beginning or we should continue 
+                    //in the state before to start the timeout mode. How to do this?
+                    await ResumeVideo(command);
                     break;
-
                 case CommandTypes.PgsPlayVideo:
-                    Preconditions.ThrowIfNull(nameof(command.Message), command.Message);
-                    Preconditions.ThrowIfNull(nameof(command.AdditionalInfo), command.AdditionalInfo);
-
-                    var setModeCommand = new Command()
-                    {
-                        Device = command.Device,
-                        Message = ((int)TimeoutModes.Pgs).ToString()
-                    };
-
-                    await _mediaService.SetPgsTimeoutModeAsync(_mapper.Map<Command, SetPgsTimeoutModeRequest>(command));
-
-                    await _mediaService.InitSessionAsync(_mapper.Map<Command, InitSessionRequest>(command));
+                    await InitializeVideo(command);
                     break;
-
                 case CommandTypes.PgsStopVideo:
-                    await _mediaService.DeInitSessionAsync(_mapper.Map<Command, DeInitSessionRequest>(command));
+                    await StopVideo(command);
                     break;
-
-                case CommandTypes.PgsPlayAudio:
-                    await _mediaService.InitSessionAsync(_mapper.Map<Command, InitSessionRequest>(command));
-                    break;
-
-                //case CommandTypes.PgsStopAudio:
-                //    await _mediaService.DeInitSessionAsync(command);
-                //    break;
-
                 case CommandTypes.PgsHandleMessageForVideo:
-                    Preconditions.ThrowIfNull(nameof(command.Message), command.Message);
-                    await _mediaService.HandleMessageAsync(_mapper.Map<Command, HandleMessageRequest>(command));
+                    await HandleMessageForVideo(command);
                     break;
-
                 #endregion
 
                 #region Timeout Commands
                 case CommandTypes.TimeoutPlayPdfSlides:
                     //TODO: What happens with the Pgs Tab??
-                    command.Message = ((int)TimeoutModes.Timeout).ToString();
-                    var setTimeOutModeCommand = new Command()
-                    {
-                        Device = command.Device,
-                        Message = ((int)TimeoutModes.Timeout).ToString()
-                    };
-
-                    await _mediaService.SetPgsTimeoutModeAsync(_mapper.Map<Command, SetPgsTimeoutModeRequest>(command));
-
+                    await PlayTimeoutSlides(command);
                     break;
-
                 case CommandTypes.TimeoutNextPdfSlide:
-                    await _mediaService.NextPageAsync(command);
+                    await GoToNextTimeoutSlide(command);
                     break;
-
                 case CommandTypes.TimeoutPreviousPdfSlide:
-                    await _mediaService.PreviousPageAsync(command);
+                    await GoToPreviousTimeoutSlide(command);
                     break;
 
                 case CommandTypes.TimeoutSetCurrentSlide:
-                    Preconditions.ThrowIfStringIsNotNumber(nameof(command.Message), command.Message);
-                    await _mediaService.SetTimeoutPageAsync(_mapper.Map<Command, SetTimeoutPageRequest>(command));
+                    await SetTimeoutCurrentSlide(command);
+                    break;
+                case CommandTypes.SetTimeoutMode:
+                    await SetTimeoutMode(command);
                     break;
                 #endregion
 
@@ -150,135 +134,23 @@ namespace Avalanche.Api.Managers.Devices
                 case CommandTypes.ShowVideoRoutingPreview:
                     await ShowVideoRoutingPreview(command);
                     break;
+                case CommandTypes.HideVideoRoutingPreview:
+                    await HideVideoRoutingPreview(command);
+                    break;
                 #endregion Operate Commands
 
                 #region Recorder Commands
-
                 case CommandTypes.StartRecording:
-                    await StartRecording(command);
+                    await _recorderService.StartRecording();
                     break;
                 case CommandTypes.StopRecording:
-                    await StopRecording(command);
+                    await _recorderService.StopRecording();
                     break;
                 #endregion
             }
         }
 
-        #region Routing
-
-        public async Task<IList<Source>> GetOperationsSources()
-        {
-            var sources = await _routingService.GetVideoSources();
-            var currentRoutes = await _routingService.GetCurrentRoutes();
-
-            IList<Source> listResult = _mapper.Map<IList<Ism.Routing.V1.Protos.VideoSourceMessage>, IList<Source>>(sources.VideoSources);
-
-            foreach (var item in currentRoutes.Routes)
-            {
-                var source = listResult.Where(s => s.Id.Equals(item.Source.Alias) && s.InternalIndex.Equals(item.Source.Index)).FirstOrDefault();
-                if (source != null)
-                    source.Output = _mapper.Map<Ism.Routing.V1.Protos.AliasIndexMessage, Output>(item.Sink);
-            }
-
-            return listResult;
-        }
-
-        public async Task<IList<Output>> GetOperationsOutputs()
-        {
-            var outputs = await _routingService.GetVideoSinks();
-            IList<Output> listResult = _mapper.Map<IList<Ism.Routing.V1.Protos.VideoSinkMessage>, IList<Output>>(outputs.VideoSinks);
-            return listResult;
-        }
-
-        private async Task RouteVideoSource(Command command)
-        {
-            Preconditions.ThrowIfCountIsLessThan(nameof(command.Destinations), command.Destinations, 1);
-            foreach (var item in command.Destinations)
-            {
-                await _routingService.RouteVideo(new Ism.Routing.V1.Protos.RouteVideoRequest()
-                {
-                    Sink = _mapper.Map<Device, Ism.Routing.V1.Protos.AliasIndexMessage>(item),
-                    Source = _mapper.Map<Device, Ism.Routing.V1.Protos.AliasIndexMessage>(command.Device),
-                }); 
-            }
-        }
-
-        private async Task UnrouteVideoSource(Command command)
-        {
-            await _routingService.RouteVideo(new Ism.Routing.V1.Protos.RouteVideoRequest()
-            {
-                Sink = _mapper.Map<Device, Ism.Routing.V1.Protos.AliasIndexMessage>(command.Device),
-                Source = new Ism.Routing.V1.Protos.AliasIndexMessage(),
-            });
-        }
-
-        private async Task ExitFullScreen(Command command)
-        {
-            await _routingService.ExitFullScreen(new Ism.Routing.V1.Protos.ExitFullScreenRequest()
-            {
-                UserInterfaceId = Convert.ToInt32(command.AdditionalInfo)
-            });
-        }
-
-        private async Task EnterFullScreen(Command command)
-        {
-            await _routingService.EnterFullScreen(new Ism.Routing.V1.Protos.EnterFullScreenRequest()
-            {
-                Source = _mapper.Map<Device, Ism.Routing.V1.Protos.AliasIndexMessage>(command.Device),
-                UserInterfaceId = Convert.ToInt32(command.AdditionalInfo)
-            });
-        }
-
-        private async Task ShowVideoRoutingPreview(Command command)
-        {
-            var config = await _settingsService.GetVideoRoutingSettingsAsync();
-            var region = JsonConvert.DeserializeObject<Region>(command.AdditionalInfo);
-
-            if (config.Mode == VideoRoutingModes.Hardware)
-            {
-                //await _avidisService.SetPreviewRegion(new SetPreviewRegionRequest()
-                //{
-                //    PreviewIndex = 0, //TODO: Temporary value
-                //    Height = region.Height,
-                //    Width = region.Width,
-                //    X = region.X,
-                //    Y = region.Y,
-                //});
-
-                await RoutePreview(command);
-
-                //await _avidisService.SetPreviewVisible(new SetPreviewVisibleRequest()
-                //{
-                //    PreviewIndex = 0, //TODO: Temporary values
-                //    Visible = command.Device.IsActive
-                //});
-            }
-
-            if (config.Mode == VideoRoutingModes.Software)
-                await RoutePreview(command);
-        }
-
-        private async Task RoutePreview(Command command)
-        {
-            await _avidisService.RoutePreview(new AvidisDeviceInterface.V1.Protos.RoutePreviewRequest()
-            {
-                PreviewIndex = 0, //TODO: Temporary value
-                Source = _mapper.Map<Device, AvidisDeviceInterface.V1.Protos.AliasIndexMessage>(command.Device),
-            });
-        }
-        #endregion Routing
-
-        #region PGS - Timeout
-        private async Task PlayPgsVideo(Command command)
-        {
-            var alwaysOnSettings = await _settingsService.GetTimeoutSettingsAsync();
-            //await SetMode(command.Device, alwaysOnSettings.PgsVideoAlwaysOn ? TimeoutModes.Pgs : TimeoutModes.Idle);
-            //TODO: Check set mode call
-            if (alwaysOnSettings.PgsVideoAlwaysOn)
-                await _mediaService.InitSessionAsync(_mapper.Map<Command, InitSessionRequest>(command));
-        }
-
-        public Task<List<Output>> GetPGSOutputs()
+        public Task<List<Output>> GetPgsOutputs()
         {
             List<Output> outputs = new List<Output>();
 
@@ -316,7 +188,7 @@ namespace Avalanche.Api.Managers.Devices
 
             return Task.FromResult(outputs);
         }
-
+        
         public Task<List<Output>> GetTimeoutOutputs()
         {
             List<Output> outputs = new List<Output>();
@@ -343,21 +215,29 @@ namespace Avalanche.Api.Managers.Devices
 
             return Task.FromResult(outputs);
         }
-
-        #endregion PGS - Timeout
-
-        #region Recording
-
-        private async Task StartRecording(Command command)
+        
+        public async Task<IList<Source>> GetOperationsSources()
         {
-            await _recorderService.StartRecording();
+            var sources = await _routingService.GetVideoSources();
+            var currentRoutes = await _routingService.GetCurrentRoutes();
+
+            IList<Source> listResult = _mapper.Map<IList<Ism.Routing.V1.Protos.VideoSourceMessage>, IList<Source>>(sources.VideoSources);
+
+            foreach (var item in currentRoutes.Routes)
+            {
+                var source = listResult.Where(s => s.Id.Equals(item.Source.Alias) && s.InternalIndex.Equals(item.Source.Index)).FirstOrDefault();
+                if (source != null)
+                    source.Output = _mapper.Map<Ism.Routing.V1.Protos.AliasIndexMessage, Output>(item.Sink);
+            }
+
+            return listResult;
         }
 
-        private async Task StopRecording(Command command)
+        public async Task<IList<Output>> GetOperationsOutputs()
         {
-            await _recorderService.StopRecording();
+            var outputs = await _routingService.GetVideoSinks();
+            IList<Output> listResult = _mapper.Map<IList<Ism.Routing.V1.Protos.VideoSinkMessage>, IList<Output>>(outputs.VideoSinks);
+            return listResult;
         }
-
-        #endregion
     }
 }
