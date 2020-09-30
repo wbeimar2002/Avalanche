@@ -25,8 +25,6 @@ namespace Avalanche.Api.Services.Configuration
         public Ism.Streaming.V1.Protos.WebRtcStreamer.WebRtcStreamerClient WebRtcStreamerClient { get; set; }
         public PgsTimeout.PgsTimeoutClient PgsTimeoutClient { get; set; }
 
-        public bool IgnorePgsTimeoutClientMocks { get; set; }
-
         public SettingsService(IConfigurationService configurationService, IStorageService storageService)
         {
             _configurationService = configurationService;
@@ -48,31 +46,6 @@ namespace Avalanche.Api.Services.Configuration
 
         public async Task<TimeoutSettings> GetTimeoutSettingsAsync()
         {
-            //Faking calls while I have the real server
-            if (!IgnorePgsTimeoutClientMocks)
-            {
-                var mockResponseForPdf = new GetTimeoutPdfPathResponse()
-                {
-                    PdfPath = @"C:\Olympus\apps\config\AvalancheApi\safety_checklist.pdf"
-                };
-
-                var mockResponseForAlwaysOn = new GetPgsAlwaysOnSettingResponse()
-                {
-                    IsAlwaysOn = true
-                };
-
-                Mock<PgsTimeout.PgsTimeoutClient> mockGrpcClient = new Mock<PgsTimeout.PgsTimeoutClient>();
-
-                var fakeCallForPdf = TestCalls.AsyncUnaryCall(Task.FromResult(mockResponseForPdf), Task.FromResult(new Metadata()), () => Status.DefaultSuccess, () => new Metadata(), () => { });
-
-                var fakeCallForAlwaysOn = TestCalls.AsyncUnaryCall(Task.FromResult(mockResponseForAlwaysOn), Task.FromResult(new Metadata()), () => Status.DefaultSuccess, () => new Metadata(), () => { });
-
-                mockGrpcClient.Setup(mock => mock.GetTimeoutPdfPathAsync(Moq.It.IsAny<Empty>(), null, null, CancellationToken.None)).Returns(fakeCallForPdf);
-                mockGrpcClient.Setup(mock => mock.GetPgsAlwaysOnSettingAsync(Moq.It.IsAny<Empty>(), null, null, CancellationToken.None)).Returns(fakeCallForAlwaysOn);
-
-                PgsTimeoutClient = mockGrpcClient.Object;
-            }
-          
             var actionResponseForPdf = await PgsTimeoutClient.GetTimeoutPdfPathAsync(new Empty());
             var actionResponseForAlwaysOn = await PgsTimeoutClient.GetPgsAlwaysOnSettingAsync(new Empty());
 

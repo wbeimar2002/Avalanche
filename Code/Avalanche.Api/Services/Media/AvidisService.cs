@@ -12,8 +12,6 @@ namespace Avalanche.Api.Services.Media
         readonly IConfigurationService _configurationService;
         readonly string _hostIpAddress;
 
-        public bool IgnoreGrpcServicesMocks { get; set; }
-
         public AvidisDeviceInterface.V1.Protos.Avidis.AvidisClient AvidisClient { get; set; }
 
         public AvidisService(IConfigurationService configurationService)
@@ -25,8 +23,6 @@ namespace Avalanche.Api.Services.Media
             var mediaServiceGrpcPort = _configurationService.GetEnvironmentVariable("mediaServiceGrpcPort");
             var grpcCertificate = _configurationService.GetEnvironmentVariable("grpcCertificate");
             var grpcPassword = _configurationService.GetEnvironmentVariable("grpcPassword");
-
-            IgnoreGrpcServicesMocks = Convert.ToBoolean(_configurationService.GetEnvironmentVariable("IgnoreGrpcServicesMocks"));
 
             var certificate = new System.Security.Cryptography.X509Certificates.X509Certificate2(grpcCertificate, grpcPassword);
 

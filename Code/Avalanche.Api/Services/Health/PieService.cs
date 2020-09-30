@@ -9,8 +9,6 @@ namespace Avalanche.Api.Services.Health
         readonly IConfigurationService _configurationService;
         readonly string _hostIpAddress;
 
-        public bool IgnoreGrpcServicesMocks { get; set; }
-
         public Ism.PatientInfoEngine.V1.Protos.PatientListService.PatientListServiceClient PatientListServiceClient { get; set; }
         public Ism.Storage.Core.PatientList.V1.Protos.PatientListStorage.PatientListStorageClient PatientListStorageClient { get; set; }
 

@@ -14,8 +14,6 @@ namespace Avalanche.Api.Services.Media
         readonly IAccessInfoFactory _accessInfoFactory;
         readonly string _hostIpAddress;
 
-        public bool IgnoreGrpcServicesMocks { get; set; }
-
         public Ism.Routing.V1.Protos.Routing.RoutingClient RoutingClient { get; set; }
 
         public RoutingService(IConfigurationService configurationService, IAccessInfoFactory accessInfoFactory)
@@ -28,8 +26,6 @@ namespace Avalanche.Api.Services.Media
             var mediaServiceGrpcPort = _configurationService.GetEnvironmentVariable("mediaServiceGrpcPort");
             var grpcCertificate = _configurationService.GetEnvironmentVariable("grpcCertificate");
             var grpcPassword = _configurationService.GetEnvironmentVariable("grpcPassword");
-
-            IgnoreGrpcServicesMocks = Convert.ToBoolean(_configurationService.GetEnvironmentVariable("IgnoreGrpcServicesMocks"));
 
             var certificate = new System.Security.Cryptography.X509Certificates.X509Certificate2(grpcCertificate, grpcPassword);
 
