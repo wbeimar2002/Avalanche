@@ -2,13 +2,13 @@
 import "google/protobuf/empty.proto";
 import "google/protobuf/duration.proto";  
 
-option csharp_namespace = "AvidisDeviceInterface.Proto";
+option csharp_namespace = "AvidisDeviceInterface.V1.Protos";
 
 package avidis;
 
 service Avidis{
-	rpc SetPreviewVisible (SetPreviewVisibleRequest) returns (google.protobuf.Empty);
-	rpc SetPreviewRegion (SetPreviewRegionRequest) returns (google.protobuf.Empty);
+	rpc HidePreview (HidePreviewRequest) returns (google.protobuf.Empty);
+	rpc ShowPreview (ShowPreviewRequest) returns (google.protobuf.Empty);
 	rpc RoutePreview (RoutePreviewRequest) returns (google.protobuf.Empty);
 }
 
@@ -17,12 +17,11 @@ message AliasIndexMessage{
 	int32 index = 2;
 }
 
-message SetPreviewVisibleRequest{
+message HidePreviewRequest{
 	int32 previewIndex = 1;
-	bool visible = 2;
 }
 
-message SetPreviewRegionRequest{
+message ShowPreviewRequest{
 	int32 previewIndex = 1;
 	int32 x = 2;
 	int32 y = 3;

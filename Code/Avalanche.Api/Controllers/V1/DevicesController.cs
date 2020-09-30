@@ -37,15 +37,14 @@ namespace Avalanche.Api.Controllers.V1
         /// Send a command to the output
         /// </summary>
         [HttpPut("commands")]
-        [Produces(typeof(List<CommandResponse>))]
         public async Task<IActionResult> SendCommand([FromBody]CommandViewModel command, [FromServices]IWebHostEnvironment env)
         {
             try
             {
                 _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
-                var response = await _devicesManager.SendCommandAsync(command);
+                await _devicesManager.SendCommandAsync(command);
 
-                return Ok(response);
+                return Ok();
             }
             catch (Exception exception)
             {
@@ -68,7 +67,7 @@ namespace Avalanche.Api.Controllers.V1
             try
             {
                 _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
-                var result = await _devicesManager.GetPGSOutputs();
+                var result = await _devicesManager.GetPgsOutputs();
                 return Ok(result);
             }
             catch (Exception exception)
