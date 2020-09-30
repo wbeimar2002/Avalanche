@@ -37,7 +37,7 @@ namespace Avalanche.Shared.Domain.Enumerations
         [Description("Show video routing preview")]
         SetTimeoutMode = 25,
 
-        [Description("Fullscreen Mode")]
+        [Description("Enter Fullscreen Mode")]
         EnterFullScreen = 30,
         [Description("Exit Fullscreen Mode")]
         ExitFullScreen = 31,

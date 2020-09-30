@@ -80,12 +80,6 @@ namespace Avalanche.Api.MappingConfigurations
                     opt => opt.MapFrom(src => Convert.ToInt32(src.Message)))
                 .ReverseMap();
 
-            CreateMap<Command, Ism.PgsTimeout.Common.Core.SetTimeoutPageRequest>()
-                .ForMember(dest =>
-                    dest.PageNumber,
-                    opt => opt.MapFrom(src => Convert.ToInt32(src.Message)))
-                .ReverseMap();
-
             CreateMap<Command, Ism.PgsTimeout.Common.Core.SetPgsTimeoutModeRequest>()
                 .ForMember(dest =>
                     dest.Mode,

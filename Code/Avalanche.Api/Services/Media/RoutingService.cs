@@ -37,6 +37,7 @@ namespace Avalanche.Api.Services.Media
         {
             return await RoutingClient.GetVideoSourcesAsync(new Google.Protobuf.WellKnownTypes.Empty());
         }
+
         public async Task<Ism.Routing.V1.Protos.GetVideoSinksResponse> GetVideoSinks()
         {
             return await RoutingClient.GetVideoSinksAsync(new Google.Protobuf.WellKnownTypes.Empty());

@@ -238,10 +238,10 @@ namespace Avalanche.Api.MappingConfigurations
                 .ForPath(dest =>
                     dest.PatientRecord.PerformingPhysician.LastName,
                     opt => opt.MapFrom(src => src.Physician.LastName))
-                .ForMember(dest =>
+                .ForPath(dest =>
                     dest.PatientRecord.SecondaryPhysicians,
                     opt => opt.Ignore())
-                .ForMember(dest =>
+                .ForPath(dest =>
                     dest.PatientRecord.Properties,
                     opt => opt.Ignore())
                 .ReverseMap();
@@ -315,10 +315,10 @@ namespace Avalanche.Api.MappingConfigurations
                 .ForPath(dest =>
                     dest.PatientRecord.PerformingPhysician.LastName,
                     opt => opt.MapFrom(src => src.Physician.LastName))
-                .ForMember(dest =>
+                .ForPath(dest =>
                     dest.PatientRecord.SecondaryPhysicians,
                     opt => opt.Ignore())
-                .ForMember(dest =>
+                .ForPath(dest =>
                     dest.PatientRecord.Properties,
                     opt => opt.Ignore())
                 .ReverseMap();
