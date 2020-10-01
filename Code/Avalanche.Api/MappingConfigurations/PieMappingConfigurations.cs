@@ -22,10 +22,10 @@ namespace Avalanche.Api.MappingConfigurations
                    opt => opt.MapFrom(src => string.Empty))
                .ForPath(dest =>
                    dest.SearchFields.MaxDate,
-                   opt => opt.MapFrom(src => src.MaxDate.Value.ToTimestamp()))
+                   opt => opt.Ignore()) //Temporary, still is not used
                .ForPath(dest =>
                    dest.SearchFields.MinDate,
-                   opt => opt.MapFrom(src => src.MinDate.Value.ToTimestamp()))
+                   opt => opt.Ignore()) //Temporary, still is not used
                .ForPath(dest =>
                    dest.SearchFields.MRN,
                    opt => opt.MapFrom(src => src.MRN))
@@ -76,10 +76,10 @@ namespace Avalanche.Api.MappingConfigurations
                     opt => opt.MapFrom(src => string.Empty))
                 .ForPath(dest =>
                     dest.SearchFields.MaxDate,
-                    opt => opt.MapFrom(src => string.Empty))
+                    opt => opt.Ignore()) //Temporary, still is not used
                 .ForPath(dest =>
                     dest.SearchFields.MinDate,
-                    opt => opt.MapFrom(src => string.Empty))
+                    opt => opt.Ignore()) //Temporary, still is not used
                 .ForPath(dest =>
                     dest.SearchFields.MRN,
                     opt => opt.MapFrom(src => string.Empty))
@@ -123,25 +123,28 @@ namespace Avalanche.Api.MappingConfigurations
 
             CreateMap<Ism.IsmLogCommon.Core.AccessInfo, AccessInfo>();
 
-            CreateMap<Ism.Storage.Core.PatientList.V1.Protos.PatientRecordMessage, Shared.Domain.Models.Patient>()
+            CreateMap<Ism.Storage.Core.PatientList.V1.Protos.AddPatientRecordResponse, Shared.Domain.Models.Patient>()
                 .ForMember(dest =>
                     dest.FirstName,
-                    opt => opt.MapFrom(src => src.Patient.FirstName))
+                    opt => opt.MapFrom(src => src.PatientRecord.Patient.FirstName))
                 .ForMember(dest =>
                     dest.LastName,
-                    opt => opt.MapFrom(src => src.Patient.LastName))
+                    opt => opt.MapFrom(src => src.PatientRecord.Patient.LastName))
+                .ForMember(dest =>
+                    dest.Department,
+                    opt => opt.MapFrom(src => src.PatientRecord.Department))
                 .ForMember(dest =>
                     dest.Id,
-                    opt => opt.MapFrom(src => src.InternalId))
+                    opt => opt.MapFrom(src => src.PatientRecord.InternalId))
                 .ForMember(dest =>
                     dest.DateOfBirth,
-                    opt => opt.MapFrom(src => new DateTime(src.Patient.Dob.Year, src.Patient.Dob.Month, src.Patient.Dob.Day)))
+                    opt => opt.MapFrom(src => new DateTime(src.PatientRecord.Patient.Dob.Year, src.PatientRecord.Patient.Dob.Month, src.PatientRecord.Patient.Dob.Day)))
                 .ForMember(dest =>
                     dest.MRN,
-                    opt => opt.MapFrom(src => src.Mrn))
+                    opt => opt.MapFrom(src => src.PatientRecord.Mrn))
                 .ForMember(dest =>
                     dest.Sex,
-                    opt => opt.MapFrom(src => GetSex(src.Patient.Sex)))
+                    opt => opt.MapFrom(src => GetSex(src.PatientRecord.Patient.Sex)))
                 .ReverseMap();
 
             CreateMap<Ism.PatientInfoEngine.V1.Protos.PatientRecordMessage, Shared.Domain.Models.Patient>()
@@ -211,6 +214,9 @@ namespace Avalanche.Api.MappingConfigurations
                 .ForPath(dest =>
                     dest.PatientRecord.ProcedureId,
                     opt => opt.MapFrom(src => "Unknown"))
+                .ForPath(dest =>
+                    dest.PatientRecord.Mrn,
+                    opt => opt.MapFrom(src => src.MRN))
                 .ForPath(dest =>
                     dest.PatientRecord.Patient.FirstName,
                     opt => opt.MapFrom(src => src.FirstName))
@@ -288,6 +294,9 @@ namespace Avalanche.Api.MappingConfigurations
                 .ForPath(dest =>
                     dest.PatientRecord.ProcedureId,
                     opt => opt.MapFrom(src => "Unknown"))
+                .ForPath(dest =>
+                    dest.PatientRecord.Mrn,
+                    opt => opt.MapFrom(src => src.MRN))
                 .ForPath(dest =>
                     dest.PatientRecord.Patient.FirstName,
                     opt => opt.MapFrom(src => src.FirstName))

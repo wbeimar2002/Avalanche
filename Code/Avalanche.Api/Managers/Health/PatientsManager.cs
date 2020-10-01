@@ -79,11 +79,12 @@ namespace Avalanche.Api.Managers.Health
             string quickRegistrationDateFormat = setupSettings.QuickRegistrationDateFormat;
             string formattedDate = DateTime.UtcNow.ToLocalTime().ToString(quickRegistrationDateFormat);
 
+            //TODO: Pending check this default data
             var newPatient = new PatientViewModel()
             {
                 ScopeSerialNumber = "???", //TODO: How this is related to
                 MRN = $"{formattedDate}MRN",
-                DateOfBirth = DateTime.UtcNow,
+                DateOfBirth = DateTime.UtcNow.ToLocalTime(),
                 FirstName = $"{formattedDate}FirstName",
                 LastName = $"{formattedDate}LastName",
                 Sex = new KeyValuePairViewModel()
@@ -92,11 +93,13 @@ namespace Avalanche.Api.Managers.Health
                 },
                 Department = new KeyValuePairViewModel()
                 {
-                    Id = "Unknown"
+                    Id = "Unknown",
+                    Value = "Unknown"
                 },
                 ProcedureType = new KeyValuePairViewModel()
                 {
-                    Id =  "Unknown"
+                    Id = "Unknown",
+                    Value = "Unknown"
                 },
                 //TODO: Performing physician is administrator by default
                 //Which are the values?
