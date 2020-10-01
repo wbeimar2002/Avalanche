@@ -22,10 +22,10 @@ namespace Avalanche.Api.MappingConfigurations
                    opt => opt.MapFrom(src => string.Empty))
                .ForPath(dest =>
                    dest.SearchFields.MaxDate,
-                   opt => opt.Ignore()) //Temporary, still is not used
+                   opt => opt.MapFrom(src => src.MaxDate == null? null : src.MaxDate.Value.ToTimestamp()))
                .ForPath(dest =>
                    dest.SearchFields.MinDate,
-                   opt => opt.Ignore()) //Temporary, still is not used
+                   opt => opt.MapFrom(src => src.MinDate == null ? null : src.MinDate.Value.ToTimestamp()))
                .ForPath(dest =>
                    dest.SearchFields.MRN,
                    opt => opt.MapFrom(src => src.MRN))
@@ -76,10 +76,10 @@ namespace Avalanche.Api.MappingConfigurations
                     opt => opt.MapFrom(src => string.Empty))
                 .ForPath(dest =>
                     dest.SearchFields.MaxDate,
-                    opt => opt.Ignore()) //Temporary, still is not used
+                    opt => opt.Ignore()) 
                 .ForPath(dest =>
                     dest.SearchFields.MinDate,
-                    opt => opt.Ignore()) //Temporary, still is not used
+                    opt => opt.Ignore()) 
                 .ForPath(dest =>
                     dest.SearchFields.MRN,
                     opt => opt.MapFrom(src => string.Empty))
