@@ -121,8 +121,7 @@ namespace Avalanche.Api.MappingConfigurations
                     opt => opt.MapFrom(src => src.AccessInformation.UserName))
                 .ReverseMap();
 
-            CreateMap<AccessInfo, Ism.PatientInfoEngine.V1.Protos.AccessInfoMessage>();
-            CreateMap<AccessInfo, Ism.Storage.Core.PatientList.V1.Protos.AccessInfoMessage>();
+            CreateMap<Ism.IsmLogCommon.Core.AccessInfo, AccessInfo>();
 
             CreateMap<Ism.Storage.Core.PatientList.V1.Protos.PatientRecordMessage, Shared.Domain.Models.Patient>()
                 .ForMember(dest =>
@@ -193,7 +192,7 @@ namespace Avalanche.Api.MappingConfigurations
                     opt => opt.MapFrom(src => "Unknown"))
                 .ForPath(dest =>
                     dest.PatientRecord.Department,
-                    opt => opt.MapFrom(src => src.Department.Id))
+                    opt => opt.MapFrom(src => src.Department.Value))
                 .ForPath(dest =>
                     dest.PatientRecord.AdmissionStatus,
                     opt => opt.MapFrom(src => new Ism.Storage.Core.PatientList.V1.Protos.AdmissionStatusMessage()))
@@ -208,7 +207,7 @@ namespace Avalanche.Api.MappingConfigurations
                     opt => opt.MapFrom(src => new Timestamp()))
                 .ForPath(dest =>
                     dest.PatientRecord.ProcedureType,
-                    opt => opt.MapFrom(src => src.ProcedureType.Id))
+                    opt => opt.MapFrom(src => src.ProcedureType.Value))
                 .ForPath(dest =>
                     dest.PatientRecord.ProcedureId,
                     opt => opt.MapFrom(src => "Unknown"))
@@ -270,7 +269,7 @@ namespace Avalanche.Api.MappingConfigurations
                     opt => opt.MapFrom(src => "Unknown"))
                 .ForPath(dest =>
                     dest.PatientRecord.Department,
-                    opt => opt.MapFrom(src => src.Department.Id))
+                    opt => opt.MapFrom(src => src.Department.Value))
                 .ForPath(dest =>
                     dest.PatientRecord.AdmissionStatus,
                     opt => opt.MapFrom(src => new Ism.Storage.Core.PatientList.V1.Protos.AdmissionStatusMessage()))
@@ -285,7 +284,7 @@ namespace Avalanche.Api.MappingConfigurations
                     opt => opt.MapFrom(src => new Timestamp()))
                 .ForPath(dest =>
                     dest.PatientRecord.ProcedureType,
-                    opt => opt.MapFrom(src => src.ProcedureType.Id))
+                    opt => opt.MapFrom(src => src.ProcedureType.Value))
                 .ForPath(dest =>
                     dest.PatientRecord.ProcedureId,
                     opt => opt.MapFrom(src => "Unknown"))

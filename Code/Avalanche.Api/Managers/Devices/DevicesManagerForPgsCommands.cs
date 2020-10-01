@@ -34,7 +34,7 @@ namespace Avalanche.Api.Managers.Devices
             await ExecuteCommandAsync(CommandTypes.SetTimeoutMode, setModeCommand);
 
             var accessInfo = _accessInfoFactory.GenerateAccessInfo();
-            var accessInfoMessage = _mapper.Map<Ism.Storage.Core.PatientList.V1.Protos.AccessInfoMessage>(accessInfo);
+            command.AccessInformation = _mapper.Map<Ism.IsmLogCommon.Core.AccessInfo, AccessInfo>(accessInfo); 
 
             var actionResponse = await _mediaService.InitSessionAsync(_mapper.Map<Command, InitSessionRequest>(command));
 
@@ -66,6 +66,9 @@ namespace Avalanche.Api.Managers.Devices
 
             if (alwaysOnSettings.PgsVideoAlwaysOn)
             {
+                var accessInfo = _accessInfoFactory.GenerateAccessInfo();
+                command.AccessInformation = _mapper.Map<Ism.IsmLogCommon.Core.AccessInfo, AccessInfo>(accessInfo);
+
                 var actionResponse = await _mediaService.InitSessionAsync(_mapper.Map<Command, InitSessionRequest>(command));
 
                 var response = new CommandResponse(command.Device)

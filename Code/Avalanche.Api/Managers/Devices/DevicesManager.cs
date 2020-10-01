@@ -56,24 +56,13 @@ namespace Avalanche.Api.Managers.Devices
 
             foreach (var item in command.Devices)
             {
-                var accessInfo = _accessInfoFactory.GenerateAccessInfo();
-
                 CommandResponse response = await ExecuteCommandAsync(command.CommandType, new Command()
                 {
                     Device = _mapper.Map<Device, Source>(item),
                     Destinations = command.Destinations,
                     Message = command.Message,
                     AdditionalInfo = command.AdditionalInfo,
-                    Type = command.Type,
-                    AccessInformation = new AccessInfo
-                    {
-                        ApplicationName = accessInfo.ApplicationName,
-                        Details = command.CommandType.GetDescription(),
-                        Id = accessInfo.Id,
-                        Ip = accessInfo.Ip,
-                        MachineName = accessInfo.MachineName,
-                        UserName = accessInfo.UserName
-                    },
+                    Type = command.Type
                 });
 
                 responses.Add(response);
