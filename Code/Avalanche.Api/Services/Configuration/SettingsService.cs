@@ -1,5 +1,4 @@
-﻿using Avalanche.Api.Services.Files;
-using Avalanche.Shared.Infrastructure.Models;
+﻿using Avalanche.Shared.Infrastructure.Models;
 using Avalanche.Shared.Infrastructure.Services.Settings;
 using Google.Protobuf.WellKnownTypes;
 using Grpc.Core;
