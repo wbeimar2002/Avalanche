@@ -34,7 +34,7 @@ namespace Avalanche.Api.Controllers.V1
         /// </summary>
         [HttpGet("stream/sources")]
         [Produces(typeof(List<Device>))]
-        public async Task<IActionResult> GetPGSOutputs([FromServices] IWebHostEnvironment env)
+        public async Task<IActionResult> GetPgsOutputs([FromServices] IWebHostEnvironment env)
         {
             try
             {

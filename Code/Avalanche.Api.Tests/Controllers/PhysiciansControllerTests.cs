@@ -2,6 +2,7 @@
 using Avalanche.Api.Controllers.V1;
 using Avalanche.Api.Managers.Health;
 using Avalanche.Api.Tests.Extensions;
+using Avalanche.Api.ViewModels;
 using Avalanche.Shared.Domain.Models;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -42,12 +43,14 @@ namespace Avalanche.Api.Tests.Controllers
         }
 
         [Test]
-        public void BroadcastShouldReturnOkResult()
+        public void BGetAllPhysiciansOkResult()
         {
             var fixture = new Fixture();
             var list = fixture.CreateMany<Physician>(10).ToList();
+            var sourceFile = fixture.Create<PhysiciansViewModel>();
 
-            _physiciansManager.Setup(mock => mock.GetAllPhysicians()).ReturnsAsync(list);
+            //_physiciansManager.Setup(mock => mock.GetAllPhysicians()).ReturnsAsync(list);
+            _physiciansManager.Setup(mock => mock.GetTemporaryPhysiciansSource()).ReturnsAsync(sourceFile);
 
             var okResult = _controller.GetAll(_environment.Object);
 
@@ -62,9 +65,10 @@ namespace Avalanche.Api.Tests.Controllers
         }
 
         [Test]
-        public void BroadcastShouldReturnBadResultIfFails()
+        public void GetAllPhysiciansBadResultIfFails()
         {
-            _physiciansManager.Setup(mock => mock.GetAllPhysicians()).Throws(It.IsAny<Exception>());
+            //_physiciansManager.Setup(mock => mock.GetAllPhysicians()).Throws(It.IsAny<Exception>());
+            _physiciansManager.Setup(mock => mock.GetTemporaryPhysiciansSource()).Throws(It.IsAny<Exception>());
 
             var badResult = _controller.GetAll(_environment.Object);
 

@@ -48,7 +48,7 @@ namespace Avalanche.Api.Managers.Devices
             _mapper = mapper;
         }
 
-        public async Task<List<CommandResponse>> SendCommandAsync(CommandViewModel command)
+        public async Task<List<CommandResponse>> SendCommand(CommandViewModel command)
         {
             Preconditions.ThrowIfCountIsLessThan(nameof(command.Devices), command.Devices, 1);
 
