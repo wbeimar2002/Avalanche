@@ -12,6 +12,42 @@ namespace Avalanche.Api.MappingConfigurations
     {
         public VideoRotingMappingConfigurations()
         {
+            CreateMap<Region, AvidisDeviceInterface.V1.Protos.ShowPreviewRequest>()
+                .ForMember(dest =>
+                    dest.PreviewIndex, //TODO: Temporary value
+                    opt => opt.MapFrom(src => 0))
+                .ForMember(dest =>
+                    dest.Height,
+                    opt => opt.MapFrom(src => src.Height))
+                .ForMember(dest =>
+                    dest.Width,
+                    opt => opt.MapFrom(src => src.Width))
+                .ForMember(dest =>
+                    dest.X,
+                    opt => opt.MapFrom(src => src.X))
+                .ForMember(dest =>
+                    dest.Y,
+                    opt => opt.MapFrom(src => src.Y))
+                .ReverseMap();
+
+            CreateMap<Command, AvidisDeviceInterface.V1.Protos.HidePreviewRequest>()
+                .ForMember(dest =>
+                    dest.PreviewIndex, //TODO: Temporary value
+                    opt => opt.MapFrom(src => 0))
+                .ReverseMap();
+
+            CreateMap<Command, AvidisDeviceInterface.V1.Protos.RoutePreviewRequest>()
+                .ForMember(dest =>
+                    dest.PreviewIndex, //TODO: Temporary value
+                    opt => opt.MapFrom(src => 0))
+                .ForPath(dest =>
+                    dest.Source.Alias,
+                    opt => opt.MapFrom(src => src.Device.Id))
+                .ForPath(dest =>
+                    dest.Source.Index,
+                    opt => opt.MapFrom(src => src.Device.InternalIndex))
+                .ReverseMap();
+
             CreateMap<Device, Output>()
                 .ForMember(dest =>
                     dest.Id,
@@ -45,7 +81,7 @@ namespace Avalanche.Api.MappingConfigurations
                     opt => opt.Ignore())
                 .ReverseMap();
 
-            CreateMap<Device, Ism.Routing.Common.Core.AliasIndexMessage>()
+            CreateMap<Device, Ism.Routing.V1.Protos.AliasIndexMessage>()
                 .ForMember(dest =>
                     dest.Alias,
                     opt => opt.MapFrom(src => src.Id))
@@ -54,7 +90,7 @@ namespace Avalanche.Api.MappingConfigurations
                     opt => opt.MapFrom(src => src.InternalIndex))
                 .ReverseMap();
 
-            CreateMap<Source, Ism.Routing.Common.Core.AliasIndexMessage>()
+            CreateMap<Source, Ism.Routing.V1.Protos.AliasIndexMessage>()
                 .ForMember(dest =>
                     dest.Alias,
                     opt => opt.MapFrom(src => src.Id))
@@ -63,7 +99,7 @@ namespace Avalanche.Api.MappingConfigurations
                     opt => opt.MapFrom(src => src.InternalIndex))
                 .ReverseMap();
 
-            CreateMap<Output, Ism.Routing.Common.Core.AliasIndexMessage>()
+            CreateMap<Output, Ism.Routing.V1.Protos.AliasIndexMessage>()
                 .ForMember(dest =>
                     dest.Alias,
                     opt => opt.MapFrom(src => src.Id))
@@ -72,7 +108,7 @@ namespace Avalanche.Api.MappingConfigurations
                     opt => opt.MapFrom(src => src.InternalIndex))
                 .ReverseMap();
 
-            CreateMap<Source, AvidisDeviceInterface.Proto.AliasIndexMessage>()
+            CreateMap<Source, AvidisDeviceInterface.V1.Protos.AliasIndexMessage>()
                 .ForMember(dest =>
                     dest.Alias,
                     opt => opt.MapFrom(src => src.Id))
@@ -81,7 +117,7 @@ namespace Avalanche.Api.MappingConfigurations
                     opt => opt.MapFrom(src => src.InternalIndex))
                 .ReverseMap();
 
-            CreateMap<Device, AvidisDeviceInterface.Proto.AliasIndexMessage>()
+            CreateMap<Device, AvidisDeviceInterface.V1.Protos.AliasIndexMessage>()
                 .ForMember(dest =>
                     dest.Alias,
                     opt => opt.MapFrom(src => src.Id))
@@ -90,7 +126,7 @@ namespace Avalanche.Api.MappingConfigurations
                     opt => opt.MapFrom(src => src.InternalIndex))
                 .ReverseMap();
 
-            CreateMap<Ism.Routing.Common.Core.VideoSourceMessage, Source>()
+            CreateMap<Ism.Routing.V1.Protos.VideoSourceMessage, Source>()
                 .ForMember(dest =>
                     dest.Id,
                     opt => opt.MapFrom(src => src.Source.Alias))
@@ -117,7 +153,7 @@ namespace Avalanche.Api.MappingConfigurations
                     opt => opt.Ignore())
                 .ReverseMap();
 
-            CreateMap<Ism.Routing.Common.Core.VideoSinkMessage, Output>()
+            CreateMap<Ism.Routing.V1.Protos.VideoSinkMessage, Output>()
                 .ForMember(dest =>
                     dest.Id,
                     opt => opt.MapFrom(src => src.Sink.Alias))

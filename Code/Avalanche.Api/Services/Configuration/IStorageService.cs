@@ -8,6 +8,5 @@ namespace Avalanche.Api.Services.Configuration
     public interface IStorageService
     {
         Task<T> GetJson<T>(string configurationKey, int version);
-        Task SaveJson<T>(string configurationKey, T jsonObject);
     }
 }

@@ -1,5 +1,4 @@
 ﻿using Avalanche.Shared.Infrastructure.Services.Settings;
-using AvidisDeviceInterface.Proto;
 using Ism.Security.Grpc.Helpers;
 using System;
 using System.Collections.Generic;
@@ -13,9 +12,7 @@ namespace Avalanche.Api.Services.Media
         readonly IConfigurationService _configurationService;
         readonly string _hostIpAddress;
 
-        public bool IgnoreGrpcServicesMocks { get; set; }
-
-        public Avidis.AvidisClient AvidisClient { get; set; }
+        public AvidisDeviceInterface.V1.Protos.Avidis.AvidisClient AvidisClient { get; set; }
 
         public AvidisService(IConfigurationService configurationService)
         {
@@ -27,27 +24,25 @@ namespace Avalanche.Api.Services.Media
             var grpcCertificate = _configurationService.GetEnvironmentVariable("grpcCertificate");
             var grpcPassword = _configurationService.GetEnvironmentVariable("grpcPassword");
 
-            IgnoreGrpcServicesMocks = Convert.ToBoolean(_configurationService.GetEnvironmentVariable("IgnoreGrpcServicesMocks"));
-
             var certificate = new System.Security.Cryptography.X509Certificates.X509Certificate2(grpcCertificate, grpcPassword);
 
             //Client = ClientHelper.GetSecureClient<WebRtcStreamer.WebRtcStreamerClient>($"https://{hostIpAddress}:{mediaServiceGrpcPort}", certificate);
-            AvidisClient = ClientHelper.GetInsecureClient<Avidis.AvidisClient>($"https://{_hostIpAddress}:{mediaServiceGrpcPort}");
+            AvidisClient = ClientHelper.GetInsecureClient<AvidisDeviceInterface.V1.Protos.Avidis.AvidisClient>($"https://{_hostIpAddress}:{mediaServiceGrpcPort}");
         }
 
-        public async Task RoutePreview(RoutePreviewRequest routePreviewRequest)
+        public async Task RoutePreview(AvidisDeviceInterface.V1.Protos.RoutePreviewRequest routePreviewRequest)
         {
             await AvidisClient.RoutePreviewAsync(routePreviewRequest);
         }
 
-        public async Task SetPreviewRegion(SetPreviewRegionRequest setPreviewRegionRequest)
+        public async Task HidePreview(AvidisDeviceInterface.V1.Protos.HidePreviewRequest hidePreviewRequest)
         {
-            await AvidisClient.SetPreviewRegionAsync(setPreviewRegionRequest);
+            await AvidisClient.HidePreviewAsync(hidePreviewRequest);
         }
 
-        public async Task SetPreviewVisible(SetPreviewVisibleRequest setPreviewVisibleRequest)
+        public async Task ShowPreview(AvidisDeviceInterface.V1.Protos.ShowPreviewRequest showPreviewRequest)
         {
-            await AvidisClient.SetPreviewVisibleAsync(setPreviewVisibleRequest);
+            await AvidisClient.ShowPreviewAsync(showPreviewRequest);
         }
     }
 }

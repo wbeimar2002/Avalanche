@@ -8,8 +8,7 @@ using Avalanche.Shared.Domain.Models;
 using Avalanche.Shared.Infrastructure.Helpers;
 using Avalanche.Shared.Infrastructure.Models;
 using Google.Protobuf.WellKnownTypes;
-using Ism.PatientInfoEngine.Common.Core;
-using Ism.PatientInfoEngine.Common.Core.Protos;
+using Ism.PatientInfoEngine.V1.Protos;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
@@ -46,40 +45,46 @@ namespace Avalanche.Api.Managers.Health
             Preconditions.ThrowIfNull(nameof(newPatient.Sex.Id), newPatient.Sex.Id);
 
             var accessInfo = _accessInfoFactory.GenerateAccessInfo();
-            var accessInfoMessage = _mapper.Map<Ism.Storage.Common.Core.PatientList.Proto.AccessInfoMessage>(accessInfo);
+            newPatient.AccessInformation = _mapper.Map<AccessInfo>(accessInfo);
 
+            var setupSettings = await _settingsService.GetSetupSettingsAsync();
             //TODO: Configurable in maintenance (on/off) - user logged in is auto-filled as physician when doing manual registration
+            //TODO: What about the procedure type and department. How this should be filled?
             if (newPatient.Physician == null)
             {
-                newPatient.Physician = new Physician()
+                if (setupSettings.AutoFillPhysician)
                 {
-                    Id = user.FindFirst("Id")?.Value,
-                    FirstName = user.FindFirst("FirstName")?.Value,
-                    LastName = user.FindFirst("LastName")?.Value,
-                };
+                    newPatient.Physician = new Physician()
+                    {
+                        Id = user.FindFirst("Id")?.Value,
+                        FirstName = user.FindFirst("FirstName")?.Value,
+                        LastName = user.FindFirst("LastName")?.Value,
+                    };
+                }
+                else
+                {
+                    newPatient.Physician = newPatient.Physician;
+                }
             }
 
-            var patient = _mapper.Map<PatientViewModel, Ism.Storage.Common.Core.PatientList.Proto.PatientRecordMessage>(newPatient);
+            var patientRequest = _mapper.Map<PatientViewModel, Ism.Storage.Core.PatientList.V1.Protos.AddPatientRecordRequest>(newPatient);
+            var result = await _pieService.RegisterPatient(patientRequest);
 
-            var result = await _pieService.RegisterPatient(patient, accessInfoMessage);
-            return _mapper.Map<Ism.Storage.Common.Core.PatientList.Proto.PatientRecordMessage, Shared.Domain.Models.Patient>(result);
+            return _mapper.Map<Ism.Storage.Core.PatientList.V1.Protos.AddPatientRecordResponse, Shared.Domain.Models.Patient>(result);
         }
 
         public async Task<Shared.Domain.Models.Patient> QuickPatientRegistration(System.Security.Claims.ClaimsPrincipal user)
         {
-            //TODO: Local date? Issue with docker
-            //TODO: This format should come from a configuration setting?
-            string quickRegistrationDateFormat = "yyyy_MM_dd_T_HH_mm_ss_ff";
-            string formattedDate = DateTime.Now.ToString(quickRegistrationDateFormat);
+            var setupSettings = await _settingsService.GetSetupSettingsAsync();
+            string quickRegistrationDateFormat = setupSettings.QuickRegistrationDateFormat;
+            string formattedDate = DateTime.UtcNow.ToLocalTime().ToString(quickRegistrationDateFormat);
 
-            var accessInfo = _accessInfoFactory.GenerateAccessInfo();
-            var accessInfoMessage = _mapper.Map<Ism.Storage.Common.Core.PatientList.Proto.AccessInfoMessage>(accessInfo);
-
+            //TODO: Pending check this default data
             var newPatient = new PatientViewModel()
             {
                 ScopeSerialNumber = "???", //TODO: How this is related to
                 MRN = $"{formattedDate}MRN",
-                DateOfBirth = DateTime.UtcNow,
+                DateOfBirth = DateTime.UtcNow.ToLocalTime(),
                 FirstName = $"{formattedDate}FirstName",
                 LastName = $"{formattedDate}LastName",
                 Sex = new KeyValuePairViewModel()
@@ -88,11 +93,13 @@ namespace Avalanche.Api.Managers.Health
                 },
                 Department = new KeyValuePairViewModel()
                 {
-                    Id = "Unknown"
+                    Id = "Unknown",
+                    Value = "Unknown"
                 },
                 ProcedureType = new KeyValuePairViewModel()
                 {
-                    Id =  "Unknown"
+                    Id = "Unknown",
+                    Value = "Unknown"
                 },
                 //TODO: Performing physician is administrator by default
                 //Which are the values?
@@ -103,11 +110,14 @@ namespace Avalanche.Api.Managers.Health
                     LastName = user.FindFirst("LastName")?.Value,
                 }
             };
-            
-            var patient = _mapper.Map<PatientViewModel, Ism.Storage.Common.Core.PatientList.Proto.PatientRecordMessage>(newPatient);
 
-            var result = await _pieService.RegisterPatient(patient, accessInfoMessage);
-            return _mapper.Map<Ism.Storage.Common.Core.PatientList.Proto.PatientRecordMessage, Shared.Domain.Models.Patient>(result);
+            var accessInfo = _accessInfoFactory.GenerateAccessInfo();
+            newPatient.AccessInformation = _mapper.Map<AccessInfo>(accessInfo);
+
+            var patientRequest = _mapper.Map<PatientViewModel, Ism.Storage.Core.PatientList.V1.Protos.AddPatientRecordRequest>(newPatient);
+            var result = await _pieService.RegisterPatient(patientRequest);
+
+            return _mapper.Map<Ism.Storage.Core.PatientList.V1.Protos.AddPatientRecordResponse, Shared.Domain.Models.Patient>(result);
         }
 
         public async Task UpdatePatient(PatientViewModel existingPatient)
@@ -122,11 +132,10 @@ namespace Avalanche.Api.Managers.Health
             Preconditions.ThrowIfNull(nameof(existingPatient.Sex.Id), existingPatient.Sex.Id);
 
             var accessInfo = _accessInfoFactory.GenerateAccessInfo();
-            var accessInfoMessage = _mapper.Map<Ism.Storage.Common.Core.PatientList.Proto.AccessInfoMessage>(accessInfo);
+            existingPatient.AccessInformation = _mapper.Map<AccessInfo>(accessInfo);
 
-            var patient = _mapper.Map<PatientViewModel, Ism.Storage.Common.Core.PatientList.Proto.PatientRecordMessage>(existingPatient);
-
-            await _pieService.UpdatePatient(patient, accessInfoMessage);
+            var patientRequest = _mapper.Map<PatientViewModel, Ism.Storage.Core.PatientList.V1.Protos.UpdatePatientRecordRequest>(existingPatient);
+            await _pieService.UpdatePatient(patientRequest);
         }
 
         public async Task DeletePatient(ulong id)
@@ -134,9 +143,13 @@ namespace Avalanche.Api.Managers.Health
             Preconditions.ThrowIfNull(nameof(id), id);
 
             var accessInfo = _accessInfoFactory.GenerateAccessInfo();
-            var accessInfoMessage = _mapper.Map<Ism.Storage.Common.Core.PatientList.Proto.AccessInfoMessage>(accessInfo);
+            var accessInfoMessage = _mapper.Map<Ism.Storage.Core.PatientList.V1.Protos.AccessInfoMessage>(accessInfo);
 
-            await _pieService.DeletePatient(id, accessInfoMessage);
+            await _pieService.DeletePatient(new Ism.Storage.Core.PatientList.V1.Protos.DeletePatientRecordRequest()
+            {
+                AccessInfo = accessInfoMessage,
+                PatientRecordId = id
+            });
         }
 
         public async Task<IList<Shared.Domain.Models.Patient>> Search(PatientKeywordSearchFilterViewModel filter)
@@ -149,14 +162,16 @@ namespace Avalanche.Api.Managers.Health
 
             // TODO - get valid culture (either system configuration or passed in via caller)
             var cultureName = CultureInfo.CurrentCulture.Name;
-            cultureName = string.IsNullOrEmpty(cultureName) ? "en-US" : cultureName;
+            filter.CultureName = string.IsNullOrEmpty(cultureName) ? "en-US" : cultureName;
 
             //TODO: This is the final implementation?
             var accessInfo = _accessInfoFactory.GenerateAccessInfo();
-            var accessInfoMessage = _mapper.Map<Ism.PatientInfoEngine.Common.Core.Protos.AccessInfoMessage>(accessInfo);
+            filter.AccessInformation = _mapper.Map<AccessInfo>(accessInfo);
 
-            var queryResult = await _pieService.Search(search, filter.Page * filter.Limit, filter.Limit, cultureName, accessInfoMessage);
-            return _mapper.Map<IList<Ism.PatientInfoEngine.Common.Core.Protos.PatientRecordMessage>, IList<Shared.Domain.Models.Patient>>(queryResult);
+            var request = _mapper.Map<Ism.PatientInfoEngine.V1.Protos.SearchRequest>(filter);
+            var queryResult = await _pieService.Search(request);
+
+            return _mapper.Map<IList<Ism.PatientInfoEngine.V1.Protos.PatientRecordMessage>, IList<Shared.Domain.Models.Patient>>(queryResult.UpdatedPatList);
         }
 
         public async Task<IList<Shared.Domain.Models.Patient>> Search(PatientDetailsSearchFilterViewModel filter)
@@ -178,15 +193,16 @@ namespace Avalanche.Api.Managers.Health
 
             //TODO: This is the final implementation?
             var accessInfo = _accessInfoFactory.GenerateAccessInfo();
-            var accessInfoMessage = _mapper.Map<Ism.PatientInfoEngine.Common.Core.Protos.AccessInfoMessage>(accessInfo);
+            filter.AccessInformation = _mapper.Map<AccessInfo>(accessInfo);
 
             // TODO - get valid culture (either system configuration or passed in via caller)
             var cultureName = CultureInfo.CurrentCulture.Name;
-            cultureName = string.IsNullOrEmpty(cultureName) ? "en-US" : cultureName;
+            filter.CultureName = string.IsNullOrEmpty(cultureName) ? "en-US" : cultureName;
 
-            var queryResult = await _pieService.Search(search, filter.Page * filter.Limit, filter.Limit, cultureName, accessInfoMessage);
+            var request = _mapper.Map<Ism.PatientInfoEngine.V1.Protos.SearchRequest>(filter);
+            var queryResult = await _pieService.Search(request);
 
-            return _mapper.Map<IList<Ism.PatientInfoEngine.Common.Core.Protos.PatientRecordMessage>, IList<Shared.Domain.Models.Patient>>(queryResult);
+            return _mapper.Map<IList<Ism.PatientInfoEngine.V1.Protos.PatientRecordMessage>, IList<Shared.Domain.Models.Patient>>(queryResult.UpdatedPatList);
 
         }
     }

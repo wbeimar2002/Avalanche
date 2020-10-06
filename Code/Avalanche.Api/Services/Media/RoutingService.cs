@@ -1,6 +1,5 @@
 ﻿using Avalanche.Api.Utilities;
 using Avalanche.Shared.Infrastructure.Services.Settings;
-using Ism.Routing.Common.Core;
 using Ism.Security.Grpc.Helpers;
 using System;
 using System.Collections.Generic;
@@ -15,9 +14,7 @@ namespace Avalanche.Api.Services.Media
         readonly IAccessInfoFactory _accessInfoFactory;
         readonly string _hostIpAddress;
 
-        public bool IgnoreGrpcServicesMocks { get; set; }
-
-        public Routing.RoutingClient RoutingClient { get; set; }
+        public Ism.Routing.V1.Protos.Routing.RoutingClient RoutingClient { get; set; }
 
         public RoutingService(IConfigurationService configurationService, IAccessInfoFactory accessInfoFactory)
         {
@@ -30,49 +27,48 @@ namespace Avalanche.Api.Services.Media
             var grpcCertificate = _configurationService.GetEnvironmentVariable("grpcCertificate");
             var grpcPassword = _configurationService.GetEnvironmentVariable("grpcPassword");
 
-            IgnoreGrpcServicesMocks = Convert.ToBoolean(_configurationService.GetEnvironmentVariable("IgnoreGrpcServicesMocks"));
-
             var certificate = new System.Security.Cryptography.X509Certificates.X509Certificate2(grpcCertificate, grpcPassword);
 
             //Client = ClientHelper.GetSecureClient<WebRtcStreamer.WebRtcStreamerClient>($"https://{hostIpAddress}:{mediaServiceGrpcPort}", certificate);
-            RoutingClient = ClientHelper.GetInsecureClient<Routing.RoutingClient>($"https://{_hostIpAddress}:{mediaServiceGrpcPort}");
+            RoutingClient = ClientHelper.GetInsecureClient<Ism.Routing.V1.Protos.Routing.RoutingClient>($"https://{_hostIpAddress}:{mediaServiceGrpcPort}");
         }
 
-        public async Task<GetVideoSourcesResponse> GetVideoSources()
+        public async Task<Ism.Routing.V1.Protos.GetVideoSourcesResponse> GetVideoSources()
         {
             return await RoutingClient.GetVideoSourcesAsync(new Google.Protobuf.WellKnownTypes.Empty());
         }
-        public async Task<GetVideoSinksResponse> GetVideoSinks()
+
+        public async Task<Ism.Routing.V1.Protos.GetVideoSinksResponse> GetVideoSinks()
         {
             return await RoutingClient.GetVideoSinksAsync(new Google.Protobuf.WellKnownTypes.Empty());
         }
 
-        public async Task<GetCurrentRoutesResponse> GetCurrentRoutes()
+        public async Task<Ism.Routing.V1.Protos.GetCurrentRoutesResponse> GetCurrentRoutes()
         {
             return await RoutingClient.GetCurrentRoutesAsync(new Google.Protobuf.WellKnownTypes.Empty());
         }
 
-        public async Task<GetVideoStateForSourceResponse> GetVideoStateForSource(GetVideoStateForSourceRequest getVideoStateForSourceRequest)
+        public async Task<Ism.Routing.V1.Protos.GetVideoStateForSourceResponse> GetVideoStateForSource(Ism.Routing.V1.Protos.GetVideoStateForSourceRequest getVideoStateForSourceRequest)
         {
             return await RoutingClient.GetVideoStateForSourceAsync(getVideoStateForSourceRequest);
         }
 
-        public async Task EnterFullScreen(EnterFullScreenRequest enterFullScreenRequest)
+        public async Task EnterFullScreen(Ism.Routing.V1.Protos.EnterFullScreenRequest enterFullScreenRequest)
         {
             await RoutingClient.EnterFullScreenAsync(enterFullScreenRequest);
         }
 
-        public async Task ExitFullScreen(ExitFullScreenRequest exitFullScreenRequest)
+        public async Task ExitFullScreen(Ism.Routing.V1.Protos.ExitFullScreenRequest exitFullScreenRequest)
         {
             await RoutingClient.ExitFullScreenAsync(exitFullScreenRequest);
         }
 
-        public async Task<GetRouteForSinkResponse> GetRouteForSink(GetRouteForSinkRequest getRouteForSinkRequest)
+        public async Task<Ism.Routing.V1.Protos.GetRouteForSinkResponse> GetRouteForSink(Ism.Routing.V1.Protos.GetRouteForSinkRequest getRouteForSinkRequest)
         {
             return await RoutingClient.GetRouteForSinkAsync(getRouteForSinkRequest);
         }
 
-        public async Task RouteVideo(RouteVideoRequest routeVideoRequest)
+        public async Task RouteVideo(Ism.Routing.V1.Protos.RouteVideoRequest routeVideoRequest)
         {
             await RoutingClient.RouteVideoAsync(routeVideoRequest);
         }

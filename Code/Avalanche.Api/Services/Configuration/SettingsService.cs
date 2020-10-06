@@ -1,12 +1,10 @@
-﻿using Avalanche.Api.Services.Files;
-using Avalanche.Shared.Infrastructure.Models;
+﻿using Avalanche.Shared.Infrastructure.Models;
 using Avalanche.Shared.Infrastructure.Services.Settings;
 using Google.Protobuf.WellKnownTypes;
 using Grpc.Core;
 using Grpc.Core.Testing;
 using Ism.PgsTimeout.Common.Core;
 using Ism.Security.Grpc.Helpers;
-using Ism.Streaming.Common.Core;
 using Moq;
 using System;
 using System.Collections.Generic;
@@ -19,19 +17,18 @@ namespace Avalanche.Api.Services.Configuration
     public class SettingsService : ISettingsService
     {
         readonly IConfigurationService _configurationService;
-        readonly IFileService _fileService;
+        readonly IStorageService _storageService;
 
         readonly string _hostIpAddress;
 
-        public WebRtcStreamer.WebRtcStreamerClient WebRtcStreamerClient { get; set; }
+        public Ism.Streaming.V1.Protos.WebRtcStreamer.WebRtcStreamerClient WebRtcStreamerClient { get; set; }
         public PgsTimeout.PgsTimeoutClient PgsTimeoutClient { get; set; }
+        public bool UseMocks { get; set; }
 
-        public bool IgnorePgsTimeoutClientMocks { get; set; }
-
-        public SettingsService(IConfigurationService configurationService, IFileService fileService)
+        public SettingsService(IConfigurationService configurationService, IStorageService storageService)
         {
             _configurationService = configurationService;
-            _fileService = fileService;
+            _storageService = storageService;
 
             _hostIpAddress = _configurationService.GetEnvironmentVariable("hostIpAddress");
 
@@ -41,16 +38,17 @@ namespace Avalanche.Api.Services.Configuration
             var grpcPassword = _configurationService.GetEnvironmentVariable("grpcPassword");
 
             var certificate = new System.Security.Cryptography.X509Certificates.X509Certificate2(grpcCertificate, grpcPassword);
+            UseMocks = true;
 
             //Client = ClientHelper.GetSecureClient<WebRtcStreamer.WebRtcStreamerClient>($"https://{hostIpAddress}:{WebRTCGrpcPort}", certificate);
-            WebRtcStreamerClient = ClientHelper.GetInsecureClient<WebRtcStreamer.WebRtcStreamerClient>($"https://{_hostIpAddress}:{WebRTCGrpcPort}");
+            WebRtcStreamerClient = ClientHelper.GetInsecureClient<Ism.Streaming.V1.Protos.WebRtcStreamer.WebRtcStreamerClient>($"https://{_hostIpAddress}:{WebRTCGrpcPort}");
             PgsTimeoutClient = ClientHelper.GetInsecureClient<PgsTimeout.PgsTimeoutClient>($"https://{_hostIpAddress}:{PgsTimeoutGrpcPort}");
         }
 
         public async Task<TimeoutSettings> GetTimeoutSettingsAsync()
         {
             //Faking calls while I have the real server
-            if (!IgnorePgsTimeoutClientMocks)
+            if (UseMocks)
             {
                 var mockResponseForPdf = new GetTimeoutPdfPathResponse()
                 {
@@ -73,7 +71,7 @@ namespace Avalanche.Api.Services.Configuration
 
                 PgsTimeoutClient = mockGrpcClient.Object;
             }
-          
+
             var actionResponseForPdf = await PgsTimeoutClient.GetTimeoutPdfPathAsync(new Empty());
             var actionResponseForAlwaysOn = await PgsTimeoutClient.GetPgsAlwaysOnSettingAsync(new Empty());
 
@@ -86,14 +84,12 @@ namespace Avalanche.Api.Services.Configuration
 
         public async Task<SetupSettings> GetSetupSettingsAsync()
         {
-            string path = "/config/PatientsSetupSettings.json";
-            return await _fileService.LoadAsync<SetupSettings>(path);
+            return await _storageService.GetJson<SetupSettings>("PatientsSetupSettings", 1);
         }
 
         public async Task<VideoRoutingSettings> GetVideoRoutingSettingsAsync()
         {
-            string path = "/config/VideoRoutingSettings.json";
-            return await _fileService.LoadAsync<VideoRoutingSettings>(path);
+            return await _storageService.GetJson<VideoRoutingSettings>("VideoRoutingSettings", 1);
         }
     }
 }

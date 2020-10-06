@@ -6,8 +6,12 @@ namespace Avalanche.Shared.Domain.Models
 {
     public class CommandResponse
     {
-        public Device Device { get; set; }
+        public CommandResponse(Device device)
+        {
+            this.Device = device;
+        }
+
+        public Device Device { get; private set; }
         public List<string> Messages { get; set; }
-        public int ResponseCode { get; set; }
     }
 }

@@ -1,4 +1,5 @@
-﻿using Avalanche.Shared.Domain.Enumerations;
+﻿using Avalanche.Api.ViewModels;
+using Avalanche.Shared.Domain.Enumerations;
 using Avalanche.Shared.Domain.Models;
 using System;
 using System.Collections.Generic;
@@ -11,5 +12,6 @@ namespace Avalanche.Api.Managers.Health
     {
         Task<List<Physician>> GetAllPhysicians();
         Task<List<Source>> GetPresetsByPhysician(string id, PresetTypes presetType);
+        Task<PhysiciansViewModel> GetTemporaryPhysiciansSource();
     }
 }

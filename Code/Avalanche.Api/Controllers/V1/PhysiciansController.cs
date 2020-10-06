@@ -39,13 +39,13 @@ namespace Avalanche.Api.Controllers.V1
         /// Get all physicians
         /// </summary>
         [HttpGet("")]
-        [Produces(typeof(List<Physician>))]
+        [Produces(typeof(List<PhysiciansViewModel>))]
         public async Task<IActionResult> GetAll([FromServices]IWebHostEnvironment env)
         {
             try
             {
                 _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
-                var result = await _physiciansManager.GetAllPhysicians();
+                PhysiciansViewModel result = await _physiciansManager.GetTemporaryPhysiciansSource();
                 return Ok(result);
             }
             catch (Exception exception)
@@ -58,6 +58,7 @@ namespace Avalanche.Api.Controllers.V1
                 _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
             }
         }
+
 
         /// <summary>
         /// Get physician by id

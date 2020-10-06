@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using Avalanche.Shared.Domain.Models;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,7 +14,6 @@ namespace Avalanche.Api.ViewModels
         public PatientKeywordSearchFilterViewModel() : base()
         {
         }
-
 
         public override object Clone()
         {

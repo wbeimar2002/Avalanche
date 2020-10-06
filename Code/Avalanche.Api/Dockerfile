@@ -16,6 +16,12 @@ RUN dotnet restore "Avalanche.Api/Avalanche.Api.csproj" --configfile NuGet.Confi
 
 COPY . .
 WORKDIR "/src/Avalanche.Api"
+
+ONBUILD RUN apt-get update --option Acquire::Check-Date=false && \
+            apt-get install --yes --no-install-recommends procps unzip && \
+            apt-get clean --yes && \
+            rm -rf /var/lib/apt/lists/*
+
 RUN dotnet build "Avalanche.Api.csproj" -c Release -o /app/build
 
 FROM build AS publish

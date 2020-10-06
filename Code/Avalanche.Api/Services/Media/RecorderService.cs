@@ -18,7 +18,7 @@ namespace Avalanche.Api.Services.Media
         readonly IConfigurationService _configurationService;
         readonly string _hostIpAddress;
 
-        public bool IgnoreGrpcServicesMocks { get; set; }
+        public bool UseMocks { get; set; }
 
         public Recorder.RecorderClient RecorderClient { get; set; }
 
@@ -32,7 +32,7 @@ namespace Avalanche.Api.Services.Media
             var grpcCertificate = _configurationService.GetEnvironmentVariable("grpcCertificate");
             var grpcPassword = _configurationService.GetEnvironmentVariable("grpcPassword");
 
-            IgnoreGrpcServicesMocks = Convert.ToBoolean(_configurationService.GetEnvironmentVariable("IgnoreGrpcServicesMocks"));
+            UseMocks = true;
 
             var certificate = new System.Security.Cryptography.X509Certificates.X509Certificate2(grpcCertificate, grpcPassword);
 
@@ -43,7 +43,7 @@ namespace Avalanche.Api.Services.Media
         public async Task StartRecording()
         {
             //Faking calls while I have the real server
-            if (!IgnoreGrpcServicesMocks)
+            if (UseMocks)
             {
                 Mock<Recorder.RecorderClient> mockGrpcClient = new Mock<Recorder.RecorderClient>();
                 var fakeCall = TestCalls.AsyncUnaryCall(Task.FromResult(new Empty()), Task.FromResult(new Metadata()), () => Status.DefaultSuccess, () => new Metadata(), () => { });
@@ -57,7 +57,7 @@ namespace Avalanche.Api.Services.Media
 
         public async Task StopRecording()
         {
-            if (!IgnoreGrpcServicesMocks)
+            if (UseMocks)
             {
                 Mock<Recorder.RecorderClient> mockGrpcClient = new Mock<Recorder.RecorderClient>();
                 var fakeCall = TestCalls.AsyncUnaryCall(Task.FromResult(new Empty()), Task.FromResult(new Metadata()), () => Status.DefaultSuccess, () => new Metadata(), () => { });

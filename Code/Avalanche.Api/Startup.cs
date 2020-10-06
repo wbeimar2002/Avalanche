@@ -8,7 +8,6 @@ using Avalanche.Api.Managers.Metadata;
 using Avalanche.Api.Managers.Notifications;
 using Avalanche.Api.Managers.Settings;
 using Avalanche.Api.Services.Configuration;
-using Avalanche.Api.Services.Files;
 using Avalanche.Api.Services.Health;
 using Avalanche.Api.Services.Media;
 using Avalanche.Api.Services.Settings;
@@ -62,7 +61,7 @@ namespace Avalanche.Api
 
             services.AddSingleton<ISettingsManager, SettingsManagerMock>();
             services.AddSingleton<IPatientsManager, PatientsManager>();
-            services.AddSingleton<IPhysiciansManager, PhysiciansManagerMock>();
+            services.AddSingleton<IPhysiciansManager, PhysiciansManager>();
             services.AddSingleton<IProceduresManager, ProceduresManagerMock>();
             services.AddSingleton<IMetadataManager, MetadataManager>();
             services.AddSingleton<ILicensingManager, LicensingManagerMock>();
@@ -72,7 +71,6 @@ namespace Avalanche.Api
             services.AddSingleton<IPieService, PieService>();
             services.AddSingleton<ISettingsService, SettingsService>();
             services.AddSingleton<IStorageService, StorageService>();
-            services.AddSingleton<IFileService, FileService>();
             services.AddSingleton<IBroadcastService, BroadcastService>();
             services.AddSingleton<INotificationsManager, NotificationsManager>();
             services.AddSingleton<IRoutingService, RoutingService>();

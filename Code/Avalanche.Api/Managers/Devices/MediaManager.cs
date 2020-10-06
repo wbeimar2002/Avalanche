@@ -5,7 +5,6 @@ using Avalanche.Shared.Domain.Models;
 using Avalanche.Shared.Infrastructure.Helpers;
 using Avalanche.Shared.Infrastructure.Models;
 using Ism.IsmLogCommon.Core;
-using Ism.Streaming.Common.Core;
 using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
@@ -39,8 +38,9 @@ namespace Avalanche.Api.Managers.Devices
 
         public async Task<IList<Device>> GetSourceStreams()
         {
-            var result = await _mediaService.GetSourceStreams();
-            IList<Device> listResult = _mapper.Map<IList<WebRtcSourceMessage>, IList<Device>>(result);
+            //TODO: Check this
+            var result = await _mediaService.GetSourceStreamsAsync();
+            IList<Device> listResult = _mapper.Map<IList<Ism.Streaming.V1.Protos.WebRtcSourceMessage>, IList<Device>>(result.Sources);
             return listResult;
         }
 
