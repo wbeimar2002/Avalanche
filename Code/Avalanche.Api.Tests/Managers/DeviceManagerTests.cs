@@ -1,12 +1,15 @@
-﻿using Avalanche.Api.Managers.Devices;
+﻿using AutoMapper;
+using Avalanche.Api.Managers.Devices;
 using Avalanche.Api.Services.Configuration;
 using Avalanche.Api.Services.Media;
+using Avalanche.Api.Utilities;
 using Avalanche.Api.ViewModels;
 using Avalanche.Shared.Domain.Enumerations;
 using Avalanche.Shared.Domain.Models;
 using Avalanche.Shared.Infrastructure.Models;
 using Avalanche.Shared.Infrastructure.Services.Settings;
 using Castle.Core.Configuration;
+using Google.Protobuf.WellKnownTypes;
 using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
@@ -19,9 +22,14 @@ namespace Avalanche.Api.Tests.Managers
     [TestFixture()]
     public class DeviceManagerTests
     {
+        Mock<IAvidisService> _avidisService;
+        Mock<IRecorderService> _recorderService;
         Mock<IMediaService> _mediaService;
         Mock<ISettingsService> _settingsService;
+        Mock<IRoutingService> _routingService;
         Mock<ILogger<MediaManager>> _appLoggerService;
+        Mock<IMapper> _mapper;
+        Mock<IAccessInfoFactory> _accessInfoFactory;
 
         DevicesManager _manager;
 
@@ -32,7 +40,8 @@ namespace Avalanche.Api.Tests.Managers
             _settingsService = new Mock<ISettingsService>();
             _appLoggerService = new Mock<ILogger<MediaManager>>();
 
-            _manager = new DevicesManager(_mediaService.Object, _settingsService.Object, _appLoggerService.Object);
+            _manager = new DevicesManager(_mediaService.Object, _settingsService.Object, _routingService.Object, _appLoggerService.Object, 
+                _avidisService.Object, _recorderService.Object, _accessInfoFactory.Object, _mapper.Object);
         }
 
         #region Pgs
@@ -47,15 +56,11 @@ namespace Avalanche.Api.Tests.Managers
                 Devices = new List<Device>() { new Device() { Id = "Preview" } }
             };
 
-            CommandResponse commandResponse = new CommandResponse();
+            var actionResult = _manager.SendCommand(commandViewModel);
 
-            _mediaService.Setup(mock => mock.PgsPlayVideoAsync(It.IsAny<Command>())).ReturnsAsync(commandResponse);
+            _mediaService.Verify(mock => mock.InitSessionAsync(It.IsAny<Ism.Streaming.V1.Protos.InitSessionRequest>()), Times.Once);
 
-            var actionResult = _manager.SendCommandAsync(commandViewModel);
-
-            _mediaService.Verify(mock => mock.PgsPlayVideoAsync(It.IsAny<Command>()), Times.Once);
-
-            Assert.IsNotNull(commandResponse);
+            //Assert.IsNotNull(commandResponse);
         }
 
         [Test]
@@ -67,15 +72,11 @@ namespace Avalanche.Api.Tests.Managers
                 Devices = new List<Device>() { new Device() { Id = "Preview" } }
             };
 
-            CommandResponse commandResponse = new CommandResponse();
+            var actionResult = _manager.SendCommand(commandViewModel);
 
-            _mediaService.Setup(mock => mock.PgsStopVideoAsync(It.IsAny<Command>())).ReturnsAsync(commandResponse);
+            _mediaService.Verify(mock => mock.DeInitSessionAsync(It.IsAny<Ism.Streaming.V1.Protos.DeInitSessionRequest>()), Times.Once);
 
-            var actionResult = _manager.SendCommandAsync(commandViewModel);
-
-            _mediaService.Verify(mock => mock.PgsStopVideoAsync(It.IsAny<Command>()), Times.Once);
-
-            Assert.IsNotNull(commandResponse);
+            //Assert.IsNotNull(commandResponse);
         }
 
         [Test]
@@ -88,56 +89,15 @@ namespace Avalanche.Api.Tests.Managers
                 Devices = new List<Device>() { new Device() { Id = "Preview" } }
             };
 
-            CommandResponse commandResponse = new CommandResponse();
 
-            _mediaService.Setup(mock => mock.PgsHandleMessageForVideoAsync(It.IsAny<Command>())).ReturnsAsync(commandResponse);
 
-            var actionResult = _manager.SendCommandAsync(commandViewModel);
+            var actionResult = _manager.SendCommand(commandViewModel);
 
-            _mediaService.Verify(mock => mock.PgsHandleMessageForVideoAsync(It.IsAny<Command>()), Times.Once);
+            _mediaService.Verify(mock => mock.HandleMessageAsync(It.IsAny<Ism.Streaming.V1.Protos.HandleMessageRequest>()), Times.Once);
 
-            Assert.IsNotNull(commandResponse);
+            //Assert.IsNotNull(commandResponse);
         }
 
-        [Test]
-        public void PgsExecutePlayAudioShouldReturnResponse()
-        {
-            CommandViewModel commandViewModel = new CommandViewModel()
-            {
-                CommandType = Shared.Domain.Enumerations.CommandTypes.PgsPlayAudio,
-                Devices = new List<Device>() { new Device() { Id = "Testing" } }
-            };
-
-            CommandResponse commandResponse = new CommandResponse();
-
-            _mediaService.Setup(mock => mock.PgsPlayAudioAsync(It.IsAny<Command>())).ReturnsAsync(commandResponse);
-
-            var actionResult = _manager.SendCommandAsync(commandViewModel);
-
-            _mediaService.Verify(mock => mock.PgsPlayAudioAsync(It.IsAny<Command>()), Times.Once);
-
-            Assert.IsNotNull(commandResponse);
-        }
-
-        [Test]
-        public void PgsExecuteStopAudioShouldReturnResponse()
-        {
-            CommandViewModel commandViewModel = new CommandViewModel()
-            {
-                CommandType = Shared.Domain.Enumerations.CommandTypes.PgsStopAudio,
-                Devices = new List<Device>() { new Device() { Id = "Testing" } }
-            };
-
-            CommandResponse commandResponse = new CommandResponse();
-
-            _mediaService.Setup(mock => mock.PgsStopAudioAsync(It.IsAny<Command>())).ReturnsAsync(commandResponse);
-
-            var actionResult = _manager.SendCommandAsync(commandViewModel);
-
-            _mediaService.Verify(mock => mock.PgsStopAudioAsync(It.IsAny<Command>()), Times.Once);
-
-            Assert.IsNotNull(commandResponse);
-        }
         #endregion Pgs
 
         #region Timeout
@@ -151,15 +111,11 @@ namespace Avalanche.Api.Tests.Managers
                 Devices = new List<Device>() { new Device() { Id = "Timeout" } }
             };
 
-            CommandResponse commandResponse = new CommandResponse();
+            var actionResult = _manager.SendCommand(commandViewModel);
 
-            _mediaService.Setup(mock => mock.TimeoutSetModeAsync(It.IsAny<Command>())).ReturnsAsync(commandResponse);
+            _mediaService.Verify(mock => mock.SetPgsTimeoutModeAsync(It.IsAny<Ism.PgsTimeout.Common.Core.SetPgsTimeoutModeRequest>()), Times.Once);
 
-            var actionResult = _manager.SendCommandAsync(commandViewModel);
-
-            _mediaService.Verify(mock => mock.TimeoutSetModeAsync(It.IsAny<Command>()), Times.Once);
-
-            Assert.IsNotNull(commandResponse);
+            //Assert.IsNotNull(commandResponse);
         }
 
         [Test]
@@ -171,21 +127,19 @@ namespace Avalanche.Api.Tests.Managers
                 Devices = new List<Device>() { new Device() { Id = "Timeout" } }
             };
 
-            CommandResponse commandResponse = new CommandResponse();
-
             TimeoutSettings timeoutSettings = new TimeoutSettings()
             {
                 PgsVideoAlwaysOn = true
             };
 
             _settingsService.Setup(mock => mock.GetTimeoutSettingsAsync()).ReturnsAsync(timeoutSettings);
-            _mediaService.Setup(mock => mock.TimeoutSetModeAsync(It.IsAny<Command>())).ReturnsAsync(commandResponse);
 
-            var actionResult = _manager.SendCommandAsync(commandViewModel);
+            var actionResult = _manager.SendCommand(commandViewModel);
 
-            _mediaService.Verify(mock => mock.TimeoutSetModeAsync(It.Is<Command>(args => args.Message == ((int)TimeoutModes.Pgs).ToString())), Times.Once);
+            _mediaService.Verify(mock => mock.SetPgsTimeoutModeAsync(It.IsAny<Ism.PgsTimeout.Common.Core.SetPgsTimeoutModeRequest>()), Times.Once);
+            //_mediaService.Verify(mock => mock.TimeoutSetModeAsync(It.Is<Command>(args => args.Message == ((int)TimeoutModes.Pgs).ToString())), Times.Once);
 
-            Assert.IsNotNull(commandResponse);
+            //Assert.IsNotNull(commandResponse);
         }
 
         [Test]
@@ -197,21 +151,18 @@ namespace Avalanche.Api.Tests.Managers
                 Devices = new List<Device>() { new Device() { Id = "Timeout" } }
             };
 
-            CommandResponse commandResponse = new CommandResponse();
-
             TimeoutSettings timeoutSettings = new TimeoutSettings()
             {
                 PgsVideoAlwaysOn = false
             };
 
             _settingsService.Setup(mock => mock.GetTimeoutSettingsAsync()).ReturnsAsync(timeoutSettings);
-            _mediaService.Setup(mock => mock.TimeoutSetModeAsync(It.IsAny<Command>())).ReturnsAsync(commandResponse);
 
-            var actionResult = _manager.SendCommandAsync(commandViewModel);
+            var actionResult = _manager.SendCommand(commandViewModel);
 
-            _mediaService.Verify(mock => mock.TimeoutSetModeAsync(It.Is<Command>(args => args.Message == ((int)TimeoutModes.Idle).ToString())), Times.Once);
+            _mediaService.Verify(mock => mock.SetPgsTimeoutModeAsync(It.IsAny<Ism.PgsTimeout.Common.Core.SetPgsTimeoutModeRequest>()), Times.Once);
 
-            Assert.IsNotNull(commandResponse);
+            //Assert.IsNotNull(commandResponse);
         }
 
         [Test]
@@ -223,15 +174,12 @@ namespace Avalanche.Api.Tests.Managers
                 Devices = new List<Device>() { new Device() { Id = "Timeout" } }
             };
 
-            CommandResponse commandResponse = new CommandResponse();
+            
+            var actionResult = _manager.SendCommand(commandViewModel);
 
-            _mediaService.Setup(mock => mock.TimeoutNextSlideAsync(It.IsAny<Command>())).ReturnsAsync(commandResponse);
+            _mediaService.Verify(mock => mock.NextPageAsync(), Times.Once);
 
-            var actionResult = _manager.SendCommandAsync(commandViewModel);
-
-            _mediaService.Verify(mock => mock.TimeoutNextSlideAsync(It.IsAny<Command>()), Times.Once);
-
-            Assert.IsNotNull(commandResponse);
+            //Assert.IsNotNull(commandResponse);
         }
 
 
@@ -244,15 +192,11 @@ namespace Avalanche.Api.Tests.Managers
                 Devices = new List<Device>() { new Device() { Id = "Timeout" } }
             };
 
-            CommandResponse commandResponse = new CommandResponse();
+            var actionResult = _manager.SendCommand(commandViewModel);
 
-            _mediaService.Setup(mock => mock.TimeoutPreviousSlideAsync(It.IsAny<Command>())).ReturnsAsync(commandResponse);
+            _mediaService.Verify(mock => mock.PreviousPageAsync(), Times.Once);
 
-            var actionResult = _manager.SendCommandAsync(commandViewModel);
-
-            _mediaService.Verify(mock => mock.TimeoutPreviousSlideAsync(It.IsAny<Command>()), Times.Once);
-
-            Assert.IsNotNull(commandResponse);
+            //Assert.IsNotNull(commandResponse);
         }
 
 
@@ -266,15 +210,11 @@ namespace Avalanche.Api.Tests.Managers
                 Message = "0"
             };
 
-            CommandResponse commandResponse = new CommandResponse();
+            var actionResult = _manager.SendCommand(commandViewModel);
 
-            _mediaService.Setup(mock => mock.TimeoutSetCurrentSlideAsync(It.IsAny<Command>())).ReturnsAsync(commandResponse);
+            _mediaService.Verify(mock => mock.SetTimeoutPageAsync(It.IsAny<Ism.PgsTimeout.Common.Core.SetTimeoutPageRequest>()), Times.Once);
 
-            var actionResult = _manager.SendCommandAsync(commandViewModel);
-
-            _mediaService.Verify(mock => mock.TimeoutSetCurrentSlideAsync(It.IsAny<Command>()), Times.Once);
-
-            Assert.IsNotNull(commandResponse);
+            //Assert.IsNotNull(commandResponse);
         }
         #endregion Timeout
     }

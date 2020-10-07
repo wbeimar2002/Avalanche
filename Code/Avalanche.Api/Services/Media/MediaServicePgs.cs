@@ -44,7 +44,7 @@ namespace Avalanche.Api.Services.Media
             return await WebRtcStreamerClient.GetSourceStreamsAsync(new Google.Protobuf.WellKnownTypes.Empty());
         }
 
-        public async Task<Google.Protobuf.WellKnownTypes.Empty> HandleMessageAsync(Ism.Streaming.V1.Protos.HandleMessageRequest handleMessageRequest)
+        public async Task HandleMessageAsync(Ism.Streaming.V1.Protos.HandleMessageRequest handleMessageRequest)
         {
             return await WebRtcStreamerClient.HandleMessageAsync(handleMessageRequest);
         }
@@ -54,7 +54,7 @@ namespace Avalanche.Api.Services.Media
             return await WebRtcStreamerClient.InitSessionAsync(initSessionRequest);
         }
 
-        public async Task<Google.Protobuf.WellKnownTypes.Empty> DeInitSessionAsync(Ism.Streaming.V1.Protos.DeInitSessionRequest deInitSessionRequest)
+        public async Task DeInitSessionAsync(Ism.Streaming.V1.Protos.DeInitSessionRequest deInitSessionRequest)
         {
             return await WebRtcStreamerClient.DeInitSessionAsync(deInitSessionRequest);
         }
