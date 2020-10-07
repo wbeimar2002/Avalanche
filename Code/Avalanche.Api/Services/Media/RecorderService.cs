@@ -2,7 +2,7 @@
 using Google.Protobuf.WellKnownTypes;
 using Grpc.Core;
 using Grpc.Core.Testing;
-using Ism.Recorder.Common.Core;
+using Ism.Recorder.Core.V1.Protos;
 using Ism.Security.Grpc.Helpers;
 using Moq;
 using System;
@@ -40,19 +40,19 @@ namespace Avalanche.Api.Services.Media
             RecorderClient = ClientHelper.GetInsecureClient<Recorder.RecorderClient>($"https://{_hostIpAddress}:{mediaServiceGrpcPort}");
         }
 
-        public async Task StartRecording()
+        public async Task StartRecording(RecordMessage recordMessage)
         {
             //Faking calls while I have the real server
             if (UseMocks)
             {
                 Mock<Recorder.RecorderClient> mockGrpcClient = new Mock<Recorder.RecorderClient>();
                 var fakeCall = TestCalls.AsyncUnaryCall(Task.FromResult(new Empty()), Task.FromResult(new Metadata()), () => Status.DefaultSuccess, () => new Metadata(), () => { });
-                mockGrpcClient.Setup(mock => mock.StartRecordingAsync(Moq.It.IsAny<Empty>(), null, null, CancellationToken.None)).Returns(fakeCall);
+                mockGrpcClient.Setup(mock => mock.StartRecordingAsync(Moq.It.IsAny<RecordMessage>(), null, null, CancellationToken.None)).Returns(fakeCall);
 
                 RecorderClient = mockGrpcClient.Object;
             }
 
-            await RecorderClient.StartRecordingAsync(new Google.Protobuf.WellKnownTypes.Empty());
+            await RecorderClient.StartRecordingAsync(recordMessage);
         }
 
         public async Task StopRecording()

@@ -1,14 +1,13 @@
 ﻿using AutoMapper;
 using Avalanche.Shared.Domain.Models;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Avalanche.Api.MappingConfigurations
 {
     public class MediaMappingConfigurations : Profile
     {
+
+        //
         public MediaMappingConfigurations()
         {
             CreateMap<Command, Ism.Streaming.V1.Protos.InitSessionRequest>()
@@ -84,6 +83,15 @@ namespace Avalanche.Api.MappingConfigurations
                 .ForMember(dest =>
                     dest.Mode,
                     opt => opt.MapFrom(src => (Ism.PgsTimeout.Common.Core.PgsTimeoutModeEnum)Convert.ToInt32(src.Message)))
+                .ReverseMap();
+
+            CreateMap<Command, Ism.Recorder.Core.V1.Protos.RecordMessage>()
+                .ForMember(dest =>
+                    dest.LibId,
+                    opt => opt.MapFrom(src => "Unknown"))
+                .ForMember(dest =>
+                    dest.RepositoryId,
+                    opt => opt.MapFrom(src => "Unknown"))
                 .ReverseMap();
 
             CreateMap<Ism.Streaming.V1.Protos.WebRtcSourceMessage, Device>()

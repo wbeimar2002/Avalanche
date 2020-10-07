@@ -94,7 +94,7 @@ namespace Avalanche.Api.Managers.Devices
 
         private async Task<CommandResponse> StartRecording(Command command)
         {
-            await _recorderService.StartRecording();
+            await _recorderService.StartRecording(_mapper.Map<Command, Ism.Recorder.Core.V1.Protos.RecordMessage>(command));
             return new CommandResponse(command.Device);
         }
 

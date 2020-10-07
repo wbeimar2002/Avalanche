@@ -56,9 +56,11 @@ namespace Avalanche.Api.Managers.Devices
 
             foreach (var item in command.Devices)
             {
+                var device = _mapper.Map<Device, Source>(item);
+
                 CommandResponse response = await ExecuteCommandAsync(command.CommandType, new Command()
                 {
-                    Device = _mapper.Map<Device, Source>(item),
+                    Device = device,
                     Destinations = command.Destinations,
                     Message = command.Message,
                     AdditionalInfo = command.AdditionalInfo,

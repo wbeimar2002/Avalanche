@@ -46,7 +46,7 @@ namespace Avalanche.Api.Services.Media
 
         public async Task HandleMessageAsync(Ism.Streaming.V1.Protos.HandleMessageRequest handleMessageRequest)
         {
-            return await WebRtcStreamerClient.HandleMessageAsync(handleMessageRequest);
+            await WebRtcStreamerClient.HandleMessageAsync(handleMessageRequest);
         }
 
         public async Task<Ism.Streaming.V1.Protos.InitSessionResponse> InitSessionAsync(Ism.Streaming.V1.Protos.InitSessionRequest initSessionRequest)
@@ -56,7 +56,7 @@ namespace Avalanche.Api.Services.Media
 
         public async Task DeInitSessionAsync(Ism.Streaming.V1.Protos.DeInitSessionRequest deInitSessionRequest)
         {
-            return await WebRtcStreamerClient.DeInitSessionAsync(deInitSessionRequest);
+            await WebRtcStreamerClient.DeInitSessionAsync(deInitSessionRequest);
         }
 
         #endregion WebRTC

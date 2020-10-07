@@ -8,9 +8,9 @@ using System.Threading.Tasks;
 
 namespace Avalanche.Api.MappingConfigurations
 {
-    public class VideoRotingMappingConfigurations : Profile
+    public class VideoRoutingMappingConfigurations : Profile
     {
-        public VideoRotingMappingConfigurations()
+        public VideoRoutingMappingConfigurations()
         {
             CreateMap<Region, AvidisDeviceInterface.V1.Protos.ShowPreviewRequest>()
                 .ForMember(dest =>

@@ -19,7 +19,7 @@ namespace Avalanche.Api.Tests.MappingConfigurations
             var config = new MapperConfiguration(cfg =>
             {
                 cfg.AddProfile(new PieMappingConfigurations());
-                cfg.AddProfile(new VideoRotingMappingConfigurations());
+                cfg.AddProfile(new VideoRoutingMappingConfigurations());
                 cfg.AddProfile(new MediaMappingConfigurations());
             });
 
@@ -35,7 +35,7 @@ namespace Avalanche.Api.Tests.MappingConfigurations
         [Test]
         public void VideoRotingMappingConfigurations_IsValid()
         {
-            AssertProfileIsValid<VideoRotingMappingConfigurations>();
+            AssertProfileIsValid<VideoRoutingMappingConfigurations>();
         }
 
         [Test]

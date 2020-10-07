@@ -1,42 +1,33 @@
 syntax = "proto3";
 import "google/protobuf/empty.proto";
 
-option csharp_namespace = "Ism.Recorder.Common.Core";
+option csharp_namespace = "Ism.Recorder.Core.V1.Protos";
 
 package recorder;
 
 // The recorder service definition.
 service Recorder {
-    rpc Acknowledge (google.protobuf.Empty) returns (google.protobuf.Empty);
-    rpc AddImage (AddImageRequest) returns (google.protobuf.Empty);
-    rpc AddMobileCaptureVideo (AddMobileCaptureVideoRequest) returns (google.protobuf.Empty);
-	rpc AddVideo (AddVideoRequest) returns (google.protobuf.Empty);
+	rpc StartRecording (RecordMessage) returns (google.protobuf.Empty);
+	rpc StopRecording (google.protobuf.Empty) returns (google.protobuf.Empty);
+	rpc PauseRecording (google.protobuf.Empty) returns (google.protobuf.Empty);
+	rpc ResumeRecording (google.protobuf.Empty) returns (google.protobuf.Empty);
 	rpc CaptureImage (CaptureImageRequest) returns (CaptureImageResponse);
-	rpc CreateRecordingSession (CreateRecordingSessionRequest) returns (CreateRecordingSessionResponse);
-	rpc DeleteImage (DeleteImageRequest) returns (google.protobuf.Empty);
-	rpc DeleteLastImage (DeleteLastImageRequest) returns (google.protobuf.Empty);
-	rpc DeleteVideo (DeleteVideoRequest) returns (google.protobuf.Empty);
-	rpc DiscardProcedure (DiscardProcedureRequest) returns (google.protobuf.Empty);
-	rpc FinishProcedure (FinishProcedureRequest) returns (google.protobuf.Empty);
-	rpc GetAutolabelOverrides (google.protobuf.Empty) returns (GetAutolabelOverridesResponse);
-	rpc ResetRecordingStartTime (google.protobuf.Empty) returns (google.protobuf.Empty);
-	rpc SetAnnotations (SetAnnotationsRequest) returns (google.protobuf.Empty);
-	rpc SetAutolabelOverrides (SetAutolabelOverridesRequest) returns (google.protobuf.Empty);
-	rpc SetImagesPrintState (SetImagesPrintStateRequest) returns (google.protobuf.Empty);
+	rpc StartPM (RecordMessage) returns (google.protobuf.Empty);
+	rpc StopPM (google.protobuf.Empty) returns (google.protobuf.Empty);
 	rpc SetRecordChannelEnabled (SetRecordChannelEnabledRequest) returns (google.protobuf.Empty);
 	rpc SetRecordChannelsEnabled (SetRecordChannelsEnabledRequest) returns (google.protobuf.Empty);
-	rpc StartPM (google.protobuf.Empty) returns (google.protobuf.Empty);
-
-	rpc StartRecording (google.protobuf.Empty) returns (google.protobuf.Empty);
-	rpc StopRecording (google.protobuf.Empty) returns (google.protobuf.Empty);
-
+	rpc ResetRecordingStartTime (google.protobuf.Empty) returns (google.protobuf.Empty);
 	rpc ToggleRecordingChannel (ToggleRecordingChannelRequest) returns (google.protobuf.Empty);
 	rpc ToggleRecording (google.protobuf.Empty) returns (google.protobuf.Empty);
-    rpc UpdateClinicalInfo (UpdateClinicalInfoRequest) returns (google.protobuf.Empty);
-	rpc UpdateProcedureData (UpdateProcedureDataRequest) returns (google.protobuf.Empty);
 }
 
 //Type Messages
+message RecordMessage {
+	string libId = 1;
+	string repositoryId = 2;
+}
+
+
 message AccessInfoMessage {
 	string id = 1;
 	string ip = 2;
@@ -109,7 +100,8 @@ message AddVideoRequest {
 }
 
 message CaptureImageRequest {
-	AccessInfoMessage accessInfoMessage = 1;
+	RecordMessage record = 1;
+	AccessInfoMessage accessInfoMessage = 2;
 }
 
 message CreateRecordingSessionRequest {
