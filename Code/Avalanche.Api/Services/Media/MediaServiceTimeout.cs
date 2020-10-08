@@ -19,7 +19,7 @@ namespace Avalanche.Api.Services.Media
 
         #region PgsTimeout
 
-        public async Task<Empty> SetPgsTimeoutModeAsync(SetPgsTimeoutModeRequest setPgsTimeoutModeRequest)
+        public async Task SetPgsTimeoutModeAsync(SetPgsTimeoutModeRequest setPgsTimeoutModeRequest)
         {
             //Faking calls while I have the real server
             if (UseMocks)
@@ -31,10 +31,10 @@ namespace Avalanche.Api.Services.Media
                 PgsTimeoutClient = mockGrpcClient.Object;
             }
 
-            return await PgsTimeoutClient.SetPgsTimeoutModeAsync(setPgsTimeoutModeRequest);
+            await PgsTimeoutClient.SetPgsTimeoutModeAsync(setPgsTimeoutModeRequest);
         }
 
-        public async Task<Empty> SetTimeoutPageAsync(SetTimeoutPageRequest setTimeoutPageRequest)
+        public async Task SetTimeoutPageAsync(SetTimeoutPageRequest setTimeoutPageRequest)
         {
             //Faking calls while I have the real server
             if (UseMocks)
@@ -46,10 +46,10 @@ namespace Avalanche.Api.Services.Media
                 PgsTimeoutClient = mockGrpcClient.Object;
             }
 
-            return await PgsTimeoutClient.SetTimeoutPageAsync(setTimeoutPageRequest);
+            await PgsTimeoutClient.SetTimeoutPageAsync(setTimeoutPageRequest);
         }
 
-        public async Task<Empty> NextPageAsync(Command command)
+        public async Task NextPageAsync()
         {
             //Faking calls while I have the real server
             if (UseMocks)
@@ -61,10 +61,10 @@ namespace Avalanche.Api.Services.Media
                 PgsTimeoutClient = mockGrpcClient.Object;
             }
 
-            return await PgsTimeoutClient.NextPageAsync(new Empty());
+            await PgsTimeoutClient.NextPageAsync(new Empty());
         }
 
-        public async Task<Empty> PreviousPageAsync(Command command)
+        public async Task PreviousPageAsync()
         {
             //Faking calls while I have the real server
             if (UseMocks)
@@ -76,7 +76,7 @@ namespace Avalanche.Api.Services.Media
                 PgsTimeoutClient = mockGrpcClient.Object;
             }
 
-            return await PgsTimeoutClient.PreviousPageAsync(new Empty());
+            await PgsTimeoutClient.PreviousPageAsync(new Empty());
         }
 
         #endregion PgsTimeout

@@ -202,7 +202,7 @@ namespace Avalanche.Api.Tests.Controllers
         public void RegisterPatientShouldReturnOkWithNewPatientInfo()
         {
             PatientViewModel patient = new PatientViewModel();
-            _patientsManager.Setup(mock => mock.RegisterPatient(patient, It.IsAny<ClaimsPrincipal>())).ReturnsAsync(new Patient());
+            _patientsManager.Setup(mock => mock.RegisterPatient(patient, It.IsAny<User>())).ReturnsAsync(new Patient());
 
             var okResult = _controller.ManualPatientRegistration(patient, _environment.Object);
 
@@ -219,7 +219,7 @@ namespace Avalanche.Api.Tests.Controllers
         [Test]
         public void RegisterPatientShouldReturnBadResultIfFails()
         {
-            _patientsManager.Setup(mock => mock.RegisterPatient(It.IsAny<PatientViewModel>(), It.IsAny<ClaimsPrincipal>())).Throws(It.IsAny<Exception>());
+            _patientsManager.Setup(mock => mock.RegisterPatient(It.IsAny<PatientViewModel>(), It.IsAny<User>())).Throws(It.IsAny<Exception>());
 
             var badResult = _controller.ManualPatientRegistration(It.IsAny<PatientViewModel>(), _environment.Object);
 
@@ -236,7 +236,7 @@ namespace Avalanche.Api.Tests.Controllers
         [Test]
         public void QuickRegistrationShouldReturnOkWithNewPatientInfo()
         {
-            _patientsManager.Setup(mock => mock.QuickPatientRegistration(It.IsAny<ClaimsPrincipal>())).ReturnsAsync(new Patient());
+            _patientsManager.Setup(mock => mock.QuickPatientRegistration(It.IsAny<User>())).ReturnsAsync(new Patient());
 
             var okResult = _controller.QuickPatientRegistration(_environment.Object);
 
@@ -253,7 +253,7 @@ namespace Avalanche.Api.Tests.Controllers
         [Test]
         public void QuickRegistrationShouldReturnBadResultIfFails()
         {
-            _patientsManager.Setup(mock => mock.QuickPatientRegistration(It.IsAny<ClaimsPrincipal>())).Throws(It.IsAny<Exception>());
+            _patientsManager.Setup(mock => mock.QuickPatientRegistration(It.IsAny<User>())).Throws(It.IsAny<Exception>());
 
             var badResult = _controller.QuickPatientRegistration(_environment.Object);
 

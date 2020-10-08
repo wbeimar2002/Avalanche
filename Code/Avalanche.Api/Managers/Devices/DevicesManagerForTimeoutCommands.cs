@@ -35,13 +35,13 @@ namespace Avalanche.Api.Managers.Devices
 
         private async Task<CommandResponse> GoToPreviousTimeoutSlide(Command command)
         {
-            await _mediaService.PreviousPageAsync(command);
+            await _mediaService.PreviousPageAsync();
             return new CommandResponse(command.Device);
         }
 
         private async Task<CommandResponse> GoToNextTimeoutSlide(Command command)
         {
-            await _mediaService.NextPageAsync(command);
+            await _mediaService.NextPageAsync();
             return new CommandResponse(command.Device);
         }
 

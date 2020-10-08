@@ -13,11 +13,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Remove="Managers\DeviceManagerTests.cs" />
-    <Compile Remove="Managers\PatientsManagerTests.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
     <None Remove="grpc_localhost_root_l1.pfx" />
   </ItemGroup>
 
@@ -49,10 +44,6 @@
     <Reference Include="Ism.Log.Common.Core">
       <HintPath>..\HackyDllDumpingGround\Ism.Log.Common.Core.dll</HintPath>
     </Reference>
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Managers\" />
   </ItemGroup>
 
 </Project>

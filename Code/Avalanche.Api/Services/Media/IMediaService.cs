@@ -16,14 +16,14 @@ namespace Avalanche.Api.Services.Media
         Task<Ism.Streaming.V1.Protos.GetSourceStreamsResponse> GetSourceStreamsAsync();
 
         //Video
-        Task<Google.Protobuf.WellKnownTypes.Empty> HandleMessageAsync(Ism.Streaming.V1.Protos.HandleMessageRequest handleMessageRequest);
+        Task HandleMessageAsync(Ism.Streaming.V1.Protos.HandleMessageRequest handleMessageRequest);
         Task<Ism.Streaming.V1.Protos.InitSessionResponse> InitSessionAsync(Ism.Streaming.V1.Protos.InitSessionRequest initSessionRequest);
-        Task<Google.Protobuf.WellKnownTypes.Empty> DeInitSessionAsync(Ism.Streaming.V1.Protos.DeInitSessionRequest deInitSessionRequest);
+        Task DeInitSessionAsync(Ism.Streaming.V1.Protos.DeInitSessionRequest deInitSessionRequest);
 
         //Timeout PDF
-        Task<Google.Protobuf.WellKnownTypes.Empty> SetPgsTimeoutModeAsync(SetPgsTimeoutModeRequest setPgsTimeoutModeRequest);
-        Task<Google.Protobuf.WellKnownTypes.Empty> SetTimeoutPageAsync(SetTimeoutPageRequest setTimeoutPageRequest);
-        Task<Google.Protobuf.WellKnownTypes.Empty> NextPageAsync(Command command);
-        Task<Google.Protobuf.WellKnownTypes.Empty> PreviousPageAsync(Command command);
+        Task SetPgsTimeoutModeAsync(SetPgsTimeoutModeRequest setPgsTimeoutModeRequest);
+        Task SetTimeoutPageAsync(SetTimeoutPageRequest setTimeoutPageRequest);
+        Task NextPageAsync();
+        Task PreviousPageAsync();
     }
 }

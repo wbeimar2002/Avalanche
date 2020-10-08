@@ -7,7 +7,7 @@ namespace Avalanche.Api.Services.Media
 {
     public interface IRecorderService
     {
-        Task StartRecording();
+        Task StartRecording(Ism.Recorder.Core.V1.Protos.RecordMessage recordMessage);
         Task StopRecording();
     }
 }

@@ -1,23 +1,17 @@
 ﻿using AutoMapper;
 using Avalanche.Api.Managers.Health;
-using Avalanche.Api.Managers.Settings;
 using Avalanche.Api.MappingConfigurations;
 using Avalanche.Api.Services.Configuration;
 using Avalanche.Api.Services.Health;
 using Avalanche.Api.Utilities;
 using Avalanche.Api.ViewModels;
 using Avalanche.Shared.Domain.Models;
-using Ism.PatientInfoEngine.Common.Core;
-using Ism.PatientInfoEngine.Common.Core.Protos;
-using Ism.Telemetry.RabbitMq.Models;
-using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Security.Claims;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Avalanche.Api.Tests.Managers
@@ -208,23 +202,19 @@ namespace Avalanche.Api.Tests.Managers
         
         public void RegisterPatientShouldFailIfNullOrIncompleteData(PatientViewModel newPatient)
         {
-            var patient = _mapper.Map<PatientViewModel, Ism.Storage.Common.Core.PatientList.Proto.PatientRecordMessage>(newPatient);
-            var accessInfo = _accessInfoFactory.Object.GenerateAccessInfo();
-            var accessInfoMessage = _mapper.Map<Ism.Storage.Common.Core.PatientList.Proto.AccessInfoMessage>(accessInfo);
+            _pieService.Setup(mock => mock.RegisterPatient(new Ism.Storage.Core.PatientList.V1.Protos.AddPatientRecordRequest()));
 
-            _pieService.Setup(mock => mock.RegisterPatient(patient, accessInfoMessage));
+            Task Act() => _manager.RegisterPatient(newPatient, It.IsAny<User>());
 
-            Task Act() => _manager.RegisterPatient(newPatient);
             Assert.That(Act, Throws.TypeOf<ArgumentNullException>());
 
-            _pieService.Verify(mock => mock.RegisterPatient(patient, accessInfoMessage), Times.Never);            
+            _pieService.Verify(mock => mock.RegisterPatient(new Ism.Storage.Core.PatientList.V1.Protos.AddPatientRecordRequest()), Times.Never);            
         }
 
         [Test]
-
         public void RegisterPatientWorksWithRightData()
         {
-            PatientViewModel patient = new PatientViewModel()
+            PatientViewModel newPatient = new PatientViewModel()
             {
                 MRN = "Sample",
                 DateOfBirth = DateTime.Today,
@@ -235,72 +225,117 @@ namespace Avalanche.Api.Tests.Managers
                     Id = "S",
                     TranslationKey = "SampleKey",
                     Value = "Sample"
+                },
+                Department = new KeyValuePairViewModel() { Id = "SampleDepartment" },
+                Physician = new Physician()
+                {
+                    Id = "SampleId",
+                    FirstName = "SampleFirstName",
+                    LastName = "SampleLastName"
+                },
+                ProcedureType = new KeyValuePairViewModel() { Id = "SampleProcedureType" }
+            };
+
+            var response = new Ism.Storage.Core.PatientList.V1.Protos.AddPatientRecordResponse()
+            { 
+                PatientRecord = new Ism.Storage.Core.PatientList.V1.Protos.PatientRecordMessage()
+                { 
+                    InternalId = 1233
                 }
             };
 
-            _pieService.Setup(mock => mock.RegisterPatient(It.IsAny<Patient>(), It.IsAny<ProcedureType>(), It.IsAny<Physician>())).ReturnsAsync(new Patient());
+            var setupSettings = new Shared.Infrastructure.Models.SetupSettings()
+            {
+                QuickRegistrationDateFormat = "yyyyMMdd_T_mmss"
+            };
 
-            var result = _manager.RegisterPatient(patient);
+            _settingsService.Setup(mock => mock.GetSetupSettingsAsync()).ReturnsAsync(setupSettings);
 
-            _pieService.Verify(mock => mock.RegisterPatient(It.IsAny<Patient>(), It.IsAny<ProcedureType>(), It.IsAny<Physician>()), Times.Once);
+            _pieService.Setup(mock => mock.RegisterPatient(It.IsAny<Ism.Storage.Core.PatientList.V1.Protos.AddPatientRecordRequest>())).ReturnsAsync(response);
+
+            var result = _manager.RegisterPatient(newPatient, It.IsAny<User>());
+
+            _pieService.Verify(mock => mock.RegisterPatient(It.IsAny<Ism.Storage.Core.PatientList.V1.Protos.AddPatientRecordRequest>()), Times.Once);
         }
 
         [Test]
         public void QuickPatientRegistrationWorks()
         {
-            _pieService.Setup(mock => mock.RegisterPatient(It.IsAny<Patient>(), It.IsAny<ProcedureType>(), It.IsAny<Physician>())).ReturnsAsync(new Patient());
+            var setupSettings = new Shared.Infrastructure.Models.SetupSettings()
+            {
+                QuickRegistrationDateFormat = "yyyyMMdd_T_mmss"
+            };
 
-            var result = _manager.QuickPatientRegistration(It.IsAny<ClaimsPrincipal>());
+            _settingsService.Setup(mock => mock.GetSetupSettingsAsync()).ReturnsAsync(setupSettings);
 
-            _pieService.Verify(mock => mock.RegisterPatient(It.IsAny<Patient>(), It.IsAny<ProcedureType>(), It.IsAny<Physician>()), Times.Once);
+            _pieService.Setup(mock => mock.RegisterPatient(It.IsAny<Ism.Storage.Core.PatientList.V1.Protos.AddPatientRecordRequest>()));
+
+            User user = new User()
+            {
+                Id = "Sample",
+                FirstName = "Sample",
+                LastName = "Sample"
+            };
+
+            var result = _manager.QuickPatientRegistration(user);
+
+            _pieService.Verify(mock => mock.RegisterPatient(It.IsAny<Ism.Storage.Core.PatientList.V1.Protos.AddPatientRecordRequest>()), Times.Once);
         }
 
         [Test, TestCaseSource(nameof(PatientUpdateViewModelWrongDataTestCases))]
 
         public void UpdatePatientShouldFailIfNullOrIncompleteData(PatientViewModel patient)
         {
-            _pieService.Setup(mock => mock.UpdatePatient(It.IsAny<Patient>()));
+            _pieService.Setup(mock => mock.UpdatePatient(new Ism.Storage.Core.PatientList.V1.Protos.UpdatePatientRecordRequest()));
 
             Task Act() => _manager.UpdatePatient(patient);
             Assert.That(Act, Throws.TypeOf<ArgumentNullException>());
 
-            _pieService.Verify(mock => mock.UpdatePatient(It.IsAny<Patient>()), Times.Never);
+            _pieService.Verify(mock => mock.UpdatePatient(new Ism.Storage.Core.PatientList.V1.Protos.UpdatePatientRecordRequest()), Times.Never);
         }
 
         [Test]
 
         public void UpdatePatientWorksWithRightData()
         {
-            PatientViewModel patient = new PatientViewModel()
+            PatientViewModel existingPatient = new PatientViewModel()
             {
-                Id = 0,
+                Id = 1,
                 MRN = "Sample",
                 DateOfBirth = DateTime.Today,
                 FirstName = "Sample",
                 LastName = "Sample",
-                Gender = new KeyValuePairViewModel()
+                Sex = new KeyValuePairViewModel()
                 {
                     Id = "S",
                     TranslationKey = "SampleKey",
                     Value = "Sample"
-                }
+                },
+                Department = new KeyValuePairViewModel() { Id = "SampleDepartment" },
+                Physician = new Physician()
+                {
+                    Id = "SampleId",
+                    FirstName = "SampleFirstName",
+                    LastName = "SampleLastName"
+                },
+                ProcedureType = new KeyValuePairViewModel() { Id = "SampleProcedureType" }
             };
 
-            _pieService.Setup(mock => mock.UpdatePatient(It.IsAny<Patient>()));
+            _pieService.Setup(mock => mock.UpdatePatient(It.IsAny<Ism.Storage.Core.PatientList.V1.Protos.UpdatePatientRecordRequest>()));
 
-            var result = _manager.UpdatePatient(patient);
+            var result = _manager.UpdatePatient(existingPatient);
 
-            _pieService.Verify(mock => mock.UpdatePatient(It.IsAny<Patient>()), Times.Once);
+            _pieService.Verify(mock => mock.UpdatePatient(It.IsAny<Ism.Storage.Core.PatientList.V1.Protos.UpdatePatientRecordRequest>()), Times.Once);
         }
 
         [Test]
         public void DeleteWorks()
         {
-            _pieService.Setup(mock => mock.DeletePatient(It.IsAny<ulong>()));
+            _pieService.Setup(mock => mock.DeletePatient(new Ism.Storage.Core.PatientList.V1.Protos.DeletePatientRecordRequest()));
 
             var result = _manager.DeletePatient(It.IsAny<ulong>());
 
-            _pieService.Verify(mock => mock.DeletePatient(It.IsAny<ulong>()), Times.Once);
+            _pieService.Verify(mock => mock.DeletePatient(new Ism.Storage.Core.PatientList.V1.Protos.DeletePatientRecordRequest()), Times.Once);
         }
 
 
@@ -319,11 +354,11 @@ namespace Avalanche.Api.Tests.Managers
 
             List<Patient> response = new List<Patient>();
 
-            _pieService.Setup(mock => mock.Search(It.IsAny<PatientSearchFieldsMessage>(), filter.Page * filter.Limit, filter.Limit, cultureName)).ReturnsAsync(response);
+            _pieService.Setup(mock => mock.Search(It.IsAny<Ism.PatientInfoEngine.V1.Protos.SearchRequest>())).ReturnsAsync(It.IsAny<Ism.PatientInfoEngine.V1.Protos.SearchResponse>());
 
             var actionResult = _manager.Search(filter);
 
-            _pieService.Verify(mock => mock.Search(It.IsAny<PatientSearchFieldsMessage>(), filter.Page * filter.Limit, filter.Limit, cultureName), Times.Once);
+            _pieService.Verify(mock => mock.Search(It.IsAny<Ism.PatientInfoEngine.V1.Protos.SearchRequest>()), Times.Once);
 
             Assert.IsNotNull(response);
         }
@@ -344,11 +379,11 @@ namespace Avalanche.Api.Tests.Managers
 
             List<Patient> response = new List<Patient>();
 
-            _pieService.Setup(mock => mock.Search(It.IsAny<PatientSearchFieldsMessage>(), filter.Page * filter.Limit, filter.Limit, cultureName)).ReturnsAsync(response);
+            _pieService.Setup(mock => mock.Search(It.IsAny<Ism.PatientInfoEngine.V1.Protos.SearchRequest>())).ReturnsAsync(It.IsAny<Ism.PatientInfoEngine.V1.Protos.SearchResponse>());
 
             var actionResult = _manager.Search(filter);
 
-            _pieService.Verify(mock => mock.Search(It.IsAny<PatientSearchFieldsMessage>(), filter.Page * filter.Limit, filter.Limit, cultureName), Times.Once);
+            _pieService.Verify(mock => mock.Search(It.IsAny<Ism.PatientInfoEngine.V1.Protos.SearchRequest>()), Times.Once);
 
             Assert.IsNotNull(response);
         }
