@@ -4113,7 +4113,7 @@ module.exports={
   "_resolved": "https://registry.npmjs.org/cheerio/-/cheerio-1.0.0-rc.3.tgz",
   "_shasum": "094636d425b2e9c0f4eb91a46c05630c9a1a8bf6",
   "_spec": "cheerio@^1.0.0-rc.2",
-  "_where": "C:\\Users\\sorey\\AppData\\Roaming\\npm\\node_modules\\postman-to-k6",
+  "_where": "C:\\Users\\SoreyGarcia\\AppData\\Roaming\\npm\\node_modules\\postman-to-k6",
   "author": {
     "name": "Matt Mueller",
     "email": "mattmuelle@gmail.com",
@@ -26916,6 +26916,7 @@ module.exports = require('./readable').Transform
 module.exports = require('./lib/_stream_writable.js');
 
 },{"./lib/_stream_writable.js":309}],319:[function(require,module,exports){
+/*! safe-buffer. MIT License. Feross Aboukhadijeh <https://feross.org/opensource> */
 /* eslint-disable node/no-deprecated-api */
 var buffer = require('buffer')
 var Buffer = buffer.Buffer
