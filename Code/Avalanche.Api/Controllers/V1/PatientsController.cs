@@ -45,7 +45,15 @@ namespace Avalanche.Api.Controllers.V1
             try
             {
                 _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
-                var patientRegistered = await _patientsManager.RegisterPatient(newPatient, User);
+
+                var user = new Avalanche.Shared.Domain.Models.User()
+                {
+                    Id = User.FindFirst("Id")?.Value,
+                    FirstName = User.FindFirst("FirstName")?.Value,
+                    LastName = User.FindFirst("LastName")?.Value,
+                };
+
+                var patientRegistered = await _patientsManager.RegisterPatient(newPatient, user);
                 
                 return new ObjectResult(patientRegistered) { StatusCode = StatusCodes.Status201Created };
             }
@@ -115,7 +123,14 @@ namespace Avalanche.Api.Controllers.V1
             {
                 _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
 
-                var newPatient = await _patientsManager.QuickPatientRegistration(User);
+                var user = new Avalanche.Shared.Domain.Models.User()
+                {
+                    Id = User.FindFirst("Id")?.Value,
+                    FirstName = User.FindFirst("FirstName")?.Value,
+                    LastName = User.FindFirst("LastName")?.Value,
+                };
+
+                var newPatient = await _patientsManager.QuickPatientRegistration(user);
 
                 return new ObjectResult(newPatient) { StatusCode = StatusCodes.Status201Created };
             }

@@ -28,8 +28,11 @@ namespace Avalanche.Api.Tests.Managers
             CommandViewModel commandViewModel = new CommandViewModel()
             {
                 CommandType = Shared.Domain.Enumerations.CommandTypes.RouteVideoSource,
-                Devices = new List<Device>() { new Device() { Id = "TP1" } }
+                Devices = new List<Device>() { new Device() { Id = "TP1" } },
+                Destinations = new List<Device>() { new Device() { Id = "TP1" } }
             };
+
+            _routingService.Setup(mock => mock.RouteVideo(It.IsAny<Ism.Routing.V1.Protos.RouteVideoRequest>()));
 
             var commandResponse = _manager.SendCommand(commandViewModel);
 
@@ -59,7 +62,7 @@ namespace Avalanche.Api.Tests.Managers
         {
             CommandViewModel commandViewModel = new CommandViewModel()
             {
-                CommandType = Shared.Domain.Enumerations.CommandTypes.EnterFullScreen,
+                CommandType = Shared.Domain.Enumerations.CommandTypes.ExitFullScreen,
                 Devices = new List<Device>() { new Device() { Id = "TP1" } }
             };
 

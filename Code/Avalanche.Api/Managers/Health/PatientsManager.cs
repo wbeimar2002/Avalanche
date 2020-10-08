@@ -34,7 +34,7 @@ namespace Avalanche.Api.Managers.Health
             _mapper = mapper;
         }
 
-        public async Task<Shared.Domain.Models.Patient> RegisterPatient(PatientViewModel newPatient, System.Security.Claims.ClaimsPrincipal user)
+        public async Task<Shared.Domain.Models.Patient> RegisterPatient(PatientViewModel newPatient, Avalanche.Shared.Domain.Models.User user)
         {
             Preconditions.ThrowIfNull(nameof(newPatient), newPatient);
             Preconditions.ThrowIfNull(nameof(newPatient.MRN), newPatient.MRN);
@@ -56,9 +56,9 @@ namespace Avalanche.Api.Managers.Health
                 {
                     newPatient.Physician = new Physician()
                     {
-                        Id = user.FindFirst("Id")?.Value,
-                        FirstName = user.FindFirst("FirstName")?.Value,
-                        LastName = user.FindFirst("LastName")?.Value,
+                        Id = user.Id,
+                        FirstName = user.FirstName,
+                        LastName = user.LastName
                     };
                 }
                 else
@@ -70,10 +70,11 @@ namespace Avalanche.Api.Managers.Health
             var patientRequest = _mapper.Map<PatientViewModel, Ism.Storage.Core.PatientList.V1.Protos.AddPatientRecordRequest>(newPatient);
             var result = await _pieService.RegisterPatient(patientRequest);
 
-            return _mapper.Map<Ism.Storage.Core.PatientList.V1.Protos.AddPatientRecordResponse, Shared.Domain.Models.Patient>(result);
+            var response = _mapper.Map<Ism.Storage.Core.PatientList.V1.Protos.AddPatientRecordResponse, Shared.Domain.Models.Patient>(result);
+            return response;
         }
 
-        public async Task<Shared.Domain.Models.Patient> QuickPatientRegistration(System.Security.Claims.ClaimsPrincipal user)
+        public async Task<Shared.Domain.Models.Patient> QuickPatientRegistration(Avalanche.Shared.Domain.Models.User user)
         {
             var setupSettings = await _settingsService.GetSetupSettingsAsync();
             string quickRegistrationDateFormat = setupSettings.QuickRegistrationDateFormat;
@@ -103,11 +104,11 @@ namespace Avalanche.Api.Managers.Health
                 },
                 //TODO: Performing physician is administrator by default
                 //Which are the values?
-                Physician = new Physician() 
+                Physician = new Physician()
                 {
-                    Id = user.FindFirst("Id")?.Value,
-                    FirstName = user.FindFirst("FirstName")?.Value,
-                    LastName = user.FindFirst("LastName")?.Value,
+                    Id = user.Id,
+                    FirstName = user.FirstName,
+                    LastName = user.LastName
                 }
             };
 

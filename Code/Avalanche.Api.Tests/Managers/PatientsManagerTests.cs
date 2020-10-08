@@ -204,7 +204,7 @@ namespace Avalanche.Api.Tests.Managers
         {
             _pieService.Setup(mock => mock.RegisterPatient(new Ism.Storage.Core.PatientList.V1.Protos.AddPatientRecordRequest()));
 
-            Task Act() => _manager.RegisterPatient(newPatient, It.IsAny<ClaimsPrincipal>());
+            Task Act() => _manager.RegisterPatient(newPatient, It.IsAny<User>());
 
             Assert.That(Act, Throws.TypeOf<ArgumentNullException>());
 
@@ -225,24 +225,61 @@ namespace Avalanche.Api.Tests.Managers
                     Id = "S",
                     TranslationKey = "SampleKey",
                     Value = "Sample"
+                },
+                Department = new KeyValuePairViewModel() { Id = "SampleDepartment" },
+                Physician = new Physician()
+                {
+                    Id = "SampleId",
+                    FirstName = "SampleFirstName",
+                    LastName = "SampleLastName"
+                },
+                ProcedureType = new KeyValuePairViewModel() { Id = "SampleProcedureType" }
+            };
+
+            var response = new Ism.Storage.Core.PatientList.V1.Protos.AddPatientRecordResponse()
+            { 
+                PatientRecord = new Ism.Storage.Core.PatientList.V1.Protos.PatientRecordMessage()
+                { 
+                    InternalId = 1233
                 }
             };
 
-            _pieService.Setup(mock => mock.RegisterPatient(new Ism.Storage.Core.PatientList.V1.Protos.AddPatientRecordRequest()));
+            var setupSettings = new Shared.Infrastructure.Models.SetupSettings()
+            {
+                QuickRegistrationDateFormat = "yyyyMMdd_T_mmss"
+            };
 
-            Task Act() => _manager.RegisterPatient(newPatient, It.IsAny<ClaimsPrincipal>());
+            _settingsService.Setup(mock => mock.GetSetupSettingsAsync()).ReturnsAsync(setupSettings);
 
-            _pieService.Verify(mock => mock.RegisterPatient(new Ism.Storage.Core.PatientList.V1.Protos.AddPatientRecordRequest()), Times.Once);
+            _pieService.Setup(mock => mock.RegisterPatient(It.IsAny<Ism.Storage.Core.PatientList.V1.Protos.AddPatientRecordRequest>())).ReturnsAsync(response);
+
+            var result = _manager.RegisterPatient(newPatient, It.IsAny<User>());
+
+            _pieService.Verify(mock => mock.RegisterPatient(It.IsAny<Ism.Storage.Core.PatientList.V1.Protos.AddPatientRecordRequest>()), Times.Once);
         }
 
         [Test]
         public void QuickPatientRegistrationWorks()
         {
-            _pieService.Setup(mock => mock.RegisterPatient(new Ism.Storage.Core.PatientList.V1.Protos.AddPatientRecordRequest()));
+            var setupSettings = new Shared.Infrastructure.Models.SetupSettings()
+            {
+                QuickRegistrationDateFormat = "yyyyMMdd_T_mmss"
+            };
 
-            var result = _manager.QuickPatientRegistration(It.IsAny<ClaimsPrincipal>());
+            _settingsService.Setup(mock => mock.GetSetupSettingsAsync()).ReturnsAsync(setupSettings);
 
-            _pieService.Verify(mock => mock.RegisterPatient(new Ism.Storage.Core.PatientList.V1.Protos.AddPatientRecordRequest()), Times.Once);
+            _pieService.Setup(mock => mock.RegisterPatient(It.IsAny<Ism.Storage.Core.PatientList.V1.Protos.AddPatientRecordRequest>()));
+
+            User user = new User()
+            {
+                Id = "Sample",
+                FirstName = "Sample",
+                LastName = "Sample"
+            };
+
+            var result = _manager.QuickPatientRegistration(user);
+
+            _pieService.Verify(mock => mock.RegisterPatient(It.IsAny<Ism.Storage.Core.PatientList.V1.Protos.AddPatientRecordRequest>()), Times.Once);
         }
 
         [Test, TestCaseSource(nameof(PatientUpdateViewModelWrongDataTestCases))]
@@ -261,9 +298,9 @@ namespace Avalanche.Api.Tests.Managers
 
         public void UpdatePatientWorksWithRightData()
         {
-            PatientViewModel patient = new PatientViewModel()
+            PatientViewModel existingPatient = new PatientViewModel()
             {
-                Id = 0,
+                Id = 1,
                 MRN = "Sample",
                 DateOfBirth = DateTime.Today,
                 FirstName = "Sample",
@@ -273,14 +310,22 @@ namespace Avalanche.Api.Tests.Managers
                     Id = "S",
                     TranslationKey = "SampleKey",
                     Value = "Sample"
-                }
+                },
+                Department = new KeyValuePairViewModel() { Id = "SampleDepartment" },
+                Physician = new Physician()
+                {
+                    Id = "SampleId",
+                    FirstName = "SampleFirstName",
+                    LastName = "SampleLastName"
+                },
+                ProcedureType = new KeyValuePairViewModel() { Id = "SampleProcedureType" }
             };
 
-            _pieService.Setup(mock => mock.UpdatePatient(new Ism.Storage.Core.PatientList.V1.Protos.UpdatePatientRecordRequest()));
+            _pieService.Setup(mock => mock.UpdatePatient(It.IsAny<Ism.Storage.Core.PatientList.V1.Protos.UpdatePatientRecordRequest>()));
 
-            var result = _manager.UpdatePatient(patient);
+            var result = _manager.UpdatePatient(existingPatient);
 
-            _pieService.Verify(mock => mock.UpdatePatient(new Ism.Storage.Core.PatientList.V1.Protos.UpdatePatientRecordRequest()), Times.Once);
+            _pieService.Verify(mock => mock.UpdatePatient(It.IsAny<Ism.Storage.Core.PatientList.V1.Protos.UpdatePatientRecordRequest>()), Times.Once);
         }
 
         [Test]
