@@ -1,20 +1,15 @@
-﻿using AutoFixture;
-using AutoMapper;
+﻿using AutoMapper;
 using Avalanche.Api.Services.Configuration;
 using Avalanche.Api.Services.Health;
 using Avalanche.Api.Utilities;
 using Avalanche.Api.ViewModels;
 using Avalanche.Shared.Domain.Models;
 using Avalanche.Shared.Infrastructure.Helpers;
-using Avalanche.Shared.Infrastructure.Models;
 using Google.Protobuf.WellKnownTypes;
 using Ism.PatientInfoEngine.V1.Protos;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
-using System.Linq;
-using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace Avalanche.Api.Managers.Health

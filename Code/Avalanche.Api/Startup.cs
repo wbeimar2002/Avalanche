@@ -17,6 +17,8 @@ using Avalanche.Shared.Infrastructure.Services.Settings;
 using Ism.Broadcaster.Services;
 using Ism.RabbitMq.Client;
 using Ism.RabbitMq.Client.Models;
+using Ism.Security.Grpc;
+using Ism.Security.Grpc.Interfaces;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -29,6 +31,14 @@ using Serilog;
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Security.Cryptography.X509Certificates;
+using static AvidisDeviceInterface.V1.Protos.Avidis;
+using static Ism.PatientInfoEngine.V1.Protos.PatientListService;
+using static Ism.PgsTimeout.V1.Protos.PgsTimeout;
+using static Ism.Recorder.Core.V1.Protos.Recorder;
+using static Ism.Routing.V1.Protos.Routing;
+using static Ism.Storage.Core.Configuration.V1.Protos.ConfigurationService;
+using static Ism.Storage.Core.PatientList.V1.Protos.PatientListStorage;
+using static Ism.Streaming.V1.Protos.WebRtcStreamer;
 
 namespace Avalanche.Api
 {
@@ -59,6 +69,10 @@ namespace Avalanche.Api
             IConfigurationService configurationService = new ConfigurationService(Configuration);
             services.AddSingleton(c => configurationService);
 
+            var grpcCertificate = configurationService.GetEnvironmentVariable("grpcCertificate");
+            var grpcPassword = configurationService.GetEnvironmentVariable("grpcPassword");
+            var grpcServerValidationCertificate = configurationService.GetEnvironmentVariable("grpcServerValidationCertificate");
+
             services.AddSingleton<ISettingsManager, SettingsManagerMock>();
             services.AddSingleton<IPatientsManager, PatientsManager>();
             services.AddSingleton<IPhysiciansManager, PhysiciansManager>();
@@ -76,6 +90,15 @@ namespace Avalanche.Api
             services.AddSingleton<IRoutingService, RoutingService>();
             services.AddSingleton<IAvidisService, AvidisService>();
             services.AddSingleton<IRecorderService, RecorderService>();
+            services.AddSingleton<ICertificateProvider>(new FileSystemCertificateProvider(grpcCertificate, grpcPassword, grpcServerValidationCertificate));
+            services.AddSingleton<IGrpcClientFactory<PatientListServiceClient>, GrpcClientFactory<PatientListServiceClient>>();
+            services.AddSingleton<IGrpcClientFactory<PatientListStorageClient>, GrpcClientFactory<PatientListStorageClient>>();
+            services.AddSingleton<IGrpcClientFactory<RecorderClient>, GrpcClientFactory<RecorderClient>>();
+            services.AddSingleton<IGrpcClientFactory<RoutingClient>, GrpcClientFactory<RoutingClient>>();
+            services.AddSingleton<IGrpcClientFactory<AvidisClient>, GrpcClientFactory<AvidisClient>>();
+            services.AddSingleton<IGrpcClientFactory<WebRtcStreamerClient>, GrpcClientFactory<WebRtcStreamerClient>>();
+            services.AddSingleton<IGrpcClientFactory<PgsTimeoutClient>, GrpcClientFactory<PgsTimeoutClient>>();
+            services.AddSingleton<IGrpcClientFactory<ConfigurationServiceClient>, GrpcClientFactory<ConfigurationServiceClient>>();
 
             services.AddHttpContextAccessor();
             services.AddSingleton<IAccessInfoFactory, AccessInfoFactory>();

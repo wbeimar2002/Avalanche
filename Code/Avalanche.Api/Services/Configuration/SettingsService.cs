@@ -2,18 +2,21 @@
 using Avalanche.Shared.Infrastructure.Services.Settings;
 using Google.Protobuf.WellKnownTypes;
 using Grpc.Core;
+using Grpc.Core.Interceptors;
 using Grpc.Core.Testing;
-using Ism.PgsTimeout.Common.Core;
-using Ism.Security.Grpc.Helpers;
+using Ism.PgsTimeout.Client.V1;
+using Ism.PgsTimeout.V1.Protos;
+using Ism.Security.Grpc.Interfaces;
 using Moq;
 using System;
 using System.Collections.Generic;
-using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 using System.Threading;
 using System.Threading.Tasks;
+using static Ism.PgsTimeout.V1.Protos.PgsTimeout;
 
 namespace Avalanche.Api.Services.Configuration
-{ 
+{
     public class SettingsService : ISettingsService
     {
         readonly IConfigurationService _configurationService;
@@ -21,11 +24,10 @@ namespace Avalanche.Api.Services.Configuration
 
         readonly string _hostIpAddress;
 
-        public Ism.Streaming.V1.Protos.WebRtcStreamer.WebRtcStreamerClient WebRtcStreamerClient { get; set; }
-        public PgsTimeout.PgsTimeoutClient PgsTimeoutClient { get; set; }
+        public PgsTimeoutSecureClient PgsTimeoutClient { get; set; }
         public bool UseMocks { get; set; }
 
-        public SettingsService(IConfigurationService configurationService, IStorageService storageService)
+        public SettingsService(IConfigurationService configurationService, IStorageService storageService, IGrpcClientFactory<PgsTimeoutClient> grpcPgsClientFactory, ICertificateProvider certificateProvider)
         {
             _configurationService = configurationService;
             _storageService = storageService;
@@ -37,17 +39,9 @@ namespace Avalanche.Api.Services.Configuration
             var grpcCertificate = _configurationService.GetEnvironmentVariable("grpcCertificate");
             var grpcPassword = _configurationService.GetEnvironmentVariable("grpcPassword");
 
-            var certificate = new System.Security.Cryptography.X509Certificates.X509Certificate2(grpcCertificate, grpcPassword);
+            var certificate = new X509Certificate2(grpcCertificate, grpcPassword);
             UseMocks = true;
 
-            //Client = ClientHelper.GetSecureClient<WebRtcStreamer.WebRtcStreamerClient>($"https://{hostIpAddress}:{WebRTCGrpcPort}", certificate);
-            WebRtcStreamerClient = ClientHelper.GetInsecureClient<Ism.Streaming.V1.Protos.WebRtcStreamer.WebRtcStreamerClient>($"https://{_hostIpAddress}:{WebRTCGrpcPort}");
-            PgsTimeoutClient = ClientHelper.GetInsecureClient<PgsTimeout.PgsTimeoutClient>($"https://{_hostIpAddress}:{PgsTimeoutGrpcPort}");
-        }
-
-        public async Task<TimeoutSettings> GetTimeoutSettingsAsync()
-        {
-            //Faking calls while I have the real server
             if (UseMocks)
             {
                 var mockResponseForPdf = new GetTimeoutPdfPathResponse()
@@ -60,20 +54,29 @@ namespace Avalanche.Api.Services.Configuration
                     IsAlwaysOn = true
                 };
 
-                Mock<PgsTimeout.PgsTimeoutClient> mockGrpcClient = new Mock<PgsTimeout.PgsTimeoutClient>();
-
                 var fakeCallForPdf = TestCalls.AsyncUnaryCall(Task.FromResult(mockResponseForPdf), Task.FromResult(new Metadata()), () => Status.DefaultSuccess, () => new Metadata(), () => { });
-
                 var fakeCallForAlwaysOn = TestCalls.AsyncUnaryCall(Task.FromResult(mockResponseForAlwaysOn), Task.FromResult(new Metadata()), () => Status.DefaultSuccess, () => new Metadata(), () => { });
 
+                Mock<PgsTimeoutClient> mockGrpcClient = new Mock<PgsTimeoutClient>();
                 mockGrpcClient.Setup(mock => mock.GetTimeoutPdfPathAsync(Moq.It.IsAny<Empty>(), null, null, CancellationToken.None)).Returns(fakeCallForPdf);
                 mockGrpcClient.Setup(mock => mock.GetPgsAlwaysOnSettingAsync(Moq.It.IsAny<Empty>(), null, null, CancellationToken.None)).Returns(fakeCallForAlwaysOn);
 
-                PgsTimeoutClient = mockGrpcClient.Object;
+                var mockPgs = new Mock<IGrpcClientFactory<PgsTimeoutClient>>();
+                mockPgs.Setup(m => m.GetSecureClient(It.IsAny<string>(), It.IsAny<X509Certificate2>(), It.IsAny<X509Certificate2>(), It.IsAny<string>(), It.IsAny<List<Interceptor>>(), It.IsAny<List<Func<Metadata, Metadata>>>()))
+                        .Returns(mockGrpcClient.Object);
+
+                grpcPgsClientFactory = mockPgs.Object;
             }
 
-            var actionResponseForPdf = await PgsTimeoutClient.GetTimeoutPdfPathAsync(new Empty());
-            var actionResponseForAlwaysOn = await PgsTimeoutClient.GetPgsAlwaysOnSettingAsync(new Empty());
+
+            //Client = ClientHelper.GetSecureClient<WebRtcStreamer.WebRtcStreamerClient>($"https://{hostIpAddress}:{WebRTCGrpcPort}", certificate);
+            PgsTimeoutClient = new PgsTimeoutSecureClient(grpcPgsClientFactory, _hostIpAddress, PgsTimeoutGrpcPort, certificateProvider); 
+        }
+
+        public async Task<TimeoutSettings> GetTimeoutSettingsAsync()
+        {
+            var actionResponseForPdf = await PgsTimeoutClient.GetTimeoutPdfPath();
+            var actionResponseForAlwaysOn = await PgsTimeoutClient.GetPgsAlwaysOnSetting();
 
             return new TimeoutSettings
             {

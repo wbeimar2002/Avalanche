@@ -1,16 +1,15 @@
-﻿using Avalanche.Shared.Domain.Enumerations;
-using Avalanche.Shared.Domain.Models;
-using Avalanche.Shared.Infrastructure.Models;
-using Ism.PgsTimeout.Common.Core;
-using System.Collections.Generic;
+﻿using Avalanche.Shared.Domain.Models;
+using Ism.PgsTimeout.Client.V1;
+using Ism.PgsTimeout.V1.Protos;
+using Ism.Streaming.Client.V1;
 using System.Threading.Tasks;
 
 namespace Avalanche.Api.Services.Media
 {
     public interface IMediaService
     {
-        Ism.Streaming.V1.Protos.WebRtcStreamer.WebRtcStreamerClient WebRtcStreamerClient { get; set; }
-        PgsTimeout.PgsTimeoutClient PgsTimeoutClient { get; set; }
+        WebRtcStreamerSecureClient WebRtcStreamerClient { get; set; }
+        PgsTimeoutSecureClient PgsTimeoutClient { get; set; }
 
         //General
         Task<Ism.Streaming.V1.Protos.GetSourceStreamsResponse> GetSourceStreamsAsync();

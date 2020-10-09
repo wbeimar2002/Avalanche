@@ -33,7 +33,7 @@ namespace Avalanche.Api.Tests.Managers
 
             var commandResponse = _manager.SendCommand(commandViewModel);
 
-            _mediaService.Verify(mock => mock.SetPgsTimeoutModeAsync(It.IsAny<Ism.PgsTimeout.Common.Core.SetPgsTimeoutModeRequest>()), Times.Once);
+            _mediaService.Verify(mock => mock.SetPgsTimeoutModeAsync(It.IsAny<Ism.PgsTimeout.V1.Protos.SetPgsTimeoutModeRequest>()), Times.Once);
 
             Assert.IsNotNull(commandResponse);
         }
@@ -56,7 +56,7 @@ namespace Avalanche.Api.Tests.Managers
 
             var commandResponse = _manager.SendCommand(commandViewModel);
 
-            _mediaService.Verify(mock => mock.SetPgsTimeoutModeAsync(It.Is<Ism.PgsTimeout.Common.Core.SetPgsTimeoutModeRequest>(args => (int)args.Mode == (int)TimeoutModes.Pgs)), Times.Once);
+            _mediaService.Verify(mock => mock.SetPgsTimeoutModeAsync(It.Is<Ism.PgsTimeout.V1.Protos.SetPgsTimeoutModeRequest>(args => (int)args.Mode == (int)TimeoutModes.Pgs)), Times.Once);
 
             Assert.IsNotNull(commandResponse);
         }
@@ -79,7 +79,7 @@ namespace Avalanche.Api.Tests.Managers
 
             var commandResponse = _manager.SendCommand(commandViewModel);
 
-            _mediaService.Verify(mock => mock.SetPgsTimeoutModeAsync(It.Is<Ism.PgsTimeout.Common.Core.SetPgsTimeoutModeRequest>(args => (int)args.Mode == (int)TimeoutModes.Idle)), Times.Once);
+            _mediaService.Verify(mock => mock.SetPgsTimeoutModeAsync(It.Is<Ism.PgsTimeout.V1.Protos.SetPgsTimeoutModeRequest>(args => (int)args.Mode == (int)TimeoutModes.Idle)), Times.Once);
 
             Assert.IsNotNull(commandResponse);
         }
@@ -130,7 +130,7 @@ namespace Avalanche.Api.Tests.Managers
 
             var commandResponse = _manager.SendCommand(commandViewModel);
 
-            _mediaService.Verify(mock => mock.SetTimeoutPageAsync(It.IsAny<Ism.PgsTimeout.Common.Core.SetTimeoutPageRequest>()), Times.Once);
+            _mediaService.Verify(mock => mock.SetTimeoutPageAsync(It.IsAny<Ism.PgsTimeout.V1.Protos.SetTimeoutPageRequest>()), Times.Once);
 
             Assert.IsNotNull(commandResponse);
         }

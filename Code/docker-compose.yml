@@ -57,12 +57,14 @@ services:
       app_net:
         ipv4_address: 192.168.1.60
     environment:
-      hostIpAddress: '10.0.75.1'
-      mediaServiceGrpcPort: '8002'
+      hostIpAddress: 'host.docker.internal'
+      mediaServiceGrpcPort: '7001'
+      pieServiceAddress: 'patientInfoEngine'
       pieServiceGrpcPort: '9089'
-      storageServiceGrpcPort: '5011'
+      storageServiceGrpcPort: '5012'
       grpcCertificate: '/certificates/grpc_localhost_root_l1.pfx' 
       grpcPassword: '0123456789'
+      grpcServerValidationCertificate: '/certificates/grpc_localhost_root_l1.cer'
       grpcThumprint: '86CD34D2FADDFFE00D31F4C12294782ECCB9041F'
       seqUrl: 'http://seq:5341'
       logging:loglevel:default: 'debug'
@@ -71,6 +73,7 @@ services:
       loggerFileSizeLimit: 209715200
       loggerRetainedFileCountLimit: 5
       TZ: "America/Los_Angeles"
+      PgsTimeoutGrpcPort: '9500'
     depends_on:
       - seqserver
       - rabbitmq

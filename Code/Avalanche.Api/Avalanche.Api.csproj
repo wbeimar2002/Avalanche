@@ -33,8 +33,9 @@
   <ItemGroup>
     <PackageReference Include="AutoFixture" Version="4.13.0" />
     <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="8.0.1" />
+    <PackageReference Include="AvidisDeviceInterface.Client" Version="1.0.0-prerelease0001" />
     <PackageReference Include="Google.Protobuf" Version="3.13.0" />
-    <PackageReference Include="Grpc.Core" Version="2.31.0" />
+    <PackageReference Include="Grpc.Core" Version="2.32.0" />
     <PackageReference Include="Grpc.Core.Testing" Version="2.31.0" />
     <PackageReference Include="Grpc.Net.Client" Version="2.31.0" />
     <PackageReference Include="Grpc.Tools" Version="2.31.0">
@@ -42,8 +43,15 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Ism.Broadcaster.Standard" Version="1.0.0-prerelease0002" />
+    <PackageReference Include="Ism.PatientInfoEngine.Client" Version="1.0.0-prerelease0001" />
+    <PackageReference Include="Ism.PgsTimeout.Client" Version="1.0.0-prerelease0001" />
     <PackageReference Include="Ism.RabbitMq.Client" Version="1.0.0-prerelease3" />
-    <PackageReference Include="Ism.Security.Grpc.Standard" Version="1.0.0-prerelease001" />
+    <PackageReference Include="Ism.Recorder.Client" Version="1.0.0-prerelease0002" />
+    <PackageReference Include="Ism.Routing.Client" Version="1.0.0-prerelease0001" />
+    <PackageReference Include="Ism.Security.Grpc.Standard" Version="1.0.0-prerelease003" />
+    <PackageReference Include="Ism.Storage.Configuration.Client" Version="1.0.0-prerelease0003" />
+    <PackageReference Include="Ism.Storage.PatientList.Client" Version="1.0.0-prerelease0003" />
+    <PackageReference Include="Ism.Streaming.Client" Version="1.0.0-prerelease0001" />
     <!--<PackageReference Include="Ism.PatientInfoEngine.Client.Core" Version="1.0.0-prerelease3" />-->
     <!--<PackageReference Include="Ism.Utility.Core" Version="1.0.1-prerelease9" />-->
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="3.1.7" />
@@ -56,7 +64,7 @@
     <PackageReference Include="RabbitMQ.Client" Version="6.2.1" />
     <PackageReference Include="Serilog.AspNetCore" Version="3.4.0" />
     <PackageReference Include="Serilog.Extensions.Logging" Version="3.0.1" />
-    <PackageReference Include="Serilog.Sinks.Seq" Version="4.0.0" />
+    <!--<PackageReference Include="Serilog.Sinks.Seq" Version="4.0.0" />-->
     <PackageReference Include="Swashbuckle.AspNetCore" Version="5.5.1" />
     <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.7.1" />
   </ItemGroup>
@@ -64,18 +72,6 @@
   <ItemGroup>
     <ProjectReference Include="..\Avalanche.Shared.Domain\Avalanche.Shared.Domain.csproj" />
     <ProjectReference Include="..\Avalanche.Shared.Infrastructure\Avalanche.Shared.Infrastructure.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Protobuf Include="Protos\WebRtcStreamer.proto" />
-    <Protobuf Include="Protos\PgsTimeout.proto" />
-    <Protobuf Include="Protos\ConfigurationService.proto" />
-    <Protobuf Include="Protos\PatientInfoEngineService.proto" />
-    <Protobuf Include="Protos\PatientListStorage.proto" />
-    <Protobuf Include="Protos\Routing.proto" />
-    <Protobuf Include="Protos\Avidis.proto" />
-    <Protobuf Include="Protos\Recorder.proto" />
-    <Protobuf Include="Protos\LibraryIndexStorage.proto" />  
   </ItemGroup> 
 
     <ItemGroup>

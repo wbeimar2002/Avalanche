@@ -1,48 +1,48 @@
 ﻿using Avalanche.Shared.Infrastructure.Services.Settings;
-using Ism.Security.Grpc.Helpers;
+using AvidisDeviceInterface.Client.V1;
+using AvidisDeviceInterface.V1.Protos;
+using Ism.Security.Grpc.Interfaces;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
+using static AvidisDeviceInterface.V1.Protos.Avidis;
 
 namespace Avalanche.Api.Services.Media
 {
     public class AvidisService : IAvidisService
     {
         readonly IConfigurationService _configurationService;
-        readonly string _hostIpAddress;
 
-        public AvidisDeviceInterface.V1.Protos.Avidis.AvidisClient AvidisClient { get; set; }
+        public bool IgnoreGrpcServicesMocks { get; set; }
 
-        public AvidisService(IConfigurationService configurationService)
+        public AvidisSecureClient AvidisClient { get; set; }
+
+        public AvidisService(IConfigurationService configurationService, IGrpcClientFactory<AvidisClient> grpcClientFactory, ICertificateProvider certificateProvider)
         {
             _configurationService = configurationService;
 
-            _hostIpAddress = _configurationService.GetEnvironmentVariable("hostIpAddress");
+            var hostIpAddress = _configurationService.GetEnvironmentVariable("hostIpAddress");
 
+#warning TODO: Is this port correct?
             var mediaServiceGrpcPort = _configurationService.GetEnvironmentVariable("mediaServiceGrpcPort");
-            var grpcCertificate = _configurationService.GetEnvironmentVariable("grpcCertificate");
-            var grpcPassword = _configurationService.GetEnvironmentVariable("grpcPassword");
-
-            var certificate = new System.Security.Cryptography.X509Certificates.X509Certificate2(grpcCertificate, grpcPassword);
 
             //Client = ClientHelper.GetSecureClient<WebRtcStreamer.WebRtcStreamerClient>($"https://{hostIpAddress}:{mediaServiceGrpcPort}", certificate);
-            AvidisClient = ClientHelper.GetInsecureClient<AvidisDeviceInterface.V1.Protos.Avidis.AvidisClient>($"https://{_hostIpAddress}:{mediaServiceGrpcPort}");
+            //AvidisClient = ClientHelper.GetInsecureClient<Avidis.AvidisClient>($"https://{_hostIpAddress}:{mediaServiceGrpcPort}");
+            AvidisClient = new AvidisSecureClient(grpcClientFactory, hostIpAddress, mediaServiceGrpcPort, certificateProvider);
         }
 
         public async Task RoutePreview(AvidisDeviceInterface.V1.Protos.RoutePreviewRequest routePreviewRequest)
         {
-            await AvidisClient.RoutePreviewAsync(routePreviewRequest);
+            await AvidisClient.RoutePreview(routePreviewRequest);
         }
 
-        public async Task HidePreview(AvidisDeviceInterface.V1.Protos.HidePreviewRequest hidePreviewRequest)
+        public async Task ShowPreview(ShowPreviewRequest showPreviewRequest)
         {
-            await AvidisClient.HidePreviewAsync(hidePreviewRequest);
+            await AvidisClient.ShowPreview(showPreviewRequest);
         }
 
-        public async Task ShowPreview(AvidisDeviceInterface.V1.Protos.ShowPreviewRequest showPreviewRequest)
+        public async Task HidePreview(HidePreviewRequest hidePreviewRequest)
         {
-            await AvidisClient.ShowPreviewAsync(showPreviewRequest);
+            await AvidisClient.HidePreview(hidePreviewRequest);
         }
     }
 }

@@ -1,18 +1,16 @@
 ﻿using Avalanche.Shared.Infrastructure.Services.Settings;
-using Google.Protobuf.WellKnownTypes;
-using Grpc.Core.Testing;
-using Ism.Security.Grpc.Helpers;
 using Moq;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
-using Grpc.Core;
 using Avalanche.Shared.Infrastructure.Extensions;
 using Newtonsoft.Json;
 using System.IO;
 using Ism.Storage.Core.Configuration.V1.Protos;
+using Ism.Storage.Configuration.Client.V1;
+using Ism.Security.Grpc.Interfaces;
+using static Ism.Storage.Core.Configuration.V1.Protos.ConfigurationService;
+using Ism.Storage.Core.Configuration.V1.Protos;
+using Ism.Common.Core.Configuration.Models;
 
 namespace Avalanche.Api.Services.Configuration
 {
@@ -21,43 +19,35 @@ namespace Avalanche.Api.Services.Configuration
         readonly IConfigurationService _configurationService;
         readonly string _hostIpAddress;
 
-        public ConfigurationService.ConfigurationServiceClient ConfigurationStorageService { get; set; }
+        public ConfigurationServiceSecureClient ConfigurationStorageService { get; set; }
 
-        public StorageService(IConfigurationService configurationService)
+        public StorageService(IConfigurationService configurationService, IGrpcClientFactory<ConfigurationServiceClient> grpcClientFactory, ICertificateProvider certificateProvider)
         {
             _configurationService = configurationService;
 
-            _hostIpAddress = _configurationService.GetEnvironmentVariable("hostIpAddress");
+            var hostIpAddress = _configurationService.GetEnvironmentVariable("hostIpAddress");
 
             var storageServiceGrpcPort = _configurationService.GetEnvironmentVariable("storageServiceGrpcPort");
-            var grpcCertificate = _configurationService.GetEnvironmentVariable("grpcCertificate");
-            var grpcPassword = _configurationService.GetEnvironmentVariable("grpcPassword");
-
-            var certificate = new System.Security.Cryptography.X509Certificates.X509Certificate2(grpcCertificate, grpcPassword);
 
             //Client = ClientHelper.GetSecureClient<WebRtcStreamer.WebRtcStreamerClient>($"https://{hostIpAddress}:{WebRTCGrpcPort}", certificate);
-            ConfigurationStorageService = ClientHelper.GetInsecureClient<ConfigurationService.ConfigurationServiceClient>($"https://{_hostIpAddress}:{storageServiceGrpcPort}");
+            //ConfigurationStorageService = ClientHelper.GetInsecureClient<ConfigurationService.ConfigurationServiceClient>($"https://{_hostIpAddress}:{storageServiceGrpcPort}");
+            ConfigurationStorageService = new ConfigurationServiceSecureClient(grpcClientFactory, hostIpAddress, storageServiceGrpcPort, certificateProvider);
         }
 
         public async Task<T> GetJson<T>(string configurationKey, int version)
         {
-            var request = new GetConfigurationRequest()
+            var context = new ConfigurationContext //TODO: Assign correct values
             {
-                Version = Convert.ToUInt32(version),
-                Section = configurationKey,
-                Context = new ConfigurationContextMessage() //TODO: Assign correct values
-                { 
-                    DepartmentId = "Unknown",
-                    UserId = "Unknown",
-                    SystemId = "Unknown",
-                    SiteId = "Unknown",
-                    IdnId = "Unknown",
-                }
+                DepartmentId = "Unknown",
+                UserId = "Unknown",
+                SystemId = "Unknown",
+                SiteId = "Unknown",
+                IdnId = "Unknown",
             };
-            
-            var actionResponse = await ConfigurationStorageService.GetConfigurationAsync(request);
 
-            return actionResponse.ConfigurationJson.Get<T>();
+            var actionResponse = await ConfigurationStorageService.GetConfiguration(configurationKey, Convert.ToUInt32(version), context);
+
+            return actionResponse.Get<T>();
         }
     }
 }
