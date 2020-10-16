@@ -50,14 +50,33 @@ stages:
           vstsFeed: '$(VstsFeed)'
 
     # sonar 1 of 3
+     #- task: SonarSource.sonarqube.15B84CA1-B62F-4A2A-A403-89B77A063157.SonarQubePrepare@4
+      # condition: and(succeeded(), eq(variables['Build.SourceBranchName'], 'dev'))
+       #displayName: 'Prepare analysis on SonarQube'
+       #inputs:
+        #  SonarQube: sonarqube
+         # projectKey: '$(SonarProject)'
+          # projectName: '$(SonarProject)'
+
      - task: SonarSource.sonarqube.15B84CA1-B62F-4A2A-A403-89B77A063157.SonarQubePrepare@4
-       condition: and(succeeded(), eq(variables['Build.SourceBranchName'], 'dev'))
+       condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))
        displayName: 'Prepare analysis on SonarQube'
        inputs:
           SonarQube: sonarqube
           projectKey: '$(SonarProject)'
           projectName: '$(SonarProject)'
-   
+        
+     - task: SonarQubePrepare@4
+       condition: and(succeeded(), eq(variables['Build.Reason'], 'PullRequest'))
+       inputs:
+            SonarQube: 'sonarqube'
+            projectKey: '$(SonarProject)'
+            scannerMode: 'MSBuild'
+            extraProperties: |
+              sonar.pullrequest.vsts.instanceUrl=https://dev.azure.com/ismclouddev
+              sonar.pullrequest.vsts.project=avalanche
+              sonar.pullrequest.vsts.repository=$(Build.Repository.Name)
+
      - task: DotNetCoreCLI@2
        displayName: 'dotnet build **/*.sln'
        inputs:
