@@ -113,13 +113,14 @@ stages:
      
      # sonar 2 of 3
      - task: SonarQubeAnalyze@4
-       condition: and(succeeded(), eq(variables['Build.SourceBranchName'], 'dev'))
+       #condition: and(succeeded(), eq(variables['Build.SourceBranchName'], 'dev'))
 
     # sonar 3 of 3
      - task: SonarQubePublish@4
-       condition: and(succeeded(), eq(variables['Build.SourceBranchName'], 'dev'))
        inputs:
-        pollingTimeoutSec: '300'
+        pollingTimeoutSec: 300
+        projectKey: $(SonarProject)
+        projectName: $(SonarProject)
   
 
     # make app artifacts
