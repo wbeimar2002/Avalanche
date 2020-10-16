@@ -1,3 +1,6 @@
+trigger:
+  none
+  
 name: $(build_number_prefix)-$(majorversion).$(minorversion).$(patch).$(Releasestage)_$(majorversion).$(minorversion).$(Date:yyMM).$(Date:dd)$(Rev:rr)
 
 resources:
