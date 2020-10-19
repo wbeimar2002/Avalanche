@@ -50,14 +50,38 @@ stages:
           vstsFeed: '$(VstsFeed)'
 
     # sonar 1 of 3
-     - task: SonarSource.sonarqube.15B84CA1-B62F-4A2A-A403-89B77A063157.SonarQubePrepare@4
-       condition: and(succeeded(), eq(variables['Build.SourceBranchName'], 'dev'))
+     - task: SonarQubePrepare@4
+       condition: |
+        and
+        (
+          ne(variables['Build.Reason'], 'PullRequest'),
+          eq(variables['check_sonar_analysis'], 'true')
+        )
+      #condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))
        displayName: 'Prepare analysis on SonarQube'
        inputs:
           SonarQube: sonarqube
-          projectKey: '$(SonarProject)'
+          projectKey: '$(SonarProjectKey)'
           projectName: '$(SonarProject)'
-   
+        
+     - task: SonarQubePrepare@4
+       condition: |
+        and
+        (
+          eq(variables['Build.Reason'], 'PullRequest'),
+          eq(variables['check_sonar_analysis'], 'true')
+        )
+       displayName: 'PR Prepare analysis on SonarQube'
+       #condition: and(succeeded(), eq(variables['Build.Reason'], 'PullRequest'))
+       inputs:
+          SonarQube: 'sonarqube'
+          projectKey: '$(SonarProjectKey)'
+          scannerMode: 'MSBuild'
+          extraProperties: |
+            sonar.pullrequest.vsts.instanceUrl=https://dev.azure.com/ismclouddev
+            sonar.pullrequest.vsts.project=$(AdoProject)
+            sonar.pullrequest.vsts.repository=$(Build.Repository.Name) 
+
      - task: DotNetCoreCLI@2
        displayName: 'dotnet build **/*.sln'
        inputs:
@@ -92,15 +116,15 @@ stages:
           Contents: '*.trx'
           TargetFolder: '$(Agent.BuildDirectory)\TestResults'
      
-     # sonar 2 of 3
      - task: SonarQubeAnalyze@4
-       condition: and(succeeded(), eq(variables['Build.SourceBranchName'], 'dev'))
-
-    # sonar 3 of 3
+       condition: and(succeeded(), eq(variables['check_sonar_analysis'], 'true'))
+      
      - task: SonarQubePublish@4
-       condition: and(succeeded(), eq(variables['Build.SourceBranchName'], 'dev'))
+       condition: and(succeeded(), eq(variables['check_sonar_analysis'], 'true'))
        inputs:
-        pollingTimeoutSec: '300'
+        pollingTimeoutSec: 300
+        projectKey: $(SonarProjectKey)
+        projectName: $(SonarProject)
   
 
     # make app artifacts
