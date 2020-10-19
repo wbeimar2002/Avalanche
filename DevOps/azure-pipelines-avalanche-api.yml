@@ -51,29 +51,29 @@ stages:
 
     # sonar 1 of 3
      - task: SonarQubePrepare@4
-      condition: |
+       condition: |
         and
         (
           ne(variables['Build.Reason'], 'PullRequest'),
           eq(variables['check_sonar_analysis'], 'true')
         )
       #condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))
-      displayName: 'Prepare analysis on SonarQube'
-      inputs:
+       displayName: 'Prepare analysis on SonarQube'
+       inputs:
           SonarQube: sonarqube
           projectKey: '$(SonarProjectKey)'
           projectName: '$(SonarProject)'
         
-    - task: SonarQubePrepare@4
-      condition: |
+     - task: SonarQubePrepare@4
+       condition: |
         and
         (
           eq(variables['Build.Reason'], 'PullRequest'),
           eq(variables['check_sonar_analysis'], 'true')
         )
-      displayName: 'PR Prepare analysis on SonarQube'
-      #condition: and(succeeded(), eq(variables['Build.Reason'], 'PullRequest'))
-      inputs:
+       displayName: 'PR Prepare analysis on SonarQube'
+       #condition: and(succeeded(), eq(variables['Build.Reason'], 'PullRequest'))
+       inputs:
           SonarQube: 'sonarqube'
           projectKey: '$(SonarProjectKey)'
           scannerMode: 'MSBuild'
@@ -119,9 +119,9 @@ stages:
      - task: SonarQubeAnalyze@4
        condition: and(succeeded(), eq(variables['check_sonar_analysis'], 'true'))
       
-    - task: SonarQubePublish@4
-      condition: and(succeeded(), eq(variables['check_sonar_analysis'], 'true'))
-      inputs:
+     - task: SonarQubePublish@4
+       condition: and(succeeded(), eq(variables['check_sonar_analysis'], 'true'))
+       inputs:
         pollingTimeoutSec: 300
         projectKey: $(SonarProjectKey)
         projectName: $(SonarProject)
