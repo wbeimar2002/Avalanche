@@ -53,6 +53,9 @@ namespace Avalanche.Api.MappingConfigurations
                 .ForPath(dest =>
                     dest.Offer.Type,
                     opt => opt.MapFrom(src => src.Type))
+                .ForPath(dest =>
+                    dest.ExternalObservedIp,
+                    opt => opt.MapFrom(src => src.AccessInformation.Ip))
                 .ReverseMap();
 
             CreateMap<Command, Ism.Streaming.V1.Protos.HandleMessageRequest>()

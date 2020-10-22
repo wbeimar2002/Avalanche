@@ -48,6 +48,16 @@ namespace Avalanche.Api.Utilities
             return returnValue;
         }
 
+        public static string GetHostAddress(HttpContext context, bool replaceLocalhostWithLoopback)
+        {
+            var host = context?.Request?.Host.Host;
+            if (replaceLocalhostWithLoopback && string.Equals(host, "localhost", StringComparison.OrdinalIgnoreCase))
+            {
+                return "127.0.0.1";
+            }
+            return host;
+        }
+
         private static List<string> Split(string header, bool nullOrWhitespaceInputReturnsNull = false)
         {
             if (string.IsNullOrWhiteSpace(header))
