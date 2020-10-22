@@ -2,6 +2,7 @@
 using Avalanche.Api.ViewModels;
 using Avalanche.Shared.Domain.Models;
 using Google.Protobuf.WellKnownTypes;
+using Ism.Common.Core.Configuration.Models;
 using System;
 
 namespace Avalanche.Api.MappingConfigurations
@@ -10,6 +11,24 @@ namespace Avalanche.Api.MappingConfigurations
     {
         public PieMappingConfigurations()
         {
+            CreateMap < Avalanche.Shared.Domain.Models.User, ConfigurationContext>()
+                .ForMember(dest =>
+                    dest.IdnId,
+                    opt => opt.MapFrom(src => src.IdnId))
+                .ForMember(dest =>
+                    dest.SiteId,
+                    opt => opt.MapFrom(src => src.SiteId))
+                .ForMember(dest =>
+                    dest.SystemId,
+                    opt => opt.MapFrom(src => src.SystemId))
+                .ForMember(dest =>
+                    dest.UserId,
+                    opt => opt.MapFrom(src => src.Id))
+                .ForMember(dest =>
+                    dest.DepartmentId,
+                    opt => opt.MapFrom(src => src.DepartmentId))
+                .ReverseMap();
+
             CreateMap<PatientDetailsSearchFilterViewModel, Ism.PatientInfoEngine.V1.Protos.SearchRequest>()
                .ForPath(dest =>
                    dest.SearchFields.Accession,

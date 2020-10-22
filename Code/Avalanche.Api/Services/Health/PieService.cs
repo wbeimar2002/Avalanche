@@ -20,10 +20,8 @@ namespace Avalanche.Api.Services.Health
     {
         readonly IConfigurationService _configurationService;
 
-        public bool IgnoreGrpcServicesMocks { get; set; }
-
-        public PatientListSecureClient PatientListServiceClient { get; set; }
-        public PatientListStorageSecureClient PatientListStorageClient { get; set; }
+        PatientListSecureClient PatientListServiceClient { get; set; }
+        PatientListStorageSecureClient PatientListStorageClient { get; set; }
 
         public PieService(IConfigurationService configurationService, IGrpcClientFactory<PatientListServiceClient> grpcClientFactory, IGrpcClientFactory<PatientListStorageClient> storageClientFactory, ICertificateProvider certificateProvider)
         {

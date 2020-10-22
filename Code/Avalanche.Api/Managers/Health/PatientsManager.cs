@@ -6,6 +6,7 @@ using Avalanche.Api.ViewModels;
 using Avalanche.Shared.Domain.Models;
 using Avalanche.Shared.Infrastructure.Helpers;
 using Google.Protobuf.WellKnownTypes;
+using Ism.Common.Core.Configuration.Models;
 using Ism.PatientInfoEngine.V1.Protos;
 using System;
 using System.Collections.Generic;
@@ -42,7 +43,9 @@ namespace Avalanche.Api.Managers.Health
             var accessInfo = _accessInfoFactory.GenerateAccessInfo();
             newPatient.AccessInformation = _mapper.Map<AccessInfo>(accessInfo);
 
-            var setupSettings = await _settingsService.GetSetupSettingsAsync();
+            var configurationContext = _mapper.Map<Avalanche.Shared.Domain.Models.User, ConfigurationContext>(user);
+            var setupSettings = await _settingsService.GetSetupSettingsAsync(configurationContext);
+
             //TODO: Configurable in maintenance (on/off) - user logged in is auto-filled as physician when doing manual registration
             //TODO: What about the procedure type and department. How this should be filled?
             if (newPatient.Physician == null)
@@ -71,7 +74,8 @@ namespace Avalanche.Api.Managers.Health
 
         public async Task<Shared.Domain.Models.Patient> QuickPatientRegistration(Avalanche.Shared.Domain.Models.User user)
         {
-            var setupSettings = await _settingsService.GetSetupSettingsAsync();
+            var configurationContext = _mapper.Map<Avalanche.Shared.Domain.Models.User, ConfigurationContext>(user);
+            var setupSettings = await _settingsService.GetSetupSettingsAsync(configurationContext);
             string quickRegistrationDateFormat = setupSettings.QuickRegistrationDateFormat;
             string formattedDate = DateTime.UtcNow.ToLocalTime().ToString(quickRegistrationDateFormat);
 

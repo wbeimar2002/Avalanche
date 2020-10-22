@@ -50,7 +50,7 @@ namespace Avalanche.Api.Tests.Controllers
             var sourceFile = fixture.Create<PhysiciansViewModel>();
 
             //_physiciansManager.Setup(mock => mock.GetAllPhysicians()).ReturnsAsync(list);
-            _physiciansManager.Setup(mock => mock.GetTemporaryPhysiciansSource()).ReturnsAsync(sourceFile);
+            _physiciansManager.Setup(mock => mock.GetTemporaryPhysiciansSource(It.IsAny<User>())).ReturnsAsync(sourceFile);
 
             var okResult = _controller.GetAll(_environment.Object);
 
@@ -68,7 +68,7 @@ namespace Avalanche.Api.Tests.Controllers
         public void GetAllPhysiciansBadResultIfFails()
         {
             //_physiciansManager.Setup(mock => mock.GetAllPhysicians()).Throws(It.IsAny<Exception>());
-            _physiciansManager.Setup(mock => mock.GetTemporaryPhysiciansSource()).Throws(It.IsAny<Exception>());
+            _physiciansManager.Setup(mock => mock.GetTemporaryPhysiciansSource(It.IsAny<User>())).Throws(It.IsAny<Exception>());
 
             var badResult = _controller.GetAll(_environment.Object);
 

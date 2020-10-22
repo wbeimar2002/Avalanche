@@ -4,12 +4,14 @@ using Google.Protobuf.WellKnownTypes;
 using Grpc.Core;
 using Grpc.Core.Interceptors;
 using Grpc.Core.Testing;
+using Ism.Common.Core.Configuration.Models;
 using Ism.PgsTimeout.Client.V1;
 using Ism.PgsTimeout.V1.Protos;
 using Ism.Security.Grpc.Interfaces;
 using Moq;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading;
 using System.Threading.Tasks;
@@ -17,6 +19,7 @@ using static Ism.PgsTimeout.V1.Protos.PgsTimeout;
 
 namespace Avalanche.Api.Services.Configuration
 {
+    [ExcludeFromCodeCoverage]
     public class SettingsService : ISettingsService
     {
         readonly IConfigurationService _configurationService;
@@ -85,14 +88,14 @@ namespace Avalanche.Api.Services.Configuration
             };
         }
 
-        public async Task<SetupSettings> GetSetupSettingsAsync()
+        public async Task<SetupSettings> GetSetupSettingsAsync(ConfigurationContext context)
         {
-            return await _storageService.GetJson<SetupSettings>("PatientsSetupSettings", 1);
+            return await _storageService.GetJson<SetupSettings>("PatientsSetupSettings", 1, context);
         }
 
-        public async Task<VideoRoutingSettings> GetVideoRoutingSettingsAsync()
+        public async Task<VideoRoutingSettings> GetVideoRoutingSettingsAsync(ConfigurationContext context)
         {
-            return await _storageService.GetJson<VideoRoutingSettings>("VideoRoutingSettings", 1);
+            return await _storageService.GetJson<VideoRoutingSettings>("VideoRoutingSettings", 1, context);
         }
     }
 }

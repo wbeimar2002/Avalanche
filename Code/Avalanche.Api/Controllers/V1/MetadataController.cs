@@ -45,7 +45,15 @@ namespace Avalanche.Api.Controllers.V1
             try
             {
                 _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
-                var result = await _metadataManager.GetMetadata(Shared.Domain.Enumerations.MetadataTypes.ContentTypes);
+
+                var user = new Avalanche.Shared.Domain.Models.User()
+                {
+                    Id = User.FindFirst("Id")?.Value,
+                    FirstName = User.FindFirst("FirstName")?.Value,
+                    LastName = User.FindFirst("LastName")?.Value,
+                };
+
+                var result = await _metadataManager.GetMetadata(Shared.Domain.Enumerations.MetadataTypes.ContentTypes, user);
                 return Ok(result);
             }
             catch (Exception exception)
@@ -93,7 +101,15 @@ namespace Avalanche.Api.Controllers.V1
             try
             {
                 _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
-                var result = await _metadataManager.GetMetadata(Shared.Domain.Enumerations.MetadataTypes.Sex);
+
+                var user = new Avalanche.Shared.Domain.Models.User()
+                {
+                    Id = User.FindFirst("Id")?.Value,
+                    FirstName = User.FindFirst("FirstName")?.Value,
+                    LastName = User.FindFirst("LastName")?.Value,
+                };
+
+                var result = await _metadataManager.GetMetadata(Shared.Domain.Enumerations.MetadataTypes.Sex, user);
                 return Ok(result);
             }
             catch (Exception exception)
@@ -117,7 +133,15 @@ namespace Avalanche.Api.Controllers.V1
             try
             {
                 _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
-                var result = await _metadataManager.GetMetadata(Shared.Domain.Enumerations.MetadataTypes.ProcedureTypes);
+
+                var user = new Avalanche.Shared.Domain.Models.User()
+                {
+                    Id = User.FindFirst("Id")?.Value,
+                    FirstName = User.FindFirst("FirstName")?.Value,
+                    LastName = User.FindFirst("LastName")?.Value,
+                };
+
+                var result = await _metadataManager.GetMetadata(Shared.Domain.Enumerations.MetadataTypes.ProcedureTypes, user);
                 return Ok(result);
             }
             catch (Exception exception)
@@ -141,7 +165,15 @@ namespace Avalanche.Api.Controllers.V1
             try
             {
                 _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
-                var result = await _metadataManager.GetMetadata(Shared.Domain.Enumerations.MetadataTypes.SourceTypes);
+
+                var user = new Avalanche.Shared.Domain.Models.User()
+                {
+                    Id = User.FindFirst("Id")?.Value,
+                    FirstName = User.FindFirst("FirstName")?.Value,
+                    LastName = User.FindFirst("LastName")?.Value,
+                };
+
+                var result = await _metadataManager.GetMetadata(Shared.Domain.Enumerations.MetadataTypes.SourceTypes, user);
                 return Ok(result);
             }
             catch (Exception exception)
@@ -165,7 +197,15 @@ namespace Avalanche.Api.Controllers.V1
             try
             {
                 _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
-                var result = await _metadataManager.GetMetadata(Shared.Domain.Enumerations.MetadataTypes.Departments);
+
+                var user = new Avalanche.Shared.Domain.Models.User()
+                {
+                    Id = User.FindFirst("Id")?.Value,
+                    FirstName = User.FindFirst("FirstName")?.Value,
+                    LastName = User.FindFirst("LastName")?.Value,
+                };
+
+                var result = await _metadataManager.GetMetadata(Shared.Domain.Enumerations.MetadataTypes.Departments, user);
                 return Ok(result);
             }
             catch (Exception exception)

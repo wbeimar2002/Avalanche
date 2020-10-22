@@ -45,7 +45,15 @@ namespace Avalanche.Api.Controllers.V1
             try
             {
                 _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
-                var response = await _settingsManager.GetVideoRoutingSettingsAsync();
+
+                var user = new Avalanche.Shared.Domain.Models.User()
+                {
+                    Id = User.FindFirst("Id")?.Value,
+                    FirstName = User.FindFirst("FirstName")?.Value,
+                    LastName = User.FindFirst("LastName")?.Value,
+                };
+
+                var response = await _settingsManager.GetVideoRoutingSettingsAsync(user);
                 return Ok(response);
             }
             catch (Exception exception)
@@ -69,7 +77,15 @@ namespace Avalanche.Api.Controllers.V1
             try
             {
                 _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
-                var response = await _settingsManager.GetSetupSettingsAsync();
+
+                var user = new Avalanche.Shared.Domain.Models.User()
+                {
+                    Id = User.FindFirst("Id")?.Value,
+                    FirstName = User.FindFirst("FirstName")?.Value,
+                    LastName = User.FindFirst("LastName")?.Value,
+                };
+
+                var response = await _settingsManager.GetSetupSettingsAsync(user);
                 return Ok(response);
             }
             catch (Exception exception)

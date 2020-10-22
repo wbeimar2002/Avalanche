@@ -9,6 +9,7 @@ using Ism.Security.Grpc.Interfaces;
 using Moq;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading;
 using System.Threading.Tasks;
@@ -16,6 +17,7 @@ using static Ism.Recorder.Core.V1.Protos.Recorder;
 
 namespace Avalanche.Api.Services.Media
 {
+    [ExcludeFromCodeCoverage]
     public class RecorderService : IRecorderService
     {
         readonly IConfigurationService _configurationService;

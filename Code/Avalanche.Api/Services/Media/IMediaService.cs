@@ -8,9 +8,6 @@ namespace Avalanche.Api.Services.Media
 {
     public interface IMediaService
     {
-        WebRtcStreamerSecureClient WebRtcStreamerClient { get; set; }
-        PgsTimeoutSecureClient PgsTimeoutClient { get; set; }
-
         //General
         Task<Ism.Streaming.V1.Protos.GetSourceStreamsResponse> GetSourceStreamsAsync();
 

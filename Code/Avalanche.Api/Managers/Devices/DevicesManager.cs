@@ -61,7 +61,8 @@ namespace Avalanche.Api.Managers.Devices
                     Destinations = command.Destinations,
                     Message = command.Message,
                     AdditionalInfo = command.AdditionalInfo,
-                    Type = command.Type
+                    Type = command.Type, 
+                    User = command.User
                 });
 
                 responses.Add(response);

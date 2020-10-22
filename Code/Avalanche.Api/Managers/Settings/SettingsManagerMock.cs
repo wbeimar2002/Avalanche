@@ -1,8 +1,10 @@
-﻿using Avalanche.Api.Services.Configuration;
+﻿using AutoMapper;
+using Avalanche.Api.Services.Configuration;
 using Avalanche.Api.ViewModels;
 using Avalanche.Shared.Domain.Enumerations;
 using Avalanche.Shared.Domain.Models;
 using Avalanche.Shared.Infrastructure.Models;
+using Ism.Common.Core.Configuration.Models;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
@@ -15,14 +17,18 @@ namespace Avalanche.Api.Managers.Settings
     public class SettingsManagerMock : ISettingsManager
     {
         readonly ISettingsService _settingsService;
-        public SettingsManagerMock(ISettingsService settingsService)
+        readonly IMapper _mapper;
+
+        public SettingsManagerMock(ISettingsService settingsService, IMapper mapper)
         {
             _settingsService = settingsService;
+            _mapper = mapper;
         }
 
-        public async Task<VideoRoutingSettings> GetVideoRoutingSettingsAsync()
+        public async Task<VideoRoutingSettings> GetVideoRoutingSettingsAsync(Avalanche.Shared.Domain.Models.User user)
         {
-            return await _settingsService.GetVideoRoutingSettingsAsync();
+            var configurationContext = _mapper.Map<Avalanche.Shared.Domain.Models.User, ConfigurationContext>(user);
+            return await _settingsService.GetVideoRoutingSettingsAsync(configurationContext);
         }
 
 
@@ -31,9 +37,10 @@ namespace Avalanche.Api.Managers.Settings
             return await _settingsService.GetTimeoutSettingsAsync();
         }
 
-        public async Task<SetupSettings> GetSetupSettingsAsync()
+        public async Task<SetupSettings> GetSetupSettingsAsync(Avalanche.Shared.Domain.Models.User user)
         {
-            return await _settingsService.GetSetupSettingsAsync();
+            var configurationContext = _mapper.Map<Avalanche.Shared.Domain.Models.User, ConfigurationContext>(user);
+            return await _settingsService.GetSetupSettingsAsync(configurationContext);
         }
 
         public Task<List<SettingCategory>> GetCategories()

@@ -43,6 +43,16 @@ namespace Avalanche.Api.Controllers.V1
             try
             {
                 _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
+
+                var user = new Avalanche.Shared.Domain.Models.User()
+                {
+                    Id = User.FindFirst("Id")?.Value,
+                    FirstName = User.FindFirst("FirstName")?.Value,
+                    LastName = User.FindFirst("LastName")?.Value,
+                };
+
+                command.User = user;
+
                 var result = await _devicesManager.SendCommand(command);
 
                 return Ok(result);

@@ -1,6 +1,8 @@
 ﻿using AutoFixture;
+using AutoMapper;
 using Avalanche.Api.Services.Configuration;
 using Avalanche.Api.ViewModels;
+using Ism.Common.Core.Configuration.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,60 +13,33 @@ namespace Avalanche.Api.Managers.Metadata
     public class MetadataManager : IMetadataManager
     {
         readonly IStorageService _storageService;
-        //TODO: Remove mock data when storage configuration service is running
+        readonly IMapper _mapper;
 
-        public MetadataManager(IStorageService storageService)
+        public MetadataManager(IStorageService storageService, IMapper mapper)
         {
             _storageService = storageService;
+            _mapper = mapper;
         }
 
-        public async Task<List<KeyValuePairViewModel>> GetMetadata(Shared.Domain.Enumerations.MetadataTypes type)
+        public async Task<List<KeyValuePairViewModel>> GetMetadata(Shared.Domain.Enumerations.MetadataTypes type, Avalanche.Shared.Domain.Models.User user)
         {
+            var configurationContext = _mapper.Map<Avalanche.Shared.Domain.Models.User, ConfigurationContext>(user);
+
             switch (type)
             {
                 case Shared.Domain.Enumerations.MetadataTypes.Sex:
-                    return await GetSexsTypes();
+                    return (await _storageService.GetJson<ListContainerViewModel>("SexTypes", 1, configurationContext)).Items;
                 case Shared.Domain.Enumerations.MetadataTypes.ProcedureTypes:
-                    return await GetProcedureTypes();
+                    return (await _storageService.GetJson<ListContainerViewModel>("ProcedureTypes", 1, configurationContext)).Items;
                 case Shared.Domain.Enumerations.MetadataTypes.ContentTypes:
-                    return await GetContentTypes();
+                    return (await _storageService.GetJson<ListContainerViewModel>("ContentTypes", 1, configurationContext)).Items;
                 case Shared.Domain.Enumerations.MetadataTypes.SourceTypes:
-                    return await GetSourceTypes();
+                    return (await _storageService.GetJson<ListContainerViewModel>("SourceTypes", 1, configurationContext)).Items;
                 case Shared.Domain.Enumerations.MetadataTypes.Departments:
-                    return await GetDepartments();
+                    return (await _storageService.GetJson<ListContainerViewModel>("Departments", 1, configurationContext)).Items;
                 default:
                     return new List<KeyValuePairViewModel>();
             }
-        }
-
-        private async Task<List<KeyValuePairViewModel>> GetDepartments()
-        {
-            List<KeyValuePairViewModel> list = (await _storageService.GetJson<ListContainerViewModel>("Departments", 1)).Items;
-            return list;
-        }
-
-        private async Task<List<KeyValuePairViewModel>> GetProcedureTypes()
-        {
-            List<KeyValuePairViewModel> list = (await _storageService.GetJson<ListContainerViewModel>("ProcedureTypes", 1)).Items;
-            return list;
-        }
-
-        private async Task<List<KeyValuePairViewModel>> GetSexsTypes()
-        {
-            List<KeyValuePairViewModel> list = (await _storageService.GetJson<ListContainerViewModel>("SexTypes", 1)).Items;
-            return list;
-        }
-
-        private async Task<List<KeyValuePairViewModel>> GetContentTypes()
-        {
-            List<KeyValuePairViewModel> list = (await _storageService.GetJson<ListContainerViewModel>("ContentTypes", 1)).Items;
-            return list;
-        }
-
-        private async Task<List<KeyValuePairViewModel>> GetSourceTypes()
-        {
-            List<KeyValuePairViewModel> list = (await _storageService.GetJson<ListContainerViewModel>("SourceTypes", 1)).Items;
-            return list;
         }
     }
 }

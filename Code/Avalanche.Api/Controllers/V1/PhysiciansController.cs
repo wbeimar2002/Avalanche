@@ -45,7 +45,15 @@ namespace Avalanche.Api.Controllers.V1
             try
             {
                 _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
-                PhysiciansViewModel result = await _physiciansManager.GetTemporaryPhysiciansSource();
+
+                var user = new Avalanche.Shared.Domain.Models.User()
+                {
+                    Id = User.FindFirst("Id")?.Value,
+                    FirstName = User.FindFirst("FirstName")?.Value,
+                    LastName = User.FindFirst("LastName")?.Value,
+                };
+
+                PhysiciansViewModel result = await _physiciansManager.GetTemporaryPhysiciansSource(user);
                 return Ok(result);
             }
             catch (Exception exception)

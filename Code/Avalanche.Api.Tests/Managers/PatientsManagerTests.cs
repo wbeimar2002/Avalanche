@@ -1,4 +1,5 @@
-﻿using AutoMapper;
+﻿using AutoFixture;
+using AutoMapper;
 using Avalanche.Api.Managers.Health;
 using Avalanche.Api.MappingConfigurations;
 using Avalanche.Api.Services.Configuration;
@@ -6,11 +7,13 @@ using Avalanche.Api.Services.Health;
 using Avalanche.Api.Utilities;
 using Avalanche.Api.ViewModels;
 using Avalanche.Shared.Domain.Models;
+using Ism.Common.Core.Configuration.Models;
 using Moq;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 
@@ -249,7 +252,7 @@ namespace Avalanche.Api.Tests.Managers
                 QuickRegistrationDateFormat = "yyyyMMdd_T_mmss"
             };
 
-            _settingsService.Setup(mock => mock.GetSetupSettingsAsync()).ReturnsAsync(setupSettings);
+            _settingsService.Setup(mock => mock.GetSetupSettingsAsync(It.IsAny<ConfigurationContext>())).ReturnsAsync(setupSettings);
 
             _pieService.Setup(mock => mock.RegisterPatient(It.IsAny<Ism.Storage.Core.PatientList.V1.Protos.AddPatientRecordRequest>())).ReturnsAsync(response);
 
@@ -266,7 +269,7 @@ namespace Avalanche.Api.Tests.Managers
                 QuickRegistrationDateFormat = "yyyyMMdd_T_mmss"
             };
 
-            _settingsService.Setup(mock => mock.GetSetupSettingsAsync()).ReturnsAsync(setupSettings);
+            _settingsService.Setup(mock => mock.GetSetupSettingsAsync(It.IsAny<ConfigurationContext>())).ReturnsAsync(setupSettings);
 
             _pieService.Setup(mock => mock.RegisterPatient(It.IsAny<Ism.Storage.Core.PatientList.V1.Protos.AddPatientRecordRequest>()));
 
@@ -352,15 +355,30 @@ namespace Avalanche.Api.Tests.Managers
             var cultureName = CultureInfo.CurrentCulture.Name;
             cultureName = string.IsNullOrEmpty(cultureName) ? "en-US" : cultureName;
 
-            List<Patient> response = new List<Patient>();
+            Fixture autoFixture = new Fixture();
+            var patientRecords = autoFixture.CreateMany<Ism.PatientInfoEngine.V1.Protos.PatientRecordMessage>(filter.Limit);
 
-            _pieService.Setup(mock => mock.Search(It.IsAny<Ism.PatientInfoEngine.V1.Protos.SearchRequest>())).ReturnsAsync(It.IsAny<Ism.PatientInfoEngine.V1.Protos.SearchResponse>());
+            var serviceResponse = new Ism.PatientInfoEngine.V1.Protos.SearchResponse();
+            serviceResponse.UpdatedPatList.Add(patientRecords);
+
+            foreach (var item in serviceResponse.UpdatedPatList)
+            {
+                item.Patient.Dob = new Ism.PatientInfoEngine.V1.Protos.FixedDateMessage()
+                {
+                    Year = DateTime.Now.Year,
+                    Month = DateTime.Now.Month,
+                    Day = DateTime.Now.Day
+                };
+            }
+
+            _pieService.Setup(mock => mock.Search(It.IsAny<Ism.PatientInfoEngine.V1.Protos.SearchRequest>())).ReturnsAsync(serviceResponse);
 
             var actionResult = _manager.Search(filter);
 
             _pieService.Verify(mock => mock.Search(It.IsAny<Ism.PatientInfoEngine.V1.Protos.SearchRequest>()), Times.Once);
 
-            Assert.IsNotNull(response);
+            Assert.AreEqual(actionResult.Result.Count, filter.Limit);
+            Assert.IsNotNull(actionResult);
         }
 
         [Test]
@@ -370,22 +388,36 @@ namespace Avalanche.Api.Tests.Managers
             {
                 Limit = 10,
                 Page = 0,
-                LastName = "Name",
                 RoomName = "Room",
             };
 
             var cultureName = CultureInfo.CurrentCulture.Name;
             cultureName = string.IsNullOrEmpty(cultureName) ? "en-US" : cultureName;
 
-            List<Patient> response = new List<Patient>();
+            Fixture autoFixture = new Fixture();
+            var patientRecords = autoFixture.CreateMany<Ism.PatientInfoEngine.V1.Protos.PatientRecordMessage>(filter.Limit);
 
-            _pieService.Setup(mock => mock.Search(It.IsAny<Ism.PatientInfoEngine.V1.Protos.SearchRequest>())).ReturnsAsync(It.IsAny<Ism.PatientInfoEngine.V1.Protos.SearchResponse>());
+            var serviceResponse = new Ism.PatientInfoEngine.V1.Protos.SearchResponse();
+            serviceResponse.UpdatedPatList.Add(patientRecords);
+
+            foreach (var item in serviceResponse.UpdatedPatList)
+            {
+                item.Patient.Dob = new Ism.PatientInfoEngine.V1.Protos.FixedDateMessage()
+                {
+                    Year = DateTime.Now.Year,
+                    Month = DateTime.Now.Month,
+                    Day = DateTime.Now.Day
+                };
+            }
+
+            _pieService.Setup(mock => mock.Search(It.IsAny<Ism.PatientInfoEngine.V1.Protos.SearchRequest>())).ReturnsAsync(serviceResponse);
 
             var actionResult = _manager.Search(filter);
 
             _pieService.Verify(mock => mock.Search(It.IsAny<Ism.PatientInfoEngine.V1.Protos.SearchRequest>()), Times.Once);
 
-            Assert.IsNotNull(response);
+            Assert.AreEqual(actionResult.Result.Count, filter.Limit); 
+            Assert.IsNotNull(actionResult);
         }
     }
 }

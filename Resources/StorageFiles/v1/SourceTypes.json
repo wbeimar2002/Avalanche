@@ -1,0 +1,19 @@
+{
+  "Items": [
+    {
+      "TranslationKey": null,
+      "Id": "0",
+      "Value": "Default"
+    },
+    {
+      "TranslationKey": null,
+      "Id": "1",
+      "Value": "Active Source"
+    },
+    {
+      "TranslationKey": null,
+      "Id": "1",
+      "Value": "Checklist PDF"
+    }
+  ]
+}
