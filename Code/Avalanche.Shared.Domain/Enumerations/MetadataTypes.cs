@@ -7,9 +7,7 @@ namespace Avalanche.Shared.Domain.Enumerations
     public enum MetadataTypes
     {
         Sex,
-        ProcedureTypes,
         ContentTypes,
-        SourceTypes,
-        Departments,
+        SourceTypes
     }
 }

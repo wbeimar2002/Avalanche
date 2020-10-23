@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
+using Avalanche.Api.Extensions;
 using Avalanche.Api.Managers.Settings;
 using Avalanche.Api.ViewModels;
 using Avalanche.Shared.Domain.Models;
@@ -46,14 +47,7 @@ namespace Avalanche.Api.Controllers.V1
             {
                 _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
 
-                var user = new Avalanche.Shared.Domain.Models.User()
-                {
-                    Id = User.FindFirst("Id")?.Value,
-                    FirstName = User.FindFirst("FirstName")?.Value,
-                    LastName = User.FindFirst("LastName")?.Value,
-                };
-
-                var response = await _settingsManager.GetVideoRoutingSettingsAsync(user);
+                var response = await _settingsManager.GetVideoRoutingSettingsAsync(User.GetUser());
                 return Ok(response);
             }
             catch (Exception exception)
@@ -78,14 +72,7 @@ namespace Avalanche.Api.Controllers.V1
             {
                 _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
 
-                var user = new Avalanche.Shared.Domain.Models.User()
-                {
-                    Id = User.FindFirst("Id")?.Value,
-                    FirstName = User.FindFirst("FirstName")?.Value,
-                    LastName = User.FindFirst("LastName")?.Value,
-                };
-
-                var response = await _settingsManager.GetSetupSettingsAsync(user);
+                var response = await _settingsManager.GetSetupSettingsAsync(User.GetUser());
                 return Ok(response);
             }
             catch (Exception exception)

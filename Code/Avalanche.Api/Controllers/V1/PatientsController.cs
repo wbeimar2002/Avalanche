@@ -5,6 +5,7 @@ using System.Net;
 using System.Security;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using Avalanche.Api.Extensions;
 using Avalanche.Api.Managers.Health;
 using Avalanche.Api.ViewModels;
 using Avalanche.Shared.Domain.Models;
@@ -46,14 +47,7 @@ namespace Avalanche.Api.Controllers.V1
             {
                 _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
 
-                var user = new Avalanche.Shared.Domain.Models.User()
-                {
-                    Id = User.FindFirst("Id")?.Value,
-                    FirstName = User.FindFirst("FirstName")?.Value,
-                    LastName = User.FindFirst("LastName")?.Value,
-                };
-
-                var patientRegistered = await _patientsManager.RegisterPatient(newPatient, user);
+                var patientRegistered = await _patientsManager.RegisterPatient(newPatient, User.GetUser());
                 
                 return new ObjectResult(patientRegistered) { StatusCode = StatusCodes.Status201Created };
             }
@@ -123,14 +117,7 @@ namespace Avalanche.Api.Controllers.V1
             {
                 _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
 
-                var user = new Avalanche.Shared.Domain.Models.User()
-                {
-                    Id = User.FindFirst("Id")?.Value,
-                    FirstName = User.FindFirst("FirstName")?.Value,
-                    LastName = User.FindFirst("LastName")?.Value,
-                };
-
-                var newPatient = await _patientsManager.QuickPatientRegistration(user);
+                var newPatient = await _patientsManager.QuickPatientRegistration(User.GetUser());
 
                 return new ObjectResult(newPatient) { StatusCode = StatusCodes.Status201Created };
             }

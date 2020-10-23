@@ -37,6 +37,7 @@ using static Ism.PgsTimeout.V1.Protos.PgsTimeout;
 using static Ism.Recorder.Core.V1.Protos.Recorder;
 using static Ism.Routing.V1.Protos.Routing;
 using static Ism.Storage.Core.Configuration.V1.Protos.ConfigurationService;
+using static Ism.Storage.Core.DataManagement.V1.Protos.DataManagementStorage;
 using static Ism.Storage.Core.PatientList.V1.Protos.PatientListStorage;
 using static Ism.Streaming.V1.Protos.WebRtcStreamer;
 
@@ -84,13 +85,13 @@ namespace Avalanche.Api
             services.AddSingleton<IMediaManager, MediaManager>();
             services.AddSingleton<IPieService, PieService>();
             services.AddSingleton<ISettingsService, SettingsService>();
-            services.AddSingleton<IStorageService, StorageService>();
             services.AddSingleton<IBroadcastService, BroadcastService>();
             services.AddSingleton<INotificationsManager, NotificationsManager>();
             services.AddSingleton<IRoutingService, RoutingService>();
             services.AddSingleton<IAvidisService, AvidisService>();
-            services.AddSingleton<IRecorderService, RecorderService>();
+            services.AddSingleton<IRecorderService, RecorderService>(); 
             services.AddSingleton<ICertificateProvider>(new FileSystemCertificateProvider(grpcCertificate, grpcPassword, grpcServerValidationCertificate));
+            services.AddSingleton<IGrpcClientFactory<DataManagementStorageClient>, GrpcClientFactory<DataManagementStorageClient>>();
             services.AddSingleton<IGrpcClientFactory<PatientListServiceClient>, GrpcClientFactory<PatientListServiceClient>>();
             services.AddSingleton<IGrpcClientFactory<PatientListStorageClient>, GrpcClientFactory<PatientListStorageClient>>();
             services.AddSingleton<IGrpcClientFactory<RecorderClient>, GrpcClientFactory<RecorderClient>>();

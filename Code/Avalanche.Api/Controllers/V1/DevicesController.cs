@@ -1,4 +1,5 @@
-﻿using Avalanche.Api.Managers.Devices;
+﻿using Avalanche.Api.Extensions;
+using Avalanche.Api.Managers.Devices;
 using Avalanche.Api.ViewModels;
 using Avalanche.Shared.Domain.Enumerations;
 using Avalanche.Shared.Domain.Models;
@@ -44,14 +45,7 @@ namespace Avalanche.Api.Controllers.V1
             {
                 _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
 
-                var user = new Avalanche.Shared.Domain.Models.User()
-                {
-                    Id = User.FindFirst("Id")?.Value,
-                    FirstName = User.FindFirst("FirstName")?.Value,
-                    LastName = User.FindFirst("LastName")?.Value,
-                };
-
-                command.User = user;
+                command.User = User.GetUser();
 
                 var result = await _devicesManager.SendCommand(command);
 

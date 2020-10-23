@@ -91,23 +91,6 @@ namespace Avalanche.Api.Tests.Controllers
         }
 
         [Test]
-        public void GetProcedureTypesShouldReturnBadResultIfFails()
-        {
-            _metadataManager.Setup(mock => mock.GetMetadata(MetadataTypes.ProcedureTypes, It.IsAny<User>())).Throws(It.IsAny<Exception>());
-
-            var badResult = _controller.GetProcedureTypes(_environment.Object);
-
-            if (_checkLogger)
-            {
-                _appLoggerService.Verify(LogLevel.Error, $"Exception {_controller.GetType().Name}.GetProcedureTypes", Times.Once());
-                _appLoggerService.Verify(LogLevel.Debug, $"Requested {_controller.GetType().Name}.GetProcedureTypes", Times.Once());
-                _appLoggerService.Verify(LogLevel.Debug, $"Completed {_controller.GetType().Name}.GetProcedureTypes", Times.Once());
-            }
-
-            Assert.IsInstanceOf<BadRequestObjectResult>(badResult.Result);
-        }
-
-        [Test]
         public void GetContentTypesShouldReturnOkResult()
         {
             var okResult = _controller.GetContentTypes(_environment.Object);
@@ -184,23 +167,6 @@ namespace Avalanche.Api.Tests.Controllers
             }
 
             Assert.IsInstanceOf<OkObjectResult>(okResult.Result);
-        }
-
-        [Test]
-        public void GetDepartmentsShouldReturnBadResultIfFails()
-        {
-            _metadataManager.Setup(mock => mock.GetMetadata(MetadataTypes.Departments, It.IsAny<User>())).Throws(It.IsAny<Exception>());
-
-            var badResult = _controller.GetDepartments(_environment.Object);
-
-            if (_checkLogger)
-            {
-                _appLoggerService.Verify(LogLevel.Error, $"Exception {_controller.GetType().Name}.GetDepartments", Times.Once());
-                _appLoggerService.Verify(LogLevel.Debug, $"Requested {_controller.GetType().Name}.GetDepartments", Times.Once());
-                _appLoggerService.Verify(LogLevel.Debug, $"Completed {_controller.GetType().Name}.GetDepartments", Times.Once());
-            }
-
-            Assert.IsInstanceOf<BadRequestObjectResult>(badResult.Result);
         }
     }
 }

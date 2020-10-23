@@ -62,6 +62,7 @@ services:
       pieServiceAddress: 'patientInfoEngine'
       pieServiceGrpcPort: '9089'
       storageServiceGrpcPort: '5012'
+      dataManagementGrpcPort: '5012'
       grpcCertificate: '/certificates/grpc_localhost_root_l1.pfx' 
       grpcPassword: '0123456789'
       grpcServerValidationCertificate: '/certificates/grpc_localhost_root_l1.cer'

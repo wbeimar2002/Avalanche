@@ -39,10 +39,7 @@ namespace Avalanche.Api.Services.Configuration
 
             var WebRTCGrpcPort = _configurationService.GetEnvironmentVariable("WebRTCGrpcPort");
             var PgsTimeoutGrpcPort = _configurationService.GetEnvironmentVariable("PgsTimeoutGrpcPort");
-            var grpcCertificate = _configurationService.GetEnvironmentVariable("grpcCertificate");
-            var grpcPassword = _configurationService.GetEnvironmentVariable("grpcPassword");
 
-            var certificate = new X509Certificate2(grpcCertificate, grpcPassword);
             UseMocks = true;
 
             if (UseMocks)
@@ -71,8 +68,6 @@ namespace Avalanche.Api.Services.Configuration
                 grpcPgsClientFactory = mockPgs.Object;
             }
 
-
-            //Client = ClientHelper.GetSecureClient<WebRtcStreamer.WebRtcStreamerClient>($"https://{hostIpAddress}:{WebRTCGrpcPort}", certificate);
             PgsTimeoutClient = new PgsTimeoutSecureClient(grpcPgsClientFactory, _hostIpAddress, PgsTimeoutGrpcPort, certificateProvider); 
         }
 

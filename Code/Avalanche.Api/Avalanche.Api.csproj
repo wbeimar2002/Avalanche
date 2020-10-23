@@ -27,7 +27,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Remove="Protos\WebRtcServiceExtensions.cs" />
+    <Compile Remove="Services\Configuration\StorageService.cs" />
   </ItemGroup>
 
   <ItemGroup>
@@ -78,12 +78,19 @@
     <Reference Include="Ism.Log.Common.Core">
       <HintPath>..\HackyDllDumpingGround\Ism.Log.Common.Core.dll</HintPath>
     </Reference>
+    <Reference Include="Ism.Storage.DataManagement.Client">
+      <HintPath>..\..\..\AvalancheStorage\Ism.Storage.DataManagement.Client\bin\Debug\netstandard2.1\Ism.Storage.DataManagement.Client.dll</HintPath>
+    </Reference>
   </ItemGroup>
 
   <ItemGroup>
     <None Update="Avalanche.Api.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Services\Data\" />
   </ItemGroup>
 
 </Project>
