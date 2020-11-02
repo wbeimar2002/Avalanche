@@ -49,9 +49,6 @@ namespace Avalanche.Api.Services.Media
                 grpcClientFactory = mockFactory.Object;
             }
 
-
-            //Client = ClientHelper.GetSecureClient<WebRtcStreamer.WebRtcStreamerClient>($"https://{hostIpAddress}:{mediaServiceGrpcPort}", certificate);
-            //RecorderClient = ClientHelper.GetInsecureClient<Recorder.RecorderClient>($"https://{_hostIpAddress}:{mediaServiceGrpcPort}");
             RecorderClient = new RecorderSecureClient(grpcClientFactory, hostIpAddress, mediaServiceGrpcPort, certificateProvider);
         }
 

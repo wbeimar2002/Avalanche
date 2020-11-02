@@ -3,6 +3,7 @@ using Avalanche.Api.ViewModels;
 using Avalanche.Shared.Domain.Models;
 using Google.Protobuf.WellKnownTypes;
 using Ism.Common.Core.Configuration.Models;
+using Ism.Storage.Core.DataManagement.V1.Protos;
 using System;
 
 namespace Avalanche.Api.MappingConfigurations
@@ -11,6 +12,39 @@ namespace Avalanche.Api.MappingConfigurations
     {
         public PieMappingConfigurations()
         {
+            CreateMap<DepartmentMessage, Department>();
+            CreateMap<ProcedureTypeMessage, ProcedureType>();
+
+            CreateMap<Department, AddDepartmentRequest>()
+                .ForPath(dest =>
+                    dest.Department.Name,
+                    opt => opt.MapFrom(src => src.Name))
+                .ReverseMap();
+
+            CreateMap<ProcedureType, AddProcedureTypeRequest>()
+                .ForPath(dest =>
+                    dest.ProcedureType.Name,
+                    opt => opt.MapFrom(src => src.Name))
+                .ForPath(dest =>
+                    dest.ProcedureType.Department,
+                    opt => opt.MapFrom(src => src.Department))
+                .ReverseMap();
+
+            CreateMap<AddDepartmentResponse, Department>()
+                .ForMember(dest =>
+                    dest.Name,
+                    opt => opt.MapFrom(src => src.Department.Name))
+                .ReverseMap();
+
+            CreateMap<AddProcedureTypeResponse, ProcedureType>()
+                .ForMember(dest =>
+                    dest.Name,
+                    opt => opt.MapFrom(src => src.ProcedureType.Name))
+                .ForMember(dest =>
+                    dest.Department,
+                    opt => opt.MapFrom(src => src.ProcedureType.Department))
+                .ReverseMap();
+
             CreateMap < Avalanche.Shared.Domain.Models.User, ConfigurationContext>()
                 .ForMember(dest =>
                     dest.IdnId,

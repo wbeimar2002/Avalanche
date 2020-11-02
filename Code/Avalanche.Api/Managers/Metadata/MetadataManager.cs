@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Avalanche.Api.Services.Configuration;
+using Avalanche.Api.Services.Health;
 using Avalanche.Api.ViewModels;
 using Avalanche.Shared.Domain.Models;
 using Avalanche.Shared.Infrastructure.Services.Settings;
@@ -20,29 +21,18 @@ namespace Avalanche.Api.Managers.Metadata
         readonly ISettingsService _settingsService;
         readonly IMapper _mapper;
 
-        readonly IConfigurationService _configurationService;
-        readonly string _hostIpAddress;
-        readonly string _dataManagementGrpcPort;
-
-        DataManagementStorageSecureClient DataManagementStorageClient { get; set; }
+        readonly IDataManagementService _dataManagementService;
 
 
         public MetadataManager(IStorageService storageService,
-            IGrpcClientFactory<DataManagementStorageClient> grpcClientFactory, 
-            ICertificateProvider certificateProvider,
-            IConfigurationService configurationService,
+            IDataManagementService dataManagementService,
             ISettingsService settingsService,
             IMapper mapper)
         {
-            _configurationService = configurationService;
+            _dataManagementService = dataManagementService;
             _storageService = storageService;
             _settingsService = settingsService;
             _mapper = mapper;
-
-            _hostIpAddress = _configurationService.GetEnvironmentVariable("hostIpAddress");
-            _dataManagementGrpcPort = _configurationService.GetEnvironmentVariable("dataManagementGrpcPort");
-
-            DataManagementStorageClient = new DataManagementStorageSecureClient(grpcClientFactory, _hostIpAddress, _dataManagementGrpcPort, certificateProvider);
         }
 
         public async Task<List<KeyValuePairViewModel>> GetMetadata(Shared.Domain.Enumerations.MetadataTypes type, Avalanche.Shared.Domain.Models.User user)
@@ -73,19 +63,19 @@ namespace Avalanche.Api.Managers.Metadata
 
         public async Task<Department> AddDepartment(Department department)
         {
-            var result = await DataManagementStorageClient.AddDepartment(new Ism.Storage.Core.DataManagement.V1.Protos.AddDepartmentRequest());
+            var result = await _dataManagementService.AddDepartment(_mapper.Map<Department, AddDepartmentRequest>(department));
             return _mapper.Map<AddDepartmentResponse, Department>(result);
         }
 
         public async Task DeleteDepartment(string departmentName)
         {
-            await DataManagementStorageClient.DeleteDepartment(new Ism.Storage.Core.DataManagement.V1.Protos.DeleteDepartmentRequest());
+            await _dataManagementService.DeleteDepartment(new Ism.Storage.Core.DataManagement.V1.Protos.DeleteDepartmentRequest() { DepartmentName = departmentName });
         }
 
         public async Task<List<Department>> GetAllDepartments()
         {
             
-            var result = await DataManagementStorageClient.GetAllDepartments(new Google.Protobuf.WellKnownTypes.Empty());
+            var result = await _dataManagementService.GetAllDepartments();
 
             //TODO: Validate Why not order this? When viewed on the front end Department List shall be displayed in alphabetical order.  
             //Does not require sorting on the backend.
@@ -95,7 +85,7 @@ namespace Avalanche.Api.Managers.Metadata
 
         public async Task<ProcedureType> AddProcedureType(ProcedureType procedureType)
         {
-            var result = await DataManagementStorageClient.AddProcedureType(new Ism.Storage.Core.DataManagement.V1.Protos.AddProcedureTypeRequest());
+            var result = await _dataManagementService.AddProcedureType(_mapper.Map<ProcedureType, AddProcedureTypeRequest>(procedureType));
             return _mapper.Map<AddProcedureTypeResponse, ProcedureType>(result);
         }
 
@@ -103,14 +93,18 @@ namespace Avalanche.Api.Managers.Metadata
         {
             await ValidateDepartmentSupport(user, departmentName);
 
-            await DataManagementStorageClient.DeleteProcedureType(new Ism.Storage.Core.DataManagement.V1.Protos.DeleteProcedureTypeRequest());
+            await _dataManagementService.DeleteProcedureType(new Ism.Storage.Core.DataManagement.V1.Protos.DeleteProcedureTypeRequest()
+            {
+                DepartmentName = departmentName,
+                ProcedureTypeName = procedureTypeName
+            });
         }
 
         public async Task<List<ProcedureType>> GetProceduresByDepartment(Avalanche.Shared.Domain.Models.User user, string departmentName = null)
         {
             await ValidateDepartmentSupport(user, departmentName);
 
-            var result = await DataManagementStorageClient.GetProceduresByDepartment(new Ism.Storage.Core.DataManagement.V1.Protos.GetProceduresByDepartmentRequest()
+            var result = await _dataManagementService.GetProceduresByDepartment(new Ism.Storage.Core.DataManagement.V1.Protos.GetProceduresByDepartmentRequest()
             {
                 DepartmentName = departmentName
             });
