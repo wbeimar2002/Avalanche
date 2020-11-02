@@ -86,11 +86,16 @@ namespace Avalanche.Api.Managers.Devices
         {
 #warning TODO: determine sourcing of this info.
             // NOTE: it seems a bit awkward for the UI/API to need to know and/or generate this? Especially "libId"? 
+
+            var now = DateTime.UtcNow;
+            var libId = $"{now.Year}_{now.Month}_{now.Day}T{now.Hour}_{now.Minute}_{now.Second}";
+
             var message = new RecordMessage
             {
-                LibId = string.Empty,
-                RepositoryId = string.Empty
+                LibId = libId,
+                RepositoryId = Guid.NewGuid().ToString()
             };
+
             await _recorderService.StartRecording(message);
             return new CommandResponse(command.Device);
         }
