@@ -187,7 +187,7 @@ namespace Avalanche.Api.Controllers.V1
         }
 
         [HttpDelete("departments/{departmentName}")]
-        public async Task<IActionResult> AddDepartment(string departmentName, [FromServices] IWebHostEnvironment env)
+        public async Task<IActionResult> DeleteDepartment(string departmentName, [FromServices] IWebHostEnvironment env)
         {
             try
             {
@@ -265,7 +265,7 @@ namespace Avalanche.Api.Controllers.V1
             {
                 _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
 
-                var result = await _metadataManager.AddProcedureType(procedureType);
+                var result = await _metadataManager.AddProcedureType(User.GetUser(), procedureType);
                 return Ok(result);
             }
             catch (Exception exception)
@@ -286,7 +286,10 @@ namespace Avalanche.Api.Controllers.V1
             {
                 _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
 
-                await _metadataManager.DeleteProcedureType(User.GetUser(), procedureTypeName);
+                await _metadataManager.DeleteProcedureType(User.GetUser(), new ProcedureType()
+                {
+                    Name = procedureTypeName
+                });
 
                 return Ok();
             }
@@ -308,7 +311,11 @@ namespace Avalanche.Api.Controllers.V1
             {
                 _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
 
-                await _metadataManager.DeleteProcedureType(User.GetUser(), procedureTypeName, departmentName);
+                await _metadataManager.DeleteProcedureType(User.GetUser(), new ProcedureType()
+                {
+                    Department = departmentName,
+                    Name = procedureTypeName
+                });
 
                 return Ok();
             }

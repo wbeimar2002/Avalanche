@@ -37,15 +37,6 @@ namespace Avalanche.Api.Managers.Metadata
 
         public async Task<List<KeyValuePairViewModel>> GetMetadata(Shared.Domain.Enumerations.MetadataTypes type, Avalanche.Shared.Domain.Models.User user)
         {
-            /*
-             *  The user shall be warned if they attempt to Add a Department with a duplicate name.
-                Deleting a Department shall also Delete all related Procedure Types for that Department.
-                When viewed on the front end Department List shall be displayed in alphabetical order.  Does not require sorting on the backend.
-
-                Procedure Type, optionally, may have a child relationship to a Department.  If no Department is selected then Procedure Types without a Department are shown.
-                Procedure Type.Name must be unique for the related Department.  
-                The user shall be warned if they attempt to enter a Procedure Type with a duplicate name.
-             */
             var configurationContext = _mapper.Map<Avalanche.Shared.Domain.Models.User, ConfigurationContext>(user);
 
             switch (type)
@@ -69,35 +60,30 @@ namespace Avalanche.Api.Managers.Metadata
 
         public async Task DeleteDepartment(string departmentName)
         {
-            await _dataManagementService.DeleteDepartment(new Ism.Storage.Core.DataManagement.V1.Protos.DeleteDepartmentRequest() { DepartmentName = departmentName });
+            await _dataManagementService.DeleteDepartment(new DeleteDepartmentRequest() { DepartmentName = departmentName });
         }
 
         public async Task<List<Department>> GetAllDepartments()
         {
-            
             var result = await _dataManagementService.GetAllDepartments();
 
-            //TODO: Validate Why not order this? When viewed on the front end Department List shall be displayed in alphabetical order.  
-            //Does not require sorting on the backend.
             return _mapper.Map<IList<DepartmentMessage>, IList<Department>>(result.DepartmentList)
                 .OrderBy(d => d.Name).ToList();
         }
 
-        public async Task<ProcedureType> AddProcedureType(ProcedureType procedureType)
+        public async Task<ProcedureType> AddProcedureType(Avalanche.Shared.Domain.Models.User user, ProcedureType procedureType)
         {
+            await ValidateDepartmentSupport(user, procedureType.Department);
+
             var result = await _dataManagementService.AddProcedureType(_mapper.Map<ProcedureType, AddProcedureTypeRequest>(procedureType));
             return _mapper.Map<AddProcedureTypeResponse, ProcedureType>(result);
         }
 
-        public async Task DeleteProcedureType(Avalanche.Shared.Domain.Models.User user, string procedureTypeName, string departmentName = null)
+        public async Task DeleteProcedureType(Avalanche.Shared.Domain.Models.User user, ProcedureType procedureType)
         {
-            await ValidateDepartmentSupport(user, departmentName);
+            await ValidateDepartmentSupport(user, procedureType.Department);
 
-            await _dataManagementService.DeleteProcedureType(new Ism.Storage.Core.DataManagement.V1.Protos.DeleteProcedureTypeRequest()
-            {
-                DepartmentName = departmentName,
-                ProcedureTypeName = procedureTypeName
-            });
+            await _dataManagementService.DeleteProcedureType(_mapper.Map<ProcedureType, DeleteProcedureTypeRequest>(procedureType));
         }
 
         public async Task<List<ProcedureType>> GetProceduresByDepartment(Avalanche.Shared.Domain.Models.User user, string departmentName = null)
@@ -117,12 +103,15 @@ namespace Avalanche.Api.Managers.Metadata
             var configurationContext = _mapper.Map<Avalanche.Shared.Domain.Models.User, ConfigurationContext>(user);
             var setupSettings = await _settingsService.GetSetupSettingsAsync(configurationContext);
 
-            //TODO: Check the strategy to throw business logic exceptions
+#warning TODO: Check the strategy to throw business logic exceptions
             if (setupSettings.DepartmentsSupported && string.IsNullOrEmpty(departmentName))
-                throw new System.Exception("Departments value is invalid");
-
-            if (!setupSettings.DepartmentsSupported && !string.IsNullOrEmpty(departmentName))
-                throw new System.Exception("Departments is not supported");
+            {
+                throw new System.ArgumentNullException("Department value is invalid. It should not be null.");
+            }
+            else if (!string.IsNullOrEmpty(departmentName))
+            { 
+                    throw new System.ArgumentException("Department value is invalid. Departments are not supported.");
+            }                
         }
     }
 }

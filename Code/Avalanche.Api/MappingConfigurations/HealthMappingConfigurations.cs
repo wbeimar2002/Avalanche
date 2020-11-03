@@ -8,12 +8,39 @@ using System;
 
 namespace Avalanche.Api.MappingConfigurations
 {
-    public class PieMappingConfigurations : Profile
+    public class HealthMappingConfigurations : Profile
     {
-        public PieMappingConfigurations()
+        public HealthMappingConfigurations()
         {
-            CreateMap<DepartmentMessage, Department>();
-            CreateMap<ProcedureTypeMessage, ProcedureType>();
+            CreateMap<ProcedureType, DeleteProcedureTypeRequest>()
+                .ForMember(dest =>
+                    dest.DepartmentName,
+                    opt => opt.MapFrom(src => src.Department))
+                .ForMember(dest =>
+                    dest.ProcedureTypeName,
+                    opt => opt.MapFrom(src => src.Name))
+                .ReverseMap();
+
+            CreateMap<DepartmentMessage, Department>()
+                .ForMember(dest =>
+                    dest.Name,
+                    opt => opt.MapFrom(src => src.Name))
+                .ForMember(dest =>
+                    dest.IsNew,
+                    opt => opt.Ignore())
+                .ReverseMap();
+
+            CreateMap<ProcedureTypeMessage, ProcedureType>()
+                .ForMember(dest =>
+                    dest.Name,
+                    opt => opt.MapFrom(src => src.Name))
+                .ForMember(dest =>
+                    dest.Department,
+                    opt => opt.MapFrom(src => src.Department))
+                .ForMember(dest =>
+                    dest.IsNew,
+                    opt => opt.Ignore())
+                .ReverseMap();
 
             CreateMap<Department, AddDepartmentRequest>()
                 .ForPath(dest =>
@@ -34,6 +61,9 @@ namespace Avalanche.Api.MappingConfigurations
                 .ForMember(dest =>
                     dest.Name,
                     opt => opt.MapFrom(src => src.Department.Name))
+                .ForMember(dest =>
+                    dest.IsNew,
+                    opt => opt.MapFrom(src => src.IsNew))
                 .ReverseMap();
 
             CreateMap<AddProcedureTypeResponse, ProcedureType>()
@@ -43,6 +73,9 @@ namespace Avalanche.Api.MappingConfigurations
                 .ForMember(dest =>
                     dest.Department,
                     opt => opt.MapFrom(src => src.ProcedureType.Department))
+                .ForMember(dest =>
+                    dest.IsNew,
+                    opt => opt.MapFrom(src => src.IsNew))
                 .ReverseMap();
 
             CreateMap < Avalanche.Shared.Domain.Models.User, ConfigurationContext>()

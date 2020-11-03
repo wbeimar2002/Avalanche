@@ -53,7 +53,7 @@ namespace Avalanche.Api.Tests.Managers
         {
             _mapperConfiguration = new MapperConfiguration(cfg =>
             {
-                cfg.AddProfile(new PieMappingConfigurations());
+                cfg.AddProfile(new HealthMappingConfigurations());
                 cfg.AddProfile(new VideoRoutingMappingConfigurations());
                 cfg.AddProfile(new MediaMappingConfigurations());
             });

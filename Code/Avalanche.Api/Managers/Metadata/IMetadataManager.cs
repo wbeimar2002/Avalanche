@@ -11,8 +11,8 @@ namespace Avalanche.Api.Managers.Metadata
         Task<Department> AddDepartment(Department department);
         Task DeleteDepartment(string departmentName);
         Task<List<Department>> GetAllDepartments();
-        Task<ProcedureType> AddProcedureType(ProcedureType procedureType);
-        Task DeleteProcedureType(Avalanche.Shared.Domain.Models.User user, string procedureTypeName, string departmentName = null);
+        Task<ProcedureType> AddProcedureType(Avalanche.Shared.Domain.Models.User user, ProcedureType procedureType);
+        Task DeleteProcedureType(Avalanche.Shared.Domain.Models.User user, ProcedureType procedureType);
         Task<List<ProcedureType>> GetProceduresByDepartment(Avalanche.Shared.Domain.Models.User user, string departmentName = null);
     }
 }

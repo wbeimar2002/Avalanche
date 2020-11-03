@@ -42,7 +42,7 @@ namespace Avalanche.Api.Tests.Controllers
         [Test]
         public void SendCommandReturnOkResult()
         {
-            var okResult = _controller.SendCommand(It.IsAny<CommandViewModel>(), _environment.Object);
+            var okResult = _controller.SendCommand(new CommandViewModel(), _environment.Object);
 
             if (_checkLogger)
             {

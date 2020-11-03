@@ -39,7 +39,7 @@ namespace Avalanche.Api.Tests.Managers
 
             var config = new MapperConfiguration(cfg =>
             {
-                cfg.AddProfile(new PieMappingConfigurations());
+                cfg.AddProfile(new HealthMappingConfigurations());
             });
 
             _mapper = config.CreateMapper();
