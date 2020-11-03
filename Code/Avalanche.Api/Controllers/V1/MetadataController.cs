@@ -48,7 +48,7 @@ namespace Avalanche.Api.Controllers.V1
             {
                 _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
 
-                var result = await _metadataManager.GetMetadata(Shared.Domain.Enumerations.MetadataTypes.ContentTypes, User.GetUser());
+                var result = await _metadataManager.GetMetadata(User.GetUser(), Shared.Domain.Enumerations.MetadataTypes.ContentTypes);
                 return Ok(result);
             }
             catch (Exception exception)
@@ -97,7 +97,7 @@ namespace Avalanche.Api.Controllers.V1
             {
                 _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
 
-                var result = await _metadataManager.GetMetadata(Shared.Domain.Enumerations.MetadataTypes.Sex, User.GetUser());
+                var result = await _metadataManager.GetMetadata(User.GetUser(), Shared.Domain.Enumerations.MetadataTypes.Sex);
                 return Ok(result);
             }
             catch (Exception exception)
@@ -122,7 +122,7 @@ namespace Avalanche.Api.Controllers.V1
             {
                 _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
 
-                var result = await _metadataManager.GetMetadata(Shared.Domain.Enumerations.MetadataTypes.SourceTypes, User.GetUser());
+                var result = await _metadataManager.GetMetadata(User.GetUser(), Shared.Domain.Enumerations.MetadataTypes.SourceTypes);
                 return Ok(result);
             }
             catch (Exception exception)
@@ -147,7 +147,7 @@ namespace Avalanche.Api.Controllers.V1
             {
                 _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
 
-                var result = await _metadataManager.GetAllDepartments();
+                var result = await _metadataManager.GetAllDepartments(User.GetUser());
                 return Ok(result);
             }
             catch (Exception exception)
@@ -172,7 +172,7 @@ namespace Avalanche.Api.Controllers.V1
             {
                 _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
 
-                var result = await _metadataManager.AddDepartment(department);
+                var result = await _metadataManager.AddDepartment(User.GetUser(), department);
                 return Ok(result);
             }
             catch (Exception exception)
@@ -193,7 +193,7 @@ namespace Avalanche.Api.Controllers.V1
             {
                 _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
 
-                await _metadataManager.DeleteDepartment(departmentName);
+                await _metadataManager.DeleteDepartment(User.GetUser(), departmentName);
                 return Ok();
             }
             catch (Exception exception)

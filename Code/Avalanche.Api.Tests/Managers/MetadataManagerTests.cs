@@ -156,5 +156,35 @@ namespace Avalanche.Api.Tests.Managers
 
             Assert.That(Act, Throws.TypeOf<ArgumentNullException>());
         }
+
+        [Test]
+        public void AddDepartmentShouldFailIfDepartmentIsNotSupported()
+        {
+            var settingsDepartmentNotSupported = new SetupSettings()
+            {
+                DepartmentsSupported = false
+            };
+
+            _settingsService.Setup(mock => mock.GetSetupSettingsAsync(It.IsAny<ConfigurationContext>())).ReturnsAsync(settingsDepartmentNotSupported);
+
+            Task Act() => _manager.AddDepartment(It.IsAny<User>(), It.IsAny<Department>());
+
+            Assert.That(Act, Throws.TypeOf<InvalidOperationException>());
+        }
+
+        [Test]
+        public void DeleteDepartmentShouldFailIfDepartmentIsNotSupported()
+        {
+            var settingsDepartmentNotSupported = new SetupSettings()
+            {
+                DepartmentsSupported = false
+            };
+
+            _settingsService.Setup(mock => mock.GetSetupSettingsAsync(It.IsAny<ConfigurationContext>())).ReturnsAsync(settingsDepartmentNotSupported);
+
+            Task Act() => _manager.DeleteDepartment(It.IsAny<User>(), "Sample Department");
+
+            Assert.That(Act, Throws.TypeOf<InvalidOperationException>());
+        }
     }
 }

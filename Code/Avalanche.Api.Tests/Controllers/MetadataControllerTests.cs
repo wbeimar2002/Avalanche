@@ -61,7 +61,7 @@ namespace Avalanche.Api.Tests.Controllers
         [Test]
         public void GetSexesShouldReturnBadResultIfFails()
         {
-            _metadataManager.Setup(mock => mock.GetMetadata(MetadataTypes.Sex, It.IsAny<User>())).Throws(It.IsAny<Exception>());
+            _metadataManager.Setup(mock => mock.GetMetadata(It.IsAny<User>(), MetadataTypes.Sex)).Throws(It.IsAny<Exception>());
 
             var badResult = _controller.GetSexes(_environment.Object);
 
@@ -93,7 +93,7 @@ namespace Avalanche.Api.Tests.Controllers
         [Test]
         public void GetContentTypesShouldReturnBadResultIfFails()
         {
-            _metadataManager.Setup(mock => mock.GetMetadata(MetadataTypes.ContentTypes, It.IsAny<User>())).Throws(It.IsAny<Exception>());
+            _metadataManager.Setup(mock => mock.GetMetadata(It.IsAny<User>(), MetadataTypes.ContentTypes)).Throws(It.IsAny<Exception>());
 
             var badResult = _controller.GetContentTypes(_environment.Object);
 
@@ -125,7 +125,7 @@ namespace Avalanche.Api.Tests.Controllers
         [Test]
         public void GetSourceTypesShouldReturnBadResultIfFails()
         {
-            _metadataManager.Setup(mock => mock.GetMetadata(MetadataTypes.SourceTypes, It.IsAny<User>())).Throws(It.IsAny<Exception>());
+            _metadataManager.Setup(mock => mock.GetMetadata(It.IsAny<User>(), MetadataTypes.SourceTypes)).Throws(It.IsAny<Exception>());
 
             var badResult = _controller.GetSourceTypes(_environment.Object);
 
@@ -157,7 +157,7 @@ namespace Avalanche.Api.Tests.Controllers
         [Test]
         public void GetDepartmentsShouldReturnBadResultIfFails()
         {
-            _metadataManager.Setup(mock => mock.GetAllDepartments()).Throws(It.IsAny<Exception>());
+            _metadataManager.Setup(mock => mock.GetAllDepartments(It.IsAny<User>())).Throws(It.IsAny<Exception>());
 
             var badResult = _controller.GetDepartments(_environment.Object);
 
