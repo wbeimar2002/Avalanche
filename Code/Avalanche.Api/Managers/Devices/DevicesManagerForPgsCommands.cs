@@ -1,4 +1,5 @@
-﻿using Avalanche.Shared.Domain.Enumerations;
+﻿using Avalanche.Api.Utilities;
+using Avalanche.Shared.Domain.Enumerations;
 using Avalanche.Shared.Domain.Models;
 using Avalanche.Shared.Infrastructure.Helpers;
 using Ism.Streaming.V1.Protos;
@@ -25,7 +26,10 @@ namespace Avalanche.Api.Managers.Devices
             var accessInfo = _accessInfoFactory.GenerateAccessInfo();
             command.AccessInformation = _mapper.Map<Ism.IsmLogCommon.Core.AccessInfo, AccessInfo>(accessInfo);
 
-            var actionResponse = await _mediaService.InitSessionAsync(_mapper.Map<Command, InitSessionRequest>(command));
+            var initRequest = _mapper.Map<Command, InitSessionRequest>(command);
+            SetInitRequestIpInfo(initRequest);
+
+            var actionResponse = await _mediaService.InitSessionAsync(initRequest);
 
             var response = new CommandResponse(command.Device)
             {
@@ -58,7 +62,10 @@ namespace Avalanche.Api.Managers.Devices
                 var accessInfo = _accessInfoFactory.GenerateAccessInfo();
                 command.AccessInformation = _mapper.Map<Ism.IsmLogCommon.Core.AccessInfo, AccessInfo>(accessInfo);
 
-                var actionResponse = await _mediaService.InitSessionAsync(_mapper.Map<Command, InitSessionRequest>(command));
+                var initRequest = _mapper.Map<Command, InitSessionRequest>(command);
+                SetInitRequestIpInfo(initRequest);
+
+                var actionResponse = await _mediaService.InitSessionAsync(initRequest);
 
                 var response = new CommandResponse(command.Device)
                 {
@@ -87,6 +94,19 @@ namespace Avalanche.Api.Managers.Devices
         {
             await _mediaService.DeInitSessionAsync(_mapper.Map<Command, DeInitSessionRequest>(command));
             return new CommandResponse(command.Device);
+        }
+
+        private void SetInitRequestIpInfo(InitSessionRequest initRequest)
+        {
+#warning FIX this: Correct solution depends on determining avalanche-web hosting model
+            // TODO: this is a hack to get local webrtc working until we implement a hosting strategy for the web application. 
+            //          - running via ng-serve means we will never get a correct remote IP as observed by AvalancheApi
+            initRequest.AccessInfo.Ip = "127.0.0.1";
+            // NOTE: "ExternalObservedIp" needs to be the IP address the browser contacts media service on. So:
+            //          - if the browser is running local, it should be 127.0.0.1. 
+            //          - If the browser is remote, it must be the external IP of the host.
+            //      - the following is probably ok for pgs streams requested directly from the box, since the "host" header is likely to only ever be localhost or the correct IP.
+            initRequest.ExternalObservedIp = HttpContextUtilities.GetHostAddress(_httpContextAccessor.HttpContext, true);
         }
     }
 }

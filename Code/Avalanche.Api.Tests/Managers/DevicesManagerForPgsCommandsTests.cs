@@ -7,16 +7,12 @@ using Avalanche.Api.Utilities;
 using Avalanche.Api.ViewModels;
 using Avalanche.Shared.Domain.Enumerations;
 using Avalanche.Shared.Domain.Models;
-using Avalanche.Shared.Infrastructure.Models;
-using Avalanche.Shared.Infrastructure.Services.Settings;
-using Castle.Core.Configuration;
-using Google.Protobuf.WellKnownTypes;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace Avalanche.Api.Tests.Managers
 {
@@ -60,8 +56,11 @@ namespace Avalanche.Api.Tests.Managers
 
             _mapper = _mapperConfiguration.CreateMapper();
 
+            Mock<IHttpContextAccessor> mockAccessor = new Mock<IHttpContextAccessor>();
+            mockAccessor.Setup(m => m.HttpContext.Request.Host).Returns(new HostString("localhost", 5000));
+
             _manager = new DevicesManager(_mediaService.Object, _settingsService.Object, _routingService.Object, _appLoggerService.Object,
-                _avidisService.Object, _recorderService.Object, _accessInfoFactory.Object, _mapper);
+                _avidisService.Object, _recorderService.Object, _accessInfoFactory.Object, _mapper, mockAccessor.Object);
         }
 
         [Test]

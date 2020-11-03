@@ -7,6 +7,7 @@ using Avalanche.Shared.Domain.Enumerations;
 using Avalanche.Shared.Domain.Models;
 using Avalanche.Shared.Infrastructure.Extensions;
 using Avalanche.Shared.Infrastructure.Helpers;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -25,6 +26,7 @@ namespace Avalanche.Api.Managers.Devices
         readonly ILogger<MediaManager> _appLoggerService;
         readonly IMapper _mapper;
         readonly IAccessInfoFactory _accessInfoFactory;
+        readonly IHttpContextAccessor _httpContextAccessor;
 
         public DevicesManager(IMediaService mediaService,
             ISettingsService settingsService,
@@ -33,7 +35,8 @@ namespace Avalanche.Api.Managers.Devices
             IAvidisService avidisService,
             IRecorderService recorderService,
             IAccessInfoFactory accessInfoFactory,
-            IMapper mapper)
+            IMapper mapper,
+            IHttpContextAccessor httpContextAccessor)
         {
             _recorderService = recorderService;
             _avidisService = avidisService;
@@ -43,6 +46,7 @@ namespace Avalanche.Api.Managers.Devices
             _appLoggerService = appLoggerService;
             _accessInfoFactory = accessInfoFactory;
             _mapper = mapper;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         public async Task<List<CommandResponse>> SendCommand(CommandViewModel command)
