@@ -3,15 +3,11 @@ using Avalanche.Api.Services.Configuration;
 using Avalanche.Api.Services.Health;
 using Avalanche.Api.ViewModels;
 using Avalanche.Shared.Domain.Models;
-using Avalanche.Shared.Infrastructure.Services.Settings;
 using Ism.Common.Core.Configuration.Models;
-using Ism.Security.Grpc.Interfaces;
 using Ism.Storage.Core.DataManagement.V1.Protos;
-using Ism.Storage.DataManagement.Client;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using static Ism.Storage.Core.DataManagement.V1.Protos.DataManagementStorage;
 
 namespace Avalanche.Api.Managers.Metadata
 {
@@ -104,12 +100,14 @@ namespace Avalanche.Api.Managers.Metadata
             var setupSettings = await _settingsService.GetSetupSettingsAsync(configurationContext);
 
 #warning TODO: Check the strategy to throw business logic exceptions
-            if (setupSettings.DepartmentsSupported && string.IsNullOrEmpty(departmentName))
+            if (setupSettings.DepartmentsSupported)
             {
-                throw new System.ArgumentNullException("Department value is invalid. It should not be null.");
+                if (string.IsNullOrEmpty(departmentName))
+                    throw new System.ArgumentNullException("Department value is invalid. It should not be null.");
             }
-            else if (!string.IsNullOrEmpty(departmentName))
-            { 
+            else 
+            {
+                if (!string.IsNullOrEmpty(departmentName))
                     throw new System.ArgumentException("Department value is invalid. Departments are not supported.");
             }                
         }
