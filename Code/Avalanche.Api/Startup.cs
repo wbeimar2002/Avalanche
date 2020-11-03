@@ -200,12 +200,13 @@ namespace Avalanche.Api
                 builder =>
                 {
                     builder
-                        .WithOrigins("http://localhost:4200")
-                        .WithHeaders(new[] { "authorization", "content-type", "accept" })
-                        .WithMethods(new[] { "GET", "POST", "PUT", "DELETE", "OPTIONS" })
-                        //.AllowAnyOrigin()
-                        //.AllowAnyMethod()
-                        .AllowCredentials();
+                        //.WithOrigins("http://localhost:4200")
+                        //.WithHeaders(new[] { "authorization", "content-type", "accept" })
+                        //.WithMethods(new[] { "GET", "POST", "PUT", "DELETE", "OPTIONS" })
+                        .AllowAnyOrigin()
+                        .AllowAnyMethod()
+                        .AllowAnyHeader();
+                        //.AllowCredentials();
                 });
             });
         }

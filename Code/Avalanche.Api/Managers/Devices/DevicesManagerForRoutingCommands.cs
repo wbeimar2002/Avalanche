@@ -93,7 +93,9 @@ namespace Avalanche.Api.Managers.Devices
             var message = new RecordMessage
             {
                 LibId = libId,
-                RepositoryId = Guid.NewGuid().ToString()
+                //RepositoryId = Guid.NewGuid().ToString()
+                // TODO: hardcoding for the demo
+                RepositoryId = "cache"
             };
 
             await _recorderService.StartRecording(message);
