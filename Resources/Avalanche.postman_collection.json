@@ -1022,7 +1022,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\"name\":\"procTypeSample\",\"department\":\"departmentSample\"}"
+							"raw": "{\"name\":\"procTypeSample\",\"department\":\"notExist\"}"
 						},
 						"url": {
 							"raw": "https://localhost:5001/Metadata/procedureTypes",
@@ -3747,6 +3747,144 @@
 						"body": {
 							"mode": "raw",
 							"raw": "{\r\n   \"commandType\":35,\r\n   \"message\":\"\",\r\n   \"type\":\"\",\r\n   \"devices\":[\r\n      {\r\n         \"output\":null,\r\n         \"isDynamic\":false,\r\n         \"id\":\"tpo0\",\r\n         \"name\":\"UI 1\",\r\n         \"isActive\":true,\r\n         \"positionInScreen\":1,\r\n         \"internalIndex\":0,\r\n         \"type\":\"pc\",\r\n         \"icon\":\"icon_pc\"\r\n      }\r\n   ],\r\n   \"destinations\":[\r\n      {\r\n         \"thumbnail\":null,\r\n         \"id\":\"tpo0\",\r\n         \"name\":\"Rec1\",\r\n         \"isActive\":true,\r\n         \"positionInScreen\":-1,\r\n         \"internalIndex\":0,\r\n         \"type\":\"Encoder\",\r\n         \"icon\":\"icon_record\"\r\n      }\r\n   ],\r\n   \"additionalInfo\":\"{\\\"X\\\":180.75,\\\"Y\\\":221,\\\"Width\\\":300,\\\"Height\\\":230.40625}\"\r\n}",
+							"options": {
+								"raw": {}
+							}
+						},
+						"url": {
+							"raw": "https://localhost:5001/Devices/commands",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"port": "5001",
+							"path": [
+								"Devices",
+								"commands"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "Recording",
+			"item": [
+				{
+					"name": "Start Recording",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "8ea59cf2-b056-45ec-b649-a4fdf5a98f74",
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Is an array\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData).to.be.an('array');",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{CURRENT_ACCESS_TOKEN}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "accept",
+								"value": "text/plain"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n   \"commandType\":40,\r\n   \"message\":\"\",\r\n   \"type\":\"\",\r\n   \"devices\":[\r\n      {\r\n         \r\n      }\r\n   ],\r\n   \"destinations\":[\r\n      {\r\n         \"thumbnail\":null,\r\n         \"id\":\"tpo0\",\r\n         \"name\":\"Rec1\",\r\n         \"isActive\":true,\r\n         \"positionInScreen\":-1,\r\n         \"internalIndex\":0,\r\n         \"type\":\"Encoder\",\r\n         \"icon\":\"icon_record\"\r\n      },\r\n      {\r\n         \"thumbnail\":null,\r\n         \"id\":\"tpo1\",\r\n         \"name\":\"Rec2\",\r\n         \"isActive\":true,\r\n         \"positionInScreen\":-1,\r\n         \"internalIndex\":0,\r\n         \"type\":\"Encoder\",\r\n         \"icon\":\"icon_record\"\r\n      }\r\n   ]\r\n}",
+							"options": {
+								"raw": {}
+							}
+						},
+						"url": {
+							"raw": "https://localhost:5001/Devices/commands",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"port": "5001",
+							"path": [
+								"Devices",
+								"commands"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Stop Recording",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "17411a2f-01b9-4f72-9062-3aa707a00631",
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Is an array\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData).to.be.an('array');",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{CURRENT_ACCESS_TOKEN}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "accept",
+								"value": "text/plain"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n   \"commandType\":41,\r\n   \"message\":\"\",\r\n   \"type\":\"\",\r\n   \"devices\":[\r\n      {\r\n         \r\n      }\r\n   ],\r\n   \"destinations\":[\r\n      {\r\n         \"thumbnail\":null,\r\n         \"id\":\"tpo0\",\r\n         \"name\":\"Rec1\",\r\n         \"isActive\":true,\r\n         \"positionInScreen\":-1,\r\n         \"internalIndex\":0,\r\n         \"type\":\"Encoder\",\r\n         \"icon\":\"icon_record\"\r\n      },\r\n      {\r\n         \"thumbnail\":null,\r\n         \"id\":\"tpo1\",\r\n         \"name\":\"Rec2\",\r\n         \"isActive\":true,\r\n         \"positionInScreen\":-1,\r\n         \"internalIndex\":0,\r\n         \"type\":\"Encoder\",\r\n         \"icon\":\"icon_record\"\r\n      }\r\n   ]\r\n}",
 							"options": {
 								"raw": {}
 							}

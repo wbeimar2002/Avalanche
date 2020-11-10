@@ -46,6 +46,7 @@
     <PackageReference Include="Ism.Routing.Client" Version="1.0.0-prerelease0001" />
     <PackageReference Include="Ism.Security.Grpc.Standard" Version="1.0.0-prerelease003" />
     <PackageReference Include="Ism.Storage.Configuration.Client" Version="1.0.0-prerelease0004" />
+    <PackageReference Include="Ism.Storage.DataManagement.Client" Version="1.0.0-prerelease0001" />
     <PackageReference Include="Ism.Storage.PatientList.Client" Version="1.0.0-prerelease0003" />
     <PackageReference Include="Ism.Streaming.Client" Version="1.0.0-prerelease0002" />
     <!--<PackageReference Include="Ism.PatientInfoEngine.Client.Core" Version="1.0.0-prerelease3" />-->
@@ -68,15 +69,6 @@
   <ItemGroup>
     <ProjectReference Include="..\Avalanche.Shared.Domain\Avalanche.Shared.Domain.csproj" />
     <ProjectReference Include="..\Avalanche.Shared.Infrastructure\Avalanche.Shared.Infrastructure.csproj" />
-  </ItemGroup> 
-
-    <ItemGroup>
-    <Reference Include="Ism.Log.Common.Core">
-      <HintPath>..\HackyDllDumpingGround\Ism.Log.Common.Core.dll</HintPath>
-    </Reference>
-    <Reference Include="Ism.Storage.DataManagement.Client">
-      <HintPath>..\..\..\AvalancheStorage\Ism.Storage.DataManagement.Client\bin\Debug\netstandard2.1\Ism.Storage.DataManagement.Client.dll</HintPath>
-    </Reference>
   </ItemGroup>
 
   <ItemGroup>
