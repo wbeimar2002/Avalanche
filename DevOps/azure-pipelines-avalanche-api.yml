@@ -20,7 +20,10 @@ resources:
 variables:
 
   - group: 'vg-dev-avalanche-api'
-  
+
+  - name: 'ReportGenerator_Version'
+    value: '4.0.7'
+    
 stages:
 # stage for creating PR comment if nuget pkgs verssion not up to date
 - template: pipeline\templates\nuget-version-check.yml@devops
@@ -102,6 +105,23 @@ stages:
         workingDirectory: avalanche-api/Code/Avalanche.Api.Tests
         vstsFeed: '$(VstsFeed)'
      
+     - script: >-
+          dotnet tool install dotnet-reportgenerator-globaltool
+          --global
+          --version $(ReportGenerator_Version)
+       name: install_code_coverage_report_generator
+       displayName: Install code coverage report generator tool
+       enabled: True
+       
+     - script: >-
+        reportgenerator
+        "-reports:$(TestOutputDirectory)/**/*.opencover.xml"
+        "-targetdir:$(TestOutputDirectory)/.CoverageResults/Report"
+        "-reporttypes:Cobertura;HtmlInline_AzurePipelines"
+       name: generate_code_coverage_report
+       displayName: Generate code coverage report
+       enabled: True
+       
      - task: CopyFiles@2
        displayName: 'Copy Files to: $(Agent.BuildDirectory)\TestResults'
        inputs:
