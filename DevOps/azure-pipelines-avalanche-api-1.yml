@@ -98,7 +98,10 @@ stages:
           vstsFeed: '$(VstsFeed)'
           ##configuration: 'release'
      
-     # Test with Coverage
+     - script: >-
+          ls avalanche-api
+          ls avalanche-api\Code
+          ls avalanche-api\Code\Avalanche.Api.Tests
 
     # Run all tests with "/p:CollectCoverage=true /p:CoverletOutputFormat=cobertura" to generate the code coverage file
      - task: DotNetCoreCLI@2
@@ -117,8 +120,7 @@ stages:
        displayName: Install code coverage report generator tool
        enabled: True
     
-     #- script: >-
-          #ls $(TestOutputDirectory)
+     
      - script: >-
         reportgenerator
         "-reports:'$(Build.SourcesDirectory)/tests/\*\*/coverage.cobertura.xml'
