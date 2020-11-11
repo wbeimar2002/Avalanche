@@ -99,12 +99,12 @@ stages:
      - task: DotNetCoreCLI@2
        displayName: 'dotnet test'
        inputs:
-        command: test
-        projects: '$(TestProject)'
-        testRunTitle: TestResults
-        workingDirectory: avalanche-api/Code/Avalanche.Api.Tests
-        vstsFeed: '$(VstsFeed)'
-     
+            command: test
+            publishTestResults: false
+            projects: avalanche-storage\Ism.Storage.sln
+            #projects: avalanche-storage\Test/Ism.Storage.Core.Test.Common\Ism.Storage.Core.Test.Common.csproj
+            arguments: '--no-restore --no-build --configuration $(BuildConfiguration) --logger trx --collect:"XPlat Code Coverage" --results-directory $(TestOutputDirectory)'
+  
      - script: >-
           dotnet tool install dotnet-reportgenerator-globaltool
           --global
