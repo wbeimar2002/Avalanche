@@ -104,16 +104,14 @@ stages:
           ls avalanche-api\Code\ 
      - script: >-
           ls avalanche-api\Code\Avalanche.Api.Tests   
-   
-    # Run all tests with "/p:CollectCoverage=true /p:CoverletOutputFormat=cobertura" to generate the code coverage file
+     # Run tests and create coverage report'
      - task: DotNetCoreCLI@2
-       displayName: dotnet test
+       displayName: Test
        inputs:
-          command: test
-          arguments: '--configuration $(BuildConfiguration) /p:CollectCoverage=true /p:CoverletOutputFormat=cobertura'
-          projects: '$(ProjectSolution)'
-          #projects: 'avalanche-api\Code\Avalanche.Api.Tests\*.csproj'
-          nobuild: true
+        command: test
+        projects: $(ProjectSolution)'
+        arguments: '--configuration $(BuildConfiguration) --no-build /p:CollectCoverage=true /p:DeterministicSourcePaths=true /p:IncludeTestAssembly=true /p:CoverletOutputFormat=opencover%2ccobertura /p:CoverletOutput=../target/reports/coverage/'
+
      
      - script: >-
           dotnet tool install dotnet-reportgenerator-globaltool
