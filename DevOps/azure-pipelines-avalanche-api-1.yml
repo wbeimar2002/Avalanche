@@ -100,7 +100,7 @@ stages:
      
      - script: >-
           ls avalanche-api
-          ls avalanche-api\Code
+          ls avalanche-api\Code\Avalanche.Api.Tests
           ls avalanche-api\Code\Avalanche.Api.Tests
 
     # Run all tests with "/p:CollectCoverage=true /p:CoverletOutputFormat=cobertura" to generate the code coverage file
@@ -109,7 +109,7 @@ stages:
        inputs:
           command: test
           arguments: '--configuration $(BuildConfiguration) /p:CollectCoverage=true /p:CoverletOutputFormat=cobertura'
-          projects: 'avalanche-api/Code/Avalanche.Api.Tests/\*\*/\*.csproj'
+          projects: 'avalanche-api/Code/Avalanche.Api.Tests\\*\*\\*.csproj'
           nobuild: true
      
      - script: >-
