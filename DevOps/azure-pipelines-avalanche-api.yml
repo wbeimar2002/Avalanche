@@ -117,7 +117,7 @@ stages:
        enabled: True
     
      - script: >-
-          ls .
+          ls $(TestOutputDirectory)
 
      - script: >-
         reportgenerator
