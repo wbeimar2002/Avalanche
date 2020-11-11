@@ -121,8 +121,8 @@ stages:
 
      - script: >-
         reportgenerator
-        "-reports:$(TestOutputDirectory)/**/*.opencover.xml"
-        "-targetdir:$(TestOutputDirectory)/.CoverageResults/Report"
+        "-reports:$(TestOutputDirectory)\**\*.opencover.xml"
+        "-targetdir:$(TestOutputDirectory)\.CoverageResults/Report"
         "-reporttypes:Cobertura;HtmlInline_AzurePipelines"
        name: generate_code_coverage_report
        displayName: Generate code coverage report
