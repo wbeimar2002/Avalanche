@@ -106,7 +106,7 @@ stages:
        inputs:
           command: test
           arguments: '--configuration $(BuildConfiguration) /p:CollectCoverage=true /p:CoverletOutputFormat=cobertura'
-          projects: 'tests/\*\*/\*.csproj'
+          projects: 'avalanche-api/Code/Avalanche.Api.Tests/\*\*/\*.csproj'
           nobuild: true
      
      - script: >-
