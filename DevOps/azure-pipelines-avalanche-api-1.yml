@@ -99,10 +99,12 @@ stages:
           ##configuration: 'release'
      
      - script: >-
-          ls avalanche-api
-          ls avalanche-api\Code\Avalanche.Api.Tests
-          ls avalanche-api\Code\Avalanche.Api.Tests
-
+          ls avalanche-api 
+     - script: >-
+          ls avalanche-api\Code\ 
+     - script: >-
+          ls valanche-api\Code\Avalanche.Api.Tests   
+   
     # Run all tests with "/p:CollectCoverage=true /p:CoverletOutputFormat=cobertura" to generate the code coverage file
      - task: DotNetCoreCLI@2
        displayName: dotnet test
