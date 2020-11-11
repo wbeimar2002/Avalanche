@@ -116,7 +116,7 @@ stages:
      - script: >-
           dotnet tool install --global coverlet.console
           --global
-       name: install_code_coverage_report_generator
+       name: install_code_coverage_for_coverlet
        displayName: Install  coverlet.console
        enabled: True
   
