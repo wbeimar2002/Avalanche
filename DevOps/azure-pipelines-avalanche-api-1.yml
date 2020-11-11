@@ -117,8 +117,8 @@ stages:
        displayName: Install code coverage report generator tool
        enabled: True
     
-     - script: >-
-          ls $(TestOutputDirectory)
+     #- script: >-
+          #ls $(TestOutputDirectory)
      - script: >-
         reportgenerator
         "-reports:'$(Build.SourcesDirectory)/tests/\*\*/coverage.cobertura.xml'
