@@ -109,7 +109,7 @@ stages:
        displayName: Test
        inputs:
         command: test
-        projects: $(ProjectSolution)'
+        projects: '$(ProjectSolution)'
         arguments: '--configuration $(BuildConfiguration) --no-build /p:CollectCoverage=true /p:DeterministicSourcePaths=true /p:IncludeTestAssembly=true /p:CoverletOutputFormat=opencover%2ccobertura /p:CoverletOutput=../target/reports/coverage/'
 
      
