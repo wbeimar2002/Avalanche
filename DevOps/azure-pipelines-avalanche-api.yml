@@ -21,6 +21,9 @@ variables:
 
   - group: 'vg-dev-avalanche-api'
 
+  - name: 'testOutputDirectory'
+    value: '$(Agent.TempDirectory)/testresults'
+ 
   - name: 'ReportGenerator_Version'
     value: '4.0.7'
     
