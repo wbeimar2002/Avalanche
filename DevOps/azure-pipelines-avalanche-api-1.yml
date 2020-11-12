@@ -119,10 +119,10 @@ stages:
        name: install_code_coverage_for_coverlet
        displayName: Install  coverlet.console
        enabled: True
-  
-     - script: dotnet test BuildApp.Web.Tests/BuildApp.Web.Tests.csproj --logger "trx;LogFileName=testresults.trx" /p:CollectCoverage=true /p:CoverletOutputFormat=cobertura /p:CoverletOutput=TestResults/Coverage/
-       displayName: 'dotnet test'
      
+     - script: dotnet test --logger "trx;LogFileName=testresults.trx" /p:CollectCoverage=true /p:CoverletOutputFormat=cobertura /p:CoverletOutput=TestResults/Coverage/
+       displayName: 'dotnet test'
+
      - script: |
          reportgenerator -reports:$(Build.SourcesDirectory)/**/coverage.cobertura.xml -targetdir:$(Build.SourcesDirectory)/CodeCoverage -reporttypes:HtmlInline_AzurePipelines
        displayName: 'Create code coverage report'
