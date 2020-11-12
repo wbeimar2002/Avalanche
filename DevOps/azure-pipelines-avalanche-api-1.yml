@@ -129,15 +129,7 @@ stages:
         nobuild: true
      
         
-     - script: >-
-        reportgenerator
-        "-reports:'D:\a\_temp\*.trx'
-        "-targetdir:'$(Build.SourcesDirectory)/CodeCoverage'
-        "-reporttypes:'Cobertura;Badges'
-       name: generate_code_coverage_report
-       displayName: Generate code coverage report
-       enabled: True
-
+     
      - task: CopyFiles@2
        displayName: 'Copy Files to: $(Agent.BuildDirectory)\TestResults'
        inputs:
