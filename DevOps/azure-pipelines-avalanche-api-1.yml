@@ -120,7 +120,7 @@ stages:
        displayName: Install  coverlet.console
        enabled: True
      
-     - script: dotnet test --logger "trx;LogFileName=testresults.trx" /p:CollectCoverage=true /p:CoverletOutputFormat=cobertura /p:CoverletOutput=TestResults/Coverage/
+     - script: dotnet test $(ProjectSolution) --logger "trx;LogFileName=testresults.trx" /p:CollectCoverage=true /p:CoverletOutputFormat=cobertura /p:CoverletOutput=TestResults/Coverage/
        displayName: 'dotnet test'
 
      - script: |
