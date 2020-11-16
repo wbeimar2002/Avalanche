@@ -2,7 +2,7 @@ trigger:
 - api-tests
  
 variables:
-  system.debug: true
+  #system.debug: true
   #disable.coverage.autogenerate: true
 
 pool:
