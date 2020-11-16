@@ -32,8 +32,9 @@ steps:
 
 - script: >-
     ls $(Agent.TempDirectory)/TestResults
+
 - task: PublishCodeCoverageResults@1
-  displayName: 'Publish code coverage report'
   inputs:
-    codeCoverageTool: 'Cobertura'
-    summaryFileLocation: 'PrimeService.Tests'
+            codeCoverageTool: 'Cobertura'
+            summaryFileLocation: '$(Agent.TempDirectory)/TestResults/api.cobertura.xml'
+            failIfCoverageEmpty: true
