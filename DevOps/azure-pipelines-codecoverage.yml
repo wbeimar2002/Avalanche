@@ -22,11 +22,22 @@ steps:
 - script: >-
     sh Code/codecoverage.sh 'Code/Avalanche.Security.Server.Tests/Avalanche.Security.Server.Tests.csproj' 'release' '$(Agent.TempDirectory)/TestResults/security'
 
-#- bash: >-
-    #reportgenerator "-reports:$(Agent.TempDirectory)/TestResults/*.xml" "-targetdir:$(Agent.TempDirectory)/TestResults1" -reporttypes:xml
+- script: >-
+    #reportgenerator "-reports:$(Agent.TempDirectory)/TestResults/api.cobertura.xml" "-targetdir:$(Agent.TempDirectory)/coveragereport"
+
+#- task: reportgenerator@4
+  #inputs:
+    #reports: **/coverage.cobertura.xml;artifact/**/cobertura-coverage.xml
+    #targetdir: $(Pipeline.Workspace)/coveragereport
 
 - script: >-
     ls $(Agent.TempDirectory)/TestResults
+
+- task: PublishCodeCoverageResults@1
+  inputs:
+            codeCoverageTool: 'Cobertura'
+            summaryFileLocation: '$(Agent.TempDirectory)/TestResults/api.cobertura.xml'
+            failIfCoverageEmpty: true
 
 # single report working
 #- task: PublishCodeCoverageResults@1
