@@ -29,7 +29,7 @@ steps:
     reportgenerator "-reports:$(Agent.TempDirectory)/TestResults/api.cobertura.xml" "-targetdir:$(Agent.TempDirectory)/coveragereport" -reporttypes:xml
 
 - script: >-
-    ls (Agent.TempDirectory)/coveragereport
+    ls $(Agent.TempDirectory)/coveragereport
 #- task: reportgenerator@4
   #inputs:
     #reports: **/coverage.cobertura.xml;artifact/**/cobertura-coverage.xml
