@@ -12,7 +12,7 @@ dotnet build -c $build_configuration $project_path
 # dotnet test /p:CollectCoverage=true /p:CoverletOutputFormat=cobertura
 dotnet test $project_path  -c $build_configuration  /p:CollectCoverage=true /p:CoverletOutputFormat=cobertura /p:CoverletOutput=$coverlet_outpath
 # reportgenerator "-reports:coverage.cobertura.xml" "-targetdir:coveragereport" -reporttypes:Html
-reportgenerator "-reports:TestResults/*.xml" "-targetdir:$report_outpath" -reporttypes:Html
+#reportgenerator "-reports:TestResults/*.xml" "-targetdir:$report_outpath" -reporttypes:Html
 
 
 
