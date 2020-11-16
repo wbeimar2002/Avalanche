@@ -34,6 +34,12 @@ steps:
     ls $(Agent.TempDirectory)/TestResults
 
 # works for single report
+#- script: >-
+    #reportgenerator
+    #"-reports:$(Agent.TempDirectory)/TestResults/security.cobertura.xml"
+    #"-targetdir:coveragereport"
+    #-reporttypes:Html
+
 #- task: PublishCodeCoverageResults@1
   #inputs:
             #codeCoverageTool: 'Cobertura'
