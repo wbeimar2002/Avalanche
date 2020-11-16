@@ -33,3 +33,8 @@ steps:
             codeCoverageTool: 'Cobertura'
             summaryFileLocation: '$(Agent.TempDirectory)/TestResults/api.cobertura.xml'
             failIfCoverageEmpty: true
+- task: PublishCodeCoverageResults@1
+  inputs:
+            codeCoverageTool: 'Cobertura'
+            summaryFileLocation: '$(Agent.TempDirectory)/TestResults/api.security.xml'
+            failIfCoverageEmpty: true
