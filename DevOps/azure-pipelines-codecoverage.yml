@@ -33,8 +33,14 @@ steps:
 - script: >-
     ls $(Agent.TempDirectory)/TestResults
 
+# works for single report
+#- task: PublishCodeCoverageResults@1
+  #inputs:
+            #codeCoverageTool: 'Cobertura'
+            #summaryFileLocation: '$(Agent.TempDirectory)/TestResults/api.cobertura.xml'
+            #failIfCoverageEmpty: true
 - task: PublishCodeCoverageResults@1
   inputs:
             codeCoverageTool: 'Cobertura'
-            summaryFileLocation: '$(Agent.TempDirectory)/TestResults/api.cobertura.xml'
+            summaryFileLocation: '$(Agent.TempDirectory)/TestResults/'
             failIfCoverageEmpty: true
