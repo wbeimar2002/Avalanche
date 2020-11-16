@@ -24,7 +24,7 @@ steps:
 
 - script: >-
     reportgenerator
-    "-reports:$(Agent.TempDirectory)/TestResults"
+    "-reports:$(Agent.TempDirectory)/TestResults/security.cobertura.xml"
     "-targetdir:coveragereport"
     -reporttypes:Html
 #- bash: >-
