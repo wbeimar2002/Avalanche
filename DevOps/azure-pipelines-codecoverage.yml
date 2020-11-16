@@ -11,11 +11,11 @@ pool:
 steps:
 
 - script: >-
-    ls .
+    echo "##vso[task.prependpath]$HOME/.dotnet/tools"
+
 - script: >-
-    cd Code
+    dotnet tool install -g dotnet-reportgenerator-globaltool
+
 - script: >-
-    ls .
-- script: >-
-    sh Code/codecoverage.sh 'Code/Avalanche.Api.Tests/Avalanche.Api.Tests.csproj' 'release' '../TestResults/api'
-    sh Code/codecoverage.sh 'Code/Avalanche.Security.Server.Tests/Avalanche.Security.Server.Tests.csproj' 'release' '../TestResults/security'
+    sh Code/codecoverage.sh 'Code/Avalanche.Api.Tests/Avalanche.Api.Tests.csproj' 'release' './TestResults/api'
+    sh Code/codecoverage.sh 'Code/Avalanche.Security.Server.Tests/Avalanche.Security.Server.Tests.csproj' 'release' './TestResults/security'
