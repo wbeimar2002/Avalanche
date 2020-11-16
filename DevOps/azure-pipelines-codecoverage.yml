@@ -26,7 +26,7 @@ steps:
     ls $(Agent.TempDirectory)/TestResults
 
 - script: >-
-    reportgenerator "-reports:$(Agent.TempDirectory)/TestResults/api.cobertura.xml" "-targetdir:$(Agent.TempDirectory)/coveragereport" -reporttypes:xml
+    reportgenerator "-reports:$(Agent.TempDirectory)/TestResults/api.cobertura.xml;$(Agent.TempDirectory)/TestResults/security.cobertura.xml" "-targetdir:$(Agent.TempDirectory)/coveragereport" -reporttypes:xml
 
 - script: >-
     ls $(Agent.TempDirectory)/coveragereport
