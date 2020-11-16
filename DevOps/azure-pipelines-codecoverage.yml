@@ -28,13 +28,9 @@ steps:
 - script: >-
     ls $(Agent.TempDirectory)/TestResults
 
-- task: PublishCodeCoverageResults@1
-  inputs:
-            codeCoverageTool: 'Cobertura'
-            summaryFileLocation: '$(Agent.TempDirectory)/TestResults/api.cobertura.xml'
-            failIfCoverageEmpty: true
-- task: PublishCodeCoverageResults@1
-  inputs:
-            codeCoverageTool: 'Cobertura'
-            summaryFileLocation: '$(Agent.TempDirectory)/TestResults/security.cobertura.xml'
-            failIfCoverageEmpty: true
+# single report working
+#- task: PublishCodeCoverageResults@1
+  #inputs:
+            #codeCoverageTool: 'Cobertura'
+            #summaryFileLocation: '$(Agent.TempDirectory)/TestResults/api.cobertura.xml'
+            #failIfCoverageEmpty: true
