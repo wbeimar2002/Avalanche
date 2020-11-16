@@ -40,7 +40,7 @@ steps:
 - task: PublishCodeCoverageResults@1
   inputs:
     codeCoverageTool: "Cobertura"
-    summaryFileLocation: $(Agent.TempDirectory)/coveragereport/Cobertura.xml
+    summaryFileLocation: '$(Agent.TempDirectory)/coveragereport/Summary.xml'
 
 # single report working
 #- task: PublishCodeCoverageResults@1
