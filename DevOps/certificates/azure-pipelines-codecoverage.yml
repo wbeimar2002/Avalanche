@@ -11,31 +11,6 @@ pool:
 steps:
 
 - script: >-
-    dotnet restore 'PrimeService.Tests/PrimeService.Tests.csproj'
+    sh codecoverage.sh 'Avalanche.Api.Tests/Avalanche.Api.Tests.csproj' 'release' '../TestResults/api'
+    sh codecoverage.sh 'Avalanche.Security.Server.Tests/Avalanche.Security.Server.Tests.csproj' 'release' '../TestResults/security'
 
-- script: >-
-    dotnet build 'PrimeService.Tests/PrimeService.Tests.csproj'
-
-- script: >-
-    dotnet restore 'PrimeService.Tests/PrimeService.Tests.csproj'
-
-- script: >-
-    dotnet test 'PrimeService.Tests/PrimeService.Tests.csproj' /p:CollectCoverage=true /p:CoverletOutputFormat=cobertura
-
-- script: >-
-    echo "##vso[task.prependpath]$HOME/.dotnet/tools"
-
-- script: >-
-    dotnet tool install -g dotnet-reportgenerator-globaltool
-
-- script: >-
-    reportgenerator
-    "-reports:PrimeService.Tests/coverage.cobertura.xml"
-    "-targetdir:coveragereport"
-    -reporttypes:Html
-
-- task: PublishCodeCoverageResults@1
-  displayName: 'Publish code coverage report'
-  inputs:
-    codeCoverageTool: 'Cobertura'
-    summaryFileLocation: 'PrimeService.Tests/coverage.cobertura.xml'
