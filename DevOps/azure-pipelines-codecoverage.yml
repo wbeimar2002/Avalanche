@@ -31,4 +31,4 @@ steps:
 - task: PublishCodeCoverageResults@1
   inputs:
     codeCoverageTool: "Cobertura"
-    summaryFileLocation: $(Agent.TempDirectory)/TestResults1/Summary.xml
+    summaryFileLocation: '/home/vsts/work/_tempTestResults1/Summary.xml'
