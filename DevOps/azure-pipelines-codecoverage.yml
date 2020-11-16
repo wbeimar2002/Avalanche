@@ -42,5 +42,5 @@ steps:
 - task: PublishCodeCoverageResults@1
   inputs:
             codeCoverageTool: 'Cobertura'
-            summaryFileLocation: '$(Agent.TempDirectory)/TestResults/'
+            summaryFileLocation: '$(Agent.TempDirectory)/TestResults'
             failIfCoverageEmpty: true
