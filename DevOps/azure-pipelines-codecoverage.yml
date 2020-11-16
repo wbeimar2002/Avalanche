@@ -11,5 +11,7 @@ pool:
 steps:
 
 - script: >-
+    ls .
+- script: >-
     sh ../Code/codecoverage.sh 'Avalanche.Api.Tests/Avalanche.Api.Tests.csproj' 'release' '../TestResults/api'
     sh ../Code/codecoverage.sh 'Avalanche.Security.Server.Tests/Avalanche.Security.Server.Tests.csproj' 'release' '../TestResults/security'
