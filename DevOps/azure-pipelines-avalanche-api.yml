@@ -111,7 +111,7 @@ stages:
           /p:CoverletOutput="$(Agent.TempDirectory)/TestResults/" \
           /p:MergeWith="$coverlet_outpath/coverage.json" \
           /p:CoverletOutputFormat=\"json,opencover,cobertura\"
-
+       displayName: 'perform code coverage analysis'
 #Code/codecoverage-all-test-projects.sh 'Code/Avalanche.Api.sln' 'release' '$(Agent.TempDirectory)/TestResults/'
 
      - task: CopyFiles@2
