@@ -105,15 +105,12 @@ stages:
         vstsFeed: '$(VstsFeed)'
 
      - script: >-
-          dotnet test '$(ProjectSolution)' \
-          /p:CollectCoverage=true \
-          /maxcpucount:1 \
-          /p:CoverletOutput="$(Agent.TempDirectory)/TestResults/" \
-          /p:MergeWith="$coverlet_outpath/coverage.json" \
-          /p:CoverletOutputFormat=\"json,opencover,cobertura\"
-       displayName: 'perform code coverage analysis'
-#Code/codecoverage-all-test-projects.sh 'Code/Avalanche.Api.sln' 'release' '$(Agent.TempDirectory)/TestResults/'
-
+        dotnet test 'avalanche-api/Code/Avalanche.Api.Tests.csproj' /p:CollectCoverage=true /p:CoverletOutputFormat=cobertura
+     - task: PublishCodeCoverageResults@1
+       displayName: 'Publish code coverage report'
+       inputs:
+        codeCoverageTool: 'Cobertura'
+        summaryFileLocation: 'avalanche-api/Code/Avalanche.Api.Tests/coverage.cobertura.xml'
      - task: CopyFiles@2
        displayName: 'Copy Files to: $(Agent.BuildDirectory)\TestResults'
        inputs:
