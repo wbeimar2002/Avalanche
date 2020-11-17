@@ -105,7 +105,7 @@ stages:
         vstsFeed: '$(VstsFeed)'
 
      - script: >-
-          dotnet test $(ProjectSolution) \
+          dotnet test '$(ProjectSolution)' \
           /p:CollectCoverage=true \
           /maxcpucount:1 \
           /p:CoverletOutput="$(Agent.TempDirectory)/TestResults/" \
