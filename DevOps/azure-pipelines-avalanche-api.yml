@@ -61,10 +61,8 @@ stages:
        displayName: 'Prepare analysis on SonarQube'
        inputs:
           SonarQube: sonarqube
-          projectKey: 'avalanche-api-code-coverage'
-          projectName: 'avalanche-api-code-coverage'
-          #projectKey: '$(SonarProjectKey)'
-          #projectName: '$(SonarProject)'
+          projectKey: '$(SonarProjectKey)'
+          projectName: '$(SonarProject)'
         
      - task: SonarQubePrepare@4
        condition: |
