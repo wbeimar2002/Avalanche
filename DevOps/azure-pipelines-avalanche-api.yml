@@ -1,5 +1,5 @@
 trigger:
-  none
+  nh-code-coverage
 
 name: $(build_number_prefix)-$(majorversion).$(minorversion).$(patch).$(Releasestage)_$(majorversion).$(minorversion).$(Date:yyMM).$(Date:dd)$(Rev:rr)
 
@@ -61,8 +61,10 @@ stages:
        displayName: 'Prepare analysis on SonarQube'
        inputs:
           SonarQube: sonarqube
-          projectKey: '$(SonarProjectKey)'
-          projectName: '$(SonarProject)'
+          projectKey: 'avalanche-api-code-coverage'
+          projectName: 'avalanche-api-code-coverage'
+          #projectKey: '$(SonarProjectKey)'
+          #projectName: '$(SonarProject)'
         
      - task: SonarQubePrepare@4
        condition: |
@@ -156,7 +158,18 @@ stages:
        inputs:
         PathtoPublish: '$(Repo)/DevOps/certificates'
         ArtifactName: certificates
+  - jobs:
 
+  - job: code_coverage
+    
+    pool:
+    
+      vmImage: '$(pool_vm_image)'
+    
+    steps:
+     
+     - checkout: self
+     - checkout: devops
 - stage: push_to_acr
 
   #condition: and(succeeded(), eq(variables['Build.SourceBranchName'], 'dev'))
