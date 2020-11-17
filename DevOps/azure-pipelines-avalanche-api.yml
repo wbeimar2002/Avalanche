@@ -105,7 +105,7 @@ stages:
         vstsFeed: '$(VstsFeed)'
 
      - script: >-
-        dotnet test 'avalanche-api/Code/Avalanche.Api.Tests.csproj' /p:CollectCoverage=true /p:CoverletOutputFormat=cobertura
+        dotnet test 'avalanche-api/Code/Avalanche.Api.Tests/Avalanche.Api.Tests.csproj' /p:CollectCoverage=true /p:CoverletOutputFormat=cobertura
      - task: PublishCodeCoverageResults@1
        displayName: 'Publish code coverage report'
        inputs:
