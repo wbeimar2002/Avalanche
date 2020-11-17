@@ -159,18 +159,6 @@ stages:
         PathtoPublish: '$(Repo)/DevOps/certificates'
         ArtifactName: certificates
 
-
-  - job: code_coverage
-    
-    pool:
-    
-      vmImage: '$(pool_vm_image)'
-    
-    steps:
-     
-     - checkout: self
-     - checkout: devops
-
 - stage: push_to_acr
 
   #condition: and(succeeded(), eq(variables['Build.SourceBranchName'], 'dev'))
