@@ -109,7 +109,7 @@ stages:
        displayName: 'Publish code coverage report'
        inputs:
         codeCoverageTool: 'Cobertura'
-        summaryFileLocation: 'avalanche-api/Code/Avalanche.Security.Server/coverage.cobertura.xml'
+        summaryFileLocation: 'avalanche-api/Code/Avalanche.Security.Server.Tests/coverage.cobertura.xml'
      - task: CopyFiles@2
        displayName: 'Copy Files to: $(Agent.BuildDirectory)\TestResults'
        inputs:
