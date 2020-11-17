@@ -104,6 +104,8 @@ stages:
 
      - script: >-
         dotnet test $(TestProject) /p:CollectCoverage=true /p:CoverletOutputFormat=cobertura
+       displayName: 'code coverage analysis'
+
      - task: PublishCodeCoverageResults@1
        displayName: 'Publish code coverage report'
        inputs:
