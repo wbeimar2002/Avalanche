@@ -69,7 +69,7 @@ namespace Avalanche.Api.Controllers.V1
             try
             {
                 _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
-                await _patientsManager.UpdatePatient(existing);
+                await _patientsManager.UpdatePatient(existing, User.GetUser());
 
                 return Ok();
             }

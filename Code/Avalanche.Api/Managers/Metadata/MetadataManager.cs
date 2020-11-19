@@ -17,9 +17,7 @@ namespace Avalanche.Api.Managers.Metadata
         readonly IStorageService _storageService;
         readonly ISettingsService _settingsService;
         readonly IMapper _mapper;
-
         readonly IDataManagementService _dataManagementService;
-
 
         public MetadataManager(IStorageService storageService,
             IDataManagementService dataManagementService,
@@ -121,11 +119,11 @@ namespace Avalanche.Api.Managers.Metadata
             var configurationContext = _mapper.Map<Avalanche.Shared.Domain.Models.User, ConfigurationContext>(user);
             var setupSettings = await _settingsService.GetSetupSettingsAsync(configurationContext);
 
-#warning TODO: Check the strategy to throw business logic exceptions
+            #warning TODO: Check the strategy to throw business logic exceptions. Same exceptions in Patients Manager
             if (setupSettings.DepartmentsSupported)
             {
                 if (string.IsNullOrEmpty(departmentName))
-                    throw new System.ArgumentNullException("Department value is invalid. It should not be null.");
+                    throw new System.ArgumentNullException("Department value is invalid. It should not be null. Departments are supported.");
             }
             else 
             {

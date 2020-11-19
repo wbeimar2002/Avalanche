@@ -102,8 +102,6 @@ namespace Avalanche.Api
             services.AddSingleton<IGrpcClientFactory<WebRtcStreamerClient>, GrpcClientFactory<WebRtcStreamerClient>>();
             services.AddSingleton<IGrpcClientFactory<PgsTimeoutClient>, GrpcClientFactory<PgsTimeoutClient>>();
             services.AddSingleton<IGrpcClientFactory<ConfigurationServiceClient>, GrpcClientFactory<ConfigurationServiceClient>>();
-
-            services.AddHttpContextAccessor();
             services.AddSingleton<IAccessInfoFactory, AccessInfoFactory>();
 
             //TODO: Check this. Should be env variables?
@@ -129,7 +127,7 @@ namespace Avalanche.Api
             services.AddAutoMapper(typeof(Startup));
 
             ConfigureAuthorization(services);
-            ConfigureCorsPolicy(services, configurationService);
+            ConfigureCorsPolicy(services);
             ConfigureCertificate(configurationService);
         }
 
@@ -181,20 +179,8 @@ namespace Avalanche.Api
             });
         }
 
-        private static void ConfigureCorsPolicy(IServiceCollection services, IConfigurationService configurationService)
+        private static void ConfigureCorsPolicy(IServiceCollection services)
         {
-            /*
-             * This was implemented in Hikari because people use the API from an external computer,
-             * please evaluate if this scenario applies here in Avalanche
-             
-            var configSettings = await configurationService.LoadAsync<ConfigSettings>("/environment/env.json");
-
-            if (configSettings == null)
-                configSettings = new ConfigSettings();
-
-            //TODO: This needs to be reviewed ports should not be hardcoded
-            configSettings.IpAddress = configSettings.IpAddress.Replace(":6005", ":8443");*/
-
             // Add Cors
             // https://docs.microsoft.com/en-us/aspnet/core/security/cors?view=aspnetcore-3.1
             services.AddCors(options =>

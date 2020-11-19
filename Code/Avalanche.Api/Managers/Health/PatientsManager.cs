@@ -5,6 +5,7 @@ using Avalanche.Api.Utilities;
 using Avalanche.Api.ViewModels;
 using Avalanche.Shared.Domain.Models;
 using Avalanche.Shared.Infrastructure.Helpers;
+using Avalanche.Shared.Infrastructure.Models;
 using Google.Protobuf.WellKnownTypes;
 using Ism.Common.Core.Configuration.Models;
 using Ism.PatientInfoEngine.V1.Protos;
@@ -21,12 +22,18 @@ namespace Avalanche.Api.Managers.Health
         readonly ISettingsService _settingsService;
         readonly IAccessInfoFactory _accessInfoFactory;
         readonly IMapper _mapper;
+        readonly IDataManagementService _dataManagementService;
 
-        public PatientsManager(IPieService pieService, ISettingsService settingsService, IAccessInfoFactory accessInfoFactory, IMapper mapper)
+        public PatientsManager(IPieService pieService, 
+            ISettingsService settingsService, 
+            IAccessInfoFactory accessInfoFactory, 
+            IMapper mapper, 
+            IDataManagementService dataManagementService)
         {
             _pieService = pieService;
             _settingsService = settingsService;
             _accessInfoFactory = accessInfoFactory;
+            _dataManagementService = dataManagementService;
             _mapper = mapper;
         }
 
@@ -46,8 +53,10 @@ namespace Avalanche.Api.Managers.Health
             var configurationContext = _mapper.Map<Avalanche.Shared.Domain.Models.User, ConfigurationContext>(user);
             var setupSettings = await _settingsService.GetSetupSettingsAsync(configurationContext);
 
+            //TODO: Pending facility
             //TODO: Configurable in maintenance (on/off) - user logged in is auto-filled as physician when doing manual registration
             //TODO: What about the procedure type and department. How this should be filled?
+            //TODO: What about facility
             if (newPatient.Physician == null)
             {
                 if (setupSettings.AutoFillPhysician)
@@ -65,6 +74,8 @@ namespace Avalanche.Api.Managers.Health
                 }
             }
 
+            await CheckProcedureType(newPatient.ProcedureType.Value, newPatient.Department.Value, setupSettings);
+
             var patientRequest = _mapper.Map<PatientViewModel, Ism.Storage.Core.PatientList.V1.Protos.AddPatientRecordRequest>(newPatient);
             var result = await _pieService.RegisterPatient(patientRequest);
 
@@ -79,6 +90,7 @@ namespace Avalanche.Api.Managers.Health
             string quickRegistrationDateFormat = setupSettings.QuickRegistrationDateFormat;
             string formattedDate = DateTime.UtcNow.ToLocalTime().ToString(quickRegistrationDateFormat);
 
+            //TODO: Pending facility
             //TODO: Pending check this default data
             var newPatient = new PatientViewModel()
             {
@@ -96,7 +108,7 @@ namespace Avalanche.Api.Managers.Health
                     Id = "Unknown",
                     Value = "Unknown"
                 },
-                ProcedureType = new KeyValuePairViewModel()
+                ProcedureType = new KeyValuePairViewModel() //TODO: What should be this value
                 {
                     Id = "Unknown",
                     Value = "Unknown"
@@ -120,7 +132,7 @@ namespace Avalanche.Api.Managers.Health
             return _mapper.Map<Ism.Storage.Core.PatientList.V1.Protos.AddPatientRecordResponse, Shared.Domain.Models.Patient>(result);
         }
 
-        public async Task UpdatePatient(PatientViewModel existingPatient)
+        public async Task UpdatePatient(PatientViewModel existingPatient, Avalanche.Shared.Domain.Models.User user)
         {
             Preconditions.ThrowIfNull(nameof(existingPatient), existingPatient);
             Preconditions.ThrowIfNull(nameof(existingPatient.Id), existingPatient.Id);
@@ -131,8 +143,13 @@ namespace Avalanche.Api.Managers.Health
             Preconditions.ThrowIfNull(nameof(existingPatient.Sex), existingPatient.Sex);
             Preconditions.ThrowIfNull(nameof(existingPatient.Sex.Id), existingPatient.Sex.Id);
 
+            var configurationContext = _mapper.Map<Avalanche.Shared.Domain.Models.User, ConfigurationContext>(user);
+            var setupSettings = await _settingsService.GetSetupSettingsAsync(configurationContext);
+
             var accessInfo = _accessInfoFactory.GenerateAccessInfo();
             existingPatient.AccessInformation = _mapper.Map<AccessInfo>(accessInfo);
+
+            await CheckProcedureType(existingPatient.ProcedureType.Value, existingPatient.Department.Value, setupSettings);
 
             var patientRequest = _mapper.Map<PatientViewModel, Ism.Storage.Core.PatientList.V1.Protos.UpdatePatientRecordRequest>(existingPatient);
             await _pieService.UpdatePatient(patientRequest);
@@ -160,6 +177,7 @@ namespace Avalanche.Api.Managers.Health
             var search = new PatientSearchFieldsMessage();
             search.Keyword = filter.Term;
 
+            //TODO: Facility is internal??? just backend??? Un check box en configuraciones que dice si se filtra o no por facility
             // TODO - get valid culture (either system configuration or passed in via caller)
             var cultureName = CultureInfo.CurrentCulture.Name;
             filter.CultureName = string.IsNullOrEmpty(cultureName) ? "en-US" : cultureName;
@@ -191,6 +209,7 @@ namespace Avalanche.Api.Managers.Health
                 ProcedureId = filter.ProcedureId,
             };
 
+            //TODO: Facility is internal??? just backend??? Un check box en configuraciones que dice si se filtra o no por facility
             //TODO: This is the final implementation?
             var accessInfo = _accessInfoFactory.GenerateAccessInfo();
             filter.AccessInformation = _mapper.Map<AccessInfo>(accessInfo);
@@ -204,6 +223,25 @@ namespace Avalanche.Api.Managers.Health
 
             return _mapper.Map<IList<Ism.PatientInfoEngine.V1.Protos.PatientRecordMessage>, IList<Shared.Domain.Models.Patient>>(queryResult.UpdatedPatList);
 
+        }
+
+        private async Task CheckProcedureType(string procedureTypeName, string departmentName, SetupSettings setupSettings)
+        {
+            var newProcedureType = new Ism.Storage.Core.DataManagement.V1.Protos.ProcedureTypeMessage()
+            {
+                Name = procedureTypeName,
+                Department = departmentName
+            };
+
+            var existingProcedureType = await _dataManagementService.GetProcedureTypeAsync(newProcedureType);
+
+            if (string.IsNullOrEmpty(existingProcedureType.Name))
+            {
+                await _dataManagementService.AddProcedureType(new Ism.Storage.Core.DataManagement.V1.Protos.AddProcedureTypeRequest()
+                {
+                    ProcedureType = newProcedureType,
+                });
+            }
         }
     }
 }
