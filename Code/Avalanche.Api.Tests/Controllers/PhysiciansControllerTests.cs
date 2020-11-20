@@ -43,22 +43,22 @@ namespace Avalanche.Api.Tests.Controllers
         }
 
         [Test]
-        public void BGetAllPhysiciansOkResult()
+        public void GetAllPhysiciansOkResult()
         {
             var fixture = new Fixture();
             var list = fixture.CreateMany<Physician>(10).ToList();
             var sourceFile = fixture.Create<PhysiciansViewModel>();
 
-            //_physiciansManager.Setup(mock => mock.GetAllPhysicians()).ReturnsAsync(list);
+//            _physiciansManager.Setup(mock => mock.GetAllPhysicians()).ReturnsAsync(list);
             _physiciansManager.Setup(mock => mock.GetTemporaryPhysiciansSource(It.IsAny<User>())).ReturnsAsync(sourceFile);
 
-            var okResult = _controller.GetAll(_environment.Object);
+            var okResult = _controller.GetAllPhysicians(_environment.Object);
 
             if (_checkLogger)
             {
-                _appLoggerService.Verify(LogLevel.Error, $"Exception {_controller.GetType().Name}.GetAll", Times.Never());
-                _appLoggerService.Verify(LogLevel.Debug, $"Requested {_controller.GetType().Name}.GetAll", Times.Once());
-                _appLoggerService.Verify(LogLevel.Debug, $"Completed {_controller.GetType().Name}.GetAll", Times.Once());
+                _appLoggerService.Verify(LogLevel.Error, $"Exception {_controller.GetType().Name}.GetAllPhysicians", Times.Never());
+                _appLoggerService.Verify(LogLevel.Debug, $"Requested {_controller.GetType().Name}.GetAllPhysicians", Times.Once());
+                _appLoggerService.Verify(LogLevel.Debug, $"Completed {_controller.GetType().Name}.GetAllPhysicians", Times.Once());
             }
 
             Assert.IsInstanceOf<OkObjectResult>(okResult.Result);
@@ -70,13 +70,13 @@ namespace Avalanche.Api.Tests.Controllers
             //_physiciansManager.Setup(mock => mock.GetAllPhysicians()).Throws(It.IsAny<Exception>());
             _physiciansManager.Setup(mock => mock.GetTemporaryPhysiciansSource(It.IsAny<User>())).Throws(It.IsAny<Exception>());
 
-            var badResult = _controller.GetAll(_environment.Object);
+            var badResult = _controller.GetAllPhysicians(_environment.Object);
 
             if (_checkLogger)
             {
-                _appLoggerService.Verify(LogLevel.Error, $"Exception {_controller.GetType().Name}.GetAll", Times.Once());
-                _appLoggerService.Verify(LogLevel.Debug, $"Requested {_controller.GetType().Name}.GetAll", Times.Once());
-                _appLoggerService.Verify(LogLevel.Debug, $"Completed {_controller.GetType().Name}.GetAll", Times.Once());
+                _appLoggerService.Verify(LogLevel.Error, $"Exception {_controller.GetType().Name}.GetAllPhysicians", Times.Once());
+                _appLoggerService.Verify(LogLevel.Debug, $"Requested {_controller.GetType().Name}.GetAllPhysicians", Times.Once());
+                _appLoggerService.Verify(LogLevel.Debug, $"Completed {_controller.GetType().Name}.GetAllPhysicians", Times.Once());
             }
 
             Assert.IsInstanceOf<BadRequestObjectResult>(badResult.Result);

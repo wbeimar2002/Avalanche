@@ -1,4 +1,5 @@
-﻿using AutoMapper;
+﻿using AutoFixture;
+using AutoMapper;
 using Avalanche.Api.Managers.Metadata;
 using Avalanche.Api.MappingConfigurations;
 using Avalanche.Api.Services.Configuration;
@@ -59,7 +60,10 @@ namespace Avalanche.Api.Tests.Managers
                 Department = "Invalid Department"
             };
 
-            Task Act() => _manager.AddProcedureType(It.IsAny<User>(), newProcedureType);
+            Fixture fixture = new Fixture();
+            var user = fixture.Create<User>();
+
+            Task Act() => _manager.AddProcedureType(user, newProcedureType);
 
             Assert.That(Act, Throws.TypeOf<ArgumentException>());
         }
@@ -80,7 +84,10 @@ namespace Avalanche.Api.Tests.Managers
                 Department = null
             };
 
-            Task Act() => _manager.AddProcedureType(It.IsAny<User>(), newProcedureType);
+            Fixture fixture = new Fixture();
+            var user = fixture.Create<User>();
+
+            Task Act() => _manager.AddProcedureType(user, newProcedureType);
 
             Assert.That(Act, Throws.TypeOf<ArgumentNullException>());
         }
@@ -101,7 +108,10 @@ namespace Avalanche.Api.Tests.Managers
                 Department = "Invalid Department"
             };
 
-            Task Act() => _manager.DeleteProcedureType(It.IsAny<User>(), procedureType);
+            Fixture fixture = new Fixture();
+            var user = fixture.Create<User>();
+
+            Task Act() => _manager.DeleteProcedureType(user, procedureType);
 
             Assert.That(Act, Throws.TypeOf<ArgumentException>());
         }
@@ -122,7 +132,10 @@ namespace Avalanche.Api.Tests.Managers
                 Department = null
             };
 
-            Task Act() => _manager.DeleteProcedureType(It.IsAny<User>(), procedureType);
+            Fixture fixture = new Fixture();
+            var user = fixture.Create<User>();
+
+            Task Act() => _manager.DeleteProcedureType(user, procedureType);
 
             Assert.That(Act, Throws.TypeOf<ArgumentNullException>());
         }
@@ -135,9 +148,12 @@ namespace Avalanche.Api.Tests.Managers
                 DepartmentsSupported = false
             };
 
+            Fixture fixture = new Fixture();
+            var user = fixture.Create<User>();
+
             _settingsService.Setup(mock => mock.GetSetupSettingsAsync(It.IsAny<ConfigurationContext>())).ReturnsAsync(settingsDepartmentNotSupported);
 
-            Task Act() => _manager.GetProceduresByDepartment(It.IsAny<User>(), "Sample Invalid Department");
+            Task Act() => _manager.GetProceduresByDepartment(user, "Sample Invalid Department");
 
             Assert.That(Act, Throws.TypeOf<ArgumentException>());
         }
@@ -150,9 +166,12 @@ namespace Avalanche.Api.Tests.Managers
                 DepartmentsSupported = true
             };
 
+            Fixture fixture = new Fixture();
+            var user = fixture.Create<User>();
+
             _settingsService.Setup(mock => mock.GetSetupSettingsAsync(It.IsAny<ConfigurationContext>())).ReturnsAsync(settingsDepartmentNotSupported);
 
-            Task Act() => _manager.GetProceduresByDepartment(It.IsAny<User>(), null);
+            Task Act() => _manager.GetProceduresByDepartment(user, null);
 
             Assert.That(Act, Throws.TypeOf<ArgumentNullException>());
         }
@@ -165,9 +184,12 @@ namespace Avalanche.Api.Tests.Managers
                 DepartmentsSupported = false
             };
 
+            Fixture fixture = new Fixture();
+            var user = fixture.Create<User>();
+
             _settingsService.Setup(mock => mock.GetSetupSettingsAsync(It.IsAny<ConfigurationContext>())).ReturnsAsync(settingsDepartmentNotSupported);
 
-            Task Act() => _manager.AddDepartment(It.IsAny<User>(), It.IsAny<Department>());
+            Task Act() => _manager.AddDepartment(user, It.IsAny<Department>());
 
             Assert.That(Act, Throws.TypeOf<InvalidOperationException>());
         }
@@ -180,9 +202,12 @@ namespace Avalanche.Api.Tests.Managers
                 DepartmentsSupported = false
             };
 
+            Fixture fixture = new Fixture();
+            var user = fixture.Create<User>();
+
             _settingsService.Setup(mock => mock.GetSetupSettingsAsync(It.IsAny<ConfigurationContext>())).ReturnsAsync(settingsDepartmentNotSupported);
 
-            Task Act() => _manager.DeleteDepartment(It.IsAny<User>(), "Sample Department");
+            Task Act() => _manager.DeleteDepartment(user, "Sample Department");
 
             Assert.That(Act, Throws.TypeOf<InvalidOperationException>());
         }

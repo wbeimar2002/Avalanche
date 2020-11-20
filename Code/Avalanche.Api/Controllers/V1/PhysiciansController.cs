@@ -41,7 +41,7 @@ namespace Avalanche.Api.Controllers.V1
         /// </summary>
         [HttpGet("")]
         [Produces(typeof(List<PhysiciansViewModel>))]
-        public async Task<IActionResult> GetAll([FromServices]IWebHostEnvironment env)
+        public async Task<IActionResult> GetAllPhysicians([FromServices]IWebHostEnvironment env)
         {
             try
             {

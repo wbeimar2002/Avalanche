@@ -14,6 +14,6 @@ namespace Avalanche.Api.Services.Health
         Task DeleteProcedureType(DeleteProcedureTypeRequest request);
         Task<GetDepartmentsResponse> GetAllDepartments();
         Task<GetProceduresByDepartmentResponse> GetProceduresByDepartment(GetProceduresByDepartmentRequest request);
-        Task<ProcedureTypeMessage> GetProcedureTypeAsync(ProcedureTypeMessage request);
+        Task<ProcedureTypeMessage> GetProcedureType(ProcedureTypeMessage request);
     }
 }

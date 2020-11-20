@@ -441,7 +441,7 @@ namespace Avalanche.Api.MappingConfigurations
                     return Ism.Storage.Core.PatientList.V1.Protos.SexMessage.F;
                 case "M":
                     return Ism.Storage.Core.PatientList.V1.Protos.SexMessage.M;
-                case "O":
+                case "O": //TODO: Check this
                 case "U":
                 default:
                     return Ism.Storage.Core.PatientList.V1.Protos.SexMessage.U;

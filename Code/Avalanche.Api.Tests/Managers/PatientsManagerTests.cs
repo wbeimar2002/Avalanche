@@ -26,6 +26,7 @@ namespace Avalanche.Api.Tests.Managers
         Mock<IPieService> _pieService;
         Mock<ISettingsService> _settingsService;
         Mock<IAccessInfoFactory> _accessInfoFactory;
+        Mock<IDataManagementService> _dataManagementService;
 
         IMapper _mapper;
         PatientsManager _manager;
@@ -36,6 +37,7 @@ namespace Avalanche.Api.Tests.Managers
             _pieService = new Mock<IPieService>();
             _settingsService = new Mock<ISettingsService>();
             _accessInfoFactory = new Mock<IAccessInfoFactory>();
+            _dataManagementService = new Mock<IDataManagementService>();
 
             var config = new MapperConfiguration(cfg =>
             {
@@ -43,7 +45,7 @@ namespace Avalanche.Api.Tests.Managers
             });
 
             _mapper = config.CreateMapper();
-            _manager = new PatientsManager(_pieService.Object, _settingsService.Object, _accessInfoFactory.Object, _mapper);
+            _manager = new PatientsManager(_pieService.Object, _settingsService.Object, _accessInfoFactory.Object, _mapper, _dataManagementService.Object);
         }
 
         public static IEnumerable<TestCaseData> NewPatientViewModelWrongDataTestCases
@@ -205,9 +207,12 @@ namespace Avalanche.Api.Tests.Managers
         
         public void RegisterPatientShouldFailIfNullOrIncompleteData(PatientViewModel newPatient)
         {
+            Fixture fixture = new Fixture();
+            var user = fixture.Create<User>();
+
             _pieService.Setup(mock => mock.RegisterPatient(new Ism.Storage.Core.PatientList.V1.Protos.AddPatientRecordRequest()));
 
-            Task Act() => _manager.RegisterPatient(newPatient, It.IsAny<User>());
+            Task Act() => _manager.RegisterPatient(newPatient, user);
 
             Assert.That(Act, Throws.TypeOf<ArgumentNullException>());
 
@@ -215,7 +220,7 @@ namespace Avalanche.Api.Tests.Managers
         }
 
         [Test]
-        public void RegisterPatientWorksWithRightData()
+        public void RegisterPatientWorksWithRightDataShouldAddProcedureTypeIfNotExists()
         {
             PatientViewModel newPatient = new PatientViewModel()
             {
@@ -236,7 +241,7 @@ namespace Avalanche.Api.Tests.Managers
                     FirstName = "SampleFirstName",
                     LastName = "SampleLastName"
                 },
-                ProcedureType = new KeyValuePairViewModel() { Id = "SampleProcedureType" }
+                ProcedureType = new KeyValuePairViewModel() { Value = "SampleProcedureType" }
             };
 
             var response = new Ism.Storage.Core.PatientList.V1.Protos.AddPatientRecordResponse()
@@ -252,58 +257,31 @@ namespace Avalanche.Api.Tests.Managers
                 QuickRegistrationDateFormat = "yyyyMMdd_T_mmss"
             };
 
+            Fixture fixture = new Fixture();
+            var user = fixture.Create<User>();
+
+            _dataManagementService.Setup(mock => mock.GetProcedureType(new Ism.Storage.Core.DataManagement.V1.Protos.ProcedureTypeMessage()
+            {
+                Department = newPatient.Department.Value,
+                Name = newPatient.ProcedureType.Value
+            })).ReturnsAsync(new Ism.Storage.Core.DataManagement.V1.Protos.ProcedureTypeMessage());
+
             _settingsService.Setup(mock => mock.GetSetupSettingsAsync(It.IsAny<ConfigurationContext>())).ReturnsAsync(setupSettings);
 
             _pieService.Setup(mock => mock.RegisterPatient(It.IsAny<Ism.Storage.Core.PatientList.V1.Protos.AddPatientRecordRequest>())).ReturnsAsync(response);
 
-            var result = _manager.RegisterPatient(newPatient, It.IsAny<User>());
+            var result = _manager.RegisterPatient(newPatient, user);
 
+            _dataManagementService.Verify(mock => mock.GetProcedureType(It.IsAny<Ism.Storage.Core.DataManagement.V1.Protos.ProcedureTypeMessage>()), Times.Once);
+            _dataManagementService.Verify(mock => mock.AddProcedureType(It.IsAny<Ism.Storage.Core.DataManagement.V1.Protos.AddProcedureTypeRequest>()), Times.Once);
             _pieService.Verify(mock => mock.RegisterPatient(It.IsAny<Ism.Storage.Core.PatientList.V1.Protos.AddPatientRecordRequest>()), Times.Once);
         }
 
         [Test]
-        public void QuickPatientRegistrationWorks()
+        public void RegisterPatientWorksWithRightDataShouldNotAddProcedureTypeIfExists()
         {
-            var setupSettings = new Shared.Infrastructure.Models.SetupSettings()
+            PatientViewModel newPatient = new PatientViewModel()
             {
-                QuickRegistrationDateFormat = "yyyyMMdd_T_mmss"
-            };
-
-            _settingsService.Setup(mock => mock.GetSetupSettingsAsync(It.IsAny<ConfigurationContext>())).ReturnsAsync(setupSettings);
-
-            _pieService.Setup(mock => mock.RegisterPatient(It.IsAny<Ism.Storage.Core.PatientList.V1.Protos.AddPatientRecordRequest>()));
-
-            User user = new User()
-            {
-                Id = "Sample",
-                FirstName = "Sample",
-                LastName = "Sample"
-            };
-
-            var result = _manager.QuickPatientRegistration(user);
-
-            _pieService.Verify(mock => mock.RegisterPatient(It.IsAny<Ism.Storage.Core.PatientList.V1.Protos.AddPatientRecordRequest>()), Times.Once);
-        }
-
-        [Test, TestCaseSource(nameof(PatientUpdateViewModelWrongDataTestCases))]
-
-        public void UpdatePatientShouldFailIfNullOrIncompleteData(PatientViewModel patient)
-        {
-            _pieService.Setup(mock => mock.UpdatePatient(new Ism.Storage.Core.PatientList.V1.Protos.UpdatePatientRecordRequest()));
-
-            Task Act() => _manager.UpdatePatient(patient);
-            Assert.That(Act, Throws.TypeOf<ArgumentNullException>());
-
-            _pieService.Verify(mock => mock.UpdatePatient(new Ism.Storage.Core.PatientList.V1.Protos.UpdatePatientRecordRequest()), Times.Never);
-        }
-
-        [Test]
-
-        public void UpdatePatientWorksWithRightData()
-        {
-            PatientViewModel existingPatient = new PatientViewModel()
-            {
-                Id = 1,
                 MRN = "Sample",
                 DateOfBirth = DateTime.Today,
                 FirstName = "Sample",
@@ -321,13 +299,186 @@ namespace Avalanche.Api.Tests.Managers
                     FirstName = "SampleFirstName",
                     LastName = "SampleLastName"
                 },
-                ProcedureType = new KeyValuePairViewModel() { Id = "SampleProcedureType" }
+                ProcedureType = new KeyValuePairViewModel() { Value = "SampleProcedureType" }
             };
 
+            var response = new Ism.Storage.Core.PatientList.V1.Protos.AddPatientRecordResponse()
+            {
+                PatientRecord = new Ism.Storage.Core.PatientList.V1.Protos.PatientRecordMessage()
+                {
+                    InternalId = 1233
+                }
+            };
+
+            var setupSettings = new Shared.Infrastructure.Models.SetupSettings()
+            {
+                QuickRegistrationDateFormat = "yyyyMMdd_T_mmss"
+            };
+
+            Fixture fixture = new Fixture();
+            var user = fixture.Create<User>();
+
+            var existingProcedureType = new Ism.Storage.Core.DataManagement.V1.Protos.ProcedureTypeMessage()
+            {
+                Department = newPatient.Department.Value,
+                Name = newPatient.ProcedureType.Value
+            };
+
+            _dataManagementService.Setup(mock => mock.GetProcedureType(existingProcedureType)).ReturnsAsync(existingProcedureType);
+
+            _settingsService.Setup(mock => mock.GetSetupSettingsAsync(It.IsAny<ConfigurationContext>())).ReturnsAsync(setupSettings);
+
+            _pieService.Setup(mock => mock.RegisterPatient(It.IsAny<Ism.Storage.Core.PatientList.V1.Protos.AddPatientRecordRequest>())).ReturnsAsync(response);
+
+            var result = _manager.RegisterPatient(newPatient, user);
+
+            _dataManagementService.Verify(mock => mock.GetProcedureType(It.IsAny<Ism.Storage.Core.DataManagement.V1.Protos.ProcedureTypeMessage>()), Times.Once);
+            _dataManagementService.Verify(mock => mock.AddProcedureType(It.IsAny<Ism.Storage.Core.DataManagement.V1.Protos.AddProcedureTypeRequest>()), Times.Never);
+            _pieService.Verify(mock => mock.RegisterPatient(It.IsAny<Ism.Storage.Core.PatientList.V1.Protos.AddPatientRecordRequest>()), Times.Once);
+        }
+
+        [Test]
+        public void QuickPatientRegistrationWorks()
+        {
+            Fixture fixture = new Fixture();
+            var user = fixture.Create<User>();
+
+            var setupSettings = new Shared.Infrastructure.Models.SetupSettings()
+            {
+                QuickRegistrationDateFormat = "yyyyMMdd_T_mmss"
+            };
+
+            _settingsService.Setup(mock => mock.GetSetupSettingsAsync(It.IsAny<ConfigurationContext>())).ReturnsAsync(setupSettings);
+
+            _pieService.Setup(mock => mock.RegisterPatient(It.IsAny<Ism.Storage.Core.PatientList.V1.Protos.AddPatientRecordRequest>()));
+
+            var result = _manager.QuickPatientRegistration(user);
+
+            _pieService.Verify(mock => mock.RegisterPatient(It.IsAny<Ism.Storage.Core.PatientList.V1.Protos.AddPatientRecordRequest>()), Times.Once);
+        }
+
+        [Test, TestCaseSource(nameof(PatientUpdateViewModelWrongDataTestCases))]
+
+        public void UpdatePatientShouldFailIfNullOrIncompleteData(PatientViewModel patient)
+        {
+            Fixture fixture = new Fixture();
+            var user = fixture.Create<User>();
+
+            var setupSettings = new Shared.Infrastructure.Models.SetupSettings()
+            {
+                QuickRegistrationDateFormat = "yyyyMMdd_T_mmss"
+            };
+
+            _pieService.Setup(mock => mock.UpdatePatient(new Ism.Storage.Core.PatientList.V1.Protos.UpdatePatientRecordRequest()));
+            _settingsService.Setup(mock => mock.GetSetupSettingsAsync(It.IsAny<ConfigurationContext>())).ReturnsAsync(setupSettings);
+
+            Task Act() => _manager.UpdatePatient(patient, user);
+            Assert.That(Act, Throws.TypeOf<ArgumentNullException>());
+
+            _pieService.Verify(mock => mock.UpdatePatient(new Ism.Storage.Core.PatientList.V1.Protos.UpdatePatientRecordRequest()), Times.Never);
+        }
+
+        [Test]
+
+        public void UpdatePatientWorksWithRightDataShouldAddProcedureTypeIfNotExists()
+        {
+            PatientViewModel existingPatient = new PatientViewModel()
+            {
+                Id = 1,
+                MRN = "Sample",
+                DateOfBirth = DateTime.Today,
+                FirstName = "Sample",
+                LastName = "Sample",
+                Sex = new KeyValuePairViewModel()
+                {
+                    Id = "S",
+                    TranslationKey = "SampleKey",
+                    Value = "Sample"
+                },
+                Department = new KeyValuePairViewModel() { Value = "SampleDepartment" },
+                Physician = new Physician()
+                {
+                    Id = "SampleId",
+                    FirstName = "SampleFirstName",
+                    LastName = "SampleLastName"
+                },
+                ProcedureType = new KeyValuePairViewModel() { Value = "SampleProcedureType" }
+            };
+
+            var setupSettings = new Shared.Infrastructure.Models.SetupSettings()
+            {
+                QuickRegistrationDateFormat = "yyyyMMdd_T_mmss"
+            };
+
+            Fixture fixture = new Fixture();
+            var user = fixture.Create<User>();
+
+            _dataManagementService.Setup(mock => mock.GetProcedureType(new Ism.Storage.Core.DataManagement.V1.Protos.ProcedureTypeMessage()
+            {
+                Department = existingPatient.Department.Value,
+                Name = existingPatient.ProcedureType.Value
+            })).ReturnsAsync(new Ism.Storage.Core.DataManagement.V1.Protos.ProcedureTypeMessage());
+
+            _settingsService.Setup(mock => mock.GetSetupSettingsAsync(It.IsAny<ConfigurationContext>())).ReturnsAsync(setupSettings);
             _pieService.Setup(mock => mock.UpdatePatient(It.IsAny<Ism.Storage.Core.PatientList.V1.Protos.UpdatePatientRecordRequest>()));
 
-            var result = _manager.UpdatePatient(existingPatient);
+            var result = _manager.UpdatePatient(existingPatient, user);
 
+            _dataManagementService.Verify(mock => mock.GetProcedureType(It.IsAny<Ism.Storage.Core.DataManagement.V1.Protos.ProcedureTypeMessage>()), Times.Once);
+            _dataManagementService.Verify(mock => mock.AddProcedureType(It.IsAny<Ism.Storage.Core.DataManagement.V1.Protos.AddProcedureTypeRequest>()), Times.Once);
+            _pieService.Verify(mock => mock.UpdatePatient(It.IsAny<Ism.Storage.Core.PatientList.V1.Protos.UpdatePatientRecordRequest>()), Times.Once);
+        }
+
+        [Test]
+
+        public void UpdatePatientWorksWithRightDataShouldNotAddProcedureTypeIfExists()
+        {
+            PatientViewModel existingPatient = new PatientViewModel()
+            {
+                Id = 1,
+                MRN = "Sample",
+                DateOfBirth = DateTime.Today,
+                FirstName = "Sample",
+                LastName = "Sample",
+                Sex = new KeyValuePairViewModel()
+                {
+                    Id = "S",
+                    TranslationKey = "SampleKey",
+                    Value = "Sample"
+                },
+                Department = new KeyValuePairViewModel() { Value = "SampleDepartment" },
+                Physician = new Physician()
+                {
+                    Id = "SampleId",
+                    FirstName = "SampleFirstName",
+                    LastName = "SampleLastName"
+                },
+                ProcedureType = new KeyValuePairViewModel() { Value = "SampleProcedureType" }
+            };
+
+            var setupSettings = new Shared.Infrastructure.Models.SetupSettings()
+            {
+                QuickRegistrationDateFormat = "yyyyMMdd_T_mmss"
+            };
+
+            Fixture fixture = new Fixture();
+            var user = fixture.Create<User>();
+
+            var existingProcedureType = new Ism.Storage.Core.DataManagement.V1.Protos.ProcedureTypeMessage()
+            {
+                Department = existingPatient.Department.Value,
+                Name = existingPatient.ProcedureType.Value
+            };
+
+            _dataManagementService.Setup(mock => mock.GetProcedureType(existingProcedureType)).ReturnsAsync(existingProcedureType);
+
+            _settingsService.Setup(mock => mock.GetSetupSettingsAsync(It.IsAny<ConfigurationContext>())).ReturnsAsync(setupSettings);
+            _pieService.Setup(mock => mock.UpdatePatient(It.IsAny<Ism.Storage.Core.PatientList.V1.Protos.UpdatePatientRecordRequest>()));
+
+            var result = _manager.UpdatePatient(existingPatient, user);
+
+            _dataManagementService.Verify(mock => mock.GetProcedureType(It.IsAny<Ism.Storage.Core.DataManagement.V1.Protos.ProcedureTypeMessage>()), Times.Once);
+            _dataManagementService.Verify(mock => mock.AddProcedureType(It.IsAny<Ism.Storage.Core.DataManagement.V1.Protos.AddProcedureTypeRequest>()), Times.Never);
             _pieService.Verify(mock => mock.UpdatePatient(It.IsAny<Ism.Storage.Core.PatientList.V1.Protos.UpdatePatientRecordRequest>()), Times.Once);
         }
 

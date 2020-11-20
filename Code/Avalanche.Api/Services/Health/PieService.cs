@@ -13,9 +13,11 @@ using static Ism.Storage.Core.PatientList.V1.Protos.PatientListStorage;
 using Ism.Security.Grpc;
 using Ism.Storage.PatientList.Client.V1;
 using Ism.Storage.Core.PatientList.V1.Protos;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Avalanche.Api.Services.Health
 {
+    [ExcludeFromCodeCoverage]
     public class PieService : IPieService
     {
         readonly IConfigurationService _configurationService;

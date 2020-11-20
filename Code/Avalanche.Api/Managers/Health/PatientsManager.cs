@@ -46,6 +46,7 @@ namespace Avalanche.Api.Managers.Health
             Preconditions.ThrowIfNull(nameof(newPatient.LastName), newPatient.LastName);
             Preconditions.ThrowIfNull(nameof(newPatient.Sex), newPatient.Sex);
             Preconditions.ThrowIfNull(nameof(newPatient.Sex.Id), newPatient.Sex.Id);
+            Preconditions.ThrowIfNull(nameof(newPatient.ProcedureType.Value), newPatient.ProcedureType.Value);
 
             var accessInfo = _accessInfoFactory.GenerateAccessInfo();
             newPatient.AccessInformation = _mapper.Map<AccessInfo>(accessInfo);
@@ -74,7 +75,7 @@ namespace Avalanche.Api.Managers.Health
                 }
             }
 
-            await CheckProcedureType(newPatient.ProcedureType.Value, newPatient.Department.Value, setupSettings);
+            await CheckProcedureType(newPatient.ProcedureType.Value, newPatient.Department?.Value, setupSettings);
 
             var patientRequest = _mapper.Map<PatientViewModel, Ism.Storage.Core.PatientList.V1.Protos.AddPatientRecordRequest>(newPatient);
             var result = await _pieService.RegisterPatient(patientRequest);
@@ -142,6 +143,7 @@ namespace Avalanche.Api.Managers.Health
             Preconditions.ThrowIfNull(nameof(existingPatient.LastName), existingPatient.LastName);
             Preconditions.ThrowIfNull(nameof(existingPatient.Sex), existingPatient.Sex);
             Preconditions.ThrowIfNull(nameof(existingPatient.Sex.Id), existingPatient.Sex.Id);
+            Preconditions.ThrowIfNull(nameof(existingPatient.ProcedureType.Value), existingPatient.ProcedureType.Value);
 
             var configurationContext = _mapper.Map<Avalanche.Shared.Domain.Models.User, ConfigurationContext>(user);
             var setupSettings = await _settingsService.GetSetupSettingsAsync(configurationContext);
@@ -149,7 +151,7 @@ namespace Avalanche.Api.Managers.Health
             var accessInfo = _accessInfoFactory.GenerateAccessInfo();
             existingPatient.AccessInformation = _mapper.Map<AccessInfo>(accessInfo);
 
-            await CheckProcedureType(existingPatient.ProcedureType.Value, existingPatient.Department.Value, setupSettings);
+            await CheckProcedureType(existingPatient.ProcedureType.Value, existingPatient.Department?.Value, setupSettings);
 
             var patientRequest = _mapper.Map<PatientViewModel, Ism.Storage.Core.PatientList.V1.Protos.UpdatePatientRecordRequest>(existingPatient);
             await _pieService.UpdatePatient(patientRequest);
@@ -233,7 +235,7 @@ namespace Avalanche.Api.Managers.Health
                 Department = departmentName
             };
 
-            var existingProcedureType = await _dataManagementService.GetProcedureTypeAsync(newProcedureType);
+            var existingProcedureType = await _dataManagementService.GetProcedureType(newProcedureType);
 
             if (string.IsNullOrEmpty(existingProcedureType.Name))
             {
