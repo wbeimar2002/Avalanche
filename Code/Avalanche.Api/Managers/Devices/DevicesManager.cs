@@ -138,12 +138,16 @@ namespace Avalanche.Api.Managers.Devices
         {
             List<Output> outputs = new List<Output>();
 
+            // TODO need to add group index to source/display config
+            // for now, the index should be good enough
+
             outputs.Add(new Output()
             {
                 Id = Guid.NewGuid().ToString(),
                 IsActive = true,
                 Name = "MAIN TV 1",
-                Thumbnail = "https://www.olympus-oste.eu/media/innovations/images_5/2n_research_and_development/entwicklung_produktinnovationen_intro.jpg"
+                Thumbnail = "https://www.olympus-oste.eu/media/innovations/images_5/2n_research_and_development/entwicklung_produktinnovationen_intro.jpg",
+                PositionInScreen = 0
             });
 
             outputs.Add(new Output()
@@ -151,7 +155,8 @@ namespace Avalanche.Api.Managers.Devices
                 Id = Guid.NewGuid().ToString(),
                 IsActive = false,
                 Name = "MAIN TV 2",
-                Thumbnail = "https://www.olympus-oste.eu/media/innovations/images_5/2n_research_and_development/entwicklung_produktinnovationen_intro.jpg"
+                Thumbnail = "https://www.olympus-oste.eu/media/innovations/images_5/2n_research_and_development/entwicklung_produktinnovationen_intro.jpg",
+                PositionInScreen = 1
             });
 
             outputs.Add(new Output()
@@ -159,7 +164,8 @@ namespace Avalanche.Api.Managers.Devices
                 Id = Guid.NewGuid().ToString(),
                 IsActive = true,
                 Name = "AUX TV 1",
-                Thumbnail = "https://www.olympus-oste.eu/media/innovations/images_5/2n_research_and_development/entwicklung_produktinnovationen_systemintegration_6.jpg"
+                Thumbnail = "https://www.olympus-oste.eu/media/innovations/images_5/2n_research_and_development/entwicklung_produktinnovationen_systemintegration_6.jpg",
+                PositionInScreen = 2
             });
 
             outputs.Add(new Output()
@@ -167,12 +173,22 @@ namespace Avalanche.Api.Managers.Devices
                 Id = Guid.NewGuid().ToString(),
                 IsActive = false,
                 Name = "MAIN TV 2",
-                Thumbnail = "https://www.olympus-oste.eu/media/innovations/images_5/2n_research_and_development/entwicklung_produktinnovationen_systemintegration_6.jpg"
+                Thumbnail = "https://www.olympus-oste.eu/media/innovations/images_5/2n_research_and_development/entwicklung_produktinnovationen_systemintegration_6.jpg",
+                PositionInScreen = 3
             });
+
+            outputs.AddRange(Enumerable.Range(0, 32).Select(x => new Output()
+            {
+                Id = Guid.NewGuid().ToString(),
+                IsActive = true,
+                Name = $"Aux Test {x}",
+                Thumbnail = "https://www.olympus-oste.eu/media/innovations/images_5/2n_research_and_development/entwicklung_produktinnovationen_systemintegration_6.jpg",
+                PositionInScreen = 5 + x // should leave a gap of size 1 
+            }));
 
             return Task.FromResult(outputs);
         }
-        
+
         public Task<List<Output>> GetTimeoutOutputs()
         {
             List<Output> outputs = new List<Output>();
@@ -199,7 +215,7 @@ namespace Avalanche.Api.Managers.Devices
 
             return Task.FromResult(outputs);
         }
-        
+
         public async Task<IList<Source>> GetOperationsSources()
         {
             var sources = await _routingService.GetVideoSources();
