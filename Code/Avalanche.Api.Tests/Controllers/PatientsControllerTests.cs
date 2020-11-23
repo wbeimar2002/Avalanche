@@ -271,7 +271,7 @@ namespace Avalanche.Api.Tests.Controllers
         public void UpdatePatientShouldReturnOk()
         {
             PatientViewModel patientUpdated = new PatientViewModel();
-            _patientsManager.Setup(mock => mock.UpdatePatient(patientUpdated));
+            _patientsManager.Setup(mock => mock.UpdatePatient(patientUpdated, It.IsAny<User>()));
 
             var okResult = _controller.UpdatePatient(patientUpdated, _environment.Object);
 
@@ -288,7 +288,7 @@ namespace Avalanche.Api.Tests.Controllers
         [Test]
         public void UpdatePatientShouldReturnBadResultIfFails()
         {
-            _patientsManager.Setup(mock => mock.UpdatePatient(It.IsAny<PatientViewModel>())).Throws(It.IsAny<Exception>());
+            _patientsManager.Setup(mock => mock.UpdatePatient(It.IsAny<PatientViewModel>(), It.IsAny<User>())).Throws(It.IsAny<Exception>());
 
             var badResult = _controller.UpdatePatient(It.IsAny<PatientViewModel>(), _environment.Object);
 

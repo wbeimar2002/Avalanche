@@ -303,7 +303,53 @@
 									"    pm.expect(jsonData).to.have.property('lastName');",
 									"    pm.expect(jsonData).to.have.property('department');",
 									"    pm.expect(jsonData).to.have.property('sex');",
-									"});"
+									"});",
+									"",
+									"const moment = require('moment');",
+									"",
+									"const TimeZoneUTCOffsetMapping = {",
+									"  'America/Los_Angeles': -7",
+									"};",
+									"",
+									"const LocalUTCOffset = -5;",
+									"",
+									"function getMomentDisplayInTimeZone(momentObj, timeZone, dateFormat) {",
+									"  let timeZoneUTCOffset = TimeZoneUTCOffsetMapping[timeZone];",
+									"  if (timeZoneUTCOffset === undefined) {",
+									"    throw new Error('No time zone matched');",
+									"  }",
+									"",
+									"  return momentObj.add(timeZoneUTCOffset - LocalUTCOffset, 'hour').format(dateFormat);",
+									"}",
+									"",
+									"console.log(getMomentDisplayInTimeZone(moment(), 'America/Los_Angeles', 'YYYY_MM_DD_T_HH_mm_ss'));",
+									"",
+									"let dateNow = getMomentDisplayInTimeZone(moment(), 'America/Los_Angeles', 'YYYY_MM_DD_T_HH_mm_ss');",
+									"dateNow = moment().subtract(5,\"minutes\").toDate()",
+									"let dateDiff = moment(pm.response.json().dateOfBirth).isBefore(dateNow)",
+									"",
+									"console.log(dateNow);",
+									"",
+									"pm.test(\"Created within the last 5 minutes: \" , () => {",
+									"    pm.expect(dateDiff).to.be.true",
+									"})",
+									"",
+									"let timestamp = moment(pm.response.json().dateOfBirth).format(\"YYYY-MM-DD\")",
+									"let isToday   = moment().format(\"YYYY-MM-DD\")",
+									"",
+									"pm.test(\"Check Date of Birth is Today\", function () {",
+									"    pm.expect(moment(timestamp).isSame(isToday), \"Dates do not match\").to.be.true;",
+									"});",
+									"",
+									"pm.test('Check the date format for MRN, First Name and Last Name', () => {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.mrn).to.match(/^\\d{4}_\\d{2}_\\d{2}_T_\\d{2}_\\d{2}_\\d{2}_\\d{2}MRN$/)",
+									"    pm.expect(jsonData.firstName).to.match(/^\\d{4}_\\d{2}_\\d{2}_T_\\d{2}_\\d{2}_\\d{2}_\\d{2}FirstName$/)",
+									"    pm.expect(jsonData.lastName).to.match(/^\\d{4}_\\d{2}_\\d{2}_T_\\d{2}_\\d{2}_\\d{2}_\\d{2}LastName$/)",
+									"    ",
+									"})",
+									"",
+									""
 								],
 								"type": "text/javascript"
 							}
@@ -707,6 +753,412 @@
 							"path": [
 								"Settings",
 								"setup"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Add Department",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{CURRENT_ACCESS_TOKEN}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "authority",
+								"value": "localhost:5001"
+							},
+							{
+								"key": "accept",
+								"value": "text/plain"
+							},
+							{
+								"key": "user-agent",
+								"value": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.111 Safari/537.36"
+							},
+							{
+								"key": "content-type",
+								"value": "application/json"
+							},
+							{
+								"key": "origin",
+								"value": "https://localhost:5001"
+							},
+							{
+								"key": "sec-fetch-site",
+								"value": "same-origin"
+							},
+							{
+								"key": "sec-fetch-mode",
+								"value": "cors"
+							},
+							{
+								"key": "sec-fetch-dest",
+								"value": "empty"
+							},
+							{
+								"key": "referer",
+								"value": "https://localhost:5001/swagger/index.html"
+							},
+							{
+								"key": "accept-language",
+								"value": "en-US,en;q=0.9"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"name\":\"sampledepartmentname\",\"isNew\":true}"
+						},
+						"url": {
+							"raw": "https://localhost:5001/Metadata/departments",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"port": "5001",
+							"path": [
+								"Metadata",
+								"departments"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get All Departments",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{CURRENT_ACCESS_TOKEN}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "authority",
+								"value": "localhost:5001"
+							},
+							{
+								"key": "accept",
+								"value": "text/plain"
+							},
+							{
+								"key": "user-agent",
+								"value": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.111 Safari/537.36"
+							},
+							{
+								"key": "sec-fetch-site",
+								"value": "same-origin"
+							},
+							{
+								"key": "sec-fetch-mode",
+								"value": "cors"
+							},
+							{
+								"key": "sec-fetch-dest",
+								"value": "empty"
+							},
+							{
+								"key": "referer",
+								"value": "https://localhost:5001/swagger/index.html"
+							},
+							{
+								"key": "accept-language",
+								"value": "en-US,en;q=0.9"
+							}
+						],
+						"url": {
+							"raw": "https://localhost:5001/Metadata/departments",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"port": "5001",
+							"path": [
+								"Metadata",
+								"departments"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Department",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{CURRENT_ACCESS_TOKEN}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "authority",
+								"value": "localhost:5001"
+							},
+							{
+								"key": "accept",
+								"value": "*/*"
+							},
+							{
+								"key": "user-agent",
+								"value": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.111 Safari/537.36"
+							},
+							{
+								"key": "origin",
+								"value": "https://localhost:5001"
+							},
+							{
+								"key": "sec-fetch-site",
+								"value": "same-origin"
+							},
+							{
+								"key": "sec-fetch-mode",
+								"value": "cors"
+							},
+							{
+								"key": "sec-fetch-dest",
+								"value": "empty"
+							},
+							{
+								"key": "referer",
+								"value": "https://localhost:5001/swagger/index.html"
+							},
+							{
+								"key": "accept-language",
+								"value": "en-US,en;q=0.9"
+							}
+						],
+						"url": {
+							"raw": "https://localhost:5001/Metadata/departments/sampledepartmentname",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"port": "5001",
+							"path": [
+								"Metadata",
+								"departments",
+								"sampledepartmentname"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Add Procedure Type",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{CURRENT_ACCESS_TOKEN}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "authority",
+								"value": "localhost:5001"
+							},
+							{
+								"key": "accept",
+								"value": "text/plain"
+							},
+							{
+								"key": "user-agent",
+								"value": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.111 Safari/537.36"
+							},
+							{
+								"key": "content-type",
+								"value": "application/json"
+							},
+							{
+								"key": "origin",
+								"value": "https://localhost:5001"
+							},
+							{
+								"key": "sec-fetch-site",
+								"value": "same-origin"
+							},
+							{
+								"key": "sec-fetch-mode",
+								"value": "cors"
+							},
+							{
+								"key": "sec-fetch-dest",
+								"value": "empty"
+							},
+							{
+								"key": "referer",
+								"value": "https://localhost:5001/swagger/index.html"
+							},
+							{
+								"key": "accept-language",
+								"value": "en-US,en;q=0.9"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"name\":\"procTypeSample\",\"department\":\"notExist\"}"
+						},
+						"url": {
+							"raw": "https://localhost:5001/Metadata/procedureTypes",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"port": "5001",
+							"path": [
+								"Metadata",
+								"procedureTypes"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Procedure Types by Department",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{CURRENT_ACCESS_TOKEN}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "authority",
+								"value": "localhost:5001"
+							},
+							{
+								"key": "accept",
+								"value": "text/plain"
+							},
+							{
+								"key": "user-agent",
+								"value": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.111 Safari/537.36"
+							},
+							{
+								"key": "sec-fetch-site",
+								"value": "same-origin"
+							},
+							{
+								"key": "sec-fetch-mode",
+								"value": "cors"
+							},
+							{
+								"key": "sec-fetch-dest",
+								"value": "empty"
+							},
+							{
+								"key": "referer",
+								"value": "https://localhost:5001/swagger/index.html"
+							},
+							{
+								"key": "accept-language",
+								"value": "en-US,en;q=0.9"
+							}
+						],
+						"url": {
+							"raw": "https://localhost:5001/Metadata/departments/departmentSample/procedureTypes",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"port": "5001",
+							"path": [
+								"Metadata",
+								"departments",
+								"departmentSample",
+								"procedureTypes"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Procedure Type",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "authority",
+								"value": "localhost:5001"
+							},
+							{
+								"key": "accept",
+								"value": "*/*"
+							},
+							{
+								"key": "user-agent",
+								"value": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.111 Safari/537.36"
+							},
+							{
+								"key": "origin",
+								"value": "https://localhost:5001"
+							},
+							{
+								"key": "sec-fetch-site",
+								"value": "same-origin"
+							},
+							{
+								"key": "sec-fetch-mode",
+								"value": "cors"
+							},
+							{
+								"key": "sec-fetch-dest",
+								"value": "empty"
+							},
+							{
+								"key": "referer",
+								"value": "https://localhost:5001/swagger/index.html"
+							},
+							{
+								"key": "accept-language",
+								"value": "en-US,en;q=0.9"
+							}
+						],
+						"url": {
+							"raw": "https://localhost:5001/Metadata/departments/departmentSample/procedureTypes/procTypeSample",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"port": "5001",
+							"path": [
+								"Metadata",
+								"departments",
+								"departmentSample",
+								"procedureTypes",
+								"procTypeSample"
 							]
 						}
 					},
@@ -3295,6 +3747,144 @@
 						"body": {
 							"mode": "raw",
 							"raw": "{\r\n   \"commandType\":35,\r\n   \"message\":\"\",\r\n   \"type\":\"\",\r\n   \"devices\":[\r\n      {\r\n         \"output\":null,\r\n         \"isDynamic\":false,\r\n         \"id\":\"tpo0\",\r\n         \"name\":\"UI 1\",\r\n         \"isActive\":true,\r\n         \"positionInScreen\":1,\r\n         \"internalIndex\":0,\r\n         \"type\":\"pc\",\r\n         \"icon\":\"icon_pc\"\r\n      }\r\n   ],\r\n   \"destinations\":[\r\n      {\r\n         \"thumbnail\":null,\r\n         \"id\":\"tpo0\",\r\n         \"name\":\"Rec1\",\r\n         \"isActive\":true,\r\n         \"positionInScreen\":-1,\r\n         \"internalIndex\":0,\r\n         \"type\":\"Encoder\",\r\n         \"icon\":\"icon_record\"\r\n      }\r\n   ],\r\n   \"additionalInfo\":\"{\\\"X\\\":180.75,\\\"Y\\\":221,\\\"Width\\\":300,\\\"Height\\\":230.40625}\"\r\n}",
+							"options": {
+								"raw": {}
+							}
+						},
+						"url": {
+							"raw": "https://localhost:5001/Devices/commands",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"port": "5001",
+							"path": [
+								"Devices",
+								"commands"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "Recording",
+			"item": [
+				{
+					"name": "Start Recording",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "8ea59cf2-b056-45ec-b649-a4fdf5a98f74",
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Is an array\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData).to.be.an('array');",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{CURRENT_ACCESS_TOKEN}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "accept",
+								"value": "text/plain"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n   \"commandType\":40,\r\n   \"message\":\"\",\r\n   \"type\":\"\",\r\n   \"devices\":[\r\n      {\r\n         \r\n      }\r\n   ],\r\n   \"destinations\":[\r\n      {\r\n         \"thumbnail\":null,\r\n         \"id\":\"tpo0\",\r\n         \"name\":\"Rec1\",\r\n         \"isActive\":true,\r\n         \"positionInScreen\":-1,\r\n         \"internalIndex\":0,\r\n         \"type\":\"Encoder\",\r\n         \"icon\":\"icon_record\"\r\n      },\r\n      {\r\n         \"thumbnail\":null,\r\n         \"id\":\"tpo1\",\r\n         \"name\":\"Rec2\",\r\n         \"isActive\":true,\r\n         \"positionInScreen\":-1,\r\n         \"internalIndex\":0,\r\n         \"type\":\"Encoder\",\r\n         \"icon\":\"icon_record\"\r\n      }\r\n   ]\r\n}",
+							"options": {
+								"raw": {}
+							}
+						},
+						"url": {
+							"raw": "https://localhost:5001/Devices/commands",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"port": "5001",
+							"path": [
+								"Devices",
+								"commands"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Stop Recording",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "17411a2f-01b9-4f72-9062-3aa707a00631",
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Is an array\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData).to.be.an('array');",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{CURRENT_ACCESS_TOKEN}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "accept",
+								"value": "text/plain"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n   \"commandType\":41,\r\n   \"message\":\"\",\r\n   \"type\":\"\",\r\n   \"devices\":[\r\n      {\r\n         \r\n      }\r\n   ],\r\n   \"destinations\":[\r\n      {\r\n         \"thumbnail\":null,\r\n         \"id\":\"tpo0\",\r\n         \"name\":\"Rec1\",\r\n         \"isActive\":true,\r\n         \"positionInScreen\":-1,\r\n         \"internalIndex\":0,\r\n         \"type\":\"Encoder\",\r\n         \"icon\":\"icon_record\"\r\n      },\r\n      {\r\n         \"thumbnail\":null,\r\n         \"id\":\"tpo1\",\r\n         \"name\":\"Rec2\",\r\n         \"isActive\":true,\r\n         \"positionInScreen\":-1,\r\n         \"internalIndex\":0,\r\n         \"type\":\"Encoder\",\r\n         \"icon\":\"icon_record\"\r\n      }\r\n   ]\r\n}",
 							"options": {
 								"raw": {}
 							}

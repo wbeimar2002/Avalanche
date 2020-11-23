@@ -8,8 +8,10 @@ using Avalanche.Shared.Domain.Enumerations;
 using Avalanche.Shared.Domain.Models;
 using Avalanche.Shared.Infrastructure.Models;
 using Avalanche.Shared.Infrastructure.Services.Settings;
+using AvidisDeviceInterface.V1.Protos;
 using Castle.Core.Configuration;
 using Google.Protobuf.WellKnownTypes;
+using Ism.Common.Core.Configuration.Models;
 using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
@@ -32,7 +34,22 @@ namespace Avalanche.Api.Tests.Managers
                 Destinations = new List<Device>() { new Device() { Id = "TP1" } }
             };
 
-            _routingService.Setup(mock => mock.RouteVideo(It.IsAny<Ism.Routing.V1.Protos.RouteVideoRequest>()));
+            var commandResponse = _manager.SendCommand(commandViewModel);
+
+            _routingService.Verify(mock => mock.RouteVideo(It.IsAny<Ism.Routing.V1.Protos.RouteVideoRequest>()), Times.Once);
+
+            Assert.IsNotNull(commandResponse);
+        }
+
+        [Test]
+        public void UnrouteVideoSourceShouldReturnResponse()
+        {
+            CommandViewModel commandViewModel = new CommandViewModel()
+            {
+                CommandType = Shared.Domain.Enumerations.CommandTypes.UnrouteVideoSource,
+                Devices = new List<Device>() { new Device() { Id = "TP1" } },
+                Destinations = new List<Device>() { new Device() { Id = "TP1" } }
+            };
 
             var commandResponse = _manager.SendCommand(commandViewModel);
 
@@ -69,6 +86,67 @@ namespace Avalanche.Api.Tests.Managers
             var commandResponse = _manager.SendCommand(commandViewModel);
 
             _routingService.Verify(mock => mock.ExitFullScreen(It.IsAny<Ism.Routing.V1.Protos.ExitFullScreenRequest>()), Times.Once);
+
+            Assert.IsNotNull(commandResponse);
+        }
+
+        [Test]
+        public void ShowVideoRoutingPreviewHarwareModeShouldReturnResponse()
+        {
+            _settingsService.Setup(mock =>  mock.GetVideoRoutingSettingsAsync(It.IsAny<ConfigurationContext>())).ReturnsAsync(new VideoRoutingSettings()
+            {
+                Mode = VideoRoutingModes.Hardware
+            });
+
+            CommandViewModel commandViewModel = new CommandViewModel()
+            {
+                AdditionalInfo = "{\"X\":180.75,\"Y\":221,\"Width\":300,\"Height\":230.40625}",
+                CommandType = Shared.Domain.Enumerations.CommandTypes.ShowVideoRoutingPreview,
+                Devices = new List<Device>() { new Device() { Id = "TP1" } }
+            };
+
+            var commandResponse = _manager.SendCommand(commandViewModel);
+
+            _avidisService.Verify(mock => mock.ShowPreview(It.IsAny<ShowPreviewRequest>()), Times.Once);
+            _avidisService.Verify(mock => mock.RoutePreview(It.IsAny<RoutePreviewRequest>()), Times.Once);
+
+            Assert.IsNotNull(commandResponse);
+        }
+
+        [Test]
+        public void ShowVideoRoutingPreviewSoftwareModeShouldReturnResponse()
+        {
+            _settingsService.Setup(mock => mock.GetVideoRoutingSettingsAsync(It.IsAny<ConfigurationContext>())).ReturnsAsync(new VideoRoutingSettings()
+            {
+                Mode = VideoRoutingModes.Software
+            });
+
+            CommandViewModel commandViewModel = new CommandViewModel()
+            {
+                AdditionalInfo = "{\"X\":180.75,\"Y\":221,\"Width\":300,\"Height\":230.40625}",
+                CommandType = Shared.Domain.Enumerations.CommandTypes.ShowVideoRoutingPreview,
+                Devices = new List<Device>() { new Device() { Id = "TP1" } }
+            };
+
+            var commandResponse = _manager.SendCommand(commandViewModel);
+
+            _avidisService.Verify(mock => mock.RoutePreview(It.IsAny<RoutePreviewRequest>()), Times.Once);
+
+            Assert.IsNotNull(commandResponse);
+        }
+
+        [Test]
+        public void HideVideoRoutingPreviewShouldReturnResponse()
+        {
+            CommandViewModel commandViewModel = new CommandViewModel()
+            {
+                CommandType = Shared.Domain.Enumerations.CommandTypes.HideVideoRoutingPreview,
+                Devices = new List<Device>() { new Device() { Id = "TP1" } }
+            };
+
+            var commandResponse = _manager.SendCommand(commandViewModel);
+
+            _avidisService.Verify(mock => mock.HidePreview(It.IsAny<HidePreviewRequest>()), Times.Once);
 
             Assert.IsNotNull(commandResponse);
         }

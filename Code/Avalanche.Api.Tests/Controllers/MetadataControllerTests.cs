@@ -3,6 +3,7 @@ using Avalanche.Api.Managers.Devices;
 using Avalanche.Api.Managers.Metadata;
 using Avalanche.Api.Tests.Extensions;
 using Avalanche.Shared.Domain.Enumerations;
+using Avalanche.Shared.Domain.Models;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -60,7 +61,7 @@ namespace Avalanche.Api.Tests.Controllers
         [Test]
         public void GetSexesShouldReturnBadResultIfFails()
         {
-            _metadataManager.Setup(mock => mock.GetMetadata(MetadataTypes.Sex)).Throws(It.IsAny<Exception>());
+            _metadataManager.Setup(mock => mock.GetMetadata(It.IsAny<User>(), MetadataTypes.Sex)).Throws(It.IsAny<Exception>());
 
             var badResult = _controller.GetSexes(_environment.Object);
 
@@ -69,38 +70,6 @@ namespace Avalanche.Api.Tests.Controllers
                 _appLoggerService.Verify(LogLevel.Error, $"Exception {_controller.GetType().Name}.GetSexes", Times.Once());
                 _appLoggerService.Verify(LogLevel.Debug, $"Requested {_controller.GetType().Name}.GetSexes", Times.Once());
                 _appLoggerService.Verify(LogLevel.Debug, $"Completed {_controller.GetType().Name}.GetSexes", Times.Once());
-            }
-
-            Assert.IsInstanceOf<BadRequestObjectResult>(badResult.Result);
-        }
-
-        [Test]
-        public void GetProcedureTypesShouldReturnOkResult()
-        {
-            var okResult = _controller.GetProcedureTypes(_environment.Object);
-
-            if (_checkLogger)
-            {
-                _appLoggerService.Verify(LogLevel.Error, $"Exception {_controller.GetType().Name}.GetProcedureTypes", Times.Never());
-                _appLoggerService.Verify(LogLevel.Debug, $"Requested {_controller.GetType().Name}.GetProcedureTypes", Times.Once());
-                _appLoggerService.Verify(LogLevel.Debug, $"Completed {_controller.GetType().Name}.GetProcedureTypes", Times.Once());
-            }
-
-            Assert.IsInstanceOf<OkObjectResult>(okResult.Result);
-        }
-
-        [Test]
-        public void GetProcedureTypesShouldReturnBadResultIfFails()
-        {
-            _metadataManager.Setup(mock => mock.GetMetadata(MetadataTypes.ProcedureTypes)).Throws(It.IsAny<Exception>());
-
-            var badResult = _controller.GetProcedureTypes(_environment.Object);
-
-            if (_checkLogger)
-            {
-                _appLoggerService.Verify(LogLevel.Error, $"Exception {_controller.GetType().Name}.GetProcedureTypes", Times.Once());
-                _appLoggerService.Verify(LogLevel.Debug, $"Requested {_controller.GetType().Name}.GetProcedureTypes", Times.Once());
-                _appLoggerService.Verify(LogLevel.Debug, $"Completed {_controller.GetType().Name}.GetProcedureTypes", Times.Once());
             }
 
             Assert.IsInstanceOf<BadRequestObjectResult>(badResult.Result);
@@ -124,7 +93,7 @@ namespace Avalanche.Api.Tests.Controllers
         [Test]
         public void GetContentTypesShouldReturnBadResultIfFails()
         {
-            _metadataManager.Setup(mock => mock.GetMetadata(MetadataTypes.ContentTypes)).Throws(It.IsAny<Exception>());
+            _metadataManager.Setup(mock => mock.GetMetadata(It.IsAny<User>(), MetadataTypes.ContentTypes)).Throws(It.IsAny<Exception>());
 
             var badResult = _controller.GetContentTypes(_environment.Object);
 
@@ -156,7 +125,7 @@ namespace Avalanche.Api.Tests.Controllers
         [Test]
         public void GetSourceTypesShouldReturnBadResultIfFails()
         {
-            _metadataManager.Setup(mock => mock.GetMetadata(MetadataTypes.SourceTypes)).Throws(It.IsAny<Exception>());
+            _metadataManager.Setup(mock => mock.GetMetadata(It.IsAny<User>(), MetadataTypes.SourceTypes)).Throws(It.IsAny<Exception>());
 
             var badResult = _controller.GetSourceTypes(_environment.Object);
 
@@ -188,7 +157,7 @@ namespace Avalanche.Api.Tests.Controllers
         [Test]
         public void GetDepartmentsShouldReturnBadResultIfFails()
         {
-            _metadataManager.Setup(mock => mock.GetMetadata(MetadataTypes.Departments)).Throws(It.IsAny<Exception>());
+            _metadataManager.Setup(mock => mock.GetAllDepartments(It.IsAny<User>())).Throws(It.IsAny<Exception>());
 
             var badResult = _controller.GetDepartments(_environment.Object);
 
@@ -200,6 +169,145 @@ namespace Avalanche.Api.Tests.Controllers
             }
 
             Assert.IsInstanceOf<BadRequestObjectResult>(badResult.Result);
+        }
+
+        [Test]
+        public void GetProcedureTypesShouldReturnOkResult()
+        {
+            var okResult = _controller.GetProcedureTypes(_environment.Object);
+
+            if (_checkLogger)
+            {
+                _appLoggerService.Verify(LogLevel.Error, $"Exception {_controller.GetType().Name}.GetProcedureTypes", Times.Never());
+                _appLoggerService.Verify(LogLevel.Debug, $"Requested {_controller.GetType().Name}.GetProcedureTypes", Times.Once());
+                _appLoggerService.Verify(LogLevel.Debug, $"Completed {_controller.GetType().Name}.GetProcedureTypes", Times.Once());
+            }
+
+            Assert.IsInstanceOf<OkObjectResult>(okResult.Result);
+        }
+
+        [Test]
+        public void GetProcedureTypesShouldReturnBadResultIfFails()
+        {
+            _metadataManager.Setup(mock => mock.GetProceduresByDepartment(It.IsAny<User>(), It.IsAny<string>())).Throws(It.IsAny<Exception>());
+
+            var badResult = _controller.GetProcedureTypes(_environment.Object);
+
+            if (_checkLogger)
+            {
+                _appLoggerService.Verify(LogLevel.Error, $"Exception {_controller.GetType().Name}.GetProcedureTypes", Times.Once());
+                _appLoggerService.Verify(LogLevel.Debug, $"Requested {_controller.GetType().Name}.GetProcedureTypes", Times.Once());
+                _appLoggerService.Verify(LogLevel.Debug, $"Completed {_controller.GetType().Name}.GetProcedureTypes", Times.Once());
+            }
+
+            Assert.IsInstanceOf<BadRequestObjectResult>(badResult.Result);
+        }
+
+        [Test]
+        public void GetProceduresByDepartmentShouldReturnOkResult()
+        {
+            var okResult = _controller.GetProcedureTypesByDepartment(It.IsAny<string>(), _environment.Object);
+
+            if (_checkLogger)
+            {
+                _appLoggerService.Verify(LogLevel.Error, $"Exception {_controller.GetType().Name}.GetProcedureTypesByDepartment", Times.Never());
+                _appLoggerService.Verify(LogLevel.Debug, $"Requested {_controller.GetType().Name}.GetProcedureTypesByDepartment", Times.Once());
+                _appLoggerService.Verify(LogLevel.Debug, $"Completed {_controller.GetType().Name}.GetProcedureTypesByDepartment", Times.Once());
+            }
+
+            Assert.IsInstanceOf<OkObjectResult>(okResult.Result);
+        }
+
+        [Test]
+        public void GetProcedureTypesByDepartmentShouldReturnBadResultIfFails()
+        {
+            _metadataManager.Setup(mock => mock.GetProceduresByDepartment(It.IsAny<User>(), It.IsAny<string>())).Throws(It.IsAny<Exception>());
+
+            var badResult = _controller.GetProcedureTypesByDepartment(It.IsAny<string>(), _environment.Object);
+
+            if (_checkLogger)
+            {
+                _appLoggerService.Verify(LogLevel.Error, $"Exception {_controller.GetType().Name}.GetProcedureTypesByDepartment", Times.Once());
+                _appLoggerService.Verify(LogLevel.Debug, $"Requested {_controller.GetType().Name}.GetProcedureTypesByDepartment", Times.Once());
+                _appLoggerService.Verify(LogLevel.Debug, $"Completed {_controller.GetType().Name}.GetProcedureTypesByDepartment", Times.Once());
+            }
+
+            Assert.IsInstanceOf<BadRequestObjectResult>(badResult.Result);
+        }
+
+        [Test]
+        public void AddDepartmentShouldReturnOkResult()
+        {
+            var okResult = _controller.AddDepartment(It.IsAny<Department>(), _environment.Object);
+
+            if (_checkLogger)
+            {
+                _appLoggerService.Verify(LogLevel.Error, $"Exception {_controller.GetType().Name}.AddDepartment", Times.Never());
+                _appLoggerService.Verify(LogLevel.Debug, $"Requested {_controller.GetType().Name}.AddDepartment", Times.Once());
+                _appLoggerService.Verify(LogLevel.Debug, $"Completed {_controller.GetType().Name}.AddDepartment", Times.Once());
+            }
+
+            Assert.IsInstanceOf<OkObjectResult>(okResult.Result);
+        }
+
+        [Test]
+        public void AddProcedureTypeShouldReturnOkResult()
+        {
+            var okResult = _controller.AddProcedureType(It.IsAny<ProcedureType>(), _environment.Object);
+
+            if (_checkLogger)
+            {
+                _appLoggerService.Verify(LogLevel.Error, $"Exception {_controller.GetType().Name}.AddProcedureType", Times.Never());
+                _appLoggerService.Verify(LogLevel.Debug, $"Requested {_controller.GetType().Name}.AddProcedureType", Times.Once());
+                _appLoggerService.Verify(LogLevel.Debug, $"Completed {_controller.GetType().Name}.AddProcedureType", Times.Once());
+            }
+
+            Assert.IsInstanceOf<OkObjectResult>(okResult.Result);
+        }
+
+        [Test]
+        public void DeleteDepartmentShouldReturnOkResult()
+        {
+            var okResult = _controller.DeleteDepartment(It.IsAny<string>(), _environment.Object);
+
+            if (_checkLogger)
+            {
+                _appLoggerService.Verify(LogLevel.Error, $"Exception {_controller.GetType().Name}.DeleteDepartment", Times.Never());
+                _appLoggerService.Verify(LogLevel.Debug, $"Requested {_controller.GetType().Name}.DeleteDepartment", Times.Once());
+                _appLoggerService.Verify(LogLevel.Debug, $"Completed {_controller.GetType().Name}.DeleteDepartment", Times.Once());
+            }
+
+            Assert.IsInstanceOf<OkResult>(okResult.Result);
+        }
+
+        [Test]
+        public void DeleteProcedureTypeShouldReturnOkResult()
+        {
+            var okResult = _controller.DeleteProcedureType(It.IsAny<string>(), _environment.Object);
+
+            if (_checkLogger)
+            {
+                _appLoggerService.Verify(LogLevel.Error, $"Exception {_controller.GetType().Name}.DeleteProcedureType", Times.Never());
+                _appLoggerService.Verify(LogLevel.Debug, $"Requested {_controller.GetType().Name}.DeleteProcedureType", Times.Once());
+                _appLoggerService.Verify(LogLevel.Debug, $"Completed {_controller.GetType().Name}.DeleteProcedureType", Times.Once());
+            }
+
+            Assert.IsInstanceOf<OkResult>(okResult.Result);
+        }
+
+        [Test]
+        public void DeleteProcedureTypeByDepartmentShouldReturnOkResult()
+        {
+            var okResult = _controller.DeleteProcedureType(It.IsAny<string>(), It.IsAny<string>(), _environment.Object);
+
+            if (_checkLogger)
+            {
+                _appLoggerService.Verify(LogLevel.Error, $"Exception {_controller.GetType().Name}.DeleteProcedureType", Times.Never());
+                _appLoggerService.Verify(LogLevel.Debug, $"Requested {_controller.GetType().Name}.DeleteProcedureType", Times.Once());
+                _appLoggerService.Verify(LogLevel.Debug, $"Completed {_controller.GetType().Name}.DeleteProcedureType", Times.Once());
+            }
+
+            Assert.IsInstanceOf<OkResult>(okResult.Result);
         }
     }
 }

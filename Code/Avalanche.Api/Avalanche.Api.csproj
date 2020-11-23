@@ -14,20 +14,20 @@
   <ItemGroup>
     <Compile Remove="Managers\Security\**" />
     <Compile Remove="Repositories\**" />
+    <Compile Remove="Services\Data\**" />
     <Compile Remove="Services\Security\**" />
     <Content Remove="Managers\Security\**" />
     <Content Remove="Repositories\**" />
+    <Content Remove="Services\Data\**" />
     <Content Remove="Services\Security\**" />
     <EmbeddedResource Remove="Managers\Security\**" />
     <EmbeddedResource Remove="Repositories\**" />
+    <EmbeddedResource Remove="Services\Data\**" />
     <EmbeddedResource Remove="Services\Security\**" />
     <None Remove="Managers\Security\**" />
     <None Remove="Repositories\**" />
+    <None Remove="Services\Data\**" />
     <None Remove="Services\Security\**" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Compile Remove="Protos\WebRtcServiceExtensions.cs" />
   </ItemGroup>
 
   <ItemGroup>
@@ -49,7 +49,8 @@
     <PackageReference Include="Ism.Recorder.Client" Version="1.0.0-prerelease0005" />
     <PackageReference Include="Ism.Routing.Client" Version="1.0.0-prerelease0001" />
     <PackageReference Include="Ism.Security.Grpc.Standard" Version="1.0.0-prerelease003" />
-    <PackageReference Include="Ism.Storage.Configuration.Client" Version="1.0.0-prerelease0004" />
+    <PackageReference Include="Ism.Storage.Configuration.Client" Version="1.0.0-prerelease0005" />
+    <PackageReference Include="Ism.Storage.DataManagement.Client" Version="1.0.0-prerelease0003" />
     <PackageReference Include="Ism.Storage.PatientList.Client" Version="1.0.0-prerelease0004" />
     <PackageReference Include="Ism.Streaming.Client" Version="1.0.0-prerelease0002" />
     <!--<PackageReference Include="Ism.PatientInfoEngine.Client.Core" Version="1.0.0-prerelease3" />-->
@@ -72,12 +73,6 @@
   <ItemGroup>
     <ProjectReference Include="..\Avalanche.Shared.Domain\Avalanche.Shared.Domain.csproj" />
     <ProjectReference Include="..\Avalanche.Shared.Infrastructure\Avalanche.Shared.Infrastructure.csproj" />
-  </ItemGroup> 
-
-    <ItemGroup>
-    <Reference Include="Ism.Log.Common.Core">
-      <HintPath>..\HackyDllDumpingGround\Ism.Log.Common.Core.dll</HintPath>
-    </Reference>
   </ItemGroup>
 
   <ItemGroup>

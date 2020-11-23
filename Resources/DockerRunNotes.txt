@@ -1,0 +1,3 @@
+Create external network
+docker network create -d bridge --subnet=192.168.1.0/24 --gateway=192.168.1.254 app_net
+Run docker-compose up 

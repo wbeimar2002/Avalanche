@@ -17,5 +17,6 @@ namespace Avalanche.Api.ViewModels
 
         public List<Device> Devices { get; set; }
         public List<Device> Destinations { get; set; }
+        public User User { get; set; }
     }
 }

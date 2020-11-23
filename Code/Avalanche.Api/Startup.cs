@@ -37,6 +37,7 @@ using static Ism.PgsTimeout.V1.Protos.PgsTimeout;
 using static Ism.Recorder.Core.V1.Protos.Recorder;
 using static Ism.Routing.V1.Protos.Routing;
 using static Ism.Storage.Core.Configuration.V1.Protos.ConfigurationService;
+using static Ism.Storage.Core.DataManagement.V1.Protos.DataManagementStorage;
 using static Ism.Storage.Core.PatientList.V1.Protos.PatientListStorage;
 using static Ism.Streaming.V1.Protos.WebRtcStreamer;
 
@@ -84,13 +85,15 @@ namespace Avalanche.Api
             services.AddSingleton<IMediaManager, MediaManager>();
             services.AddSingleton<IPieService, PieService>();
             services.AddSingleton<ISettingsService, SettingsService>();
-            services.AddSingleton<IStorageService, StorageService>();
             services.AddSingleton<IBroadcastService, BroadcastService>();
             services.AddSingleton<INotificationsManager, NotificationsManager>();
             services.AddSingleton<IRoutingService, RoutingService>();
             services.AddSingleton<IAvidisService, AvidisService>();
             services.AddSingleton<IRecorderService, RecorderService>();
+            services.AddSingleton<IStorageService, StorageService>();
+            services.AddSingleton<IDataManagementService, DataManagementService>();
             services.AddSingleton<ICertificateProvider>(new FileSystemCertificateProvider(grpcCertificate, grpcPassword, grpcServerValidationCertificate));
+            services.AddSingleton<IGrpcClientFactory<DataManagementStorageClient>, GrpcClientFactory<DataManagementStorageClient>>();
             services.AddSingleton<IGrpcClientFactory<PatientListServiceClient>, GrpcClientFactory<PatientListServiceClient>>();
             services.AddSingleton<IGrpcClientFactory<PatientListStorageClient>, GrpcClientFactory<PatientListStorageClient>>();
             services.AddSingleton<IGrpcClientFactory<RecorderClient>, GrpcClientFactory<RecorderClient>>();
@@ -99,8 +102,6 @@ namespace Avalanche.Api
             services.AddSingleton<IGrpcClientFactory<WebRtcStreamerClient>, GrpcClientFactory<WebRtcStreamerClient>>();
             services.AddSingleton<IGrpcClientFactory<PgsTimeoutClient>, GrpcClientFactory<PgsTimeoutClient>>();
             services.AddSingleton<IGrpcClientFactory<ConfigurationServiceClient>, GrpcClientFactory<ConfigurationServiceClient>>();
-
-            services.AddHttpContextAccessor();
             services.AddSingleton<IAccessInfoFactory, AccessInfoFactory>();
 
             //TODO: Check this. Should be env variables?
@@ -126,7 +127,7 @@ namespace Avalanche.Api
             services.AddAutoMapper(typeof(Startup));
 
             ConfigureAuthorization(services);
-            ConfigureCorsPolicy(services, configurationService);
+            ConfigureCorsPolicy(services);
             ConfigureCertificate(configurationService);
         }
 
@@ -178,20 +179,8 @@ namespace Avalanche.Api
             });
         }
 
-        private static void ConfigureCorsPolicy(IServiceCollection services, IConfigurationService configurationService)
+        private static void ConfigureCorsPolicy(IServiceCollection services)
         {
-            /*
-             * This was implemented in Hikari because people use the API from an external computer,
-             * please evaluate if this scenario applies here in Avalanche
-             
-            var configSettings = await configurationService.LoadAsync<ConfigSettings>("/environment/env.json");
-
-            if (configSettings == null)
-                configSettings = new ConfigSettings();
-
-            //TODO: This needs to be reviewed ports should not be hardcoded
-            configSettings.IpAddress = configSettings.IpAddress.Replace(":6005", ":8443");*/
-
             // Add Cors
             // https://docs.microsoft.com/en-us/aspnet/core/security/cors?view=aspnetcore-3.1
             services.AddCors(options =>

@@ -58,7 +58,7 @@ pm.sendRequest is not supported for k6 so, this is a simple pre-request
 Download de k6.exe
 https://github.com/loadimpact/k6/releases
 
-k6 run Avalanche-k6-script.js --out json=Avalanche.k6.results.json
+k6 run --summary-export=Avalanche.k6.results.json Avalanche-k6-script.js
 
 OPTIONAL > Run the script with docker
 References: https://docs.k6.io/docs/running-k6

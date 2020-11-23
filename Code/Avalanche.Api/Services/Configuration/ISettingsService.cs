@@ -1,4 +1,5 @@
 ﻿using Avalanche.Shared.Infrastructure.Models;
+using Ism.Common.Core.Configuration.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,7 +10,7 @@ namespace Avalanche.Api.Services.Configuration
     public interface ISettingsService
     {
         Task<TimeoutSettings> GetTimeoutSettingsAsync();
-        Task<SetupSettings> GetSetupSettingsAsync();
-        Task<VideoRoutingSettings> GetVideoRoutingSettingsAsync();
+        Task<SetupSettings> GetSetupSettingsAsync(ConfigurationContext context);
+        Task<VideoRoutingSettings> GetVideoRoutingSettingsAsync(ConfigurationContext context);
     }
 }

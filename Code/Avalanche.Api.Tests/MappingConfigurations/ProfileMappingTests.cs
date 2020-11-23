@@ -18,7 +18,7 @@ namespace Avalanche.Api.Tests.MappingConfigurations
         {
             var config = new MapperConfiguration(cfg =>
             {
-                cfg.AddProfile(new PieMappingConfigurations());
+                cfg.AddProfile(new HealthMappingConfigurations());
                 cfg.AddProfile(new VideoRoutingMappingConfigurations());
                 cfg.AddProfile(new MediaMappingConfigurations());
             });
@@ -27,9 +27,9 @@ namespace Avalanche.Api.Tests.MappingConfigurations
         }
 
         [Test]
-        public void PieMappingConfigurations_IsValid()
+        public void HealthMappingConfigurations_IsValid()
         {
-            AssertProfileIsValid<PieMappingConfigurations>();      
+            AssertProfileIsValid<HealthMappingConfigurations>();      
         }
 
         [Test]

@@ -7,6 +7,7 @@ using Ism.PgsTimeout.V1.Protos;
 using Moq;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -16,7 +17,7 @@ namespace Avalanche.Api.Services.Media
     {
         public bool UseMocks { get; set; }
 
-        public PgsTimeoutSecureClient PgsTimeoutClient { get; set; }
+        PgsTimeoutSecureClient PgsTimeoutClient { get; set; }
 
         #region PgsTimeout
 

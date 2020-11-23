@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
+using Avalanche.Api.Extensions;
 using Avalanche.Api.Managers.Health;
 using Avalanche.Api.ViewModels;
 using Avalanche.Shared.Domain.Enumerations;
@@ -40,12 +41,13 @@ namespace Avalanche.Api.Controllers.V1
         /// </summary>
         [HttpGet("")]
         [Produces(typeof(List<PhysiciansViewModel>))]
-        public async Task<IActionResult> GetAll([FromServices]IWebHostEnvironment env)
+        public async Task<IActionResult> GetAllPhysicians([FromServices]IWebHostEnvironment env)
         {
             try
             {
                 _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
-                PhysiciansViewModel result = await _physiciansManager.GetTemporaryPhysiciansSource();
+
+                PhysiciansViewModel result = await _physiciansManager.GetTemporaryPhysiciansSource(User.GetUser());
                 return Ok(result);
             }
             catch (Exception exception)

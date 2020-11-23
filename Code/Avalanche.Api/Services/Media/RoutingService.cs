@@ -5,29 +5,26 @@ using Ism.Routing.V1.Protos;
 using Ism.Security.Grpc.Interfaces;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
 using static Ism.Routing.V1.Protos.Routing;
 
 namespace Avalanche.Api.Services.Media
 {
+    [ExcludeFromCodeCoverage]
     public class RoutingService : IRoutingService
     {
         readonly IConfigurationService _configurationService;
-
-        
-        public RoutingSecureClient RoutingClient { get; set; }
+        RoutingSecureClient RoutingClient { get; set; }
 
         public RoutingService(IConfigurationService configurationService, IGrpcClientFactory<RoutingClient> grpcClientFactory, ICertificateProvider certificateProvider)
         {
             _configurationService = configurationService;
 
             var hostIpAddress = _configurationService.GetEnvironmentVariable("hostIpAddress");
-
             var mediaServiceGrpcPort = _configurationService.GetEnvironmentVariable("mediaServiceGrpcPort");
 
-            //Client = ClientHelper.GetSecureClient<WebRtcStreamer.WebRtcStreamerClient>($"https://{hostIpAddress}:{mediaServiceGrpcPort}", certificate);
-            //RoutingClient = ClientHelper.GetInsecureClient<Routing.RoutingClient>($"https://{_hostIpAddress}:{mediaServiceGrpcPort}");
             RoutingClient = new RoutingSecureClient(grpcClientFactory, hostIpAddress, mediaServiceGrpcPort, certificateProvider);
         }
 

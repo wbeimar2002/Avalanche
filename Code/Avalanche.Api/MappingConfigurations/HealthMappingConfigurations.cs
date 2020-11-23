@@ -2,14 +2,100 @@
 using Avalanche.Api.ViewModels;
 using Avalanche.Shared.Domain.Models;
 using Google.Protobuf.WellKnownTypes;
+using Ism.Common.Core.Configuration.Models;
+using Ism.Storage.Core.DataManagement.V1.Protos;
 using System;
 
 namespace Avalanche.Api.MappingConfigurations
 {
-    public class PieMappingConfigurations : Profile
+    public class HealthMappingConfigurations : Profile
     {
-        public PieMappingConfigurations()
+        public HealthMappingConfigurations()
         {
+            CreateMap<ProcedureType, DeleteProcedureTypeRequest>()
+                .ForMember(dest =>
+                    dest.DepartmentName,
+                    opt => opt.MapFrom(src => src.Department))
+                .ForMember(dest =>
+                    dest.ProcedureTypeName,
+                    opt => opt.MapFrom(src => src.Name))
+                .ReverseMap();
+
+            CreateMap<DepartmentMessage, Department>()
+                .ForMember(dest =>
+                    dest.Name,
+                    opt => opt.MapFrom(src => src.Name))
+                .ForMember(dest =>
+                    dest.IsNew,
+                    opt => opt.Ignore())
+                .ReverseMap();
+
+            CreateMap<ProcedureTypeMessage, ProcedureType>()
+                .ForMember(dest =>
+                    dest.Name,
+                    opt => opt.MapFrom(src => src.Name))
+                .ForMember(dest =>
+                    dest.Department,
+                    opt => opt.MapFrom(src => src.Department))
+                .ForMember(dest =>
+                    dest.IsNew,
+                    opt => opt.Ignore())
+                .ReverseMap();
+
+            CreateMap<Department, AddDepartmentRequest>()
+                .ForPath(dest =>
+                    dest.Department.Name,
+                    opt => opt.MapFrom(src => src.Name))
+                .ReverseMap();
+
+            CreateMap<ProcedureType, AddProcedureTypeRequest>()
+                .ForPath(dest =>
+                    dest.ProcedureType.Name,
+                    opt => opt.MapFrom(src => src.Name))
+                .ForPath(dest =>
+                    dest.ProcedureType.Department,
+                    opt => opt.MapFrom(src => src.Department))
+                .ReverseMap();
+
+            CreateMap<AddDepartmentResponse, Department>()
+                .ForMember(dest =>
+                    dest.Name,
+                    opt => opt.MapFrom(src => src.Department.Name))
+                .ForMember(dest =>
+                    dest.IsNew,
+                    opt => opt.MapFrom(src => src.IsNew))
+                .ReverseMap();
+
+            CreateMap<AddProcedureTypeResponse, ProcedureType>()
+                .ForMember(dest =>
+                    dest.Name,
+                    opt => opt.MapFrom(src => src.ProcedureType.Name))
+                .ForMember(dest =>
+                    dest.Department,
+                    opt => opt.MapFrom(src => src.ProcedureType.Department))
+                .ForMember(dest =>
+                    dest.IsNew,
+                    opt => opt.MapFrom(src => src.IsNew))
+                .ReverseMap();
+
+            CreateMap < Avalanche.Shared.Domain.Models.User, ConfigurationContext>()
+                .ForMember(dest =>
+                    dest.IdnId,
+                    opt => opt.MapFrom(src => src.IdnId))
+                .ForMember(dest =>
+                    dest.SiteId,
+                    opt => opt.MapFrom(src => src.SiteId))
+                .ForMember(dest =>
+                    dest.SystemId,
+                    opt => opt.MapFrom(src => src.SystemId))
+                .ForMember(dest =>
+                    dest.UserId,
+                    opt => opt.MapFrom(src => src.Id))
+                .ForMember(dest =>
+                    dest.DepartmentId,
+                    opt => opt.MapFrom(src => src.DepartmentId))
+                .ReverseMap();
+
             CreateMap<PatientDetailsSearchFilterViewModel, Ism.PatientInfoEngine.V1.Protos.SearchRequest>()
                .ForPath(dest =>
                    dest.SearchFields.Accession,
@@ -355,7 +441,7 @@ namespace Avalanche.Api.MappingConfigurations
                     return Ism.Storage.Core.PatientList.V1.Protos.SexMessage.F;
                 case "M":
                     return Ism.Storage.Core.PatientList.V1.Protos.SexMessage.M;
-                case "O":
+                case "O": //TODO: Check this
                 case "U":
                 default:
                     return Ism.Storage.Core.PatientList.V1.Protos.SexMessage.U;

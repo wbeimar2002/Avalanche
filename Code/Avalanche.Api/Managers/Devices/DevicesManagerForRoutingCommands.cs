@@ -1,7 +1,7 @@
 ﻿using Avalanche.Shared.Domain.Enumerations;
 using Avalanche.Shared.Domain.Models;
 using Avalanche.Shared.Infrastructure.Helpers;
-using Ism.Recorder.Core.V1.Protos;
+using Ism.Common.Core.Configuration.Models;
 using Newtonsoft.Json;
 using System;
 using System.Threading.Tasks;
@@ -59,7 +59,9 @@ namespace Avalanche.Api.Managers.Devices
 
         private async Task<CommandResponse> ShowVideoRoutingPreview(Command command)
         {
-            var config = await _settingsService.GetVideoRoutingSettingsAsync();
+            var configurationContext = _mapper.Map<Avalanche.Shared.Domain.Models.User, ConfigurationContext>(command.User);
+
+            var config = await _settingsService.GetVideoRoutingSettingsAsync(configurationContext);
             var region = JsonConvert.DeserializeObject<Region>(command.AdditionalInfo);
 
             if (config.Mode == VideoRoutingModes.Hardware)
@@ -79,30 +81,6 @@ namespace Avalanche.Api.Managers.Devices
         private async Task<CommandResponse> RoutePreview(Command command)
         {
             await _avidisService.RoutePreview(_mapper.Map<Command, AvidisDeviceInterface.V1.Protos.RoutePreviewRequest>(command));
-            return new CommandResponse(command.Device);
-        }
-
-        private async Task<CommandResponse> StartRecording(Command command)
-        {
-#warning TODO: determine sourcing of this info.
-            // NOTE: it seems a bit awkward for the UI/API to need to know and/or generate this? Especially "libId"? 
-
-            var now = DateTime.UtcNow;
-            var libId = $"{now.Year}_{now.Month}_{now.Day}T{now.Hour}_{now.Minute}_{now.Second}";
-
-            var message = new RecordMessage
-            {
-                LibId = libId,
-                RepositoryId = Guid.NewGuid().ToString()
-            };
-
-            await _recorderService.StartRecording(message);
-            return new CommandResponse(command.Device);
-        }
-
-        private async Task<CommandResponse> StopRecording(Command command)
-        {
-            await _recorderService.StopRecording();
             return new CommandResponse(command.Device);
         }
     }

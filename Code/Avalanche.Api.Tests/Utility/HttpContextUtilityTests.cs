@@ -55,7 +55,6 @@ namespace Avalanche.Api.Tests.Utility
             Assert.AreEqual(testIp, result);
         }
 
-
         private HeaderDictionary GetForwardedHeaders(string ip)
         {
             HeaderDictionary headers = new HeaderDictionary();

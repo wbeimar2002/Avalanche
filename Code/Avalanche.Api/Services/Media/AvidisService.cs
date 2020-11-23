@@ -3,30 +3,25 @@ using AvidisDeviceInterface.Client.V1;
 using AvidisDeviceInterface.V1.Protos;
 using Ism.Security.Grpc.Interfaces;
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using static AvidisDeviceInterface.V1.Protos.Avidis;
 
 namespace Avalanche.Api.Services.Media
 {
+    [ExcludeFromCodeCoverage]
     public class AvidisService : IAvidisService
     {
         readonly IConfigurationService _configurationService;
-
-        public bool IgnoreGrpcServicesMocks { get; set; }
-
-        public AvidisSecureClient AvidisClient { get; set; }
+        AvidisSecureClient AvidisClient { get; set; }
 
         public AvidisService(IConfigurationService configurationService, IGrpcClientFactory<AvidisClient> grpcClientFactory, ICertificateProvider certificateProvider)
         {
             _configurationService = configurationService;
 
             var hostIpAddress = _configurationService.GetEnvironmentVariable("hostIpAddress");
-
-#warning TODO: Is this port correct?
             var mediaServiceGrpcPort = _configurationService.GetEnvironmentVariable("mediaServiceGrpcPort");
 
-            //Client = ClientHelper.GetSecureClient<WebRtcStreamer.WebRtcStreamerClient>($"https://{hostIpAddress}:{mediaServiceGrpcPort}", certificate);
-            //AvidisClient = ClientHelper.GetInsecureClient<Avidis.AvidisClient>($"https://{_hostIpAddress}:{mediaServiceGrpcPort}");
             AvidisClient = new AvidisSecureClient(grpcClientFactory, hostIpAddress, mediaServiceGrpcPort, certificateProvider);
         }
 

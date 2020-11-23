@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
+using Avalanche.Api.Extensions;
 using Avalanche.Api.Managers.Settings;
 using Avalanche.Api.ViewModels;
 using Avalanche.Shared.Domain.Models;
@@ -45,7 +46,8 @@ namespace Avalanche.Api.Controllers.V1
             try
             {
                 _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
-                var response = await _settingsManager.GetVideoRoutingSettingsAsync();
+
+                var response = await _settingsManager.GetVideoRoutingSettingsAsync(User.GetUser());
                 return Ok(response);
             }
             catch (Exception exception)
@@ -69,7 +71,8 @@ namespace Avalanche.Api.Controllers.V1
             try
             {
                 _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
-                var response = await _settingsManager.GetSetupSettingsAsync();
+
+                var response = await _settingsManager.GetSetupSettingsAsync(User.GetUser());
                 return Ok(response);
             }
             catch (Exception exception)

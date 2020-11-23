@@ -10,9 +10,9 @@ namespace Avalanche.Api.Managers.Settings
 {
     public interface ISettingsManager
     {
-        Task<VideoRoutingSettings> GetVideoRoutingSettingsAsync();
+        Task<VideoRoutingSettings> GetVideoRoutingSettingsAsync(Avalanche.Shared.Domain.Models.User user);
         Task<TimeoutSettings> GetTimeoutSettingsAsync();
-        Task<SetupSettings> GetSetupSettingsAsync();
+        Task<SetupSettings> GetSetupSettingsAsync(Avalanche.Shared.Domain.Models.User user);
 
         Task<List<SettingCategory>> GetCategories();
         Task<SettingCategoryViewModel> GetSettingsByCategory(string categoryKey);

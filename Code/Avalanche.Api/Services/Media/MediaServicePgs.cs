@@ -12,6 +12,7 @@ using Ism.Streaming.V1.Protos;
 using Moq;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading;
 using System.Threading.Tasks;
@@ -20,14 +21,14 @@ using static Ism.Streaming.V1.Protos.WebRtcStreamer;
 
 namespace Avalanche.Api.Services.Media
 {
+    [ExcludeFromCodeCoverage]
     public partial class MediaService : IMediaService
     {
         readonly IConfigurationService _configurationService;
         readonly IAccessInfoFactory _accessInfoFactory;
         readonly string _hostIpAddress;
 
-
-        public WebRtcStreamerSecureClient WebRtcStreamerClient { get; set; }
+        WebRtcStreamerSecureClient WebRtcStreamerClient { get; set; }
 
         public MediaService(IConfigurationService configurationService, IAccessInfoFactory accessInfoFactory, IGrpcClientFactory<WebRtcStreamerClient> grpcWebrtcClientFactory, IGrpcClientFactory<PgsTimeoutClient> grpcPgsClientFactory, ICertificateProvider certificateProvider)
         {

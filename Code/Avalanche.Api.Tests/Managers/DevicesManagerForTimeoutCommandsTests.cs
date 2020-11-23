@@ -100,7 +100,6 @@ namespace Avalanche.Api.Tests.Managers
             Assert.IsNotNull(commandResponse);
         }
 
-
         [Test]
         public void TimeoutExecutePreviousSlideShouldReturnResponse()
         {
@@ -116,7 +115,6 @@ namespace Avalanche.Api.Tests.Managers
 
             Assert.IsNotNull(commandResponse);
         }
-
 
         [Test]
         public void TimeoutExecuteSetCurrentPageShouldReturnResponse()
