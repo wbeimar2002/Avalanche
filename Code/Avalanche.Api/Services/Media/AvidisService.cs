@@ -2,7 +2,6 @@
 using AvidisDeviceInterface.Client.V1;
 using AvidisDeviceInterface.V1.Protos;
 using Ism.Security.Grpc.Interfaces;
-using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using static AvidisDeviceInterface.V1.Protos.Avidis;

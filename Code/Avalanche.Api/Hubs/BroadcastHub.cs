@@ -1,19 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using Avalanche.Shared.Infrastructure.Extensions;
 using Ism.Broadcaster.EventArgs;
-using Ism.Broadcaster.Models;
 using Ism.Broadcaster.Services;
-using Avalanche.Shared.Infrastructure.Enumerations;
-using Avalanche.Shared.Infrastructure.Extensions;
+using Ism.RabbitMq.Client;
+using Ism.RabbitMq.Client.Models;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Logging;
-using Ism.Broadcaster.Extensions;
-using Ism.RabbitMq.Client;
-using Avalanche.Api.Handlers;
-using Ism.RabbitMq.Client.Models;
 using Microsoft.Extensions.Options;
+using System;
 using System.Diagnostics.CodeAnalysis;
 
 namespace Avalanche.Api.Hubs

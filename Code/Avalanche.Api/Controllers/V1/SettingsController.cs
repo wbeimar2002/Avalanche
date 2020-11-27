@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
-using System.Linq;
-using System.Threading.Tasks;
-using Avalanche.Api.Extensions;
+﻿using Avalanche.Api.Extensions;
 using Avalanche.Api.Managers.Settings;
 using Avalanche.Api.ViewModels;
 using Avalanche.Shared.Domain.Models;
@@ -12,12 +7,15 @@ using Avalanche.Shared.Infrastructure.Extensions;
 using Avalanche.Shared.Infrastructure.Helpers;
 using Avalanche.Shared.Infrastructure.Models;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
+using System.Threading.Tasks;
 
 namespace Avalanche.Api.Controllers.V1
 {

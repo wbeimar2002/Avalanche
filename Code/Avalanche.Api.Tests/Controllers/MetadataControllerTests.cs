@@ -189,7 +189,7 @@ namespace Avalanche.Api.Tests.Controllers
         [Test]
         public void GetProcedureTypesShouldReturnBadResultIfFails()
         {
-            _metadataManager.Setup(mock => mock.GetProceduresByDepartment(It.IsAny<User>(), It.IsAny<string>())).Throws(It.IsAny<Exception>());
+            _metadataManager.Setup(mock => mock.GetProceduresByDepartment(It.IsAny<User>(), null)).Throws(It.IsAny<Exception>());
 
             var badResult = _controller.GetProcedureTypes(_environment.Object);
 
@@ -206,7 +206,7 @@ namespace Avalanche.Api.Tests.Controllers
         [Test]
         public void GetProceduresByDepartmentShouldReturnOkResult()
         {
-            var okResult = _controller.GetProcedureTypesByDepartment(It.IsAny<string>(), _environment.Object);
+            var okResult = _controller.GetProcedureTypesByDepartment(It.IsAny<int>(), _environment.Object);
 
             if (_checkLogger)
             {
@@ -221,9 +221,9 @@ namespace Avalanche.Api.Tests.Controllers
         [Test]
         public void GetProcedureTypesByDepartmentShouldReturnBadResultIfFails()
         {
-            _metadataManager.Setup(mock => mock.GetProceduresByDepartment(It.IsAny<User>(), It.IsAny<string>())).Throws(It.IsAny<Exception>());
+            _metadataManager.Setup(mock => mock.GetProceduresByDepartment(It.IsAny<User>(), It.IsAny<int>())).Throws(It.IsAny<Exception>());
 
-            var badResult = _controller.GetProcedureTypesByDepartment(It.IsAny<string>(), _environment.Object);
+            var badResult = _controller.GetProcedureTypesByDepartment(It.IsAny<int>(), _environment.Object);
 
             if (_checkLogger)
             {
@@ -268,7 +268,7 @@ namespace Avalanche.Api.Tests.Controllers
         [Test]
         public void DeleteDepartmentShouldReturnOkResult()
         {
-            var okResult = _controller.DeleteDepartment(It.IsAny<string>(), _environment.Object);
+            var okResult = _controller.DeleteDepartment(It.IsAny<int>(), _environment.Object);
 
             if (_checkLogger)
             {
@@ -298,7 +298,7 @@ namespace Avalanche.Api.Tests.Controllers
         [Test]
         public void DeleteProcedureTypeByDepartmentShouldReturnOkResult()
         {
-            var okResult = _controller.DeleteProcedureType(It.IsAny<string>(), It.IsAny<string>(), _environment.Object);
+            var okResult = _controller.DeleteProcedureType(It.IsAny<int>(), It.IsAny<int>(), _environment.Object);
 
             if (_checkLogger)
             {

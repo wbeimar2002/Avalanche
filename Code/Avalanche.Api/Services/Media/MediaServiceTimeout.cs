@@ -1,14 +1,5 @@
-﻿using Avalanche.Shared.Domain.Models;
-using Google.Protobuf.WellKnownTypes;
-using Grpc.Core;
-using Grpc.Core.Testing;
-using Ism.PgsTimeout.Client.V1;
+﻿using Ism.PgsTimeout.Client.V1;
 using Ism.PgsTimeout.V1.Protos;
-using Moq;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
-using System.Threading;
 using System.Threading.Tasks;
 
 namespace Avalanche.Api.Services.Media

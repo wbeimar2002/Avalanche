@@ -1,7 +1,4 @@
-﻿using Avalanche.Shared.Domain.Models;
-using Ism.PgsTimeout.Client.V1;
-using Ism.PgsTimeout.V1.Protos;
-using Ism.Streaming.Client.V1;
+﻿using Ism.PgsTimeout.V1.Protos;
 using System.Threading.Tasks;
 
 namespace Avalanche.Api.Services.Media

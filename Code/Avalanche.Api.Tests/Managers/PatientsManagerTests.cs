@@ -13,8 +13,6 @@ using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
-using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace Avalanche.Api.Tests.Managers
@@ -234,14 +232,14 @@ namespace Avalanche.Api.Tests.Managers
                     TranslationKey = "SampleKey",
                     Value = "Sample"
                 },
-                Department = new KeyValuePairViewModel() { Id = "SampleDepartment" },
+                Department = new Department() { Id = 1, Name = "SampleDepartment" },
                 Physician = new Physician()
                 {
                     Id = "SampleId",
                     FirstName = "SampleFirstName",
                     LastName = "SampleLastName"
                 },
-                ProcedureType = new KeyValuePairViewModel() { Value = "SampleProcedureType" }
+                ProcedureType = new ProcedureType() { Id = 1, Name = "SampleProcedureType" }
             };
 
             var response = new Ism.Storage.Core.PatientList.V1.Protos.AddPatientRecordResponse()
@@ -260,11 +258,13 @@ namespace Avalanche.Api.Tests.Managers
             Fixture fixture = new Fixture();
             var user = fixture.Create<User>();
 
-            _dataManagementService.Setup(mock => mock.GetProcedureType(new Ism.Storage.Core.DataManagement.V1.Protos.ProcedureTypeMessage()
-            {
-                Department = newPatient.Department.Value,
-                Name = newPatient.ProcedureType.Value
-            })).ReturnsAsync(new Ism.Storage.Core.DataManagement.V1.Protos.ProcedureTypeMessage());
+            _dataManagementService.Setup(mock => mock.GetProcedureType(It.IsAny<Ism.Storage.Core.DataManagement.V1.Protos.GetProcedureTypeRequest>()))
+                .ReturnsAsync(new Ism.Storage.Core.DataManagement.V1.Protos.ProcedureTypeMessage()
+                {
+                    DepartmentId = 0,
+                    Id = 0,
+                    Name = null
+                });
 
             _settingsService.Setup(mock => mock.GetSetupSettingsAsync(It.IsAny<ConfigurationContext>())).ReturnsAsync(setupSettings);
 
@@ -272,7 +272,7 @@ namespace Avalanche.Api.Tests.Managers
 
             var result = _manager.RegisterPatient(newPatient, user);
 
-            _dataManagementService.Verify(mock => mock.GetProcedureType(It.IsAny<Ism.Storage.Core.DataManagement.V1.Protos.ProcedureTypeMessage>()), Times.Once);
+            _dataManagementService.Verify(mock => mock.GetProcedureType(It.IsAny<Ism.Storage.Core.DataManagement.V1.Protos.GetProcedureTypeRequest>()), Times.Once);
             _dataManagementService.Verify(mock => mock.AddProcedureType(It.IsAny<Ism.Storage.Core.DataManagement.V1.Protos.AddProcedureTypeRequest>()), Times.Once);
             _pieService.Verify(mock => mock.RegisterPatient(It.IsAny<Ism.Storage.Core.PatientList.V1.Protos.AddPatientRecordRequest>()), Times.Once);
         }
@@ -292,14 +292,14 @@ namespace Avalanche.Api.Tests.Managers
                     TranslationKey = "SampleKey",
                     Value = "Sample"
                 },
-                Department = new KeyValuePairViewModel() { Id = "SampleDepartment" },
+                Department = new Department() { Id = 1, Name = "SampleDepartment" },
                 Physician = new Physician()
                 {
                     Id = "SampleId",
                     FirstName = "SampleFirstName",
                     LastName = "SampleLastName"
                 },
-                ProcedureType = new KeyValuePairViewModel() { Value = "SampleProcedureType" }
+                ProcedureType = new ProcedureType() { Id = 1, Name = "SampleProcedureType" }
             };
 
             var response = new Ism.Storage.Core.PatientList.V1.Protos.AddPatientRecordResponse()
@@ -318,13 +318,13 @@ namespace Avalanche.Api.Tests.Managers
             Fixture fixture = new Fixture();
             var user = fixture.Create<User>();
 
-            var existingProcedureType = new Ism.Storage.Core.DataManagement.V1.Protos.ProcedureTypeMessage()
-            {
-                Department = newPatient.Department.Value,
-                Name = newPatient.ProcedureType.Value
-            };
-
-            _dataManagementService.Setup(mock => mock.GetProcedureType(existingProcedureType)).ReturnsAsync(existingProcedureType);
+            _dataManagementService.Setup(mock => mock.GetProcedureType(It.IsAny<Ism.Storage.Core.DataManagement.V1.Protos.GetProcedureTypeRequest>()))
+                .ReturnsAsync(new Ism.Storage.Core.DataManagement.V1.Protos.ProcedureTypeMessage()
+                {
+                    DepartmentId = 1,
+                    Id = 1,
+                    Name = "Existing"
+                });
 
             _settingsService.Setup(mock => mock.GetSetupSettingsAsync(It.IsAny<ConfigurationContext>())).ReturnsAsync(setupSettings);
 
@@ -332,7 +332,7 @@ namespace Avalanche.Api.Tests.Managers
 
             var result = _manager.RegisterPatient(newPatient, user);
 
-            _dataManagementService.Verify(mock => mock.GetProcedureType(It.IsAny<Ism.Storage.Core.DataManagement.V1.Protos.ProcedureTypeMessage>()), Times.Once);
+            _dataManagementService.Verify(mock => mock.GetProcedureType(It.IsAny<Ism.Storage.Core.DataManagement.V1.Protos.GetProcedureTypeRequest>()), Times.Once);
             _dataManagementService.Verify(mock => mock.AddProcedureType(It.IsAny<Ism.Storage.Core.DataManagement.V1.Protos.AddProcedureTypeRequest>()), Times.Never);
             _pieService.Verify(mock => mock.RegisterPatient(It.IsAny<Ism.Storage.Core.PatientList.V1.Protos.AddPatientRecordRequest>()), Times.Once);
         }
@@ -395,14 +395,14 @@ namespace Avalanche.Api.Tests.Managers
                     TranslationKey = "SampleKey",
                     Value = "Sample"
                 },
-                Department = new KeyValuePairViewModel() { Value = "SampleDepartment" },
+                Department = new Department() { Id = 1, Name = "SampleDepartment" },
                 Physician = new Physician()
                 {
                     Id = "SampleId",
                     FirstName = "SampleFirstName",
                     LastName = "SampleLastName"
                 },
-                ProcedureType = new KeyValuePairViewModel() { Value = "SampleProcedureType" }
+                ProcedureType = new ProcedureType() { Id = 1, Name = "SampleProcedureType" }
             };
 
             var setupSettings = new Shared.Infrastructure.Models.SetupSettings()
@@ -413,18 +413,20 @@ namespace Avalanche.Api.Tests.Managers
             Fixture fixture = new Fixture();
             var user = fixture.Create<User>();
 
-            _dataManagementService.Setup(mock => mock.GetProcedureType(new Ism.Storage.Core.DataManagement.V1.Protos.ProcedureTypeMessage()
-            {
-                Department = existingPatient.Department.Value,
-                Name = existingPatient.ProcedureType.Value
-            })).ReturnsAsync(new Ism.Storage.Core.DataManagement.V1.Protos.ProcedureTypeMessage());
+            _dataManagementService.Setup(mock => mock.GetProcedureType(It.IsAny<Ism.Storage.Core.DataManagement.V1.Protos.GetProcedureTypeRequest>()))
+                .ReturnsAsync(new Ism.Storage.Core.DataManagement.V1.Protos.ProcedureTypeMessage()
+                {
+                    DepartmentId = 0,
+                    Id = 0,
+                    Name = null
+                });
 
             _settingsService.Setup(mock => mock.GetSetupSettingsAsync(It.IsAny<ConfigurationContext>())).ReturnsAsync(setupSettings);
             _pieService.Setup(mock => mock.UpdatePatient(It.IsAny<Ism.Storage.Core.PatientList.V1.Protos.UpdatePatientRecordRequest>()));
 
             var result = _manager.UpdatePatient(existingPatient, user);
 
-            _dataManagementService.Verify(mock => mock.GetProcedureType(It.IsAny<Ism.Storage.Core.DataManagement.V1.Protos.ProcedureTypeMessage>()), Times.Once);
+            _dataManagementService.Verify(mock => mock.GetProcedureType(It.IsAny<Ism.Storage.Core.DataManagement.V1.Protos.GetProcedureTypeRequest>()), Times.Once);
             _dataManagementService.Verify(mock => mock.AddProcedureType(It.IsAny<Ism.Storage.Core.DataManagement.V1.Protos.AddProcedureTypeRequest>()), Times.Once);
             _pieService.Verify(mock => mock.UpdatePatient(It.IsAny<Ism.Storage.Core.PatientList.V1.Protos.UpdatePatientRecordRequest>()), Times.Once);
         }
@@ -446,14 +448,22 @@ namespace Avalanche.Api.Tests.Managers
                     TranslationKey = "SampleKey",
                     Value = "Sample"
                 },
-                Department = new KeyValuePairViewModel() { Value = "SampleDepartment" },
+                Department = new Department() 
+                {
+                    Id = 1,
+                    Name = "SampleDepartment" 
+                },
                 Physician = new Physician()
                 {
                     Id = "SampleId",
                     FirstName = "SampleFirstName",
                     LastName = "SampleLastName"
                 },
-                ProcedureType = new KeyValuePairViewModel() { Value = "SampleProcedureType" }
+                ProcedureType = new ProcedureType() 
+                {
+                    Id = 1,
+                    Name = "SampleProcedureType" 
+                }
             };
 
             var setupSettings = new Shared.Infrastructure.Models.SetupSettings()
@@ -464,20 +474,20 @@ namespace Avalanche.Api.Tests.Managers
             Fixture fixture = new Fixture();
             var user = fixture.Create<User>();
 
-            var existingProcedureType = new Ism.Storage.Core.DataManagement.V1.Protos.ProcedureTypeMessage()
-            {
-                Department = existingPatient.Department.Value,
-                Name = existingPatient.ProcedureType.Value
-            };
-
-            _dataManagementService.Setup(mock => mock.GetProcedureType(existingProcedureType)).ReturnsAsync(existingProcedureType);
+            _dataManagementService.Setup(mock => mock.GetProcedureType(It.IsAny< Ism.Storage.Core.DataManagement.V1.Protos.GetProcedureTypeRequest>()))
+                .ReturnsAsync(new Ism.Storage.Core.DataManagement.V1.Protos.ProcedureTypeMessage()
+                {
+                    DepartmentId = 1,
+                    Id = 1,
+                    Name = "Existing"
+                });
 
             _settingsService.Setup(mock => mock.GetSetupSettingsAsync(It.IsAny<ConfigurationContext>())).ReturnsAsync(setupSettings);
             _pieService.Setup(mock => mock.UpdatePatient(It.IsAny<Ism.Storage.Core.PatientList.V1.Protos.UpdatePatientRecordRequest>()));
 
             var result = _manager.UpdatePatient(existingPatient, user);
 
-            _dataManagementService.Verify(mock => mock.GetProcedureType(It.IsAny<Ism.Storage.Core.DataManagement.V1.Protos.ProcedureTypeMessage>()), Times.Once);
+            _dataManagementService.Verify(mock => mock.GetProcedureType(It.IsAny<Ism.Storage.Core.DataManagement.V1.Protos.GetProcedureTypeRequest>()), Times.Once);
             _dataManagementService.Verify(mock => mock.AddProcedureType(It.IsAny<Ism.Storage.Core.DataManagement.V1.Protos.AddProcedureTypeRequest>()), Times.Never);
             _pieService.Verify(mock => mock.UpdatePatient(It.IsAny<Ism.Storage.Core.PatientList.V1.Protos.UpdatePatientRecordRequest>()), Times.Once);
         }

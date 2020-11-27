@@ -10,7 +10,7 @@ namespace Avalanche.Api.ViewModels
 
         public string AccessionNumber { get; set; }
 
-        public string DepartmentName { get; set; }
+        public string Department { get; set; }
 
         public DateTimeOffset? MinDate { get; set; }
 
@@ -37,7 +37,7 @@ namespace Avalanche.Api.ViewModels
             LastName = lastName;
             MRN = mrn;
             AccessionNumber = accessionNumber;
-            DepartmentName = departmentName;
+            Department = departmentName;
             MinDate = minDate;
             MaxDate = maxDate;
             RoomName = roomName;
@@ -46,7 +46,7 @@ namespace Avalanche.Api.ViewModels
 
         public override object Clone()
         {
-            return new PatientDetailsSearchFilterViewModel(LastName, MRN, AccessionNumber, DepartmentName, MinDate, MaxDate, RoomName, ProcedureId);
+            return new PatientDetailsSearchFilterViewModel(LastName, MRN, AccessionNumber, Department, MinDate, MaxDate, RoomName, ProcedureId);
         }
 
     }

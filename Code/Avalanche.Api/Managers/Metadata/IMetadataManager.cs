@@ -9,10 +9,10 @@ namespace Avalanche.Api.Managers.Metadata
     {
         Task<List<KeyValuePairViewModel>> GetMetadata(Avalanche.Shared.Domain.Models.User user, Shared.Domain.Enumerations.MetadataTypes type);
         Task<Department> AddDepartment(Avalanche.Shared.Domain.Models.User user, Department department);
-        Task DeleteDepartment(Avalanche.Shared.Domain.Models.User user, string departmentName);
+        Task DeleteDepartment(Avalanche.Shared.Domain.Models.User user, int departmentId);
         Task<List<Department>> GetAllDepartments(Avalanche.Shared.Domain.Models.User user);
         Task<ProcedureType> AddProcedureType(Avalanche.Shared.Domain.Models.User user, ProcedureType procedureType);
         Task DeleteProcedureType(Avalanche.Shared.Domain.Models.User user, ProcedureType procedureType);
-        Task<List<ProcedureType>> GetProceduresByDepartment(Avalanche.Shared.Domain.Models.User user, string departmentName = null);
+        Task<List<ProcedureType>> GetProceduresByDepartment(Avalanche.Shared.Domain.Models.User user, int? departmentId);
     }
 }

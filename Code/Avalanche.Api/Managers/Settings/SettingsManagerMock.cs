@@ -5,10 +5,8 @@ using Avalanche.Shared.Domain.Enumerations;
 using Avalanche.Shared.Domain.Models;
 using Avalanche.Shared.Infrastructure.Models;
 using Ism.Common.Core.Configuration.Models;
-using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace Avalanche.Api.Managers.Settings

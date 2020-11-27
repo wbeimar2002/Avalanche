@@ -1,12 +1,7 @@
-﻿using Avalanche.Api.Utilities;
-using Avalanche.Shared.Infrastructure.Services.Settings;
+﻿using Avalanche.Shared.Infrastructure.Services.Settings;
 using Ism.Routing.Client.V1;
-using Ism.Routing.V1.Protos;
 using Ism.Security.Grpc.Interfaces;
-using System;
-using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.Linq;
 using System.Threading.Tasks;
 using static Ism.Routing.V1.Protos.Routing;
 

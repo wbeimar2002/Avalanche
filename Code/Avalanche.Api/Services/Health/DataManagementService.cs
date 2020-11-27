@@ -3,10 +3,7 @@ using Google.Protobuf.WellKnownTypes;
 using Ism.Security.Grpc.Interfaces;
 using Ism.Storage.Core.DataManagement.V1.Protos;
 using Ism.Storage.DataManagement.Client;
-using System;
-using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.Linq;
 using System.Threading.Tasks;
 using static Ism.Storage.Core.DataManagement.V1.Protos.DataManagementStorage;
 
@@ -46,6 +43,6 @@ namespace Avalanche.Api.Services.Health
 
         public async Task<GetProceduresByDepartmentResponse> GetProceduresByDepartment(GetProceduresByDepartmentRequest request) => await DataManagementStorageClient.GetProceduresByDepartment(request);
 
-        public async Task<ProcedureTypeMessage> GetProcedureType(ProcedureTypeMessage request) => await DataManagementStorageClient.GetProcedureTypeAsync(request);
+        public async Task<ProcedureTypeMessage> GetProcedureType(GetProcedureTypeRequest request) => await DataManagementStorageClient.GetProcedureType(request);
     }
 }

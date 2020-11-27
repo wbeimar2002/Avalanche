@@ -1,17 +1,8 @@
 ﻿using Avalanche.Shared.Infrastructure.Services.Settings;
-using Google.Protobuf.WellKnownTypes;
-using Grpc.Core;
-using Grpc.Core.Interceptors;
-using Grpc.Core.Testing;
 using Ism.Recorder.Client.V1;
 using Ism.Recorder.Core.V1.Protos;
 using Ism.Security.Grpc.Interfaces;
-using Moq;
-using System;
-using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.Security.Cryptography.X509Certificates;
-using System.Threading;
 using System.Threading.Tasks;
 using static Ism.Recorder.Core.V1.Protos.Recorder;
 

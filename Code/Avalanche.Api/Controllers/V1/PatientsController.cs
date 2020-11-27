@@ -1,24 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Security;
-using System.Security.Claims;
-using System.Threading.Tasks;
-using Avalanche.Api.Extensions;
+﻿using Avalanche.Api.Extensions;
 using Avalanche.Api.Managers.Health;
 using Avalanche.Api.ViewModels;
-using Avalanche.Shared.Domain.Models;
 using Avalanche.Shared.Infrastructure.Enumerations;
 using Avalanche.Shared.Infrastructure.Extensions;
 using Avalanche.Shared.Infrastructure.Helpers;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using System;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace Avalanche.Api.Controllers.V1
 {
@@ -40,7 +34,7 @@ namespace Avalanche.Api.Controllers.V1
         /// Register new patient
         /// </summary>
         [HttpPost("")]
-        [Produces(typeof(Patient))]
+        [Produces(typeof(PatientViewModel))]
         public async Task<IActionResult> ManualPatientRegistration(PatientViewModel newPatient, [FromServices]IWebHostEnvironment env)
         {
             try
@@ -63,7 +57,7 @@ namespace Avalanche.Api.Controllers.V1
         }
 
         [HttpPut("{id}")]
-        [Produces(typeof(Patient))]
+        [Produces(typeof(PatientViewModel))]
         public async Task<IActionResult> UpdatePatient(PatientViewModel existing, [FromServices] IWebHostEnvironment env)
         {
             try
@@ -85,7 +79,7 @@ namespace Avalanche.Api.Controllers.V1
         }
 
         [HttpDelete("{id}")]
-        [Produces(typeof(Patient))]
+        [Produces(typeof(PatientViewModel))]
         public async Task<IActionResult> DeletePatient(ulong id, [FromServices] IWebHostEnvironment env)
         {
             try
@@ -110,7 +104,7 @@ namespace Avalanche.Api.Controllers.V1
         /// Get a quick patient registration
         /// </summary>
         [HttpPost("quick")]
-        [Produces(typeof(Patient))]
+        [Produces(typeof(PatientViewModel))]
         public async Task<IActionResult> QuickPatientRegistration([FromServices]IWebHostEnvironment env)
         {
             try
@@ -136,14 +130,14 @@ namespace Avalanche.Api.Controllers.V1
         /// Search patient using criteria and paging
         /// </summary>
         [HttpPost("filtered")]
-        [Produces(typeof(PagedCollectionViewModel<Patient>))]
+        [Produces(typeof(PagedCollectionViewModel<PatientViewModel>))]
         public async Task<IActionResult> Search([FromBody]PatientKeywordSearchFilterViewModel filter, [FromServices]IWebHostEnvironment env)
         {
             try
             {
                 _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
                 
-                var result = new PagedCollectionViewModel<Patient>();
+                var result = new PagedCollectionViewModel<PatientViewModel>();
                 result.Items = await _patientsManager.Search(filter);
 
                 AppendPagingContext(filter, result);
@@ -164,14 +158,14 @@ namespace Avalanche.Api.Controllers.V1
         /// Search patient using criteria and paging
         /// </summary>
         [HttpPost("filteredDetailed")]
-        [Produces(typeof(PagedCollectionViewModel<Patient>))]
+        [Produces(typeof(PagedCollectionViewModel<PatientViewModel>))]
         public async Task<IActionResult> SearchDetailed([FromBody]PatientDetailsSearchFilterViewModel filter, [FromServices]IWebHostEnvironment env)
         {
             try
             {
                 _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
 
-                var result = new PagedCollectionViewModel<Patient>();
+                var result = new PagedCollectionViewModel<PatientViewModel>();
                 result.Items = await _patientsManager.Search(filter);
 
                 AppendPagingContext(filter, result);
