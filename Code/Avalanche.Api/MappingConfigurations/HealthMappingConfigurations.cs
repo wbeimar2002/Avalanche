@@ -421,7 +421,7 @@ namespace Avalanche.Api.MappingConfigurations
                     opt => opt.MapFrom(src => new Ism.Storage.Core.PatientList.V1.Protos.AdmissionStatusMessage()))
                 .ForPath(dest =>
                     dest.PatientRecord.InternalId,
-                    opt => opt.MapFrom(src => 0))
+                    opt => opt.MapFrom(src => src.Id))
                 .ForPath(dest =>
                     dest.PatientRecord.Room,
                     opt => opt.MapFrom(src => "Unknown"))
