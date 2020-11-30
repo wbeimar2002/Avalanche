@@ -49,8 +49,8 @@
     <PackageReference Include="Ism.Recorder.Client" Version="1.0.0-prerelease0005" />
     <PackageReference Include="Ism.Routing.Client" Version="1.0.0-prerelease0001" />
     <PackageReference Include="Ism.Security.Grpc.Standard" Version="1.0.0-prerelease003" />
-    <PackageReference Include="Ism.Storage.Configuration.Client" Version="1.0.0-prerelease0005" />
-    <PackageReference Include="Ism.Storage.DataManagement.Client" Version="1.0.0-prerelease0003" />
+    <PackageReference Include="Ism.Storage.Configuration.Client" Version="1.0.0-prerelease0006" />
+    <PackageReference Include="Ism.Storage.DataManagement.Client" Version="1.0.0-prerelease0005" />
     <PackageReference Include="Ism.Storage.PatientList.Client" Version="1.0.0-prerelease0004" />
     <PackageReference Include="Ism.Streaming.Client" Version="1.0.0-prerelease0002" />
     <!--<PackageReference Include="Ism.PatientInfoEngine.Client.Core" Version="1.0.0-prerelease3" />-->

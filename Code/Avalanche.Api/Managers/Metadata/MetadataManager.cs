@@ -56,12 +56,11 @@ namespace Avalanche.Api.Managers.Metadata
             return _mapper.Map<AddDepartmentResponse, Department>(result);
         }
 
-        public async Task DeleteDepartment(Avalanche.Shared.Domain.Models.User user, string departmentName)
+        public async Task DeleteDepartment(Avalanche.Shared.Domain.Models.User user, int departmentId)
         {
             await ValidateDepartmentsSupport(user);
-            Preconditions.ThrowIfNull(nameof(departmentName), departmentName);
 
-            await _dataManagementService.DeleteDepartment(new DeleteDepartmentRequest() { DepartmentName = departmentName });
+            await _dataManagementService.DeleteDepartment(new DeleteDepartmentRequest() { DepartmentId = departmentId });
         }
 
         public async Task<List<Department>> GetAllDepartments(Avalanche.Shared.Domain.Models.User user)
@@ -76,7 +75,7 @@ namespace Avalanche.Api.Managers.Metadata
 
         public async Task<ProcedureType> AddProcedureType(Avalanche.Shared.Domain.Models.User user, ProcedureType procedureType)
         {
-            await ValidateDepartmentsSupport(user, procedureType.Department);
+            await ValidateDepartmentsSupport(user, procedureType.DepartmentId);
             Preconditions.ThrowIfNull(nameof(procedureType.Name), procedureType.Name);
 
             var result = await _dataManagementService.AddProcedureType(_mapper.Map<ProcedureType, AddProcedureTypeRequest>(procedureType));
@@ -85,19 +84,19 @@ namespace Avalanche.Api.Managers.Metadata
 
         public async Task DeleteProcedureType(Avalanche.Shared.Domain.Models.User user, ProcedureType procedureType)
         {
-            await ValidateDepartmentsSupport(user, procedureType.Department);
+            await ValidateDepartmentsSupport(user, procedureType.DepartmentId);
             Preconditions.ThrowIfNull(nameof(procedureType.Name), procedureType.Name);
 
             await _dataManagementService.DeleteProcedureType(_mapper.Map<ProcedureType, DeleteProcedureTypeRequest>(procedureType));
         }
 
-        public async Task<List<ProcedureType>> GetProceduresByDepartment(Avalanche.Shared.Domain.Models.User user, string departmentName = null)
+        public async Task<List<ProcedureType>> GetProceduresByDepartment(Avalanche.Shared.Domain.Models.User user, int? departmentId)
         {
-            await ValidateDepartmentsSupport(user, departmentName);
+            await ValidateDepartmentsSupport(user, departmentId);
 
             var result = await _dataManagementService.GetProceduresByDepartment(new Ism.Storage.Core.DataManagement.V1.Protos.GetProceduresByDepartmentRequest()
             {
-                DepartmentName = departmentName
+                DepartmentId = departmentId
             });
 
             return _mapper.Map<IList<ProcedureTypeMessage>, IList<ProcedureType>>(result.ProcedureTypeList).ToList();
@@ -114,7 +113,7 @@ namespace Avalanche.Api.Managers.Metadata
             }
         }
 
-        private async Task ValidateDepartmentsSupport(User user, string departmentName)
+        private async Task ValidateDepartmentsSupport(User user, int? departmentId)
         {
             var configurationContext = _mapper.Map<Avalanche.Shared.Domain.Models.User, ConfigurationContext>(user);
             var setupSettings = await _settingsService.GetSetupSettingsAsync(configurationContext);
@@ -122,12 +121,12 @@ namespace Avalanche.Api.Managers.Metadata
             #warning TODO: Check the strategy to throw business logic exceptions. Same exceptions in Patients Manager
             if (setupSettings.DepartmentsSupported)
             {
-                if (string.IsNullOrEmpty(departmentName))
+                if (departmentId == null || departmentId == 0)
                     throw new System.ArgumentNullException("Department value is invalid. It should not be null. Departments are supported.");
             }
             else 
             {
-                if (!string.IsNullOrEmpty(departmentName))
+                if (departmentId != null || departmentId != 0)
                     throw new System.ArgumentException("Department value is invalid. Departments are not supported.");
             }                
         }

@@ -1,7 +1,4 @@
 ﻿using Ism.Storage.Core.DataManagement.V1.Protos;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace Avalanche.Api.Services.Health
@@ -14,6 +11,6 @@ namespace Avalanche.Api.Services.Health
         Task DeleteProcedureType(DeleteProcedureTypeRequest request);
         Task<GetDepartmentsResponse> GetAllDepartments();
         Task<GetProceduresByDepartmentResponse> GetProceduresByDepartment(GetProceduresByDepartmentRequest request);
-        Task<ProcedureTypeMessage> GetProcedureType(ProcedureTypeMessage request);
+        Task<ProcedureTypeMessage> GetProcedureType(GetProcedureTypeRequest request);
     }
 }

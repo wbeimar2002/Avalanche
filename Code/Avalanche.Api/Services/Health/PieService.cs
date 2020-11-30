@@ -1,19 +1,11 @@
 ﻿using Avalanche.Shared.Infrastructure.Services.Settings;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using System;
-using System.Runtime.ConstrainedExecution;
 using Ism.PatientInfoEngine.Grpc;
 using Ism.Security.Grpc.Interfaces;
-
-using Ism.PatientInfoEngine.V1.Protos;
+using Ism.Storage.PatientList.Client.V1;
+using System.Diagnostics.CodeAnalysis;
+using System.Threading.Tasks;
 using static Ism.PatientInfoEngine.V1.Protos.PatientListService;
 using static Ism.Storage.Core.PatientList.V1.Protos.PatientListStorage;
-using Ism.Security.Grpc;
-using Ism.Storage.PatientList.Client.V1;
-using Ism.Storage.Core.PatientList.V1.Protos;
-using System.Diagnostics.CodeAnalysis;
 
 namespace Avalanche.Api.Services.Health
 {

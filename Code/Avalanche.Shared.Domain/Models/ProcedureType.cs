@@ -6,8 +6,9 @@ namespace Avalanche.Shared.Domain.Models
 {
     public class ProcedureType
     {
+        public int Id { get; set; }
         public string Name { get; set; }
-        public string Department { get; set; }
-        public bool IsNew { get; set; }
+        public int? DepartmentId { get; set; }
+        public bool? IsNew { get; set; }
     }
 }

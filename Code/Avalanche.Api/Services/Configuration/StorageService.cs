@@ -1,16 +1,12 @@
-﻿using Avalanche.Shared.Infrastructure.Services.Settings;
-using Moq;
-using System;
-using System.Threading.Tasks;
-using Avalanche.Shared.Infrastructure.Extensions;
-using Newtonsoft.Json;
-using System.IO;
-using Ism.Storage.Core.Configuration.V1.Protos;
-using Ism.Storage.Configuration.Client.V1;
-using Ism.Security.Grpc.Interfaces;
-using static Ism.Storage.Core.Configuration.V1.Protos.ConfigurationService;
+﻿using Avalanche.Shared.Infrastructure.Extensions;
+using Avalanche.Shared.Infrastructure.Services.Settings;
 using Ism.Common.Core.Configuration.Models;
+using Ism.Security.Grpc.Interfaces;
+using Ism.Storage.Configuration.Client.V1;
+using System;
 using System.Diagnostics.CodeAnalysis;
+using System.Threading.Tasks;
+using static Ism.Storage.Core.Configuration.V1.Protos.ConfigurationService;
 
 namespace Avalanche.Api.Services.Configuration
 {

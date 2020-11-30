@@ -14,14 +14,17 @@ namespace Avalanche.Api.MappingConfigurations
         {
             CreateMap<ProcedureType, DeleteProcedureTypeRequest>()
                 .ForMember(dest =>
-                    dest.DepartmentName,
-                    opt => opt.MapFrom(src => src.Department))
+                    dest.DepartmentId,
+                    opt => opt.MapFrom(src => src.DepartmentId))
                 .ForMember(dest =>
-                    dest.ProcedureTypeName,
-                    opt => opt.MapFrom(src => src.Name))
+                    dest.ProcedureTypeId,
+                    opt => opt.MapFrom(src => src.Id))
                 .ReverseMap();
 
             CreateMap<DepartmentMessage, Department>()
+                .ForMember(dest =>
+                    dest.Id,
+                    opt => opt.MapFrom(src => src.Id))
                 .ForMember(dest =>
                     dest.Name,
                     opt => opt.MapFrom(src => src.Name))
@@ -32,11 +35,14 @@ namespace Avalanche.Api.MappingConfigurations
 
             CreateMap<ProcedureTypeMessage, ProcedureType>()
                 .ForMember(dest =>
+                    dest.Id,
+                    opt => opt.MapFrom(src => src.Id))
+                .ForMember(dest =>
                     dest.Name,
                     opt => opt.MapFrom(src => src.Name))
                 .ForMember(dest =>
-                    dest.Department,
-                    opt => opt.MapFrom(src => src.Department))
+                    dest.DepartmentId,
+                    opt => opt.MapFrom(src => src.DepartmentId))
                 .ForMember(dest =>
                     dest.IsNew,
                     opt => opt.Ignore())
@@ -44,20 +50,29 @@ namespace Avalanche.Api.MappingConfigurations
 
             CreateMap<Department, AddDepartmentRequest>()
                 .ForPath(dest =>
+                    dest.Department.Id,
+                    opt => opt.MapFrom(src => src.Id))
+                .ForPath(dest =>
                     dest.Department.Name,
                     opt => opt.MapFrom(src => src.Name))
                 .ReverseMap();
 
             CreateMap<ProcedureType, AddProcedureTypeRequest>()
                 .ForPath(dest =>
+                    dest.ProcedureType.Id,
+                    opt => opt.MapFrom(src => 0))
+                .ForPath(dest =>
                     dest.ProcedureType.Name,
                     opt => opt.MapFrom(src => src.Name))
                 .ForPath(dest =>
-                    dest.ProcedureType.Department,
-                    opt => opt.MapFrom(src => src.Department))
+                    dest.ProcedureType.DepartmentId,
+                    opt => opt.MapFrom(src => src.DepartmentId))
                 .ReverseMap();
 
             CreateMap<AddDepartmentResponse, Department>()
+                .ForMember(dest =>
+                    dest.Id,
+                    opt => opt.MapFrom(src => src.Department.Id))
                 .ForMember(dest =>
                     dest.Name,
                     opt => opt.MapFrom(src => src.Department.Name))
@@ -68,11 +83,14 @@ namespace Avalanche.Api.MappingConfigurations
 
             CreateMap<AddProcedureTypeResponse, ProcedureType>()
                 .ForMember(dest =>
+                    dest.Id,
+                    opt => opt.MapFrom(src => src.ProcedureType.Id))
+                .ForMember(dest =>
                     dest.Name,
                     opt => opt.MapFrom(src => src.ProcedureType.Name))
                 .ForMember(dest =>
-                    dest.Department,
-                    opt => opt.MapFrom(src => src.ProcedureType.Department))
+                    dest.DepartmentId,
+                    opt => opt.MapFrom(src => src.ProcedureType.DepartmentId))
                 .ForMember(dest =>
                     dest.IsNew,
                     opt => opt.MapFrom(src => src.IsNew))
@@ -102,7 +120,7 @@ namespace Avalanche.Api.MappingConfigurations
                    opt => opt.MapFrom(src => src.AccessionNumber))
                .ForPath(dest =>
                    dest.SearchFields.Department,
-                   opt => opt.MapFrom(src => src.DepartmentName))
+                   opt => opt.MapFrom(src => src.Department))
                .ForPath(dest =>
                    dest.SearchFields.Keyword,
                    opt => opt.MapFrom(src => string.Empty))
@@ -209,16 +227,34 @@ namespace Avalanche.Api.MappingConfigurations
 
             CreateMap<Ism.IsmLogCommon.Core.AccessInfo, AccessInfo>();
 
-            CreateMap<Ism.Storage.Core.PatientList.V1.Protos.AddPatientRecordResponse, Shared.Domain.Models.Patient>()
+            CreateMap<Ism.Storage.Core.PatientList.V1.Protos.AddPatientRecordResponse, PatientViewModel>()
+                .ForMember(dest =>
+                    dest.ScopeSerialNumber,
+                    opt => opt.Ignore())
+                .ForMember(dest =>
+                    dest.AccessInformation,
+                    opt => opt.Ignore())
                 .ForMember(dest =>
                     dest.FirstName,
                     opt => opt.MapFrom(src => src.PatientRecord.Patient.FirstName))
                 .ForMember(dest =>
                     dest.LastName,
                     opt => opt.MapFrom(src => src.PatientRecord.Patient.LastName))
-                .ForMember(dest =>
-                    dest.Department,
+                .ForPath(dest =>
+                    dest.ProcedureType.Name,
+                    opt => opt.MapFrom(src => src.PatientRecord.ProcedureType))
+                .ForPath(dest =>
+                    dest.Department.Name,
                     opt => opt.MapFrom(src => src.PatientRecord.Department))
+                .ForPath(dest =>
+                    dest.Physician.Id,
+                    opt => opt.MapFrom(src => src.PatientRecord.PerformingPhysician.UserId))
+                .ForPath(dest =>
+                    dest.Physician.FirstName,
+                    opt => opt.MapFrom(src => src.PatientRecord.PerformingPhysician.FirstName))
+                .ForPath(dest =>
+                    dest.Physician.LastName,
+                    opt => opt.MapFrom(src => src.PatientRecord.PerformingPhysician.LastName))
                 .ForMember(dest =>
                     dest.Id,
                     opt => opt.MapFrom(src => src.PatientRecord.InternalId))
@@ -233,7 +269,13 @@ namespace Avalanche.Api.MappingConfigurations
                     opt => opt.MapFrom(src => GetSex(src.PatientRecord.Patient.Sex)))
                 .ReverseMap();
 
-            CreateMap<Ism.PatientInfoEngine.V1.Protos.PatientRecordMessage, Shared.Domain.Models.Patient>()
+            CreateMap<Ism.PatientInfoEngine.V1.Protos.PatientRecordMessage, PatientViewModel>()
+                .ForMember(dest =>
+                    dest.ScopeSerialNumber,
+                    opt => opt.Ignore())
+                .ForMember(dest =>
+                    dest.AccessInformation,
+                    opt => opt.Ignore())
                 .ForMember(dest =>
                     dest.FirstName,
                     opt => opt.MapFrom(src => src.Patient.FirstName))
@@ -249,9 +291,21 @@ namespace Avalanche.Api.MappingConfigurations
                 .ForMember(dest =>
                     dest.MRN,
                     opt => opt.MapFrom(src => src.MRN))
-                .ForMember(dest =>
-                    dest.Department,
-                    opt => opt.MapFrom(src => GetSex(src.Department)))
+                .ForPath(dest =>
+                    dest.ProcedureType.Name,
+                    opt => opt.MapFrom(src => src.ProcedureType))
+                .ForPath(dest =>
+                    dest.Department.Name,
+                    opt => opt.MapFrom(src => src.Department))
+                .ForPath(dest =>
+                    dest.Physician.Id,
+                    opt => opt.MapFrom(src => src.PerformingPhysician.UserId))
+                .ForPath(dest =>
+                    dest.Physician.FirstName,
+                    opt => opt.MapFrom(src => src.PerformingPhysician.FirstName))
+                .ForPath(dest =>
+                    dest.Physician.LastName,
+                    opt => opt.MapFrom(src => src.PerformingPhysician.LastName))
                 .ForMember(dest =>
                     dest.Sex,
                     opt => opt.MapFrom(src => GetSex(src.Patient.Sex)))
@@ -281,7 +335,7 @@ namespace Avalanche.Api.MappingConfigurations
                     opt => opt.MapFrom(src => "Unknown"))
                 .ForPath(dest =>
                     dest.PatientRecord.Department,
-                    opt => opt.MapFrom(src => src.Department.Value))
+                    opt => opt.MapFrom(src => src.Department.Name))
                 .ForPath(dest =>
                     dest.PatientRecord.AdmissionStatus,
                     opt => opt.MapFrom(src => new Ism.Storage.Core.PatientList.V1.Protos.AdmissionStatusMessage()))
@@ -296,7 +350,7 @@ namespace Avalanche.Api.MappingConfigurations
                     opt => opt.MapFrom(src => new Timestamp()))
                 .ForPath(dest =>
                     dest.PatientRecord.ProcedureType,
-                    opt => opt.MapFrom(src => src.ProcedureType.Value))
+                    opt => opt.MapFrom(src => src.ProcedureType.Name))
                 .ForPath(dest =>
                     dest.PatientRecord.ProcedureId,
                     opt => opt.MapFrom(src => "Unknown"))
@@ -361,13 +415,13 @@ namespace Avalanche.Api.MappingConfigurations
                     opt => opt.MapFrom(src => "Unknown"))
                 .ForPath(dest =>
                     dest.PatientRecord.Department,
-                    opt => opt.MapFrom(src => src.Department.Value))
+                    opt => opt.MapFrom(src => src.Department.Name))
                 .ForPath(dest =>
                     dest.PatientRecord.AdmissionStatus,
                     opt => opt.MapFrom(src => new Ism.Storage.Core.PatientList.V1.Protos.AdmissionStatusMessage()))
                 .ForPath(dest =>
                     dest.PatientRecord.InternalId,
-                    opt => opt.MapFrom(src => 0))
+                    opt => opt.MapFrom(src => src.Id))
                 .ForPath(dest =>
                     dest.PatientRecord.Room,
                     opt => opt.MapFrom(src => "Unknown"))
@@ -376,7 +430,7 @@ namespace Avalanche.Api.MappingConfigurations
                     opt => opt.MapFrom(src => new Timestamp()))
                 .ForPath(dest =>
                     dest.PatientRecord.ProcedureType,
-                    opt => opt.MapFrom(src => src.ProcedureType.Value))
+                    opt => opt.MapFrom(src => src.ProcedureType.Name))
                 .ForPath(dest =>
                     dest.PatientRecord.ProcedureId,
                     opt => opt.MapFrom(src => "Unknown"))
@@ -419,17 +473,38 @@ namespace Avalanche.Api.MappingConfigurations
 
         }
 
-        private object GetSex(Ism.Storage.Core.PatientList.V1.Protos.SexMessage sex)
+        private KeyValuePairViewModel GetSex(Ism.Storage.Core.PatientList.V1.Protos.SexMessage sex)
         {
-            switch (sex)
+            string id = System.Enum.GetName(typeof(Ism.Storage.Core.PatientList.V1.Protos.SexMessage), sex);
+            return new KeyValuePairViewModel()
             {
-                case Ism.Storage.Core.PatientList.V1.Protos.SexMessage.M:
-                    return "M";
-                case Ism.Storage.Core.PatientList.V1.Protos.SexMessage.F:
-                    return "F";
-                case Ism.Storage.Core.PatientList.V1.Protos.SexMessage.U:
+                Id = id,
+                Value = GetSexTranslationKey(id)
+            };
+        }
+        private KeyValuePairViewModel GetSex(Ism.PatientInfoEngine.V1.Protos.Sex sex)
+        {
+            string id = System.Enum.GetName(typeof(Ism.PatientInfoEngine.V1.Protos.Sex), sex);
+            return new KeyValuePairViewModel()
+            {
+                Id = id,
+                TranslationKey = GetSexTranslationKey(id)
+            };
+        }
+
+        private string GetSexTranslationKey(string id)
+        {
+            switch (id)
+            {
+                case "F":
+                    return "sex.female";
+                case "M":
+                    return "sex.male";
+                case "O":
+                    return "sex.other";
+                case "U":
                 default:
-                    return "U";
+                    return "sex.unspecified";
             }
         }
 
@@ -441,24 +516,10 @@ namespace Avalanche.Api.MappingConfigurations
                     return Ism.Storage.Core.PatientList.V1.Protos.SexMessage.F;
                 case "M":
                     return Ism.Storage.Core.PatientList.V1.Protos.SexMessage.M;
-                case "O": //TODO: Check this
+                case "O": //TODO: Check this O is not supported by Pie Service
                 case "U":
                 default:
                     return Ism.Storage.Core.PatientList.V1.Protos.SexMessage.U;
-            }
-        }
-
-        private string GetSex(Ism.PatientInfoEngine.V1.Protos.Sex sex)
-        {
-            switch (sex)
-            {
-                case Ism.PatientInfoEngine.V1.Protos.Sex.M:
-                    return "M";
-                case Ism.PatientInfoEngine.V1.Protos.Sex.F:
-                    return "F";
-                case Ism.PatientInfoEngine.V1.Protos.Sex.U:
-                default:
-                    return "U";
             }
         }
     }

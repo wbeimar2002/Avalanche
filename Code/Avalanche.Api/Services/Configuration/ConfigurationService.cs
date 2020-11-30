@@ -1,12 +1,7 @@
 ﻿using Avalanche.Shared.Infrastructure.Services.Settings;
 using Microsoft.Extensions.Configuration;
-using Newtonsoft.Json;
 using System;
-using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Avalanche.Api.Services.Settings
 {

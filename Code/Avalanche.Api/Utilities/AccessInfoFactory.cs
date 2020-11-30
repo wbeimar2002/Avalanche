@@ -1,9 +1,6 @@
 ﻿using Ism.IsmLogCommon.Core;
 using Microsoft.AspNetCore.Http;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Avalanche.Api.Utilities
 {

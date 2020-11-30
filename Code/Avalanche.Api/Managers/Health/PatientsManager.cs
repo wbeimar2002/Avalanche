@@ -9,6 +9,7 @@ using Avalanche.Shared.Infrastructure.Models;
 using Google.Protobuf.WellKnownTypes;
 using Ism.Common.Core.Configuration.Models;
 using Ism.PatientInfoEngine.V1.Protos;
+using Ism.Storage.Core.DataManagement.V1.Protos;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -37,7 +38,7 @@ namespace Avalanche.Api.Managers.Health
             _mapper = mapper;
         }
 
-        public async Task<Shared.Domain.Models.Patient> RegisterPatient(PatientViewModel newPatient, Avalanche.Shared.Domain.Models.User user)
+        public async Task<PatientViewModel> RegisterPatient(PatientViewModel newPatient, Avalanche.Shared.Domain.Models.User user)
         {
             Preconditions.ThrowIfNull(nameof(newPatient), newPatient);
             Preconditions.ThrowIfNull(nameof(newPatient.MRN), newPatient.MRN);
@@ -46,7 +47,7 @@ namespace Avalanche.Api.Managers.Health
             Preconditions.ThrowIfNull(nameof(newPatient.LastName), newPatient.LastName);
             Preconditions.ThrowIfNull(nameof(newPatient.Sex), newPatient.Sex);
             Preconditions.ThrowIfNull(nameof(newPatient.Sex.Id), newPatient.Sex.Id);
-            Preconditions.ThrowIfNull(nameof(newPatient.ProcedureType.Value), newPatient.ProcedureType.Value);
+            Preconditions.ThrowIfNull(nameof(newPatient.ProcedureType.Name), newPatient.ProcedureType.Name);
 
             var accessInfo = _accessInfoFactory.GenerateAccessInfo();
             newPatient.AccessInformation = _mapper.Map<AccessInfo>(accessInfo);
@@ -75,16 +76,16 @@ namespace Avalanche.Api.Managers.Health
                 }
             }
 
-            await CheckProcedureType(newPatient.ProcedureType.Value, newPatient.Department?.Value, setupSettings);
+            await CheckProcedureType(newPatient.ProcedureType, newPatient.Department, setupSettings);
 
             var patientRequest = _mapper.Map<PatientViewModel, Ism.Storage.Core.PatientList.V1.Protos.AddPatientRecordRequest>(newPatient);
             var result = await _pieService.RegisterPatient(patientRequest);
 
-            var response = _mapper.Map<Ism.Storage.Core.PatientList.V1.Protos.AddPatientRecordResponse, Shared.Domain.Models.Patient>(result);
+            var response = _mapper.Map<Ism.Storage.Core.PatientList.V1.Protos.AddPatientRecordResponse, PatientViewModel>(result);
             return response;
         }
 
-        public async Task<Shared.Domain.Models.Patient> QuickPatientRegistration(Avalanche.Shared.Domain.Models.User user)
+        public async Task<PatientViewModel> QuickPatientRegistration(Avalanche.Shared.Domain.Models.User user)
         {
             var configurationContext = _mapper.Map<Avalanche.Shared.Domain.Models.User, ConfigurationContext>(user);
             var setupSettings = await _settingsService.GetSetupSettingsAsync(configurationContext);
@@ -104,18 +105,18 @@ namespace Avalanche.Api.Managers.Health
                 {
                     Id = "U"
                 },
-                Department = new KeyValuePairViewModel()
+                Department = new Department()
                 {
-                    Id = "Unknown",
-                    Value = "Unknown"
+                    Id = 0,
+                    Name = "Unknown"
                 },
-                ProcedureType = new KeyValuePairViewModel() //TODO: What should be this value
+                ProcedureType = new ProcedureType() //TODO: What should be this value
                 {
-                    Id = "Unknown",
-                    Value = "Unknown"
+                    Id = 0,
+                    Name = "Unknown"
                 },
                 //TODO: Performing physician is administrator by default
-                //Which are the values?
+                //Which are theose values? Temporary I am assigning the user that made the request
                 Physician = new Physician()
                 {
                     Id = user.Id,
@@ -130,7 +131,7 @@ namespace Avalanche.Api.Managers.Health
             var patientRequest = _mapper.Map<PatientViewModel, Ism.Storage.Core.PatientList.V1.Protos.AddPatientRecordRequest>(newPatient);
             var result = await _pieService.RegisterPatient(patientRequest);
 
-            return _mapper.Map<Ism.Storage.Core.PatientList.V1.Protos.AddPatientRecordResponse, Shared.Domain.Models.Patient>(result);
+            return _mapper.Map<Ism.Storage.Core.PatientList.V1.Protos.AddPatientRecordResponse, PatientViewModel>(result);
         }
 
         public async Task UpdatePatient(PatientViewModel existingPatient, Avalanche.Shared.Domain.Models.User user)
@@ -143,7 +144,7 @@ namespace Avalanche.Api.Managers.Health
             Preconditions.ThrowIfNull(nameof(existingPatient.LastName), existingPatient.LastName);
             Preconditions.ThrowIfNull(nameof(existingPatient.Sex), existingPatient.Sex);
             Preconditions.ThrowIfNull(nameof(existingPatient.Sex.Id), existingPatient.Sex.Id);
-            Preconditions.ThrowIfNull(nameof(existingPatient.ProcedureType.Value), existingPatient.ProcedureType.Value);
+            Preconditions.ThrowIfNull(nameof(existingPatient.ProcedureType.Name), existingPatient.ProcedureType.Name);
 
             var configurationContext = _mapper.Map<Avalanche.Shared.Domain.Models.User, ConfigurationContext>(user);
             var setupSettings = await _settingsService.GetSetupSettingsAsync(configurationContext);
@@ -151,7 +152,7 @@ namespace Avalanche.Api.Managers.Health
             var accessInfo = _accessInfoFactory.GenerateAccessInfo();
             existingPatient.AccessInformation = _mapper.Map<AccessInfo>(accessInfo);
 
-            await CheckProcedureType(existingPatient.ProcedureType.Value, existingPatient.Department?.Value, setupSettings);
+            await CheckProcedureType(existingPatient.ProcedureType, existingPatient.Department, setupSettings);
 
             var patientRequest = _mapper.Map<PatientViewModel, Ism.Storage.Core.PatientList.V1.Protos.UpdatePatientRecordRequest>(existingPatient);
             await _pieService.UpdatePatient(patientRequest);
@@ -171,7 +172,7 @@ namespace Avalanche.Api.Managers.Health
             });
         }
 
-        public async Task<IList<Shared.Domain.Models.Patient>> Search(PatientKeywordSearchFilterViewModel filter)
+        public async Task<IList<PatientViewModel>> Search(PatientKeywordSearchFilterViewModel filter)
         {
             Preconditions.ThrowIfNull(nameof(filter), filter);
             Preconditions.ThrowIfNull(nameof(filter.Term), filter.Term);
@@ -191,10 +192,10 @@ namespace Avalanche.Api.Managers.Health
             var request = _mapper.Map<Ism.PatientInfoEngine.V1.Protos.SearchRequest>(filter);
             var queryResult = await _pieService.Search(request);
 
-            return _mapper.Map<IList<Ism.PatientInfoEngine.V1.Protos.PatientRecordMessage>, IList<Shared.Domain.Models.Patient>>(queryResult.UpdatedPatList);
+            return _mapper.Map<IList<Ism.PatientInfoEngine.V1.Protos.PatientRecordMessage>, IList<PatientViewModel>>(queryResult.UpdatedPatList);
         }
 
-        public async Task<IList<Shared.Domain.Models.Patient>> Search(PatientDetailsSearchFilterViewModel filter)
+        public async Task<IList<PatientViewModel>> Search(PatientDetailsSearchFilterViewModel filter)
         {
             Preconditions.ThrowIfNull(nameof(filter), filter);
 
@@ -207,7 +208,7 @@ namespace Avalanche.Api.Managers.Health
                 MaxDate = filter.MaxDate?.ToTimestamp(),
                 Accession = filter.AccessionNumber,
                 Keyword = null,
-                Department = filter.DepartmentName,
+                Department = filter.Department,
                 ProcedureId = filter.ProcedureId,
             };
 
@@ -223,25 +224,28 @@ namespace Avalanche.Api.Managers.Health
             var request = _mapper.Map<Ism.PatientInfoEngine.V1.Protos.SearchRequest>(filter);
             var queryResult = await _pieService.Search(request);
 
-            return _mapper.Map<IList<Ism.PatientInfoEngine.V1.Protos.PatientRecordMessage>, IList<Shared.Domain.Models.Patient>>(queryResult.UpdatedPatList);
+            return _mapper.Map<IList<Ism.PatientInfoEngine.V1.Protos.PatientRecordMessage>, IList<PatientViewModel>>(queryResult.UpdatedPatList);
 
         }
 
-        private async Task CheckProcedureType(string procedureTypeName, string departmentName, SetupSettings setupSettings)
+        private async Task CheckProcedureType(ProcedureType procedureType, Department department, SetupSettings setupSettings)
         {
-            var newProcedureType = new Ism.Storage.Core.DataManagement.V1.Protos.ProcedureTypeMessage()
+            var existingProcedureType = await _dataManagementService.GetProcedureType(new GetProcedureTypeRequest()
             {
-                Name = procedureTypeName,
-                Department = departmentName
-            };
+                ProcedureTypeId = Convert.ToInt32(procedureType.Id),
+                DepartmentId = Convert.ToInt32(department.Id),
+            });
 
-            var existingProcedureType = await _dataManagementService.GetProcedureType(newProcedureType);
-
-            if (string.IsNullOrEmpty(existingProcedureType.Name))
+            if (existingProcedureType.Id == 0  && string.IsNullOrEmpty(existingProcedureType.Name))
             {
-                await _dataManagementService.AddProcedureType(new Ism.Storage.Core.DataManagement.V1.Protos.AddProcedureTypeRequest()
+                await _dataManagementService.AddProcedureType(new AddProcedureTypeRequest()
                 {
-                    ProcedureType = newProcedureType,
+                    ProcedureType = new ProcedureTypeMessage()
+                    {
+                        Id = Convert.ToInt32(procedureType.Id),
+                        Name = procedureType.Name,
+                        DepartmentId = Convert.ToInt32(department.Id),
+                    }
                 });
             }
         }

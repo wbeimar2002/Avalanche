@@ -1,21 +1,12 @@
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
-using Serilog;
-using Serilog.Extensions.Logging;
-using Serilog.Events;
-using Avalanche.Shared.Infrastructure.Models;
-using Newtonsoft.Json;
 using Avalanche.Shared.Infrastructure.Helpers;
 using Microsoft.AspNetCore;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Hosting;
+using Serilog;
+using Serilog.Events;
+using System;
 using System.Diagnostics.CodeAnalysis;
-using System.Security.Cryptography.X509Certificates;
+using System.IO;
 
 namespace Avalanche.Api
 {

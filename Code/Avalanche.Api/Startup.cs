@@ -77,7 +77,6 @@ namespace Avalanche.Api
             services.AddSingleton<ISettingsManager, SettingsManagerMock>();
             services.AddSingleton<IPatientsManager, PatientsManager>();
             services.AddSingleton<IPhysiciansManager, PhysiciansManager>();
-            services.AddSingleton<IProceduresManager, ProceduresManagerMock>();
             services.AddSingleton<IMetadataManager, MetadataManager>();
             services.AddSingleton<ILicensingManager, LicensingManagerMock>();
             services.AddSingleton<IMediaService, MediaService>();

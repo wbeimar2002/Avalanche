@@ -1,16 +1,11 @@
 ﻿using Avalanche.Api.Hubs;
 using Avalanche.Shared.Infrastructure.Extensions;
-using Ism.Broadcaster.EventArgs;
 using Ism.Broadcaster.Services;
 using Ism.RabbitMq.Client;
 using Ism.RabbitMq.Client.Models;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Avalanche.Api.Managers.Notifications
 {

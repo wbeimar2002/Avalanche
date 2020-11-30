@@ -64,7 +64,7 @@ namespace Avalanche.Api.Tests.Controllers
         public void SearchDetailedShouldReturnOkResultWithSomePatientsAsResult()
         {
             var fixture = new Fixture();
-            List<Patient> list = fixture.CreateMany<Patient>(10).ToList();
+            List<PatientViewModel> list = fixture.CreateMany<PatientViewModel>(10).ToList();
 
             var filter = new PatientDetailsSearchFilterViewModel()
             {
@@ -89,7 +89,7 @@ namespace Avalanche.Api.Tests.Controllers
         [Test]
         public void SearchDetailedShouldReturnOkResultWithZeroListOfPatients()
         {
-            List<Patient> list = new List<Patient>();
+            List<PatientViewModel> list = new List<PatientViewModel>();
 
             var filter = new PatientDetailsSearchFilterViewModel()
             {
@@ -132,7 +132,7 @@ namespace Avalanche.Api.Tests.Controllers
         public void SearchShouldReturnOkResultWithSomePatientsAsResult()
         {
             var fixture = new Fixture();
-            List<Patient> list = fixture.CreateMany<Patient>(10).ToList();
+            List<PatientViewModel> list = fixture.CreateMany<PatientViewModel>(10).ToList();
 
             var filter = new PatientKeywordSearchFilterViewModel()
             {
@@ -158,7 +158,7 @@ namespace Avalanche.Api.Tests.Controllers
         [Test]
         public void SearchShouldReturnOkResultWithZeroListOfPatients()
         {
-            List<Patient> list = new List<Patient>();
+            List<PatientViewModel> list = new List<PatientViewModel>();
 
             var filter = new PatientKeywordSearchFilterViewModel()
             {
@@ -202,7 +202,7 @@ namespace Avalanche.Api.Tests.Controllers
         public void RegisterPatientShouldReturnOkWithNewPatientInfo()
         {
             PatientViewModel patient = new PatientViewModel();
-            _patientsManager.Setup(mock => mock.RegisterPatient(patient, It.IsAny<User>())).ReturnsAsync(new Patient());
+            _patientsManager.Setup(mock => mock.RegisterPatient(patient, It.IsAny<User>())).ReturnsAsync(new PatientViewModel());
 
             var okResult = _controller.ManualPatientRegistration(patient, _environment.Object);
 
@@ -236,7 +236,7 @@ namespace Avalanche.Api.Tests.Controllers
         [Test]
         public void QuickRegistrationShouldReturnOkWithNewPatientInfo()
         {
-            _patientsManager.Setup(mock => mock.QuickPatientRegistration(It.IsAny<User>())).ReturnsAsync(new Patient());
+            _patientsManager.Setup(mock => mock.QuickPatientRegistration(It.IsAny<User>())).ReturnsAsync(new PatientViewModel());
 
             var okResult = _controller.QuickPatientRegistration(_environment.Object);
 

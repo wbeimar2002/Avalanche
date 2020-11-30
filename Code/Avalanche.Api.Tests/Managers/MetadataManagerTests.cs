@@ -56,8 +56,9 @@ namespace Avalanche.Api.Tests.Managers
 
             var newProcedureType = new ProcedureType()
             {
+                Id = 1,
                 Name = "Sample",
-                Department = "Invalid Department"
+                DepartmentId = 1
             };
 
             Fixture fixture = new Fixture();
@@ -80,8 +81,9 @@ namespace Avalanche.Api.Tests.Managers
 
             var newProcedureType = new ProcedureType()
             {
+                Id = 1,
                 Name = "Sample",
-                Department = null
+                DepartmentId = null
             };
 
             Fixture fixture = new Fixture();
@@ -104,8 +106,9 @@ namespace Avalanche.Api.Tests.Managers
 
             var procedureType = new ProcedureType()
             {
+                Id = 1,
                 Name = "Sample",
-                Department = "Invalid Department"
+                DepartmentId = 1
             };
 
             Fixture fixture = new Fixture();
@@ -128,8 +131,9 @@ namespace Avalanche.Api.Tests.Managers
 
             var procedureType = new ProcedureType()
             {
+                Id = 1,
                 Name = "Sample",
-                Department = null
+                DepartmentId = null
             };
 
             Fixture fixture = new Fixture();
@@ -153,7 +157,7 @@ namespace Avalanche.Api.Tests.Managers
 
             _settingsService.Setup(mock => mock.GetSetupSettingsAsync(It.IsAny<ConfigurationContext>())).ReturnsAsync(settingsDepartmentNotSupported);
 
-            Task Act() => _manager.GetProceduresByDepartment(user, "Sample Invalid Department");
+            Task Act() => _manager.GetProceduresByDepartment(user, 1);
 
             Assert.That(Act, Throws.TypeOf<ArgumentException>());
         }
@@ -207,7 +211,7 @@ namespace Avalanche.Api.Tests.Managers
 
             _settingsService.Setup(mock => mock.GetSetupSettingsAsync(It.IsAny<ConfigurationContext>())).ReturnsAsync(settingsDepartmentNotSupported);
 
-            Task Act() => _manager.DeleteDepartment(user, "Sample Department");
+            Task Act() => _manager.DeleteDepartment(user, 1);
 
             Assert.That(Act, Throws.TypeOf<InvalidOperationException>());
         }

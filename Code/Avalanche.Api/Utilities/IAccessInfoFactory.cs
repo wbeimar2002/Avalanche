@@ -1,5 +1,4 @@
 ﻿using Ism.IsmLogCommon.Core;
-using System;
 
 namespace Avalanche.Api.Utilities
 {

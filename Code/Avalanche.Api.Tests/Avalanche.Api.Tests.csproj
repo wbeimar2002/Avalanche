@@ -44,10 +44,4 @@
     <ProjectReference Include="..\Avalanche.Shared.Infrastructure\Avalanche.Shared.Infrastructure.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Reference Include="Ism.Log.Common.Core">
-      <HintPath>..\HackyDllDumpingGround\Ism.Log.Common.Core.dll</HintPath>
-    </Reference>
-  </ItemGroup>
-
 </Project>
