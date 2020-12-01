@@ -42,6 +42,12 @@ namespace Avalanche.Api.Managers.Metadata
                     return (await _storageService.GetJson<ListContainerViewModel>("ContentTypes", 1, configurationContext)).Items;
                 case Shared.Domain.Enumerations.MetadataTypes.SourceTypes:
                     return (await _storageService.GetJson<ListContainerViewModel>("SourceTypes", 1, configurationContext)).Items;
+                case Shared.Domain.Enumerations.MetadataTypes.SetupModes:
+                    return (await _storageService.GetJson<ListContainerViewModel>("SetupModes", 1, configurationContext)).Items;
+                case Shared.Domain.Enumerations.MetadataTypes.RoutingModes:
+                    return (await _storageService.GetJson<ListContainerViewModel>("RoutingModes", 1, configurationContext)).Items;
+                case Shared.Domain.Enumerations.MetadataTypes.SearchColumns:
+                    return (await _storageService.GetJson<ListContainerViewModel>("SearchColumns", 1, configurationContext)).Items;
                 default:
                     return new List<KeyValuePairViewModel>();
             }

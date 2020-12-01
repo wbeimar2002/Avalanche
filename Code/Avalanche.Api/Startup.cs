@@ -74,7 +74,8 @@ namespace Avalanche.Api
             var grpcPassword = configurationService.GetEnvironmentVariable("grpcPassword");
             var grpcServerValidationCertificate = configurationService.GetEnvironmentVariable("grpcServerValidationCertificate");
 
-            services.AddSingleton<ISettingsManager, SettingsManagerMock>();
+            services.AddSingleton<IMaintenaceManager, MaintenaceManager>();
+            services.AddSingleton<ISettingsManager, SettingsManager>();
             services.AddSingleton<IPatientsManager, PatientsManager>();
             services.AddSingleton<IPhysiciansManager, PhysiciansManager>();
             services.AddSingleton<IMetadataManager, MetadataManager>();

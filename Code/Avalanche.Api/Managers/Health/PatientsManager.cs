@@ -96,7 +96,6 @@ namespace Avalanche.Api.Managers.Health
             //TODO: Pending check this default data
             var newPatient = new PatientViewModel()
             {
-                ScopeSerialNumber = "???", //TODO: How this is related to
                 MRN = $"{formattedDate}MRN",
                 DateOfBirth = DateTime.UtcNow.ToLocalTime(),
                 FirstName = $"{formattedDate}FirstName",

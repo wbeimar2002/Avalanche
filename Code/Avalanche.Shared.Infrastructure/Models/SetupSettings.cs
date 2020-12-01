@@ -1,4 +1,5 @@
 ﻿using Avalanche.Shared.Domain.Enumerations;
+using Avalanche.Shared.Domain.Models;
 using Avalanche.Shared.Infrastructure.Enumerations;
 using Newtonsoft.Json;
 using System;
@@ -26,5 +27,8 @@ namespace Avalanche.Shared.Infrastructure.Models
 
         [JsonProperty("QuickRegistrationDateFormat")]
         public string QuickRegistrationDateFormat { get; set; }
+
+        [JsonProperty("DefaultAdministrator")]
+        public User DefaultAdministrator { get; set; }
     }
 }

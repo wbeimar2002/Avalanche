@@ -85,12 +85,12 @@ namespace Avalanche.Api.Services.Configuration
 
         public async Task<SetupSettings> GetSetupSettingsAsync(ConfigurationContext context)
         {
-            return await _storageService.GetJson<SetupSettings>("PatientsSetupSettings", 1, context);
+            return await _storageService.GetJson<SetupSettings>("SetupSettings", 1, context);
         }
 
-        public async Task<VideoRoutingSettings> GetVideoRoutingSettingsAsync(ConfigurationContext context)
+        public async Task<RoutingSettings> GetVideoRoutingSettingsAsync(ConfigurationContext context)
         {
-            return await _storageService.GetJson<VideoRoutingSettings>("VideoRoutingSettings", 1, context);
+            return await _storageService.GetJson<RoutingSettings>("RoutingSettings", 1, context);
         }
     }
 }

@@ -8,6 +8,9 @@ namespace Avalanche.Shared.Domain.Enumerations
     {
         Sex,
         ContentTypes,
-        SourceTypes
+        SourceTypes,
+        SetupModes,
+        RoutingModes,
+        SearchColumns
     }
 }

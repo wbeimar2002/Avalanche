@@ -228,9 +228,9 @@ namespace Avalanche.Api.MappingConfigurations
             CreateMap<Ism.IsmLogCommon.Core.AccessInfo, AccessInfo>();
 
             CreateMap<Ism.Storage.Core.PatientList.V1.Protos.AddPatientRecordResponse, PatientViewModel>()
-                .ForMember(dest =>
-                    dest.ScopeSerialNumber,
-                    opt => opt.Ignore())
+                //.ForMember(dest =>
+                //    dest.ScopeSerialNumber,
+                //    opt => opt.Ignore())
                 .ForMember(dest =>
                     dest.AccessInformation,
                     opt => opt.Ignore())
@@ -270,9 +270,9 @@ namespace Avalanche.Api.MappingConfigurations
                 .ReverseMap();
 
             CreateMap<Ism.PatientInfoEngine.V1.Protos.PatientRecordMessage, PatientViewModel>()
-                .ForMember(dest =>
-                    dest.ScopeSerialNumber,
-                    opt => opt.Ignore())
+                //.ForMember(dest =>
+                //    dest.ScopeSerialNumber,
+                //    opt => opt.Ignore())
                 .ForMember(dest =>
                     dest.AccessInformation,
                     opt => opt.Ignore())

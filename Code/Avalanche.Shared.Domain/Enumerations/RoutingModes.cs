@@ -4,11 +4,9 @@ using System.Text;
 
 namespace Avalanche.Shared.Domain.Enumerations
 {
-    public enum StateTypes
+    public enum RoutingModes
     {
-        Default,
-        Volume,
-        SilentMode, 
-        CurrentMainSignal,
+        Hardware,
+        Software
     }
 }

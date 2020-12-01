@@ -8,15 +8,8 @@ namespace Avalanche.Api.Managers.Settings
 {
     public interface ISettingsManager
     {
-        Task<VideoRoutingSettings> GetVideoRoutingSettingsAsync(Avalanche.Shared.Domain.Models.User user);
+        Task<RoutingSettings> GetVideoRoutingSettingsAsync(Avalanche.Shared.Domain.Models.User user);
         Task<TimeoutSettings> GetTimeoutSettingsAsync();
-        Task<SetupSettings> GetSetupSettingsAsync(Avalanche.Shared.Domain.Models.User user);
-
-        Task<List<SettingCategory>> GetCategories();
-        Task<SettingCategoryViewModel> GetSettingsByCategory(string categoryKey);
-        List<KeyValuePairViewModel> GetSourceValuesByCategory(string categoryKey, string sourceKey);
-
-        Task SaveSettingsByCategory(string categoryKey, List<KeyValuePairViewModel> settings);
-        
+        Task<SetupSettings> GetSetupSettingsAsync(Avalanche.Shared.Domain.Models.User user);        
     }
 }

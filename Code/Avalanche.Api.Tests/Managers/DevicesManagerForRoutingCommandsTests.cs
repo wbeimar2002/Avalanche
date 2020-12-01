@@ -93,9 +93,9 @@ namespace Avalanche.Api.Tests.Managers
         [Test]
         public void ShowVideoRoutingPreviewHarwareModeShouldReturnResponse()
         {
-            _settingsService.Setup(mock =>  mock.GetVideoRoutingSettingsAsync(It.IsAny<ConfigurationContext>())).ReturnsAsync(new VideoRoutingSettings()
+            _settingsService.Setup(mock =>  mock.GetVideoRoutingSettingsAsync(It.IsAny<ConfigurationContext>())).ReturnsAsync(new RoutingSettings()
             {
-                Mode = VideoRoutingModes.Hardware
+                Mode = RoutingModes.Hardware
             });
 
             CommandViewModel commandViewModel = new CommandViewModel()
@@ -116,9 +116,9 @@ namespace Avalanche.Api.Tests.Managers
         [Test]
         public void ShowVideoRoutingPreviewSoftwareModeShouldReturnResponse()
         {
-            _settingsService.Setup(mock => mock.GetVideoRoutingSettingsAsync(It.IsAny<ConfigurationContext>())).ReturnsAsync(new VideoRoutingSettings()
+            _settingsService.Setup(mock => mock.GetVideoRoutingSettingsAsync(It.IsAny<ConfigurationContext>())).ReturnsAsync(new RoutingSettings()
             {
-                Mode = VideoRoutingModes.Software
+                Mode = RoutingModes.Software
             });
 
             CommandViewModel commandViewModel = new CommandViewModel()

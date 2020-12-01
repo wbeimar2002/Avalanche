@@ -8,6 +8,7 @@ namespace Avalanche.Shared.Domain.Enumerations
     {
         Text,
         Int,
-        Boolean
+        Boolean,
+        List
     }
 }

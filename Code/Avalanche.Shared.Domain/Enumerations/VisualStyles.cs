@@ -9,6 +9,7 @@ namespace Avalanche.Shared.Domain.Enumerations
         Text,
         DropDown,
         Toggle,
-        Switch
+        Switch,
+        Grid
     }
 }
