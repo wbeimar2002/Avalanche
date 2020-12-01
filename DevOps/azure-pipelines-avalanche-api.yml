@@ -166,7 +166,7 @@ stages:
         PathtoPublish: '$(Repo)/DevOps/certificates'
         ArtifactName: certificates
 
-- stage: code_coverage
+- stage: pub_sonar_coverage_
   jobs:
 
     - job: build_test_publish
