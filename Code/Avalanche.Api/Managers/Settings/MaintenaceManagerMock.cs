@@ -24,6 +24,7 @@ namespace Avalanche.Api.Managers.Settings
                         Key = "SetupSettingsConfiguration",
                         TitleTranslationKey = "setup_settings.tittle",
                         ReadOnly = false,
+                        Settings = GetSetupSettings(),
                         Sections = GetSetupSections(),
                     };
                     break;
@@ -47,35 +48,18 @@ namespace Avalanche.Api.Managers.Settings
 
             sections.Add(new SectionViewModel()
             {
-                Key = "setup-settings-general",
-                JsonKey = "General",
-                TitleTranslationKey = "setup_settings_general.tittle",
+                Key = "setup-settings-general-administrator",
+                JsonKey = "Administrator",
+                TitleTranslationKey = "setup_settings_administrator.tittle",
                 ReadOnly = false,
-                Sections = GetSetupAdministratorSection(),
-                Settings = GetSetupGeneralSettings(),
-            }); 
-
-            sections.Add(new SectionViewModel()
-            {
-                Key = "setup-settings-registration",
-                JsonKey = "Registration",
-                TitleTranslationKey = "setup_settings_registration.tittle",
-                ReadOnly = false,
-                Sections = GetSetupRegistrationSections(),
+                Settings = GetSetupAdministratorSettings(),
             });
-
-            return sections;
-        }
-
-        private List<SectionViewModel> GetSetupRegistrationSections()
-        {
-            var sections = new List<SectionViewModel>();
 
             sections.Add(new SectionViewModel()
             {
                 Key = "setup-settings-general-quick",
-                JsonKey = "Quick",
-                TitleTranslationKey = "setup_settings_general_quick.tittle",
+                JsonKey = "QuickRegistration",
+                TitleTranslationKey = "setup_settings_quick_registration.tittle",
                 ReadOnly = false,
                 Settings = GetSetupQuickRegistrationSettings(),
             });
@@ -118,22 +102,6 @@ namespace Avalanche.Api.Managers.Settings
             return settings;
         }
 
-        private List<SectionViewModel> GetSetupAdministratorSection()
-        {
-            var sections = new List<SectionViewModel>();
-
-            sections.Add(new SectionViewModel()
-            {
-                Key = "setup-settings-general-administrator",
-                JsonKey = "Administrator",
-                TitleTranslationKey = "setup_settings_general_administrator.tittle",
-                ReadOnly = false,
-                Settings = GetSetupAdministratorSettings(),
-            }); 
-
-            return sections;
-        }
-
         private List<SettingViewModel> GetSetupAdministratorSettings()
         {
             var settings = new List<SettingViewModel>();
@@ -170,14 +138,14 @@ namespace Avalanche.Api.Managers.Settings
             return settings;
         }
 
-        private List<SettingViewModel> GetSetupGeneralSettings()
+        private List<SettingViewModel> GetSetupSettings()
         {
             var settings = new List<SettingViewModel>();
 
             settings.Add(new SettingViewModel()
             {
                 JsonKey = "Mode",
-                LabelTranslationKey = "setup_settings_general.mode_label",
+                LabelTranslationKey = "setup_settings.mode_label",
                 SourceKey = "SetupModes",
                 Value = "0",
                 SettingType = SettingTypes.Int,
@@ -187,7 +155,7 @@ namespace Avalanche.Api.Managers.Settings
             settings.Add(new SettingViewModel()
             {
                 JsonKey = "SearchColumns",
-                LabelTranslationKey = "setup_settings_general.search_columns_label",
+                LabelTranslationKey = "setup_settings.search_columns_label",
                 SourceKey = "SearchColumns",
                 SettingType = SettingTypes.List,
                 VisualStyle = VisualStyles.Grid
@@ -196,7 +164,7 @@ namespace Avalanche.Api.Managers.Settings
             settings.Add(new SettingViewModel()
             {
                 JsonKey = "DepartmentsSupported",
-                LabelTranslationKey = "setup_settings_general.departments_supported_label",
+                LabelTranslationKey = "setup_settings.departments_supported_label",
                 Value = "true",
                 SettingType = SettingTypes.Boolean,
                 VisualStyle = VisualStyles.Switch
@@ -205,7 +173,7 @@ namespace Avalanche.Api.Managers.Settings
             settings.Add(new SettingViewModel()
             {
                 JsonKey = "CacheDuration",
-                LabelTranslationKey = "setup_settings_general.cache_duration",
+                LabelTranslationKey = "setup_settings.cache_duration",
                 Value = "10000",
                 SettingType = SettingTypes.Int,
                 VisualStyle = VisualStyles.Text,
