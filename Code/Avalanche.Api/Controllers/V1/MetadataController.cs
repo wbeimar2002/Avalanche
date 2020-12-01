@@ -84,6 +84,81 @@ namespace Avalanche.Api.Controllers.V1
         }
 
         /// <summary>
+        /// Get content setup modes
+        /// </summary>
+        [HttpGet("setupModes")]
+        [Produces(typeof(List<KeyValuePairViewModel>))]
+        public async Task<IActionResult> GetSetupModes([FromServices] IWebHostEnvironment env)
+        {
+            try
+            {
+                _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
+
+                var result = await _metadataManager.GetMetadata(User.GetUser(), Shared.Domain.Enumerations.MetadataTypes.SetupModes);
+                return Ok(result);
+            }
+            catch (Exception exception)
+            {
+                _appLoggerService.LogError(LoggerHelper.GetLogMessage(DebugLogType.Exception), exception);
+                return new BadRequestObjectResult(exception.Get(env.IsDevelopment()));
+            }
+            finally
+            {
+                _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
+            }
+        }
+
+        /// <summary>
+        /// Get content routing modes
+        /// </summary>
+        [HttpGet("routingModes")]
+        [Produces(typeof(List<KeyValuePairViewModel>))]
+        public async Task<IActionResult> GetRoutingModes([FromServices] IWebHostEnvironment env)
+        {
+            try
+            {
+                _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
+
+                var result = await _metadataManager.GetMetadata(User.GetUser(), Shared.Domain.Enumerations.MetadataTypes.RoutingModes);
+                return Ok(result);
+            }
+            catch (Exception exception)
+            {
+                _appLoggerService.LogError(LoggerHelper.GetLogMessage(DebugLogType.Exception), exception);
+                return new BadRequestObjectResult(exception.Get(env.IsDevelopment()));
+            }
+            finally
+            {
+                _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
+            }
+        }
+
+        /// <summary>
+        /// Get content search columns
+        /// </summary>
+        [HttpGet("searchColumns")]
+        [Produces(typeof(List<KeyValuePairViewModel>))]
+        public async Task<IActionResult> GetSearchColumns([FromServices] IWebHostEnvironment env)
+        {
+            try
+            {
+                _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
+
+                var result = await _metadataManager.GetMetadata(User.GetUser(), Shared.Domain.Enumerations.MetadataTypes.SearchColumns);
+                return Ok(result);
+            }
+            catch (Exception exception)
+            {
+                _appLoggerService.LogError(LoggerHelper.GetLogMessage(DebugLogType.Exception), exception);
+                return new BadRequestObjectResult(exception.Get(env.IsDevelopment()));
+            }
+            finally
+            {
+                _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
+            }
+        }
+
+        /// <summary>
         /// Get content sexes
         /// </summary>
         [HttpGet("sexes")]
