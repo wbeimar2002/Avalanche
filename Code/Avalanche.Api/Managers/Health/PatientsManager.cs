@@ -56,12 +56,9 @@ namespace Avalanche.Api.Managers.Health
             var setupSettings = await _settingsService.GetSetupSettingsAsync(configurationContext);
 
             //TODO: Pending facility
-            //TODO: Configurable in maintenance (on/off) - user logged in is auto-filled as physician when doing manual registration
-            //TODO: What about the procedure type and department. How this should be filled?
-            //TODO: What about facility
             if (newPatient.Physician == null)
             {
-                if (setupSettings.AutoFillPhysician)
+                if (setupSettings.ManualRegistration.AutoFillPhysician)
                 {
                     newPatient.Physician = new Physician()
                     {
@@ -89,7 +86,7 @@ namespace Avalanche.Api.Managers.Health
         {
             var configurationContext = _mapper.Map<Avalanche.Shared.Domain.Models.User, ConfigurationContext>(user);
             var setupSettings = await _settingsService.GetSetupSettingsAsync(configurationContext);
-            string quickRegistrationDateFormat = setupSettings.QuickRegistrationDateFormat;
+            string quickRegistrationDateFormat = setupSettings.QuickRegistration.DateFormat;
             string formattedDate = DateTime.UtcNow.ToLocalTime().ToString(quickRegistrationDateFormat);
 
             //TODO: Pending facility

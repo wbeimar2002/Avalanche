@@ -252,7 +252,10 @@ namespace Avalanche.Api.Tests.Managers
 
             var setupSettings = new Shared.Infrastructure.Models.SetupSettings()
             {
-                QuickRegistrationDateFormat = "yyyyMMdd_T_mmss"
+                QuickRegistration = new Shared.Infrastructure.Models.QuickRegistrationSettings()
+                {
+                    DateFormat = "yyyyMMdd_T_mmss"
+                }
             };
 
             Fixture fixture = new Fixture();
@@ -312,7 +315,10 @@ namespace Avalanche.Api.Tests.Managers
 
             var setupSettings = new Shared.Infrastructure.Models.SetupSettings()
             {
-                QuickRegistrationDateFormat = "yyyyMMdd_T_mmss"
+                QuickRegistration = new Shared.Infrastructure.Models.QuickRegistrationSettings()
+                {
+                    DateFormat = "yyyyMMdd_T_mmss"
+                }
             };
 
             Fixture fixture = new Fixture();
@@ -345,7 +351,10 @@ namespace Avalanche.Api.Tests.Managers
 
             var setupSettings = new Shared.Infrastructure.Models.SetupSettings()
             {
-                QuickRegistrationDateFormat = "yyyyMMdd_T_mmss"
+                QuickRegistration = new Shared.Infrastructure.Models.QuickRegistrationSettings()
+                {
+                    DateFormat = "yyyyMMdd_T_mmss"
+                }
             };
 
             _settingsService.Setup(mock => mock.GetSetupSettingsAsync(It.IsAny<ConfigurationContext>())).ReturnsAsync(setupSettings);
@@ -366,7 +375,10 @@ namespace Avalanche.Api.Tests.Managers
 
             var setupSettings = new Shared.Infrastructure.Models.SetupSettings()
             {
-                QuickRegistrationDateFormat = "yyyyMMdd_T_mmss"
+                QuickRegistration = new Shared.Infrastructure.Models.QuickRegistrationSettings()
+                {
+                    DateFormat = "yyyyMMdd_T_mmss"
+                }
             };
 
             _pieService.Setup(mock => mock.UpdatePatient(new Ism.Storage.Core.PatientList.V1.Protos.UpdatePatientRecordRequest()));
@@ -407,7 +419,10 @@ namespace Avalanche.Api.Tests.Managers
 
             var setupSettings = new Shared.Infrastructure.Models.SetupSettings()
             {
-                QuickRegistrationDateFormat = "yyyyMMdd_T_mmss"
+                QuickRegistration = new Shared.Infrastructure.Models.QuickRegistrationSettings()
+                {
+                    DateFormat = "yyyyMMdd_T_mmss"
+                }
             };
 
             Fixture fixture = new Fixture();
@@ -468,7 +483,10 @@ namespace Avalanche.Api.Tests.Managers
 
             var setupSettings = new Shared.Infrastructure.Models.SetupSettings()
             {
-                QuickRegistrationDateFormat = "yyyyMMdd_T_mmss"
+                QuickRegistration = new Shared.Infrastructure.Models.QuickRegistrationSettings()
+                {
+                    DateFormat = "yyyyMMdd_T_mmss"
+                }
             };
 
             Fixture fixture = new Fixture();

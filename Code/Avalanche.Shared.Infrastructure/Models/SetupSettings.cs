@@ -10,25 +10,11 @@ namespace Avalanche.Shared.Infrastructure.Models
 {
     public class SetupSettings
     {
-        [JsonProperty("Mode")]
         public SetupModes Mode { get; set; }
-
-        [JsonProperty("CacheDuration")]
         public long CacheDuration { get; set; }
-
-        [JsonProperty("DepartmentsSupported")]
         public bool DepartmentsSupported { get; set; }
-
-        [JsonProperty("QuickRegistrationAllowed")]
-        public bool QuickRegistrationAllowed { get; set; }
-
-        [JsonProperty("AutoFillPhysician")]
-        public bool AutoFillPhysician { get; set; }
-
-        [JsonProperty("QuickRegistrationDateFormat")]
-        public string QuickRegistrationDateFormat { get; set; }
-
-        [JsonProperty("DefaultAdministrator")]
-        public User DefaultAdministrator { get; set; }
+        public User Administrator { get; set; }
+        public QuickRegistrationSettings QuickRegistration { get; set; }
+        public ManualRegistrationSettings ManualRegistration { get; set; }
     }
 }
