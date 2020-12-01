@@ -13,7 +13,7 @@ namespace Avalanche.Shared.Infrastructure.Models
         public SetupModes Mode { get; set; }
         public long CacheDuration { get; set; }
         public bool DepartmentsSupported { get; set; }
-        public User Administrator { get; set; }
+        public AdministratorSettings Administrator { get; set; }
         public QuickRegistrationSettings QuickRegistration { get; set; }
         public ManualRegistrationSettings ManualRegistration { get; set; }
     }
