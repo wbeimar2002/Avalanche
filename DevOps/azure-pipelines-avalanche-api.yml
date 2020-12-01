@@ -179,7 +179,10 @@ stages:
       
       - checkout: self
       - checkout: devops
-
+      - script: |
+          dotnet tool install --global dotnet-sonarscanner | true
+          dotnet tool install --global dotnet-reportgenerator-globaltool | true
+          echo "##vso[task.prependpath]$HOME/.dotnet/tools"
       - task: Bash@3
         inputs:
           filePath: 'devops/pipeline/coverage/publish-coverage-to-sonarqube.sh'
