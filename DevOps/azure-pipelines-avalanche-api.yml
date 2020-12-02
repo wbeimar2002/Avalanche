@@ -186,7 +186,7 @@ stages:
       - task: Bash@3
         inputs:
           filePath: 'devops/pipeline/coverage/publish-coverage-to-sonarqube.sh'
-          arguments: 36988d5bc4a283a03911e2932d9eabe6fb7ecdc6 $(ProjectSolution) $(TestProject) $(build_number_prefix)
+          arguments: 36988d5bc4a283a03911e2932d9eabe6fb7ecdc6 $(ProjectSolution) $(TestProject) $(build_number_prefix) https://sonarqube10.eastus.azurecontainer.io'
 - stage: push_to_acr
 
   #condition: and(succeeded(), eq(variables['Build.SourceBranchName'], 'dev'))
