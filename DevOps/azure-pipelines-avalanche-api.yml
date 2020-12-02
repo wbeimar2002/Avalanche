@@ -39,6 +39,7 @@ stages:
           dotnet tool install --global dotnet-sonarscanner | true
           dotnet tool install --global dotnet-reportgenerator-globaltool | true
           echo "##vso[task.prependpath]$HOME/.dotnet/tools"
+        displayName: 'Install dotnet-sonarscanner tools'
       - script: |
           sh devops/pipeline/coverage/publish-coverage-to-sonarqube.sh \
           $(SonarToken) \
@@ -46,7 +47,7 @@ stages:
           $(TestProject) \
           $(build_number_prefix) \
           $(SonarqubeUrl)
-          
+        displayName: 'publish sonarqube code coverage'
 
 # stage for creating PR comment if nuget pkgs verssion not up to date
 - template: pipeline\templates\nuget-version-check.yml@devops
