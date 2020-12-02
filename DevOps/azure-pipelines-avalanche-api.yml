@@ -44,7 +44,7 @@ stages:
           '36988d5bc4a283a03911e2932d9eabe6fb7ecdc6' \
           'avalanche-api/Code/Avalanche.Api.sln' \
           'avalanche-api/Code/Avalanche.Api.Tests/Avalanche.Api.Tests.csproj' \
-          'cavalanche-api' \
+          'avalanche-api' \
           'https://sonarqube10.eastus.azurecontainer.io'
           
 
