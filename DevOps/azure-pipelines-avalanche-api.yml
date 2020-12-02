@@ -42,10 +42,11 @@ stages:
       - script: |
           sh devops/pipeline/coverage/publish-coverage-to-sonarqube.sh \
           '36988d5bc4a283a03911e2932d9eabe6fb7ecdc6' \
-          $(ProjectSolution) \
-          $(TestProject) \
-          'code-coverage-test-1'  \
+          'avalanche-api/Code/Avalanche.Api.sln' \
+          'avalanche-api/Code/Avalanche.Api.Tests/Avalanche.Api.Tests.csproj' \
+          'cavalanche-api' \
           'https://sonarqube10.eastus.azurecontainer.io'
+          
 
 # stage for creating PR comment if nuget pkgs verssion not up to date
 - template: pipeline\templates\nuget-version-check.yml@devops
