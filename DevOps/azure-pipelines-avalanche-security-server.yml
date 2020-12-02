@@ -22,6 +22,8 @@ variables:
   - group: 'vg-dev-avalanche-security-server'
   
 stages:
+# publish sonarqube codecoverage
+- template: pipeline\templates\pub-sonarqube-codecoverage.yml@devops
 
 - stage: build
 
@@ -157,8 +159,7 @@ stages:
         PathtoPublish: '$(PathtoApp)'
         ArtifactName: '$(PathtoApp)'
     
-# publish sonarqube codecoverage
-- template: pipeline\templates\pub-sonarqube-codecoverage.yml@devops
+
 
 - stage: push_to_acr
   
