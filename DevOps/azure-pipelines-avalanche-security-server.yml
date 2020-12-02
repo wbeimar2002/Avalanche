@@ -1,3 +1,6 @@
+trigger:
+  none
+
 name: $(build_number_prefix)-$(majorversion).$(minorversion).$(patch).$(Releasestage)_$(majorversion).$(minorversion).$(Date:yyMM).$(Date:dd)$(Rev:rr)
 
 resources:
@@ -154,6 +157,9 @@ stages:
         PathtoPublish: '$(PathtoApp)'
         ArtifactName: '$(PathtoApp)'
     
+# publish sonarqube codecoverage
+- template: pipeline\templates\pub-sonarqube-codecoverage.yml@devops
+
 - stage: push_to_acr
   
 #condition: and(succeeded(), eq(variables['Build.SourceBranchName'], 'dev'))
