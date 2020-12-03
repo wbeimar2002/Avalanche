@@ -135,7 +135,9 @@ stages:
         projectKey: $(SonarProjectKey)
         projectName: $(SonarProject)
   
-
+     # publishe code coverage to sonarqube   
+     - template: pipeline\templates\pub-sonarqube-codecoverage-win.yml@devops
+     
     # make app artifacts
      - task: DotNetCoreCLI@2
        displayName: 'Publish project'
