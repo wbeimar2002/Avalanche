@@ -41,6 +41,10 @@ stages:
      - checkout: self
      - checkout: devops
 
+     - task: BatchScript@1
+       inputs:
+         filename: 'devops\pipeline\coverage\publish-coverage-to-sonarqube-win.bat'
+         arguments: .\avalanche-api\Avalanche.Api\ .\avalanche-api\Avalanche.Api.Tests\
     # resore solution
 
      - task: NuGetCommand@2
@@ -82,10 +86,7 @@ stages:
             sonar.pullrequest.vsts.instanceUrl=https://dev.azure.com/ismclouddev
             sonar.pullrequest.vsts.project=$(AdoProject)
             sonar.pullrequest.vsts.repository=$(Build.Repository.Name) 
-     - task: BatchScript@1
-       inputs:
-         filename: 'devops\pipeline\coverage\publish-coverage-to-sonarqube-win.bat'
-         arguments: '.\avalanche-api\Avalanche.Api\ .\avalanche-api\Avalanche.Api.Tests\'
+     
      - task: DotNetCoreCLI@2
        displayName: 'dotnet build **/*.sln'
        inputs:
