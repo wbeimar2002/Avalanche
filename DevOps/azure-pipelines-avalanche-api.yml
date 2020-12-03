@@ -44,7 +44,8 @@ stages:
      - task: BatchScript@1
        inputs:
          filename: 'devops\pipeline\coverage\publish-coverage-to-sonarqube-win.bat'
-         arguments: $(CsProject) $(TestProject)
+         arguments: $(build_number_prefix) $(CsProject) $(TestProject) $(SonarqubeUrl) $(SonarToken)
+         # code-coverage-test-1 .\Avalanche.Api\ .\Avalanche.Api.Tests\ https://sonarqube10.eastus.azurecontainer.io 36988d5bc4a283a03911e2932d9eabe6fb7ecdc6
          #arguments: avalanche-api\Code\Avalanche.Api\ avalanche-api\Code\Avalanche.Api.Tests\
     # resore solution
 
