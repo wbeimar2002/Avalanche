@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Avalanche.Api.Managers.Metadata;
 using Avalanche.Api.Services.Configuration;
 using Avalanche.Api.ViewModels;
 using Avalanche.Shared.Domain.Enumerations;
@@ -12,13 +13,17 @@ namespace Avalanche.Api.Managers.Settings
     public class MaintenaceManager : IMaintenaceManager
     {
         readonly IStorageService _storageService;
+        readonly IMetadataManager _metadataManager;
         readonly ISettingsService _settingsService;
         readonly IMapper _mapper;
 
-        public MaintenaceManager(IStorageService storageService, ISettingsService settingsService, IMapper mapper)
+        private List<KeyValuePairViewModel> _types;
+
+        public MaintenaceManager(IStorageService storageService, ISettingsService settingsService, IMetadataManager metadataManager, IMapper mapper)
         {
             _storageService = storageService;
             _settingsService = settingsService;
+            _metadataManager = metadataManager;
             _mapper = mapper;
         }
 
@@ -32,7 +37,10 @@ namespace Avalanche.Api.Managers.Settings
         {
             var configurationContext = _mapper.Map<Avalanche.Shared.Domain.Models.User, ConfigurationContext>(user);
             var category = await _storageService.GetJson<SectionViewModel>(key, 1, configurationContext);
-            
+
+            if (_types == null)
+                _types = await _metadataManager.GetMetadata(user, Shared.Domain.Enumerations.MetadataTypes.SettingTypes);
+
             await SetSources(configurationContext, category);
 
             foreach (var section in category.Sections)
@@ -45,11 +53,17 @@ namespace Avalanche.Api.Managers.Settings
 
         private async Task SetSources(ConfigurationContext configurationContext, SectionViewModel category)
         {
-            foreach (var item in category.Settings)
+            if (category.Settings != null)
             {
-                if (!string.IsNullOrEmpty(item.SourceKey))
+                foreach (var item in category.Settings)
                 {
-                    item.SourceValues = (await _storageService.GetJson<ListContainerViewModel>(item.SourceKey, 1, configurationContext)).Items;
+                    if (!string.IsNullOrEmpty(item.SourceKey))
+                    {
+                        item.SourceValues = (await _storageService.GetJson<SourceListContainerViewModel>(item.SourceKey, 1, configurationContext)).Items;
+                        
+                        if (_types != null)
+                            item.SourceValues.ForEach(s => s.Types = _types);
+                    }
                 }
             }
         }

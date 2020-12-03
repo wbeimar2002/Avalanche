@@ -111,15 +111,15 @@ namespace Avalanche.Api.Controllers.V1
         /// <summary>
         /// Get content routing modes
         /// </summary>
-        [HttpGet("routingModes")]
+        [HttpGet("settingTypes")]
         [Produces(typeof(List<KeyValuePairViewModel>))]
-        public async Task<IActionResult> GetRoutingModes([FromServices] IWebHostEnvironment env)
+        public async Task<IActionResult> GetSettingTypes([FromServices] IWebHostEnvironment env)
         {
             try
             {
                 _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
 
-                var result = await _metadataManager.GetMetadata(User.GetUser(), Shared.Domain.Enumerations.MetadataTypes.RoutingModes);
+                var result = await _metadataManager.GetMetadata(User.GetUser(), Shared.Domain.Enumerations.MetadataTypes.SettingTypes);
                 return Ok(result);
             }
             catch (Exception exception)

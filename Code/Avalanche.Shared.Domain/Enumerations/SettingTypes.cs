@@ -8,8 +8,9 @@ namespace Avalanche.Shared.Domain.Enumerations
     {
         Undefined = -1,
         Text,
-        Int,
+        Number,
         Boolean,
-        List
+        List,
+        Date
     }
 }

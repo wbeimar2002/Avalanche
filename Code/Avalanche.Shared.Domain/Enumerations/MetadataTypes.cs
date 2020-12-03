@@ -10,7 +10,7 @@ namespace Avalanche.Shared.Domain.Enumerations
         ContentTypes,
         SourceTypes,
         SetupModes,
-        RoutingModes,
-        SearchColumns
+        SearchColumns,
+        SettingTypes
     }
 }
