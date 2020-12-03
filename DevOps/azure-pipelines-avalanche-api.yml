@@ -44,7 +44,8 @@ stages:
      - task: BatchScript@1
        inputs:
          filename: 'devops\pipeline\coverage\publish-coverage-to-sonarqube-win.bat'
-         arguments: avalanche-api\Code\Avalanche.Api\ avalanche-api\Code\Avalanche.Api.Tests\
+         arguments: $(CsProject) $(TestProject)
+         #arguments: avalanche-api\Code\Avalanche.Api\ avalanche-api\Code\Avalanche.Api.Tests\
     # resore solution
 
      - task: NuGetCommand@2
