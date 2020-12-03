@@ -138,7 +138,7 @@ namespace Avalanche.Api.Controllers.V1
         /// </summary>
         [HttpGet("searchColumns")]
         [Produces(typeof(List<KeyValuePairViewModel>))]
-        public async Task<IActionResult> GetSearchColumns([FromServices] IWebHostEnvironment env)
+        public async Task<IActionResult> GetSearchColumns([FromServices]IWebHostEnvironment env)
         {
             try
             {

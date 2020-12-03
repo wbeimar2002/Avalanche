@@ -1,5 +1,4 @@
 ﻿using Avalanche.Api.Extensions;
-using Avalanche.Api.Managers.Devices;
 using Avalanche.Api.Managers.Settings;
 using Avalanche.Api.ViewModels;
 using Avalanche.Shared.Infrastructure.Enumerations;
@@ -9,9 +8,10 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using System;
-using System.Diagnostics.CodeAnalysis;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Avalanche.Api.Controllers.V1
@@ -31,7 +31,7 @@ namespace Avalanche.Api.Controllers.V1
         }
 
         [HttpPost("categories")]
-        public async Task<IActionResult> SaveCategory(SectionViewModel section,[FromServices] IHostingEnvironment env)
+        public async Task<IActionResult> SaveCategory(SectionViewModel section,[FromServices]IWebHostEnvironment env)
         {
             try
             {
@@ -52,7 +52,7 @@ namespace Avalanche.Api.Controllers.V1
         }
 
         [HttpGet("categories/{key}")]
-        public async Task<IActionResult> GetCategoryByKey(string key, [FromServices] IHostingEnvironment env)
+        public async Task<IActionResult> GetCategoryByKey(string key, [FromServices]IWebHostEnvironment env)
         {
             try
             {

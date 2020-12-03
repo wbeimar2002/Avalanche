@@ -6,10 +6,12 @@ namespace Avalanche.Shared.Domain.Enumerations
 {
     public enum VisualStyles
     {
+        Undefined = -1,
         Text,
         DropDown,
         Toggle,
         Switch,
-        Grid
+        List,
+        Checkbox
     }
 }

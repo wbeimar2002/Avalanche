@@ -3,6 +3,7 @@ using Avalanche.Api.Services.Configuration;
 using Avalanche.Api.ViewModels;
 using Avalanche.Shared.Domain.Enumerations;
 using Ism.Common.Core.Configuration.Models;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -30,7 +31,27 @@ namespace Avalanche.Api.Managers.Settings
         public async Task<SectionViewModel> GetCategoryByKey(Avalanche.Shared.Domain.Models.User user, string key)
         {
             var configurationContext = _mapper.Map<Avalanche.Shared.Domain.Models.User, ConfigurationContext>(user);
-            return await _storageService.GetJson<SectionViewModel>(key, 1, configurationContext);
+            var category = await _storageService.GetJson<SectionViewModel>(key, 1, configurationContext);
+            
+            await SetSources(configurationContext, category);
+
+            foreach (var section in category.Sections)
+            {
+                await SetSources(configurationContext, section);
+            }
+
+            return category;
+        }
+
+        private async Task SetSources(ConfigurationContext configurationContext, SectionViewModel category)
+        {
+            foreach (var item in category.Settings)
+            {
+                if (!string.IsNullOrEmpty(item.SourceKey))
+                {
+                    item.SourceValues = (await _storageService.GetJson<ListContainerViewModel>(item.SourceKey, 1, configurationContext)).Items;
+                }
+            }
         }
     }
 }
