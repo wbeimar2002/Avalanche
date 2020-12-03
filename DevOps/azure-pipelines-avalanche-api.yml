@@ -135,7 +135,9 @@ stages:
         pollingTimeoutSec: 300
         projectKey: $(SonarProjectKey)
         projectName: $(SonarProject)
-  
+
+     # publishe code coverage to sonarqube   
+     - template: pipeline\templates\pub-sonarqube-codecoverage-win.yml@devops
 
     # make app artifacts
      - task: DotNetCoreCLI@2
@@ -167,8 +169,6 @@ stages:
         PathtoPublish: '$(Repo)/DevOps/certificates'
         ArtifactName: certificates
 
-# publish sonarqube codecoverage
-- template: pipeline\templates\pub-sonarqube-codecoverage.yml@devops
 - stage: push_to_acr
 
   #condition: and(succeeded(), eq(variables['Build.SourceBranchName'], 'dev'))
