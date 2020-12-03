@@ -137,14 +137,14 @@ namespace Avalanche.Api.Controllers.V1
         /// Get content search columns
         /// </summary>
         [HttpGet("searchColumns")]
-        [Produces(typeof(List<KeyValuePairViewModel>))]
+        [Produces(typeof(List<SourceKeyValuePairViewModel>))]
         public async Task<IActionResult> GetSearchColumns([FromServices]IWebHostEnvironment env)
         {
             try
             {
                 _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
 
-                var result = await _metadataManager.GetMetadata(User.GetUser(), Shared.Domain.Enumerations.MetadataTypes.SearchColumns);
+                var result = await _metadataManager.GetSource(User.GetUser(), Shared.Domain.Enumerations.MetadataTypes.SearchColumns);
                 return Ok(result);
             }
             catch (Exception exception)

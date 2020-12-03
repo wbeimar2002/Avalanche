@@ -43,9 +43,12 @@ namespace Avalanche.Api.Managers.Settings
 
             await SetSources(configurationContext, category);
 
-            foreach (var section in category.Sections)
+            if (category.Sections != null)
             {
-                await SetSources(configurationContext, section);
+                foreach (var section in category.Sections)
+                {
+                    await SetSources(configurationContext, section);
+                }
             }
 
             return category;
