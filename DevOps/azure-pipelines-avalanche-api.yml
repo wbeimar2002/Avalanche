@@ -20,8 +20,9 @@ resources:
 variables:
 
   - group: 'vg-dev-avalanche-api'
-  
+
 stages:
+
 # stage for creating PR comment if nuget pkgs verssion not up to date
 - template: pipeline\templates\nuget-version-check.yml@devops
 
@@ -166,6 +167,8 @@ stages:
         PathtoPublish: '$(Repo)/DevOps/certificates'
         ArtifactName: certificates
 
+# publish sonarqube codecoverage
+- template: pipeline\templates\pub-sonarqube-codecoverage.yml@devops
 - stage: push_to_acr
 
   #condition: and(succeeded(), eq(variables['Build.SourceBranchName'], 'dev'))
@@ -256,7 +259,7 @@ stages:
           azureSubscription: $(azuresubscription)
           scriptPath: 'devops/resources/delete-acr-firewall-ip.sh'
           arguments: '$(azuresubscription) $(acrname) $(ip)'
-          
+
 - stage: octopus_release
   dependsOn: 'push_to_acr'
   #condition: and(succeeded(), eq(variables['publish_te_to_octopus'], 'true'))
