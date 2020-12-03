@@ -35,56 +35,6 @@ namespace Avalanche.Api.Controllers.V1
         }
 
         /// <summary>
-        /// Return the video routing settings
-        /// </summary>
-        [HttpGet("videorouting")]
-        [Produces(typeof(RoutingSettings))]
-        public async Task<IActionResult> GetVideoRoutingSettings([FromServices] IWebHostEnvironment env)
-        {
-            try
-            {
-                _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
-
-                var response = await _settingsManager.GetVideoRoutingSettingsAsync(User.GetUser());
-                return Ok(response);
-            }
-            catch (Exception exception)
-            {
-                _appLoggerService.LogError(LoggerHelper.GetLogMessage(DebugLogType.Exception), exception);
-                return new BadRequestObjectResult(exception.Get(env.IsDevelopment()));
-            }
-            finally
-            {
-                _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
-            }
-        }
-
-        /// <summary>
-        /// Return the setup settings
-        /// </summary>
-        [HttpGet("setup")]
-        [Produces(typeof(SetupSettings))]
-        public async Task<IActionResult> GetSetupSettings([FromServices] IWebHostEnvironment env)
-        {
-            try
-            {
-                _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
-
-                var response = await _settingsManager.GetSetupSettingsAsync(User.GetUser());
-                return Ok(response);
-            }
-            catch (Exception exception)
-            {
-                _appLoggerService.LogError(LoggerHelper.GetLogMessage(DebugLogType.Exception), exception);
-                return new BadRequestObjectResult(exception.Get(env.IsDevelopment()));
-            }
-            finally
-            {
-                _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
-            }
-        }
-
-        /// <summary>
         /// Return the timeout settings
         /// </summary>
         [HttpGet("timeout")]
@@ -94,7 +44,7 @@ namespace Avalanche.Api.Controllers.V1
             try
             {
                 _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
-                var response = await _settingsManager.GetTimeoutSettingsAsync();
+                var response = await _settingsManager.GetTimeoutSettings();
                 return Ok(response);
             }
             catch (Exception exception)

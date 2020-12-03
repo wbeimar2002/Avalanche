@@ -71,7 +71,7 @@ namespace Avalanche.Api.Services.Configuration
             PgsTimeoutClient = new PgsTimeoutSecureClient(grpcPgsClientFactory, _hostIpAddress, PgsTimeoutGrpcPort, certificateProvider); 
         }
 
-        public async Task<TimeoutSettings> GetTimeoutSettingsAsync()
+        public async Task<TimeoutSettings> GetTimeoutSettings()
         {
             var actionResponseForPdf = await PgsTimeoutClient.GetTimeoutPdfPath();
             var actionResponseForAlwaysOn = await PgsTimeoutClient.GetPgsAlwaysOnSetting();
@@ -83,14 +83,16 @@ namespace Avalanche.Api.Services.Configuration
             };
         }
 
-        public async Task<SetupSettings> GetSetupSettingsAsync(ConfigurationContext context)
+        public Task<SetupSettings> GetSetupSettings(ConfigurationContext context)
         {
-            return await _storageService.GetJson<SetupSettings>("SetupSettings", 1, context);
+            //TODO: Complete with the new dynamic settings
+            return Task.FromResult(new SetupSettings());
         }
 
-        public async Task<RoutingSettings> GetVideoRoutingSettingsAsync(ConfigurationContext context)
+        public Task<RoutingSettings> GetVideoRoutingSettings(ConfigurationContext context)
         {
-            return await _storageService.GetJson<RoutingSettings>("RoutingSettings", 1, context);
+            //TODO: Complete with the new dynamic settings
+            return Task.FromResult(new RoutingSettings());
         }
     }
 }

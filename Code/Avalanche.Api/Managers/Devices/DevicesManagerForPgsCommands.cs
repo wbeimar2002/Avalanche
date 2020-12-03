@@ -46,7 +46,7 @@ namespace Avalanche.Api.Managers.Devices
 
         private async Task<CommandResponse> StopSlidesAndResumeVideo(Command command)
         {
-            var alwaysOnSettings = await _settingsService.GetTimeoutSettingsAsync();
+            var alwaysOnSettings = await _settingsService.GetTimeoutSettings();
             var timeoutMode = alwaysOnSettings.PgsVideoAlwaysOn ? TimeoutModes.Pgs : TimeoutModes.Idle;
 
             var setModeCommand = new Command()

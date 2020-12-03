@@ -52,7 +52,7 @@ namespace Avalanche.Api.Tests.Managers
                 PgsVideoAlwaysOn = true
             };
 
-            _settingsService.Setup(mock => mock.GetTimeoutSettingsAsync()).ReturnsAsync(timeoutSettings);
+            _settingsService.Setup(mock => mock.GetTimeoutSettings()).ReturnsAsync(timeoutSettings);
 
             var commandResponse = _manager.SendCommand(commandViewModel);
 
@@ -75,7 +75,7 @@ namespace Avalanche.Api.Tests.Managers
                 PgsVideoAlwaysOn = false
             };
 
-            _settingsService.Setup(mock => mock.GetTimeoutSettingsAsync()).ReturnsAsync(timeoutSettings);
+            _settingsService.Setup(mock => mock.GetTimeoutSettings()).ReturnsAsync(timeoutSettings);
 
             var commandResponse = _manager.SendCommand(commandViewModel);
 

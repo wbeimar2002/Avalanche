@@ -8,9 +8,9 @@ using System.Text;
 
 namespace Avalanche.Shared.Infrastructure.Models
 {
-    public class SetupSettings
+    public class RegistrationSettings
     {
-        public GeneralSetupSettings General { get; set; }
-        public RegistrationSettings Registration { get; set; }        
+        public QuickRegistrationSettings Quick { get; set; }
+        public ManualRegistrationSettings Manual{ get; set; }
     }
 }

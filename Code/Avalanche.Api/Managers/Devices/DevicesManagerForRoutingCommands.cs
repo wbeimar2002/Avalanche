@@ -60,12 +60,13 @@ namespace Avalanche.Api.Managers.Devices
         private async Task<CommandResponse> ShowVideoRoutingPreview(Command command)
         {
             var configurationContext = _mapper.Map<Avalanche.Shared.Domain.Models.User, ConfigurationContext>(command.User);
+            //TODO: how to user settings in the api, web is already defined
+            //var config = await _settingsService.GetVideoRoutingSettingsAsync(configurationContext);
 
-            var config = await _settingsService.GetVideoRoutingSettingsAsync(configurationContext);
             var region = JsonConvert.DeserializeObject<Region>(command.AdditionalInfo);
 
-            if (config.Mode == RoutingModes.Hardware)
-                await _avidisService.ShowPreview(_mapper.Map<Region, AvidisDeviceInterface.V1.Protos.ShowPreviewRequest>(region));
+            //if (config.Mode == RoutingModes.Hardware)
+            //    await _avidisService.ShowPreview(_mapper.Map<Region, AvidisDeviceInterface.V1.Protos.ShowPreviewRequest>(region));
 
             await RoutePreview(command);
 

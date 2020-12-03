@@ -93,7 +93,7 @@ namespace Avalanche.Api.Tests.Managers
         [Test]
         public void ShowVideoRoutingPreviewHarwareModeShouldReturnResponse()
         {
-            _settingsService.Setup(mock =>  mock.GetVideoRoutingSettingsAsync(It.IsAny<ConfigurationContext>())).ReturnsAsync(new RoutingSettings()
+            _settingsService.Setup(mock =>  mock.GetVideoRoutingSettings(It.IsAny<ConfigurationContext>())).ReturnsAsync(new RoutingSettings()
             {
                 Mode = RoutingModes.Hardware
             });
@@ -116,7 +116,7 @@ namespace Avalanche.Api.Tests.Managers
         [Test]
         public void ShowVideoRoutingPreviewSoftwareModeShouldReturnResponse()
         {
-            _settingsService.Setup(mock => mock.GetVideoRoutingSettingsAsync(It.IsAny<ConfigurationContext>())).ReturnsAsync(new RoutingSettings()
+            _settingsService.Setup(mock => mock.GetVideoRoutingSettings(It.IsAny<ConfigurationContext>())).ReturnsAsync(new RoutingSettings()
             {
                 Mode = RoutingModes.Software
             });

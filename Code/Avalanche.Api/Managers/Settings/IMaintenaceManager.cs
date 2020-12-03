@@ -11,5 +11,6 @@ namespace Avalanche.Api.Managers.Settings
     {
         Task SaveCategory(Avalanche.Shared.Domain.Models.User user, SectionViewModel category);
         Task<SectionViewModel> GetCategoryByKey(Avalanche.Shared.Domain.Models.User user, string key);
+        Task<SectionReadOnlyViewModel> GetCategoryByKeyReadOnly(Avalanche.Shared.Domain.Models.User user, string key);
     }
 }

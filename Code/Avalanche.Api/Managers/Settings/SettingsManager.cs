@@ -23,21 +23,9 @@ namespace Avalanche.Api.Managers.Settings
             _mapper = mapper;
         }
 
-        public async Task<RoutingSettings> GetVideoRoutingSettingsAsync(Avalanche.Shared.Domain.Models.User user)
+        public async Task<TimeoutSettings> GetTimeoutSettings()
         {
-            var configurationContext = _mapper.Map<Avalanche.Shared.Domain.Models.User, ConfigurationContext>(user);
-            return await _settingsService.GetVideoRoutingSettingsAsync(configurationContext);
-        }
-
-        public async Task<TimeoutSettings> GetTimeoutSettingsAsync()
-        {
-            return await _settingsService.GetTimeoutSettingsAsync();
-        }
-
-        public async Task<SetupSettings> GetSetupSettingsAsync(Avalanche.Shared.Domain.Models.User user)
-        {
-            var configurationContext = _mapper.Map<Avalanche.Shared.Domain.Models.User, ConfigurationContext>(user);
-            return await _settingsService.GetSetupSettingsAsync(configurationContext);
+            return await _settingsService.GetTimeoutSettings();
         }
     }
 }

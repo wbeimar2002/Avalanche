@@ -4,7 +4,6 @@ using Avalanche.Api.Services.Configuration;
 using Avalanche.Api.ViewModels;
 using Avalanche.Shared.Domain.Enumerations;
 using Ism.Common.Core.Configuration.Models;
-using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -33,13 +32,19 @@ namespace Avalanche.Api.Managers.Settings
             await Task.CompletedTask;
         }
 
-        public async Task<SectionViewModel> GetCategoryByKey(Avalanche.Shared.Domain.Models.User user, string key)
+        public async Task<SectionReadOnlyViewModel> GetCategoryByKeyReadOnly(Avalanche.Shared.Domain.Models.User user, string key)
         {
-            var configurationContext = _mapper.Map<Avalanche.Shared.Domain.Models.User, ConfigurationContext>(user);
+            var configurationContext = _mapper.Map<Shared.Domain.Models.User, ConfigurationContext>(user);
+            return await _storageService.GetJson<SectionReadOnlyViewModel>(key, 1, configurationContext);
+        }
+
+        public async Task<SectionViewModel> GetCategoryByKey(Shared.Domain.Models.User user, string key)
+        {
+            var configurationContext = _mapper.Map<Shared.Domain.Models.User, ConfigurationContext>(user);
             var category = await _storageService.GetJson<SectionViewModel>(key, 1, configurationContext);
 
             if (_types == null)
-                _types = await _metadataManager.GetMetadata(user, Shared.Domain.Enumerations.MetadataTypes.SettingTypes);
+                _types = await _metadataManager.GetMetadata(user, MetadataTypes.SettingTypes);
 
             await SetSources(configurationContext, category);
 
