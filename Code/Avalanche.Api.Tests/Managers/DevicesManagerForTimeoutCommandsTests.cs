@@ -49,12 +49,12 @@ namespace Avalanche.Api.Tests.Managers
                 Devices = new List<Device>() { new Device() { Id = "Timeout" } }
             };
 
-            TimeoutSettings timeoutSettings = new TimeoutSettings()
+            PgsSettings pgsSettings = new PgsSettings()
             {
                 PgsVideoAlwaysOn = true
             };
 
-            _settingsService.Setup(mock => mock.GetTimeoutSettings(It.IsAny<ConfigurationContext>())).ReturnsAsync(timeoutSettings);
+            _settingsService.Setup(mock => mock.GetPgsSettings(It.IsAny<ConfigurationContext>())).ReturnsAsync(pgsSettings);
 
             var commandResponse = _manager.SendCommand(commandViewModel);
 
@@ -72,12 +72,12 @@ namespace Avalanche.Api.Tests.Managers
                 Devices = new List<Device>() { new Device() { Id = "Timeout" } }
             };
 
-            TimeoutSettings timeoutSettings = new TimeoutSettings()
+            PgsSettings pgsSettings = new PgsSettings()
             {
                 PgsVideoAlwaysOn = false
             };
 
-            _settingsService.Setup(mock => mock.GetTimeoutSettings(It.IsAny<ConfigurationContext>())).ReturnsAsync(timeoutSettings);
+            _settingsService.Setup(mock => mock.GetPgsSettings(It.IsAny<ConfigurationContext>())).ReturnsAsync(pgsSettings);
 
             var commandResponse = _manager.SendCommand(commandViewModel);
 

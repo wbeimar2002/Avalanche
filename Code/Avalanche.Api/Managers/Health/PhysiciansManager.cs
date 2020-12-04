@@ -1,6 +1,7 @@
 ﻿using AutoFixture;
 using AutoMapper;
 using Avalanche.Api.Services.Configuration;
+using Avalanche.Api.Services.Maintenance;
 using Avalanche.Api.ViewModels;
 using Avalanche.Shared.Domain.Enumerations;
 using Avalanche.Shared.Domain.Models;

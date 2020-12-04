@@ -5,8 +5,8 @@ using System.Text;
 
 namespace Avalanche.Shared.Infrastructure.Models
 {
-    public class TimeoutSettings
+    public class PgsSettings
     {
-        public string CheckListFileName { get; set; }
+        public bool PgsVideoAlwaysOn { get; set; }
     }
 }

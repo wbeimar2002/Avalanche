@@ -49,8 +49,8 @@ namespace Avalanche.Api.Managers.Devices
         private async Task<CommandResponse> StopSlidesAndResumeVideo(Command command, User user)
         {
             var configurationContext = _mapper.Map<Avalanche.Shared.Domain.Models.User, ConfigurationContext>(user);
-            var alwaysOnSettings = await _settingsService.GetTimeoutSettings(configurationContext);
-            var timeoutMode = alwaysOnSettings.PgsVideoAlwaysOn ? TimeoutModes.Pgs : TimeoutModes.Idle;
+            var pgsSettings = await _settingsService.GetPgsSettings(configurationContext);
+            var timeoutMode = pgsSettings.PgsVideoAlwaysOn ? TimeoutModes.Pgs : TimeoutModes.Idle;
 
             var setModeCommand = new Command()
             {
@@ -60,7 +60,7 @@ namespace Avalanche.Api.Managers.Devices
 
             await ExecuteCommandAsync(CommandTypes.SetTimeoutMode, setModeCommand, user);
 
-            if (alwaysOnSettings.PgsVideoAlwaysOn)
+            if (pgsSettings.PgsVideoAlwaysOn)
             {
                 var accessInfo = _accessInfoFactory.GenerateAccessInfo();
                 command.AccessInformation = _mapper.Map<Ism.IsmLogCommon.Core.AccessInfo, AccessInfo>(accessInfo);

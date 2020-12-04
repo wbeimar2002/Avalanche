@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Avalanche.Api.Services.Configuration;
+using Avalanche.Api.Services.Maintenance;
 using Avalanche.Api.Services.Media;
 using Avalanche.Api.Utilities;
 using Avalanche.Api.ViewModels;

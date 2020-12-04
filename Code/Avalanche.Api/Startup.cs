@@ -9,6 +9,7 @@ using Avalanche.Api.Managers.Metadata;
 using Avalanche.Api.Managers.Notifications;
 using Avalanche.Api.Services.Configuration;
 using Avalanche.Api.Services.Health;
+using Avalanche.Api.Services.Maintenance;
 using Avalanche.Api.Services.Media;
 using Avalanche.Api.Services.Settings;
 using Avalanche.Api.Utilities;
@@ -188,7 +189,7 @@ namespace Avalanche.Api
                 builder =>
                 {
                     builder
-                        .WithOrigins("http://localhost:4200")
+                        .WithOrigins("https://localhost:4200")
                         .WithHeaders(new[] { "authorization", "content-type", "accept" })
                         .WithMethods(new[] { "GET", "POST", "PUT", "DELETE", "OPTIONS" })
                         //.AllowAnyOrigin()

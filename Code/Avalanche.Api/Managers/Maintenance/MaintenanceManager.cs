@@ -1,11 +1,12 @@
 ﻿using AutoMapper;
 using Avalanche.Api.Managers.Metadata;
 using Avalanche.Api.Services.Configuration;
+using Avalanche.Api.Services.Maintenance;
 using Avalanche.Api.ViewModels;
-using Avalanche.Shared.Domain.Enumerations;
+using Avalanche.Shared.Domain.Models;
 using Avalanche.Shared.Infrastructure.Enumerations;
-using Avalanche.Shared.Infrastructure.Models;
 using Ism.Common.Core.Configuration.Models;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -77,22 +78,29 @@ namespace Avalanche.Api.Managers.Maintenance
                 }
             }
         }
-        public async Task<TimeoutSettings> GetTimeoutSettings(Avalanche.Shared.Domain.Models.User user)
+        public async Task<T> GetSettings<T>(string key, User user)
         {
             var configurationContext = _mapper.Map<Shared.Domain.Models.User, ConfigurationContext>(user);
-            return await _settingsService.GetTimeoutSettings(configurationContext);
+
+            switch (key)
+            {
+                case "PgsSettings":
+                    return ChangeType<T>(await _settingsService.GetPgsSettings(configurationContext));
+                case "TimeoutSettings":
+                    return ChangeType<T>(await _settingsService.GetTimeoutSettings(configurationContext));
+                case "RoutingSettings":
+                    return ChangeType<T>(await _settingsService.GetRoutingSettings(configurationContext));
+                case "SetupSettings":
+                    return ChangeType<T>(await _settingsService.GetSetupSettings(configurationContext));
+                default:
+                    return default(T);
+            }
         }
 
-        public async Task<SetupSettings> GetSetupSettings(Avalanche.Shared.Domain.Models.User user)
+        private T ChangeType<T>(object o)
         {
-            var configurationContext = _mapper.Map<Shared.Domain.Models.User, ConfigurationContext>(user);
-            return await _settingsService.GetSetupSettings(configurationContext);
-        }
-
-        public async Task<RoutingSettings> GetRoutingSettings(Avalanche.Shared.Domain.Models.User user)
-        {
-            var configurationContext = _mapper.Map<Shared.Domain.Models.User, ConfigurationContext>(user);
-            return await _settingsService.GetRoutingSettings(configurationContext);
+            Type conversionType = Nullable.GetUnderlyingType(typeof(T)) ?? typeof(T);
+            return (T)Convert.ChangeType(o, conversionType);
         }
     }
 }

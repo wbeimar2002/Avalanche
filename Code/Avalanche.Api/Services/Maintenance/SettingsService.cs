@@ -1,25 +1,16 @@
-﻿using Avalanche.Api.ViewModels;
+﻿using Avalanche.Api.Services.Configuration;
+using Avalanche.Api.ViewModels;
 using Avalanche.Shared.Infrastructure.Models;
 using Avalanche.Shared.Infrastructure.Services.Settings;
-using Google.Protobuf.WellKnownTypes;
-using Grpc.Core;
-using Grpc.Core.Interceptors;
-using Grpc.Core.Testing;
 using Ism.Common.Core.Configuration.Models;
-using Ism.PgsTimeout.Client.V1;
-using Ism.PgsTimeout.V1.Protos;
 using Ism.Security.Grpc.Interfaces;
-using Moq;
 using System;
-using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using System.Security.Cryptography.X509Certificates;
-using System.Threading;
 using System.Threading.Tasks;
 using static Ism.PgsTimeout.V1.Protos.PgsTimeout;
 
-namespace Avalanche.Api.Services.Configuration
+namespace Avalanche.Api.Services.Maintenance
 {
     [ExcludeFromCodeCoverage]
     public class SettingsService : ISettingsService
@@ -35,12 +26,11 @@ namespace Avalanche.Api.Services.Configuration
 
         public async Task<TimeoutSettings> GetTimeoutSettings(ConfigurationContext context)
         {
-            var section = await _storageService.GetJson<SectionReadOnlyViewModel>("RoutingSettings", 1, context);
+            var section = await _storageService.GetJson<SectionReadOnlyViewModel>("TimeoutSettings", 1, context);
 
             return new TimeoutSettings()
             {
-                CheckListFileName = GetSetting(section, "CheckListFileName")?.Value,
-                PgsVideoAlwaysOn = Convert.ToBoolean(GetSetting(section, "PgsVideoAlwaysOn")?.Value)
+                CheckListFileName = GetSetting(section, "CheckListFileName")?.Value
             };
         }
 
@@ -102,6 +92,16 @@ namespace Avalanche.Api.Services.Configuration
             var selectedSection = section.Sections.Where(s => s.JsonKey.Equals(sectionName)).FirstOrDefault();
             var selectedSubSection = selectedSection.Sections.Where(s => s.JsonKey.Equals(subsectionName)).FirstOrDefault();
             return selectedSubSection.Settings.Where(s => s.JsonKey.Equals(settingName)).FirstOrDefault();
+        }
+
+        public async Task<PgsSettings> GetPgsSettings(ConfigurationContext context)
+        {
+            var section = await _storageService.GetJson<SectionReadOnlyViewModel>("PgsSettings", 1, context);
+
+            return new PgsSettings()
+            {
+                PgsVideoAlwaysOn = Convert.ToBoolean(GetSetting(section, "PgsVideoAlwaysOn")?.Value)
+            };
         }
     }
 }

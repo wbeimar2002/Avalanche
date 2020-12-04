@@ -4,6 +4,7 @@ using Avalanche.Api.Managers.Metadata;
 using Avalanche.Api.MappingConfigurations;
 using Avalanche.Api.Services.Configuration;
 using Avalanche.Api.Services.Health;
+using Avalanche.Api.Services.Maintenance;
 using Avalanche.Shared.Domain.Models;
 using Avalanche.Shared.Infrastructure.Models;
 using Avalanche.Shared.Infrastructure.Services.Settings;
