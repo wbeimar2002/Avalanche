@@ -1,4 +1,5 @@
-﻿using Avalanche.Shared.Infrastructure.Models;
+﻿using Avalanche.Api.ViewModels;
+using Avalanche.Shared.Infrastructure.Models;
 using Avalanche.Shared.Infrastructure.Services.Settings;
 using Google.Protobuf.WellKnownTypes;
 using Grpc.Core;
@@ -12,6 +13,7 @@ using Moq;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading;
 using System.Threading.Tasks;
@@ -25,74 +27,81 @@ namespace Avalanche.Api.Services.Configuration
         readonly IConfigurationService _configurationService;
         readonly IStorageService _storageService;
 
-        readonly string _hostIpAddress;
-
-        public PgsTimeoutSecureClient PgsTimeoutClient { get; set; }
-        public bool UseMocks { get; set; }
-
         public SettingsService(IConfigurationService configurationService, IStorageService storageService, IGrpcClientFactory<PgsTimeoutClient> grpcPgsClientFactory, ICertificateProvider certificateProvider)
         {
             _configurationService = configurationService;
             _storageService = storageService;
-
-            _hostIpAddress = _configurationService.GetEnvironmentVariable("hostIpAddress");
-
-            var WebRTCGrpcPort = _configurationService.GetEnvironmentVariable("WebRTCGrpcPort");
-            var PgsTimeoutGrpcPort = _configurationService.GetEnvironmentVariable("PgsTimeoutGrpcPort");
-
-            UseMocks = true;
-
-            if (UseMocks)
-            {
-                var mockResponseForPdf = new GetTimeoutPdfPathResponse()
-                {
-                    PdfPath = @"C:\Olympus\apps\config\AvalancheApi\safety_checklist.pdf"
-                };
-
-                var mockResponseForAlwaysOn = new GetPgsAlwaysOnSettingResponse()
-                {
-                    IsAlwaysOn = true
-                };
-
-                var fakeCallForPdf = TestCalls.AsyncUnaryCall(Task.FromResult(mockResponseForPdf), Task.FromResult(new Metadata()), () => Status.DefaultSuccess, () => new Metadata(), () => { });
-                var fakeCallForAlwaysOn = TestCalls.AsyncUnaryCall(Task.FromResult(mockResponseForAlwaysOn), Task.FromResult(new Metadata()), () => Status.DefaultSuccess, () => new Metadata(), () => { });
-
-                Mock<PgsTimeoutClient> mockGrpcClient = new Mock<PgsTimeoutClient>();
-                mockGrpcClient.Setup(mock => mock.GetTimeoutPdfPathAsync(Moq.It.IsAny<Empty>(), null, null, CancellationToken.None)).Returns(fakeCallForPdf);
-                mockGrpcClient.Setup(mock => mock.GetPgsAlwaysOnSettingAsync(Moq.It.IsAny<Empty>(), null, null, CancellationToken.None)).Returns(fakeCallForAlwaysOn);
-
-                var mockPgs = new Mock<IGrpcClientFactory<PgsTimeoutClient>>();
-                mockPgs.Setup(m => m.GetSecureClient(It.IsAny<string>(), It.IsAny<X509Certificate2>(), It.IsAny<X509Certificate2>(), It.IsAny<string>(), It.IsAny<List<Interceptor>>(), It.IsAny<List<Func<Metadata, Metadata>>>()))
-                        .Returns(mockGrpcClient.Object);
-
-                grpcPgsClientFactory = mockPgs.Object;
-            }
-
-            PgsTimeoutClient = new PgsTimeoutSecureClient(grpcPgsClientFactory, _hostIpAddress, PgsTimeoutGrpcPort, certificateProvider); 
         }
 
-        public async Task<TimeoutSettings> GetTimeoutSettings()
+        public async Task<TimeoutSettings> GetTimeoutSettings(ConfigurationContext context)
         {
-            var actionResponseForPdf = await PgsTimeoutClient.GetTimeoutPdfPath();
-            var actionResponseForAlwaysOn = await PgsTimeoutClient.GetPgsAlwaysOnSetting();
+            var section = await _storageService.GetJson<SectionReadOnlyViewModel>("RoutingSettings", 1, context);
 
-            return new TimeoutSettings
+            return new TimeoutSettings()
             {
-                CheckListFileName = actionResponseForPdf.PdfPath,
-                PgsVideoAlwaysOn = actionResponseForAlwaysOn.IsAlwaysOn
+                CheckListFileName = GetSetting(section, "CheckListFileName")?.Value,
+                PgsVideoAlwaysOn = Convert.ToBoolean(GetSetting(section, "PgsVideoAlwaysOn")?.Value)
             };
         }
 
-        public Task<SetupSettings> GetSetupSettings(ConfigurationContext context)
+        public async Task<SetupSettings> GetSetupSettings(ConfigurationContext context)
         {
-            //TODO: Complete with the new dynamic settings
-            return Task.FromResult(new SetupSettings());
+            var section = await _storageService.GetJson<SectionReadOnlyViewModel>("SetupSettings", 1, context);
+            return new SetupSettings()
+            {
+                General = new GeneralSetupSettings()
+                {
+                    Mode = (Shared.Domain.Enumerations.SetupModes)Convert.ToInt32(GetSettingBySection(section, "General", "Mode")?.Value),
+                    DepartmentsSupported = Convert.ToBoolean(GetSettingBySection(section, "General", "DepartmentsSupported")?.Value),
+                    CacheDuration = Convert.ToInt32(GetSettingBySection(section, "General", "CacheDuration")?.Value),
+                    Administrator = new AdministratorSettings()
+                    {
+                        Id = GetSettingBySubSection(section, "General", "Administrator", "Id")?.Value,
+                        FirstName = GetSettingBySubSection(section, "General", "Administrator", "FirstName")?.Value,
+                        LastName = GetSettingBySubSection(section, "General", "Administrator", "LastName")?.Value
+                    }
+                },
+                Registration = new RegistrationSettings() 
+                {
+                    Manual = new ManualRegistrationSettings()
+                    { 
+                        AutoFillPhysician = Convert.ToBoolean(GetSettingBySubSection(section, "Registration", "Manual", "AutoFillPhysician")?.Value)
+                    },
+                    Quick = new QuickRegistrationSettings()
+                    { 
+                        IsAllowed = Convert.ToBoolean(GetSettingBySubSection(section, "Registration", "Quick", "IsAllowed")?.Value),
+                        UseAdministratorAsPhysician = Convert.ToBoolean(GetSettingBySubSection(section, "Registration", "Quick", "UseAdministratorAsPhysician")?.Value),
+                        DateFormat = GetSettingBySubSection(section, "Registration", "Quick", "DateFormat")?.Value
+                    }
+                }
+            };
         }
 
-        public Task<RoutingSettings> GetVideoRoutingSettings(ConfigurationContext context)
+        public async Task<RoutingSettings> GetRoutingSettings(ConfigurationContext context)
         {
-            //TODO: Complete with the new dynamic settings
-            return Task.FromResult(new RoutingSettings());
+            var section = await _storageService.GetJson<SectionReadOnlyViewModel>("RoutingSettings", 1, context);
+
+            return new RoutingSettings()
+            {
+                Mode = (Shared.Domain.Enumerations.RoutingModes)Convert.ToInt32(GetSetting(section, "Mode")?.Value)
+            };
+        }
+
+        private static SettingReadOnlyViewModel GetSetting(SectionReadOnlyViewModel section, string settingName)
+        {
+            return section.Settings.Where(s => s.JsonKey.Equals(settingName)).FirstOrDefault();
+        }
+
+        private static SettingReadOnlyViewModel GetSettingBySection(SectionReadOnlyViewModel section, string sectionName, string settingName)
+        {
+            var selectedSection = section.Sections.Where(s => s.JsonKey.Equals(sectionName)).FirstOrDefault();
+            return selectedSection.Settings.Where(s => s.JsonKey.Equals(settingName)).FirstOrDefault();
+        }
+        private static SettingReadOnlyViewModel GetSettingBySubSection(SectionReadOnlyViewModel section, string sectionName, string subsectionName, string settingName)
+        {
+            var selectedSection = section.Sections.Where(s => s.JsonKey.Equals(sectionName)).FirstOrDefault();
+            var selectedSubSection = selectedSection.Sections.Where(s => s.JsonKey.Equals(subsectionName)).FirstOrDefault();
+            return selectedSubSection.Settings.Where(s => s.JsonKey.Equals(settingName)).FirstOrDefault();
         }
     }
 }

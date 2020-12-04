@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Avalanche.Shared.Domain.Enumerations
+namespace Avalanche.Shared.Infrastructure.Enumerations
 {
     public enum VisualStyles
     {
@@ -12,6 +12,7 @@ namespace Avalanche.Shared.Domain.Enumerations
         Toggle,
         Switch,
         List,
-        Checkbox
+        Checkbox,
+        FilePicker
     }
 }

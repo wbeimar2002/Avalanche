@@ -3,13 +3,15 @@ using Avalanche.Api.Managers.Metadata;
 using Avalanche.Api.Services.Configuration;
 using Avalanche.Api.ViewModels;
 using Avalanche.Shared.Domain.Enumerations;
+using Avalanche.Shared.Infrastructure.Enumerations;
+using Avalanche.Shared.Infrastructure.Models;
 using Ism.Common.Core.Configuration.Models;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace Avalanche.Api.Managers.Settings
+namespace Avalanche.Api.Managers.Maintenance
 {
-    public class MaintenaceManager : IMaintenaceManager
+    public class MaintenanceManager : IMaintenanceManager
     {
         readonly IStorageService _storageService;
         readonly IMetadataManager _metadataManager;
@@ -18,7 +20,7 @@ namespace Avalanche.Api.Managers.Settings
 
         private List<KeyValuePairViewModel> _types;
 
-        public MaintenaceManager(IStorageService storageService, ISettingsService settingsService, IMetadataManager metadataManager, IMapper mapper)
+        public MaintenanceManager(IStorageService storageService, ISettingsService settingsService, IMetadataManager metadataManager, IMapper mapper)
         {
             _storageService = storageService;
             _settingsService = settingsService;
@@ -74,6 +76,23 @@ namespace Avalanche.Api.Managers.Settings
                     }
                 }
             }
+        }
+        public async Task<TimeoutSettings> GetTimeoutSettings(Avalanche.Shared.Domain.Models.User user)
+        {
+            var configurationContext = _mapper.Map<Shared.Domain.Models.User, ConfigurationContext>(user);
+            return await _settingsService.GetTimeoutSettings(configurationContext);
+        }
+
+        public async Task<SetupSettings> GetSetupSettings(Avalanche.Shared.Domain.Models.User user)
+        {
+            var configurationContext = _mapper.Map<Shared.Domain.Models.User, ConfigurationContext>(user);
+            return await _settingsService.GetSetupSettings(configurationContext);
+        }
+
+        public async Task<RoutingSettings> GetRoutingSettings(Avalanche.Shared.Domain.Models.User user)
+        {
+            var configurationContext = _mapper.Map<Shared.Domain.Models.User, ConfigurationContext>(user);
+            return await _settingsService.GetRoutingSettings(configurationContext);
         }
     }
 }

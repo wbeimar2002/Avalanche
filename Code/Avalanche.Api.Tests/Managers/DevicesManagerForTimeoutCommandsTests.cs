@@ -6,10 +6,12 @@ using Avalanche.Api.Utilities;
 using Avalanche.Api.ViewModels;
 using Avalanche.Shared.Domain.Enumerations;
 using Avalanche.Shared.Domain.Models;
+using Avalanche.Shared.Infrastructure.Enumerations;
 using Avalanche.Shared.Infrastructure.Models;
 using Avalanche.Shared.Infrastructure.Services.Settings;
 using Castle.Core.Configuration;
 using Google.Protobuf.WellKnownTypes;
+using Ism.Common.Core.Configuration.Models;
 using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
@@ -27,7 +29,7 @@ namespace Avalanche.Api.Tests.Managers
         {
             CommandViewModel commandViewModel = new CommandViewModel()
             {
-                CommandType = Shared.Domain.Enumerations.CommandTypes.TimeoutPlayPdfSlides,
+                CommandType = CommandTypes.TimeoutPlayPdfSlides,
                 Devices = new List<Device>() { new Device() { Id = "Timeout" } }
             };
 
@@ -43,7 +45,7 @@ namespace Avalanche.Api.Tests.Managers
         {
             CommandViewModel commandViewModel = new CommandViewModel()
             {
-                CommandType = Shared.Domain.Enumerations.CommandTypes.TimeoutStopPdfSlides,
+                CommandType = CommandTypes.TimeoutStopPdfSlides,
                 Devices = new List<Device>() { new Device() { Id = "Timeout" } }
             };
 
@@ -52,7 +54,7 @@ namespace Avalanche.Api.Tests.Managers
                 PgsVideoAlwaysOn = true
             };
 
-            _settingsService.Setup(mock => mock.GetTimeoutSettings()).ReturnsAsync(timeoutSettings);
+            _settingsService.Setup(mock => mock.GetTimeoutSettings(It.IsAny<ConfigurationContext>())).ReturnsAsync(timeoutSettings);
 
             var commandResponse = _manager.SendCommand(commandViewModel);
 
@@ -66,7 +68,7 @@ namespace Avalanche.Api.Tests.Managers
         {
             CommandViewModel commandViewModel = new CommandViewModel()
             {
-                CommandType = Shared.Domain.Enumerations.CommandTypes.TimeoutStopPdfSlides,
+                CommandType = CommandTypes.TimeoutStopPdfSlides,
                 Devices = new List<Device>() { new Device() { Id = "Timeout" } }
             };
 
@@ -75,7 +77,7 @@ namespace Avalanche.Api.Tests.Managers
                 PgsVideoAlwaysOn = false
             };
 
-            _settingsService.Setup(mock => mock.GetTimeoutSettings()).ReturnsAsync(timeoutSettings);
+            _settingsService.Setup(mock => mock.GetTimeoutSettings(It.IsAny<ConfigurationContext>())).ReturnsAsync(timeoutSettings);
 
             var commandResponse = _manager.SendCommand(commandViewModel);
 
@@ -89,7 +91,7 @@ namespace Avalanche.Api.Tests.Managers
         {
             CommandViewModel commandViewModel = new CommandViewModel()
             {
-                CommandType = Shared.Domain.Enumerations.CommandTypes.TimeoutNextPdfSlide,
+                CommandType = CommandTypes.TimeoutNextPdfSlide,
                 Devices = new List<Device>() { new Device() { Id = "Timeout" } }
             };
             
@@ -105,7 +107,7 @@ namespace Avalanche.Api.Tests.Managers
         {
             CommandViewModel commandViewModel = new CommandViewModel()
             {
-                CommandType = Shared.Domain.Enumerations.CommandTypes.TimeoutPreviousPdfSlide,
+                CommandType = CommandTypes.TimeoutPreviousPdfSlide,
                 Devices = new List<Device>() { new Device() { Id = "Timeout" } }
             };
 
@@ -121,7 +123,7 @@ namespace Avalanche.Api.Tests.Managers
         {
             CommandViewModel commandViewModel = new CommandViewModel()
             {
-                CommandType = Shared.Domain.Enumerations.CommandTypes.TimeoutSetCurrentSlide,
+                CommandType = CommandTypes.TimeoutSetCurrentSlide,
                 Devices = new List<Device>() { new Device() { Id = "Testing" } },
                 Message = "0"
             };

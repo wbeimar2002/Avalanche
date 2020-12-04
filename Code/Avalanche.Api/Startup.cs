@@ -4,9 +4,9 @@ using Avalanche.Api.Hubs;
 using Avalanche.Api.Managers.Devices;
 using Avalanche.Api.Managers.Health;
 using Avalanche.Api.Managers.Licensing;
+using Avalanche.Api.Managers.Maintenance;
 using Avalanche.Api.Managers.Metadata;
 using Avalanche.Api.Managers.Notifications;
-using Avalanche.Api.Managers.Settings;
 using Avalanche.Api.Services.Configuration;
 using Avalanche.Api.Services.Health;
 using Avalanche.Api.Services.Media;
@@ -74,8 +74,7 @@ namespace Avalanche.Api
             var grpcPassword = configurationService.GetEnvironmentVariable("grpcPassword");
             var grpcServerValidationCertificate = configurationService.GetEnvironmentVariable("grpcServerValidationCertificate");
 
-            services.AddSingleton<IMaintenaceManager, MaintenaceManager>();
-            services.AddSingleton<ISettingsManager, SettingsManager>();
+            services.AddSingleton<IMaintenanceManager, MaintenanceManager>();
             services.AddSingleton<IPatientsManager, PatientsManager>();
             services.AddSingleton<IPhysiciansManager, PhysiciansManager>();
             services.AddSingleton<IMetadataManager, MetadataManager>();

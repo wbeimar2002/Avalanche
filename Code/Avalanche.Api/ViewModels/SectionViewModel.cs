@@ -6,7 +6,6 @@ namespace Avalanche.Api.ViewModels
 {
     public class SectionViewModel
     {
-        public string Key { get; set; }
         public string TitleTranslationKey { get; set; }
         public string JsonKey { get; set; }
         public bool ReadOnly { get; set; }

@@ -6,8 +6,8 @@ namespace Avalanche.Api.Services.Configuration
 {
     public interface ISettingsService
     {
-        Task<TimeoutSettings> GetTimeoutSettings();
+        Task<TimeoutSettings> GetTimeoutSettings(ConfigurationContext context);
         Task<SetupSettings> GetSetupSettings(ConfigurationContext context);
-        Task<RoutingSettings> GetVideoRoutingSettings(ConfigurationContext context);
+        Task<RoutingSettings> GetRoutingSettings(ConfigurationContext context);
     }
 }

@@ -3,6 +3,7 @@ using Avalanche.Api.Services.Configuration;
 using Avalanche.Api.Services.Health;
 using Avalanche.Api.ViewModels;
 using Avalanche.Shared.Domain.Models;
+using Avalanche.Shared.Infrastructure.Enumerations;
 using Avalanche.Shared.Infrastructure.Helpers;
 using Ism.Common.Core.Configuration.Models;
 using Ism.Storage.Core.DataManagement.V1.Protos;
@@ -30,32 +31,32 @@ namespace Avalanche.Api.Managers.Metadata
             _mapper = mapper;
         }
 
-        public async Task<List<KeyValuePairViewModel>> GetMetadata(User user, Shared.Domain.Enumerations.MetadataTypes type)
+        public async Task<List<KeyValuePairViewModel>> GetMetadata(User user, MetadataTypes type)
         {
             var configurationContext = _mapper.Map<User, ConfigurationContext>(user);
 
             switch (type)
             {
-                case Shared.Domain.Enumerations.MetadataTypes.Sex:
+                case MetadataTypes.Sex:
                     return (await _storageService.GetJson<ListContainerViewModel>("SexTypes", 1, configurationContext)).Items;
-                case Shared.Domain.Enumerations.MetadataTypes.ContentTypes:
+                case MetadataTypes.ContentTypes:
                     return (await _storageService.GetJson<ListContainerViewModel>("ContentTypes", 1, configurationContext)).Items;
-                case Shared.Domain.Enumerations.MetadataTypes.SourceTypes:
+                case MetadataTypes.SourceTypes:
                     return (await _storageService.GetJson<ListContainerViewModel>("SourceTypes", 1, configurationContext)).Items;
-                case Shared.Domain.Enumerations.MetadataTypes.SettingTypes:
+                case MetadataTypes.SettingTypes:
                     return (await _storageService.GetJson<ListContainerViewModel>("SettingTypes", 1, configurationContext)).Items;
                 default:
                     return new List<KeyValuePairViewModel>();
             }
         }
 
-        public async Task<List<SourceKeyValuePairViewModel>> GetSource(User user, Shared.Domain.Enumerations.MetadataTypes type)
+        public async Task<List<SourceKeyValuePairViewModel>> GetSource(User user, MetadataTypes type)
         {
             var configurationContext = _mapper.Map<User, ConfigurationContext>(user);
 
             switch (type)
             {
-                case Shared.Domain.Enumerations.MetadataTypes.SearchColumns:
+                case MetadataTypes.SearchColumns:
                     return (await _storageService.GetJson<SourceListContainerViewModel>("SearchColumns", 1, configurationContext)).Items;
                 default:
                     return new List<SourceKeyValuePairViewModel>();

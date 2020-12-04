@@ -45,7 +45,7 @@ namespace Avalanche.Api.Controllers.V1
             {
                 _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
 
-                var result = await _metadataManager.GetMetadata(User.GetUser(), Shared.Domain.Enumerations.MetadataTypes.ContentTypes);
+                var result = await _metadataManager.GetMetadata(User.GetUser(), MetadataTypes.ContentTypes);
                 return Ok(result);
             }
             catch (Exception exception)
@@ -94,7 +94,7 @@ namespace Avalanche.Api.Controllers.V1
             {
                 _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
 
-                var result = await _metadataManager.GetMetadata(User.GetUser(), Shared.Domain.Enumerations.MetadataTypes.SetupModes);
+                var result = await _metadataManager.GetMetadata(User.GetUser(), MetadataTypes.SetupModes);
                 return Ok(result);
             }
             catch (Exception exception)
@@ -119,7 +119,7 @@ namespace Avalanche.Api.Controllers.V1
             {
                 _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
 
-                var result = await _metadataManager.GetMetadata(User.GetUser(), Shared.Domain.Enumerations.MetadataTypes.SettingTypes);
+                var result = await _metadataManager.GetMetadata(User.GetUser(), MetadataTypes.SettingTypes);
                 return Ok(result);
             }
             catch (Exception exception)
@@ -144,7 +144,7 @@ namespace Avalanche.Api.Controllers.V1
             {
                 _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
 
-                var result = await _metadataManager.GetSource(User.GetUser(), Shared.Domain.Enumerations.MetadataTypes.SearchColumns);
+                var result = await _metadataManager.GetSource(User.GetUser(), MetadataTypes.SearchColumns);
                 return Ok(result);
             }
             catch (Exception exception)
@@ -169,7 +169,7 @@ namespace Avalanche.Api.Controllers.V1
             {
                 _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
 
-                var result = await _metadataManager.GetMetadata(User.GetUser(), Shared.Domain.Enumerations.MetadataTypes.Sex);
+                var result = await _metadataManager.GetMetadata(User.GetUser(), MetadataTypes.Sex);
                 return Ok(result);
             }
             catch (Exception exception)
@@ -194,7 +194,7 @@ namespace Avalanche.Api.Controllers.V1
             {
                 _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
 
-                var result = await _metadataManager.GetMetadata(User.GetUser(), Shared.Domain.Enumerations.MetadataTypes.SourceTypes);
+                var result = await _metadataManager.GetMetadata(User.GetUser(), MetadataTypes.SourceTypes);
                 return Ok(result);
             }
             catch (Exception exception)

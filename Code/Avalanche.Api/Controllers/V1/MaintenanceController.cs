@@ -1,9 +1,10 @@
 ﻿using Avalanche.Api.Extensions;
-using Avalanche.Api.Managers.Settings;
+using Avalanche.Api.Managers.Maintenance;
 using Avalanche.Api.ViewModels;
 using Avalanche.Shared.Infrastructure.Enumerations;
 using Avalanche.Shared.Infrastructure.Extensions;
 using Avalanche.Shared.Infrastructure.Helpers;
+using Avalanche.Shared.Infrastructure.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -22,12 +23,12 @@ namespace Avalanche.Api.Controllers.V1
     public class MaintenanceController : ControllerBase
     {
         readonly ILogger _appLoggerService;
-        readonly IMaintenaceManager _maintenaceManager;
+        readonly IMaintenanceManager _maintenanceManager;
 
-        public MaintenanceController(IMaintenaceManager maintenaceManager, ILogger<FilesController> appLoggerService)
+        public MaintenanceController(IMaintenanceManager maintenanceManager, ILogger<FilesController> appLoggerService)
         {
             _appLoggerService = appLoggerService;
-            _maintenaceManager = maintenaceManager;
+            _maintenanceManager = maintenanceManager;
         }
 
         [HttpPost("categories")]
@@ -36,7 +37,7 @@ namespace Avalanche.Api.Controllers.V1
             try
             {
                 _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
-                await _maintenaceManager.SaveCategory(User.GetUser(), section);
+                await _maintenanceManager.SaveCategory(User.GetUser(), section);
 
                 return Ok();
             }
@@ -57,7 +58,7 @@ namespace Avalanche.Api.Controllers.V1
             try
             {
                 _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
-                var result = await _maintenaceManager.GetCategoryByKey(User.GetUser(), key);
+                var result = await _maintenanceManager.GetCategoryByKey(User.GetUser(), key);
 
                 return Ok(result);
             }
@@ -78,9 +79,33 @@ namespace Avalanche.Api.Controllers.V1
             try
             {
                 _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
-                var result = await _maintenaceManager.GetCategoryByKeyReadOnly(User.GetUser(), key);
+                var result = await _maintenanceManager.GetCategoryByKeyReadOnly(User.GetUser(), key);
 
                 return Ok(result);
+            }
+            catch (Exception exception)
+            {
+                _appLoggerService.LogError(LoggerHelper.GetLogMessage(DebugLogType.Exception), exception);
+                return new BadRequestObjectResult(exception.Get(env.IsDevelopment()));
+            }
+            finally
+            {
+                _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
+            }
+        }
+
+        /// <summary>
+        /// Return the timeout settings
+        /// </summary>
+        [HttpGet("settings/timeout")]
+        [Produces(typeof(TimeoutSettings))]
+        public async Task<IActionResult> GetTimeoutSettings([FromServices] IWebHostEnvironment env)
+        {
+            try
+            {
+                _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
+                var response = await _maintenanceManager.GetTimeoutSettings(User.GetUser());
+                return Ok(response);
             }
             catch (Exception exception)
             {
