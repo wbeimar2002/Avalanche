@@ -1,4 +1,4 @@
-$repo="avlanche-storage"
+$repo="avlanche-api"
 $homepath=$env:HOMEPATH
 $report_path="$homepath\$repo\codecoverage\"
 $targetdir="$homepath\$report_path\coveragereport"
