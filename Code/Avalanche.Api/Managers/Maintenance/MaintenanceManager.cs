@@ -6,6 +6,7 @@ using Avalanche.Api.ViewModels;
 using Avalanche.Shared.Domain.Models;
 using Avalanche.Shared.Infrastructure.Enumerations;
 using Ism.Common.Core.Configuration.Models;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -31,13 +32,25 @@ namespace Avalanche.Api.Managers.Maintenance
 
         public async Task SaveCategory(Avalanche.Shared.Domain.Models.User user, SectionViewModel category)
         {
-            //TODO: Save to storage
-            await Task.CompletedTask;
+            var configurationContext = _mapper.Map<Shared.Domain.Models.User, ConfigurationContext>(user);
+            configurationContext.IdnId = new Guid().ToString();
+            await SaveAndCleanSources(configurationContext, category);
+
+            if (category.Sections != null)
+            {
+                foreach (var section in category.Sections)
+                {
+                    await SaveAndCleanSources(configurationContext, section);
+                }
+            }
+
+            await _storageService.SaveJson(category.JsonKey, JsonConvert.SerializeObject(category), 1, configurationContext);
         }
 
         public async Task<SectionReadOnlyViewModel> GetCategoryByKeyReadOnly(Avalanche.Shared.Domain.Models.User user, string key)
         {
             var configurationContext = _mapper.Map<Shared.Domain.Models.User, ConfigurationContext>(user);
+            configurationContext.IdnId = new Guid().ToString();
             return await _storageService.GetJson<SectionReadOnlyViewModel>(key, 1, configurationContext);
         }
 
@@ -59,6 +72,7 @@ namespace Avalanche.Api.Managers.Maintenance
                 }
             }
 
+            category.JsonKey = key;
             return category;
         }
 
@@ -101,6 +115,24 @@ namespace Avalanche.Api.Managers.Maintenance
         {
             Type conversionType = Nullable.GetUnderlyingType(typeof(T)) ?? typeof(T);
             return (T)Convert.ChangeType(o, conversionType);
+        }
+
+        private async Task SaveAndCleanSources(ConfigurationContext configurationContext, SectionViewModel category)
+        {
+            if (category.Settings != null)
+            {
+                foreach (var item in category.Settings)
+                {
+                    if (!string.IsNullOrEmpty(item.SourceKey))
+                    {
+                        item.SourceValues.ForEach(s => s.Types = null);
+
+                        await _storageService.SaveJson(item.JsonKey, JsonConvert.SerializeObject(new { Items = item.SourceValues }), 1, configurationContext);
+
+                        item.SourceValues = null;
+                    }
+                }
+            }
         }
     }
 }

@@ -33,5 +33,10 @@ namespace Avalanche.Api.Services.Configuration
             var actionResponse = await ConfigurationStorageService.GetConfiguration(configurationKey, Convert.ToUInt32(version), context);
             return actionResponse.Get<T>();
         }
+
+        public async Task SaveJson(string configurationKey, string json, int version, ConfigurationContext context)
+        {
+            //await ConfigurationStorageService.SaveConfiguration(configurationKey, json, Convert.ToUInt32(version), context);
+        }
     }
 }

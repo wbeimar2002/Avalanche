@@ -19,6 +19,6 @@ namespace Avalanche.Api.ViewModels
         public VisualStyles VisualStyle { get; set; }
         public string SourceKey { get; set; }
         public VisualStyles SourceVisualStyle { get; set; }
-        public List<SourceKeyValuePairViewModel> SourceValues { get; internal set; }
+        public List<SourceKeyValuePairViewModel> SourceValues { get; set; }
     }
 }

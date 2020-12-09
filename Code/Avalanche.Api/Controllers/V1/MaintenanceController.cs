@@ -31,8 +31,8 @@ namespace Avalanche.Api.Controllers.V1
             _maintenanceManager = maintenanceManager;
         }
 
-        [HttpPost("categories")]
-        public async Task<IActionResult> SaveCategory(SectionViewModel section,[FromServices]IWebHostEnvironment env)
+        [HttpPut("categories/{key}")]
+        public async Task<IActionResult> SaveCategory(string key, [FromBody]SectionViewModel section,[FromServices]IWebHostEnvironment env)
         {
             try
             {
