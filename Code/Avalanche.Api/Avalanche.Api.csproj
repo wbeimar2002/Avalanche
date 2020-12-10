@@ -76,6 +76,15 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Reference Include="Ism.SystemState.Client">
+      <HintPath>..\..\..\dlldump\Ism.SystemState.Client.dll</HintPath>
+    </Reference>
+    <Reference Include="Ism.SystemState.Models">
+      <HintPath>..\..\..\dlldump\Ism.SystemState.Models.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+  <ItemGroup>
     <None Update="Avalanche.Api.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

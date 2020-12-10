@@ -31,6 +31,7 @@ using Serilog;
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Security.Cryptography.X509Certificates;
+using System.Threading.Tasks;
 using static AvidisDeviceInterface.V1.Protos.Avidis;
 using static Ism.PatientInfoEngine.V1.Protos.PatientListService;
 using static Ism.PgsTimeout.V1.Protos.PgsTimeout;
@@ -175,6 +176,31 @@ namespace Avalanche.Api
                     IssuerSigningKey = signingConfigurations.Key,
                     ClockSkew = TimeSpan.Zero
                 };
+
+                // From: https://docs.microsoft.com/en-us/aspnet/core/signalr/authn-and-authz?view=aspnetcore-3.1
+                // We have to hook the OnMessageReceived event in order to
+                // allow the JWT authentication handler to read the access
+                // token from the query string when a WebSocket or 
+                // Server-Sent Events request comes in.
+                jwtBearerOptions.Events = new JwtBearerEvents
+                {
+                    OnMessageReceived = context =>
+                    {
+                        var accessToken = context.Request.Query["access_token"];
+
+                        // If the request is for our hub...
+                        var path = context.HttpContext.Request.Path;
+                        if (!string.IsNullOrEmpty(accessToken))
+                        {
+                            if (path.StartsWithSegments(BroadcastHub.BroadcastHubRoute))
+                            {
+                                // Read the token out of the query string
+                                context.Token = accessToken;
+                            }
+                        }
+                        return Task.CompletedTask;
+                    }
+                };
             });
         }
 
@@ -226,7 +252,7 @@ namespace Avalanche.Api
             
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapHub<BroadcastHub>("/broadcast");
+                endpoints.MapHub<BroadcastHub>(BroadcastHub.BroadcastHubRoute);
                 endpoints.MapControllers();
             });
         }

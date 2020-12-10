@@ -1,57 +1,79 @@
 ﻿using Avalanche.Shared.Infrastructure.Extensions;
 using Ism.Broadcaster.EventArgs;
+using Ism.Broadcaster.Models;
 using Ism.Broadcaster.Services;
-using Ism.RabbitMq.Client;
-using Ism.RabbitMq.Client.Models;
+using Ism.SystemState.Client;
+using Ism.SystemState.Models.Procedure;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using System;
 using System.Diagnostics.CodeAnalysis;
 
 namespace Avalanche.Api.Hubs
 {
     [ExcludeFromCodeCoverage]
-    public class BroadcastHub : Hub
+    [Authorize]
+    public class BroadcastHub : Hub, IDisposable
     {
+        public const string BroadcastHubRoute = "/broadcast";
+
         #region Constructor
 
         readonly ILogger _appLoggerService;
-        readonly RabbitMqOptions _rabbitMqOptions;
         readonly IBroadcastService _broadcastService;
-        readonly IRabbitMqClientService _rabbitMqClientService;
         readonly IHubContext<BroadcastHub> _hubContext;
+        readonly IStateClient _stateClient;
 
         public BroadcastHub(IHubContext<BroadcastHub> hubContext,
-            IOptions<RabbitMqOptions> rabbitMqOptions,
             IBroadcastService broadcastService,
-            IRabbitMqClientService rabbitMqClientService,
+            IStateClient stateClient,
             ILogger<BroadcastHub> appLoggerService)
         {
             _broadcastService = broadcastService;
-            _rabbitMqClientService = rabbitMqClientService;
             _hubContext = hubContext;
-            _rabbitMqOptions = rabbitMqOptions.Value;
             _appLoggerService = appLoggerService;
+
+            _stateClient = stateClient;
 
             if (broadcastService == null)
                 throw new ArgumentNullException("BroadCast object is null !");
 
             BeginBroadcast(); // This will avoid an explicit call to initialize a hub by message broadcaster client
-
-            _rabbitMqClientService.SubscribeToDirectMessages(_rabbitMqOptions.QueueName, ProcessMessage);
+            RegisterStateEvents();
         }
 
         #endregion
 
+        public void Dispose()
+        {
+            // Unregister/detach broadcast listener event
+            _broadcastService.MessageListened -= RegisterMessageEvents;
+        }
+
         #region Private Methods
 
-        private void ProcessMessage(Ism.RabbitMq.Client.Models.MessageRequest messageRequest, ulong deliveryTag)
+        /// <summary>
+        /// Subscribe to any state data/events/topics we care about. At Avalanche.Api layer, this is probably just always going to be passthrough via SignalR to Avalanche.Web.
+        /// </summary>
+        private void RegisterStateEvents()
         {
-            var message = (messageRequest.Json().Get<Ism.Broadcaster.Models.MessageRequest>());
-            _broadcastService.Broadcast(message);
-            //Here we can take the decision of preserve or discard the message from RabbitMq
-            _rabbitMqClientService.SetAcknowledge(deliveryTag, true);
+            _stateClient.SubscribeTopic(new ProcedureTopicHandler
+            {
+                OnImageCaptured = (evt) => ProcessMessage(evt, nameof(ImageCapturedEvent))
+            });
+        }
+
+        private void ProcessMessage(object data, string eventName)
+        {
+            var messageJson = data.Json();
+            var messageRequest = new MessageRequest
+            {
+                Content = messageJson,
+                EventName = eventName
+            };
+
+            _broadcastService.Broadcast(messageRequest);
         }
 
         /// <summary>
@@ -61,25 +83,14 @@ namespace Avalanche.Api.Hubs
         private void BeginBroadcast()
         {
             // Register/Attach broadcast listener event
-            _broadcastService.MessageListened += (sender, broadCastArgs)
-                =>
-            {
-                RegisterMessageEvents(broadCastArgs);
-            };
-
-            // Unregister/detach broadcast listener event
-            _broadcastService.MessageListened -= (sender, broadCastArgs)
-               =>
-            {
-                RegisterMessageEvents(broadCastArgs);
-            };
+            _broadcastService.MessageListened += RegisterMessageEvents;
         }
 
-        private void RegisterMessageEvents(BroadcastEventArgs broadcastArgs)
+        private void RegisterMessageEvents(object sender, BroadcastEventArgs broadcastArgs)
         {
             try
             {
-                Ism.Broadcaster.Models.MessageRequest messageRequest = broadcastArgs.MessageRequest;
+                MessageRequest messageRequest = broadcastArgs.MessageRequest;
 
                 if (broadcastArgs != null)
                 {
@@ -100,7 +111,7 @@ namespace Avalanche.Api.Hubs
             catch (Exception ex)
             {
                 Console.WriteLine("Exception: " + ex.Message);
-                _appLoggerService.LogError($"Error sending notification to the cloud boadcaster", ex);
+                _appLoggerService.LogError($"Error sending notification via boadcaster", ex);
             }
         }
 
