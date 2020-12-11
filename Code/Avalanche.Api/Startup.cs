@@ -10,6 +10,7 @@ using Avalanche.Api.Managers.Settings;
 using Avalanche.Api.Services.Configuration;
 using Avalanche.Api.Services.Health;
 using Avalanche.Api.Services.Media;
+using Avalanche.Api.Services.Notifications;
 using Avalanche.Api.Services.Settings;
 using Avalanche.Api.Utilities;
 using Avalanche.Shared.Infrastructure.Models;
@@ -19,6 +20,7 @@ using Ism.RabbitMq.Client;
 using Ism.RabbitMq.Client.Models;
 using Ism.Security.Grpc;
 using Ism.Security.Grpc.Interfaces;
+using Ism.SystemState.Client;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -104,6 +106,8 @@ namespace Avalanche.Api
             services.AddSingleton<IGrpcClientFactory<ConfigurationServiceClient>, GrpcClientFactory<ConfigurationServiceClient>>();
             services.AddSingleton<IAccessInfoFactory, AccessInfoFactory>();
 
+            services.AddHostedService<NotificationsListener>();
+
             //TODO: Check this. Should be env variables?
             var hostName = configurationService.GetValue<string>("RabbitMqOptions:HostName");
             var port = configurationService.GetValue<int>("RabbitMqOptions:Port");
@@ -125,6 +129,8 @@ namespace Avalanche.Api
             services.AddSingleton<IRabbitMqClientService, RabbitMqClientService>();
 
             services.AddAutoMapper(typeof(Startup));
+
+            services.AddRedisStateClient("127.0.0.1:6379"); // TODO: Config
 
             ConfigureAuthorization(services);
             ConfigureCorsPolicy(services);
@@ -213,12 +219,14 @@ namespace Avalanche.Api
                 options.AddPolicy("CorsApiPolicy",
                 builder =>
                 {
+                    // TODO: this still is not correct for remote clients...not sure how to handle that if web is being served from separate endpoint to api, since we do not have a well-known address.
                     builder
-                        .WithOrigins("http://localhost:4200")
-                        .WithHeaders(new[] { "authorization", "content-type", "accept" })
-                        .WithMethods(new[] { "GET", "POST", "PUT", "DELETE", "OPTIONS" })
+                        .WithOrigins("https://localhost:4200")
+                        //.WithHeaders(new[] { "authorization", "content-type", "accept" })
+                        //.WithMethods(new[] { "GET", "POST", "PUT", "DELETE", "OPTIONS" })
+                        .AllowAnyHeader()
                         //.AllowAnyOrigin()
-                        //.AllowAnyMethod()
+                        .AllowAnyMethod()
                         .AllowCredentials();
                 });
             });
@@ -245,9 +253,10 @@ namespace Avalanche.Api
             app.UseRouting();
 
             app.UseAuthentication();
+            app.UseCors("CorsApiPolicy");
+
             app.UseAuthorization();
 
-            app.UseCors("CorsApiPolicy");
             app.UseFileServer();
             
             app.UseEndpoints(endpoints =>
