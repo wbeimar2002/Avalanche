@@ -12,6 +12,6 @@ namespace Avalanche.Shared.Infrastructure.Enumerations
         Toggle,
         Switch,
         List,
-        Checkbox
+        VerticalToogle
     }
 }

@@ -34,6 +34,7 @@ namespace Avalanche.Api.Managers.Maintenance
         {
             var configurationContext = _mapper.Map<Shared.Domain.Models.User, ConfigurationContext>(user);
             configurationContext.IdnId = new Guid().ToString();
+
             await SaveAndCleanSources(configurationContext, category);
 
             if (category.Sections != null)
@@ -78,7 +79,7 @@ namespace Avalanche.Api.Managers.Maintenance
 
         private async Task SetSources(ConfigurationContext configurationContext, SectionViewModel category)
         {
-            if (category.Settings != null)
+            if (category!= null && category.Settings != null)
             {
                 foreach (var item in category.Settings)
                 {
@@ -127,7 +128,7 @@ namespace Avalanche.Api.Managers.Maintenance
                     {
                         item.SourceValues.ForEach(s => s.Types = null);
 
-                        await _storageService.SaveJson(item.JsonKey, JsonConvert.SerializeObject(new { Items = item.SourceValues }), 1, configurationContext);
+                        await _storageService.SaveJson(item.SourceKey, JsonConvert.SerializeObject(new { Items = item.SourceValues }), 1, configurationContext);
 
                         item.SourceValues = null;
                     }
