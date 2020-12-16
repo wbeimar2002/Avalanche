@@ -33,10 +33,10 @@ namespace Avalanche.Api.Managers.Devices
             {
                 Record = new RecordMessage
                 {
-                    LibId = DateTimeOffset.Now.ToString(),
-                    RepositoryId = "TestRepository"
-                }
-            };
+                    LibId = DateTime.Now.ToString("s"), // TODO: this is wrong and needs to come from the procedure
+                    RepositoryId = "TestRepository" // TODO: this is wrong and needs to come from the procedure
+                },
+        };
             await _recorderService.CaptureImage(message);
             return new CommandResponse(command.Device);
         }
