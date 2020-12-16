@@ -17,7 +17,7 @@ namespace Avalanche.Api.Managers.Devices
 
             var message = new RecordMessage
             {
-                LibId = libId,
+                LibId = hacky_temp_libid_for_demo,
                 RepositoryId = "cache"
             };
 
