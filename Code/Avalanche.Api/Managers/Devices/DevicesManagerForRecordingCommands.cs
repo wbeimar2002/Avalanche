@@ -29,11 +29,13 @@ namespace Avalanche.Api.Managers.Devices
 
         private async Task<CommandResponse> CaptureImage(Command command)
         {
+            var now = DateTime.Now;
+            var hacky_temp_libid_for_demo = $"{now.Year}_{now.Month}_{now.Day}T{now.Hour}_{now.Minute}_{now.Second}";
             var message = new CaptureImageRequest()
             {
                 Record = new RecordMessage
                 {
-                    LibId = DateTime.Now.ToString("s"), // TODO: this is wrong and needs to come from the procedure
+                    LibId = hacky_temp_libid_for_demo, // TODO: this is wrong and needs to come from the procedure
                     RepositoryId = "TestRepository" // TODO: this is wrong and needs to come from the procedure
                 },
         };
