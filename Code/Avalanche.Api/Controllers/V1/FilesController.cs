@@ -59,7 +59,10 @@ namespace Avalanche.Api.Controllers.V1
         {
             try
             {
-                return PhysicalFile(path, "image/jpeg");
+                var libraryRoot = Environment.GetEnvironmentVariable("demoLibraryFolder");
+                var translated = path.Replace('\\', '/').TrimStart('/');
+                var fullPath = System.IO.Path.Combine(libraryRoot, translated);
+                return PhysicalFile(fullPath, "image/jpeg");
             }
             catch (Exception ex)
             {
