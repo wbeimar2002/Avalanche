@@ -130,7 +130,9 @@ namespace Avalanche.Api
 
             services.AddAutoMapper(typeof(Startup));
 
-            services.AddRedisStateClient("127.0.0.1:6379"); // TODO: Config
+            var redisAddress = configurationService.GetEnvironmentVariable("redisAddress");
+
+            services.AddRedisStateClient(redisAddress); // TODO: Config
 
             ConfigureAuthorization(services);
             ConfigureCorsPolicy(services);

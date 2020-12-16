@@ -63,6 +63,7 @@ services:
       pieServiceGrpcPort: '9089'
       storageServiceGrpcPort: '5012'
       dataManagementGrpcPort: '5012'
+      redisAddress: '192.168.1.66:6379'
       grpcCertificate: '/certificates/grpc_localhost_root_l1.pfx' 
       grpcPassword: '0123456789'
       grpcServerValidationCertificate: '/certificates/grpc_localhost_root_l1.cer'
