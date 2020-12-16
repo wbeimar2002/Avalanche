@@ -53,6 +53,12 @@ services:
       read_only: false
       volume:
         nocopy: true
+    - type: bind
+      source: C:\Library
+      target: /library
+      read_only: true
+      volume:
+        nocopy: true
     networks:
       app_net:
         ipv4_address: 192.168.1.60
@@ -64,6 +70,7 @@ services:
       storageServiceGrpcPort: '5012'
       dataManagementGrpcPort: '5012'
       redisAddress: '192.168.1.66:6379'
+      demoLibraryFolder: '/library' #this is a temporary demo hack setting. storage should not be a concern of the api
       grpcCertificate: '/certificates/grpc_localhost_root_l1.pfx' 
       grpcPassword: '0123456789'
       grpcServerValidationCertificate: '/certificates/grpc_localhost_root_l1.cer'
