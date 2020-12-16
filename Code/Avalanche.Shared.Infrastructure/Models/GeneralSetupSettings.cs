@@ -8,8 +8,7 @@ namespace Avalanche.Shared.Infrastructure.Models
     public class GeneralSetupSettings
     {
         public SetupModes Mode { get; set; }
-        public long CacheDuration { get; set; }
+        public SetupScreenModes ScreenMode { get; set; }
         public bool DepartmentsSupported { get; set; }
-        public AdministratorSettings Administrator { get; set; }
     }
 }

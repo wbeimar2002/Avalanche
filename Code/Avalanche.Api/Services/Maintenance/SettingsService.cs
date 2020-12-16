@@ -37,19 +37,14 @@ namespace Avalanche.Api.Services.Maintenance
         public async Task<SetupSettings> GetSetupSettings(ConfigurationContext context)
         {
             var section = await _storageService.GetJson<SectionReadOnlyViewModel>("SetupSettings", 1, context);
+
             return new SetupSettings()
             {
                 General = new GeneralSetupSettings()
                 {
                     Mode = (Shared.Domain.Enumerations.SetupModes)Convert.ToInt32(GetSettingBySection(section, "General", "Mode")?.Value),
+                    ScreenMode = (Shared.Domain.Enumerations.SetupScreenModes)Convert.ToInt32(GetSettingBySection(section, "General", "Mode")?.Value),
                     DepartmentsSupported = Convert.ToBoolean(GetSettingBySection(section, "General", "DepartmentsSupported")?.Value),
-                    CacheDuration = Convert.ToInt32(GetSettingBySection(section, "General", "CacheDuration")?.Value),
-                    Administrator = new AdministratorSettings()
-                    {
-                        Id = GetSettingBySubSection(section, "General", "Administrator", "Id")?.Value,
-                        FirstName = GetSettingBySubSection(section, "General", "Administrator", "FirstName")?.Value,
-                        LastName = GetSettingBySubSection(section, "General", "Administrator", "LastName")?.Value
-                    }
                 },
                 Registration = new RegistrationSettings() 
                 {

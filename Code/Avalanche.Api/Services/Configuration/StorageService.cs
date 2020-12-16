@@ -16,7 +16,6 @@ namespace Avalanche.Api.Services.Configuration
     public class StorageService : IStorageService
     {
         readonly IConfigurationService _configurationService;
-        readonly string _hostIpAddress;
 
         ConfigurationServiceSecureClient ConfigurationStorageService { get; set; }
 
@@ -32,26 +31,16 @@ namespace Avalanche.Api.Services.Configuration
 
         public async Task<T> GetJson<T>(string configurationKey, int version, ConfigurationContext context)
         {
+            context.SiteId = "Avalanche";
             var actionResponse = await ConfigurationStorageService.GetConfiguration(configurationKey, Convert.ToUInt32(version), context);
             return actionResponse.Get<T>();
         }
 
         public async Task SaveJson(string configurationKey, string json, int version, ConfigurationContext context)
         {
-            //await ConfigurationStorageService.SaveConfiguration(configurationKey, json, Convert.ToUInt32(version), context);
-            //var fileName = configurationKey + ".json";
-            //await Task.Run(() =>
-            //{
-            //    var tempPath = "/config";
-            //    var filePath = Path.Combine(tempPath, fileName);
-
-            //    if (File.Exists(filePath))
-            //    {
-            //        File.Delete(filePath);
-            //    }
-            //    string result = JsonConvert.SerializeObject(json);
-            //    File.WriteAllText(filePath, result);
-            //});
+            var kind = await ConfigurationStorageService.GetConfigurationKinds();
+            var kindId = "Avalanche"; //Temporary hardcoded
+            await ConfigurationStorageService.SaveConfiguration(configurationKey, Convert.ToUInt32(version), json, "Site", kindId);
         }
     }
 }
