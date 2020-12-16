@@ -253,7 +253,7 @@ namespace Avalanche.Api
             app.UseRouting();
 
             app.UseAuthentication();
-            app.UseCors("CorsApiPolicy");
+            app.UseCors("CorsApiPolicy"); // NOTE: cors must come before Authorization in the request pipeline
 
             app.UseAuthorization();
 
