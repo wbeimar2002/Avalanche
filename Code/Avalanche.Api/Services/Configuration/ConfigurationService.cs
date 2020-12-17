@@ -3,7 +3,7 @@ using Microsoft.Extensions.Configuration;
 using System;
 using System.Diagnostics.CodeAnalysis;
 
-namespace Avalanche.Api.Services.Settings
+namespace Avalanche.Api.Services.Configuration
 {
     [ExcludeFromCodeCoverage]
     public class ConfigurationService : IConfigurationService

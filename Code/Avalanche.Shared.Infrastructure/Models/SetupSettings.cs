@@ -1,4 +1,5 @@
 ﻿using Avalanche.Shared.Domain.Enumerations;
+using Avalanche.Shared.Domain.Models;
 using Avalanche.Shared.Infrastructure.Enumerations;
 using Newtonsoft.Json;
 using System;
@@ -9,22 +10,7 @@ namespace Avalanche.Shared.Infrastructure.Models
 {
     public class SetupSettings
     {
-        [JsonProperty("Mode")]
-        public SetupModes Mode { get; set; }
-
-        [JsonProperty("CacheDuration")]
-        public long CacheDuration { get; set; }
-
-        [JsonProperty("DepartmentsSupported")]
-        public bool DepartmentsSupported { get; set; }
-
-        [JsonProperty("QuickRegistrationAllowed")]
-        public bool QuickRegistrationAllowed { get; set; }
-
-        [JsonProperty("AutoFillPhysician")]
-        public bool AutoFillPhysician { get; set; }
-
-        [JsonProperty("QuickRegistrationDateFormat")]
-        public string QuickRegistrationDateFormat { get; set; }
+        public GeneralSetupSettings General { get; set; }
+        public RegistrationSettings Registration { get; set; }        
     }
 }

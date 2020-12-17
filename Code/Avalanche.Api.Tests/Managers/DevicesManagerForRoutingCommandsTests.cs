@@ -6,6 +6,7 @@ using Avalanche.Api.Utilities;
 using Avalanche.Api.ViewModels;
 using Avalanche.Shared.Domain.Enumerations;
 using Avalanche.Shared.Domain.Models;
+using Avalanche.Shared.Infrastructure.Enumerations;
 using Avalanche.Shared.Infrastructure.Models;
 using Avalanche.Shared.Infrastructure.Services.Settings;
 using AvidisDeviceInterface.V1.Protos;
@@ -29,7 +30,7 @@ namespace Avalanche.Api.Tests.Managers
         {
             CommandViewModel commandViewModel = new CommandViewModel()
             {
-                CommandType = Shared.Domain.Enumerations.CommandTypes.RouteVideoSource,
+                CommandType = CommandTypes.RouteVideoSource,
                 Devices = new List<Device>() { new Device() { Id = "TP1" } },
                 Destinations = new List<Device>() { new Device() { Id = "TP1" } }
             };
@@ -46,7 +47,7 @@ namespace Avalanche.Api.Tests.Managers
         {
             CommandViewModel commandViewModel = new CommandViewModel()
             {
-                CommandType = Shared.Domain.Enumerations.CommandTypes.UnrouteVideoSource,
+                CommandType = CommandTypes.UnrouteVideoSource,
                 Devices = new List<Device>() { new Device() { Id = "TP1" } },
                 Destinations = new List<Device>() { new Device() { Id = "TP1" } }
             };
@@ -63,7 +64,7 @@ namespace Avalanche.Api.Tests.Managers
         {
             CommandViewModel commandViewModel = new CommandViewModel()
             {
-                CommandType = Shared.Domain.Enumerations.CommandTypes.EnterFullScreen,
+                CommandType = CommandTypes.EnterFullScreen,
                 Devices = new List<Device>() { new Device() { Id = "TP1" } }
             };
 
@@ -79,7 +80,7 @@ namespace Avalanche.Api.Tests.Managers
         {
             CommandViewModel commandViewModel = new CommandViewModel()
             {
-                CommandType = Shared.Domain.Enumerations.CommandTypes.ExitFullScreen,
+                CommandType = CommandTypes.ExitFullScreen,
                 Devices = new List<Device>() { new Device() { Id = "TP1" } }
             };
 
@@ -93,15 +94,15 @@ namespace Avalanche.Api.Tests.Managers
         [Test]
         public void ShowVideoRoutingPreviewHarwareModeShouldReturnResponse()
         {
-            _settingsService.Setup(mock =>  mock.GetVideoRoutingSettingsAsync(It.IsAny<ConfigurationContext>())).ReturnsAsync(new VideoRoutingSettings()
+            _settingsService.Setup(mock =>  mock.GetRoutingSettings(It.IsAny<ConfigurationContext>())).ReturnsAsync(new RoutingSettings()
             {
-                Mode = VideoRoutingModes.Hardware
+                Mode = RoutingModes.Hardware
             });
 
             CommandViewModel commandViewModel = new CommandViewModel()
             {
                 AdditionalInfo = "{\"X\":180.75,\"Y\":221,\"Width\":300,\"Height\":230.40625}",
-                CommandType = Shared.Domain.Enumerations.CommandTypes.ShowVideoRoutingPreview,
+                CommandType = CommandTypes.ShowVideoRoutingPreview,
                 Devices = new List<Device>() { new Device() { Id = "TP1" } }
             };
 
@@ -116,15 +117,15 @@ namespace Avalanche.Api.Tests.Managers
         [Test]
         public void ShowVideoRoutingPreviewSoftwareModeShouldReturnResponse()
         {
-            _settingsService.Setup(mock => mock.GetVideoRoutingSettingsAsync(It.IsAny<ConfigurationContext>())).ReturnsAsync(new VideoRoutingSettings()
+            _settingsService.Setup(mock => mock.GetRoutingSettings(It.IsAny<ConfigurationContext>())).ReturnsAsync(new RoutingSettings()
             {
-                Mode = VideoRoutingModes.Software
+                Mode = RoutingModes.Software
             });
 
             CommandViewModel commandViewModel = new CommandViewModel()
             {
                 AdditionalInfo = "{\"X\":180.75,\"Y\":221,\"Width\":300,\"Height\":230.40625}",
-                CommandType = Shared.Domain.Enumerations.CommandTypes.ShowVideoRoutingPreview,
+                CommandType = CommandTypes.ShowVideoRoutingPreview,
                 Devices = new List<Device>() { new Device() { Id = "TP1" } }
             };
 
@@ -140,7 +141,7 @@ namespace Avalanche.Api.Tests.Managers
         {
             CommandViewModel commandViewModel = new CommandViewModel()
             {
-                CommandType = Shared.Domain.Enumerations.CommandTypes.HideVideoRoutingPreview,
+                CommandType = CommandTypes.HideVideoRoutingPreview,
                 Devices = new List<Device>() { new Device() { Id = "TP1" } }
             };
 

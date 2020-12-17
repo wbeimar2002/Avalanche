@@ -96,22 +96,23 @@ namespace Avalanche.Api.MappingConfigurations
                     opt => opt.MapFrom(src => src.IsNew))
                 .ReverseMap();
 
+            //TODO: Think this better
             CreateMap < Avalanche.Shared.Domain.Models.User, ConfigurationContext>()
                 .ForMember(dest =>
                     dest.IdnId,
-                    opt => opt.MapFrom(src => src.IdnId))
+                    opt => opt.Ignore())
                 .ForMember(dest =>
                     dest.SiteId,
-                    opt => opt.MapFrom(src => src.SiteId))
+                    opt => opt.Ignore())
                 .ForMember(dest =>
                     dest.SystemId,
-                    opt => opt.MapFrom(src => src.SystemId))
+                    opt => opt.Ignore())
                 .ForMember(dest =>
                     dest.UserId,
-                    opt => opt.MapFrom(src => src.Id))
+                    opt => opt.Ignore())
                 .ForMember(dest =>
                     dest.DepartmentId,
-                    opt => opt.MapFrom(src => src.DepartmentId))
+                    opt => opt.Ignore())
                 .ReverseMap();
 
             CreateMap<PatientDetailsSearchFilterViewModel, Ism.PatientInfoEngine.V1.Protos.SearchRequest>()
@@ -228,9 +229,9 @@ namespace Avalanche.Api.MappingConfigurations
             CreateMap<Ism.IsmLogCommon.Core.AccessInfo, AccessInfo>();
 
             CreateMap<Ism.Storage.Core.PatientList.V1.Protos.AddPatientRecordResponse, PatientViewModel>()
-                .ForMember(dest =>
-                    dest.ScopeSerialNumber,
-                    opt => opt.Ignore())
+                //.ForMember(dest =>
+                //    dest.ScopeSerialNumber,
+                //    opt => opt.Ignore())
                 .ForMember(dest =>
                     dest.AccessInformation,
                     opt => opt.Ignore())
@@ -270,9 +271,9 @@ namespace Avalanche.Api.MappingConfigurations
                 .ReverseMap();
 
             CreateMap<Ism.PatientInfoEngine.V1.Protos.PatientRecordMessage, PatientViewModel>()
-                .ForMember(dest =>
-                    dest.ScopeSerialNumber,
-                    opt => opt.Ignore())
+                //.ForMember(dest =>
+                //    dest.ScopeSerialNumber,
+                //    opt => opt.Ignore())
                 .ForMember(dest =>
                     dest.AccessInformation,
                     opt => opt.Ignore())

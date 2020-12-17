@@ -2,11 +2,13 @@
 using Avalanche.Api.Managers.Devices;
 using Avalanche.Api.MappingConfigurations;
 using Avalanche.Api.Services.Configuration;
+using Avalanche.Api.Services.Maintenance;
 using Avalanche.Api.Services.Media;
 using Avalanche.Api.Utilities;
 using Avalanche.Api.ViewModels;
 using Avalanche.Shared.Domain.Enumerations;
 using Avalanche.Shared.Domain.Models;
+using Avalanche.Shared.Infrastructure.Enumerations;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Moq;
@@ -50,7 +52,7 @@ namespace Avalanche.Api.Tests.Managers
             _mapperConfiguration = new MapperConfiguration(cfg =>
             {
                 cfg.AddProfile(new HealthMappingConfigurations());
-                cfg.AddProfile(new VideoRoutingMappingConfigurations());
+                cfg.AddProfile(new RoutingMappingConfigurations());
                 cfg.AddProfile(new MediaMappingConfigurations());
             });
 
@@ -68,7 +70,7 @@ namespace Avalanche.Api.Tests.Managers
         {
             CommandViewModel commandViewModel = new CommandViewModel()
             {
-                CommandType = Shared.Domain.Enumerations.CommandTypes.PgsPlayVideo,
+                CommandType = CommandTypes.PgsPlayVideo,
                 Message = "SampleMessage",
                 Type = "OfferType",
                 Devices = new List<Device>() { new Device() { Id = "Preview", Name = string.Empty, Type = string.Empty, IsActive = true } },
@@ -100,7 +102,7 @@ namespace Avalanche.Api.Tests.Managers
         {
             CommandViewModel commandViewModel = new CommandViewModel()
             {
-                CommandType = Shared.Domain.Enumerations.CommandTypes.PgsStopVideo,
+                CommandType = CommandTypes.PgsStopVideo,
                 Message = "SampleMessage",
                 Type = "OfferType",
                 Devices = new List<Device>() { new Device() { Id = "Preview", Name = string.Empty, Type = string.Empty, IsActive = true } },
@@ -125,7 +127,7 @@ namespace Avalanche.Api.Tests.Managers
         {
             CommandViewModel commandViewModel = new CommandViewModel()
             {
-                CommandType = Shared.Domain.Enumerations.CommandTypes.PgsHandleMessageForVideo,
+                CommandType = CommandTypes.PgsHandleMessageForVideo,
                 Message = "SampleMessage",
                 Type = "OfferType",
                 Devices = new List<Device>() { new Device() { Id = "Preview", Name = string.Empty, Type = string.Empty, IsActive = true } },

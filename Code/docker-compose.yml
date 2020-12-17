@@ -4,29 +4,25 @@ networks:
    app_net:
      external: true
 
-services:
-  rabbitmq:
-    hostname: rabbitmq
-    image: "rabbitmq:3-management"
-    container_name: stateserver-rabbitmq
-    environment:
-        RABBITMQ_ERLANG_COOKIE: "SWQOKODSQALRPCLNMEQG"
-        RABBITMQ_DEFAULT_USER: "guest"
-        RABBITMQ_DEFAULT_PASS: "guest"
-        RABBITMQ_DEFAULT_VHOST: "/"
-        RABBITMQ_MNESIA_DIR: "/var/lib/rabbitmq/mnesia"
+services:      
+  redis:
+    image: "redis:6.0.9"
+    container_name: avalanche-redis
+
+    # see https://raw.githubusercontent.com/redis/redis/6.0/redis.conf for definition of --notify-keyspace-events flags
+    command: redis-server --appendonly yes --notify-keyspace-events KE$lshz --port 6379 --tls-port 0 
+
     ports:
-    - "15672:15672"
-    - "5672:5672"
+    - "6379:6379"
     networks:
       app_net:
-        ipv4_address: 192.168.1.65
+        ipv4_address: 192.168.1.66
     volumes:
     - type: bind
-      source: C:\RabbitMQStateServer
-      target: /var/lib/rabbitmq/mnesia
+      source: C:\Olympus\StateData
+      target: /data
       read_only: false
-      
+
   avalanche.api:
     container_name: avalancheapi
     image: ${DOCKER_REGISTRY-}avalancheapi     
@@ -53,6 +49,12 @@ services:
       read_only: false
       volume:
         nocopy: true
+    - type: bind #this is a temporary demo hack setting. storage should not be a concern of the api 
+      source: C:\Library
+      target: /library
+      read_only: true
+      volume:
+        nocopy: true
     networks:
       app_net:
         ipv4_address: 192.168.1.60
@@ -63,6 +65,8 @@ services:
       pieServiceGrpcPort: '9089'
       storageServiceGrpcPort: '5012'
       dataManagementGrpcPort: '5012'
+      redisAddress: '192.168.1.66:6379'
+      demoLibraryFolder: '/library' #this is a temporary demo hack setting. storage should not be a concern of the api
       grpcCertificate: '/certificates/grpc_localhost_root_l1.pfx' 
       grpcPassword: '0123456789'
       grpcServerValidationCertificate: '/certificates/grpc_localhost_root_l1.cer'
@@ -77,7 +81,7 @@ services:
       PgsTimeoutGrpcPort: '9500'
     depends_on:
       - seqserver
-      - rabbitmq
+      - redis
       - avalanche.security.server
   avalanche.security.server:
     container_name: avalanchesecurityserver

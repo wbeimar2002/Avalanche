@@ -45,7 +45,7 @@ namespace Avalanche.Api.Controllers.V1
 
                 command.User = User.GetUser();
 
-                var result = await _devicesManager.SendCommand(command);
+                var result = await _devicesManager.SendCommand(command, User.GetUser());
 
                 return Ok(result);
             }

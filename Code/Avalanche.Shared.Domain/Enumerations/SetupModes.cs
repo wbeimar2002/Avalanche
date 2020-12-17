@@ -6,7 +6,7 @@ namespace Avalanche.Shared.Domain.Enumerations
 {
     public enum SetupModes
     {
-        StandAlone = 0,
+        Standalone = 0,
         DicomHL7 = 1 ,
     }
 }

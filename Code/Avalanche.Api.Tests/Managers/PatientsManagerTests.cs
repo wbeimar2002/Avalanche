@@ -4,6 +4,7 @@ using Avalanche.Api.Managers.Health;
 using Avalanche.Api.MappingConfigurations;
 using Avalanche.Api.Services.Configuration;
 using Avalanche.Api.Services.Health;
+using Avalanche.Api.Services.Maintenance;
 using Avalanche.Api.Utilities;
 using Avalanche.Api.ViewModels;
 using Avalanche.Shared.Domain.Models;
@@ -252,7 +253,13 @@ namespace Avalanche.Api.Tests.Managers
 
             var setupSettings = new Shared.Infrastructure.Models.SetupSettings()
             {
-                QuickRegistrationDateFormat = "yyyyMMdd_T_mmss"
+                Registration = new Shared.Infrastructure.Models.RegistrationSettings()
+                {
+                    Quick = new Shared.Infrastructure.Models.QuickRegistrationSettings()
+                    {
+                        DateFormat = "yyyyMMdd_T_mmss"
+                    }
+                }
             };
 
             Fixture fixture = new Fixture();
@@ -266,7 +273,7 @@ namespace Avalanche.Api.Tests.Managers
                     Name = null
                 });
 
-            _settingsService.Setup(mock => mock.GetSetupSettingsAsync(It.IsAny<ConfigurationContext>())).ReturnsAsync(setupSettings);
+            _settingsService.Setup(mock => mock.GetSetupSettings(It.IsAny<ConfigurationContext>())).ReturnsAsync(setupSettings);
 
             _pieService.Setup(mock => mock.RegisterPatient(It.IsAny<Ism.Storage.Core.PatientList.V1.Protos.AddPatientRecordRequest>())).ReturnsAsync(response);
 
@@ -312,7 +319,13 @@ namespace Avalanche.Api.Tests.Managers
 
             var setupSettings = new Shared.Infrastructure.Models.SetupSettings()
             {
-                QuickRegistrationDateFormat = "yyyyMMdd_T_mmss"
+                Registration = new Shared.Infrastructure.Models.RegistrationSettings()
+                {
+                    Quick = new Shared.Infrastructure.Models.QuickRegistrationSettings()
+                    {
+                        DateFormat = "yyyyMMdd_T_mmss"
+                    }
+                }
             };
 
             Fixture fixture = new Fixture();
@@ -326,7 +339,7 @@ namespace Avalanche.Api.Tests.Managers
                     Name = "Existing"
                 });
 
-            _settingsService.Setup(mock => mock.GetSetupSettingsAsync(It.IsAny<ConfigurationContext>())).ReturnsAsync(setupSettings);
+            _settingsService.Setup(mock => mock.GetSetupSettings(It.IsAny<ConfigurationContext>())).ReturnsAsync(setupSettings);
 
             _pieService.Setup(mock => mock.RegisterPatient(It.IsAny<Ism.Storage.Core.PatientList.V1.Protos.AddPatientRecordRequest>())).ReturnsAsync(response);
 
@@ -345,10 +358,16 @@ namespace Avalanche.Api.Tests.Managers
 
             var setupSettings = new Shared.Infrastructure.Models.SetupSettings()
             {
-                QuickRegistrationDateFormat = "yyyyMMdd_T_mmss"
+                Registration = new Shared.Infrastructure.Models.RegistrationSettings()
+                {
+                    Quick = new Shared.Infrastructure.Models.QuickRegistrationSettings()
+                    {
+                        DateFormat = "yyyyMMdd_T_mmss"
+                    }
+                }
             };
 
-            _settingsService.Setup(mock => mock.GetSetupSettingsAsync(It.IsAny<ConfigurationContext>())).ReturnsAsync(setupSettings);
+            _settingsService.Setup(mock => mock.GetSetupSettings(It.IsAny<ConfigurationContext>())).ReturnsAsync(setupSettings);
 
             _pieService.Setup(mock => mock.RegisterPatient(It.IsAny<Ism.Storage.Core.PatientList.V1.Protos.AddPatientRecordRequest>()));
 
@@ -366,11 +385,17 @@ namespace Avalanche.Api.Tests.Managers
 
             var setupSettings = new Shared.Infrastructure.Models.SetupSettings()
             {
-                QuickRegistrationDateFormat = "yyyyMMdd_T_mmss"
+                Registration = new Shared.Infrastructure.Models.RegistrationSettings()
+                {
+                    Quick = new Shared.Infrastructure.Models.QuickRegistrationSettings()
+                    {
+                        DateFormat = "yyyyMMdd_T_mmss"
+                    }
+                }
             };
 
             _pieService.Setup(mock => mock.UpdatePatient(new Ism.Storage.Core.PatientList.V1.Protos.UpdatePatientRecordRequest()));
-            _settingsService.Setup(mock => mock.GetSetupSettingsAsync(It.IsAny<ConfigurationContext>())).ReturnsAsync(setupSettings);
+            _settingsService.Setup(mock => mock.GetSetupSettings(It.IsAny<ConfigurationContext>())).ReturnsAsync(setupSettings);
 
             Task Act() => _manager.UpdatePatient(patient, user);
             Assert.That(Act, Throws.TypeOf<ArgumentNullException>());
@@ -407,7 +432,13 @@ namespace Avalanche.Api.Tests.Managers
 
             var setupSettings = new Shared.Infrastructure.Models.SetupSettings()
             {
-                QuickRegistrationDateFormat = "yyyyMMdd_T_mmss"
+                Registration = new Shared.Infrastructure.Models.RegistrationSettings()
+                {
+                    Quick = new Shared.Infrastructure.Models.QuickRegistrationSettings()
+                    {
+                        DateFormat = "yyyyMMdd_T_mmss"
+                    }
+                }
             };
 
             Fixture fixture = new Fixture();
@@ -421,7 +452,7 @@ namespace Avalanche.Api.Tests.Managers
                     Name = null
                 });
 
-            _settingsService.Setup(mock => mock.GetSetupSettingsAsync(It.IsAny<ConfigurationContext>())).ReturnsAsync(setupSettings);
+            _settingsService.Setup(mock => mock.GetSetupSettings(It.IsAny<ConfigurationContext>())).ReturnsAsync(setupSettings);
             _pieService.Setup(mock => mock.UpdatePatient(It.IsAny<Ism.Storage.Core.PatientList.V1.Protos.UpdatePatientRecordRequest>()));
 
             var result = _manager.UpdatePatient(existingPatient, user);
@@ -468,7 +499,13 @@ namespace Avalanche.Api.Tests.Managers
 
             var setupSettings = new Shared.Infrastructure.Models.SetupSettings()
             {
-                QuickRegistrationDateFormat = "yyyyMMdd_T_mmss"
+                Registration = new Shared.Infrastructure.Models.RegistrationSettings()
+                {
+                    Quick = new Shared.Infrastructure.Models.QuickRegistrationSettings()
+                    {
+                        DateFormat = "yyyyMMdd_T_mmss"
+                    }
+                }
             };
 
             Fixture fixture = new Fixture();
@@ -482,7 +519,7 @@ namespace Avalanche.Api.Tests.Managers
                     Name = "Existing"
                 });
 
-            _settingsService.Setup(mock => mock.GetSetupSettingsAsync(It.IsAny<ConfigurationContext>())).ReturnsAsync(setupSettings);
+            _settingsService.Setup(mock => mock.GetSetupSettings(It.IsAny<ConfigurationContext>())).ReturnsAsync(setupSettings);
             _pieService.Setup(mock => mock.UpdatePatient(It.IsAny<Ism.Storage.Core.PatientList.V1.Protos.UpdatePatientRecordRequest>()));
 
             var result = _manager.UpdatePatient(existingPatient, user);

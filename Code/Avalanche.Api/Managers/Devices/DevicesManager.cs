@@ -1,10 +1,12 @@
 ﻿using AutoMapper;
 using Avalanche.Api.Services.Configuration;
+using Avalanche.Api.Services.Maintenance;
 using Avalanche.Api.Services.Media;
 using Avalanche.Api.Utilities;
 using Avalanche.Api.ViewModels;
 using Avalanche.Shared.Domain.Enumerations;
 using Avalanche.Shared.Domain.Models;
+using Avalanche.Shared.Infrastructure.Enumerations;
 using Avalanche.Shared.Infrastructure.Extensions;
 using Avalanche.Shared.Infrastructure.Helpers;
 using Microsoft.AspNetCore.Http;
@@ -49,7 +51,7 @@ namespace Avalanche.Api.Managers.Devices
             _httpContextAccessor = httpContextAccessor;
         }
 
-        public async Task<List<CommandResponse>> SendCommand(CommandViewModel command)
+        public async Task<List<CommandResponse>> SendCommand(CommandViewModel command, User user = null)
         {
             Preconditions.ThrowIfCountIsLessThan(nameof(command.Devices), command.Devices, 1);
 
@@ -67,7 +69,7 @@ namespace Avalanche.Api.Managers.Devices
                     AdditionalInfo = command.AdditionalInfo,
                     Type = command.Type, 
                     User = command.User
-                });
+                }, user);
 
                 responses.Add(response);
             }
@@ -75,7 +77,7 @@ namespace Avalanche.Api.Managers.Devices
             return responses;
         }
 
-        private async Task<CommandResponse> ExecuteCommandAsync(CommandTypes commandType, Command command)
+        private async Task<CommandResponse> ExecuteCommandAsync(CommandTypes commandType, Command command, User user)
         {
             _appLoggerService.LogInformation($"{commandType.GetDescription()} command executed on {command.Device.Id} device.");
 
@@ -83,7 +85,7 @@ namespace Avalanche.Api.Managers.Devices
             {
                 #region PGS Commands
                 case CommandTypes.PgsPlayVideo:
-                    return await InitializeVideo(command);
+                    return await InitializeVideo(command, user);
                 case CommandTypes.PgsStopVideo:
                     return await StopVideo(command);
                 case CommandTypes.PgsHandleMessageForVideo:
@@ -97,7 +99,7 @@ namespace Avalanche.Api.Managers.Devices
                 case CommandTypes.TimeoutStopPdfSlides:
                     //TODO: if stop we can to restart the vide from the beginning or we should continue 
                     //in the state before to start the timeout mode. How to do this?
-                    return await StopSlidesAndResumeVideo(command);
+                    return await StopSlidesAndResumeVideo(command, user);
                 case CommandTypes.TimeoutNextPdfSlide:
                     return await GoToNextTimeoutSlide(command);
                 case CommandTypes.TimeoutPreviousPdfSlide:
@@ -128,6 +130,8 @@ namespace Avalanche.Api.Managers.Devices
                     return await StartRecording(command);
                 case CommandTypes.StopRecording:
                     return await StopRecording(command);
+                case CommandTypes.CaptureImage:
+                    return await CaptureImage(command);
                 #endregion
 
                 default:

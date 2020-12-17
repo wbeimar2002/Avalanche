@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Text;
 
-namespace Avalanche.Shared.Domain.Enumerations
+namespace Avalanche.Shared.Infrastructure.Enumerations
 {
     public enum CommandTypes
     {
@@ -54,5 +54,8 @@ namespace Avalanche.Shared.Domain.Enumerations
         StartRecording = 40,
         [Description("Stop Recording")]
         StopRecording = 41,
+
+        [Description("Capture image")]
+        CaptureImage = 42,
     }
 }

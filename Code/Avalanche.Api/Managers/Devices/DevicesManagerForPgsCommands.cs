@@ -1,7 +1,9 @@
 ﻿using Avalanche.Api.Utilities;
 using Avalanche.Shared.Domain.Enumerations;
 using Avalanche.Shared.Domain.Models;
+using Avalanche.Shared.Infrastructure.Enumerations;
 using Avalanche.Shared.Infrastructure.Helpers;
+using Ism.Common.Core.Configuration.Models;
 using Ism.Streaming.V1.Protos;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -10,7 +12,7 @@ namespace Avalanche.Api.Managers.Devices
 {
     public partial class DevicesManager : IDevicesManager
     {
-        private async Task<CommandResponse> InitializeVideo(Command command)
+        private async Task<CommandResponse> InitializeVideo(Command command, User user)
         {
             Preconditions.ThrowIfNull(nameof(command.Message), command.Message);
             Preconditions.ThrowIfNull(nameof(command.AdditionalInfo), command.AdditionalInfo);
@@ -21,7 +23,7 @@ namespace Avalanche.Api.Managers.Devices
                 Message = ((int)TimeoutModes.Pgs).ToString()
             };
 
-            await ExecuteCommandAsync(CommandTypes.SetTimeoutMode, setModeCommand);
+            await ExecuteCommandAsync(CommandTypes.SetTimeoutMode, setModeCommand, user);
 
             var accessInfo = _accessInfoFactory.GenerateAccessInfo();
             command.AccessInformation = _mapper.Map<Ism.IsmLogCommon.Core.AccessInfo, AccessInfo>(accessInfo);
@@ -44,10 +46,11 @@ namespace Avalanche.Api.Managers.Devices
             return response;
         }
 
-        private async Task<CommandResponse> StopSlidesAndResumeVideo(Command command)
+        private async Task<CommandResponse> StopSlidesAndResumeVideo(Command command, User user)
         {
-            var alwaysOnSettings = await _settingsService.GetTimeoutSettingsAsync();
-            var timeoutMode = alwaysOnSettings.PgsVideoAlwaysOn ? TimeoutModes.Pgs : TimeoutModes.Idle;
+            var configurationContext = _mapper.Map<Avalanche.Shared.Domain.Models.User, ConfigurationContext>(user);
+            var pgsSettings = await _settingsService.GetPgsSettings(configurationContext);
+            var timeoutMode = pgsSettings.PgsVideoAlwaysOn ? TimeoutModes.Pgs : TimeoutModes.Idle;
 
             var setModeCommand = new Command()
             {
@@ -55,9 +58,9 @@ namespace Avalanche.Api.Managers.Devices
                 Message = ((int)timeoutMode).ToString()
             };
 
-            await ExecuteCommandAsync(CommandTypes.SetTimeoutMode, setModeCommand);
+            await ExecuteCommandAsync(CommandTypes.SetTimeoutMode, setModeCommand, user);
 
-            if (alwaysOnSettings.PgsVideoAlwaysOn)
+            if (pgsSettings.PgsVideoAlwaysOn)
             {
                 var accessInfo = _accessInfoFactory.GenerateAccessInfo();
                 command.AccessInformation = _mapper.Map<Ism.IsmLogCommon.Core.AccessInfo, AccessInfo>(accessInfo);

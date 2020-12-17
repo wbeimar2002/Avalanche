@@ -4,21 +4,21 @@ using Avalanche.Api.Hubs;
 using Avalanche.Api.Managers.Devices;
 using Avalanche.Api.Managers.Health;
 using Avalanche.Api.Managers.Licensing;
+using Avalanche.Api.Managers.Maintenance;
 using Avalanche.Api.Managers.Metadata;
 using Avalanche.Api.Managers.Notifications;
-using Avalanche.Api.Managers.Settings;
 using Avalanche.Api.Services.Configuration;
 using Avalanche.Api.Services.Health;
+using Avalanche.Api.Services.Maintenance;
 using Avalanche.Api.Services.Media;
-using Avalanche.Api.Services.Settings;
+using Avalanche.Api.Services.Notifications;
 using Avalanche.Api.Utilities;
 using Avalanche.Shared.Infrastructure.Models;
 using Avalanche.Shared.Infrastructure.Services.Settings;
 using Ism.Broadcaster.Services;
-using Ism.RabbitMq.Client;
-using Ism.RabbitMq.Client.Models;
 using Ism.Security.Grpc;
 using Ism.Security.Grpc.Interfaces;
+using Ism.SystemState.Client;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -31,6 +31,7 @@ using Serilog;
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Security.Cryptography.X509Certificates;
+using System.Threading.Tasks;
 using static AvidisDeviceInterface.V1.Protos.Avidis;
 using static Ism.PatientInfoEngine.V1.Protos.PatientListService;
 using static Ism.PgsTimeout.V1.Protos.PgsTimeout;
@@ -74,7 +75,7 @@ namespace Avalanche.Api
             var grpcPassword = configurationService.GetEnvironmentVariable("grpcPassword");
             var grpcServerValidationCertificate = configurationService.GetEnvironmentVariable("grpcServerValidationCertificate");
 
-            services.AddSingleton<ISettingsManager, SettingsManagerMock>();
+            services.AddSingleton<IMaintenanceManager, MaintenanceManager>();
             services.AddSingleton<IPatientsManager, PatientsManager>();
             services.AddSingleton<IPhysiciansManager, PhysiciansManager>();
             services.AddSingleton<IMetadataManager, MetadataManager>();
@@ -103,47 +104,16 @@ namespace Avalanche.Api
             services.AddSingleton<IGrpcClientFactory<ConfigurationServiceClient>, GrpcClientFactory<ConfigurationServiceClient>>();
             services.AddSingleton<IAccessInfoFactory, AccessInfoFactory>();
 
-            //TODO: Check this. Should be env variables?
-            var hostName = configurationService.GetValue<string>("RabbitMqOptions:HostName");
-            var port = configurationService.GetValue<int>("RabbitMqOptions:Port");
-            var managementPort = configurationService.GetValue<int>("RabbitMqOptions:ManagementPort");
-            var userName = configurationService.GetValue<string>("RabbitMqOptions:UserName");
-            var password = configurationService.GetValue<string>("RabbitMqOptions:Password");
-            var queueName = configurationService.GetValue<string>("RabbitMqOptions:QueueName");
-
-            services.Configure<RabbitMqOptions>(options =>
-            {
-                options.HostName = hostName;
-                options.ManagementPort = managementPort;
-                options.UserName = userName;
-                options.Password = password;
-                options.QueueName = queueName;
-                options.Port = port;
-            });
-
-            services.AddSingleton<IRabbitMqClientService, RabbitMqClientService>();
+            services.AddHostedService<NotificationsListener>();
 
             services.AddAutoMapper(typeof(Startup));
 
+            var redisAddress = configurationService.GetEnvironmentVariable("redisAddress");
+
+            services.AddRedisStateClient(redisAddress); // TODO: Config
+
             ConfigureAuthorization(services);
             ConfigureCorsPolicy(services);
-            ConfigureCertificate(configurationService);
-        }
-
-        private void ConfigureCertificate(IConfigurationService configurationService)
-        {
-            var store = new X509Store(StoreName.My, StoreLocation.CurrentUser);
-            store.Open(OpenFlags.ReadWrite);
-
-            var grpcCertificate = configurationService.GetEnvironmentVariable("grpcCertificate");
-            var grpcPassword = configurationService.GetEnvironmentVariable("grpcPassword");
-            var grpcThumprint = configurationService.GetEnvironmentVariable("grpcThumprint");
-
-            var certificates = store.Certificates.Find(X509FindType.FindByThumbprint, grpcThumprint, false);
-            if (certificates.Count <= 0)
-            {
-                store.Add(new X509Certificate2(grpcCertificate, grpcPassword, X509KeyStorageFlags.PersistKeySet));
-            }
         }
 
         private void ConfigureAuthorization(IServiceCollection services)
@@ -175,6 +145,31 @@ namespace Avalanche.Api
                     IssuerSigningKey = signingConfigurations.Key,
                     ClockSkew = TimeSpan.Zero
                 };
+
+                // From: https://docs.microsoft.com/en-us/aspnet/core/signalr/authn-and-authz?view=aspnetcore-3.1
+                // We have to hook the OnMessageReceived event in order to
+                // allow the JWT authentication handler to read the access
+                // token from the query string when a WebSocket or 
+                // Server-Sent Events request comes in.
+                jwtBearerOptions.Events = new JwtBearerEvents
+                {
+                    OnMessageReceived = context =>
+                    {
+                        var accessToken = context.Request.Query["access_token"];
+
+                        // If the request is for our hub...
+                        var path = context.HttpContext.Request.Path;
+                        if (!string.IsNullOrEmpty(accessToken))
+                        {
+                            if (path.StartsWithSegments(BroadcastHub.BroadcastHubRoute))
+                            {
+                                // Read the token out of the query string
+                                context.Token = accessToken;
+                            }
+                        }
+                        return Task.CompletedTask;
+                    }
+                };
             });
         }
 
@@ -187,12 +182,14 @@ namespace Avalanche.Api
                 options.AddPolicy("CorsApiPolicy",
                 builder =>
                 {
+                    // TODO: this still is not correct for remote clients...not sure how to handle that if web is being served from separate endpoint to api, since we do not have a well-known address.
                     builder
-                        .WithOrigins("http://localhost:4200")
-                        .WithHeaders(new[] { "authorization", "content-type", "accept" })
-                        .WithMethods(new[] { "GET", "POST", "PUT", "DELETE", "OPTIONS" })
+                        .WithOrigins("https://localhost:4200")
+                        //.WithHeaders(new[] { "authorization", "content-type", "accept" })
+                        //.WithMethods(new[] { "GET", "POST", "PUT", "DELETE", "OPTIONS" })
+                        .AllowAnyHeader()
                         //.AllowAnyOrigin()
-                        //.AllowAnyMethod()
+                        .AllowAnyMethod()
                         .AllowCredentials();
                 });
             });
@@ -219,14 +216,15 @@ namespace Avalanche.Api
             app.UseRouting();
 
             app.UseAuthentication();
+            app.UseCors("CorsApiPolicy"); // NOTE: cors must come before Authorization in the request pipeline
+
             app.UseAuthorization();
 
-            app.UseCors("CorsApiPolicy");
             app.UseFileServer();
             
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapHub<BroadcastHub>("/broadcast");
+                endpoints.MapHub<BroadcastHub>(BroadcastHub.BroadcastHubRoute);
                 endpoints.MapControllers();
             });
         }

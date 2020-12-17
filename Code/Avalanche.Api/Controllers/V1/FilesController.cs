@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Diagnostics.CodeAnalysis;
@@ -31,7 +32,7 @@ namespace Avalanche.Api.Controllers.V1
         [Consumes("multipart/form-data")]
         [RequestFormLimits(MultipartBodyLengthLimit = 209715200)]
         [RequestSizeLimit(209715200)]
-        public IActionResult Upload([FromForm(Name = "file")]IFormFile file, [FromServices]IHostingEnvironment env)
+        public IActionResult Upload([FromForm(Name = "file")]IFormFile file, [FromServices]IWebHostEnvironment env)
         {
             try
             {
@@ -48,6 +49,26 @@ namespace Avalanche.Api.Controllers.V1
             finally
             {
                 _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
+            }
+        }
+
+#warning TODO: This is entirely wrong and intended only for a workflow demo. Remove.
+        // Need to define and implement correct image retrieval patterns. Not in scope of current work, but the following is not at all correct.
+        [HttpGet]
+        [AllowAnonymous]
+        public IActionResult DemoGetImageFile([FromQuery]string path)
+        {
+            try
+            {
+                var libraryRoot = Environment.GetEnvironmentVariable("demoLibraryFolder");
+                var translated = path.Replace('\\', '/').TrimStart('/');
+                var fullPath = System.IO.Path.Combine(libraryRoot, translated);
+                return PhysicalFile(fullPath, "image/jpeg");
+            }
+            catch (Exception ex)
+            {
+                _appLoggerService.LogError(LoggerHelper.GetLogMessage(DebugLogType.Exception), ex);
+                return BadRequest();
             }
         }
     }

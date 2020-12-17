@@ -1,8 +1,10 @@
 ﻿using AutoMapper;
 using Avalanche.Api.Services.Configuration;
 using Avalanche.Api.Services.Health;
+using Avalanche.Api.Services.Maintenance;
 using Avalanche.Api.ViewModels;
 using Avalanche.Shared.Domain.Models;
+using Avalanche.Shared.Infrastructure.Enumerations;
 using Avalanche.Shared.Infrastructure.Helpers;
 using Ism.Common.Core.Configuration.Models;
 using Ism.Storage.Core.DataManagement.V1.Protos;
@@ -30,20 +32,35 @@ namespace Avalanche.Api.Managers.Metadata
             _mapper = mapper;
         }
 
-        public async Task<List<KeyValuePairViewModel>> GetMetadata(Avalanche.Shared.Domain.Models.User user, Shared.Domain.Enumerations.MetadataTypes type)
+        public async Task<List<KeyValuePairViewModel>> GetMetadata(User user, MetadataTypes type)
         {
-            var configurationContext = _mapper.Map<Avalanche.Shared.Domain.Models.User, ConfigurationContext>(user);
+            var configurationContext = _mapper.Map<User, ConfigurationContext>(user);
 
             switch (type)
             {
-                case Shared.Domain.Enumerations.MetadataTypes.Sex:
+                case MetadataTypes.Sex:
                     return (await _storageService.GetJson<ListContainerViewModel>("SexTypes", 1, configurationContext)).Items;
-                case Shared.Domain.Enumerations.MetadataTypes.ContentTypes:
+                case MetadataTypes.ContentTypes:
                     return (await _storageService.GetJson<ListContainerViewModel>("ContentTypes", 1, configurationContext)).Items;
-                case Shared.Domain.Enumerations.MetadataTypes.SourceTypes:
+                case MetadataTypes.SourceTypes:
                     return (await _storageService.GetJson<ListContainerViewModel>("SourceTypes", 1, configurationContext)).Items;
+                case MetadataTypes.SettingTypes:
+                    return (await _storageService.GetJson<ListContainerViewModel>("SettingTypes", 1, configurationContext)).Items;
                 default:
                     return new List<KeyValuePairViewModel>();
+            }
+        }
+
+        public async Task<List<SourceKeyValuePairViewModel>> GetSource(User user, MetadataTypes type)
+        {
+            var configurationContext = _mapper.Map<User, ConfigurationContext>(user);
+
+            switch (type)
+            {
+                case MetadataTypes.SearchColumns:
+                    return (await _storageService.GetJson<SourceListContainerViewModel>("SearchColumns", 1, configurationContext)).Items;
+                default:
+                    return new List<SourceKeyValuePairViewModel>();
             }
         }
 
@@ -63,7 +80,7 @@ namespace Avalanche.Api.Managers.Metadata
             await _dataManagementService.DeleteDepartment(new DeleteDepartmentRequest() { DepartmentId = departmentId });
         }
 
-        public async Task<List<Department>> GetAllDepartments(Avalanche.Shared.Domain.Models.User user)
+        public async Task<List<Department>> GetAllDepartments(User user)
         {
             await ValidateDepartmentsSupport(user);
 
@@ -73,7 +90,7 @@ namespace Avalanche.Api.Managers.Metadata
                 .OrderBy(d => d.Name).ToList();
         }
 
-        public async Task<ProcedureType> AddProcedureType(Avalanche.Shared.Domain.Models.User user, ProcedureType procedureType)
+        public async Task<ProcedureType> AddProcedureType(User user, ProcedureType procedureType)
         {
             await ValidateDepartmentsSupport(user, procedureType.DepartmentId);
             Preconditions.ThrowIfNull(nameof(procedureType.Name), procedureType.Name);
@@ -105,9 +122,9 @@ namespace Avalanche.Api.Managers.Metadata
         private async Task ValidateDepartmentsSupport(User user)
         {
             var configurationContext = _mapper.Map<Avalanche.Shared.Domain.Models.User, ConfigurationContext>(user);
-            var setupSettings = await _settingsService.GetSetupSettingsAsync(configurationContext);
+            var setupSettings = await _settingsService.GetSetupSettings(configurationContext);
 
-            if (!setupSettings.DepartmentsSupported)
+            if (!setupSettings.General.DepartmentsSupported)
             {
                 throw new System.InvalidOperationException("Departments are not supported");
             }
@@ -115,20 +132,20 @@ namespace Avalanche.Api.Managers.Metadata
 
         private async Task ValidateDepartmentsSupport(User user, int? departmentId)
         {
-            var configurationContext = _mapper.Map<Avalanche.Shared.Domain.Models.User, ConfigurationContext>(user);
-            var setupSettings = await _settingsService.GetSetupSettingsAsync(configurationContext);
+            var configurationContext = _mapper.Map<User, ConfigurationContext>(user);
+            var setupSettings = await _settingsService.GetSetupSettings(configurationContext);
 
-            #warning TODO: Check the strategy to throw business logic exceptions. Same exceptions in Patients Manager
-            if (setupSettings.DepartmentsSupported)
+#warning TODO: Check the strategy to throw business logic exceptions. Same exceptions in Patients Manager
+            if (setupSettings.General.DepartmentsSupported)
             {
                 if (departmentId == null || departmentId == 0)
                     throw new System.ArgumentNullException("Department value is invalid. It should not be null. Departments are supported.");
             }
-            else 
+            else
             {
-                if (departmentId != null || departmentId != 0)
+                if (departmentId != null && departmentId != 0)
                     throw new System.ArgumentException("Department value is invalid. Departments are not supported.");
-            }                
+            }
         }
     }
 }

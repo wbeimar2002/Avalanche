@@ -4,9 +4,9 @@ using System.Text;
 
 namespace Avalanche.Shared.Domain.Enumerations
 {
-    public enum VideoRoutingModes
+    public enum SetupScreenModes
     {
-        Hardware,
-        Software
+        Search = 0,
+        Registration = 1 ,
     }
 }
