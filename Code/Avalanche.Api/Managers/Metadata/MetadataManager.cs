@@ -143,7 +143,7 @@ namespace Avalanche.Api.Managers.Metadata
             }
             else
             {
-                if (departmentId != null || departmentId != 0)
+                if (departmentId != null && departmentId != 0)
                     throw new System.ArgumentException("Department value is invalid. Departments are not supported.");
             }
         }

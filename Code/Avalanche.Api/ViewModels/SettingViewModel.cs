@@ -11,11 +11,13 @@ namespace Avalanche.Api.ViewModels
         public string LabelTranslationKey { get; set; }
         public string Description { get; set; }
         public string Format { get; set; }
-        public string Mask { get; set; }
+        public string PlaceHolder { get; set; }
         public string Icon { get; set; }
         public int MaxValue { get; set; }
         public int MinValue { get; set; }
+        public int Steps { get; set; }
         public string Value { get; set; }
+        public string DefaultValue { get; set; }
         public bool ReadOnly { get; set; }
         public bool Required { get; set; }
         public int MaxLength { get; set; }
