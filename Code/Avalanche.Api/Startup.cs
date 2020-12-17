@@ -4,14 +4,14 @@ using Avalanche.Api.Hubs;
 using Avalanche.Api.Managers.Devices;
 using Avalanche.Api.Managers.Health;
 using Avalanche.Api.Managers.Licensing;
+using Avalanche.Api.Managers.Maintenance;
 using Avalanche.Api.Managers.Metadata;
 using Avalanche.Api.Managers.Notifications;
-using Avalanche.Api.Managers.Settings;
 using Avalanche.Api.Services.Configuration;
 using Avalanche.Api.Services.Health;
+using Avalanche.Api.Services.Maintenance;
 using Avalanche.Api.Services.Media;
 using Avalanche.Api.Services.Notifications;
-using Avalanche.Api.Services.Settings;
 using Avalanche.Api.Utilities;
 using Avalanche.Shared.Infrastructure.Models;
 using Avalanche.Shared.Infrastructure.Services.Settings;
@@ -75,7 +75,7 @@ namespace Avalanche.Api
             var grpcPassword = configurationService.GetEnvironmentVariable("grpcPassword");
             var grpcServerValidationCertificate = configurationService.GetEnvironmentVariable("grpcServerValidationCertificate");
 
-            services.AddSingleton<ISettingsManager, SettingsManagerMock>();
+            services.AddSingleton<IMaintenanceManager, MaintenanceManager>();
             services.AddSingleton<IPatientsManager, PatientsManager>();
             services.AddSingleton<IPhysiciansManager, PhysiciansManager>();
             services.AddSingleton<IMetadataManager, MetadataManager>();
@@ -114,23 +114,6 @@ namespace Avalanche.Api
 
             ConfigureAuthorization(services);
             ConfigureCorsPolicy(services);
-            ConfigureCertificate(configurationService);
-        }
-
-        private void ConfigureCertificate(IConfigurationService configurationService)
-        {
-            var store = new X509Store(StoreName.My, StoreLocation.CurrentUser);
-            store.Open(OpenFlags.ReadWrite);
-
-            var grpcCertificate = configurationService.GetEnvironmentVariable("grpcCertificate");
-            var grpcPassword = configurationService.GetEnvironmentVariable("grpcPassword");
-            var grpcThumprint = configurationService.GetEnvironmentVariable("grpcThumprint");
-
-            var certificates = store.Certificates.Find(X509FindType.FindByThumbprint, grpcThumprint, false);
-            if (certificates.Count <= 0)
-            {
-                store.Add(new X509Certificate2(grpcCertificate, grpcPassword, X509KeyStorageFlags.PersistKeySet));
-            }
         }
 
         private void ConfigureAuthorization(IServiceCollection services)

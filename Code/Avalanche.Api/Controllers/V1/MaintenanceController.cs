@@ -20,29 +20,26 @@ namespace Avalanche.Api.Controllers.V1
     [Route("[controller]")]
     [ApiController]
     [Authorize]
-    public class SettingsController : ControllerBase
+    public class MaintenanceController : ControllerBase
     {
         readonly ILogger _appLoggerService;
         readonly IMaintenanceManager _maintenanceManager;
 
-        public SettingsController(IMaintenanceManager maintenanceManager, ILogger<FilesController> appLoggerService)
+        public MaintenanceController(IMaintenanceManager maintenanceManager, ILogger<FilesController> appLoggerService)
         {
             _appLoggerService = appLoggerService;
             _maintenanceManager = maintenanceManager;
         }
 
-        /// <summary>
-        /// Return the PGS settings
-        /// </summary>
-        [HttpGet("pgs")]
-        [Produces(typeof(PgsSettings))]
-        public async Task<IActionResult> GetPgsSettings([FromServices] IWebHostEnvironment env)
+        [HttpPut("categories/{key}")]
+        public async Task<IActionResult> SaveCategory(string key, [FromBody]SectionViewModel section,[FromServices]IWebHostEnvironment env)
         {
             try
             {
                 _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
-                var response = await _maintenanceManager.GetSettings<PgsSettings>("PgsSettings",User.GetUser());
-                return Ok(response);
+                await _maintenanceManager.SaveCategory(User.GetUser(), section);
+
+                return Ok();
             }
             catch (Exception exception)
             {
@@ -55,19 +52,15 @@ namespace Avalanche.Api.Controllers.V1
             }
         }
 
-
-        /// <summary>
-        /// Return the timeout settings
-        /// </summary>
-        [HttpGet("timeout")]
-        [Produces(typeof(TimeoutSettings))]
-        public async Task<IActionResult> GetTimeoutSettings([FromServices] IWebHostEnvironment env)
+        [HttpGet("categories/{key}")]
+        public async Task<IActionResult> GetCategoryByKey(string key, [FromServices]IWebHostEnvironment env)
         {
             try
             {
                 _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
-                var response = await _maintenanceManager.GetSettings<TimeoutSettings>("TimeoutSettings", User.GetUser());
-                return Ok(response);
+                var result = await _maintenanceManager.GetCategoryByKey(User.GetUser(), key);
+
+                return Ok(result);
             }
             catch (Exception exception)
             {
@@ -80,18 +73,15 @@ namespace Avalanche.Api.Controllers.V1
             }
         }
 
-        /// <summary>
-        /// Return the setup settings
-        /// </summary>
-        [HttpGet("setup")]
-        [Produces(typeof(SetupSettings))]
-        public async Task<IActionResult> GetSetupSettings([FromServices] IWebHostEnvironment env)
+        [HttpGet("categories/{key}/readonly")]
+        public async Task<IActionResult> GetCategoryByKeyReadOnly(string key, [FromServices] IWebHostEnvironment env)
         {
             try
             {
                 _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
-                var response = await _maintenanceManager.GetSettings<SetupSettings>("SetupSettings", User.GetUser());
-                return Ok(response);
+                var result = await _maintenanceManager.GetCategoryByKeyReadOnly(User.GetUser(), key);
+
+                return Ok(result);
             }
             catch (Exception exception)
             {
@@ -103,30 +93,5 @@ namespace Avalanche.Api.Controllers.V1
                 _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
             }
         }
-
-        /// <summary>
-        /// Return the timeout settings
-        /// </summary>
-        [HttpGet("routing")]
-        [Produces(typeof(RoutingSettings))]
-        public async Task<IActionResult> GetRoutingSettings([FromServices] IWebHostEnvironment env)
-        {
-            try
-            {
-                _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
-                var response = await _maintenanceManager.GetSettings<RoutingSettings>("RoutingSettings", User.GetUser());
-                return Ok(response);
-            }
-            catch (Exception exception)
-            {
-                _appLoggerService.LogError(LoggerHelper.GetLogMessage(DebugLogType.Exception), exception);
-                return new BadRequestObjectResult(exception.Get(env.IsDevelopment()));
-            }
-            finally
-            {
-                _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
-            }
-        }
-
     }
 }

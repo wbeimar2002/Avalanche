@@ -1,5 +1,6 @@
 ﻿using Avalanche.Shared.Domain.Enumerations;
 using Avalanche.Shared.Domain.Models;
+using Avalanche.Shared.Infrastructure.Enumerations;
 using System.Collections.Generic;
 
 namespace Avalanche.Api.ViewModels

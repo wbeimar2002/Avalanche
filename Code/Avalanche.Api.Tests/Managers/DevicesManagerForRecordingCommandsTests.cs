@@ -6,6 +6,7 @@ using Avalanche.Api.Utilities;
 using Avalanche.Api.ViewModels;
 using Avalanche.Shared.Domain.Enumerations;
 using Avalanche.Shared.Domain.Models;
+using Avalanche.Shared.Infrastructure.Enumerations;
 using Avalanche.Shared.Infrastructure.Models;
 using Avalanche.Shared.Infrastructure.Services.Settings;
 using AvidisDeviceInterface.V1.Protos;
@@ -30,7 +31,7 @@ namespace Avalanche.Api.Tests.Managers
         {
             CommandViewModel commandViewModel = new CommandViewModel()
             {
-                CommandType = Shared.Domain.Enumerations.CommandTypes.StartRecording,
+                CommandType = CommandTypes.StartRecording,
                 Devices = new List<Device>() { new Device() { Id = "TP1" } }
             };
 
@@ -46,7 +47,7 @@ namespace Avalanche.Api.Tests.Managers
         {
             CommandViewModel commandViewModel = new CommandViewModel()
             {
-                CommandType = Shared.Domain.Enumerations.CommandTypes.StopRecording,
+                CommandType = CommandTypes.StopRecording,
                 Devices = new List<Device>() { new Device() { Id = "TP1" } }
             };
 

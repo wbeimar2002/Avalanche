@@ -3,9 +3,9 @@ using Avalanche.Shared.Domain.Models;
 
 namespace Avalanche.Api.MappingConfigurations
 {
-    public class VideoRoutingMappingConfigurations : Profile
+    public class RoutingMappingConfigurations : Profile
     {
-        public VideoRoutingMappingConfigurations()
+        public RoutingMappingConfigurations()
         {
             CreateMap<Region, AvidisDeviceInterface.V1.Protos.ShowPreviewRequest>()
                 .ForMember(dest =>

@@ -15,7 +15,6 @@ namespace Avalanche.Api.ViewModels
         public Department Department { get; set; }
         public ProcedureType ProcedureType { get; set; }
         public Physician Physician { get; set; }
-        public string ScopeSerialNumber { get; set; }
 
         [JsonIgnore]
         public AccessInfo AccessInformation { get; set; }

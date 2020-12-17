@@ -57,7 +57,7 @@ namespace Avalanche.Api.Tests.Controllers
         [Test]
         public void SendCommandReturnBadResultIfFails()
         {
-            _deviceManager.Setup(mock => mock.SendCommand(It.IsAny<CommandViewModel>())).Throws(It.IsAny<Exception>());
+            _deviceManager.Setup(mock => mock.SendCommand(It.IsAny<CommandViewModel>(), new Shared.Domain.Models.User())).Throws(It.IsAny<Exception>());
 
             var badResult = _controller.SendCommand(It.IsAny<CommandViewModel>(), _environment.Object);
 

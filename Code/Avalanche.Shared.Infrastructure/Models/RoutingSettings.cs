@@ -6,9 +6,9 @@ using System.Text;
 
 namespace Avalanche.Shared.Infrastructure.Models
 {
-    public class VideoRoutingSettings
+    public class RoutingSettings
     {
         [JsonProperty("Mode")]
-        public VideoRoutingModes Mode { get; set; }
+        public RoutingModes Mode { get; set; }
     }
 }

@@ -2,12 +2,15 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Avalanche.Shared.Domain.Enumerations
+namespace Avalanche.Shared.Infrastructure.Enumerations
 {
     public enum MetadataTypes
     {
         Sex,
         ContentTypes,
-        SourceTypes
+        SourceTypes,
+        SetupModes,
+        SearchColumns,
+        SettingTypes
     }
 }

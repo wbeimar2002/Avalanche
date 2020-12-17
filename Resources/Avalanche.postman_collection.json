@@ -507,7 +507,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n  \"id\": 0,\r\n  \"mrn\": \"string\",\r\n  \"firstName\": \"string\",\r\n  \"lastName\": \"string\",\r\n  \"dateOfBirth\": \"2020-09-03T15:01:03.876Z\",\r\n  \"sex\": {\r\n    \"translationKey\": \"string\",\r\n    \"id\": \"string\",\r\n    \"value\": \"string\"\r\n  },\r\n  \"department\": {\r\n    \"translationKey\": \"string\",\r\n    \"id\": \"string\",\r\n    \"value\": \"string\"\r\n  },\r\n  \"procedureType\": {\r\n    \"translationKey\": \"string\",\r\n    \"id\": \"string\",\r\n    \"value\": \"string\"\r\n  },\r\n  \"physician\": {\r\n    \"id\": \"string\",\r\n    \"firstName\": \"string\",\r\n    \"lastName\": \"string\"\r\n  },\r\n  \"scopeSerialNumber\": \"string\"\r\n}",
+							"raw": "{\r\n  \"id\": 0,\r\n  \"mrn\": \"string\",\r\n  \"firstName\": \"string\",\r\n  \"lastName\": \"string\",\r\n  \"dateOfBirth\": \"2020-09-03T15:01:03.876Z\",\r\n  \"sex\": {\r\n    \"translationKey\": \"string\",\r\n    \"id\": \"string\",\r\n    \"value\": \"string\"\r\n  },\r\n  \"department\": {\r\n    \"translationKey\": \"string\",\r\n    \"id\": null,\r\n    \"value\": null\r\n  },\r\n  \"procedureType\": {\r\n    \"translationKey\": \"string\",\r\n    \"id\": \"testingNewFromRegistrationId\",\r\n    \"value\": \"testingNewFromRegistrationId\"\r\n  },\r\n  \"physician\": {\r\n    \"id\": \"string\",\r\n    \"firstName\": \"string\",\r\n    \"lastName\": \"string\"\r\n  },\r\n  \"scopeSerialNumber\": \"string\"\r\n}",
 							"options": {
 								"raw": {}
 							}
@@ -816,7 +816,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\"name\":\"sampledepartmentname\",\"isNew\":true}"
+							"raw": "{ \"name\":\"departmentSample\" }"
 						},
 						"url": {
 							"raw": "https://localhost:5001/Metadata/departments",
@@ -1022,7 +1022,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\"name\":\"procTypeSample\",\"department\":\"notExist\"}"
+							"raw": "{\"name\":\"procTypeSample\",\"departmentId\": 11}"
 						},
 						"url": {
 							"raw": "https://localhost:5001/Metadata/procedureTypes",
@@ -1088,7 +1088,7 @@
 							}
 						],
 						"url": {
-							"raw": "https://localhost:5001/Metadata/departments/departmentSample/procedureTypes",
+							"raw": "https://localhost:5001/Metadata/departments/11/procedureTypes",
 							"protocol": "https",
 							"host": [
 								"localhost"
@@ -1097,7 +1097,7 @@
 							"path": [
 								"Metadata",
 								"departments",
-								"departmentSample",
+								"11",
 								"procedureTypes"
 							]
 						}

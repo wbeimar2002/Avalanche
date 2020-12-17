@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Diagnostics.CodeAnalysis;
@@ -31,7 +32,7 @@ namespace Avalanche.Api.Controllers.V1
         [Consumes("multipart/form-data")]
         [RequestFormLimits(MultipartBodyLengthLimit = 209715200)]
         [RequestSizeLimit(209715200)]
-        public IActionResult Upload([FromForm(Name = "file")]IFormFile file, [FromServices]IHostingEnvironment env)
+        public IActionResult Upload([FromForm(Name = "file")]IFormFile file, [FromServices]IWebHostEnvironment env)
         {
             try
             {

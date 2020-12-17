@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Avalanche.Api.Services.Configuration;
 using Avalanche.Api.Services.Health;
+using Avalanche.Api.Services.Maintenance;
 using Avalanche.Api.Utilities;
 using Avalanche.Api.ViewModels;
 using Avalanche.Shared.Domain.Models;
@@ -53,15 +54,12 @@ namespace Avalanche.Api.Managers.Health
             newPatient.AccessInformation = _mapper.Map<AccessInfo>(accessInfo);
 
             var configurationContext = _mapper.Map<Avalanche.Shared.Domain.Models.User, ConfigurationContext>(user);
-            var setupSettings = await _settingsService.GetSetupSettingsAsync(configurationContext);
+            var setupSettings = await _settingsService.GetSetupSettings(configurationContext);
 
             //TODO: Pending facility
-            //TODO: Configurable in maintenance (on/off) - user logged in is auto-filled as physician when doing manual registration
-            //TODO: What about the procedure type and department. How this should be filled?
-            //TODO: What about facility
             if (newPatient.Physician == null)
             {
-                if (setupSettings.AutoFillPhysician)
+                if (setupSettings.Registration.Manual.AutoFillPhysician)
                 {
                     newPatient.Physician = new Physician()
                     {
@@ -88,15 +86,14 @@ namespace Avalanche.Api.Managers.Health
         public async Task<PatientViewModel> QuickPatientRegistration(Avalanche.Shared.Domain.Models.User user)
         {
             var configurationContext = _mapper.Map<Avalanche.Shared.Domain.Models.User, ConfigurationContext>(user);
-            var setupSettings = await _settingsService.GetSetupSettingsAsync(configurationContext);
-            string quickRegistrationDateFormat = setupSettings.QuickRegistrationDateFormat;
+            var setupSettings = await _settingsService.GetSetupSettings(configurationContext);
+            string quickRegistrationDateFormat = setupSettings.Registration.Quick.DateFormat;
             string formattedDate = DateTime.UtcNow.ToLocalTime().ToString(quickRegistrationDateFormat);
 
             //TODO: Pending facility
             //TODO: Pending check this default data
             var newPatient = new PatientViewModel()
             {
-                ScopeSerialNumber = "???", //TODO: How this is related to
                 MRN = $"{formattedDate}MRN",
                 DateOfBirth = DateTime.UtcNow.ToLocalTime(),
                 FirstName = $"{formattedDate}FirstName",
@@ -147,7 +144,7 @@ namespace Avalanche.Api.Managers.Health
             Preconditions.ThrowIfNull(nameof(existingPatient.ProcedureType.Name), existingPatient.ProcedureType.Name);
 
             var configurationContext = _mapper.Map<Avalanche.Shared.Domain.Models.User, ConfigurationContext>(user);
-            var setupSettings = await _settingsService.GetSetupSettingsAsync(configurationContext);
+            var setupSettings = await _settingsService.GetSetupSettings(configurationContext);
 
             var accessInfo = _accessInfoFactory.GenerateAccessInfo();
             existingPatient.AccessInformation = _mapper.Map<AccessInfo>(accessInfo);
@@ -230,6 +227,7 @@ namespace Avalanche.Api.Managers.Health
 
         private async Task CheckProcedureType(ProcedureType procedureType, Department department, SetupSettings setupSettings)
         {
+            //TODO: Validate department support
             var existingProcedureType = await _dataManagementService.GetProcedureType(new GetProcedureTypeRequest()
             {
                 ProcedureTypeId = Convert.ToInt32(procedureType.Id),

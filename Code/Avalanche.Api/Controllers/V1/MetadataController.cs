@@ -45,7 +45,7 @@ namespace Avalanche.Api.Controllers.V1
             {
                 _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
 
-                var result = await _metadataManager.GetMetadata(User.GetUser(), Shared.Domain.Enumerations.MetadataTypes.ContentTypes);
+                var result = await _metadataManager.GetMetadata(User.GetUser(), MetadataTypes.ContentTypes);
                 return Ok(result);
             }
             catch (Exception exception)
@@ -84,6 +84,81 @@ namespace Avalanche.Api.Controllers.V1
         }
 
         /// <summary>
+        /// Get content setup modes
+        /// </summary>
+        [HttpGet("setupModes")]
+        [Produces(typeof(List<KeyValuePairViewModel>))]
+        public async Task<IActionResult> GetSetupModes([FromServices] IWebHostEnvironment env)
+        {
+            try
+            {
+                _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
+
+                var result = await _metadataManager.GetMetadata(User.GetUser(), MetadataTypes.SetupModes);
+                return Ok(result);
+            }
+            catch (Exception exception)
+            {
+                _appLoggerService.LogError(LoggerHelper.GetLogMessage(DebugLogType.Exception), exception);
+                return new BadRequestObjectResult(exception.Get(env.IsDevelopment()));
+            }
+            finally
+            {
+                _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
+            }
+        }
+
+        /// <summary>
+        /// Get content routing modes
+        /// </summary>
+        [HttpGet("settingTypes")]
+        [Produces(typeof(List<KeyValuePairViewModel>))]
+        public async Task<IActionResult> GetSettingTypes([FromServices] IWebHostEnvironment env)
+        {
+            try
+            {
+                _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
+
+                var result = await _metadataManager.GetMetadata(User.GetUser(), MetadataTypes.SettingTypes);
+                return Ok(result);
+            }
+            catch (Exception exception)
+            {
+                _appLoggerService.LogError(LoggerHelper.GetLogMessage(DebugLogType.Exception), exception);
+                return new BadRequestObjectResult(exception.Get(env.IsDevelopment()));
+            }
+            finally
+            {
+                _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
+            }
+        }
+
+        /// <summary>
+        /// Get content search columns
+        /// </summary>
+        [HttpGet("searchColumns")]
+        [Produces(typeof(List<SourceKeyValuePairViewModel>))]
+        public async Task<IActionResult> GetSearchColumns([FromServices]IWebHostEnvironment env)
+        {
+            try
+            {
+                _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
+
+                var result = await _metadataManager.GetSource(User.GetUser(), MetadataTypes.SearchColumns);
+                return Ok(result);
+            }
+            catch (Exception exception)
+            {
+                _appLoggerService.LogError(LoggerHelper.GetLogMessage(DebugLogType.Exception), exception);
+                return new BadRequestObjectResult(exception.Get(env.IsDevelopment()));
+            }
+            finally
+            {
+                _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
+            }
+        }
+
+        /// <summary>
         /// Get content sexes
         /// </summary>
         [HttpGet("sexes")]
@@ -94,7 +169,7 @@ namespace Avalanche.Api.Controllers.V1
             {
                 _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
 
-                var result = await _metadataManager.GetMetadata(User.GetUser(), Shared.Domain.Enumerations.MetadataTypes.Sex);
+                var result = await _metadataManager.GetMetadata(User.GetUser(), MetadataTypes.Sex);
                 return Ok(result);
             }
             catch (Exception exception)
@@ -119,7 +194,7 @@ namespace Avalanche.Api.Controllers.V1
             {
                 _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
 
-                var result = await _metadataManager.GetMetadata(User.GetUser(), Shared.Domain.Enumerations.MetadataTypes.SourceTypes);
+                var result = await _metadataManager.GetMetadata(User.GetUser(), MetadataTypes.SourceTypes);
                 return Ok(result);
             }
             catch (Exception exception)
