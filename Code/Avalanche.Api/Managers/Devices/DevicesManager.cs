@@ -130,6 +130,8 @@ namespace Avalanche.Api.Managers.Devices
                     return await StartRecording(command);
                 case CommandTypes.StopRecording:
                     return await StopRecording(command);
+                case CommandTypes.CaptureImage:
+                    return await CaptureImage(command);
                 #endregion
 
                 default:

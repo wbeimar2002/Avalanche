@@ -54,5 +54,8 @@ namespace Avalanche.Shared.Infrastructure.Enumerations
         StartRecording = 40,
         [Description("Stop Recording")]
         StopRecording = 41,
+
+        [Description("Capture image")]
+        CaptureImage = 42,
     }
 }

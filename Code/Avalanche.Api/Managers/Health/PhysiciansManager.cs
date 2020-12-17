@@ -17,13 +17,11 @@ namespace Avalanche.Api.Managers.Health
     public class PhysiciansManager : IPhysiciansManager
     {
         readonly IStorageService _storageService;
-        readonly ISettingsService _settingsService;
         readonly IMapper _mapper;
 
-        public PhysiciansManager(IStorageService storageService, ISettingsService settingsService, IMapper mapper)
+        public PhysiciansManager(IStorageService storageService, IMapper mapper)
         {
             _storageService = storageService;
-            _settingsService = settingsService;
             _mapper = mapper;
         }
 

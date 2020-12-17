@@ -7,5 +7,7 @@ namespace Avalanche.Api.Services.Media
     {
         Task StartRecording(RecordMessage recordMessage);
         Task StopRecording();
+
+        Task CaptureImage(CaptureImageRequest imageMessage);
     }
 }

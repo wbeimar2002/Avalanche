@@ -1,7 +1,7 @@
 ﻿using Ism.Common.Core.Configuration.Models;
 using System.Threading.Tasks;
 
-namespace Avalanche.Api.Services.Configuration
+namespace Avalanche.Api.Services.Maintenance
 {
     public interface IStorageService
     {

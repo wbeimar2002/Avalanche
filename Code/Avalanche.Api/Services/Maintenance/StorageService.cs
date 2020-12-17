@@ -10,7 +10,7 @@ using System.IO;
 using System.Threading.Tasks;
 using static Ism.Storage.Core.Configuration.V1.Protos.ConfigurationService;
 
-namespace Avalanche.Api.Services.Configuration
+namespace Avalanche.Api.Services.Maintenance
 {
     [ExcludeFromCodeCoverage]
     public class StorageService : IStorageService
