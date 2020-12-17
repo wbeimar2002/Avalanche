@@ -29,31 +29,7 @@ namespace Avalanche.Api.Controllers.V1
         }
 
         /// <summary>
-        /// Send broadcast to Signal R using RabbitMQ
-        /// </summary>
-        [HttpPost("queued")]
-        public IActionResult SendQueuedMessage([FromBody]Ism.Broadcaster.Models.MessageRequest messageRequest, [FromServices]IWebHostEnvironment env)
-        {
-            try
-            {
-                _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
-                _notificationsManager.SendQueuedMessage(messageRequest);
-
-                return Accepted();
-            }
-            catch (Exception exception)
-            {
-                _appLoggerService.LogError(LoggerHelper.GetLogMessage(DebugLogType.Exception), exception);
-                return new BadRequestObjectResult(exception.Get(env.IsDevelopment()));
-            }
-            finally
-            {
-                _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
-            }
-        }
-
-        /// <summary>
-        /// Send broadcast to Signal R without RabbitMQ
+        /// Send broadcast to Signal R
         /// </summary>
         [HttpPost("direct")]
         public IActionResult SendDirectMessage([FromBody]Ism.Broadcaster.Models.MessageRequest messageRequest, [FromServices]IWebHostEnvironment env)

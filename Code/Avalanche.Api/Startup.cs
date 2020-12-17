@@ -16,8 +16,6 @@ using Avalanche.Api.Utilities;
 using Avalanche.Shared.Infrastructure.Models;
 using Avalanche.Shared.Infrastructure.Services.Settings;
 using Ism.Broadcaster.Services;
-using Ism.RabbitMq.Client;
-using Ism.RabbitMq.Client.Models;
 using Ism.Security.Grpc;
 using Ism.Security.Grpc.Interfaces;
 using Ism.SystemState.Client;
@@ -107,26 +105,6 @@ namespace Avalanche.Api
             services.AddSingleton<IAccessInfoFactory, AccessInfoFactory>();
 
             services.AddHostedService<NotificationsListener>();
-
-            //TODO: Check this. Should be env variables?
-            var hostName = configurationService.GetValue<string>("RabbitMqOptions:HostName");
-            var port = configurationService.GetValue<int>("RabbitMqOptions:Port");
-            var managementPort = configurationService.GetValue<int>("RabbitMqOptions:ManagementPort");
-            var userName = configurationService.GetValue<string>("RabbitMqOptions:UserName");
-            var password = configurationService.GetValue<string>("RabbitMqOptions:Password");
-            var queueName = configurationService.GetValue<string>("RabbitMqOptions:QueueName");
-
-            services.Configure<RabbitMqOptions>(options =>
-            {
-                options.HostName = hostName;
-                options.ManagementPort = managementPort;
-                options.UserName = userName;
-                options.Password = password;
-                options.QueueName = queueName;
-                options.Port = port;
-            });
-
-            services.AddSingleton<IRabbitMqClientService, RabbitMqClientService>();
 
             services.AddAutoMapper(typeof(Startup));
 

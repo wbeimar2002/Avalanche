@@ -71,41 +71,5 @@ namespace Avalanche.Api.Tests.Controllers
 
             Assert.IsInstanceOf<BadRequestObjectResult>(badResult);
         }
-
-        [Test]
-        public void SendQueuedMessageQueuedShouldReturnOkResult()
-        {
-            var message = new Ism.Broadcaster.Models.MessageRequest();
-            _notificationsManager.Setup(mock => mock.SendQueuedMessage(message));
-
-            var okResult = _controller.SendQueuedMessage(message, _environment.Object);
-
-            if (_checkLogger)
-            {
-                _appLoggerService.Verify(LogLevel.Error, $"Exception {_controller.GetType().Name}.SendQueuedMessage", Times.Never());
-                _appLoggerService.Verify(LogLevel.Debug, $"Requested {_controller.GetType().Name}.SendQueuedMessage", Times.Once());
-                _appLoggerService.Verify(LogLevel.Debug, $"Completed {_controller.GetType().Name}.SendQueuedMessage", Times.Once());
-            }
-
-            Assert.IsInstanceOf<AcceptedResult>(okResult);
-        }
-
-        [Test]
-        public void SendQueuedMessageQueuedShouldReturnBadResultIfFails()
-        {
-            _notificationsManager.Setup(mock => mock.SendQueuedMessage(It.IsAny<Ism.Broadcaster.Models.MessageRequest>())).Throws(It.IsAny<Exception>()); 
-
-            var message = new Ism.Broadcaster.Models.MessageRequest();
-            var badResult = _controller.SendQueuedMessage(message, _environment.Object);
-
-            if (_checkLogger)
-            {
-                _appLoggerService.Verify(LogLevel.Error, $"Exception {_controller.GetType().Name}.SendQueuedMessage", Times.Once());
-                _appLoggerService.Verify(LogLevel.Debug, $"Requested {_controller.GetType().Name}.SendQueuedMessage", Times.Once());
-                _appLoggerService.Verify(LogLevel.Debug, $"Completed {_controller.GetType().Name}.SendQueuedMessage", Times.Once());
-            }
-
-            Assert.IsInstanceOf<BadRequestObjectResult>(badResult);
-        }
     }
 }

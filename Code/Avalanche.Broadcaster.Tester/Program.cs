@@ -41,11 +41,6 @@ namespace Ism.Broadcaster.Tester
 
             SendDirectMessage(client);
 
-            Console.WriteLine("Press [enter] to send the queued  test message.");
-            Console.ReadLine();
-
-            SendQueuedMessage(client);
-
             Console.WriteLine("Press [enter] to exit.");
             Console.ReadLine();
         }
@@ -56,16 +51,6 @@ namespace Ism.Broadcaster.Tester
             await client.Send(new Uri(url), new Models.MessageRequest()
             { 
                 Content = $"Testing Direct Message {DateTime.Now}",
-                EventName = "TestingEvent"
-            });
-        }
-
-        private static async void SendQueuedMessage(BroadcasterClientService client)
-        {
-            var url = "https://localhost:5001/Notifications/queued";
-            await client.Send(new Uri(url), new Models.MessageRequest()
-            {
-                Content = $"Testing Queued Message {DateTime.Now}",
                 EventName = "TestingEvent"
             });
         }
