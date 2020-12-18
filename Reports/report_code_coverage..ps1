@@ -1,7 +1,10 @@
-$repo="avlanche-storage"
+$repo="avalanche-api"
 $homepath=$env:HOMEPATH
-$report_path="$homepath\$repo\codecoverage\"
-$targetdir="$homepath\$report_path\coveragereport"
+#$report_path="$homepath\$repo\codecoverage\"
+#$targetdir="$homepath\$report_path\coveragereport"
+
+$report_path="$homepath\$repo\codecoverage\report"
+$targetdir="$homepath\$repo\codecoverage\target"
 
 Remove-Item $report_path -Recurse
 Remove-Item $targetdir -Recurse
