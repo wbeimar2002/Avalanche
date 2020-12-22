@@ -6,7 +6,7 @@ using System.Text;
 
 namespace Avalanche.Shared.Infrastructure.Models
 {
-    public class RoutingSettings
+    public class SurgerySettings
     {
         [JsonProperty("Mode")]
         public RoutingModes Mode { get; set; }
