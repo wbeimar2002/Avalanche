@@ -60,6 +60,9 @@ namespace Avalanche.Api.MappingConfigurations
                     dest.Id,
                     opt => opt.MapFrom(src => src.Id))
                 .ForMember(dest =>
+                    dest.HasSignal,
+                    opt => opt.Ignore())
+                .ForMember(dest =>
                     dest.InternalIndex,
                     opt => opt.MapFrom(src => src.InternalIndex))
                 .ForMember(dest =>
@@ -116,6 +119,9 @@ namespace Avalanche.Api.MappingConfigurations
                 .ReverseMap();
 
             CreateMap<Ism.Routing.V1.Protos.VideoSourceMessage, Source>()
+                .ForMember(dest =>
+                    dest.HasSignal,
+                    opt => opt.Ignore())
                 .ForMember(dest =>
                     dest.Id,
                     opt => opt.MapFrom(src => src.Source.Alias))

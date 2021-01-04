@@ -105,6 +105,9 @@ namespace Avalanche.Api.MappingConfigurations
                     dest.Name,
                     opt => opt.MapFrom(src => src.StreamName))
                 .ForMember(dest =>
+                    dest.IsVisible,
+                    opt => opt.MapFrom(src => true))
+                .ForMember(dest =>
                     dest.PositionInScreen,
                     opt => opt.MapFrom(src => 0))
                 .ForMember(dest =>

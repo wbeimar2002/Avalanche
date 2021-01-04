@@ -33,7 +33,7 @@ namespace Avalanche.Api.Tests.MappingConfigurations
         }
 
         [Test]
-        public void VideoRotingMappingConfigurations_IsValid()
+        public void VideoRoutingMappingConfigurations_IsValid()
         {
             AssertProfileIsValid<RoutingMappingConfigurations>();
         }
