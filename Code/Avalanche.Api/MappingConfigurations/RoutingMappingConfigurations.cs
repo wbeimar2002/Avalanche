@@ -51,9 +51,6 @@ namespace Avalanche.Api.MappingConfigurations
                     dest.InternalIndex,
                     opt => opt.MapFrom(src => src.InternalIndex))
                 .ForMember(dest =>
-                    dest.IsActive,
-                    opt => opt.MapFrom(src => src.IsActive))
-                .ForMember(dest =>
                     dest.Thumbnail,
                     opt => opt.Ignore())
                 .ReverseMap();
@@ -68,9 +65,6 @@ namespace Avalanche.Api.MappingConfigurations
                 .ForMember(dest =>
                     dest.Output,
                     opt => opt.Ignore())
-                .ForMember(dest =>
-                    dest.IsActive,
-                    opt => opt.MapFrom(src => src.IsActive))
                 .ForMember(dest =>
                     dest.IsDynamic,
                     opt => opt.Ignore())
@@ -135,7 +129,7 @@ namespace Avalanche.Api.MappingConfigurations
                     dest.PositionInScreen,
                     opt => opt.MapFrom(src => src.ButtonIndex))
                 .ForMember(dest =>
-                    dest.IsActive,
+                    dest.IsVisible,
                     opt => opt.MapFrom(src => src.ShowInUi))
                 .ForMember(dest =>
                     dest.IsDynamic,
@@ -165,7 +159,7 @@ namespace Avalanche.Api.MappingConfigurations
                     dest.Type,
                     opt => opt.MapFrom(src => src.VideoSinkType))
                 .ForMember(dest =>
-                    dest.IsActive,
+                    dest.IsVisible,
                     opt => opt.MapFrom(src => src.ShowInUi))
                 .ForMember(dest =>
                     dest.Thumbnail,

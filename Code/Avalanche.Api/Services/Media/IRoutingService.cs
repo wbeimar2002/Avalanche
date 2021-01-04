@@ -12,5 +12,6 @@ namespace Avalanche.Api.Services.Media
         Task EnterFullScreen(Ism.Routing.V1.Protos.EnterFullScreenRequest enterFullScreenRequest);
         Task ExitFullScreen(Ism.Routing.V1.Protos.ExitFullScreenRequest exitFullScreenRequest);
         Task RouteVideo(Ism.Routing.V1.Protos.RouteVideoRequest routeVideoRequest);
+        Task<Ism.Routing.V1.Protos.GetVideoStateForAllSourcesResponse> GetVideoStateForAllSources();
     }
 }

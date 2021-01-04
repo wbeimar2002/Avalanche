@@ -10,7 +10,8 @@ namespace Avalanche.Shared.Domain.Models
     {
         public string Id { get; set; }
         public string Name { get; set; }
-        public bool IsActive { get; set; }
+        public bool IsVisible { get; set; }
+        public bool? HasSignal { get; set; }
         public int PositionInScreen { get; set; }
         public int InternalIndex { get; set; }
         public string Type { get; set; }
