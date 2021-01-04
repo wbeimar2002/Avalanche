@@ -103,8 +103,8 @@ namespace Avalanche.Api.Managers.Maintenance
                     return ChangeType<T>(await _settingsService.GetPgsSettings(configurationContext));
                 case "TimeoutSettings":
                     return ChangeType<T>(await _settingsService.GetTimeoutSettings(configurationContext));
-                case "RoutingSettings":
-                    return ChangeType<T>(await _settingsService.GetRoutingSettings(configurationContext));
+                case "SurgerySettings":
+                    return ChangeType<T>(await _settingsService.GetSurgerySettings(configurationContext));
                 case "SetupSettings":
                     return ChangeType<T>(await _settingsService.GetSetupSettings(configurationContext));
                 default:

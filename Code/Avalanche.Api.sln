@@ -21,8 +21,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{907645CA
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Shared", "Shared", "{C0B1EA2E-9724-4020-A2B1-5653D739E661}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Testers", "Testers", "{84FE2287-8F84-4EC4-8F7C-24F3A98F1ED6}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Avalanche.Security.Server.Tests", "Avalanche.Security.Server.Tests\Avalanche.Security.Server.Tests.csproj", "{E99E1EB2-5D99-48A4-8009-6AC06963479F}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{694C7231-4426-427B-A66E-FCBF2959A040}"

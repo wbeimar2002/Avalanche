@@ -8,6 +8,7 @@ namespace Avalanche.Shared.Domain.Models
     public class Source : Device
     {
         public Output Output { get; set; }
+        public bool? HasSignal { get; set; }
         public bool IsDynamic { get; set; }
     }
 }

@@ -146,7 +146,6 @@ namespace Avalanche.Api.Managers.Devices
             outputs.Add(new Output()
             {
                 Id = Guid.NewGuid().ToString(),
-                IsActive = true,
                 Name = "MAIN TV 1",
                 Thumbnail = "https://www.olympus-oste.eu/media/innovations/images_5/2n_research_and_development/entwicklung_produktinnovationen_intro.jpg"
             });
@@ -154,7 +153,6 @@ namespace Avalanche.Api.Managers.Devices
             outputs.Add(new Output()
             {
                 Id = Guid.NewGuid().ToString(),
-                IsActive = false,
                 Name = "MAIN TV 2",
                 Thumbnail = "https://www.olympus-oste.eu/media/innovations/images_5/2n_research_and_development/entwicklung_produktinnovationen_intro.jpg"
             });
@@ -162,7 +160,6 @@ namespace Avalanche.Api.Managers.Devices
             outputs.Add(new Output()
             {
                 Id = Guid.NewGuid().ToString(),
-                IsActive = true,
                 Name = "AUX TV 1",
                 Thumbnail = "https://www.olympus-oste.eu/media/innovations/images_5/2n_research_and_development/entwicklung_produktinnovationen_systemintegration_6.jpg"
             });
@@ -170,7 +167,6 @@ namespace Avalanche.Api.Managers.Devices
             outputs.Add(new Output()
             {
                 Id = Guid.NewGuid().ToString(),
-                IsActive = false,
                 Name = "MAIN TV 2",
                 Thumbnail = "https://www.olympus-oste.eu/media/innovations/images_5/2n_research_and_development/entwicklung_produktinnovationen_systemintegration_6.jpg"
             });
@@ -184,21 +180,18 @@ namespace Avalanche.Api.Managers.Devices
             outputs.Add(new Output()
             {
                 Id = Guid.NewGuid().ToString(),
-                IsActive = true,
                 Name = "Charting System",
             });
 
             outputs.Add(new Output()
             {
                 Id = Guid.NewGuid().ToString(),
-                IsActive = true,
                 Name = "Nurse PC",
             });
 
             outputs.Add(new Output()
             {
                 Id = Guid.NewGuid().ToString(),
-                IsActive = true,
                 Name = "Phys. PC",
             });
 
@@ -209,6 +202,7 @@ namespace Avalanche.Api.Managers.Devices
         {
             var sources = await _routingService.GetVideoSources();
             var currentRoutes = await _routingService.GetCurrentRoutes();
+            var states = await _routingService.GetVideoStateForAllSources();
 
             IList<Source> listResult = _mapper.Map<IList<Ism.Routing.V1.Protos.VideoSourceMessage>, IList<Source>>(sources.VideoSources);
 
@@ -216,7 +210,11 @@ namespace Avalanche.Api.Managers.Devices
             {
                 var source = listResult.Where(s => s.Id.Equals(item.Source.Alias) && s.InternalIndex.Equals(item.Source.Index)).FirstOrDefault();
                 if (source != null)
+                {
+                    var state = states.SourceStates.Where(s => s.Source.Alias.Equals(item.Source.Alias) && s.Source.Index.Equals(item.Source.Index)).FirstOrDefault();
+
                     source.Output = _mapper.Map<Ism.Routing.V1.Protos.AliasIndexMessage, Output>(item.Sink);
+                    source.HasSignal = state?.HasVideo;                }
             }
 
             return listResult;

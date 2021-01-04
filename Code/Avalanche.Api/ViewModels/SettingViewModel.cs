@@ -9,7 +9,7 @@ namespace Avalanche.Api.ViewModels
     public class SettingViewModel
     {
         public string LabelTranslationKey { get; set; }
-        public string Description { get; set; }
+        public string DescriptionTranslationKey { get; set; }
         public string Format { get; set; }
         public string PlaceHolder { get; set; }
         public string Icon { get; set; }

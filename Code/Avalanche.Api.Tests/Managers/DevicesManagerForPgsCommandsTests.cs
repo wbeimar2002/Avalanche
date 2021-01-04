@@ -73,7 +73,7 @@ namespace Avalanche.Api.Tests.Managers
                 CommandType = CommandTypes.PgsPlayVideo,
                 Message = "SampleMessage",
                 Type = "OfferType",
-                Devices = new List<Device>() { new Device() { Id = "Preview", Name = string.Empty, Type = string.Empty, IsActive = true } },
+                Devices = new List<Device>() { new Device() { Id = "Preview", Name = string.Empty, Type = string.Empty } },
                 Destinations = new List<Device>(),
                 AdditionalInfo = Guid.NewGuid().ToString()
             };
@@ -105,7 +105,7 @@ namespace Avalanche.Api.Tests.Managers
                 CommandType = CommandTypes.PgsStopVideo,
                 Message = "SampleMessage",
                 Type = "OfferType",
-                Devices = new List<Device>() { new Device() { Id = "Preview", Name = string.Empty, Type = string.Empty, IsActive = true } },
+                Devices = new List<Device>() { new Device() { Id = "Preview", Name = string.Empty, Type = string.Empty } },
                 Destinations = new List<Device>(),
                 AdditionalInfo = Guid.NewGuid().ToString()
             };
@@ -130,7 +130,7 @@ namespace Avalanche.Api.Tests.Managers
                 CommandType = CommandTypes.PgsHandleMessageForVideo,
                 Message = "SampleMessage",
                 Type = "OfferType",
-                Devices = new List<Device>() { new Device() { Id = "Preview", Name = string.Empty, Type = string.Empty, IsActive = true } },
+                Devices = new List<Device>() { new Device() { Id = "Preview", Name = string.Empty, Type = string.Empty } },
                 Destinations = new List<Device>(),
                 AdditionalInfo = Guid.NewGuid().ToString()
             };

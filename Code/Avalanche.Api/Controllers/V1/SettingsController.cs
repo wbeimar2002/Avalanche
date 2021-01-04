@@ -107,14 +107,14 @@ namespace Avalanche.Api.Controllers.V1
         /// <summary>
         /// Return the timeout settings
         /// </summary>
-        [HttpGet("routing")]
-        [Produces(typeof(RoutingSettings))]
-        public async Task<IActionResult> GetRoutingSettings([FromServices] IWebHostEnvironment env)
+        [HttpGet("surgery")]
+        [Produces(typeof(SurgerySettings))]
+        public async Task<IActionResult> GetSurgerySettings([FromServices] IWebHostEnvironment env)
         {
             try
             {
                 _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
-                var response = await _maintenanceManager.GetSettings<RoutingSettings>("RoutingSettings", User.GetUser());
+                var response = await _maintenanceManager.GetSettings<SurgerySettings>("SurgerySettings", User.GetUser());
                 return Ok(response);
             }
             catch (Exception exception)

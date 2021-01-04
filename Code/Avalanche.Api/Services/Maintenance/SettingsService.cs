@@ -62,13 +62,13 @@ namespace Avalanche.Api.Services.Maintenance
             };
         }
 
-        public async Task<RoutingSettings> GetRoutingSettings(ConfigurationContext context)
+        public async Task<SurgerySettings> GetSurgerySettings(ConfigurationContext context)
         {
-            var section = await _storageService.GetJson<SectionReadOnlyViewModel>("RoutingSettings", 1, context);
+            var section = await _storageService.GetJson<SectionReadOnlyViewModel>("SurgerySettings", 1, context);
 
-            return new RoutingSettings()
+            return new SurgerySettings()
             {
-                Mode = (Shared.Domain.Enumerations.RoutingModes)Convert.ToInt32(GetSetting(section, "Mode")?.Value)
+                Mode = (Shared.Domain.Enumerations.RoutingModes)Convert.ToInt32(GetSettingBySection(section, "Routing", "Mode")?.Value)
             };
         }
 

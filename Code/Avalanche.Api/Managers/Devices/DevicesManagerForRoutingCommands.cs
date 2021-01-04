@@ -60,7 +60,7 @@ namespace Avalanche.Api.Managers.Devices
         private async Task<CommandResponse> ShowVideoRoutingPreview(Command command)
         {
             var configurationContext = _mapper.Map<Avalanche.Shared.Domain.Models.User, ConfigurationContext>(command.User);
-            var config = await _settingsService.GetRoutingSettings(configurationContext);
+            var config = await _settingsService.GetSurgerySettings(configurationContext);
 
             var region = JsonConvert.DeserializeObject<Region>(command.AdditionalInfo);
 

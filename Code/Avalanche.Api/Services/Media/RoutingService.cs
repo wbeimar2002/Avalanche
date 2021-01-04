@@ -43,6 +43,11 @@ namespace Avalanche.Api.Services.Media
             return await RoutingClient.GetVideoStateForSource(getVideoStateForSourceRequest);
         }
 
+        public async Task<Ism.Routing.V1.Protos.GetVideoStateForAllSourcesResponse> GetVideoStateForAllSources()
+        {
+            return await RoutingClient.GetVideoStateForAllSources();
+        }
+
         public async Task EnterFullScreen(Ism.Routing.V1.Protos.EnterFullScreenRequest enterFullScreenRequest)
         {
             await RoutingClient.EnterFullScreen(enterFullScreenRequest);

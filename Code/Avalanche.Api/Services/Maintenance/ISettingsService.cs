@@ -8,7 +8,7 @@ namespace Avalanche.Api.Services.Maintenance
     {
         Task<TimeoutSettings> GetTimeoutSettings(ConfigurationContext context);
         Task<SetupSettings> GetSetupSettings(ConfigurationContext context);
-        Task<RoutingSettings> GetRoutingSettings(ConfigurationContext context);
+        Task<SurgerySettings> GetSurgerySettings(ConfigurationContext context);
         Task<PgsSettings> GetPgsSettings(ConfigurationContext context);
     }
 }
