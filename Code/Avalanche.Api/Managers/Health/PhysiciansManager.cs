@@ -28,7 +28,7 @@ namespace Avalanche.Api.Managers.Health
         public async Task<PhysiciansViewModel> GetTemporaryPhysiciansSource(Avalanche.Shared.Domain.Models.User user)
         {
             var configurationContext = _mapper.Map<Avalanche.Shared.Domain.Models.User, ConfigurationContext>(user);
-            return await _storageService.GetJson<PhysiciansViewModel>("Physicians", 1, configurationContext);
+            return await _storageService.GetJsonObject<PhysiciansViewModel>("Physicians", 1, configurationContext);
         }
 
         public Task<List<Physician>> GetAllPhysicians()

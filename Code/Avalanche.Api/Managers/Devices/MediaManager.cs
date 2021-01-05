@@ -14,15 +14,12 @@ namespace Avalanche.Api.Managers.Devices
     [ExcludeFromCodeCoverage]
     public class MediaManager : IMediaManager
     {
-        readonly ISettingsService _settingsService;
         readonly IMediaService _mediaService;
         readonly IMapper _mapper;
 
-        public MediaManager(ISettingsService settingsService, 
-            IMediaService mediaService,
+        public MediaManager(IMediaService mediaService,
             IMapper mapper)
         {
-            _settingsService = settingsService;
             _mediaService = mediaService;
             _mapper = mapper;
         }

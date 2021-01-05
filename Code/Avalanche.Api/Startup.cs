@@ -84,7 +84,6 @@ namespace Avalanche.Api
             services.AddSingleton<IDevicesManager, DevicesManager>();
             services.AddSingleton<IMediaManager, MediaManager>();
             services.AddSingleton<IPieService, PieService>();
-            services.AddSingleton<ISettingsService, SettingsService>();
             services.AddSingleton<IBroadcastService, BroadcastService>();
             services.AddSingleton<INotificationsManager, NotificationsManager>();
             services.AddSingleton<IRoutingService, RoutingService>();

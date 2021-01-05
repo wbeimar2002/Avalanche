@@ -31,6 +31,11 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Remove="Services\Maintenance\ISettingsService.cs" />
+    <Compile Remove="Services\Maintenance\SettingsService.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="AutoFixture" Version="4.13.0" />
     <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="8.0.1" />
     <PackageReference Include="AvidisDeviceInterface.Client" Version="1.0.0-prerelease0002" />

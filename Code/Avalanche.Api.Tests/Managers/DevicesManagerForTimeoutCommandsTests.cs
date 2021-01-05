@@ -49,12 +49,12 @@ namespace Avalanche.Api.Tests.Managers
                 Devices = new List<Device>() { new Device() { Id = "Timeout" } }
             };
 
-            PgsSettings pgsSettings = new PgsSettings()
+            var pgsSettings = new 
             {
                 PgsVideoAlwaysOn = true
             };
 
-            _settingsService.Setup(mock => mock.GetPgsSettings(It.IsAny<ConfigurationContext>())).ReturnsAsync(pgsSettings);
+            _storageService.Setup(mock => mock.GetJsonDynamic("PgsSettings", 1, It.IsAny<ConfigurationContext>())).ReturnsAsync(pgsSettings);
 
             var commandResponse = _manager.SendCommand(commandViewModel);
 
@@ -72,12 +72,12 @@ namespace Avalanche.Api.Tests.Managers
                 Devices = new List<Device>() { new Device() { Id = "Timeout" } }
             };
 
-            PgsSettings pgsSettings = new PgsSettings()
+            var pgsSettings = new 
             {
                 PgsVideoAlwaysOn = false
             };
 
-            _settingsService.Setup(mock => mock.GetPgsSettings(It.IsAny<ConfigurationContext>())).ReturnsAsync(pgsSettings);
+            _storageService.Setup(mock => mock.GetJsonDynamic("PgsSettings", 1, It.IsAny<ConfigurationContext>())).ReturnsAsync(pgsSettings);
 
             var commandResponse = _manager.SendCommand(commandViewModel);
 

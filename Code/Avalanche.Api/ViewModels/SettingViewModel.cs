@@ -1,5 +1,6 @@
 ﻿using Avalanche.Shared.Domain.Enumerations;
 using Avalanche.Shared.Infrastructure.Enumerations;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -16,7 +17,6 @@ namespace Avalanche.Api.ViewModels
         public int MaxValue { get; set; }
         public int MinValue { get; set; }
         public int Steps { get; set; }
-        public string Value { get; set; }
         public string DefaultValue { get; set; }
         public bool ReadOnly { get; set; }
         public bool Required { get; set; }
@@ -28,5 +28,20 @@ namespace Avalanche.Api.ViewModels
         public VisualStyles SourceVisualStyle { get; set; }
         public List<SourceKeyValuePairViewModel> SourceValues { get; set; }
         public List<DependencySettingViewModel> Dependencies { get; set; }
+
+
+        [JsonProperty(nameof(Value))]
+        public string ValueSetter { set { _value = value; } }
+
+        [JsonIgnore]
+        private string _value;
+
+        [JsonIgnore]
+        public string Value
+        {
+            get { return this._value; }
+            set { this._value = value; }
+        }
+
     }
 }

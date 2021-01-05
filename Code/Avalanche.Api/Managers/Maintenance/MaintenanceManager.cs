@@ -1,12 +1,13 @@
 ﻿using AutoMapper;
+using Avalanche.Api.Helpers;
 using Avalanche.Api.Managers.Metadata;
-using Avalanche.Api.Services.Configuration;
 using Avalanche.Api.Services.Maintenance;
 using Avalanche.Api.ViewModels;
 using Avalanche.Shared.Domain.Models;
 using Avalanche.Shared.Infrastructure.Enumerations;
 using Ism.Common.Core.Configuration.Models;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -17,15 +18,13 @@ namespace Avalanche.Api.Managers.Maintenance
     {
         readonly IStorageService _storageService;
         readonly IMetadataManager _metadataManager;
-        readonly ISettingsService _settingsService;
         readonly IMapper _mapper;
 
         private List<KeyValuePairViewModel> _types;
 
-        public MaintenanceManager(IStorageService storageService, ISettingsService settingsService, IMetadataManager metadataManager, IMapper mapper)
+        public MaintenanceManager(IStorageService storageService, IMetadataManager metadataManager, IMapper mapper)
         {
             _storageService = storageService;
-            _settingsService = settingsService;
             _metadataManager = metadataManager;
             _mapper = mapper;
         }
@@ -45,36 +44,40 @@ namespace Avalanche.Api.Managers.Maintenance
                 }
             }
 
-            await _storageService.SaveJson(category.JsonKey, JsonConvert.SerializeObject(category), 1, configurationContext);
+            string result = SettingsHelper.GetJsonValues(category);
+            await _storageService.SaveJson(category.JsonKey + "Values", result, 1, configurationContext);
         }
 
-        public async Task<SectionReadOnlyViewModel> GetCategoryByKeyReadOnly(Avalanche.Shared.Domain.Models.User user, string key)
+        public async Task<SectionViewModel> GetCategoryByKey(User user, string key)
         {
-            var configurationContext = _mapper.Map<Shared.Domain.Models.User, ConfigurationContext>(user);
-            configurationContext.IdnId = new Guid().ToString();
-            return await _storageService.GetJson<SectionReadOnlyViewModel>(key, 1, configurationContext);
-        }
+            var configurationContext = _mapper.Map<User, ConfigurationContext>(user);
+            var category = await _storageService.GetJsonObject<SectionViewModel>(key, 1, configurationContext);
+            var settingValues = await _storageService.GetJsonDynamic(key + "Values", 1, configurationContext);
 
-        public async Task<SectionViewModel> GetCategoryByKey(Shared.Domain.Models.User user, string key)
-        {
-            var configurationContext = _mapper.Map<Shared.Domain.Models.User, ConfigurationContext>(user);
-            var category = await _storageService.GetJson<SectionViewModel>(key, 1, configurationContext);
-
-            if (_types == null)
-                _types = await _metadataManager.GetMetadata(user, MetadataTypes.SettingTypes);
+            _types = await _metadataManager.GetMetadata(user, MetadataTypes.SettingTypes);
 
             await SetSources(configurationContext, category);
+            SettingsHelper.SetSettingValues(category, settingValues);
 
             if (category.Sections != null)
             {
                 foreach (var section in category.Sections)
                 {
+                    var sectionValues = settingValues == null ? null : settingValues[section.JsonKey];
+
                     await SetSources(configurationContext, section);
+                    SettingsHelper.SetSettingValues(section, sectionValues);
                 }
             }
 
             category.JsonKey = key;
             return category;
+        }
+
+        public async Task<JObject> GetSettingValues(string key, User user)
+        {
+            var configurationContext = _mapper.Map<Shared.Domain.Models.User, ConfigurationContext>(user);
+            return await _storageService.GetJsonDynamic(key, 1, configurationContext);
         }
 
         private async Task SetSources(ConfigurationContext configurationContext, SectionViewModel category)
@@ -85,7 +88,7 @@ namespace Avalanche.Api.Managers.Maintenance
                 {
                     if (!string.IsNullOrEmpty(item.SourceKey))
                     {
-                        item.SourceValues = (await _storageService.GetJson<SourceListContainerViewModel>(item.SourceKey, 1, configurationContext)).Items;
+                        item.SourceValues = (await _storageService.GetJsonObject<SourceListContainerViewModel>(item.SourceKey, 1, configurationContext)).Items;
                         
                         if (_types != null)
                             item.SourceValues.ForEach(s => s.Types = _types);
@@ -93,36 +96,12 @@ namespace Avalanche.Api.Managers.Maintenance
                 }
             }
         }
-        public async Task<T> GetSettings<T>(string key, User user)
-        {
-            var configurationContext = _mapper.Map<Shared.Domain.Models.User, ConfigurationContext>(user);
 
-            switch (key)
+        private async Task SaveAndCleanSources(ConfigurationContext configurationContext, SectionViewModel section)
+        {
+            if (section.Settings != null)
             {
-                case "PgsSettings":
-                    return ChangeType<T>(await _settingsService.GetPgsSettings(configurationContext));
-                case "TimeoutSettings":
-                    return ChangeType<T>(await _settingsService.GetTimeoutSettings(configurationContext));
-                case "SurgerySettings":
-                    return ChangeType<T>(await _settingsService.GetSurgerySettings(configurationContext));
-                case "SetupSettings":
-                    return ChangeType<T>(await _settingsService.GetSetupSettings(configurationContext));
-                default:
-                    return default(T);
-            }
-        }
-
-        private T ChangeType<T>(object o)
-        {
-            Type conversionType = Nullable.GetUnderlyingType(typeof(T)) ?? typeof(T);
-            return (T)Convert.ChangeType(o, conversionType);
-        }
-
-        private async Task SaveAndCleanSources(ConfigurationContext configurationContext, SectionViewModel category)
-        {
-            if (category.Settings != null)
-            {
-                foreach (var item in category.Settings)
+                foreach (var item in section.Settings)
                 {
                     if (!string.IsNullOrEmpty(item.SourceKey))
                     {

@@ -4,6 +4,7 @@ using Ism.Common.Core.Configuration.Models;
 using Ism.Security.Grpc.Interfaces;
 using Ism.Storage.Configuration.Client.V1;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
@@ -16,6 +17,7 @@ namespace Avalanche.Api.Services.Maintenance
     public class StorageService : IStorageService
     {
         readonly IConfigurationService _configurationService;
+        const string _siteId = "Avalanche"; //Temporary hardcoded
 
         ConfigurationServiceSecureClient ConfigurationStorageService { get; set; }
 
@@ -29,17 +31,24 @@ namespace Avalanche.Api.Services.Maintenance
             ConfigurationStorageService = new ConfigurationServiceSecureClient(grpcClientFactory, hostIpAddress, storageServiceGrpcPort, certificateProvider);
         }
 
-        public async Task<T> GetJson<T>(string configurationKey, int version, ConfigurationContext context)
+        public async Task<T> GetJsonObject<T>(string configurationKey, int version, ConfigurationContext context)
         {
-            context.SiteId = "Avalanche";
+            context.SiteId = _siteId;
             var actionResponse = await ConfigurationStorageService.GetConfiguration(configurationKey, Convert.ToUInt32(version), context);
             return actionResponse.Get<T>();
+        }
+
+        public async Task<dynamic> GetJsonDynamic(string configurationKey, int version, ConfigurationContext context)
+        {
+            context.SiteId = _siteId;
+            var json = await ConfigurationStorageService.GetConfiguration(configurationKey, Convert.ToUInt32(version), context);
+            return json == null ? null : JObject.Parse(json);
         }
 
         public async Task SaveJson(string configurationKey, string json, int version, ConfigurationContext context)
         {
             var kind = await ConfigurationStorageService.GetConfigurationKinds();
-            var kindId = "Avalanche"; //Temporary hardcoded
+            var kindId = _siteId; 
             await ConfigurationStorageService.SaveConfiguration(configurationKey, Convert.ToUInt32(version), json, "Site", kindId);
         }
     }

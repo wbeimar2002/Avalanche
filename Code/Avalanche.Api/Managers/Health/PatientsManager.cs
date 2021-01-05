@@ -21,19 +21,19 @@ namespace Avalanche.Api.Managers.Health
     public class PatientsManager : IPatientsManager
     {
         readonly IPieService _pieService;
-        readonly ISettingsService _settingsService;
         readonly IAccessInfoFactory _accessInfoFactory;
+        readonly IStorageService _storageService;
         readonly IMapper _mapper;
         readonly IDataManagementService _dataManagementService;
 
         public PatientsManager(IPieService pieService, 
-            ISettingsService settingsService, 
-            IAccessInfoFactory accessInfoFactory, 
+            IAccessInfoFactory accessInfoFactory,
+            IStorageService storageService,
             IMapper mapper, 
             IDataManagementService dataManagementService)
         {
             _pieService = pieService;
-            _settingsService = settingsService;
+            _storageService = storageService;
             _accessInfoFactory = accessInfoFactory;
             _dataManagementService = dataManagementService;
             _mapper = mapper;
@@ -54,7 +54,7 @@ namespace Avalanche.Api.Managers.Health
             newPatient.AccessInformation = _mapper.Map<AccessInfo>(accessInfo);
 
             var configurationContext = _mapper.Map<Avalanche.Shared.Domain.Models.User, ConfigurationContext>(user);
-            var setupSettings = await _settingsService.GetSetupSettings(configurationContext);
+            var setupSettings = await _storageService.GetJsonDynamic("SetupSettings", 1, configurationContext);
 
             //TODO: Pending facility
             if (newPatient.Physician == null)
@@ -86,7 +86,7 @@ namespace Avalanche.Api.Managers.Health
         public async Task<PatientViewModel> QuickPatientRegistration(Avalanche.Shared.Domain.Models.User user)
         {
             var configurationContext = _mapper.Map<Avalanche.Shared.Domain.Models.User, ConfigurationContext>(user);
-            var setupSettings = await _settingsService.GetSetupSettings(configurationContext);
+            var setupSettings = await _storageService.GetJsonDynamic("SetupSettings", 1, configurationContext);
             string quickRegistrationDateFormat = setupSettings.Registration.Quick.DateFormat;
             string formattedDate = DateTime.UtcNow.ToLocalTime().ToString(quickRegistrationDateFormat);
 
@@ -144,7 +144,7 @@ namespace Avalanche.Api.Managers.Health
             Preconditions.ThrowIfNull(nameof(existingPatient.ProcedureType.Name), existingPatient.ProcedureType.Name);
 
             var configurationContext = _mapper.Map<Avalanche.Shared.Domain.Models.User, ConfigurationContext>(user);
-            var setupSettings = await _settingsService.GetSetupSettings(configurationContext);
+            var setupSettings = await _storageService.GetJsonDynamic("SetupSettings", 1, configurationContext);
 
             var accessInfo = _accessInfoFactory.GenerateAccessInfo();
             existingPatient.AccessInformation = _mapper.Map<AccessInfo>(accessInfo);
@@ -225,7 +225,7 @@ namespace Avalanche.Api.Managers.Health
 
         }
 
-        private async Task CheckProcedureType(ProcedureType procedureType, Department department, SetupSettings setupSettings)
+        private async Task CheckProcedureType(ProcedureType procedureType, Department department, dynamic setupSettings)
         {
             //TODO: Validate department support
             var existingProcedureType = await _dataManagementService.GetProcedureType(new GetProcedureTypeRequest()

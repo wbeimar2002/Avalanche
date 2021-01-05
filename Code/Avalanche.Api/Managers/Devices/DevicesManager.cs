@@ -23,27 +23,27 @@ namespace Avalanche.Api.Managers.Devices
         readonly IAvidisService _avidisService;
         readonly IRecorderService _recorderService;
         readonly IMediaService _mediaService;
-        readonly ISettingsService _settingsService;
         readonly IRoutingService _routingService;
         readonly ILogger<MediaManager> _appLoggerService;
         readonly IMapper _mapper;
         readonly IAccessInfoFactory _accessInfoFactory;
         readonly IHttpContextAccessor _httpContextAccessor;
+        readonly IStorageService _storageService;
 
         public DevicesManager(IMediaService mediaService,
-            ISettingsService settingsService,
             IRoutingService routingService,
             ILogger<MediaManager> appLoggerService,
             IAvidisService avidisService,
             IRecorderService recorderService,
             IAccessInfoFactory accessInfoFactory,
             IMapper mapper,
-            IHttpContextAccessor httpContextAccessor)
+            IHttpContextAccessor httpContextAccessor,
+            IStorageService storageService)
         {
+            _storageService = storageService;
             _recorderService = recorderService;
             _avidisService = avidisService;
             _mediaService = mediaService;
-            _settingsService = settingsService;
             _routingService = routingService;
             _appLoggerService = appLoggerService;
             _accessInfoFactory = accessInfoFactory;
