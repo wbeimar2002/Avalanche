@@ -103,6 +103,10 @@ stages:
         workingDirectory: avalanche-api/Code/Avalanche.Api.Tests
         vstsFeed: '$(VstsFeed)'
 
+     - script: >-
+        dotnet tool install dotnet-reportgenerator-globaltool --global --configfile $(repo)\Reports\NuGet.Config
+       displayName: Install reportgenerator
+
      - task: PowerShell@2
        displayName: Generate ADO Code Coverage reports
        inputs:
@@ -134,12 +138,7 @@ stages:
         #SourceFolder: '$(Agent.TempDirectory)'
         #Contents: '*.trx'
         #TargetFolder: '$(Agent.BuildDirectory)\TestResults'
-     - task: PublishCodeCoverageResults@1
-       displayName: Publish ADO Code Coverage
-       inputs:
-        codeCoverageTool: "Cobertura"
-        summaryFileLocation: '$(Agent.TempDirectory)\TestResults\codecoverage\target\Cobertura.xml'
-        reportDirectory: '$(Agent.TempDirectory)\TestResults\codecoverage\target'
+
         failIfCoverageEmpty: true
 
      - task: CopyFiles@2
