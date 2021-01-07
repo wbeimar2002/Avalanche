@@ -20,8 +20,6 @@ namespace Avalanche.Api.Managers.Maintenance
         readonly IMetadataManager _metadataManager;
         readonly IMapper _mapper;
 
-        private List<KeyValuePairViewModel> _types;
-
         public MaintenanceManager(IStorageService storageService, IMetadataManager metadataManager, IMapper mapper)
         {
             _storageService = storageService;
@@ -29,18 +27,26 @@ namespace Avalanche.Api.Managers.Maintenance
             _mapper = mapper;
         }
 
+        public async Task SaveCategoryPolicies(Avalanche.Shared.Domain.Models.User user, SectionViewModel category)
+        {
+            var configurationContext = _mapper.Map<Shared.Domain.Models.User, ConfigurationContext>(user);
+            configurationContext.IdnId = new Guid().ToString();
+            //TODO: What changes with use default value policie saving
+            await _storageService.SaveJson(category.JsonKey, JsonConvert.SerializeObject(category), 1, configurationContext);
+        }
+
         public async Task SaveCategory(Avalanche.Shared.Domain.Models.User user, SectionViewModel category)
         {
             var configurationContext = _mapper.Map<Shared.Domain.Models.User, ConfigurationContext>(user);
             configurationContext.IdnId = new Guid().ToString();
 
-            await SaveAndCleanSources(configurationContext, category);
+            await SaveSources(configurationContext, category);
 
             if (category.Sections != null)
             {
                 foreach (var section in category.Sections)
                 {
-                    await SaveAndCleanSources(configurationContext, section);
+                    await SaveSources(configurationContext, section);
                 }
             }
 
@@ -54,24 +60,35 @@ namespace Avalanche.Api.Managers.Maintenance
             var category = await _storageService.GetJsonObject<SectionViewModel>(key, 1, configurationContext);
             var settingValues = await _storageService.GetJsonDynamic(key + "Values", 1, configurationContext);
 
-            _types = await _metadataManager.GetMetadata(user, MetadataTypes.SettingTypes);
+            var types = await _metadataManager.GetMetadata(user, MetadataTypes.SettingTypes);
+            var policiesTypes = (await _storageService.GetJsonObject<ListContainerViewModel>("SettingsPolicies", 1, configurationContext)).Items;           
 
-            await SetSources(configurationContext, category);
-            SettingsHelper.SetSettingValues(category, settingValues);
+            await SetSources(configurationContext, category, types);
+            SettingsHelper.SetSettingValues(category, settingValues, policiesTypes);
 
             if (category.Sections != null)
             {
-                foreach (var section in category.Sections)
-                {
-                    var sectionValues = settingValues == null ? null : settingValues[section.JsonKey];
-
-                    await SetSources(configurationContext, section);
-                    SettingsHelper.SetSettingValues(section, sectionValues);
-                }
+                await SetSettingsValues(configurationContext, category, settingValues, types, policiesTypes);
             }
 
             category.JsonKey = key;
             return category;
+        }
+
+        private async Task SetSettingsValues(ConfigurationContext configurationContext, SectionViewModel category, dynamic settingValues, List<KeyValuePairViewModel> types, List<KeyValuePairViewModel> policiesTypes)
+        {
+            foreach (var section in category.Sections)
+            {
+                var sectionValues = settingValues == null ? null : settingValues[section.JsonKey];
+
+                await SetSources(configurationContext, section, types);
+                SettingsHelper.SetSettingValues(section, sectionValues, policiesTypes);
+
+                if (section.Sections != null)
+                {
+                    await SetSettingsValues(configurationContext, section, settingValues, types, policiesTypes);
+                }
+            }
         }
 
         public async Task<JObject> GetSettingValues(string key, User user)
@@ -80,7 +97,7 @@ namespace Avalanche.Api.Managers.Maintenance
             return await _storageService.GetJsonDynamic(key, 1, configurationContext);
         }
 
-        private async Task SetSources(ConfigurationContext configurationContext, SectionViewModel category)
+        private async Task SetSources(ConfigurationContext configurationContext, SectionViewModel category, List<KeyValuePairViewModel> types)
         {
             if (category!= null && category.Settings != null)
             {
@@ -89,26 +106,21 @@ namespace Avalanche.Api.Managers.Maintenance
                     if (!string.IsNullOrEmpty(item.SourceKey))
                     {
                         item.SourceValues = (await _storageService.GetJsonObject<SourceListContainerViewModel>(item.SourceKey, 1, configurationContext)).Items;
-                        
-                        if (_types != null)
-                            item.SourceValues.ForEach(s => s.Types = _types);
+                        item.SourceValues.ForEach(s => s.Types = types);
                     }
                 }
             }
         }
 
-        private async Task SaveAndCleanSources(ConfigurationContext configurationContext, SectionViewModel section)
+        private async Task SaveSources(ConfigurationContext configurationContext, SectionViewModel section)
         {
             if (section.Settings != null)
             {
                 foreach (var item in section.Settings)
                 {
-                    if (!string.IsNullOrEmpty(item.SourceKey))
+                    if (string.IsNullOrEmpty(item.JsonKey) && !string.IsNullOrEmpty(item.SourceKey))
                     {
-                        item.SourceValues.ForEach(s => s.Types = null);
-
                         await _storageService.SaveJson(item.SourceKey, JsonConvert.SerializeObject(new { Items = item.SourceValues }), 1, configurationContext);
-
                         item.SourceValues = null;
                     }
                 }

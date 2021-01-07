@@ -1,9 +1,6 @@
-﻿using Avalanche.Shared.Domain.Enumerations;
-using Avalanche.Shared.Infrastructure.Enumerations;
+﻿using Avalanche.Shared.Infrastructure.Enumerations;
 using Newtonsoft.Json;
-using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace Avalanche.Api.ViewModels
 {
@@ -22,13 +19,50 @@ namespace Avalanche.Api.ViewModels
         public bool Required { get; set; }
         public int MaxLength { get; set; }
         public string JsonKey { get; set; }
+        public string Policy { get; set; }
         public SettingTypes SettingType { get; set; }
         public VisualStyles VisualStyle { get; set; }
         public string SourceKey { get; set; }
         public VisualStyles SourceVisualStyle { get; set; }
-        public List<SourceKeyValuePairViewModel> SourceValues { get; set; }
-        public List<DependencySettingViewModel> Dependencies { get; set; }
 
+        [JsonProperty(nameof(SourceValues))]
+        public List<SourceKeyValuePairViewModel> SourceValuesSetter { set { _sourceValues = value; } }
+
+        [JsonIgnore]
+        private List<SourceKeyValuePairViewModel> _sourceValues;
+
+        [JsonIgnore]
+        public List<SourceKeyValuePairViewModel> SourceValues
+        {
+            get { return this._sourceValues; }
+            set { this._sourceValues = value; }
+        }
+
+        [JsonProperty(nameof(PoliciesValues))]
+        public List<KeyValuePairViewModel> PoliciesValuesSetter { set { _policiesValues = value; } }
+
+        [JsonIgnore]
+        private List<KeyValuePairViewModel> _policiesValues;
+
+        [JsonIgnore]
+        public List<KeyValuePairViewModel> PoliciesValues
+        {
+            get { return this._policiesValues; }
+            set { this._policiesValues = value; }
+        }
+
+        [JsonProperty(nameof(Dependencies))]
+        public List<DependencySettingViewModel> DependenciesSetter { set { _dependencies = value; } }
+
+        [JsonIgnore]
+        private List<DependencySettingViewModel> _dependencies;
+
+        [JsonIgnore]
+        public List<DependencySettingViewModel> Dependencies
+        {
+            get { return this._dependencies; }
+            set { this._dependencies = value; }
+        }
 
         [JsonProperty(nameof(Value))]
         public string ValueSetter { set { _value = value; } }
@@ -42,6 +76,5 @@ namespace Avalanche.Api.ViewModels
             get { return this._value; }
             set { this._value = value; }
         }
-
     }
 }

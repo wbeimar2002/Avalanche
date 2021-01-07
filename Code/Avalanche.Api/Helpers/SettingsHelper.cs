@@ -1,5 +1,6 @@
 ﻿using Avalanche.Api.Extensions;
 using Avalanche.Api.ViewModels;
+using Avalanche.Shared.Infrastructure.Enumerations;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
@@ -28,7 +29,10 @@ namespace Avalanche.Api.Helpers
                 {
                     if (!string.IsNullOrEmpty(setting.JsonKey))
                     {
-                        rootSection.Add(new JProperty(setting.JsonKey, setting.Value));
+                        if (Convert.ToInt32(setting.Policy) == (int)SettingsPolicies.UseDefaultValue)
+                            rootSection.Add(new JProperty(setting.JsonKey, setting.DefaultValue));
+                        else
+                            rootSection.Add(new JProperty(setting.JsonKey, setting.Value));
                     }
                 }
             }
@@ -48,18 +52,28 @@ namespace Avalanche.Api.Helpers
             }
         }
 
-        public static void SetSettingValues(SectionViewModel section, dynamic settings)
+        public static void SetSettingValues(SectionViewModel section, dynamic setingsValues, List<KeyValuePairViewModel> policiesValues)
         {
             if (section.Settings != null)
             {
                 foreach (var setting in section.Settings)
                 {
-                    if (settings == null)
-                        setting.Value = setting.DefaultValue == null ? setting.Value : setting.DefaultValue;
+                    setting.Policy = string.IsNullOrEmpty(setting.Policy) ? ((int)SettingsPolicies.AllowEdit).ToString() : setting.Policy;
+                    setting.PoliciesValues = policiesValues;
+
+                    if (Convert.ToInt32(setting.Policy) == (int)SettingsPolicies.UseDefaultValue)
+                        setting.Value = setting.DefaultValue; //TODO: Validate this rule
                     else
                     {
-                        if (!string.IsNullOrEmpty(setting.JsonKey))
-                            setting.Value = settings[setting.JsonKey];
+                        if (setingsValues == null)
+                            setting.Value = setting.DefaultValue;
+                        else
+                        {
+                            if (string.IsNullOrEmpty(setting.JsonKey))
+                                setting.Value = setting.DefaultValue; //TODO: Validate this rule
+                            else
+                                setting.Value = setingsValues[setting.JsonKey];
+                        }
                     }
                 }
             }
