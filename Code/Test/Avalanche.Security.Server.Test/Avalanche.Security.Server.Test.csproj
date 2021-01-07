@@ -31,8 +31,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Avalanche.Security.Server\Avalanche.Security.Server.csproj" />
-    <ProjectReference Include="..\Avalanche.Shared.Infrastructure\Avalanche.Shared.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\Avalanche.Security.Server\Avalanche.Security.Server.csproj" />
+    <ProjectReference Include="..\..\Avalanche.Shared.Infrastructure\Avalanche.Shared.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>
