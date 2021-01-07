@@ -13,16 +13,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Remove="grpc_localhost_root_l1.pfx" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Content Include="grpc_localhost_root_l1.pfx">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="coverlet.msbuild" Version="2.9.0">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -41,6 +31,12 @@
     <ProjectReference Include="..\..\Avalanche.Api\Avalanche.Api.csproj" />
     <ProjectReference Include="..\..\Avalanche.Shared.Domain\Avalanche.Shared.Domain.csproj" />
     <ProjectReference Include="..\..\Avalanche.Shared.Infrastructure\Avalanche.Shared.Infrastructure.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="grpc_localhost_root_l1.pfx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project>
