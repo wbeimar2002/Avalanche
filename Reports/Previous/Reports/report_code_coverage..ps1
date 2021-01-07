@@ -11,10 +11,10 @@ Remove-Item $targetdir -Recurse
 
 dotnet tool install dotnet-reportgenerator-globaltool --global --configfile NuGet.Config
 
-dotnet test ..\Code\Avalanche.Api.Tests\Avalanche.Api.Tests.csproj `
+dotnet test ..\Code\Test\Avalanche.Api.Test\Avalanche.Api.Test.csproj `
  -c release  /p:CollectCoverage=true /p:CoverletOutputFormat=cobertura /p:CoverletOutput=$report_path\Api
 
-dotnet test ..\Code\Avalanche.Security.Server.Tests\Avalanche.Security.Server.Tests.csproj `
+dotnet test ..\Code\Test\Avalanche.Security.Server.Test\Avalanche.Security.Server.Test.csproj `
  -c release  /p:CollectCoverage=true /p:CoverletOutputFormat=cobertura /p:CoverletOutput=$report_path\Security
 
 reportgenerator "-reports:$report_path\*.xml" "-targetdir:$targetdir" -reporttypes:Html

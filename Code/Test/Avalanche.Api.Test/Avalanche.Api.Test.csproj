@@ -44,9 +44,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Avalanche.Api\Avalanche.Api.csproj" />
-    <ProjectReference Include="..\Avalanche.Shared.Domain\Avalanche.Shared.Domain.csproj" />
-    <ProjectReference Include="..\Avalanche.Shared.Infrastructure\Avalanche.Shared.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\Avalanche.Api\Avalanche.Api.csproj" />
+    <ProjectReference Include="..\..\Avalanche.Shared.Domain\Avalanche.Shared.Domain.csproj" />
+    <ProjectReference Include="..\..\Avalanche.Shared.Infrastructure\Avalanche.Shared.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>
