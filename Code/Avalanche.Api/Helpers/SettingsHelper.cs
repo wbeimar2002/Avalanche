@@ -29,10 +29,26 @@ namespace Avalanche.Api.Helpers
                 {
                     if (!string.IsNullOrEmpty(setting.JsonKey))
                     {
-                        if (Convert.ToInt32(setting.Policy) == (int)SettingsPolicies.UseDefaultValue)
-                            rootSection.Add(new JProperty(setting.JsonKey, setting.DefaultValue));
-                        else
-                            rootSection.Add(new JProperty(setting.JsonKey, setting.Value));
+                        var finalValue = Convert.ToInt32(setting.Policy) == (int)SettingsPolicies.UseDefaultValue ? setting.DefaultValue : setting.Value;
+
+                        switch (setting.SettingType)
+                        {
+                            case SettingTypes.Number:
+                                rootSection.Add(new JProperty(setting.JsonKey, Convert.ToInt32(finalValue)));
+                                break;
+                            case SettingTypes.Boolean:
+                                rootSection.Add(new JProperty(setting.JsonKey, Convert.ToBoolean(finalValue)));
+                                break;
+                            case SettingTypes.Date:
+                                rootSection.Add(new JProperty(setting.JsonKey, Convert.ToDateTime(finalValue)));
+                                break;
+                            case SettingTypes.Undefined:
+                            case SettingTypes.Text:
+                            default:
+                                rootSection.Add(new JProperty(setting.JsonKey, finalValue));
+                                break;
+                        }
+                        
                     }
                 }
             }
@@ -52,7 +68,7 @@ namespace Avalanche.Api.Helpers
             }
         }
 
-        public static void SetSettingValues(SectionViewModel section, dynamic setingsValues, List<KeyValuePairViewModel> policiesValues)
+        public static void SetSettingValues(SectionViewModel section, dynamic settingsValues, List<KeyValuePairViewModel> policiesValues)
         {
             if (section.Settings != null)
             {
@@ -61,18 +77,15 @@ namespace Avalanche.Api.Helpers
                     setting.Policy = string.IsNullOrEmpty(setting.Policy) ? ((int)SettingsPolicies.AllowEdit).ToString() : setting.Policy;
                     setting.PoliciesValues = policiesValues;
 
-                    if (Convert.ToInt32(setting.Policy) == (int)SettingsPolicies.UseDefaultValue)
-                        setting.Value = setting.DefaultValue; //TODO: Validate this rule
+                    if (settingsValues == null)
+                        setting.Value = setting.DefaultValue;
                     else
                     {
-                        if (setingsValues == null)
-                            setting.Value = setting.DefaultValue;
+                        if (string.IsNullOrEmpty(setting.JsonKey))
+                            setting.Value = null;
                         else
                         {
-                            if (string.IsNullOrEmpty(setting.JsonKey))
-                                setting.Value = setting.DefaultValue; //TODO: Validate this rule
-                            else
-                                setting.Value = setingsValues[setting.JsonKey];
+                            setting.Value = setting.SettingType == SettingTypes.Boolean ? Convert.ToString(settingsValues[setting.JsonKey]).ToLower() : settingsValues[setting.JsonKey];
                         }
                     }
                 }

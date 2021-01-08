@@ -31,7 +31,9 @@ namespace Avalanche.Api.Managers.Maintenance
         {
             var configurationContext = _mapper.Map<Shared.Domain.Models.User, ConfigurationContext>(user);
             configurationContext.IdnId = new Guid().ToString();
-            //TODO: What changes with use default value policie saving
+
+            string result = SettingsHelper.GetJsonValues(category);
+            await _storageService.SaveJson(category.JsonKey + "Values", result, 1, configurationContext);
             await _storageService.SaveJson(category.JsonKey, JsonConvert.SerializeObject(category), 1, configurationContext);
         }
 
@@ -75,9 +77,9 @@ namespace Avalanche.Api.Managers.Maintenance
             return category;
         }
 
-        private async Task SetSettingsValues(ConfigurationContext configurationContext, SectionViewModel category, dynamic settingValues, List<KeyValuePairViewModel> types, List<KeyValuePairViewModel> policiesTypes)
+        private async Task SetSettingsValues(ConfigurationContext configurationContext, SectionViewModel rootSection, dynamic settingValues, List<KeyValuePairViewModel> types, List<KeyValuePairViewModel> policiesTypes)
         {
-            foreach (var section in category.Sections)
+            foreach (var section in rootSection.Sections)
             {
                 var sectionValues = settingValues == null ? null : settingValues[section.JsonKey];
 
@@ -86,7 +88,7 @@ namespace Avalanche.Api.Managers.Maintenance
 
                 if (section.Sections != null)
                 {
-                    await SetSettingsValues(configurationContext, section, settingValues, types, policiesTypes);
+                    await SetSettingsValues(configurationContext, section, sectionValues, types, policiesTypes);
                 }
             }
         }
