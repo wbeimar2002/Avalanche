@@ -54,7 +54,7 @@ namespace Avalanche.Api.Tests.Managers
                 PgsVideoAlwaysOn = true
             };
 
-            _storageService.Setup(mock => mock.GetJsonDynamic("PgsSettings", 1, It.IsAny<ConfigurationContext>())).ReturnsAsync(pgsSettings);
+            _storageService.Setup(mock => mock.GetJsonDynamic("PgsSettingsValues", 1, It.IsAny<ConfigurationContext>())).ReturnsAsync(pgsSettings);
 
             var commandResponse = _manager.SendCommand(commandViewModel);
 
@@ -77,7 +77,7 @@ namespace Avalanche.Api.Tests.Managers
                 PgsVideoAlwaysOn = false
             };
 
-            _storageService.Setup(mock => mock.GetJsonDynamic("PgsSettings", 1, It.IsAny<ConfigurationContext>())).ReturnsAsync(pgsSettings);
+            _storageService.Setup(mock => mock.GetJsonDynamic("PgsSettingsValues", 1, It.IsAny<ConfigurationContext>())).ReturnsAsync(pgsSettings);
 
             var commandResponse = _manager.SendCommand(commandViewModel);
 
