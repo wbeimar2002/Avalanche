@@ -119,7 +119,7 @@ namespace Avalanche.Api.Managers.Metadata
         private async Task ValidateDepartmentsSupport(User user)
         {
             var configurationContext = _mapper.Map<Avalanche.Shared.Domain.Models.User, ConfigurationContext>(user);
-            var setupSettings = await _storageService.GetJsonDynamic("SetupSettings", 1, configurationContext);
+            var setupSettings = await _storageService.GetJsonDynamic("SetupSettingsValues", 1, configurationContext);
 
             if (!setupSettings.General.DepartmentsSupported)
             {
@@ -130,7 +130,7 @@ namespace Avalanche.Api.Managers.Metadata
         private async Task ValidateDepartmentsSupport(User user, int? departmentId)
         {
             var configurationContext = _mapper.Map<User, ConfigurationContext>(user);
-            var setupSettings = await _storageService.GetJsonDynamic("SetupSettings", 1, configurationContext);
+            var setupSettings = await _storageService.GetJsonDynamic("SetupSettingsValues", 1, configurationContext);
 
 #warning TODO: Check the strategy to throw business logic exceptions. Same exceptions in Patients Manager
             if (setupSettings.General.DepartmentsSupported)

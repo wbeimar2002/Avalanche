@@ -10,7 +10,7 @@ namespace Avalanche.Api.ViewModels
 {
     public class SourceKeyValuePairViewModel : KeyValuePairViewModel
     {
-        public SettingTypes Type { get; set; }
+        public string Type { get; set; }
 
         [JsonProperty(nameof(Types))]
         public List<KeyValuePairViewModel> TypesSetter { set { _types = value; } }

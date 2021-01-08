@@ -27,7 +27,7 @@ namespace Avalanche.Api.Managers.Maintenance
             _mapper = mapper;
         }
 
-        public async Task SaveCategoryPolicies(Avalanche.Shared.Domain.Models.User user, SectionViewModel category)
+        public async Task SaveCategoryPolicies(User user, SectionViewModel category)
         {
             var configurationContext = _mapper.Map<Shared.Domain.Models.User, ConfigurationContext>(user);
             configurationContext.IdnId = new Guid().ToString();
@@ -35,9 +35,9 @@ namespace Avalanche.Api.Managers.Maintenance
             await _storageService.SaveJson(category.JsonKey, JsonConvert.SerializeObject(category), 1, configurationContext);
         }
 
-        public async Task SaveCategory(Avalanche.Shared.Domain.Models.User user, SectionViewModel category)
+        public async Task SaveCategory(User user, SectionViewModel category)
         {
-            var configurationContext = _mapper.Map<Shared.Domain.Models.User, ConfigurationContext>(user);
+            var configurationContext = _mapper.Map<User, ConfigurationContext>(user);
             configurationContext.IdnId = new Guid().ToString();
 
             await SaveSources(configurationContext, category);

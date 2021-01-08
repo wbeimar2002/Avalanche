@@ -9,19 +9,20 @@ namespace Avalanche.Api.ViewModels
         public string LabelTranslationKey { get; set; }
         public string DescriptionTranslationKey { get; set; }
         public string Format { get; set; }
-        public string PlaceHolder { get; set; }
+        public string PlaceHolderTranslationKey { get; set; }
         public string Icon { get; set; }
         public int MaxValue { get; set; }
         public int MinValue { get; set; }
         public int Steps { get; set; }
         public string DefaultValue { get; set; }
-        public bool ReadOnly { get; set; }
         public bool Required { get; set; }
         public int MaxLength { get; set; }
         public string JsonKey { get; set; }
         public string Policy { get; set; }
+
         public SettingTypes SettingType { get; set; }
         public VisualStyles VisualStyle { get; set; }
+
         public string SourceKey { get; set; }
         public VisualStyles SourceVisualStyle { get; set; }
 
@@ -75,6 +76,19 @@ namespace Avalanche.Api.ViewModels
         {
             get { return this._value; }
             set { this._value = value; }
+        }
+
+        [JsonProperty(nameof(ReadOnly))]
+        public bool ReadOnlySetter { set { _readOnly = value; } }
+
+        [JsonIgnore]
+        private bool _readOnly;
+
+        [JsonIgnore]
+        public bool ReadOnly
+        {
+            get { return this._readOnly; }
+            set { this._readOnly = value; }
         }
     }
 }

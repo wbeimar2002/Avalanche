@@ -31,6 +31,27 @@ namespace Avalanche.Api.Controllers.V1
             _maintenanceManager = maintenanceManager;
         }
 
+        [HttpPut("categories/{key}/policies")]
+        public async Task<IActionResult> SaveCategoryPolicies(string key, [FromBody] SectionViewModel section, [FromServices] IWebHostEnvironment env)
+        {
+            try
+            {
+                _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
+                await _maintenanceManager.SaveCategoryPolicies(User.GetUser(), section);
+
+                return Ok();
+            }
+            catch (Exception exception)
+            {
+                _appLoggerService.LogError(LoggerHelper.GetLogMessage(DebugLogType.Exception), exception);
+                return new BadRequestObjectResult(exception.Get(env.IsDevelopment()));
+            }
+            finally
+            {
+                _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
+            }
+        }
+
         [HttpPut("categories/{key}")]
         public async Task<IActionResult> SaveCategory(string key, [FromBody]SectionViewModel section,[FromServices]IWebHostEnvironment env)
         {

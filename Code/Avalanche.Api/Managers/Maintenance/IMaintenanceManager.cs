@@ -11,5 +11,6 @@ namespace Avalanche.Api.Managers.Maintenance
         Task SaveCategory(User user, SectionViewModel category);
         Task<SectionViewModel> GetCategoryByKey(User user, string key);
         Task<JObject> GetSettingValues(string key, User user);
+        Task SaveCategoryPolicies(User user, SectionViewModel category);
     }
 }

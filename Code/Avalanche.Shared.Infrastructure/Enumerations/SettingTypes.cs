@@ -10,7 +10,6 @@ namespace Avalanche.Shared.Infrastructure.Enumerations
         Text,
         Number,
         Boolean,
-        List,
         Date
     }
 }
