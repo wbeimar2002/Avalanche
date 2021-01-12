@@ -8,8 +8,10 @@ using Avalanche.Shared.Infrastructure.Enumerations;
 using Ism.Common.Core.Configuration.Models;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using Newtonsoft.Json.Schema;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
 
 namespace Avalanche.Api.Managers.Maintenance
@@ -32,8 +34,8 @@ namespace Avalanche.Api.Managers.Maintenance
             var configurationContext = _mapper.Map<Shared.Domain.Models.User, ConfigurationContext>(user);
             configurationContext.IdnId = new Guid().ToString();
 
-            string result = SettingsHelper.GetJsonValues(category);
-            await _storageService.SaveJson(category.JsonKey + "Values", result, 1, configurationContext);
+            await SaveJsonValues(category, configurationContext);
+
             await _storageService.SaveJson(category.JsonKey, JsonConvert.SerializeObject(category), 1, configurationContext);
         }
 
@@ -52,8 +54,7 @@ namespace Avalanche.Api.Managers.Maintenance
                 }
             }
 
-            string result = SettingsHelper.GetJsonValues(category);
-            await _storageService.SaveJson(category.JsonKey + "Values", result, 1, configurationContext);
+            await SaveJsonValues(category, configurationContext);
         }
 
         public async Task<SectionViewModel> GetCategoryByKey(User user, string key)
@@ -126,6 +127,36 @@ namespace Avalanche.Api.Managers.Maintenance
                         item.SourceValues = null;
                     }
                 }
+            }
+        }
+
+        private async Task SaveJsonValues(SectionViewModel category, ConfigurationContext configurationContext)
+        {
+            string result = SettingsHelper.GetJsonValues(category);
+
+            if (await SchemaIsValid(category.JsonKey, result, configurationContext))
+            {
+                await _storageService.SaveJson(category.JsonKey + "Values", result, 1, configurationContext);
+            }
+            else
+            {   //TODO: Pending Exceptions strategy
+                throw new ValidationException("Json Schema Invalid for " + category.JsonKey + " values");
+            }
+        }
+
+        private async Task<bool> SchemaIsValid(string jsonKey, string json, ConfigurationContext configurationContext)
+        {
+            dynamic dynamicSchema = await _storageService.GetJsonDynamic(jsonKey + "Schema", 1, configurationContext);
+            if (dynamicSchema == null)
+                return true;
+            else
+            {
+                string schemaJson = JsonConvert.SerializeObject(dynamicSchema);
+                JsonSchema schema = JsonSchema.Parse(schemaJson);
+
+                JObject jsonObject = JObject.Parse(json);
+
+                return jsonObject.IsValid(schema);
             }
         }
     }
