@@ -24,7 +24,7 @@ namespace Avalanche.Api.Tests.Managers
         Mock<IAvidisService> _avidisService;
         Mock<IRecorderService> _recorderService;
         Mock<IMediaService> _mediaService;
-        Mock<ISettingsService> _settingsService;
+        Mock<IStorageService> _storageService;
         Mock<IRoutingService> _routingService;
         Mock<ILogger<MediaManager>> _appLoggerService;
         Mock<IAccessInfoFactory> _accessInfoFactory;
@@ -38,7 +38,7 @@ namespace Avalanche.Api.Tests.Managers
         public void Setup()
         {
             _mediaService = new Mock<IMediaService>();
-            _settingsService = new Mock<ISettingsService>();
+            _storageService = new Mock<IStorageService>();
             _appLoggerService = new Mock<ILogger<MediaManager>>();
             _avidisService = new Mock<IAvidisService>();
             _recorderService = new Mock<IRecorderService>();
@@ -61,8 +61,8 @@ namespace Avalanche.Api.Tests.Managers
             Mock<IHttpContextAccessor> mockAccessor = new Mock<IHttpContextAccessor>();
             mockAccessor.Setup(m => m.HttpContext.Request.Host).Returns(new HostString("localhost", 5000));
 
-            _manager = new DevicesManager(_mediaService.Object, _settingsService.Object, _routingService.Object, _appLoggerService.Object,
-                _avidisService.Object, _recorderService.Object, _accessInfoFactory.Object, _mapper, mockAccessor.Object);
+            _manager = new DevicesManager(_mediaService.Object, _routingService.Object, _appLoggerService.Object,
+                _avidisService.Object, _recorderService.Object, _accessInfoFactory.Object, _mapper, mockAccessor.Object, _storageService.Object);
         }
 
         [Test]

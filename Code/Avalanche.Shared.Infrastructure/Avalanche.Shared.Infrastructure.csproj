@@ -11,7 +11,19 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Remove="Models\AdministratorSettings.cs" />
+    <Compile Remove="Models\ApiSettings.cs" />
+    <Compile Remove="Models\ConfigSettings.cs" />
+    <Compile Remove="Models\GeneralSetupSettings.cs" />
     <Compile Remove="Models\JwtIssuerOptions.cs" />
+    <Compile Remove="Models\LoggerSettings.cs" />
+    <Compile Remove="Models\ManualRegistrationSettings.cs" />
+    <Compile Remove="Models\PgsSettings.cs" />
+    <Compile Remove="Models\QuickRegistrationSettings.cs" />
+    <Compile Remove="Models\RegistrationSettings.cs" />
+    <Compile Remove="Models\SetupSettings.cs" />
+    <Compile Remove="Models\SurgerySettings.cs" />
+    <Compile Remove="Models\TimeoutSettings.cs" />
     <Compile Remove="Models\Token.cs" />
   </ItemGroup>
 

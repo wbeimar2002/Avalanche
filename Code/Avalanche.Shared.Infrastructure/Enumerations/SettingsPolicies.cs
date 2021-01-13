@@ -4,12 +4,10 @@ using System.Text;
 
 namespace Avalanche.Shared.Infrastructure.Enumerations
 {
-    public enum SettingTypes
+    public enum SettingsPolicies
     {
-        Undefined = -1,
-        Text,
-        Number,
-        Boolean,
-        Date
+        AllowEdit,
+        ReadOnly,
+        UseDefaultValue
     }
 }

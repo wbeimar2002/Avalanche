@@ -17,18 +17,15 @@ namespace Avalanche.Api.Managers.Metadata
     public class MetadataManager : IMetadataManager
     {
         readonly IStorageService _storageService;
-        readonly ISettingsService _settingsService;
         readonly IMapper _mapper;
         readonly IDataManagementService _dataManagementService;
 
         public MetadataManager(IStorageService storageService,
             IDataManagementService dataManagementService,
-            ISettingsService settingsService,
             IMapper mapper)
         {
             _dataManagementService = dataManagementService;
             _storageService = storageService;
-            _settingsService = settingsService;
             _mapper = mapper;
         }
 
@@ -39,13 +36,13 @@ namespace Avalanche.Api.Managers.Metadata
             switch (type)
             {
                 case MetadataTypes.Sex:
-                    return (await _storageService.GetJson<ListContainerViewModel>("SexTypes", 1, configurationContext)).Items;
+                    return (await _storageService.GetJsonObject<ListContainerViewModel>("SexTypes", 1, configurationContext)).Items;
                 case MetadataTypes.ContentTypes:
-                    return (await _storageService.GetJson<ListContainerViewModel>("ContentTypes", 1, configurationContext)).Items;
+                    return (await _storageService.GetJsonObject<ListContainerViewModel>("ContentTypes", 1, configurationContext)).Items;
                 case MetadataTypes.SourceTypes:
-                    return (await _storageService.GetJson<ListContainerViewModel>("SourceTypes", 1, configurationContext)).Items;
+                    return (await _storageService.GetJsonObject<ListContainerViewModel>("SourceTypes", 1, configurationContext)).Items;
                 case MetadataTypes.SettingTypes:
-                    return (await _storageService.GetJson<ListContainerViewModel>("SettingTypes", 1, configurationContext)).Items;
+                    return (await _storageService.GetJsonObject<ListContainerViewModel>("SettingTypes", 1, configurationContext)).Items;
                 default:
                     return new List<KeyValuePairViewModel>();
             }
@@ -58,7 +55,7 @@ namespace Avalanche.Api.Managers.Metadata
             switch (type)
             {
                 case MetadataTypes.SearchColumns:
-                    return (await _storageService.GetJson<SourceListContainerViewModel>("SearchColumns", 1, configurationContext)).Items;
+                    return (await _storageService.GetJsonObject<SourceListContainerViewModel>("SearchColumns", 1, configurationContext)).Items;
                 default:
                     return new List<SourceKeyValuePairViewModel>();
             }
@@ -122,7 +119,7 @@ namespace Avalanche.Api.Managers.Metadata
         private async Task ValidateDepartmentsSupport(User user)
         {
             var configurationContext = _mapper.Map<Avalanche.Shared.Domain.Models.User, ConfigurationContext>(user);
-            var setupSettings = await _settingsService.GetSetupSettings(configurationContext);
+            var setupSettings = await _storageService.GetJsonDynamic("SetupSettingsValues", 1, configurationContext);
 
             if (!setupSettings.General.DepartmentsSupported)
             {
@@ -133,7 +130,7 @@ namespace Avalanche.Api.Managers.Metadata
         private async Task ValidateDepartmentsSupport(User user, int? departmentId)
         {
             var configurationContext = _mapper.Map<User, ConfigurationContext>(user);
-            var setupSettings = await _settingsService.GetSetupSettings(configurationContext);
+            var setupSettings = await _storageService.GetJsonDynamic("SetupSettingsValues", 1, configurationContext);
 
 #warning TODO: Check the strategy to throw business logic exceptions. Same exceptions in Patients Manager
             if (setupSettings.General.DepartmentsSupported)
