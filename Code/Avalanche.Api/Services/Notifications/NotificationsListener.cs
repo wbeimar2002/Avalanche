@@ -3,6 +3,7 @@ using Ism.Broadcaster.EventArgs;
 using Ism.Broadcaster.Services;
 using Ism.SystemState.Client;
 using Ism.SystemState.Models.Procedure;
+using Ism.SystemState.Models.VideoRouting;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
@@ -38,7 +39,9 @@ namespace Avalanche.Api.Services.Notifications
         {
             BeginBroadcast();
             _stateClient.SubscribeEvent<ImageCapturedEvent>(evt => _hubContext.Clients.All.OnImageCapture(evt));
-            
+            _stateClient.SubscribeEvent<VideoSourceStateChangedEvent>(evt => _hubContext.Clients.All.OnVideoSourceStateChanged(evt));
+            _stateClient.SubscribeEvent<VideoSourceIdentityChangedEvent>(evt => _hubContext.Clients.All.OnVideoSourceIdentityChanged(evt));
+
             return Task.CompletedTask;
         }
 
@@ -47,6 +50,8 @@ namespace Avalanche.Api.Services.Notifications
             // Unregister/detach broadcast listener event
             _broadcastService.MessageListened -= RegisterMessageEvents;
             _stateClient?.UnsubscribeEvent<ImageCapturedEvent>();
+            _stateClient?.UnsubscribeEvent<VideoSourceStateChangedEvent>();
+            _stateClient?.UnsubscribeEvent<VideoSourceIdentityChangedEvent>();
 
             return Task.CompletedTask;
         }
