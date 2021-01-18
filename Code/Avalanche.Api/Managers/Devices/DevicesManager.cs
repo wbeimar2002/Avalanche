@@ -226,6 +226,9 @@ namespace Avalanche.Api.Managers.Devices
 
             var mappedSource = _mapper.Map<Ism.Routing.V1.Protos.VideoSourceMessage, Source>(source.Source);
 
+            mappedSource.Id = alias;
+            mappedSource.InternalIndex = index;
+
             return mappedSource;
         }
 
