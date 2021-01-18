@@ -74,7 +74,7 @@ namespace Avalanche.Api.Managers.Health
                 }
             }
 
-            await CheckProcedureType(newPatient.ProcedureType, newPatient.Department, setupSettings);
+            await CheckProcedureType(newPatient.ProcedureType, newPatient.Department);
 
             var patientRequest = _mapper.Map<PatientViewModel, Ism.Storage.Core.PatientList.V1.Protos.AddPatientRecordRequest>(newPatient);
             var result = await _pieService.RegisterPatient(patientRequest);
@@ -149,7 +149,7 @@ namespace Avalanche.Api.Managers.Health
             var accessInfo = _accessInfoFactory.GenerateAccessInfo();
             existingPatient.AccessInformation = _mapper.Map<AccessInfo>(accessInfo);
 
-            await CheckProcedureType(existingPatient.ProcedureType, existingPatient.Department, setupSettings);
+            await CheckProcedureType(existingPatient.ProcedureType, existingPatient.Department);
 
             var patientRequest = _mapper.Map<PatientViewModel, Ism.Storage.Core.PatientList.V1.Protos.UpdatePatientRecordRequest>(existingPatient);
             await _pieService.UpdatePatient(patientRequest);
@@ -225,7 +225,7 @@ namespace Avalanche.Api.Managers.Health
 
         }
 
-        private async Task CheckProcedureType(ProcedureType procedureType, Department department, dynamic setupSettings)
+        private async Task CheckProcedureType(ProcedureType procedureType, Department department)
         {
             //TODO: Validate department support
             var existingProcedureType = await _dataManagementService.GetProcedureType(new GetProcedureTypeRequest()
