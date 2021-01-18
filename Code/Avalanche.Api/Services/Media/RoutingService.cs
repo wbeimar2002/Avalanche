@@ -28,6 +28,11 @@ namespace Avalanche.Api.Services.Media
             return await RoutingClient.GetVideoSources();
         }
 
+        public async Task<Ism.Routing.V1.Protos.GetAlternativeVideoSourceResponse> GetAlternativeVideoSource(Ism.Routing.V1.Protos.GetAlternativeVideoSourceRequest request)
+        {
+            return await RoutingClient.GetAlternativeVideoSource(request);
+        }
+
         public async Task<Ism.Routing.V1.Protos.GetVideoSinksResponse> GetVideoSinks()
         {
             return await RoutingClient.GetVideoSinks();
