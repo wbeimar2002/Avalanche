@@ -116,24 +116,26 @@ namespace Avalanche.Api.Managers.Metadata
             return _mapper.Map<IList<ProcedureTypeMessage>, IList<ProcedureType>>(result.ProcedureTypeList).ToList();
         }
 
-        private async Task ValidateDepartmentsSupport(User user)
+        public async Task ValidateDepartmentsSupport(User user)
         {
             var configurationContext = _mapper.Map<Avalanche.Shared.Domain.Models.User, ConfigurationContext>(user);
-            var setupSettings = await _storageService.GetJsonDynamic("SetupSettingsValues", 1, configurationContext);
+            dynamic setupSettings = await _storageService.GetJsonDynamic("SetupSettingsValues", 1, configurationContext);
 
-            if (!setupSettings.General.DepartmentsSupported)
+            bool departmentSupported = setupSettings.General.DepartmentsSupported;
+            if (!departmentSupported)
             {
                 throw new System.InvalidOperationException("Departments are not supported");
             }
         }
 
-        private async Task ValidateDepartmentsSupport(User user, int? departmentId)
+        public async Task ValidateDepartmentsSupport(User user, int? departmentId)
         {
             var configurationContext = _mapper.Map<User, ConfigurationContext>(user);
             var setupSettings = await _storageService.GetJsonDynamic("SetupSettingsValues", 1, configurationContext);
 
+            bool departmentSupported = setupSettings.General.DepartmentsSupported;
 #warning TODO: Check the strategy to throw business logic exceptions. Same exceptions in Patients Manager
-            if (setupSettings.General.DepartmentsSupported)
+            if (!departmentSupported)
             {
                 if (departmentId == null || departmentId == 0)
                     throw new System.ArgumentNullException("Department value is invalid. It should not be null. Departments are supported.");

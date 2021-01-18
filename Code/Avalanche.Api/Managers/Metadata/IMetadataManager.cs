@@ -17,5 +17,7 @@ namespace Avalanche.Api.Managers.Metadata
         Task<ProcedureType> AddProcedureType(User user, ProcedureType procedureType);
         Task DeleteProcedureType(User user, ProcedureType procedureType);
         Task<List<ProcedureType>> GetProceduresByDepartment(User user, int? departmentId);
+        Task ValidateDepartmentsSupport(User user);
+        Task ValidateDepartmentsSupport(User user, int? departmentId);
     }
 }
