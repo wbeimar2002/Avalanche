@@ -220,6 +220,18 @@ namespace Avalanche.Api.Managers.Devices
             return listResult;
         }
 
+        public async Task<Source> GetAlternativeSource(string alias, int index)
+        {
+            var source = await _routingService.GetAlternativeVideoSource(new Ism.Routing.V1.Protos.GetAlternativeVideoSourceRequest { Source = new Ism.Routing.V1.Protos.AliasIndexMessage { Alias = alias, Index = index } });
+
+            var mappedSource = _mapper.Map<Ism.Routing.V1.Protos.VideoSourceMessage, Source>(source.Source);
+
+            mappedSource.Id = alias;
+            mappedSource.InternalIndex = index;
+
+            return mappedSource;
+        }
+
         public async Task<IList<Output>> GetOperationsOutputs()
         {
             var outputs = await _routingService.GetVideoSinks();
