@@ -37,8 +37,6 @@ namespace Avalanche.Api.Managers.Metadata
             {
                 case MetadataTypes.Sex:
                     return (await _storageService.GetJsonObject<ListContainerViewModel>("SexTypes", 1, configurationContext)).Items;
-                case MetadataTypes.ContentTypes:
-                    return (await _storageService.GetJsonObject<ListContainerViewModel>("ContentTypes", 1, configurationContext)).Items;
                 case MetadataTypes.SourceTypes:
                     return (await _storageService.GetJsonObject<ListContainerViewModel>("SourceTypes", 1, configurationContext)).Items;
                 case MetadataTypes.SettingTypes:
@@ -56,6 +54,8 @@ namespace Avalanche.Api.Managers.Metadata
             {
                 case MetadataTypes.SearchColumns:
                     return (await _storageService.GetJsonObject<SourceListContainerViewModel>("SearchColumns", 1, configurationContext)).Items;
+                case MetadataTypes.PgsVideoFiles:
+                    return (await _storageService.GetJsonObject<SourceListContainerViewModel>("PgsVideoFiles", 1, configurationContext)).Items;
                 default:
                     return new List<SourceKeyValuePairViewModel>();
             }

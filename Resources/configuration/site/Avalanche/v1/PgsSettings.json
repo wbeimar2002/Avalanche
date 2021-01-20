@@ -1,0 +1,61 @@
+{
+  "TitleTranslationKey": "pgsSettings.title",
+  "JsonKey": "PgsSettings",
+  "ReadOnly": true,
+  "Sections": [
+    {
+      "TitleTranslationKey": "pgsSettings.title",
+      "JsonKey": "",
+      "Sections": null,
+      "Settings": [
+        {
+          "LabelTranslationKey": "pgsSettings.video-always-on-label",
+          "DescriptionTranslationKey": null,
+          "Format": null,
+          "PlaceHolder": null,
+          "Icon": null,
+          "MaxValue": 0,
+          "MinValue": 0,
+          "Steps": 0,
+          "DefaultValue": "false",
+          "ReadOnly": false,
+          "Required": false,
+          "MaxLength": 0,
+          "JsonKey": "PgsVideoAlwaysOn",
+          "Policy": "0",
+          "SettingType": 2,
+          "VisualStyle": 3,
+          "SourceKey": null,
+          "SourceVisualStyle": 0
+        }
+      ]
+    },
+    {
+      "TitleTranslationKey": "pgsSettings.content",
+      "JsonKey": "",
+      "Sections": null,
+      "Settings": [
+        {
+          "LabelTranslationKey": "pgsSettings.video-files",
+          "DescriptionTranslationKey": null,
+          "Format": null,
+          "PlaceHolderTranslationKey": null,
+          "Icon": null,
+          "MaxValue": 0,
+          "MinValue": 0,
+          "Steps": 0,
+          "DefaultValue": "",
+          "Required": false,
+          "MaxLength": 0,
+          "JsonKey": null,
+          "Policy": "0",
+          "SettingType": 0,
+          "VisualStyle": 4,
+          "SourceKey": "PgsVideoFiles",
+          "SourceVisualStyle": 0
+        }
+      ]
+    }
+
+  ]  
+}

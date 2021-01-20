@@ -37,15 +37,15 @@ namespace Avalanche.Api.Controllers.V1
         /// <summary>
         /// Get content types for PGS 
         /// </summary>
-        [HttpGet("contenttypes")]
+        [HttpGet("pgs/videofiles")]
         [Produces(typeof(List<KeyValuePairViewModel>))]
-        public async Task<IActionResult> GetContentTypes([FromServices]IWebHostEnvironment env)
+        public async Task<IActionResult> GetPgsVideoFiles([FromServices]IWebHostEnvironment env)
         {
             try
             {
                 _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
 
-                var result = await _metadataManager.GetMetadata(User.GetUser(), MetadataTypes.ContentTypes);
+                var result = await _metadataManager.GetMetadata(User.GetUser(), MetadataTypes.PgsVideoFiles);
                 return Ok(result);
             }
             catch (Exception exception)

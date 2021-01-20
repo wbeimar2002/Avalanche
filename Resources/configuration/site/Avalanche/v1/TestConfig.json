@@ -1,0 +1,22 @@
+{
+  "TestProperty": "TestValue",
+  "HierarchyTest": "Root",
+  "TestOverrideProperty": "ValueToOverride",
+  "NullableProperty": "NotNullValue",
+  "NullableProperty2": null,
+  "NestedObject": {
+    "NestedProp1": "NestedPropValue1",
+    "NestedProp2": "NestedPropValue2"
+  },
+  "ArrayProperty": [ 1, 2, 3 ],
+  "ArrayOfObjects": [
+    {
+      "Prop1": "Value 1",
+      "Prop2": "Value 2"
+    },
+    {
+      "Prop1": "Value 3",
+      "Prop2": "Value 4"
+    }
+  ]
+}

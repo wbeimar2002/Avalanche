@@ -1,0 +1,14 @@
+{
+  "Items": [
+    {
+      "TranslationKey": null,
+      "Id": "0",
+      "Value": "Search"
+    },
+    {
+      "TranslationKey": null,
+      "Id": "1",
+      "Value": "Registration"
+    }
+  ]
+}

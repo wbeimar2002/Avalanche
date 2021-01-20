@@ -79,7 +79,7 @@ namespace Avalanche.Api.Tests.Controllers
         [Test]
         public void GetContentTypesShouldReturnOkResult()
         {
-            var okResult = _controller.GetContentTypes(_environment.Object);
+            var okResult = _controller.GetPgsVideoFiles(_environment.Object);
 
             if (_checkLogger)
             {
@@ -94,9 +94,9 @@ namespace Avalanche.Api.Tests.Controllers
         [Test]
         public void GetContentTypesShouldReturnBadResultIfFails()
         {
-            _metadataManager.Setup(mock => mock.GetMetadata(It.IsAny<User>(), MetadataTypes.ContentTypes)).Throws(It.IsAny<Exception>());
+            _metadataManager.Setup(mock => mock.GetMetadata(It.IsAny<User>(), MetadataTypes.PgsVideoFiles)).Throws(It.IsAny<Exception>());
 
-            var badResult = _controller.GetContentTypes(_environment.Object);
+            var badResult = _controller.GetPgsVideoFiles(_environment.Object);
 
             if (_checkLogger)
             {

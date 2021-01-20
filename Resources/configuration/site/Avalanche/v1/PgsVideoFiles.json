@@ -1,0 +1,16 @@
+{
+  "Items": [
+    {
+      "Type": "0",
+      "TranslationKey": "pgsVideoFiles.pediatric",
+      "Id": "P",
+      "Value": "..\\..\\..\\..\\Resources\\PgsVideo\\Pediatric.mp4"
+    },
+    {
+      "Type": "0",
+      "TranslationKey": "pgsVideoFiles.general",
+      "Id": "G",
+      "Value": "..\\..\\..\\..\\Resources\\PgsVideo\\General.mp4"
+    }
+  ]
+}

@@ -1,0 +1,195 @@
+{
+  "TitleTranslationKey": "setupSettings.title",
+  "ReadOnly": false,
+  "Sections": [
+    {
+      "TitleTranslationKey": "setupSettingsGeneral.title",
+      "JsonKey": "General",
+      "Sections": null,
+      "Settings": [
+        {
+          "LabelTranslationKey": "setupSettingsGeneral.mode-label",
+          "DescriptionTranslationKey": null,
+          "Format": null,
+          "PlaceHolderTranslationKey": null,
+          "Icon": null,
+          "MaxValue": 0,
+          "MinValue": 0,
+          "Steps": 0,
+          "DefaultValue": "1",
+          "Required": false,
+          "MaxLength": 0,
+          "JsonKey": "Mode",
+          "Policy": "0",
+          "SettingType": 1,
+          "VisualStyle": 1,
+          "SourceKey": "SetupModes",
+          "SourceVisualStyle": 0
+        },
+        {
+          "LabelTranslationKey": "setupSettingsGeneral.screen-mode-label",
+          "DescriptionTranslationKey": null,
+          "Format": null,
+          "PlaceHolderTranslationKey": null,
+          "Icon": null,
+          "MaxValue": 0,
+          "MinValue": 0,
+          "Steps": 0,
+          "DefaultValue": "0",
+          "Required": false,
+          "MaxLength": 0,
+          "JsonKey": "ScreenMode",
+          "Policy": "0",
+          "SettingType": 1,
+          "VisualStyle": 1,
+          "SourceKey": "SetupScreenModes",
+          "SourceVisualStyle": 0
+        },
+        {
+          "LabelTranslationKey": "setupSettingsGeneral.departments-supported-label",
+          "DescriptionTranslationKey": null,
+          "Format": null,
+          "PlaceHolderTranslationKey": null,
+          "Icon": null,
+          "MaxValue": 0,
+          "MinValue": 0,
+          "Steps": 0,
+          "DefaultValue": "false",
+          "Required": false,
+          "MaxLength": 0,
+          "JsonKey": "DepartmentsSupported",
+          "Policy": "0",
+          "SettingType": 2,
+          "VisualStyle": 3,
+          "SourceKey": null,
+          "SourceVisualStyle": 0
+        }
+      ]
+    },
+    {
+      "TitleTranslationKey": "setupSettingsRegistration.title",
+      "JsonKey": "Registration",
+      "Sections": [
+        {
+          "TitleTranslationKey": "setupSettingsQuickRegistration.title",
+          "JsonKey": "Quick",
+          "Sections": null,
+          "Settings": [
+            {
+              "LabelTranslationKey": "setupSettingsQuickRegistration.is-allowed",
+              "DescriptionTranslationKey": null,
+              "Format": null,
+              "PlaceHolderTranslationKey": null,
+              "Icon": null,
+              "MaxValue": 0,
+              "MinValue": 0,
+              "Steps": 0,
+              "DefaultValue": "true",
+              "Required": false,
+              "MaxLength": 0,
+              "JsonKey": "IsAllowed",
+              "Policy": "1",
+              "SettingType": 2,
+              "VisualStyle": 3,
+              "SourceKey": null,
+              "SourceVisualStyle": 0
+            },
+            {
+              "LabelTranslationKey": "setupSettingsQuickRegistration.date-format",
+              "DescriptionTranslationKey": null,
+              "Format": null,
+              "PlaceHolderTranslationKey": null,
+              "Icon": null,
+              "MaxValue": 0,
+              "MinValue": 0,
+              "Steps": 0,
+              "DefaultValue": "yyyy_MM_dd_T_HH_mm_ss_ff",
+              "Required": true,
+              "MaxLength": 0,
+              "JsonKey": "DateFormat",
+              "Policy": "2",
+              "SettingType": 0,
+              "VisualStyle": 0,
+              "SourceKey": null,
+              "SourceVisualStyle": 0
+            },
+            {
+              "LabelTranslationKey": "setupSettingsQuickRegistration.administrator-as-physician",
+              "DescriptionTranslationKey": null,
+              "Format": null,
+              "PlaceHolderTranslationKey": null,
+              "Icon": null,
+              "MaxValue": 0,
+              "MinValue": 0,
+              "Steps": 0,
+              "DefaultValue": "true",
+              "Required": false,
+              "MaxLength": 0,
+              "JsonKey": "UseAdministratorAsPhysician",
+              "Policy": "1",
+              "SettingType": 2,
+              "VisualStyle": 3,
+              "SourceKey": null,
+              "SourceVisualStyle": 0
+            }
+          ]
+        },
+        {
+          "TitleTranslationKey": "setupSettingsManualRegistration.title",
+          "JsonKey": "Manual",
+          "Sections": null,
+          "Settings": [
+            {
+              "LabelTranslationKey": "setupSettingsManualRegistration.autofill-physician",
+              "DescriptionTranslationKey": null,
+              "Format": null,
+              "PlaceHolderTranslationKey": null,
+              "Icon": null,
+              "MaxValue": 0,
+              "MinValue": 0,
+              "Steps": 0,
+              "DefaultValue": "true",
+              "Required": false,
+              "MaxLength": 0,
+              "JsonKey": "PhysicianAsLoggedInUser",
+              "Policy": "2",
+              "SettingType": 2,
+              "VisualStyle": 3,
+              "SourceKey": null,
+              "SourceVisualStyle": 0
+            }
+          ]
+        }
+      ],
+      "Settings": null
+    },
+    {
+      "TitleTranslationKey": "setupSettingsSearch.title",
+      "JsonKey": "",
+      "Sections": null,
+      "Settings": [
+        {
+          "LabelTranslationKey": "setupSettingsSearch.search-columns-label",
+          "DescriptionTranslationKey": null,
+          "Format": null,
+          "PlaceHolderTranslationKey": null,
+          "Icon": null,
+          "MaxValue": 0,
+          "MinValue": 0,
+          "Steps": 0,
+          "DefaultValue": "",
+          "Required": false,
+          "MaxLength": 0,
+          "JsonKey": null,
+          "Policy": "0",
+          "SettingType": 2,
+          "VisualStyle": 4,
+          "SourceKey": "SearchColumns",
+          "SourceVisualStyle": 3
+        }
+      ]
+    }
+  ],
+  "JsonKey": "SetupSettings",
+  "Settings": null
+}

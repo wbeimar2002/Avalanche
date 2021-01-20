@@ -1,0 +1,14 @@
+{
+  "Items": [
+    {
+      "TranslationKey": null,
+      "Id": "0",
+      "Value": "Info"
+    },
+    {
+      "TranslationKey": null,
+      "Id": "1",
+      "Value": "Debug"
+    }
+  ]
+}

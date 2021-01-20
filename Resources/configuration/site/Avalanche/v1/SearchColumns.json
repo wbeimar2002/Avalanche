@@ -1,0 +1,58 @@
+{
+  "Items": [
+    {
+      "Type": "1",
+      "TranslationKey": "setup.id",
+      "Id": "id",
+      "Value": "true"
+    },
+    {
+      "Type": "0",
+      "TranslationKey": "setup.mrn",
+      "Id": "mrn",
+      "Value": "true"
+    },
+    {
+      "Type": "0",
+      "TranslationKey": "setup.first_name",
+      "Id": "firstName",
+      "Value": null
+    },
+    {
+      "Type": "0",
+      "TranslationKey": "setup.last_name",
+      "Id": "lastName",
+      "Value": "true"
+    },
+    {
+      "Type": "0",
+      "TranslationKey": "setup.department",
+      "Id": "department",
+      "Value": "true"
+    },
+    {
+      "Type": "0",
+      "TranslationKey": "setup.sex",
+      "Id": "sex",
+      "Value": "true"
+    },
+    {
+      "Type": "0",
+      "TranslationKey": "setup.date_of_birth",
+      "Id": "dateOfBirth",
+      "Value": "true"
+    },
+    {
+      "Type": "0",
+      "TranslationKey": "setup.procedure_type",
+      "Id": "procedureType",
+      "Value": null
+    },
+    {
+      "Type": "0",
+      "TranslationKey": "setup.physician",
+      "Id": "physician",
+      "Value": null
+    }
+  ]
+}

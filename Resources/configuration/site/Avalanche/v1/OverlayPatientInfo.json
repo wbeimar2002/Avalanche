@@ -1,0 +1,19 @@
+{
+  "Items": [
+    {
+      "TranslationKey": null,
+      "Id": "0",
+      "Value": "Always show patient info"
+    },
+    {
+      "TranslationKey": null,
+      "Id": "1",
+      "Value": "Never show patient info"
+    },
+    {
+      "TranslationKey": null,
+      "Id": "2",
+      "Value": "Show information until procedure starts"
+    }
+  ]
+}

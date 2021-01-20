@@ -1,0 +1,14 @@
+{
+  "Items": [
+    {
+      "TranslationKey": null,
+      "Id": "0",
+      "Value": "Clip"
+    },
+    {
+      "TranslationKey": null,
+      "Id": "1",
+      "Value": "Movie"
+    }
+  ]
+}

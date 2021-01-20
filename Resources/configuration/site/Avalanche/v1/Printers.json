@@ -1,0 +1,14 @@
+{
+  "Items": [
+    {
+      "TranslationKey": null,
+      "Id": "0",
+      "Value": "ISM-FLOOR1-PRINTER"
+    },
+    {
+      "TranslationKey": null,
+      "Id": "1",
+      "Value": "ISM-FLOOR2-PRINTER"
+    }
+  ]
+}
