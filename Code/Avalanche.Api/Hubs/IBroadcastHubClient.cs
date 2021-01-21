@@ -1,4 +1,5 @@
-﻿using Ism.SystemState.Models.Procedure;
+﻿using Avalanche.Api.ViewModels;
+using Ism.SystemState.Models.Procedure;
 using Ism.SystemState.Models.VideoRouting;
 using System.Threading.Tasks;
 
@@ -13,5 +14,7 @@ namespace Avalanche.Api.Hubs
         Task OnVideoSourceStateChanged(VideoSourceStateChangedEvent videoSourceStateChangedEvent);
 
         Task OnVideoSourceIdentityChanged(VideoSourceIdentityChangedEvent videoSourceIdentityChangedEvent);
+
+        Task OnActiveProcedureStateChanged(ActiveProcedureViewModel activeProcedureState);
     }
 }
