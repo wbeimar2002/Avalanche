@@ -15,6 +15,8 @@ namespace Avalanche.Api.Hubs
 
         Task OnVideoSourceIdentityChanged(VideoSourceIdentityChangedEvent videoSourceIdentityChangedEvent);
 
+        Task OnVideoSinkSourceChanged(VideoSinkSourceChangedEvent videoSinkSourceChangedEvent);
+
         Task OnActiveProcedureStateChanged(ActiveProcedureViewModel activeProcedureState);
     }
 }

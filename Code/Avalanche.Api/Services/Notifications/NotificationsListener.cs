@@ -50,6 +50,7 @@ namespace Avalanche.Api.Services.Notifications
             AddSubscription<ImageCapturedEvent>(evt => _hubContext.Clients.All.OnImageCapture(evt));
             AddSubscription<VideoSourceStateChangedEvent>(evt => _hubContext.Clients.All.OnVideoSourceStateChanged(evt));
             AddSubscription<VideoSourceIdentityChangedEvent>(evt => _hubContext.Clients.All.OnVideoSourceIdentityChanged(evt));
+            AddSubscription<VideoSinkSourceChangedEvent>(evt => _hubContext.Clients.All.OnVideoSinkSourceChanged(evt));
             AddDataSubscription<ActiveProcedureState>(data => _hubContext.Clients.All.OnActiveProcedureStateChanged(_mapper.Map<Avalanche.Api.ViewModels.ActiveProcedureViewModel>(data)));
 
             return Task.CompletedTask;
