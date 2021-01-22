@@ -73,6 +73,27 @@ namespace Avalanche.Api.Controllers.V1
             }
         }
 
+        [HttpPut("categories/lists/{key}")]
+        public async Task<IActionResult> SaveCategoryList(string key, [FromBody] DynamicListViewModel list, [FromServices] IWebHostEnvironment env)
+        {
+            try
+            {
+                _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
+                await _maintenanceManager.SaveCategoryList(User.GetUser(), list);
+
+                return Ok();
+            }
+            catch (Exception exception)
+            {
+                _appLoggerService.LogError(LoggerHelper.GetLogMessage(DebugLogType.Exception), exception);
+                return new BadRequestObjectResult(exception.Get(env.IsDevelopment()));
+            }
+            finally
+            {
+                _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
+            }
+        }
+
         [HttpGet("categories/{key}")]
         public async Task<IActionResult> GetCategoryByKey(string key, [FromServices]IWebHostEnvironment env)
         {
@@ -80,6 +101,27 @@ namespace Avalanche.Api.Controllers.V1
             {
                 _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
                 var result = await _maintenanceManager.GetCategoryByKey(User.GetUser(), key);
+
+                return Ok(result);
+            }
+            catch (Exception exception)
+            {
+                _appLoggerService.LogError(LoggerHelper.GetLogMessage(DebugLogType.Exception), exception);
+                return new BadRequestObjectResult(exception.Get(env.IsDevelopment()));
+            }
+            finally
+            {
+                _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
+            }
+        }
+
+        [HttpGet("categories/lists/{key}")]
+        public async Task<IActionResult> GetCategoryListByKey(string key, [FromServices] IWebHostEnvironment env)
+        {
+            try
+            {
+                _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
+                var result = await _maintenanceManager.GetCategoryListByKey(User.GetUser(), key);
 
                 return Ok(result);
             }

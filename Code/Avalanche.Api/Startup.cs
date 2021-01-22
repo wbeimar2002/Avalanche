@@ -59,7 +59,7 @@ namespace Avalanche.Api
         {
             services.AddControllers();
             services.AddSignalR();
-
+            //services.AddMvc().AddNewtonsoftJson();
             services.AddCustomSwagger();
             services.AddHttpContextAccessor();
 

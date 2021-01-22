@@ -159,5 +159,22 @@ namespace Avalanche.Api.Managers.Maintenance
                 return jsonObject.IsValid(schema);
             }
         }
+
+        public async Task SaveCategoryList(User user, DynamicListViewModel category)
+        {
+            var configurationContext = _mapper.Map<User, ConfigurationContext>(user);
+            configurationContext.IdnId = new Guid().ToString();
+
+        }
+
+        public async Task<DynamicListViewModel> GetCategoryListByKey(User user, string key)
+        {
+            var configurationContext = _mapper.Map<User, ConfigurationContext>(user);
+            var category = await _storageService.GetJsonObject<DynamicListViewModel>(key, 1, configurationContext);
+            var values = await _storageService.GetJsonObject<DynamicListContainerViewModel>(category.SourceKey, 1, configurationContext);
+            category.Data = values.Items;
+
+            return category;
+        }
     }
 }
