@@ -16,7 +16,7 @@
       "Type": "0",
       "TranslationKey": "setup.first_name",
       "Id": "firstName",
-      "Value": null
+      "Value": "true"
     },
     {
       "Type": "0",
@@ -46,13 +46,13 @@
       "Type": "0",
       "TranslationKey": "setup.procedure_type",
       "Id": "procedureType",
-      "Value": null
+      "Value": "true"
     },
     {
       "Type": "0",
       "TranslationKey": "setup.physician",
       "Id": "physician",
-      "Value": null
+      "Value": "true"
     }
   ]
 }

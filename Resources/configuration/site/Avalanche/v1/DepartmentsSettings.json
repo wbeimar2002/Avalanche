@@ -1,0 +1,48 @@
+{
+  "TitleTranslationKey": "departments.title",
+  "SourceKey": "Departments",
+  "InsertAllowed": "true",
+  "EditAllowed": "false",
+  "RemoveAllowed": "true",
+  "SaveAsFile": "false",
+  "Properties": [
+    {
+      "LabelTranslationKey": "departments.id",
+      "DescriptionTranslationKey": null,
+      "Format": null,
+      "PlaceHolderTranslationKey": null,
+      "Icon": null,
+      "MaxValue": 0,
+      "MinValue": 0,
+      "Steps": 0,
+      "DefaultValue": "1",
+      "Required": false,
+      "MaxLength": 0,
+      "JsonKey": "Id",
+      "Policy": "0",
+      "SettingType": 1,
+      "VisualStyle": 1,
+      "SourceKey": null,
+      "SourceVisualStyle": 0
+    },
+    {
+      "LabelTranslationKey": "departments.name",
+      "DescriptionTranslationKey": null,
+      "Format": null,
+      "PlaceHolderTranslationKey": null,
+      "Icon": null,
+      "MaxValue": 0,
+      "MinValue": 0,
+      "Steps": 0,
+      "DefaultValue": null,
+      "Required": true,
+      "MaxLength": 64,
+      "JsonKey": "Name",
+      "Policy": "0",
+      "SettingType": 1,
+      "VisualStyle": 1,
+      "SourceKey": null,
+      "SourceVisualStyle": 0
+    }
+  ]
+}
