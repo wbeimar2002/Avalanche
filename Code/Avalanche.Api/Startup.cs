@@ -7,12 +7,14 @@ using Avalanche.Api.Managers.Licensing;
 using Avalanche.Api.Managers.Maintenance;
 using Avalanche.Api.Managers.Metadata;
 using Avalanche.Api.Managers.Notifications;
+using Avalanche.Api.Managers.Procedures;
 using Avalanche.Api.Services.Configuration;
 using Avalanche.Api.Services.Health;
 using Avalanche.Api.Services.Maintenance;
 using Avalanche.Api.Services.Media;
 using Avalanche.Api.Services.Notifications;
 using Avalanche.Api.Utilities;
+using Avalanche.Shared.Domain.Models;
 using Avalanche.Shared.Infrastructure.Models;
 using Avalanche.Shared.Infrastructure.Services.Settings;
 using Ism.Broadcaster.Services;
@@ -83,6 +85,7 @@ namespace Avalanche.Api
             services.AddSingleton<IMediaService, MediaService>();
             services.AddSingleton<IDevicesManager, DevicesManager>();
             services.AddSingleton<IMediaManager, MediaManager>();
+            services.AddSingleton<IProceduresManager, ProceduresManager>();
             services.AddSingleton<IPieService, PieService>();
             services.AddSingleton<IBroadcastService, BroadcastService>();
             services.AddSingleton<INotificationsManager, NotificationsManager>();
@@ -107,9 +110,9 @@ namespace Avalanche.Api
 
             services.AddAutoMapper(typeof(Startup));
 
-            var redisAddress = configurationService.GetEnvironmentVariable("redisAddress");
-
-            services.AddRedisStateClient(redisAddress); // TODO: Config
+            var stateServiceAddress = configurationService.GetEnvironmentVariable("stateServiceGrpcAddress");
+            var stateServicePort = configurationService.GetEnvironmentVariable("stateServiceGrpcPort");
+            services.AddGrpcStateClient(stateServiceAddress, uint.Parse(stateServicePort), "AvalancheApi");
 
             ConfigureAuthorization(services);
             ConfigureCorsPolicy(services);

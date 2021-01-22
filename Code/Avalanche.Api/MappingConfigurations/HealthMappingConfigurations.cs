@@ -477,36 +477,12 @@ namespace Avalanche.Api.MappingConfigurations
         private KeyValuePairViewModel GetSex(Ism.Storage.Core.PatientList.V1.Protos.SexMessage sex)
         {
             string id = System.Enum.GetName(typeof(Ism.Storage.Core.PatientList.V1.Protos.SexMessage), sex);
-            return new KeyValuePairViewModel()
-            {
-                Id = id,
-                Value = GetSexTranslationKey(id)
-            };
+            return MappingUtilities.GetSexViewModel(id);
         }
         private KeyValuePairViewModel GetSex(Ism.PatientInfoEngine.V1.Protos.Sex sex)
         {
             string id = System.Enum.GetName(typeof(Ism.PatientInfoEngine.V1.Protos.Sex), sex);
-            return new KeyValuePairViewModel()
-            {
-                Id = id,
-                TranslationKey = GetSexTranslationKey(id)
-            };
-        }
-
-        private string GetSexTranslationKey(string id)
-        {
-            switch (id)
-            {
-                case "F":
-                    return "sex.female";
-                case "M":
-                    return "sex.male";
-                case "O":
-                    return "sex.other";
-                case "U":
-                default:
-                    return "sex.unspecified";
-            }
+            return MappingUtilities.GetSexViewModel(id);
         }
 
         private Ism.Storage.Core.PatientList.V1.Protos.SexMessage GetSex(string sex)

@@ -11,6 +11,7 @@ using Google.Protobuf.WellKnownTypes;
 using Ism.Common.Core.Configuration.Models;
 using Ism.PatientInfoEngine.V1.Protos;
 using Ism.Storage.Core.DataManagement.V1.Protos;
+using Ism.SystemState.Client;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -25,18 +26,21 @@ namespace Avalanche.Api.Managers.Health
         readonly IStorageService _storageService;
         readonly IMapper _mapper;
         readonly IDataManagementService _dataManagementService;
+        readonly IStateClient _stateClient;
 
         public PatientsManager(IPieService pieService, 
             IAccessInfoFactory accessInfoFactory,
             IStorageService storageService,
             IMapper mapper, 
-            IDataManagementService dataManagementService)
+            IDataManagementService dataManagementService,
+            IStateClient stateClient)
         {
             _pieService = pieService;
             _storageService = storageService;
             _accessInfoFactory = accessInfoFactory;
             _dataManagementService = dataManagementService;
             _mapper = mapper;
+            _stateClient = stateClient;
         }
 
         public async Task<PatientViewModel> RegisterPatient(PatientViewModel newPatient, Avalanche.Shared.Domain.Models.User user)
@@ -78,6 +82,7 @@ namespace Avalanche.Api.Managers.Health
 
             var patientRequest = _mapper.Map<PatientViewModel, Ism.Storage.Core.PatientList.V1.Protos.AddPatientRecordRequest>(newPatient);
             var result = await _pieService.RegisterPatient(patientRequest);
+            PublishActiveProcedure(newPatient);
 
             var response = _mapper.Map<Ism.Storage.Core.PatientList.V1.Protos.AddPatientRecordResponse, PatientViewModel>(result);
             return response;
@@ -127,6 +132,7 @@ namespace Avalanche.Api.Managers.Health
 
             var patientRequest = _mapper.Map<PatientViewModel, Ism.Storage.Core.PatientList.V1.Protos.AddPatientRecordRequest>(newPatient);
             var result = await _pieService.RegisterPatient(patientRequest);
+            PublishActiveProcedure(newPatient);
 
             return _mapper.Map<Ism.Storage.Core.PatientList.V1.Protos.AddPatientRecordResponse, PatientViewModel>(result);
         }
@@ -245,6 +251,32 @@ namespace Avalanche.Api.Managers.Health
                         DepartmentId = Convert.ToInt32(department.Id),
                     }
                 });
+            }
+        }
+
+        private void PublishActiveProcedure(PatientViewModel patient)
+        {
+            if (null != patient)
+            {
+                var now = DateTime.Now;
+                var hacky_temp_libid_for_demo = $"{now.Year}_{now.Month}_{now.Day}T{now.Hour}_{now.Minute}_{now.Second}";
+                var libId = hacky_temp_libid_for_demo; // TODO: this is wrong and needs to come from Library Service
+                var repositoryId = "cache"; // TODO: this is wrong and needs to come from Library Service
+
+                _stateClient.PersistData(new Ism.SystemState.Models.Procedure.ActiveProcedureState(
+                    _mapper.Map<Ism.SystemState.Models.Procedure.Patient>(patient),
+                    new List<Ism.SystemState.Models.Procedure.ProcedureImage>(),
+                    new List<string>(),
+                    libId,
+                    repositoryId,
+                    _mapper.Map<Ism.SystemState.Models.Procedure.Department>(patient.Department),
+                    _mapper.Map<Ism.SystemState.Models.Procedure.ProcedureType>(patient.ProcedureType),
+                    _mapper.Map<Ism.SystemState.Models.Procedure.Physician>(patient.Physician),
+                    false));
+            }
+            else
+            {
+                _stateClient.PersistData<Ism.SystemState.Models.Procedure.ActiveProcedureState>(null); 
             }
         }
     }

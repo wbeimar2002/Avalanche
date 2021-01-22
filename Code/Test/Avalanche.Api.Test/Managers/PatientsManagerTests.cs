@@ -9,6 +9,7 @@ using Avalanche.Api.Utilities;
 using Avalanche.Api.ViewModels;
 using Avalanche.Shared.Domain.Models;
 using Ism.Common.Core.Configuration.Models;
+using Ism.SystemState.Client;
 using Moq;
 using NUnit.Framework;
 using System;
@@ -26,6 +27,7 @@ namespace Avalanche.Api.Tests.Managers
         Mock<IStorageService> _storageService;
         Mock<IAccessInfoFactory> _accessInfoFactory;
         Mock<IDataManagementService> _dataManagementService;
+        Mock<IStateClient> _stateClient;
 
         IMapper _mapper;
         PatientsManager _manager;
@@ -37,6 +39,7 @@ namespace Avalanche.Api.Tests.Managers
             _storageService = new Mock<IStorageService>();
             _accessInfoFactory = new Mock<IAccessInfoFactory>();
             _dataManagementService = new Mock<IDataManagementService>();
+            _stateClient = new Mock<IStateClient>();
 
             var config = new MapperConfiguration(cfg =>
             {
@@ -44,7 +47,7 @@ namespace Avalanche.Api.Tests.Managers
             });
 
             _mapper = config.CreateMapper();
-            _manager = new PatientsManager(_pieService.Object, _accessInfoFactory.Object, _storageService.Object, _mapper, _dataManagementService.Object);
+            _manager = new PatientsManager(_pieService.Object, _accessInfoFactory.Object, _storageService.Object, _mapper, _dataManagementService.Object, _stateClient.Object);
         }
 
         public static IEnumerable<TestCaseData> NewPatientViewModelWrongDataTestCases
