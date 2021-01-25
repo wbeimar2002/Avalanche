@@ -189,6 +189,15 @@ stages:
        inputs:
         PathtoPublish: '$(PathtoApp)'
         ArtifactName: '$(PathtoApp)'
+
+     # make drop that is used later in copy to network a variable
+     - task: PublishBuildArtifacts@1
+       displayName: 'Publish Build Artifacts'
+       inputs:
+        PathtoPublish: '$(PathtoApp)'
+        ArtifactName: 'drop'
+
+
     
 - stage: push_to_acr
   
@@ -205,6 +214,13 @@ stages:
        inputs:
         artifactName: $(PathtoApp)
         downloadPath: '.'
+
+     - task: DownloadPipelineArtifact@2
+      displayName: 'Download Pipeline Artifact'
+      inputs:
+        source: 'current'
+        artifactName: drop
+        targetPath: '$(System.DefaultWorkingDirectory)\drop'
      
      - powershell: |
         $temp = "$(ImageName)"
@@ -329,3 +345,13 @@ stages:
         ProjectName: '$(OctopusProject)'
         ReleaseNumber: '$(PackageVersion)'
         #Channel: 'Channels-167'
+
+     - template: 'pipeline\templates\copy-release-to-network-share.yml@devops'
+       parameters: 
+        adoProject: '$(AdoProject)'
+        vsProjectNamePrefix: '$(VsProjectNamePrefix)'
+        networkShare: '$(NetworkShare)'
+        networkSubPath: '$(NetworkSubPath)'
+        networkUser: '$(NetworkUser)'
+        networkPassword: '$(NetworkPassword)'
+        builidNumber: '$Env:BUILD_BUILDNUMBER'
