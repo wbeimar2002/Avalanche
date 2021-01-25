@@ -298,7 +298,9 @@ stages:
    - job: push
 
      pool:
-      vmImage: '$(pool_vm_image)'
+      name: ism-build-pool-on-prem
+      demands: 
+        - msbuild
 
      steps:  
      - task: DownloadPipelineArtifact@2
