@@ -176,6 +176,13 @@ stages:
        inputs:
         PathtoPublish: '$(PathtoApp)'
         ArtifactName: '$(PathtoApp)'
+
+     # make drop that is used later in copy to network a variable
+     - task: PublishBuildArtifacts@1
+       displayName: 'Publish Build Artifacts'
+       inputs:
+        PathtoPublish: '$(PathtoApp)'
+        ArtifactName: 'drop'
     
      - task: CopyFiles@2
        inputs:
@@ -291,6 +298,7 @@ stages:
       name: ism-build-pool-on-prem
       demands: 
         - msbuild
+
     steps:
   
     - download: current
@@ -318,6 +326,7 @@ stages:
     - powershell: |
         write-host "package version="$ENV:PACKAGEVERSION
       displayName: 'Print package version'
+
     - task: 'octopusdeploy.octopus-deploy-build-release-tasks.octopus-pack.OctopusPack@4'
       displayName: 'Package avalanche-dicom'
       inputs:
