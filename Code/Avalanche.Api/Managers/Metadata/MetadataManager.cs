@@ -137,7 +137,7 @@ namespace Avalanche.Api.Managers.Metadata
 
             bool departmentSupported = setupSettings.General.DepartmentsSupported;
 #warning TODO: Check the strategy to throw business logic exceptions. Same exceptions in Patients Manager
-            if (!departmentSupported)
+            if (departmentSupported)
             {
                 if (departmentId == null || departmentId == 0)
                     throw new System.ArgumentNullException("Department value is invalid. It should not be null. Departments are supported.");
