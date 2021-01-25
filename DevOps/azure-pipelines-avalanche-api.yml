@@ -304,9 +304,12 @@ stages:
     - download: current
       artifact: 'certificates'
  
-    - download: current
-      artifact: 'drop'
-      targetPath: '$(System.DefaultWorkingDirectory)\drop'
+    - task: DownloadPipelineArtifact@2
+      displayName: 'Download Pipeline Artifact'
+      inputs:
+        source: 'current'
+        artifactName: drop
+        targetPath: '$(System.DefaultWorkingDirectory)\drop'
     
     - powershell: |
             $package_version =""
