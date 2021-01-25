@@ -303,7 +303,11 @@ stages:
   
     - download: current
       artifact: 'certificates'
-           
+ 
+    - download: current
+      artifact: 'drop'
+      targetPath: '$(System.DefaultWorkingDirectory)\drop'
+    
     - powershell: |
             $package_version =""
             $buildnumber = $Env:BUILD_BUILDNUMBER
