@@ -215,13 +215,6 @@ stages:
         artifactName: $(PathtoApp)
         downloadPath: '.'
 
-     - task: DownloadPipelineArtifact@2
-       displayName: 'Download Pipeline Artifact'
-       inputs:
-        source: 'current'
-        artifactName: drop
-        targetPath: '$(System.DefaultWorkingDirectory)\drop'
-     
      - powershell: |
         $temp = "$(ImageName)"
         $temp = $temp.ToLower()
@@ -305,7 +298,13 @@ stages:
    - job: push
     
      steps:  
-
+     - task: DownloadPipelineArtifact@2
+       displayName: 'Download Pipeline Artifact'
+       inputs:
+        source: 'current'
+        artifactName: drop
+        targetPath: '$(System.DefaultWorkingDirectory)\drop'
+     
      - task: PowerShell@2
        inputs:
          targetType: 'inline'
