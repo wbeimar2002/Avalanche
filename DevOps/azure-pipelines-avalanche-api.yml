@@ -346,4 +346,13 @@ stages:
        ProjectName: '$(OctopusProject)'
        ReleaseNumber: '$(PackageVersion)'
        #Channel: 'Channels-167'
-       
+    
+    - template: 'pipeline\templates\copy-release-to-network-share.yml@devops'
+      parameters: 
+        adoProject: '$(AdoProject)'
+        vsProjectNamePrefix: '$(VsProjectNamePrefix)'
+        networkShare: '$(NetworkShare)'
+        networkSubPath: '$(NetworkSubPath)'
+        networkUser: '$(NetworkUser)'
+        networkPassword: '$(NetworkPassword)'
+        builidNumber: '$Env:BUILD_BUILDNUMBER'
