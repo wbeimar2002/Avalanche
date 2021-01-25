@@ -41,6 +41,8 @@ namespace Avalanche.Api.Managers.Metadata
                     return (await _storageService.GetJsonObject<ListContainerViewModel>("SourceTypes", 1, configurationContext)).Items;
                 case MetadataTypes.SettingTypes:
                     return (await _storageService.GetJsonObject<ListContainerViewModel>("SettingTypes", 1, configurationContext)).Items;
+                case MetadataTypes.PgsVideoFiles:
+                    return (await _storageService.GetJsonObject<ListContainerViewModel>("PgsVideoFiles", 1, configurationContext)).Items;
                 default:
                     return new List<KeyValuePairViewModel>();
             }
