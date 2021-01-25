@@ -176,6 +176,13 @@ stages:
        inputs:
         PathtoPublish: '$(PathtoApp)'
         ArtifactName: '$(PathtoApp)'
+
+     # make drop that is used later in copy to network a variable
+     - task: PublishBuildArtifacts@1
+       displayName: 'Publish Build Artifacts'
+       inputs:
+        PathtoPublish: '$(PathtoApp)'
+        ArtifactName: 'drop'
     
      - task: CopyFiles@2
        inputs:
@@ -280,7 +287,7 @@ stages:
           scriptPath: 'devops/resources/delete-acr-firewall-ip.sh'
           arguments: '$(azuresubscription) $(acrname) $(ip)'
 
-- stage: octopus_release
+- stage: publish_te
   dependsOn: 'push_to_acr'
   #condition: and(succeeded(), eq(variables['publish_te_to_octopus'], 'true'))
   
@@ -288,16 +295,22 @@ stages:
   - job: push_certifcates_to_octopus
 
     pool:
-      name: agent-pool-copy-titan-to-octopus-onpremises
+      name: ism-build-pool-on-prem
       demands: 
         - msbuild
+
     steps:
   
     - download: current
       artifact: 'certificates'
-       
-     
-     
+ 
+    - task: DownloadPipelineArtifact@2
+      displayName: 'Download Pipeline Artifact'
+      inputs:
+        source: 'current'
+        artifactName: drop
+        targetPath: '$(System.DefaultWorkingDirectory)\drop'
+    
     - powershell: |
             $package_version =""
             $buildnumber = $Env:BUILD_BUILDNUMBER
@@ -320,6 +333,7 @@ stages:
     - powershell: |
         write-host "package version="$ENV:PACKAGEVERSION
       displayName: 'Print package version'
+
     - task: 'octopusdeploy.octopus-deploy-build-release-tasks.octopus-pack.OctopusPack@4'
       displayName: 'Package avalanche-dicom'
       inputs:
@@ -346,4 +360,13 @@ stages:
        ProjectName: '$(OctopusProject)'
        ReleaseNumber: '$(PackageVersion)'
        #Channel: 'Channels-167'
-       
+    
+    - template: 'pipeline\templates\copy-release-to-network-share.yml@devops'
+      parameters: 
+        adoProject: '$(AdoProject)'
+        vsProjectNamePrefix: '$(VsProjectNamePrefix)'
+        networkShare: '$(NetworkShare)'
+        networkSubPath: '$(NetworkSubPath)'
+        networkUser: '$(NetworkUser)'
+        networkPassword: '$(NetworkPassword)'
+        builidNumber: '$Env:BUILD_BUILDNUMBER'
