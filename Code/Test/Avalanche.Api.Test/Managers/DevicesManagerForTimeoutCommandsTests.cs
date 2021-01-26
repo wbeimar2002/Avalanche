@@ -58,7 +58,7 @@ namespace Avalanche.Api.Tests.Managers
 
             var commandResponse = _manager.SendCommand(commandViewModel);
 
-            _mediaService.Verify(mock => mock.SetPgsTimeoutModeAsync(It.Is<Ism.PgsTimeout.V1.Protos.SetPgsTimeoutModeRequest>(args => (int)args.Mode == (int)TimeoutModes.Pgs)), Times.Once);
+            _mediaService.Verify(mock => mock.SetPgsTimeoutModeAsync(It.Is<Ism.PgsTimeout.V1.Protos.SetPgsTimeoutModeRequest>(args => (int)args.Mode == (int)PgsTimeoutModes.Pgs)), Times.Once);
 
             Assert.IsNotNull(commandResponse);
         }
@@ -81,7 +81,7 @@ namespace Avalanche.Api.Tests.Managers
 
             var commandResponse = _manager.SendCommand(commandViewModel);
 
-            _mediaService.Verify(mock => mock.SetPgsTimeoutModeAsync(It.Is<Ism.PgsTimeout.V1.Protos.SetPgsTimeoutModeRequest>(args => (int)args.Mode == (int)TimeoutModes.Idle)), Times.Once);
+            _mediaService.Verify(mock => mock.SetPgsTimeoutModeAsync(It.Is<Ism.PgsTimeout.V1.Protos.SetPgsTimeoutModeRequest>(args => (int)args.Mode == (int)PgsTimeoutModes.Idle)), Times.Once);
 
             Assert.IsNotNull(commandResponse);
         }

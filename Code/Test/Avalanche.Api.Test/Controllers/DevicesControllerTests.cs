@@ -1,5 +1,6 @@
 ﻿using Avalanche.Api.Controllers.V1;
 using Avalanche.Api.Managers.Devices;
+using Avalanche.Api.Managers.PgsTimeout;
 using Avalanche.Api.Tests.Extensions;
 using Avalanche.Api.ViewModels;
 using Microsoft.AspNetCore.Hosting;
@@ -19,6 +20,7 @@ namespace Avalanche.Api.Tests.Controllers
         Mock<ILogger<DevicesController>> _appLoggerService;
         Mock<IWebHostEnvironment> _environment;
         Mock<IDevicesManager> _deviceManager;
+        Mock<IPgsTimeoutManager> _pgsTimeoutManager;
 
         DevicesController _controller;
 
@@ -30,8 +32,9 @@ namespace Avalanche.Api.Tests.Controllers
             _appLoggerService = new Mock<ILogger<DevicesController>>();
             _environment = new Mock<IWebHostEnvironment>();
             _deviceManager = new Mock<IDevicesManager>();
+            _pgsTimeoutManager = new Mock<IPgsTimeoutManager>();
 
-            _controller = new DevicesController(_deviceManager.Object, _appLoggerService.Object);
+            _controller = new DevicesController(_deviceManager.Object, _pgsTimeoutManager.Object, _appLoggerService.Object);
 
             OperatingSystem os = Environment.OSVersion;
 
@@ -153,7 +156,7 @@ namespace Avalanche.Api.Tests.Controllers
         [Test]
         public void GetPgsOutputsReturnBadResultIfFails()
         {
-            _deviceManager.Setup(mock => mock.GetPgsOutputs()).Throws(It.IsAny<Exception>());
+            _pgsTimeoutManager.Setup(mock => mock.GetPgsOutputs()).Throws(It.IsAny<Exception>());
 
             var badResult = _controller.GetPgsOutputs(_environment.Object);
 
@@ -185,7 +188,7 @@ namespace Avalanche.Api.Tests.Controllers
         [Test]
         public void GetTimeoutOuputsReturnBadResultIfFails()
         {
-            _deviceManager.Setup(mock => mock.GetTimeoutOutputs()).Throws(It.IsAny<Exception>());
+            _pgsTimeoutManager.Setup(mock => mock.GetTimeoutOutputs()).Throws(It.IsAny<Exception>());
 
             var badResult = _controller.GetTimeoutOuputs(_environment.Object);
 

@@ -20,7 +20,7 @@ namespace Avalanche.Api.Managers.Devices
             var setModeCommand = new Command()
             {
                 Device = command.Device,
-                Message = ((int)TimeoutModes.Pgs).ToString()
+                Message = ((int)PgsTimeoutModes.Pgs).ToString()
             };
 
             await ExecuteCommandAsync(CommandTypes.SetTimeoutMode, setModeCommand, user);
@@ -50,7 +50,7 @@ namespace Avalanche.Api.Managers.Devices
         {
             var configurationContext = _mapper.Map<Avalanche.Shared.Domain.Models.User, ConfigurationContext>(user);
             var pgsSettings = await _storageService.GetJsonDynamic("PgsSettingsValues", 1, configurationContext);
-            var timeoutMode = pgsSettings.PgsVideoAlwaysOn ? TimeoutModes.Pgs : TimeoutModes.Idle;
+            var timeoutMode = pgsSettings.PgsVideoAlwaysOn ? PgsTimeoutModes.Pgs : PgsTimeoutModes.Idle;
 
             var setModeCommand = new Command()
             {

@@ -1,5 +1,6 @@
 ﻿using Avalanche.Api.Extensions;
 using Avalanche.Api.Managers.Devices;
+using Avalanche.Api.Managers.PgsTimeout;
 using Avalanche.Api.ViewModels;
 using Avalanche.Shared.Domain.Models;
 using Avalanche.Shared.Infrastructure.Enumerations;
@@ -15,6 +16,8 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
+using static Ism.Utility.Core.Preconditions;
+
 namespace Avalanche.Api.Controllers.V1
 {
     [Route("[controller]")]
@@ -26,10 +29,13 @@ namespace Avalanche.Api.Controllers.V1
 
         readonly IDevicesManager _devicesManager;
 
-        public DevicesController(IDevicesManager devicesManager, ILogger<DevicesController> logger)
+        private readonly IPgsTimeoutManager _pgsTimeoutManager;
+
+        public DevicesController(IDevicesManager devicesManager, IPgsTimeoutManager pgsTimeoutManager, ILogger<DevicesController> logger)
         {
             _appLoggerService = logger;
             _devicesManager = devicesManager;
+            _pgsTimeoutManager = ThrowIfNullOrReturn(nameof(pgsTimeoutManager), pgsTimeoutManager);
         }
 
         /// <summary>
@@ -70,7 +76,7 @@ namespace Avalanche.Api.Controllers.V1
             try
             {
                 _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
-                var result = await _devicesManager.GetPgsOutputs();
+                var result = await _pgsTimeoutManager.GetPgsOutputs();
                 return Ok(result);
             }
             catch (Exception exception)
@@ -94,7 +100,7 @@ namespace Avalanche.Api.Controllers.V1
             try
             {
                 _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
-                var result = await _devicesManager.GetTimeoutOutputs();
+                var result = await _pgsTimeoutManager.GetTimeoutOutputs();
                 return Ok(result);
             }
             catch (Exception exception)
