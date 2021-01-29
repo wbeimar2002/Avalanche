@@ -10,6 +10,7 @@ namespace Avalanche.Api.ViewModels
         public string DescriptionTranslationKey { get; set; }
         public string Format { get; set; }
         public string PlaceHolderTranslationKey { get; set; }
+        public bool IsPrimaryKey { get; set; }
         public string Icon { get; set; }
         public int MaxValue { get; set; }
         public int MinValue { get; set; }

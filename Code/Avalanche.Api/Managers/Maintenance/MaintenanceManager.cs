@@ -12,6 +12,8 @@ using Newtonsoft.Json.Schema;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Dynamic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Avalanche.Api.Managers.Maintenance
@@ -160,21 +162,116 @@ namespace Avalanche.Api.Managers.Maintenance
             }
         }
 
-        public async Task SaveCategoryList(User user, DynamicListViewModel category)
+        public async Task SaveEntityChanges(User user, DynamicListViewModel category)
         {
             var configurationContext = _mapper.Map<User, ConfigurationContext>(user);
             configurationContext.IdnId = new Guid().ToString();
 
+            var result = JsonConvert.SerializeObject(category.Data);
+
+            if (category.SaveAsFile)
+            {
+                if (await SchemaIsValid(category.SourceKey, result, configurationContext))
+                {
+                    await _storageService.SaveJson(category.SourceKey, result, 1, configurationContext);
+                }
+                else
+                {   //TODO: Pending Exceptions strategy
+                    throw new ValidationException("Json Schema Invalid for " + category.SourceKey + " values");
+                }
+            }
+            else
+                await SaveDestination(user, category);
+        }
+
+        private async Task SaveDestination(User user, DynamicListViewModel category)
+        {
+            switch (category.SourceKey)
+            {
+                case "Departments":
+                    SaveDepartments(user, category.Action, category.Entity);
+                    break;
+                case "ProcedureTypes":
+                    SaveProcedureTypes(user, category.Action, category.Entity);
+                    break;
+                default:
+                    //TODO: Pending Exceptions strategy
+                    throw new ValidationException("Method Not Allowed");
+            }
+        }
+
+        private void SaveProcedureTypes(User user, string action, dynamic source)
+        {
+            var destination = new ProcedureType();
+            Helpers.Mapper.Map(source, destination);
+
+            switch (action)
+            {
+                case "Insert":
+                    _metadataManager.AddProcedureType(user, destination);
+                    break;
+                case "Delete":
+                    _metadataManager.DeleteProcedureType(user, destination);
+                    break;
+                default:
+                    //TODO: Pending Exceptions strategy
+                    throw new ValidationException("Method Not Allowed");
+            }
+        }
+
+        private void SaveDepartments(User user, string action, dynamic source)
+        {
+            var destination = new Department();
+            Helpers.Mapper.Map(source, destination);
+
+            switch (action)
+            {
+                case "Insert":
+                    break;
+                case "Delete":
+                    break;
+                default:
+                    throw new ValidationException("Method Not Allowed");
+            }
         }
 
         public async Task<DynamicListViewModel> GetCategoryListByKey(User user, string key)
         {
             var configurationContext = _mapper.Map<User, ConfigurationContext>(user);
             var category = await _storageService.GetJsonObject<DynamicListViewModel>(key, 1, configurationContext);
-            var values = await _storageService.GetJsonObject<DynamicListContainerViewModel>(category.SourceKey, 1, configurationContext);
-            category.Data = values.Items;
+
+            if (category.SaveAsFile)
+            {
+                var values = await _storageService.GetJsonObject<DynamicListContainerViewModel>(category.SourceKey, 1, configurationContext);
+                category.Data = values.Items;
+            }
+            else
+            {
+                category.Data = await GetData(user, category.SourceKey);
+            }
 
             return category;
+        }
+
+        private async Task<List<ExpandoObject>> GetData(User user, string sourceKey)
+        {
+            switch (sourceKey)
+            {
+                case "Departments":
+                    var departments = await _metadataManager.GetAllDepartments(user);
+
+                    return  departments
+                               .Select(item =>
+                                {
+                                    dynamic expandoObj = new ExpandoObject();
+                                    expandoObj.Id = item.Id;
+                                    expandoObj.Name = item.Name;
+                                    return (ExpandoObject)expandoObj;
+                                })
+                                .ToList();
+                default:
+                    return new List<ExpandoObject>();
+            }
         }
     }
 }

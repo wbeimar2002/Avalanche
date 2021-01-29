@@ -73,13 +73,55 @@ namespace Avalanche.Api.Controllers.V1
             }
         }
 
-        [HttpPut("categories/lists/{key}")]
-        public async Task<IActionResult> SaveCategoryList(string key, [FromBody] DynamicListViewModel list, [FromServices] IWebHostEnvironment env)
+        [HttpPost("categories/lists/{key}")]
+        public async Task<IActionResult> AddEntity(string key, [FromBody] DynamicListViewModel list, [FromServices] IWebHostEnvironment env)
         {
             try
             {
                 _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
-                await _maintenanceManager.SaveCategoryList(User.GetUser(), list);
+                await _maintenanceManager.SaveEntityChanges(User.GetUser(), list);
+
+                return Ok();
+            }
+            catch (Exception exception)
+            {
+                _appLoggerService.LogError(LoggerHelper.GetLogMessage(DebugLogType.Exception), exception);
+                return new BadRequestObjectResult(exception.Get(env.IsDevelopment()));
+            }
+            finally
+            {
+                _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
+            }
+        }
+
+        [HttpPut("categories/lists/{key}")]
+        public async Task<IActionResult> UpdateEntity(string key, [FromBody] DynamicListViewModel list, [FromServices] IWebHostEnvironment env)
+        {
+            try
+            {
+                _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
+                await _maintenanceManager.SaveEntityChanges(User.GetUser(), list);
+
+                return Ok();
+            }
+            catch (Exception exception)
+            {
+                _appLoggerService.LogError(LoggerHelper.GetLogMessage(DebugLogType.Exception), exception);
+                return new BadRequestObjectResult(exception.Get(env.IsDevelopment()));
+            }
+            finally
+            {
+                _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
+            }
+        }
+
+        [HttpDelete("categories/lists/{key}")]
+        public async Task<IActionResult> DeleteEntity(string key, [FromBody] DynamicListViewModel list, [FromServices] IWebHostEnvironment env)
+        {
+            try
+            {
+                _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
+                await _maintenanceManager.SaveEntityChanges(User.GetUser(), list);
 
                 return Ok();
             }
