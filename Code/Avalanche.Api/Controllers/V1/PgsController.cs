@@ -33,15 +33,19 @@ namespace Avalanche.Api.Controllers.V1
 
         #region PgsTimeoutPlayer methods
 
+        /// <summary>
+        /// Gets a collection of video files from the player
+        /// </summary>
+        /// <param name="env"></param>
+        /// <returns></returns>
         [HttpGet("videoFiles")]
-        [Produces(typeof(IDictionary<string, string>))]
         public async Task<IActionResult> GetPgsVideoFiles([FromServices] IWebHostEnvironment env)
         {
             try
             {
                 _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
-                var result = await _pgsTimeoutManager.GetPgsVideoFiles();
-                return Ok(result);
+                //var result = await _pgsTimeoutManager.GetPgsVideoFiles();
+                return Ok();
             }
             catch (Exception ex)
             {
@@ -54,13 +58,19 @@ namespace Avalanche.Api.Controllers.V1
             }
         }
 
+        /// <summary>
+        /// Sets the current video file of the player
+        /// </summary>
+        /// <param name="file"></param>
+        /// <param name="env"></param>
+        /// <returns></returns>
         [HttpPut("videoFile")]
-        public async Task<IActionResult> SetCurrentFile(string file, [FromServices] IWebHostEnvironment env)
+        public async Task<IActionResult> SetCurrentFile([FromBody] string file, [FromServices] IWebHostEnvironment env)
         {
             try
             {
                 _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
-                await _pgsTimeoutManager.SetPgsVideoFile(file);
+                //await _pgsTimeoutManager.SetPgsVideoFile(file);
                 return Ok();
             }
             catch (Exception ex)
@@ -82,13 +92,13 @@ namespace Avalanche.Api.Controllers.V1
         /// <param name="env"></param>
         /// <returns></returns>
         [HttpPut("videoPosition")]
-        public async Task<IActionResult> SetPgsVideoPosition(double position, [FromServices] IWebHostEnvironment env)
+        public async Task<IActionResult> SetPgsVideoPosition([FromBody] double position, [FromServices] IWebHostEnvironment env)
         {
             try
             {
                 _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
 
-                await _pgsTimeoutManager.SetPlaybackPosition(position);
+                //await _pgsTimeoutManager.SetPlaybackPosition(position);
 
                 return Ok();
             }
@@ -105,21 +115,103 @@ namespace Avalanche.Api.Controllers.V1
 
         /// <summary>
         /// Sets the volume of pgs audio
-        /// 0.0 means mute, 1.0 means loudest
+        /// 0.0 means mute, 1.0 means loudest. Note that 0.0 is different than muting
         /// </summary>
-        /// <param name="volume"></param>
+        /// <param name="level"></param>
         /// <param name="env"></param>
         /// <returns></returns>
-        [HttpPut("volume")]
-        public async Task<IActionResult> SetPgsVolume(double volume, [FromServices] IWebHostEnvironment env)
+        [HttpPut("volume/level")]
+        public async Task<IActionResult> SetPgsVolume([FromBody] double level, [FromServices] IWebHostEnvironment env)
         {
             try
             {
                 _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
 
-                await _pgsTimeoutManager.SetPgsVolume(volume);
+                //await _pgsTimeoutManager.SetPgsVolume(level);
 
                 return Ok();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(LoggerHelper.GetLogMessage(DebugLogType.Exception), ex);
+                return new BadRequestObjectResult(ex.Get(env.IsDevelopment()));
+            }
+            finally
+            {
+                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
+            }
+        }
+
+        /// <summary>
+        /// Gets the current pgs audio volume. Range is from 0-1
+        /// </summary>
+        /// <param name="env"></param>
+        /// <returns></returns>
+        [HttpGet("volume/level")]
+        public async Task<IActionResult> GetPgsVolume([FromServices] IWebHostEnvironment env)
+        {
+            try
+            {
+                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
+
+                // TODO: implement
+                //await _pgsTimeoutManager.SetPgsVolume(volume);
+
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(LoggerHelper.GetLogMessage(DebugLogType.Exception), ex);
+                return new BadRequestObjectResult(ex.Get(env.IsDevelopment()));
+            }
+            finally
+            {
+                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
+            }
+        }
+
+        /// <summary>
+        /// Sets the PGS player audio mute
+        /// </summary>
+        /// <param name="env"></param>
+        /// <returns></returns>
+        [HttpPut("volume/mute")]
+        public async Task<IActionResult> SetPgsMute([FromBody] bool mute, [FromServices] IWebHostEnvironment env)
+        {
+            try
+            {
+                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
+
+                // TODO: implement
+
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(LoggerHelper.GetLogMessage(DebugLogType.Exception), ex);
+                return new BadRequestObjectResult(ex.Get(env.IsDevelopment()));
+            }
+            finally
+            {
+                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
+            }
+        }
+
+        /// <summary>
+        /// Gets if the pgs player audio is muted
+        /// </summary>
+        /// <param name="env"></param>
+        /// <returns></returns>
+        [HttpGet("volume/mute")]
+        public async Task<IActionResult> GetPgsMute([FromServices] IWebHostEnvironment env)
+        {
+            try
+            {
+                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
+
+                // TODO: implement
+
+                return Ok(false);
             }
             catch (Exception ex)
             {
@@ -143,7 +235,7 @@ namespace Avalanche.Api.Controllers.V1
         /// <param name="env"></param>
         /// <returns></returns>
         [HttpPut("state")]
-        public async Task<IActionResult> SetPgsState(bool pgsState, [FromServices] IWebHostEnvironment env)
+        public async Task<IActionResult> SetPgsState([FromBody] bool pgsState, [FromServices] IWebHostEnvironment env)
         {
             try
             {
@@ -152,10 +244,10 @@ namespace Avalanche.Api.Controllers.V1
                 // start or stop pgs based on the requested state
                 // the pgsTimeoutManager deals with pgs-timeout interaction
                 // it also deals with something like 2 UIs starting pgs at the same time
-                if (pgsState)
-                    await _pgsTimeoutManager.StartPgs();
-                else
-                    await _pgsTimeoutManager.StopPgs();
+                //if (pgsState)
+                //    await _pgsTimeoutManager.StartPgs();
+                //else
+                //    await _pgsTimeoutManager.StopPgs();
 
                 return Ok();
             }
@@ -170,6 +262,11 @@ namespace Avalanche.Api.Controllers.V1
             }
         }
 
+        /// <summary>
+        /// Gets the list of pgs outputs and their current checked state
+        /// </summary>
+        /// <param name="env"></param>
+        /// <returns></returns>
         [HttpGet("outputs")]
         [Produces(typeof(List<Output>))]
         public async Task<IActionResult> GetPgsOutputs([FromServices] IWebHostEnvironment env)
@@ -177,8 +274,63 @@ namespace Avalanche.Api.Controllers.V1
             try
             {
                 _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
-                var result = await _pgsTimeoutManager.GetPgsOutputs();
-                return Ok(result);
+                //var result = await _pgsTimeoutManager.GetPgsOutputs();
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(LoggerHelper.GetLogMessage(DebugLogType.Exception), ex);
+                return new BadRequestObjectResult(ex.Get(env.IsDevelopment()));
+            }
+            finally
+            {
+                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
+            }
+        }
+
+        /// <summary>
+        /// Sets the checked state of a pgs display and internally it gets broadcast
+        /// </summary>
+        /// <param name="alias"></param>
+        /// <param name="index"></param>
+        /// <param name="enabled"></param>
+        /// <param name="env"></param>
+        /// <returns></returns>
+        [HttpPut("output/{alias}:{index}/state")]
+        public async Task<IActionResult> SetPgsStateForDisplay(string alias, int index, [FromBody] bool enabled, [FromServices] IWebHostEnvironment env)
+        {
+            try
+            {
+                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
+
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(LoggerHelper.GetLogMessage(DebugLogType.Exception), ex);
+                return new BadRequestObjectResult(ex.Get(env.IsDevelopment()));
+            }
+            finally
+            {
+                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
+            }
+        }
+
+        /// <summary>
+        /// Gets the checked state of a pgs display
+        /// </summary>
+        /// <param name="alias"></param>
+        /// <param name="index"></param>
+        /// <param name="env"></param>
+        /// <returns></returns>
+        [HttpGet("output/{alias}:{index}/state")]
+        public async Task<IActionResult> GetPgsStateForDisplay(string alias, int index, [FromServices] IWebHostEnvironment env)
+        {
+            try
+            {
+                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
+
+                return Ok();
             }
             catch (Exception ex)
             {

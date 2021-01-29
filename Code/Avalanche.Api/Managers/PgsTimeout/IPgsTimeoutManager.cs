@@ -22,10 +22,10 @@ namespace Avalanche.Api.Managers.PgsTimeout
         Task StopPgs();
 
         /// <summary>
-        /// Returns a list of PGS video files. Key is display name, value is file path
+        /// Returns a list of PGS video files
         /// </summary>
         /// <returns></returns>
-        Task<IDictionary<string, string>> GetPgsVideoFiles();
+        Task<IList<string>> GetPgsVideoFiles();
 
         /// <summary>
         /// Sets the current video file of the PGS player
@@ -55,16 +55,19 @@ namespace Avalanche.Api.Managers.PgsTimeout
         // is PGS audio its own thing or can audio itself be an isolated element?
         Task SetPgsVolume(double volume);
 
-        /// <summary>
-        /// Sets the mode of the pgs timeout player
-        /// Internally, this tells the player which elements should be visible or not
-        /// </summary>
-        /// <param name="mode"></param>
-        /// <returns></returns>
-        /// 
         // this is internal to the pgs player
         // pgs manager calls into wpf app to tell it this
         //Task SetPgsTimeoutPlayerMode(TimeoutModes mode);
+
+        // TODO: methods for the checkbox
+
+        /// <summary>
+        /// Should map to checked/unchecked when toggling PGS from a display
+        /// </summary>
+        /// <param name="displayId"></param>
+        /// <param name="enabled"></param>
+        /// <returns></returns>
+        Task SetPgsStateForDisplay(AliasIndexApiModel displayId, bool enabled);
 
         Task<List<Output>> GetTimeoutOutputs();
     }

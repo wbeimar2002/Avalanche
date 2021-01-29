@@ -95,6 +95,7 @@ namespace Avalanche.Api
             services.AddSingleton<IAvidisService, AvidisService>();
             services.AddSingleton<IRecorderService, RecorderService>();
             services.AddSingleton<IStorageService, StorageService>();
+            services.AddSingleton<IPgsTimeoutService, PgsTimeoutService>();
             services.AddSingleton<IDataManagementService, DataManagementService>();
             services.AddSingleton<ICertificateProvider>(new FileSystemCertificateProvider(grpcCertificate, grpcPassword, grpcServerValidationCertificate));
             services.AddSingleton<IGrpcClientFactory<DataManagementStorageClient>, GrpcClientFactory<DataManagementStorageClient>>();
