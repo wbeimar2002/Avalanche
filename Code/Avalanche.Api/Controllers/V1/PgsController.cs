@@ -19,7 +19,7 @@ namespace Avalanche.Api.Controllers.V1
 {
     [Route("room/[controller]")]
     [ApiController]
-    //[Authorize]
+    [Authorize]
     public class PgsController : ControllerBase
     {
         private readonly ILogger<PgsController> _logger;
