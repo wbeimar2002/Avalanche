@@ -1,0 +1,48 @@
+{
+  "TitleTranslationKey": "sinks.title",
+  "SourceKey": "SinksData",
+  "InsertAllowed": "true",
+  "EditAllowed": "true",
+  "RemoveAllowed": "true",
+  "SaveAsFile": "true",
+  "Properties": [
+    {
+      "LabelTranslationKey": "sinks.alias",
+      "DescriptionTranslationKey": null,
+      "Format": null,
+      "PlaceHolderTranslationKey": null,
+      "IsPrimaryKey": false,
+      "Icon": null,
+      "MaxValue": 0,
+      "MinValue": 0,
+      "Steps": 0,
+      "DefaultValue": "1",
+      "Required": false,
+      "MaxLength": 0,
+      "JsonKey": "Alias",
+      "SettingType": 1,
+      "VisualStyle": 1,
+      "SourceKey": null,
+      "SourceVisualStyle": 0
+    },
+    {
+      "LabelTranslationKey": "sinks.index",
+      "DescriptionTranslationKey": null,
+      "Format": null,
+      "PlaceHolderTranslationKey": null,
+      "IsPrimaryKey": false,
+      "Icon": null,
+      "MaxValue": 0,
+      "MinValue": 0,
+      "Steps": 0,
+      "DefaultValue": "0",
+      "Required": true,
+      "MaxLength": 64,
+      "JsonKey": "Index",
+      "SettingType": 1,
+      "VisualStyle": 1,
+      "SourceKey": null,
+      "SourceVisualStyle": 0
+    }
+  ]
+}

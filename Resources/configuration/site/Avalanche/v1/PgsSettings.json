@@ -21,7 +21,7 @@
           "ReadOnly": false,
           "Required": false,
           "MaxLength": 0,
-          "JsonKey": "PgsVideoAlwaysOn",
+          "JsonKey": "AlwaysOn",
           "Policy": "0",
           "SettingType": 2,
           "VisualStyle": 3,

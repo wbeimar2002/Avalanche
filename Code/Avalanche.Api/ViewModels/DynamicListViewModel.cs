@@ -13,7 +13,7 @@ namespace Avalanche.Api.ViewModels
         public string SourceKey { get; set; }
         public bool InsertAllowed { get; set; }
         public bool EditAllowed { get; set; }
-        public bool RemoveAllowed { get; set; }
+        public bool DeleteAllowed { get; set; }
         public bool SaveAsFile { get; set; }
         public string Action { get; set; }
         public List<DynamicPropertyViewModel> Properties { get; set; }
