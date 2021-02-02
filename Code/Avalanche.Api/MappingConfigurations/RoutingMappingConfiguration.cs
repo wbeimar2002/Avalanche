@@ -3,9 +3,9 @@ using Avalanche.Shared.Domain.Models;
 
 namespace Avalanche.Api.MappingConfigurations
 {
-    public class RoutingMappingConfigurations : Profile
+    public class RoutingMappingConfiguration : Profile
     {
-        public RoutingMappingConfigurations()
+        public RoutingMappingConfiguration()
         {
             CreateMap<Region, AvidisDeviceInterface.V1.Protos.ShowPreviewRequest>()
                 .ForMember(dest =>

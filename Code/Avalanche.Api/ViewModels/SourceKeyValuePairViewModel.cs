@@ -13,13 +13,13 @@ namespace Avalanche.Api.ViewModels
         public string Type { get; set; }
 
         [JsonProperty(nameof(Types))]
-        public List<KeyValuePairViewModel> TypesSetter { set { _types = value; } }
+        public IList<KeyValuePairViewModel> TypesSetter { set { _types = value; } }
 
         [JsonIgnore]
-        private List<KeyValuePairViewModel> _types;
+        private IList<KeyValuePairViewModel> _types;
 
         [JsonIgnore]
-        public List<KeyValuePairViewModel> Types
+        public IList<KeyValuePairViewModel> Types
         {
             get { return this._types; }
             set { this._types = value; }

@@ -68,7 +68,7 @@ namespace Avalanche.Api.Helpers
             }
         }
 
-        public static void SetSettingValues(SectionViewModel section, dynamic settingsValues, List<KeyValuePairViewModel> policiesValues)
+        public static void SetSettingValues(SectionViewModel section, dynamic settingsValues, IList<KeyValuePairViewModel> policiesValues)
         {
             if (section.Settings != null)
             {

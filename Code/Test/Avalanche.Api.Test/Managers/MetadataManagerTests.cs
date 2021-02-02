@@ -36,7 +36,7 @@ namespace Avalanche.Api.Tests.Managers
 
             var config = new MapperConfiguration(cfg =>
             {
-                cfg.AddProfile(new HealthMappingConfigurations());
+                cfg.AddProfile(new HealthMappingConfiguration());
             });
 
             _mapper = config.CreateMapper();

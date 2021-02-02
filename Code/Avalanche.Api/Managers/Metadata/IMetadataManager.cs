@@ -9,11 +9,11 @@ namespace Avalanche.Api.Managers.Metadata
 {
     public interface IMetadataManager
     {
-        Task<List<KeyValuePairViewModel>> GetMetadata(User user, MetadataTypes type);
-        Task<List<SourceKeyValuePairViewModel>> GetSource(User user, MetadataTypes settingTypes);
+        Task<IList<KeyValuePairViewModel>> GetMetadata(User user, MetadataTypes type);
+        Task<IList<SourceKeyValuePairViewModel>> GetSource(User user, MetadataTypes settingTypes);
         Task<Department> AddDepartment(User user, Department department);
         Task DeleteDepartment(User user, int departmentId);
-        Task<List<Department>> GetAllDepartments(User user);
+        Task<IList<Department>> GetAllDepartments(User user);
         Task<ProcedureType> AddProcedureType(User user, ProcedureType procedureType);
         Task DeleteProcedureType(User user, ProcedureType procedureType);
         Task<List<ProcedureType>> GetProceduresByDepartment(User user, int? departmentId);

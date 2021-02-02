@@ -40,13 +40,13 @@ namespace Avalanche.Api.ViewModels
         }
 
         [JsonProperty(nameof(PoliciesValues))]
-        public List<KeyValuePairViewModel> PoliciesValuesSetter { set { _policiesValues = value; } }
+        public IList<KeyValuePairViewModel> PoliciesValuesSetter { set { _policiesValues = value; } }
 
         [JsonIgnore]
-        private List<KeyValuePairViewModel> _policiesValues;
+        private IList<KeyValuePairViewModel> _policiesValues;
 
         [JsonIgnore]
-        public List<KeyValuePairViewModel> PoliciesValues
+        public IList<KeyValuePairViewModel> PoliciesValues
         {
             get { return this._policiesValues; }
             set { this._policiesValues = value; }

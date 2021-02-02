@@ -59,6 +59,28 @@ namespace Avalanche.Api.Managers.Maintenance
             await SaveJsonValues(category, configurationContext);
         }
 
+        public async Task SaveEntityChanges(User user, DynamicListViewModel category)
+        {
+            var configurationContext = _mapper.Map<User, ConfigurationContext>(user);
+            configurationContext.IdnId = new Guid().ToString();
+
+            var result = JsonConvert.SerializeObject(new { Items = category.Data });
+
+            if (category.SaveAsFile)
+            {
+                if (await SchemaIsValid(category.SourceKey, result, configurationContext))
+                {
+                    await _storageService.SaveJson(category.SourceKey, result, 1, configurationContext);
+                }
+                else
+                {   //TODO: Pending Exceptions strategy
+                    throw new ValidationException("Json Schema Invalid for " + category.SourceKey + " values");
+                }
+            }
+            else
+                await SaveDestination(user, category);
+        }
+
         public async Task<SectionViewModel> GetCategoryByKey(User user, string key)
         {
             var configurationContext = _mapper.Map<User, ConfigurationContext>(user);
@@ -80,7 +102,45 @@ namespace Avalanche.Api.Managers.Maintenance
             return category;
         }
 
-        private async Task SetSettingsValues(ConfigurationContext configurationContext, SectionViewModel rootSection, dynamic settingValues, List<KeyValuePairViewModel> types, List<KeyValuePairViewModel> policiesTypes)
+        public async Task<DynamicListViewModel> GetCategoryListByKey(User user, string key)
+        {
+            var configurationContext = _mapper.Map<User, ConfigurationContext>(user);
+            var category = await _storageService.GetJsonObject<DynamicListViewModel>(key, 1, configurationContext);
+
+            if (category.SaveAsFile)
+            {
+                var values = await _storageService.GetJsonObject<DynamicListContainerViewModel>(category.SourceKey, 1, configurationContext);
+                category.Data = values.Items;
+
+                foreach (var item in category.Properties)
+                {
+                    if (!string.IsNullOrEmpty(item.SourceKey))
+                    {
+                        item.SourceValues = await GetDynamicSourceValues(item.SourceKey, configurationContext, user);
+                    }
+                }
+            }
+            else
+            {
+                category.Data = await GetData(user, category.SourceKey);
+            }
+
+            return category;
+        }
+
+        private async Task<IList<KeyValuePairViewModel>> GetDynamicSourceValues(string sourceKey, ConfigurationContext configurationContext, User user)
+        {
+            switch (sourceKey)
+            {
+                case "Departments":
+                    var data = await _metadataManager.GetAllDepartments(user);
+                    return _mapper.Map<IList<Department>, IList<KeyValuePairViewModel>>(data);
+                default:
+                    return (await _storageService.GetJsonObject<ListContainerViewModel>(sourceKey, 1, configurationContext)).Items;
+            }
+        }
+
+        private async Task SetSettingsValues(ConfigurationContext configurationContext, SectionViewModel rootSection, dynamic settingValues, IList<KeyValuePairViewModel> types, IList<KeyValuePairViewModel> policiesTypes)
         {
             foreach (var section in rootSection.Sections)
             {
@@ -102,7 +162,7 @@ namespace Avalanche.Api.Managers.Maintenance
             return await _storageService.GetJsonDynamic(key, 1, configurationContext);
         }
 
-        private async Task SetSources(ConfigurationContext configurationContext, SectionViewModel category, List<KeyValuePairViewModel> types)
+        private async Task SetSources(ConfigurationContext configurationContext, SectionViewModel category, IList<KeyValuePairViewModel> types)
         {
             if (category!= null && category.Settings != null)
             {
@@ -162,28 +222,6 @@ namespace Avalanche.Api.Managers.Maintenance
             }
         }
 
-        public async Task SaveEntityChanges(User user, DynamicListViewModel category)
-        {
-            var configurationContext = _mapper.Map<User, ConfigurationContext>(user);
-            configurationContext.IdnId = new Guid().ToString();
-
-            var result = JsonConvert.SerializeObject(category.Data);
-
-            if (category.SaveAsFile)
-            {
-                if (await SchemaIsValid(category.SourceKey, result, configurationContext))
-                {
-                    await _storageService.SaveJson(category.SourceKey, result, 1, configurationContext);
-                }
-                else
-                {   //TODO: Pending Exceptions strategy
-                    throw new ValidationException("Json Schema Invalid for " + category.SourceKey + " values");
-                }
-            }
-            else
-                await SaveDestination(user, category);
-        }
-
         private async Task SaveDestination(User user, DynamicListViewModel category)
         {
             switch (category.SourceKey)
@@ -233,24 +271,6 @@ namespace Avalanche.Api.Managers.Maintenance
                 default:
                     throw new ValidationException("Method Not Allowed");
             }
-        }
-
-        public async Task<DynamicListViewModel> GetCategoryListByKey(User user, string key)
-        {
-            var configurationContext = _mapper.Map<User, ConfigurationContext>(user);
-            var category = await _storageService.GetJsonObject<DynamicListViewModel>(key, 1, configurationContext);
-
-            if (category.SaveAsFile)
-            {
-                var values = await _storageService.GetJsonObject<DynamicListContainerViewModel>(category.SourceKey, 1, configurationContext);
-                category.Data = values.Items;
-            }
-            else
-            {
-                category.Data = await GetData(user, category.SourceKey);
-            }
-
-            return category;
         }
 
         private async Task<List<ExpandoObject>> GetData(User user, string sourceKey)

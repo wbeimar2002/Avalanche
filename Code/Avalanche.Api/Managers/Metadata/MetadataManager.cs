@@ -29,7 +29,7 @@ namespace Avalanche.Api.Managers.Metadata
             _mapper = mapper;
         }
 
-        public async Task<List<KeyValuePairViewModel>> GetMetadata(User user, MetadataTypes type)
+        public async Task<IList<KeyValuePairViewModel>> GetMetadata(User user, MetadataTypes type)
         {
             var configurationContext = _mapper.Map<User, ConfigurationContext>(user);
 
@@ -48,7 +48,7 @@ namespace Avalanche.Api.Managers.Metadata
             }
         }
 
-        public async Task<List<SourceKeyValuePairViewModel>> GetSource(User user, MetadataTypes type)
+        public async Task<IList<SourceKeyValuePairViewModel>> GetSource(User user, MetadataTypes type)
         {
             var configurationContext = _mapper.Map<User, ConfigurationContext>(user);
 
@@ -79,7 +79,7 @@ namespace Avalanche.Api.Managers.Metadata
             await _dataManagementService.DeleteDepartment(new DeleteDepartmentRequest() { DepartmentId = departmentId });
         }
 
-        public async Task<List<Department>> GetAllDepartments(User user)
+        public async Task<IList<Department>> GetAllDepartments(User user)
         {
             await ValidateDepartmentsSupport(user);
 
