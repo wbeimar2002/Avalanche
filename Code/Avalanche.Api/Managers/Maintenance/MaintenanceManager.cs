@@ -59,7 +59,7 @@ namespace Avalanche.Api.Managers.Maintenance
             await SaveJsonValues(category, configurationContext);
         }
 
-        public async Task SaveEntityChanges(User user, DynamicListViewModel category)
+        public async Task SaveEntityChanges(User user, DynamicListViewModel category, DynamicListActions action)
         {
             var configurationContext = _mapper.Map<User, ConfigurationContext>(user);
             configurationContext.IdnId = Guid.NewGuid().ToString();
@@ -78,7 +78,7 @@ namespace Avalanche.Api.Managers.Maintenance
                 }
             }
             else
-                await SaveDestination(user, category);
+                await SaveDestination(user, category, action);
         }
 
         public async Task<SectionViewModel> GetCategoryByKey(User user, string key)
@@ -235,15 +235,15 @@ namespace Avalanche.Api.Managers.Maintenance
             }
         }
 
-        private async Task SaveDestination(User user, DynamicListViewModel category)
+        private async Task SaveDestination(User user, DynamicListViewModel category, DynamicListActions action)
         {
             switch (category.SourceKey)
             {
                 case "Departments":
-                    SaveDepartments(user, category.Action, category.Entity);
+                    SaveDepartments(user, action, category.Entity);
                     break;
                 case "ProcedureTypes":
-                    SaveProcedureTypes(user, category.Action, category.Entity);
+                    SaveProcedureTypes(user, action, category.Entity);
                     break;
                 default:
                     //TODO: Pending Exceptions strategy
@@ -251,17 +251,17 @@ namespace Avalanche.Api.Managers.Maintenance
             }
         }
 
-        private void SaveProcedureTypes(User user, string action, dynamic source)
+        private void SaveProcedureTypes(User user, DynamicListActions action, dynamic source)
         {
             var destination = new ProcedureType();
             Helpers.Mapper.Map(source, destination);
 
             switch (action)
             {
-                case "Insert":
+                case DynamicListActions.Insert:
                     _metadataManager.AddProcedureType(user, destination);
                     break;
-                case "Delete":
+                case DynamicListActions.Delete:
                     _metadataManager.DeleteProcedureType(user, destination);
                     break;
                 default:
@@ -270,16 +270,16 @@ namespace Avalanche.Api.Managers.Maintenance
             }
         }
 
-        private void SaveDepartments(User user, string action, dynamic source)
+        private void SaveDepartments(User user, DynamicListActions action, dynamic source)
         {
             var destination = new Department();
             Helpers.Mapper.Map(source, destination);
 
             switch (action)
             {
-                case "Insert":
+                case DynamicListActions.Insert:
                     break;
-                case "Delete":
+                case DynamicListActions.Delete:
                     break;
                 default:
                     throw new ValidationException("Method Not Allowed");

@@ -18,6 +18,7 @@ namespace Avalanche.Api.ViewModels
         public int Steps { get; set; }
         public string DefaultValue { get; set; }
         public bool Required { get; set; }
+        public bool IsHidden { get; set; }
         public int MaxLength { get; set; }  
         public string JsonKey { get; set; }
         public string JsonKeyForRelatedObject { get; set; }

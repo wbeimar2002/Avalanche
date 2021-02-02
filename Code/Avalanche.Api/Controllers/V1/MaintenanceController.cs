@@ -79,7 +79,7 @@ namespace Avalanche.Api.Controllers.V1
             try
             {
                 _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
-                await _maintenanceManager.SaveEntityChanges(User.GetUser(), list);
+                await _maintenanceManager.SaveEntityChanges(User.GetUser(), list, DynamicListActions.Insert);
 
                 return Ok();
             }
@@ -100,7 +100,7 @@ namespace Avalanche.Api.Controllers.V1
             try
             {
                 _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
-                await _maintenanceManager.SaveEntityChanges(User.GetUser(), list);
+                await _maintenanceManager.SaveEntityChanges(User.GetUser(), list, DynamicListActions.Update);
 
                 return Ok();
             }
@@ -121,7 +121,7 @@ namespace Avalanche.Api.Controllers.V1
             try
             {
                 _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
-                await _maintenanceManager.SaveEntityChanges(User.GetUser(), list);
+                await _maintenanceManager.SaveEntityChanges(User.GetUser(), list, DynamicListActions.Delete);
 
                 return Ok();
             }

@@ -12,7 +12,6 @@ namespace Avalanche.Api.ViewModels
         public bool EditAllowed { get; set; }
         public bool DeleteAllowed { get; set; }
         public bool SaveAsFile { get; set; }
-        public string Action { get; set; }
         public List<DynamicPropertyViewModel> Properties { get; set; }
         public List<ExpandoObject> Data { get; set; }
         public ExpandoObject Entity { get; set; }
