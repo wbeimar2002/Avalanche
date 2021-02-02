@@ -8,6 +8,7 @@ namespace Avalanche.Api.ViewModels
     {
         public string TitleTranslationKey { get; set; }
         public string JsonKey { get; set; }
+        public string Schema { get; set; }
         public List<SectionViewModel> Sections { get; set; }
         public List<SettingViewModel> Settings { get; set; }
     }

@@ -26,31 +26,6 @@ namespace Avalanche.Api.ViewModels
         public VisualStyles VisualStyle { get; set; }
 
         public string SourceKey { get; set; }
-
-        [JsonProperty(nameof(SourceValues))]
-        public IList<KeyValuePairViewModel> SourceValuesSetter { set { _sourceValues = value; } }
-
-        [JsonIgnore]
-        private IList<KeyValuePairViewModel> _sourceValues;
-
-        [JsonIgnore]
-        public IList<KeyValuePairViewModel> SourceValues
-        {
-            get { return this._sourceValues; }
-            set { this._sourceValues = value; }
-        }
-
-        [JsonProperty(nameof(Value))]
-        public string ValueSetter { set { _value = value; } }
-
-        [JsonIgnore]
-        private string _value;
-
-        [JsonIgnore]
-        public string Value
-        {
-            get { return this._value; }
-            set { this._value = value; }
-        }
+        public IList<KeyValuePairObjectViewModel> SourceValues { get; set; }
     }
 }

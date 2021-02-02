@@ -34,7 +34,7 @@ namespace Avalanche.Api.Managers.Maintenance
         public async Task SaveCategoryPolicies(User user, SectionViewModel category)
         {
             var configurationContext = _mapper.Map<Shared.Domain.Models.User, ConfigurationContext>(user);
-            configurationContext.IdnId = new Guid().ToString();
+            configurationContext.IdnId = Guid.NewGuid().ToString();
 
             await SaveJsonValues(category, configurationContext);
 
@@ -44,7 +44,7 @@ namespace Avalanche.Api.Managers.Maintenance
         public async Task SaveCategory(User user, SectionViewModel category)
         {
             var configurationContext = _mapper.Map<User, ConfigurationContext>(user);
-            configurationContext.IdnId = new Guid().ToString();
+            configurationContext.IdnId = Guid.NewGuid().ToString();
 
             await SaveSources(configurationContext, category);
 
@@ -62,15 +62,15 @@ namespace Avalanche.Api.Managers.Maintenance
         public async Task SaveEntityChanges(User user, DynamicListViewModel category)
         {
             var configurationContext = _mapper.Map<User, ConfigurationContext>(user);
-            configurationContext.IdnId = new Guid().ToString();
+            configurationContext.IdnId = Guid.NewGuid().ToString();
 
             var result = JsonConvert.SerializeObject(new { Items = category.Data });
 
             if (category.SaveAsFile)
             {
-                if (await SchemaIsValid(category.SourceKey, result, configurationContext))
+                if (await SchemaIsValid(category.Schema, result, configurationContext))
                 {
-                    await _storageService.SaveJson(category.SourceKey, result, 1, configurationContext);
+                    await _storageService.SaveJson(category.Schema, result, 1, configurationContext);
                 }
                 else
                 {   //TODO: Pending Exceptions strategy
@@ -128,15 +128,28 @@ namespace Avalanche.Api.Managers.Maintenance
             return category;
         }
 
-        private async Task<IList<KeyValuePairViewModel>> GetDynamicSourceValues(string sourceKey, ConfigurationContext configurationContext, User user)
+        private async Task<IList<KeyValuePairObjectViewModel>> GetDynamicSourceValues(string sourceKey, ConfigurationContext configurationContext, User user)
         {
             switch (sourceKey)
             {
                 case "Departments":
-                    var data = await _metadataManager.GetAllDepartments(user);
-                    return _mapper.Map<IList<Department>, IList<KeyValuePairViewModel>>(data);
+                    var departments = await GetData(user, "Departments");
+                    return departments.Select(d => new KeyValuePairObjectViewModel()
+                    {
+                        Id = ((dynamic)d).Id,
+                        Value = ((dynamic)d).Name,
+                        RelatedObject = d
+                    }).ToList();
+                case "SinksData":
+                    var sinks = (await _storageService.GetJsonObject<DynamicListContainerViewModel>(sourceKey, 1, configurationContext)).Items;
+                    return sinks.Select(s => new KeyValuePairObjectViewModel()
+                    {
+                        Id = Guid.NewGuid().ToString(),
+                        Value = $"{((dynamic)s).Alias} ({((dynamic)s).Index})",
+                        RelatedObject = s
+                    }).ToList();
                 default:
-                    return (await _storageService.GetJsonObject<ListContainerViewModel>(sourceKey, 1, configurationContext)).Items;
+                    return null;
             }
         }
 
@@ -196,7 +209,7 @@ namespace Avalanche.Api.Managers.Maintenance
         {
             string result = SettingsHelper.GetJsonValues(category);
 
-            if (await SchemaIsValid(category.JsonKey, result, configurationContext))
+            if (await SchemaIsValid(category.Schema, result, configurationContext))
             {
                 await _storageService.SaveJson(category.JsonKey + "Values", result, 1, configurationContext);
             }
@@ -206,9 +219,9 @@ namespace Avalanche.Api.Managers.Maintenance
             }
         }
 
-        private async Task<bool> SchemaIsValid(string jsonKey, string json, ConfigurationContext configurationContext)
+        private async Task<bool> SchemaIsValid(string schemaKey, string json, ConfigurationContext configurationContext)
         {
-            dynamic dynamicSchema = await _storageService.GetJsonDynamic(jsonKey + "Schema", 1, configurationContext);
+            dynamic dynamicSchema = await _storageService.GetJsonDynamic(schemaKey, 1, configurationContext);
             if (dynamicSchema == null)
                 return true;
             else
