@@ -83,6 +83,9 @@ namespace Avalanche.Api.Managers.Devices
 
             switch (commandType)
             {
+                // TODO: these are actually the webrtc commands
+                // they should probably be moved to their own controller/manager
+                // leaving as is for now as to not break the existing preview implementation
                 #region PGS Commands
                 case CommandTypes.PgsPlayVideo:
                     return await InitializeVideo(command, user);

@@ -9,7 +9,11 @@ namespace Avalanche.Shared.Domain.Models
     /// </summary>
     public class AliasIndexApiModel
     {
-        public string Alias { get; set; }
-        public int Index { get; set; }
+        public string Alias { get; set; } = string.Empty;
+        public int Index { get; set; } = 0;
+
+        public AliasIndexApiModel() { }
+
+        public AliasIndexApiModel(string alias, int index) => (Alias, Index) = (alias, index);
     }
 }

@@ -66,7 +66,8 @@ namespace Avalanche.Api.Services.Media
         }
 
         #region WebRTC
-
+        
+        // TODO: implement these as WebRtcService
         public async Task<GetSourceStreamsResponse> GetSourceStreamsAsync() => await WebRtcStreamerClient.GetSourceStreams();
 
         public Task HandleMessageAsync(HandleMessageRequest handleMessageRequest) => WebRtcStreamerClient.HandleMessage(handleMessageRequest);

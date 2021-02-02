@@ -19,7 +19,8 @@ namespace Avalanche.Api.Controllers.V1
 {
     [Route("room/[controller]")]
     [ApiController]
-    [Authorize]
+#warning uncomment before checking in
+    //[Authorize]
     public class PgsController : ControllerBase
     {
         private readonly ILogger<PgsController> _logger;
@@ -44,8 +45,8 @@ namespace Avalanche.Api.Controllers.V1
             try
             {
                 _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
-                //var result = await _pgsTimeoutManager.GetPgsVideoFiles();
-                return Ok();
+                var result = await _pgsTimeoutManager.GetPgsVideoFiles();
+                return Ok(result);
             }
             catch (Exception ex)
             {
@@ -70,7 +71,7 @@ namespace Avalanche.Api.Controllers.V1
             try
             {
                 _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
-                //await _pgsTimeoutManager.SetPgsVideoFile(file);
+                await _pgsTimeoutManager.SetPgsVideoFile(file);
                 return Ok();
             }
             catch (Exception ex)
@@ -97,9 +98,7 @@ namespace Avalanche.Api.Controllers.V1
             try
             {
                 _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
-
-                //await _pgsTimeoutManager.SetPlaybackPosition(position);
-
+                await _pgsTimeoutManager.SetPlaybackPosition(position);
                 return Ok();
             }
             catch (Exception ex)
@@ -126,9 +125,7 @@ namespace Avalanche.Api.Controllers.V1
             try
             {
                 _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
-
-                //await _pgsTimeoutManager.SetPgsVolume(level);
-
+                await _pgsTimeoutManager.SetPgsVolume(level);
                 return Ok();
             }
             catch (Exception ex)
@@ -153,11 +150,8 @@ namespace Avalanche.Api.Controllers.V1
             try
             {
                 _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
-
-                // TODO: implement
-                //await _pgsTimeoutManager.SetPgsVolume(volume);
-
-                return Ok();
+                var volume = await _pgsTimeoutManager.GetPgsVolume();
+                return Ok(volume);
             }
             catch (Exception ex)
             {
@@ -181,9 +175,7 @@ namespace Avalanche.Api.Controllers.V1
             try
             {
                 _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
-
-                // TODO: implement
-
+                await _pgsTimeoutManager.SetPgsMute(true);
                 return Ok();
             }
             catch (Exception ex)
@@ -208,10 +200,8 @@ namespace Avalanche.Api.Controllers.V1
             try
             {
                 _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
-
-                // TODO: implement
-
-                return Ok(false);
+                var muted = await _pgsTimeoutManager.GetPgsMute();
+                return Ok(muted);
             }
             catch (Exception ex)
             {
@@ -244,10 +234,10 @@ namespace Avalanche.Api.Controllers.V1
                 // start or stop pgs based on the requested state
                 // the pgsTimeoutManager deals with pgs-timeout interaction
                 // it also deals with something like 2 UIs starting pgs at the same time
-                //if (pgsState)
-                //    await _pgsTimeoutManager.StartPgs();
-                //else
-                //    await _pgsTimeoutManager.StopPgs();
+                if (pgsState)
+                    await _pgsTimeoutManager.StartPgs();
+                else
+                    await _pgsTimeoutManager.StopPgs();
 
                 return Ok();
             }
@@ -274,8 +264,8 @@ namespace Avalanche.Api.Controllers.V1
             try
             {
                 _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
-                //var result = await _pgsTimeoutManager.GetPgsOutputs();
-                return Ok();
+                var result = await _pgsTimeoutManager.GetPgsOutputs();
+                return Ok(result);
             }
             catch (Exception ex)
             {
@@ -302,7 +292,7 @@ namespace Avalanche.Api.Controllers.V1
             try
             {
                 _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
-
+                await _pgsTimeoutManager.SetPgsStateForDisplay(new AliasIndexApiModel(alias, index), enabled);
                 return Ok();
             }
             catch (Exception ex)
@@ -329,8 +319,8 @@ namespace Avalanche.Api.Controllers.V1
             try
             {
                 _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
-
-                return Ok();
+                var enabled = _pgsTimeoutManager.GetPgsStateForDisplay(new AliasIndexApiModel(alias, index));
+                return Ok(enabled);
             }
             catch (Exception ex)
             {
