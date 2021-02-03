@@ -246,10 +246,10 @@ namespace Avalanche.Api.Managers.Maintenance
             switch (category.SourceKey)
             {
                 case "Departments":
-                    SaveDepartments(user, action, category.Entity);
+                    await SaveDepartments(user, action, category.Entity);
                     break;
                 case "ProcedureTypes":
-                    SaveProcedureTypes(user, action, category.Entity);
+                    await SaveProcedureTypes(user, action, category.Entity);
                     break;
                 default:
                     //TODO: Pending Exceptions strategy
@@ -257,18 +257,18 @@ namespace Avalanche.Api.Managers.Maintenance
             }
         }
 
-        private void SaveProcedureTypes(User user, DynamicListActions action, dynamic source)
+        private async Task SaveProcedureTypes(User user, DynamicListActions action, dynamic source)
         {
-            var destination = new ProcedureType();
-            Helpers.Mapper.Map(source, destination);
+            var procedureType = new ProcedureType();
+            Helpers.Mapper.Map(source, procedureType);
 
             switch (action)
             {
                 case DynamicListActions.Insert:
-                    _metadataManager.AddProcedureType(user, destination);
+                    await _metadataManager.AddProcedureType(user, procedureType);
                     break;
                 case DynamicListActions.Delete:
-                    _metadataManager.DeleteProcedureType(user, destination);
+                    await _metadataManager.DeleteProcedureType(user, procedureType);
                     break;
                 default:
                     //TODO: Pending Exceptions strategy
@@ -276,16 +276,18 @@ namespace Avalanche.Api.Managers.Maintenance
             }
         }
 
-        private void SaveDepartments(User user, DynamicListActions action, dynamic source)
+        private async Task SaveDepartments(User user, DynamicListActions action, dynamic source)
         {
-            var destination = new Department();
-            Helpers.Mapper.Map(source, destination);
+            var department = new Department();
+            Helpers.Mapper.Map(source, department);
 
             switch (action)
             {
                 case DynamicListActions.Insert:
+                    await _metadataManager.AddDepartment(user, department);
                     break;
                 case DynamicListActions.Delete:
+                    await _metadataManager.DeleteDepartment(user, department.Id);
                     break;
                 default:
                     throw new ValidationException("Method Not Allowed");
