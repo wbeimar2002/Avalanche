@@ -35,7 +35,11 @@ namespace Avalanche.Api.Services.Maintenance
         {
             context.SiteId = _siteId;
             var actionResponse = await ConfigurationStorageService.GetConfiguration(configurationKey, Convert.ToUInt32(version), context);
-            return actionResponse == null ? default(T) : actionResponse.Get<T>();
+            // hack to get a poco from local config
+            if (string.IsNullOrEmpty(actionResponse))
+                return _configurationService.GetSection<T>(configurationKey);
+            else
+                return actionResponse.Get<T>();
         }
 
         public async Task<dynamic> GetJsonDynamic(string configurationKey, int version, ConfigurationContext context)
