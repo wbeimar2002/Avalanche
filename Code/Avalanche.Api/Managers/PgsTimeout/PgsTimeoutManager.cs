@@ -318,7 +318,7 @@ namespace Avalanche.Api.Managers.PgsTimeout
             // pgs checkbox state must persist reboots
             // state client should handle this
             var pgsData = await _stateClient.GetData<PgsDisplayStateData>();
-            var state = pgsData.DisplayStates.SingleOrDefault(x =>
+            var state = pgsData?.DisplayStates.SingleOrDefault(x =>
                 string.Equals(x.AliasIndex.Alias, displayId.Alias, StringComparison.OrdinalIgnoreCase) &&
                 x.AliasIndex.Index == displayId.Index);
 
