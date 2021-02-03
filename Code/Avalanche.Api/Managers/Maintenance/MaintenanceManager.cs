@@ -64,13 +64,13 @@ namespace Avalanche.Api.Managers.Maintenance
             var configurationContext = _mapper.Map<User, ConfigurationContext>(user);
             configurationContext.IdnId = Guid.NewGuid().ToString();
 
-            var result = JsonConvert.SerializeObject(new { Items = category.Data });
-
             if (category.SaveAsFile)
             {
+                var result = JsonConvert.SerializeObject(new { Items = category.Data });
+
                 if (await SchemaIsValid(category.Schema, result, configurationContext))
                 {
-                    await _storageService.SaveJson(category.Schema, result, 1, configurationContext);
+                    await _storageService.SaveJson(category.SourceKey, result, 1, configurationContext);
                 }
                 else
                 {   //TODO: Pending Exceptions strategy
@@ -221,17 +221,23 @@ namespace Avalanche.Api.Managers.Maintenance
 
         private async Task<bool> SchemaIsValid(string schemaKey, string json, ConfigurationContext configurationContext)
         {
-            dynamic dynamicSchema = await _storageService.GetJsonDynamic(schemaKey, 1, configurationContext);
-            if (dynamicSchema == null)
+            if (string.IsNullOrEmpty(schemaKey))
                 return true;
             else
             {
-                string schemaJson = JsonConvert.SerializeObject(dynamicSchema);
-                JsonSchema schema = JsonSchema.Parse(schemaJson);
+                dynamic dynamicSchema = await _storageService.GetJsonDynamic(schemaKey, 1, configurationContext);
 
-                JObject jsonObject = JObject.Parse(json);
+                if (dynamicSchema == null)
+                    return true;
+                else
+                {
+                    string schemaJson = JsonConvert.SerializeObject(dynamicSchema);
+                    JsonSchema schema = JsonSchema.Parse(schemaJson);
 
-                return jsonObject.IsValid(schema);
+                    JObject jsonObject = JObject.Parse(json);
+
+                    return jsonObject.IsValid(schema);
+                }
             }
         }
 
