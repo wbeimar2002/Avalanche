@@ -191,5 +191,6 @@
     }
   ],
   "JsonKey": "SetupSettings",
+  "Schema": "SetupSettingsSchema",
   "Settings": null
 }
