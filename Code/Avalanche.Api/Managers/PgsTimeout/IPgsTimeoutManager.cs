@@ -35,7 +35,7 @@ namespace Avalanche.Api.Managers.PgsTimeout
         /// </summary>
         /// <param name="path"></param>
         /// <returns></returns>
-        Task SetPgsVideoFile(string path);
+        Task SetPgsVideoFile(PgsVideoFile path);
 
         /// <summary>
         /// Sets the playback position to the specified value

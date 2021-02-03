@@ -66,7 +66,7 @@ namespace Avalanche.Api.Controllers.V1
         /// <param name="env"></param>
         /// <returns></returns>
         [HttpPut("videoFile")]
-        public async Task<IActionResult> SetCurrentFile([FromBody] string file, [FromServices] IWebHostEnvironment env)
+        public async Task<IActionResult> SetCurrentFile([FromBody] PgsVideoFile file, [FromServices] IWebHostEnvironment env)
         {
             try
             {
