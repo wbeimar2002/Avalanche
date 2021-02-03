@@ -28,7 +28,7 @@ namespace Avalanche.Api.Managers.PgsTimeout
         /// Returns a list of PGS video files
         /// </summary>
         /// <returns></returns>
-        Task<IList<string>> GetPgsVideoFiles();
+        Task<IList<PgsVideoFile>> GetPgsVideoFiles();
 
         /// <summary>
         /// Sets the current video file of the PGS player

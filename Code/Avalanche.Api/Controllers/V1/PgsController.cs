@@ -175,7 +175,7 @@ namespace Avalanche.Api.Controllers.V1
             try
             {
                 _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
-                await _pgsTimeoutManager.SetPgsMute(true);
+                await _pgsTimeoutManager.SetPgsMute(mute);
                 return Ok();
             }
             catch (Exception ex)

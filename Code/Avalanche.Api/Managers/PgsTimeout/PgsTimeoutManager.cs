@@ -73,6 +73,16 @@ namespace Avalanche.Api.Managers.PgsTimeout
         /// </summary>
         private readonly SemaphoreSlim _startStopLock = new SemaphoreSlim(1, 1);
 
+        // fake values for pgs volume and mute
+#warning add endpoints to pgs player for this
+
+        private readonly PgsVideoFile _generalFile = new PgsVideoFile { Name = "General", FilePath = @"C:\Resources\PgsVideo\General.mp4" };
+        private readonly PgsVideoFile _pediatricFile = new PgsVideoFile { Name = "Pediatric", FilePath = @"C:\Resources\PgsVideo\Pediatric.mp4" };
+
+        private double _pgsVolume = 0.5;
+        private bool _pgsMute = false;
+        private PgsVideoFile _currentVideoFile;
+
         public PgsTimeoutManager(
             IStorageService storageService,
             IRoutingService routingService,
@@ -85,6 +95,8 @@ namespace Avalanche.Api.Managers.PgsTimeout
             _stateClient = ThrowIfNullOrReturn(nameof(stateClient), stateClient);
             _pgsTimeoutService = ThrowIfNullOrReturn(nameof(pgsTimeoutService), pgsTimeoutService);
             _mapper = ThrowIfNullOrReturn(nameof(mapper), mapper);
+
+            _currentVideoFile = _generalFile;
         }
 
         public async Task StartPgs()
@@ -94,7 +106,6 @@ namespace Avalanche.Api.Managers.PgsTimeout
             {
                 await SaveCurrentRoutes();
 
-                var config = await GetConfig();
 
 
                 _currentPgsTimeoutState = PgsTimeoutModes.Pgs;
@@ -110,6 +121,7 @@ namespace Avalanche.Api.Managers.PgsTimeout
             await _startStopLock.WaitAsync(_cts.Token);
             try
             {
+                await LoadSavedRoutes();
 
                 // TODO: might need to revisit state tracking when we need to implement timeout
                 _currentPgsTimeoutState = PgsTimeoutModes.Idle;
@@ -149,31 +161,43 @@ namespace Avalanche.Api.Managers.PgsTimeout
 
         #region PgsTimeoutPlayer methods
 
-        public async Task<IList<string>> GetPgsVideoFiles()
+        public async Task<IList<PgsVideoFile>> GetPgsVideoFiles()
         {
-            var files = await _pgsTimeoutService.GetPgsVideoFileList();
-            return files.VideoFiles.ToList();
+            // TODO: integrate with player app
+            //var files = await _pgsTimeoutService.GetPgsVideoFileList();
+            var files = new List<PgsVideoFile> { _generalFile, _pediatricFile };
+            return await Task.FromResult(files);
         }
 
-        public async Task SetPgsVideoFile(string path)
+        public async Task<PgsVideoFile> GetPgsVideoFile() 
         {
-            await _pgsTimeoutService.SetPgsVideoFile(new Ism.PgsTimeout.V1.Protos.SetPgsVideoFileRequest { VideoFile = "asdas" });
-            throw new NotImplementedException();
+            // TODO:
+            return await Task.FromResult(_currentVideoFile);
         }
 
-        public Task SetPlaybackPosition(double position)
+        public async Task SetPgsVideoFile(PgsVideoFile file)
         {
-            throw new NotImplementedException();
+            // TODO: integrate with player
+            //await _pgsTimeoutService.SetPgsVideoFile(new Ism.PgsTimeout.V1.Protos.SetPgsVideoFileRequest { VideoFile = path });
+            _currentVideoFile = file;
+            await Task.CompletedTask;
+        }
+
+        public async Task SetPlaybackPosition(double position)
+        {
+            // TODO: implement set video position
+            await Task.CompletedTask;
         }
 
         public async Task<double> GetPgsVolume()
         {
-            throw new NotImplementedException();
+            return await Task.FromResult(_pgsVolume);
         }
 
-        public Task SetPgsVolume(double volume)
+        public async Task SetPgsVolume(double volume)
         {
-            throw new NotImplementedException();
+            _pgsVolume = volume;
+            await Task.CompletedTask;
         }
 
         /// <summary>
@@ -182,17 +206,18 @@ namespace Avalanche.Api.Managers.PgsTimeout
         /// <returns></returns>
         public async Task<bool> GetPgsMute()
         {
-            throw new NotImplementedException();
+            return await Task.FromResult(_pgsMute);
         }
 
         /// <summary>
         /// Set to true to mute PGS audio
         /// </summary>
-        /// <param name="muted"></param>
+        /// <param name="mute"></param>
         /// <returns></returns>
         public async Task SetPgsMute(bool mute)
         {
-            throw new NotImplementedException();
+            _pgsMute = mute;
+            await Task.CompletedTask;
         }
 
         #endregion
@@ -206,10 +231,10 @@ namespace Avalanche.Api.Managers.PgsTimeout
 
             var routingSinks = await _routingService.GetVideoSinks();
             var routes = await _routingService.GetCurrentRoutes();
-            
+
             // PGS sinks are typically a subset of routing sinks
             // typically, they would be all of the displays without the record channels
-            
+
             // get the routing sinks that are also called out in the pgs sink collection
             var pgsSinks = routingSinks.VideoSinks.Where(routingSink =>
                 config.PgsSinks.Any(pgsSink =>
@@ -288,17 +313,16 @@ namespace Avalanche.Api.Managers.PgsTimeout
             });
         }
 
-        public Task<bool> GetPgsStateForSink(AliasIndexApiModel displayId)
+        public async Task<bool> GetPgsStateForSink(AliasIndexApiModel displayId)
         {
             // pgs checkbox state must persist reboots
             // state client should handle this
-            throw new NotImplementedException();
-        }
+            var pgsData = await _stateClient.GetData<PgsDisplayStateData>();
+            var state = pgsData.DisplayStates.SingleOrDefault(x =>
+                string.Equals(x.AliasIndex.Alias, displayId.Alias, StringComparison.OrdinalIgnoreCase) &&
+                x.AliasIndex.Index == displayId.Index);
 
-        public Task<object> GetPgsStateForAllDisplays()
-        {
-            // state client
-            throw new NotImplementedException();
+            return state?.Enabled ?? true;
         }
 
         #endregion
@@ -324,7 +348,7 @@ namespace Avalanche.Api.Managers.PgsTimeout
             _currentRoutes = await _routingService.GetCurrentRoutes();
         }
 
-        private async Task LoadCurrentRoutes()
+        private async Task LoadSavedRoutes()
         {
             if (_currentPgsTimeoutState == PgsTimeoutModes.Idle)
                 return;
