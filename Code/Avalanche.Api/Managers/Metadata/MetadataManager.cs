@@ -106,7 +106,7 @@ namespace Avalanche.Api.Managers.Metadata
             await _dataManagementService.DeleteProcedureType(_mapper.Map<ProcedureType, DeleteProcedureTypeRequest>(procedureType));
         }
 
-        public async Task<List<ProcedureType>> GetProceduresByDepartment(Avalanche.Shared.Domain.Models.User user, int? departmentId)
+        public async Task<List<ProcedureType>> GetProcedureTypesByDepartment(Avalanche.Shared.Domain.Models.User user, int? departmentId)
         {
             await ValidateDepartmentsSupport(user, departmentId);
 

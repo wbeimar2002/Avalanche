@@ -123,6 +123,32 @@ namespace Avalanche.Api.Managers.Maintenance
             else
             {
                 category.Data = await GetData(user, category.SourceKey);
+
+                foreach (var item in category.Properties)
+                {
+                    if (!string.IsNullOrEmpty(item.SourceKey))
+                    {
+                        item.SourceValues = await GetDynamicSourceValues(item.SourceKey, configurationContext, user);
+
+                        foreach (var element in category.Data)
+                        {
+                            var serializedElement = JsonConvert.SerializeObject(element);
+                            JObject jsonElement = JObject.Parse(serializedElement);
+                            string relatedObject = JsonConvert.SerializeObject(item.SourceValues.Where(s => s.Id == jsonElement[item.JsonKey].ToString()).FirstOrDefault()?.RelatedObject);
+
+                            jsonElement.Add(new JProperty(item.JsonKeyForRelatedObject, JObject.Parse(relatedObject)));
+
+                            dynamic jsonElementObject = JsonConvert.DeserializeObject<ExpandoObject>(jsonElement.ToString());
+
+                            var _original = (IDictionary<string, object>)jsonElementObject;
+                            var _clone = (IDictionary<string, object>)element;
+
+                            foreach (var propertyKey in _original)
+                                _clone[propertyKey.Key] = propertyKey.Value;
+
+                        }
+                    }
+                }
             }
 
             return category;
@@ -130,26 +156,33 @@ namespace Avalanche.Api.Managers.Maintenance
 
         private async Task<IList<KeyValuePairObjectViewModel>> GetDynamicSourceValues(string sourceKey, ConfigurationContext configurationContext, User user)
         {
-            switch (sourceKey)
+            try
             {
-                case "Departments":
-                    var departments = await GetData(user, "Departments");
-                    return departments.Select(d => new KeyValuePairObjectViewModel()
-                    {
-                        Id = ((dynamic)d).Id,
-                        Value = ((dynamic)d).Name,
-                        RelatedObject = d
-                    }).ToList();
-                case "SinksData":
-                    var sinks = (await _storageService.GetJsonObject<DynamicListContainerViewModel>(sourceKey, 1, configurationContext)).Items;
-                    return sinks.Select(s => new KeyValuePairObjectViewModel()
-                    {
-                        Id = Guid.NewGuid().ToString(),
-                        Value = $"{((dynamic)s).Alias} ({((dynamic)s).Index})",
-                        RelatedObject = s
-                    }).ToList();
-                default:
-                    return null;
+                switch (sourceKey)
+                {
+                    case "Departments":
+                        var departments = await GetData(user, "Departments");
+                        return departments.Select(d => new KeyValuePairObjectViewModel()
+                        {
+                            Id = ((dynamic)d).Id.ToString(),
+                            Value = ((dynamic)d).Name,
+                            RelatedObject = d
+                        }).ToList();
+                    case "SinksData":
+                        var sinks = (await _storageService.GetJsonObject<DynamicListContainerViewModel>(sourceKey, 1, configurationContext)).Items;
+                        return sinks.Select(s => new KeyValuePairObjectViewModel()
+                        {
+                            Id = Guid.NewGuid().ToString(),
+                            Value = $"{((dynamic)s).Alias} ({((dynamic)s).Index})",
+                            RelatedObject = s
+                        }).ToList();
+                    default:
+                        return new List<KeyValuePairObjectViewModel>();
+                }
+            }
+            catch (Exception ex)
+            {
+                return new List<KeyValuePairObjectViewModel>();
             }
         }
 
@@ -260,6 +293,8 @@ namespace Avalanche.Api.Managers.Maintenance
         private async Task SaveProcedureTypes(User user, DynamicListActions action, dynamic source)
         {
             var procedureType = new ProcedureType();
+            procedureType.DepartmentId = Convert.ToInt32(source.Department.Id);
+
             Helpers.Mapper.Map(source, procedureType);
 
             switch (action)
@@ -302,14 +337,28 @@ namespace Avalanche.Api.Managers.Maintenance
                     var departments = await _metadataManager.GetAllDepartments(user);
 
                     return  departments
-                               .Select(item =>
-                                {
-                                    dynamic expandoObj = new ExpandoObject();
-                                    expandoObj.Id = item.Id;
-                                    expandoObj.Name = item.Name;
-                                    return (ExpandoObject)expandoObj;
-                                })
-                                .ToList();
+                        .Select(item =>
+                        {
+                            dynamic expandoObj = new ExpandoObject();
+                            expandoObj.Id = item.Id;
+                            expandoObj.Name = item.Name;
+                            return (ExpandoObject)expandoObj;
+                        })
+                        .ToList();
+                case "ProcedureTypes":
+
+                    var procedureTypes = await _metadataManager.GetProcedureTypesByDepartment(user, 1);
+
+                    return procedureTypes
+                        .Select(item =>
+                        {
+                            dynamic expandoObj = new ExpandoObject();
+                            expandoObj.Id = item.Id;
+                            expandoObj.Name = item.Name;
+                            expandoObj.DepartmentId = item.DepartmentId;
+                            return (ExpandoObject)expandoObj;
+                        })
+                        .ToList();
                 default:
                     return new List<ExpandoObject>();
             }

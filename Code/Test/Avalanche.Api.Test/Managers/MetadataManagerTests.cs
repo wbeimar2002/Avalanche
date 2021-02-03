@@ -171,7 +171,7 @@ namespace Avalanche.Api.Tests.Managers
 
             _storageService.Setup(mock => mock.GetJsonDynamic("SetupSettingsValues", 1, It.IsAny<ConfigurationContext>())).ReturnsAsync(settingsDepartmenSupported);
 
-            Task Act() => _manager.GetProceduresByDepartment(user, 1);
+            Task Act() => _manager.GetProcedureTypesByDepartment(user, 1);
 
             Assert.That(Act, Throws.TypeOf<ArgumentException>());
         }
@@ -192,7 +192,7 @@ namespace Avalanche.Api.Tests.Managers
 
             _storageService.Setup(mock => mock.GetJsonDynamic("SetupSettingsValues", 1, It.IsAny<ConfigurationContext>())).ReturnsAsync(settingsDepartmenSupported);
 
-            Task Act() => _manager.GetProceduresByDepartment(user, null);
+            Task Act() => _manager.GetProcedureTypesByDepartment(user, null);
 
             Assert.That(Act, Throws.TypeOf<ArgumentNullException>());
         }

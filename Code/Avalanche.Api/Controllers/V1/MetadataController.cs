@@ -290,7 +290,7 @@ namespace Avalanche.Api.Controllers.V1
             {
                 _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
 
-                var result = await _metadataManager.GetProceduresByDepartment(User.GetUser(), departmentId);
+                var result = await _metadataManager.GetProcedureTypesByDepartment(User.GetUser(), departmentId);
                 return Ok(result);
             }
             catch (Exception exception)
@@ -315,7 +315,7 @@ namespace Avalanche.Api.Controllers.V1
             {
                 _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
 
-                var result = await _metadataManager.GetProceduresByDepartment(User.GetUser(), null);
+                var result = await _metadataManager.GetProcedureTypesByDepartment(User.GetUser(), null);
                 return Ok(result);
             }
             catch (Exception exception)
