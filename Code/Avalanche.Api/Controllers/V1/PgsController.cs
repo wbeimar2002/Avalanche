@@ -253,13 +253,13 @@ namespace Avalanche.Api.Controllers.V1
         }
 
         /// <summary>
-        /// Gets the list of pgs outputs and their current checked state
+        /// Gets the list of pgs sinks and their current checked state
         /// </summary>
         /// <param name="env"></param>
         /// <returns></returns>
-        [HttpGet("outputs")]
+        [HttpGet("sinks")]
         [Produces(typeof(List<VideoSink>))]
-        public async Task<IActionResult> GetPgsOutputs([FromServices] IWebHostEnvironment env)
+        public async Task<IActionResult> GetPgsSinks([FromServices] IWebHostEnvironment env)
         {
             try
             {
@@ -279,20 +279,20 @@ namespace Avalanche.Api.Controllers.V1
         }
 
         /// <summary>
-        /// Sets the checked state of a pgs display and internally it gets broadcast
+        /// Sets the checked state of a pgs sink and internally it gets broadcast
         /// </summary>
         /// <param name="alias"></param>
         /// <param name="index"></param>
         /// <param name="enabled"></param>
         /// <param name="env"></param>
         /// <returns></returns>
-        [HttpPut("output/{alias}:{index}/state")]
-        public async Task<IActionResult> SetPgsStateForDisplay(string alias, int index, [FromBody] bool enabled, [FromServices] IWebHostEnvironment env)
+        [HttpPut("sink/{alias}:{index}/state")]
+        public async Task<IActionResult> SetPgsStateForSink(string alias, int index, [FromBody] bool enabled, [FromServices] IWebHostEnvironment env)
         {
             try
             {
                 _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
-                await _pgsTimeoutManager.SetPgsStateForDisplay(new AliasIndexApiModel(alias, index), enabled);
+                await _pgsTimeoutManager.SetPgsStateForSink(new AliasIndexApiModel(alias, index), enabled);
                 return Ok();
             }
             catch (Exception ex)
@@ -307,19 +307,19 @@ namespace Avalanche.Api.Controllers.V1
         }
 
         /// <summary>
-        /// Gets the checked state of a pgs display
+        /// Gets the checked state of a pgs sink
         /// </summary>
         /// <param name="alias"></param>
         /// <param name="index"></param>
         /// <param name="env"></param>
         /// <returns></returns>
-        [HttpGet("output/{alias}:{index}/state")]
-        public async Task<IActionResult> GetPgsStateForDisplay(string alias, int index, [FromServices] IWebHostEnvironment env)
+        [HttpGet("sink/{alias}:{index}/state")]
+        public async Task<IActionResult> GetPgsStateForSink(string alias, int index, [FromServices] IWebHostEnvironment env)
         {
             try
             {
                 _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
-                var enabled = _pgsTimeoutManager.GetPgsStateForDisplay(new AliasIndexApiModel(alias, index));
+                var enabled = await _pgsTimeoutManager.GetPgsStateForSink(new AliasIndexApiModel(alias, index));
                 return Ok(enabled);
             }
             catch (Exception ex)

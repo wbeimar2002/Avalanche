@@ -80,7 +80,7 @@ namespace Avalanche.Api.Managers.PgsTimeout
         /// </summary>
         /// <param name="displayId"></param>
         /// <returns></returns>
-        Task<bool> GetPgsStateForDisplay(AliasIndexApiModel displayId);
+        Task<bool> GetPgsStateForSink(AliasIndexApiModel displayId);
 
         /// <summary>
         /// Should map to checked/unchecked when toggling PGS from a display
@@ -88,7 +88,7 @@ namespace Avalanche.Api.Managers.PgsTimeout
         /// <param name="displayId"></param>
         /// <param name="enabled"></param>
         /// <returns></returns>
-        Task SetPgsStateForDisplay(AliasIndexApiModel displayId, bool enabled);
+        Task SetPgsStateForSink(AliasIndexApiModel displayId, bool enabled);
 
         /// <summary>
         /// Gets a collection of configured PGS displays

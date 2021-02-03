@@ -232,7 +232,7 @@ namespace Avalanche.Api.Managers.PgsTimeout
             throw new NotImplementedException();
         }
 
-        public async Task SetPgsStateForDisplay(AliasIndexApiModel displayId, bool enabled)
+        public async Task SetPgsStateForSink(AliasIndexApiModel displayId, bool enabled)
         {
             var config = await GetConfig();
             // pgs checkbox state must persist reboots
@@ -288,7 +288,7 @@ namespace Avalanche.Api.Managers.PgsTimeout
             });
         }
 
-        public Task<bool> GetPgsStateForDisplay(AliasIndexApiModel displayId)
+        public Task<bool> GetPgsStateForSink(AliasIndexApiModel displayId)
         {
             // pgs checkbox state must persist reboots
             // state client should handle this
