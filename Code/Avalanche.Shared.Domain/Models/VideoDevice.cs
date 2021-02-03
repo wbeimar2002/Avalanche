@@ -12,14 +12,9 @@ namespace Avalanche.Shared.Domain.Models
     public class VideoDevice
     {
         /// <summary>
-        /// Alias component of an AliasIndex
+        /// AliasIndex used to identify this source/sink
         /// </summary>
-        public string Alias { get; set; } = string.Empty;
-
-        /// <summary>
-        /// Index component of an AliasIndex
-        /// </summary>
-        public int Index { get; set; }
+        public AliasIndexApiModel Id { get; set; } = new AliasIndexApiModel();
 
         /// <summary>
         /// Friendly (display) name

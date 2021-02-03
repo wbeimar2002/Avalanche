@@ -37,31 +37,25 @@ namespace Avalanche.Api.MappingConfigurations
                     opt => opt.MapFrom(src => 0))
                 .ForPath(dest =>
                     dest.Source.Alias,
-                    opt => opt.MapFrom(src => src.Device.Alias))
+                    opt => opt.MapFrom(src => src.Device.Id.Alias))
                 .ForPath(dest =>
                     dest.Source.Index,
-                    opt => opt.MapFrom(src => src.Device.Index))
+                    opt => opt.MapFrom(src => src.Device.Id.Index))
                 .ReverseMap();
 
             CreateMap<VideoDevice, VideoSink>()
                 .ForMember(dest =>
-                    dest.Alias,
-                    opt => opt.MapFrom(src => src.Alias))
-                .ForMember(dest =>
-                    dest.Index,
-                    opt => opt.MapFrom(src => src.Index))
+                    dest.Id,
+                    opt => opt.MapFrom(src => src.Id))
                 .ReverseMap();
 
             CreateMap<VideoDevice, VideoSource>()
                 .ForMember(dest =>
-                    dest.Alias,
-                    opt => opt.MapFrom(src => src.Alias))
+                    dest.Id,
+                    opt => opt.MapFrom(src => src.Id))
                 .ForMember(dest =>
                     dest.HasVideo,
                     opt => opt.Ignore())
-                .ForMember(dest =>
-                    dest.Index,
-                    opt => opt.MapFrom(src => src.Index))
                 .ForMember(dest =>
                     dest.IsDynamic,
                     opt => opt.Ignore())
@@ -70,57 +64,57 @@ namespace Avalanche.Api.MappingConfigurations
             CreateMap<VideoDevice, Ism.Routing.V1.Protos.AliasIndexMessage>()
                 .ForMember(dest =>
                     dest.Alias,
-                    opt => opt.MapFrom(src => src.Alias))
+                    opt => opt.MapFrom(src => src.Id.Alias))
                 .ForMember(dest =>
                     dest.Index,
-                    opt => opt.MapFrom(src => src.Index))
+                    opt => opt.MapFrom(src => src.Id.Index))
                 .ReverseMap();
 
             CreateMap<VideoSource, Ism.Routing.V1.Protos.AliasIndexMessage>()
                 .ForMember(dest =>
                     dest.Alias,
-                    opt => opt.MapFrom(src => src.Alias))
+                    opt => opt.MapFrom(src => src.Id.Alias))
                 .ForMember(dest =>
                     dest.Index,
-                    opt => opt.MapFrom(src => src.Index))
+                    opt => opt.MapFrom(src => src.Id.Index))
                 .ReverseMap();
 
             CreateMap<VideoSink, Ism.Routing.V1.Protos.AliasIndexMessage>()
                 .ForMember(dest =>
                     dest.Alias,
-                    opt => opt.MapFrom(src => src.Alias))
+                    opt => opt.MapFrom(src => src.Id.Alias))
                 .ForMember(dest =>
                     dest.Index,
-                    opt => opt.MapFrom(src => src.Index))
+                    opt => opt.MapFrom(src => src.Id.Index))
                 .ReverseMap();
 
             CreateMap<VideoSource, AvidisDeviceInterface.V1.Protos.AliasIndexMessage>()
                 .ForMember(dest =>
                     dest.Alias,
-                    opt => opt.MapFrom(src => src.Alias))
+                    opt => opt.MapFrom(src => src.Id.Alias))
                 .ForMember(dest =>
                     dest.Index,
-                    opt => opt.MapFrom(src => src.Index))
+                    opt => opt.MapFrom(src => src.Id.Index))
                 .ReverseMap();
 
             CreateMap<VideoDevice, AvidisDeviceInterface.V1.Protos.AliasIndexMessage>()
                 .ForMember(dest =>
                     dest.Alias,
-                    opt => opt.MapFrom(src => src.Alias))
+                    opt => opt.MapFrom(src => src.Id.Alias))
                 .ForMember(dest =>
                     dest.Index,
-                    opt => opt.MapFrom(src => src.Index))
+                    opt => opt.MapFrom(src => src.Id.Index))
                 .ReverseMap();
 
             CreateMap<Ism.Routing.V1.Protos.VideoSourceMessage, VideoSource>()
                 .ForMember(dest =>
                     dest.HasVideo,
                     opt => opt.Ignore())
-                .ForMember(dest =>
-                    dest.Alias,
+                .ForPath(dest =>
+                    dest.Id.Alias,
                     opt => opt.MapFrom(src => src.Source.Alias))
-                .ForMember(dest =>
-                    dest.Index,
+                .ForPath(dest =>
+                    dest.Id.Index,
                     opt => opt.MapFrom(src => src.Source.Index))
                 .ForMember(dest =>
                     dest.Name,
@@ -140,11 +134,11 @@ namespace Avalanche.Api.MappingConfigurations
                 .ReverseMap();
 
             CreateMap<Ism.Routing.V1.Protos.VideoSinkMessage, VideoSink>()
-                .ForMember(dest =>
-                    dest.Alias,
+                .ForPath(dest =>
+                    dest.Id.Alias,
                     opt => opt.MapFrom(src => src.Sink.Alias))
-                .ForMember(dest =>
-                    dest.Index,
+                .ForPath(dest =>
+                    dest.Id.Index,
                     opt => opt.MapFrom(src => src.Sink.Index))
                 .ForMember(dest =>
                     dest.Name,

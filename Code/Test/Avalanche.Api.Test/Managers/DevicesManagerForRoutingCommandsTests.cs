@@ -31,8 +31,8 @@ namespace Avalanche.Api.Tests.Managers
             CommandViewModel commandViewModel = new CommandViewModel()
             {
                 CommandType = CommandTypes.RouteVideoSource,
-                Devices = new List<VideoDevice>() { new VideoDevice() { Alias = "TP1" } },
-                Destinations = new List<VideoDevice>() { new VideoDevice() { Alias = "TP1" } }
+                Devices = new List<VideoDevice>() { new VideoDevice() { Id = new AliasIndexApiModel("TP1", 0) } },
+                Destinations = new List<VideoDevice>() { new VideoDevice() { Id = new AliasIndexApiModel("TP1", 0) } }
             };
 
             var commandResponse = _manager.SendCommand(commandViewModel);
@@ -48,8 +48,8 @@ namespace Avalanche.Api.Tests.Managers
             CommandViewModel commandViewModel = new CommandViewModel()
             {
                 CommandType = CommandTypes.UnrouteVideoSource,
-                Devices = new List<VideoDevice>() { new VideoDevice() { Alias = "TP1" } },
-                Destinations = new List<VideoDevice>() { new VideoDevice() { Alias = "TP1" } }
+                Devices = new List<VideoDevice>() { new VideoDevice() { Id = new AliasIndexApiModel("TP1", 0) } },
+                Destinations = new List<VideoDevice>() { new VideoDevice() { Id = new AliasIndexApiModel("TP1", 0) } }
             };
 
             var commandResponse = _manager.SendCommand(commandViewModel);
@@ -65,7 +65,7 @@ namespace Avalanche.Api.Tests.Managers
             CommandViewModel commandViewModel = new CommandViewModel()
             {
                 CommandType = CommandTypes.EnterFullScreen,
-                Devices = new List<VideoDevice>() { new VideoDevice() { Alias = "TP1" } }
+                Devices = new List<VideoDevice>() { new VideoDevice() { Id = new AliasIndexApiModel("TP1", 0) } }
             };
 
             var commandResponse = _manager.SendCommand(commandViewModel);
@@ -81,7 +81,7 @@ namespace Avalanche.Api.Tests.Managers
             CommandViewModel commandViewModel = new CommandViewModel()
             {
                 CommandType = CommandTypes.ExitFullScreen,
-                Devices = new List<VideoDevice>() { new VideoDevice() { Alias = "TP1" } }
+                Devices = new List<VideoDevice>() { new VideoDevice() { Id = new AliasIndexApiModel("TP1", 0) } }
             };
 
             var commandResponse = _manager.SendCommand(commandViewModel);
@@ -94,7 +94,7 @@ namespace Avalanche.Api.Tests.Managers
         [Test]
         public void ShowVideoRoutingPreviewHarwareModeShouldReturnResponse()
         {
-            _storageService.Setup(mock =>  mock.GetJsonDynamic("SurgerySettingsValues", 1, It.IsAny<ConfigurationContext>())).ReturnsAsync(new
+            _storageService.Setup(mock => mock.GetJsonDynamic("SurgerySettingsValues", 1, It.IsAny<ConfigurationContext>())).ReturnsAsync(new
             {
                 Mode = RoutingModes.Hardware
             });
@@ -103,7 +103,7 @@ namespace Avalanche.Api.Tests.Managers
             {
                 AdditionalInfo = "{\"X\":180.75,\"Y\":221,\"Width\":300,\"Height\":230.40625}",
                 CommandType = CommandTypes.ShowVideoRoutingPreview,
-                Devices = new List<VideoDevice>() { new VideoDevice() { Alias = "TP1" } }
+                Devices = new List<VideoDevice>() { new VideoDevice() { Id = new AliasIndexApiModel("TP1", 0) } }
             };
 
             var commandResponse = _manager.SendCommand(commandViewModel);
@@ -126,7 +126,7 @@ namespace Avalanche.Api.Tests.Managers
             {
                 AdditionalInfo = "{\"X\":180.75,\"Y\":221,\"Width\":300,\"Height\":230.40625}",
                 CommandType = CommandTypes.ShowVideoRoutingPreview,
-                Devices = new List<VideoDevice>() { new VideoDevice() { Alias = "TP1" } }
+                Devices = new List<VideoDevice>() { new VideoDevice() { Id = new AliasIndexApiModel("TP1", 0) } }
             };
 
             var commandResponse = _manager.SendCommand(commandViewModel);
@@ -142,7 +142,7 @@ namespace Avalanche.Api.Tests.Managers
             CommandViewModel commandViewModel = new CommandViewModel()
             {
                 CommandType = CommandTypes.HideVideoRoutingPreview,
-                Devices = new List<VideoDevice>() { new VideoDevice() { Alias = "TP1" } }
+                Devices = new List<VideoDevice>() { new VideoDevice() { Id = new AliasIndexApiModel("TP1", 0) } }
             };
 
             var commandResponse = _manager.SendCommand(commandViewModel);

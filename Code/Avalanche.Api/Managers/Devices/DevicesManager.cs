@@ -80,7 +80,7 @@ namespace Avalanche.Api.Managers.Devices
 
         private async Task<CommandResponse> ExecuteCommandAsync(CommandTypes commandType, Command command, User user)
         {
-            _appLoggerService.LogInformation($"{commandType.GetDescription()} command executed on {command.Device.Alias} device.");
+            _appLoggerService.LogInformation($"{commandType.GetDescription()} command executed on {command.Device.Id.Alias} device.");
 
             switch (commandType)
             {
@@ -155,7 +155,7 @@ namespace Avalanche.Api.Managers.Devices
             foreach (var source in listResult)
             {
                 // need to merge the HasVideo and VideoSource collections
-                var state = states.SourceStates.SingleOrDefault(x => x.Source.EqualsOther(source));
+                var state = states.SourceStates.SingleOrDefault(x => x.Source.EqualsVideoDevice(source));
                 source.HasVideo = state?.HasVideo ?? false;
             }
 
@@ -169,8 +169,7 @@ namespace Avalanche.Api.Managers.Devices
 
             var mappedSource = _mapper.Map<Ism.Routing.V1.Protos.VideoSourceMessage, VideoSource>(source.Source);
 
-            mappedSource.Alias = alias;
-            mappedSource.Index = index;
+            mappedSource.Id = new AliasIndexApiModel(alias, index);
 
             // you could plug in an ela that has no video connected to it
             mappedSource.HasVideo = hasVideo.HasVideo;
@@ -186,7 +185,7 @@ namespace Avalanche.Api.Managers.Devices
             var listResult = _mapper.Map<IList<Ism.Routing.V1.Protos.VideoSinkMessage>, IList<VideoSink>>(sinks.VideoSinks);
             foreach (var sink in listResult) 
             {
-                var route = routes.Routes.SingleOrDefault(x => x.Sink.EqualsOther(sink));
+                var route = routes.Routes.SingleOrDefault(x => x.Sink.EqualsVideoDevice(sink));
                 // get the current source
                 sink.Source = new AliasIndexApiModel(route.Source.Alias, route.Source.Index);
             }

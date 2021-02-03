@@ -47,12 +47,12 @@ namespace Avalanche.Api.Extensions
         /// <param name="left"></param>
         /// <param name="right"></param>
         /// <returns></returns>
-        public static bool EqualsOther(this Ism.Routing.V1.Protos.AliasIndexMessage left, VideoDevice right)
+        public static bool EqualsVideoDevice(this Ism.Routing.V1.Protos.AliasIndexMessage left, VideoDevice right)
         {
             ThrowIfNull(nameof(left), left);
             ThrowIfNull(nameof(right), right);
 
-            return string.Equals(left.Alias, right.Alias, StringComparison.OrdinalIgnoreCase) && left.Index == right.Index;
+            return string.Equals(left.Alias, right.Id.Alias, StringComparison.OrdinalIgnoreCase) && left.Index == right.Id.Index;
         }
 
         /// <summary>

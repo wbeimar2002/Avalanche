@@ -104,9 +104,25 @@ namespace Avalanche.Api.Managers.PgsTimeout
             await _startStopLock.WaitAsync(_cts.Token);
             try
             {
+                var config = await GetConfig();
+
                 await SaveCurrentRoutes();
 
 
+                var sinks = await GetPgsSinks();
+                foreach (var sink in sinks)
+                {
+                    // display is unchecked, skip this one
+                    var enabled = await GetPgsStateForSink(sink.Id);
+                    if (!enabled)
+                        continue;
+
+                    await _routingService.RouteVideo(new RouteVideoRequest
+                    {
+                        Source = config.PgsSource.ToRoutingAliasIndex(),
+                        Sink = sink.Id.ToRoutingAliasIndex()
+                    });
+                }
 
                 _currentPgsTimeoutState = PgsTimeoutModes.Pgs;
             }
@@ -121,6 +137,7 @@ namespace Avalanche.Api.Managers.PgsTimeout
             await _startStopLock.WaitAsync(_cts.Token);
             try
             {
+                // restore saved routes
                 await LoadSavedRoutes();
 
                 // TODO: might need to revisit state tracking when we need to implement timeout
@@ -244,7 +261,7 @@ namespace Avalanche.Api.Managers.PgsTimeout
 
             foreach (var sink in apiSinks)
             {
-                var route = routes.Routes.SingleOrDefault(x => x.Sink.EqualsOther(sink));
+                var route = routes.Routes.SingleOrDefault(x => x.Sink.EqualsVideoDevice(sink));
                 // get the current source
                 sink.Source = new AliasIndexApiModel(route.Source.Alias, route.Source.Index);
             }
