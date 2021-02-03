@@ -15,7 +15,7 @@ namespace Avalanche.Shared.Domain.Models
         /// <summary>
         /// List of displays to route PGS to
         /// </summary>
-        public List<AliasIndexApiModel> PgsDisplays { get; set; }
+        public List<AliasIndexApiModel> PgsSinks { get; set; }
 
         /// <summary>
         /// Id of the video source to use for timeout
@@ -32,6 +32,6 @@ namespace Avalanche.Shared.Domain.Models
         /// <summary>
         /// List of displays to send timeout to
         /// </summary>
-        public List<AliasIndexApiModel> TimeoutDisplays { get; set; }
+        public List<AliasIndexApiModel> TimeoutSinks { get; set; }
     }
 }

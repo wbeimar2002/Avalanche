@@ -15,6 +15,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Avalanche.Api.Extensions;
 
 namespace Avalanche.Api.Managers.Devices
 {
@@ -59,7 +60,7 @@ namespace Avalanche.Api.Managers.Devices
 
             foreach (var item in command.Devices)
             {
-                var device = _mapper.Map<Device, Source>(item);
+                var device = _mapper.Map<VideoDevice, VideoSource>(item);
 
                 CommandResponse response = await ExecuteCommandAsync(command.CommandType, new Command()
                 {
@@ -67,7 +68,7 @@ namespace Avalanche.Api.Managers.Devices
                     Destinations = command.Destinations,
                     Message = command.Message,
                     AdditionalInfo = command.AdditionalInfo,
-                    Type = command.Type, 
+                    Type = command.Type,
                     User = command.User
                 }, user);
 
@@ -79,7 +80,7 @@ namespace Avalanche.Api.Managers.Devices
 
         private async Task<CommandResponse> ExecuteCommandAsync(CommandTypes commandType, Command command, User user)
         {
-            _appLoggerService.LogInformation($"{commandType.GetDescription()} command executed on {command.Device.Id} device.");
+            _appLoggerService.LogInformation($"{commandType.GetDescription()} command executed on {command.Device.Alias} device.");
 
             switch (commandType)
             {
@@ -142,103 +143,53 @@ namespace Avalanche.Api.Managers.Devices
             }
         }
 
-        public Task<List<Output>> GetPgsOutputs()
+        public async Task<IList<VideoSource>> GetRoutingSources()
         {
-            List<Output> outputs = new List<Output>();
-
-            outputs.Add(new Output()
-            {
-                Id = Guid.NewGuid().ToString(),
-                Name = "MAIN TV 1",
-                Thumbnail = "https://www.olympus-oste.eu/media/innovations/images_5/2n_research_and_development/entwicklung_produktinnovationen_intro.jpg"
-            });
-
-            outputs.Add(new Output()
-            {
-                Id = Guid.NewGuid().ToString(),
-                Name = "MAIN TV 2",
-                Thumbnail = "https://www.olympus-oste.eu/media/innovations/images_5/2n_research_and_development/entwicklung_produktinnovationen_intro.jpg"
-            });
-
-            outputs.Add(new Output()
-            {
-                Id = Guid.NewGuid().ToString(),
-                Name = "AUX TV 1",
-                Thumbnail = "https://www.olympus-oste.eu/media/innovations/images_5/2n_research_and_development/entwicklung_produktinnovationen_systemintegration_6.jpg"
-            });
-
-            outputs.Add(new Output()
-            {
-                Id = Guid.NewGuid().ToString(),
-                Name = "MAIN TV 2",
-                Thumbnail = "https://www.olympus-oste.eu/media/innovations/images_5/2n_research_and_development/entwicklung_produktinnovationen_systemintegration_6.jpg"
-            });
-
-            return Task.FromResult(outputs);
-        }
-        
-        public Task<List<Output>> GetTimeoutOutputs()
-        {
-            List<Output> outputs = new List<Output>();
-            outputs.Add(new Output()
-            {
-                Id = Guid.NewGuid().ToString(),
-                Name = "Charting System",
-            });
-
-            outputs.Add(new Output()
-            {
-                Id = Guid.NewGuid().ToString(),
-                Name = "Nurse PC",
-            });
-
-            outputs.Add(new Output()
-            {
-                Id = Guid.NewGuid().ToString(),
-                Name = "Phys. PC",
-            });
-
-            return Task.FromResult(outputs);
-        }
-        
-        public async Task<IList<Source>> GetOperationsSources()
-        {
+            // get video sources and their states
+            // the state collection only contains the AliasIndex and a bool
             var sources = await _routingService.GetVideoSources();
-            var currentRoutes = await _routingService.GetCurrentRoutes();
             var states = await _routingService.GetVideoStateForAllSources();
 
-            IList<Source> listResult = _mapper.Map<IList<Ism.Routing.V1.Protos.VideoSourceMessage>, IList<Source>>(sources.VideoSources);
+            var listResult = _mapper.Map<IList<Ism.Routing.V1.Protos.VideoSourceMessage>, IList<VideoSource>>(sources.VideoSources);
 
-            foreach (var item in currentRoutes.Routes)
+            foreach (var source in listResult)
             {
-                var source = listResult.Where(s => s.Id.Equals(item.Source.Alias) && s.InternalIndex.Equals(item.Source.Index)).FirstOrDefault();
-                if (source != null)
-                {
-                    var state = states.SourceStates.Where(s => s.Source.Alias.Equals(item.Source.Alias) && s.Source.Index.Equals(item.Source.Index)).FirstOrDefault();
-
-                    source.Output = _mapper.Map<Ism.Routing.V1.Protos.AliasIndexMessage, Output>(item.Sink);
-                    source.HasSignal = state?.HasVideo;                }
+                // need to merge the HasVideo and VideoSource collections
+                var state = states.SourceStates.SingleOrDefault(x => x.Source.EqualsOther(source));
+                source.HasVideo = state?.HasVideo ?? false;
             }
 
             return listResult;
         }
 
-        public async Task<Source> GetAlternativeSource(string alias, int index)
+        public async Task<VideoSource> GetAlternativeSource(string alias, int index)
         {
             var source = await _routingService.GetAlternativeVideoSource(new Ism.Routing.V1.Protos.GetAlternativeVideoSourceRequest { Source = new Ism.Routing.V1.Protos.AliasIndexMessage { Alias = alias, Index = index } });
+            var hasVideo = await _routingService.GetVideoStateForSource(new Ism.Routing.V1.Protos.GetVideoStateForSourceRequest { Source = new Ism.Routing.V1.Protos.AliasIndexMessage { Alias = alias, Index = index } });
 
-            var mappedSource = _mapper.Map<Ism.Routing.V1.Protos.VideoSourceMessage, Source>(source.Source);
+            var mappedSource = _mapper.Map<Ism.Routing.V1.Protos.VideoSourceMessage, VideoSource>(source.Source);
 
-            mappedSource.Id = alias;
-            mappedSource.InternalIndex = index;
+            mappedSource.Alias = alias;
+            mappedSource.Index = index;
+
+            // you could plug in an ela that has no video connected to it
+            mappedSource.HasVideo = hasVideo.HasVideo;
 
             return mappedSource;
         }
 
-        public async Task<IList<Output>> GetOperationsOutputs()
+        public async Task<IList<VideoSink>> GetRoutingSinks()
         {
-            var outputs = await _routingService.GetVideoSinks();
-            IList<Output> listResult = _mapper.Map<IList<Ism.Routing.V1.Protos.VideoSinkMessage>, IList<Output>>(outputs.VideoSinks);
+            var sinks = await _routingService.GetVideoSinks();
+            var routes = await _routingService.GetCurrentRoutes();
+
+            var listResult = _mapper.Map<IList<Ism.Routing.V1.Protos.VideoSinkMessage>, IList<VideoSink>>(sinks.VideoSinks);
+            foreach (var sink in listResult) 
+            {
+                var route = routes.Routes.SingleOrDefault(x => x.Sink.EqualsOther(sink));
+                // get the current source
+                sink.Source = new AliasIndexApiModel(route.Source.Alias, route.Source.Index);
+            }
             return listResult;
         }
     }

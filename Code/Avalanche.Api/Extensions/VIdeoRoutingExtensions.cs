@@ -13,7 +13,7 @@ namespace Avalanche.Api.Extensions
     public static class VideoRoutingExtensions
     {
         /// <summary>
-        /// Converts an api aliasIndex into a fRPC routing AliasIndex
+        /// Converts an api aliasIndex into a gRPC routing AliasIndex
         /// </summary>
         /// <param name="model"></param>
         /// <returns></returns>
@@ -25,6 +25,34 @@ namespace Avalanche.Api.Extensions
                 Alias = model.Alias,
                 Index = model.Index
             };
+        }
+
+        /// <summary>
+        /// Helper for equality checking if 2 routing alias indices are equal
+        /// </summary>
+        /// <param name="left"></param>
+        /// <param name="right"></param>
+        /// <returns></returns>
+        public static bool EqualsOther(this Ism.Routing.V1.Protos.AliasIndexMessage left, Ism.Routing.V1.Protos.AliasIndexMessage right)
+        {
+            ThrowIfNull(nameof(left), left);
+            ThrowIfNull(nameof(right), right);
+
+            return string.Equals(left.Alias, right.Alias, StringComparison.OrdinalIgnoreCase) && left.Index == right.Index;
+        }
+
+        /// <summary>
+        /// Returns true if a proto aliasIndex equals an api video device
+        /// </summary>
+        /// <param name="left"></param>
+        /// <param name="right"></param>
+        /// <returns></returns>
+        public static bool EqualsOther(this Ism.Routing.V1.Protos.AliasIndexMessage left, VideoDevice right)
+        {
+            ThrowIfNull(nameof(left), left);
+            ThrowIfNull(nameof(right), right);
+
+            return string.Equals(left.Alias, right.Alias, StringComparison.OrdinalIgnoreCase) && left.Index == right.Index;
         }
 
         /// <summary>
@@ -41,5 +69,6 @@ namespace Avalanche.Api.Extensions
                 Index = model.Index
             };
         }
+
     }
 }

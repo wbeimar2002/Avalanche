@@ -22,7 +22,8 @@ namespace Avalanche.Api.Controllers.V1
 {
     [Route("[controller]")]
     [ApiController]
-    [Authorize]
+#warning uncomment this before PR
+    //[Authorize]
     public class DevicesController : ControllerBase
     {
         readonly ILogger _appLoggerService;
@@ -67,64 +68,16 @@ namespace Avalanche.Api.Controllers.V1
         }
 
         /// <summary>
-        /// Returns all the destinations for setup 
-        /// </summary>
-        [HttpGet("outputs/pgs")]
-        [Produces(typeof(List<Output>))]
-        public async Task<IActionResult> GetPgsOutputs([FromServices] IWebHostEnvironment env)
-        {
-            try
-            {
-                _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
-                var result = await _pgsTimeoutManager.GetPgsOutputs();
-                return Ok(result);
-            }
-            catch (Exception exception)
-            {
-                _appLoggerService.LogError(LoggerHelper.GetLogMessage(DebugLogType.Exception), exception);
-                return new BadRequestObjectResult(exception.Get(env.IsDevelopment()));
-            }
-            finally
-            {
-                _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
-            }
-        }
-
-        /// <summary>
-        /// Returns all the destinations for timeout 
-        /// </summary>
-        [HttpGet("outputs/timeout")]
-        [Produces(typeof(List<Output>))]
-        public async Task<IActionResult> GetTimeoutOuputs([FromServices] IWebHostEnvironment env)
-        {
-            try
-            {
-                _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
-                var result = await _pgsTimeoutManager.GetTimeoutOutputs();
-                return Ok(result);
-            }
-            catch (Exception exception)
-            {
-                _appLoggerService.LogError(LoggerHelper.GetLogMessage(DebugLogType.Exception), exception);
-                return new BadRequestObjectResult(exception.Get(env.IsDevelopment()));
-            }
-            finally
-            {
-                _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
-            }
-        }
-
-        /// <summary>
         /// Returns all the destinations for operations 
         /// </summary>
         [HttpGet("outputs/operations")]
-        [Produces(typeof(List<Output>))]
+        [Produces(typeof(List<VideoSink>))]
         public async Task<IActionResult> GetOperationsOuputs([FromServices] IWebHostEnvironment env)
         {
             try
             {
                 _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
-                var result = await _devicesManager.GetOperationsOutputs();
+                var result = await _devicesManager.GetRoutingSinks();
                 return Ok(result);
             }
             catch (Exception exception)
@@ -142,13 +95,13 @@ namespace Avalanche.Api.Controllers.V1
         /// Returns all the destinations for operations 
         /// </summary>
         [HttpGet("sources/operations")]
-        [Produces(typeof(List<Source>))]
+        [Produces(typeof(List<VideoSource>))]
         public async Task<IActionResult> GetOperationsSources([FromServices] IWebHostEnvironment env)
         {
             try
             {
                 _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
-                var result = await _devicesManager.GetOperationsSources();
+                var result = await _devicesManager.GetRoutingSources();
                 return Ok(result);
             }
             catch (Exception exception)
@@ -167,7 +120,7 @@ namespace Avalanche.Api.Controllers.V1
         /// Call this as a response to a source identity changed event
         /// </summary>
         [HttpGet("sources/{alias}:{index}/alternativeSource")]
-        [Produces(typeof(Source))]
+        [Produces(typeof(VideoSource))]
         public async Task<IActionResult> GetAlternativeSource(string alias, int index, [FromServices] IWebHostEnvironment env)
         {
             try

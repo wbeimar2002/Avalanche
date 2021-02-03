@@ -1,4 +1,5 @@
-﻿using Avalanche.Api.Extensions;
+﻿using AutoMapper;
+using Avalanche.Api.Extensions;
 using Avalanche.Api.Services.Maintenance;
 using Avalanche.Api.Services.Media;
 using Avalanche.Shared.Domain.Enumerations;
@@ -40,6 +41,9 @@ namespace Avalanche.Api.Managers.PgsTimeout
         // gRPC client for the pgs timeout application
         private readonly IPgsTimeoutService _pgsTimeoutService;
 
+        // mapper for various gRPC types to api types
+        private readonly IMapper _mapper;
+
         /// <summary>
         /// Is the room in PGS, timeout or none
         /// Used to determine if we need to save the current routes or not
@@ -73,12 +77,14 @@ namespace Avalanche.Api.Managers.PgsTimeout
             IStorageService storageService,
             IRoutingService routingService,
             IStateClient stateClient,
-            IPgsTimeoutService pgsTimeoutService)
+            IPgsTimeoutService pgsTimeoutService,
+            IMapper mapper)
         {
             _storageService = ThrowIfNullOrReturn(nameof(storageService), storageService);
             _routingService = ThrowIfNullOrReturn(nameof(routingService), routingService);
             _stateClient = ThrowIfNullOrReturn(nameof(stateClient), stateClient);
             _pgsTimeoutService = ThrowIfNullOrReturn(nameof(pgsTimeoutService), pgsTimeoutService);
+            _mapper = ThrowIfNullOrReturn(nameof(mapper), mapper);
         }
 
         public async Task StartPgs()
@@ -143,13 +149,15 @@ namespace Avalanche.Api.Managers.PgsTimeout
 
         #region PgsTimeoutPlayer methods
 
-        public Task<IList<string>> GetPgsVideoFiles()
+        public async Task<IList<string>> GetPgsVideoFiles()
         {
-            throw new NotImplementedException();
+            var files = await _pgsTimeoutService.GetPgsVideoFileList();
+            return files.VideoFiles.ToList();
         }
 
-        public Task SetPgsVideoFile(string path)
+        public async Task SetPgsVideoFile(string path)
         {
+            await _pgsTimeoutService.SetPgsVideoFile(new Ism.PgsTimeout.V1.Protos.SetPgsVideoFileRequest { VideoFile = "asdas" });
             throw new NotImplementedException();
         }
 
@@ -157,7 +165,6 @@ namespace Avalanche.Api.Managers.PgsTimeout
         {
             throw new NotImplementedException();
         }
-
 
         public async Task<double> GetPgsVolume()
         {
@@ -192,12 +199,35 @@ namespace Avalanche.Api.Managers.PgsTimeout
 
         #region API/routing methods
 
-        public Task<IList<Output>> GetPgsOutputs()
+        public async Task<IList<VideoSink>> GetPgsSinks()
         {
-            throw new NotImplementedException();
+            // this needs to return the same data that routing does
+            var config = await GetConfig();
+
+            var routingSinks = await _routingService.GetVideoSinks();
+            var routes = await _routingService.GetCurrentRoutes();
+            
+            // PGS sinks are typically a subset of routing sinks
+            // typically, they would be all of the displays without the record channels
+            
+            // get the routing sinks that are also called out in the pgs sink collection
+            var pgsSinks = routingSinks.VideoSinks.Where(routingSink =>
+                config.PgsSinks.Any(pgsSink =>
+                    routingSink.Sink.EqualsOther(pgsSink.ToRoutingAliasIndex())));
+
+            var apiSinks = _mapper.Map<IList<VideoSinkMessage>, IList<VideoSink>>(pgsSinks.ToList());
+
+            foreach (var sink in apiSinks)
+            {
+                var route = routes.Routes.SingleOrDefault(x => x.Sink.EqualsOther(sink));
+                // get the current source
+                sink.Source = new AliasIndexApiModel(route.Source.Alias, route.Source.Index);
+            }
+
+            return apiSinks;
         }
 
-        public Task<List<Output>> GetTimeoutOutputs()
+        public Task<IList<VideoSink>> GetTimeoutSinks()
         {
             throw new NotImplementedException();
         }

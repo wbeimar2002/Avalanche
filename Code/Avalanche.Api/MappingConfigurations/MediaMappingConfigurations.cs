@@ -37,7 +37,7 @@ namespace Avalanche.Api.MappingConfigurations
                 //    opt => opt.MapFrom(src => true))
                 .ForMember(dest =>
                     dest.StreamId,
-                    opt => opt.MapFrom(src => src.Device.Id))
+                    opt => opt.MapFrom(src => src.Device.Alias))
                 .ForMember(dest =>
                     dest.SessionId,
                     opt => opt.MapFrom(src => src.AdditionalInfo))
@@ -97,9 +97,9 @@ namespace Avalanche.Api.MappingConfigurations
                     opt => opt.MapFrom(src => "Unknown"))
                 .ReverseMap();
 
-            CreateMap<Ism.Streaming.V1.Protos.WebRtcSourceMessage, Device>()
+            CreateMap<Ism.Streaming.V1.Protos.WebRtcSourceMessage, VideoDevice>()
                 .ForMember(dest =>
-                    dest.InternalIndex,
+                    dest.Index,
                     opt => opt.MapFrom(src => src.PreviewIndex))
                 .ForMember(dest =>
                     dest.Name,
@@ -111,7 +111,7 @@ namespace Avalanche.Api.MappingConfigurations
                     dest.PositionInScreen,
                     opt => opt.MapFrom(src => 0))
                 .ForMember(dest =>
-                    dest.Id,
+                    dest.Alias,
                     opt => opt.MapFrom(src => string.Empty))
                 .ForMember(dest =>
                     dest.Type,

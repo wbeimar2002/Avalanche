@@ -94,7 +94,14 @@ namespace Avalanche.Api.Managers.PgsTimeout
         /// Gets a collection of configured PGS displays
         /// </summary>
         /// <returns></returns>
-        Task<IList<Output>> GetPgsOutputs();
+        Task<IList<VideoSink>> GetPgsSinks();
+
+        // TODO: determine if this can be removed, timeout displays aren't changed at runtime
+        /// <summary>
+        /// Gets a collection of configured timeout sinks
+        /// </summary>
+        /// <returns></returns>
+        Task<IList<VideoSink>> GetTimeoutSinks();
 
         #endregion
     }

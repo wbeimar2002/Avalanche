@@ -32,7 +32,7 @@ namespace Avalanche.Api.Controllers.V1
         /// Returns all the stream sources
         /// </summary>
         [HttpGet("stream/sources")]
-        [Produces(typeof(List<Device>))]
+        [Produces(typeof(List<VideoDevice>))]
         public async Task<IActionResult> GetPgsOutputs([FromServices] IWebHostEnvironment env)
         {
             try

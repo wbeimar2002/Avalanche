@@ -258,13 +258,13 @@ namespace Avalanche.Api.Controllers.V1
         /// <param name="env"></param>
         /// <returns></returns>
         [HttpGet("outputs")]
-        [Produces(typeof(List<Output>))]
+        [Produces(typeof(List<VideoSink>))]
         public async Task<IActionResult> GetPgsOutputs([FromServices] IWebHostEnvironment env)
         {
             try
             {
                 _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
-                var result = await _pgsTimeoutManager.GetPgsOutputs();
+                var result = await _pgsTimeoutManager.GetPgsSinks();
                 return Ok(result);
             }
             catch (Exception ex)
