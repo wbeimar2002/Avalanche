@@ -17,5 +17,7 @@ namespace Avalanche.Api.ViewModels
         public List<DynamicPropertyViewModel> Properties { get; set; }
         public List<ExpandoObject> Data { get; set; }
         public ExpandoObject Entity { get; set; }
+        public List<ExpandoObject> NewData { get; set; }
+        public List<ExpandoObject> DeletedData { get; set; }
     }
 }

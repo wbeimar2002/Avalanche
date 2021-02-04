@@ -48,13 +48,13 @@ namespace Avalanche.Api.Managers.Maintenance
             var configurationContext = _mapper.Map<User, ConfigurationContext>(user);
             configurationContext.IdnId = Guid.NewGuid().ToString();
 
-            await SaveSources(configurationContext, category);
+            await SaveSources(user, configurationContext, category);
 
             if (category.Sections != null)
             {
                 foreach (var section in category.Sections)
                 {
-                    await SaveSources(configurationContext, section);
+                    await SaveSources(user, configurationContext, section);
                 }
             }
 
@@ -68,19 +68,24 @@ namespace Avalanche.Api.Managers.Maintenance
 
             if (category.SaveAsFile)
             {
-                var result = JsonConvert.SerializeObject(new { Items = category.Data });
-
-                if (await SchemaIsValid(category.Schema, result, configurationContext))
-                {
-                    await _storageService.SaveJson(category.SourceKey, result, 1, configurationContext);
-                }
-                else
-                {   //TODO: Pending Exceptions strategy
-                    throw new ValidationException("Json Schema Invalid for " + category.SourceKey + " values");
-                }
+                await SaveCustomListFile(category, configurationContext);
             }
             else
-                await SaveDestination(user, category, action);
+                await SaveCustomEntity(user, category, action);
+        }
+
+        private async Task SaveCustomListFile(DynamicListViewModel category, ConfigurationContext configurationContext)
+        {
+            var result = JsonConvert.SerializeObject(new { Items = category.Data });
+
+            if (await SchemaIsValid(category.Schema, result, configurationContext))
+            {
+                await _storageService.SaveJson(category.SourceKey, result, 1, configurationContext);
+            }
+            else
+            {   //TODO: Pending Exceptions strategy
+                throw new ValidationException("Json Schema Invalid for " + category.SourceKey + " values");
+            }
         }
 
         public async Task<DynamicSectionViewModel> GetCategoryByKey(User user, string key)
@@ -232,7 +237,7 @@ namespace Avalanche.Api.Managers.Maintenance
             }
         }
 
-        private async Task SaveSources(ConfigurationContext configurationContext, DynamicSectionViewModel section)
+        private async Task SaveSources(User user, ConfigurationContext configurationContext, DynamicSectionViewModel section)
         {
             if (section.Settings != null)
             {
@@ -240,8 +245,20 @@ namespace Avalanche.Api.Managers.Maintenance
                 {
                     if (string.IsNullOrEmpty(item.JsonKey) && !string.IsNullOrEmpty(item.SourceKey))
                     {
-                        await _storageService.SaveJson(item.SourceKey, JsonConvert.SerializeObject(new { Items = item.SourceValues }), 1, configurationContext);
-                        item.SourceValues = null;
+                        if (item.VisualStyle == VisualStyles.CustomList)
+                        {
+                            var category = item.CustomList;
+
+                            if (category.SaveAsFile)
+                                SaveCustomListFile(category, configurationContext);
+                            else
+                                await SaveCustomEntities(user, category);
+                        }
+                        else
+                        {
+                            await _storageService.SaveJson(item.SourceKey, JsonConvert.SerializeObject(new { Items = item.SourceValues }), 1, configurationContext);
+                            item.SourceValues = null;
+                        }
                     }
                 }
             }
@@ -283,7 +300,7 @@ namespace Avalanche.Api.Managers.Maintenance
             }
         }
 
-        private async Task SaveDestination(User user, DynamicListViewModel category, DynamicListActions action)
+        private async Task SaveCustomEntity(User user, DynamicListViewModel category, DynamicListActions action)
         {
             switch (category.SourceKey)
             {
@@ -296,6 +313,25 @@ namespace Avalanche.Api.Managers.Maintenance
                 default:
                     //TODO: Pending Exceptions strategy
                     throw new ValidationException("Method Not Allowed");
+            }
+        }
+
+        private async Task SaveCustomEntities(User user, DynamicListViewModel category)
+        {
+            switch (category.SourceKey)
+            {
+                case "Departments":
+                    foreach (var item in category.NewData)
+                    {
+                        await SaveDepartments(user, DynamicListActions.Insert, item);
+                    }
+                    break;
+                case "ProcedureTypes":
+                    foreach (var item in category.DeletedData)
+                    {
+                        await SaveDepartments(user, DynamicListActions.Delete, item);
+                    }
+                    break;
             }
         }
 
