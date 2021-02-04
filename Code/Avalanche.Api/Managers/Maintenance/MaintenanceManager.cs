@@ -31,17 +31,19 @@ namespace Avalanche.Api.Managers.Maintenance
             _mapper = mapper;
         }
 
-        public async Task SaveCategoryPolicies(User user, SectionViewModel category)
+        public async Task SaveCategoryPolicies(User user, DynamicSectionViewModel category)
         {
             var configurationContext = _mapper.Map<Shared.Domain.Models.User, ConfigurationContext>(user);
             configurationContext.IdnId = Guid.NewGuid().ToString();
 
             await SaveJsonValues(category, configurationContext);
 
+            SettingsHelper.CleanSettings(category);
+
             await _storageService.SaveJson(category.JsonKey, JsonConvert.SerializeObject(category), 1, configurationContext);
         }
 
-        public async Task SaveCategory(User user, SectionViewModel category)
+        public async Task SaveCategory(User user, DynamicSectionViewModel category)
         {
             var configurationContext = _mapper.Map<User, ConfigurationContext>(user);
             configurationContext.IdnId = Guid.NewGuid().ToString();
@@ -81,21 +83,21 @@ namespace Avalanche.Api.Managers.Maintenance
                 await SaveDestination(user, category, action);
         }
 
-        public async Task<SectionViewModel> GetCategoryByKey(User user, string key)
+        public async Task<DynamicSectionViewModel> GetCategoryByKey(User user, string key)
         {
             var configurationContext = _mapper.Map<User, ConfigurationContext>(user);
-            var category = await _storageService.GetJsonObject<SectionViewModel>(key, 1, configurationContext);
+            var category = await _storageService.GetJsonObject<DynamicSectionViewModel>(key, 1, configurationContext);
             var settingValues = await _storageService.GetJsonDynamic(key + "Values", 1, configurationContext);
 
             var types = await _metadataManager.GetMetadata(user, MetadataTypes.SettingTypes);
             var policiesTypes = (await _storageService.GetJsonObject<ListContainerViewModel>("SettingsPolicies", 1, configurationContext)).Items;           
 
-            await SetSources(configurationContext, category, types);
+            await SetSources(user, configurationContext, category, types);
             SettingsHelper.SetSettingValues(category, settingValues, policiesTypes);
 
             if (category.Sections != null)
             {
-                await SetSettingsValues(configurationContext, category, settingValues, types, policiesTypes);
+                await SetSettingsValues(user, configurationContext, category, settingValues, types, policiesTypes);
             }
 
             category.JsonKey = key;
@@ -186,18 +188,18 @@ namespace Avalanche.Api.Managers.Maintenance
             }
         }
 
-        private async Task SetSettingsValues(ConfigurationContext configurationContext, SectionViewModel rootSection, dynamic settingValues, IList<KeyValuePairViewModel> types, IList<KeyValuePairViewModel> policiesTypes)
+        private async Task SetSettingsValues(User user, ConfigurationContext configurationContext, DynamicSectionViewModel rootSection, dynamic settingValues, IList<KeyValuePairViewModel> types, IList<KeyValuePairViewModel> policiesTypes)
         {
             foreach (var section in rootSection.Sections)
             {
                 var sectionValues = settingValues == null ? null : settingValues[section.JsonKey];
 
-                await SetSources(configurationContext, section, types);
+                await SetSources(user, configurationContext, section, types);
                 SettingsHelper.SetSettingValues(section, sectionValues, policiesTypes);
 
                 if (section.Sections != null)
                 {
-                    await SetSettingsValues(configurationContext, section, sectionValues, types, policiesTypes);
+                    await SetSettingsValues(user, configurationContext, section, sectionValues, types, policiesTypes);
                 }
             }
         }
@@ -208,22 +210,29 @@ namespace Avalanche.Api.Managers.Maintenance
             return await _storageService.GetJsonDynamic(key, 1, configurationContext);
         }
 
-        private async Task SetSources(ConfigurationContext configurationContext, SectionViewModel category, IList<KeyValuePairViewModel> types)
+        private async Task SetSources(User user, ConfigurationContext configurationContext, DynamicSectionViewModel category, IList<KeyValuePairViewModel> types)
         {
             if (category!= null && category.Settings != null)
             {
                 foreach (var item in category.Settings)
                 {
-                    if (!string.IsNullOrEmpty(item.SourceKey))
+                    if (item.VisualStyle == VisualStyles.CustomList)
                     {
-                        item.SourceValues = (await _storageService.GetJsonObject<SourceListContainerViewModel>(item.SourceKey, 1, configurationContext)).Items;
-                        item.SourceValues.ForEach(s => s.Types = types);
+                        item.CustomList = await GetCategoryListByKey(user, item.SourceKey);
+                    }
+                    else
+                    {
+                        if (!string.IsNullOrEmpty(item.SourceKey))
+                        {
+                            item.SourceValues = (await _storageService.GetJsonObject<DynamicSourceListContainerViewModel>(item.SourceKey, 1, configurationContext)).Items;
+                            item.SourceValues.ToList().ForEach(s => s.Types = types);
+                        }
                     }
                 }
             }
         }
 
-        private async Task SaveSources(ConfigurationContext configurationContext, SectionViewModel section)
+        private async Task SaveSources(ConfigurationContext configurationContext, DynamicSectionViewModel section)
         {
             if (section.Settings != null)
             {
@@ -238,7 +247,7 @@ namespace Avalanche.Api.Managers.Maintenance
             }
         }
 
-        private async Task SaveJsonValues(SectionViewModel category, ConfigurationContext configurationContext)
+        private async Task SaveJsonValues(DynamicSectionViewModel category, ConfigurationContext configurationContext)
         {
             string result = SettingsHelper.GetJsonValues(category);
 
@@ -293,7 +302,7 @@ namespace Avalanche.Api.Managers.Maintenance
         private async Task SaveProcedureTypes(User user, DynamicListActions action, dynamic source)
         {
             var procedureType = new ProcedureType();
-            procedureType.DepartmentId = Convert.ToInt32(source.Department.Id);
+            procedureType.DepartmentId = Convert.ToInt32(source.Department?.Id);
 
             Helpers.Mapper.Map(source, procedureType);
 

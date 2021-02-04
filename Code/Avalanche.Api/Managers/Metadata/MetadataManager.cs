@@ -48,18 +48,18 @@ namespace Avalanche.Api.Managers.Metadata
             }
         }
 
-        public async Task<IList<SourceKeyValuePairViewModel>> GetSource(User user, MetadataTypes type)
+        public async Task<IList<DynamicSourceKeyValuePairViewModel>> GetSource(User user, MetadataTypes type)
         {
             var configurationContext = _mapper.Map<User, ConfigurationContext>(user);
 
             switch (type)
             {
                 case MetadataTypes.SearchColumns:
-                    return (await _storageService.GetJsonObject<SourceListContainerViewModel>("SearchColumns", 1, configurationContext)).Items;
+                    return (await _storageService.GetJsonObject<DynamicSourceListContainerViewModel>("SearchColumns", 1, configurationContext)).Items;
                 case MetadataTypes.PgsVideoFiles:
-                    return (await _storageService.GetJsonObject<SourceListContainerViewModel>("PgsVideoFiles", 1, configurationContext)).Items;
+                    return (await _storageService.GetJsonObject<DynamicSourceListContainerViewModel>("PgsVideoFiles", 1, configurationContext)).Items;
                 default:
-                    return new List<SourceKeyValuePairViewModel>();
+                    return new List<DynamicSourceKeyValuePairViewModel>();
             }
         }
 

@@ -12,7 +12,7 @@ namespace Avalanche.Api.Helpers
 {
     public static class SettingsHelper
     {
-        public static string GetJsonValues(SectionViewModel category)
+        public static string GetJsonValues(DynamicSectionViewModel category)
         {
             string json = @"{}";
             JObject jsonRoot = JObject.Parse(json);
@@ -21,7 +21,7 @@ namespace Avalanche.Api.Helpers
             return jsonRoot.ToString();
         }
 
-        public static void AddSettingValues(JObject rootSection, SectionViewModel section)
+        public static void AddSettingValues(JObject rootSection, DynamicSectionViewModel section)
         {
             if (section.Settings != null)
             {
@@ -68,7 +68,30 @@ namespace Avalanche.Api.Helpers
             }
         }
 
-        public static void SetSettingValues(SectionViewModel section, dynamic settingsValues, IList<KeyValuePairViewModel> policiesValues)
+        internal static void CleanSettings(DynamicSectionViewModel section)
+        {
+            if (section.Settings != null)
+            {
+                foreach (var setting in section.Settings)
+                {
+                    setting.SourceValues = null;
+                    setting.Dependencies = null;
+                    setting.PoliciesValues = null;
+                    setting.CustomList = null;
+                    setting.Value = null;
+                }
+            }
+
+            if (section.Sections != null)
+            {
+                foreach (var item in section.Sections)
+                {
+                    CleanSettings(item);
+                }
+            }
+        }
+
+        public static void SetSettingValues(DynamicSectionViewModel section, dynamic settingsValues, IList<KeyValuePairViewModel> policiesValues)
         {
             if (section.Settings != null)
             {

@@ -5,8 +5,8 @@ using System.Threading.Tasks;
 
 namespace Avalanche.Api.ViewModels
 {
-    public class SourceListContainerViewModel
+    public class DynamicSourceListContainerViewModel
     {
-        public List<SourceKeyValuePairViewModel> Items { get; set; }
+        public List<DynamicSourceKeyValuePairViewModel> Items { get; set; }
     }
 }

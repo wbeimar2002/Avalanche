@@ -32,7 +32,7 @@ namespace Avalanche.Api.Controllers.V1
         }
 
         [HttpPut("categories/{key}/policies")]
-        public async Task<IActionResult> SaveCategoryPolicies(string key, [FromBody] SectionViewModel section, [FromServices] IWebHostEnvironment env)
+        public async Task<IActionResult> SaveCategoryPolicies(string key, [FromBody] DynamicSectionViewModel section, [FromServices] IWebHostEnvironment env)
         {
             try
             {
@@ -53,7 +53,7 @@ namespace Avalanche.Api.Controllers.V1
         }
 
         [HttpPut("categories/{key}")]
-        public async Task<IActionResult> SaveCategory(string key, [FromBody]SectionViewModel section,[FromServices]IWebHostEnvironment env)
+        public async Task<IActionResult> SaveCategory(string key, [FromBody]DynamicSectionViewModel section,[FromServices]IWebHostEnvironment env)
         {
             try
             {

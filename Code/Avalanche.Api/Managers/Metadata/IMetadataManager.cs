@@ -10,7 +10,7 @@ namespace Avalanche.Api.Managers.Metadata
     public interface IMetadataManager
     {
         Task<IList<KeyValuePairViewModel>> GetMetadata(User user, MetadataTypes type);
-        Task<IList<SourceKeyValuePairViewModel>> GetSource(User user, MetadataTypes settingTypes);
+        Task<IList<DynamicSourceKeyValuePairViewModel>> GetSource(User user, MetadataTypes settingTypes);
         Task<Department> AddDepartment(User user, Department department);
         Task DeleteDepartment(User user, int departmentId);
         Task<IList<Department>> GetAllDepartments(User user);
