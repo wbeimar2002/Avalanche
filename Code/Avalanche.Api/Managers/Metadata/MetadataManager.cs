@@ -8,7 +8,9 @@ using Avalanche.Shared.Infrastructure.Enumerations;
 using Avalanche.Shared.Infrastructure.Helpers;
 using Ism.Common.Core.Configuration.Models;
 using Ism.Storage.Core.DataManagement.V1.Protos;
+using Newtonsoft.Json;
 using System.Collections.Generic;
+using System.Dynamic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -55,12 +57,19 @@ namespace Avalanche.Api.Managers.Metadata
             switch (type)
             {
                 case MetadataTypes.SearchColumns:
-                    return (await _storageService.GetJsonObject<DynamicSourceListContainerViewModel>("SearchColumns", 1, configurationContext)).Items;
+                    return (await _storageService.GetJsonObject<SourceListContainerViewModel>("SearchColumns", 1, configurationContext)).Items;
                 case MetadataTypes.PgsVideoFiles:
-                    return (await _storageService.GetJsonObject<DynamicSourceListContainerViewModel>("PgsVideoFiles", 1, configurationContext)).Items;
+                    return (await _storageService.GetJsonObject<SourceListContainerViewModel>("PgsVideoFiles", 1, configurationContext)).Items;
                 default:
                     return new List<DynamicSourceKeyValuePairViewModel>();
             }
+        }
+
+        public async Task<ExpandoObject> GetDynamicSource(User user, string key)
+        {
+            var configurationContext = _mapper.Map<User, ConfigurationContext>(user);
+            var dynamicObject = await _storageService.GetJsonDynamic(key, 1, configurationContext);
+            return JsonConvert.DeserializeObject<ExpandoObject>(JsonConvert.SerializeObject(dynamicObject));
         }
 
         public async Task<Department> AddDepartment(Avalanche.Shared.Domain.Models.User user, Department department)

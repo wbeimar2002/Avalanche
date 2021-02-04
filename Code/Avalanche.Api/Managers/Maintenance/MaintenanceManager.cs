@@ -229,7 +229,7 @@ namespace Avalanche.Api.Managers.Maintenance
                     {
                         if (!string.IsNullOrEmpty(item.SourceKey))
                         {
-                            item.SourceValues = (await _storageService.GetJsonObject<DynamicSourceListContainerViewModel>(item.SourceKey, 1, configurationContext)).Items;
+                            item.SourceValues = (await _storageService.GetJsonObject<SourceListContainerViewModel>(item.SourceKey, 1, configurationContext)).Items;
                             item.SourceValues.ToList().ForEach(s => s.Types = types);
                         }
                     }

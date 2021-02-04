@@ -37,6 +37,31 @@ namespace Avalanche.Api.Controllers.V1
         /// <summary>
         /// Get content types for PGS 
         /// </summary>
+        [HttpGet("dynamic/{key}")]
+        [Produces(typeof(List<KeyValuePairViewModel>))]
+        public async Task<IActionResult> GetDynamicSource(string key, [FromServices] IWebHostEnvironment env)
+        {
+            try
+            {
+                _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
+
+                var result = await _metadataManager.GetDynamicSource(User.GetUser(), key);
+                return Ok(result);
+            }
+            catch (Exception exception)
+            {
+                _appLoggerService.LogError(LoggerHelper.GetLogMessage(DebugLogType.Exception), exception);
+                return new BadRequestObjectResult(exception.Get(env.IsDevelopment()));
+            }
+            finally
+            {
+                _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
+            }
+        }
+
+        /// <summary>
+        /// Get content types for PGS 
+        /// </summary>
         [HttpGet("pgs/videofiles")]
         [Produces(typeof(List<KeyValuePairViewModel>))]
         public async Task<IActionResult> GetPgsVideoFiles([FromServices]IWebHostEnvironment env)
@@ -258,6 +283,9 @@ namespace Avalanche.Api.Controllers.V1
             }
         }
 
+        /// <summary>
+        /// Delete department
+        /// </summary>
         [HttpDelete("departments/{departmentId}")]
         public async Task<IActionResult> DeleteDepartment(int departmentId, [FromServices] IWebHostEnvironment env)
         {

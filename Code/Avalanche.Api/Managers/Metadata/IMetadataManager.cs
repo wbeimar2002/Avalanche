@@ -3,6 +3,7 @@ using Avalanche.Shared.Domain.Enumerations;
 using Avalanche.Shared.Domain.Models;
 using Avalanche.Shared.Infrastructure.Enumerations;
 using System.Collections.Generic;
+using System.Dynamic;
 using System.Threading.Tasks;
 
 namespace Avalanche.Api.Managers.Metadata
@@ -19,5 +20,6 @@ namespace Avalanche.Api.Managers.Metadata
         Task<List<ProcedureType>> GetProcedureTypesByDepartment(User user, int? departmentId);
         Task ValidateDepartmentsSupport(User user);
         Task ValidateDepartmentsSupport(User user, int? departmentId);
+        Task<ExpandoObject> GetDynamicSource(User user, string key);
     }
 }
