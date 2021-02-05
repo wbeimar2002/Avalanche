@@ -18,7 +18,7 @@
       "MinValue": 0,
       "Steps": 0,
       "DefaultValue": "none",
-      "Required": false,
+      "Required": true,
       "MaxLength": 64,
       "JsonKey": "Alias",
       "SettingType": 0,

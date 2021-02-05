@@ -5,14 +5,9 @@
     {
       "TitleTranslationKey": "setupSettingsGeneral.title",
       "JsonKey": "General",
-      "Sections": null,
       "Settings": [
         {
           "LabelTranslationKey": "setupSettingsGeneral.mode-label",
-          "DescriptionTranslationKey": null,
-          "Format": null,
-          "PlaceHolderTranslationKey": null,
-          "Icon": null,
           "MaxValue": 0,
           "MinValue": 0,
           "Steps": 0,
@@ -20,7 +15,7 @@
           "Required": false,
           "MaxLength": 0,
           "JsonKey": "Mode",
-          "Policy": "0",
+          "Policy": "1",
           "SettingType": 1,
           "VisualStyle": 1,
           "SourceKey": "SetupModes",
@@ -28,10 +23,6 @@
         },
         {
           "LabelTranslationKey": "setupSettingsGeneral.screen-mode-label",
-          "DescriptionTranslationKey": null,
-          "Format": null,
-          "PlaceHolderTranslationKey": null,
-          "Icon": null,
           "MaxValue": 0,
           "MinValue": 0,
           "Steps": 0,
@@ -47,10 +38,6 @@
         },
         {
           "LabelTranslationKey": "setupSettingsGeneral.departments-supported-label",
-          "DescriptionTranslationKey": null,
-          "Format": null,
-          "PlaceHolderTranslationKey": null,
-          "Icon": null,
           "MaxValue": 0,
           "MinValue": 0,
           "Steps": 0,
@@ -61,7 +48,6 @@
           "Policy": "0",
           "SettingType": 2,
           "VisualStyle": 3,
-          "SourceKey": null,
           "SourceVisualStyle": 0
         }
       ]
@@ -73,14 +59,9 @@
         {
           "TitleTranslationKey": "setupSettingsQuickRegistration.title",
           "JsonKey": "Quick",
-          "Sections": null,
           "Settings": [
             {
               "LabelTranslationKey": "setupSettingsQuickRegistration.is-allowed",
-              "DescriptionTranslationKey": null,
-              "Format": null,
-              "PlaceHolderTranslationKey": null,
-              "Icon": null,
               "MaxValue": 0,
               "MinValue": 0,
               "Steps": 0,
@@ -91,15 +72,10 @@
               "Policy": "1",
               "SettingType": 2,
               "VisualStyle": 3,
-              "SourceKey": null,
               "SourceVisualStyle": 0
             },
             {
               "LabelTranslationKey": "setupSettingsQuickRegistration.date-format",
-              "DescriptionTranslationKey": null,
-              "Format": null,
-              "PlaceHolderTranslationKey": null,
-              "Icon": null,
               "MaxValue": 0,
               "MinValue": 0,
               "Steps": 0,
@@ -110,15 +86,10 @@
               "Policy": "2",
               "SettingType": 0,
               "VisualStyle": 0,
-              "SourceKey": null,
               "SourceVisualStyle": 0
             },
             {
               "LabelTranslationKey": "setupSettingsQuickRegistration.administrator-as-physician",
-              "DescriptionTranslationKey": null,
-              "Format": null,
-              "PlaceHolderTranslationKey": null,
-              "Icon": null,
               "MaxValue": 0,
               "MinValue": 0,
               "Steps": 0,
@@ -129,7 +100,6 @@
               "Policy": "1",
               "SettingType": 2,
               "VisualStyle": 3,
-              "SourceKey": null,
               "SourceVisualStyle": 0
             }
           ]
@@ -137,14 +107,9 @@
         {
           "TitleTranslationKey": "setupSettingsManualRegistration.title",
           "JsonKey": "Manual",
-          "Sections": null,
           "Settings": [
             {
               "LabelTranslationKey": "setupSettingsManualRegistration.autofill-physician",
-              "DescriptionTranslationKey": null,
-              "Format": null,
-              "PlaceHolderTranslationKey": null,
-              "Icon": null,
               "MaxValue": 0,
               "MinValue": 0,
               "Steps": 0,
@@ -155,32 +120,24 @@
               "Policy": "2",
               "SettingType": 2,
               "VisualStyle": 3,
-              "SourceKey": null,
               "SourceVisualStyle": 0
             }
           ]
         }
-      ],
-      "Settings": null
+      ]
     },
     {
       "TitleTranslationKey": "setupSettingsSearch.title",
       "JsonKey": "",
-      "Sections": null,
       "Settings": [
         {
           "LabelTranslationKey": "setupSettingsSearch.search-columns-label",
-          "DescriptionTranslationKey": null,
-          "Format": null,
-          "PlaceHolderTranslationKey": null,
-          "Icon": null,
           "MaxValue": 0,
           "MinValue": 0,
           "Steps": 0,
           "DefaultValue": "",
           "Required": false,
           "MaxLength": 0,
-          "JsonKey": null,
           "Policy": "0",
           "SettingType": 2,
           "VisualStyle": 4,
