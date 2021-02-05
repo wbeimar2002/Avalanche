@@ -17,6 +17,10 @@
     <EmbeddedResource Remove="Services\**" />
     <None Remove="Services\**" />
   </ItemGroup>
+  
+  <ItemGroup>
+    <Compile Remove="Controllers\PhysiciansControllerTests.cs" />
+  </ItemGroup>
 
   <ItemGroup>
     <None Remove="grpc_localhost_root_l1.pfx" />

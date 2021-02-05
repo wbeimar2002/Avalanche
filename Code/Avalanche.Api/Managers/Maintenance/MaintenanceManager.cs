@@ -133,6 +133,8 @@ namespace Avalanche.Api.Managers.Maintenance
 
                 foreach (var item in category.Properties)
                 {
+                    SetIsRequired(configurationContext, category.SourceKey, item);
+
                     if (!string.IsNullOrEmpty(item.SourceKey))
                     {
                         item.SourceValues = await GetDynamicSourceValues(item.SourceKey, configurationContext, user);
@@ -159,6 +161,23 @@ namespace Avalanche.Api.Managers.Maintenance
             }
 
             return category;
+        }
+
+        private async Task SetIsRequired(ConfigurationContext configurationContext, string key, DynamicPropertyViewModel item)
+        {
+            //It is a switch because this will grow
+            switch (key)
+            {
+                case "DepartmentsMetadata":
+                    switch (item.JsonKey)
+                    {
+                        case "DepartmentId":
+                            dynamic setupSettings = await _storageService.GetJsonDynamic("SetupSettingsValues", 1, configurationContext);
+                            item.Required = setupSettings.General.DepartmentsSupported;
+                            break;
+                    }
+                    break;
+            }
         }
 
         private async Task<IList<KeyValuePairObjectViewModel>> GetDynamicSourceValues(string sourceKey, ConfigurationContext configurationContext, User user)
