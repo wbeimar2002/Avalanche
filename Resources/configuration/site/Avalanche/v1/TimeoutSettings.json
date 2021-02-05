@@ -1,0 +1,28 @@
+{
+  "TitleTranslationKey": "timeoutSettings.title",
+  "JsonKey": "TimeoutSettings",
+  "ReadOnly": true,
+  "Sections": null,
+  "Settings": [
+    {
+      "LabelTranslationKey": "timeoutSettings.check-list-file-name-label",
+      "DescriptionTranslationKey": null,
+      "Format": null,
+      "PlaceHolderTranslationKey": null,
+      "Icon": null,
+      "MaxValue": 0,
+      "MinValue": 0,
+      "Steps": 0,
+      "DefaultValue": null,
+      "Required": false,
+      "MaxLength": 0,
+      "JsonKey": "CheckListFileName",
+      "Policy": "1",
+      "SettingType": 0,
+      "VisualStyle": 0,
+      "SourceKey": null,
+      "SourceVisualStyle": 0
+    }
+  ],
+  "Schema": null
+}

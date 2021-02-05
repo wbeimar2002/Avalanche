@@ -4,6 +4,6 @@ namespace Avalanche.Api.ViewModels
 {
     public class ListContainerViewModel
     {
-        public List<KeyValuePairViewModel> Items { get; set; }
+        public IList<KeyValuePairViewModel> Items { get; set; }
     }
 }

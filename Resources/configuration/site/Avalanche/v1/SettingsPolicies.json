@@ -1,0 +1,19 @@
+{
+  "Items": [
+    {
+      "TranslationKey": "settingsPermissions.Allow",
+      "Id": "0",
+      "Value": "Allow Edit"
+    },
+    {
+      "TranslationKey": "settingsPermissions.ReadOnly",
+      "Id": "1",
+      "Value": "Read Only"
+    },
+    {
+      "TranslationKey": "settingsPermissions.UseDefaultValue",
+      "Id": "2",
+      "Value": "Use Default Value"
+    }
+  ]
+}

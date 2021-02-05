@@ -10,6 +10,5 @@ namespace Avalanche.Api.Managers.Health
     {
         Task<List<Physician>> GetAllPhysicians();
         Task<List<VideoSource>> GetPresetsByPhysician(string id, PresetTypes presetType);
-        Task<PhysiciansViewModel> GetTemporaryPhysiciansSource(Avalanche.Shared.Domain.Models.User user);
     }
 }

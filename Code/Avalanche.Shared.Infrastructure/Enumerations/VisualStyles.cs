@@ -11,7 +11,8 @@ namespace Avalanche.Shared.Infrastructure.Enumerations
         DropDown,
         Toggle,
         Switch,
-        List,
-        VerticalToogle
+        GenericList,
+        VerticalToogle,
+        CustomList
     }
 }

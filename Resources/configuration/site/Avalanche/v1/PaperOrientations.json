@@ -1,0 +1,14 @@
+{
+  "Items": [
+    {
+      "TranslationKey": null,
+      "Id": "0",
+      "Value": "Landscape"
+    },
+    {
+      "TranslationKey": null,
+      "Id": "1",
+      "Value": "Portrait"
+    }
+  ]
+}

@@ -1,0 +1,12 @@
+{
+  "$id": "https://example.com/pgssettings.schema.json",
+  "$schema": "http://json-schema.org/draft-2019-9/schema#",
+  "title": "PgsSettings",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "AlwaysOn": {
+      "type": "boolean"
+    }
+  }
+}

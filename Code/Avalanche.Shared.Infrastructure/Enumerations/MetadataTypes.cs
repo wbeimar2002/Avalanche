@@ -7,7 +7,7 @@ namespace Avalanche.Shared.Infrastructure.Enumerations
     public enum MetadataTypes
     {
         Sex,
-        ContentTypes,
+        PgsVideoFiles,
         SourceTypes,
         SetupModes,
         SearchColumns,

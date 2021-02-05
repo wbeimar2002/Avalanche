@@ -1,0 +1,25 @@
+{
+  "Items": [
+    {
+      "TranslationKey": "settingType.Text",
+      "Id": "0",
+      "Value": "Text"
+    },
+    {
+      "TranslationKey": "settingType.Number",
+      "Id": "1",
+      "Value": "Number"
+    },
+    {
+      "TranslationKey": "settingType.Boolean",
+      "Id": "2",
+      "Value": "Boolean"
+    },
+    {
+      "TranslationKey": "settingType.Date",
+      "Id": "4",
+      "Value": "Date"
+    }
+  ]
+}
+

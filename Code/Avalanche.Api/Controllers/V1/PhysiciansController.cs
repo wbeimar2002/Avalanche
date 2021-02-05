@@ -1,5 +1,6 @@
 ﻿using Avalanche.Api.Extensions;
 using Avalanche.Api.Managers.Health;
+using Avalanche.Api.Managers.Metadata;
 using Avalanche.Api.ViewModels;
 using Avalanche.Shared.Domain.Enumerations;
 using Avalanche.Shared.Domain.Models;
@@ -27,25 +28,26 @@ namespace Avalanche.Api.Controllers.V1
     {
         readonly ILogger _appLoggerService;
         readonly IPhysiciansManager _physiciansManager;
+        readonly IMetadataManager _metadataManager;
 
-        public PhysiciansController(ILogger<PhysiciansController> appLoggerService, IPhysiciansManager physiciansManager)
+        public PhysiciansController(ILogger<PhysiciansController> appLoggerService, IPhysiciansManager physiciansManager, IMetadataManager metadataManager)
         {
             _appLoggerService = appLoggerService;
             _physiciansManager = physiciansManager;
+            _metadataManager = metadataManager;
         }
 
         /// <summary>
         /// Get all physicians
         /// </summary>
         [HttpGet("")]
-        [Produces(typeof(List<PhysiciansViewModel>))]
         public async Task<IActionResult> GetAllPhysicians([FromServices]IWebHostEnvironment env)
         {
             try
             {
                 _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
 
-                PhysiciansViewModel result = await _physiciansManager.GetTemporaryPhysiciansSource(User.GetUser());
+                var result = await _metadataManager.GetDynamicSource(User.GetUser(), "PhysiciansData");
                 return Ok(result);
             }
             catch (Exception exception)

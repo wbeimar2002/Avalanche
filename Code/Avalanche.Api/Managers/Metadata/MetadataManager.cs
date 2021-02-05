@@ -8,7 +8,9 @@ using Avalanche.Shared.Infrastructure.Enumerations;
 using Avalanche.Shared.Infrastructure.Helpers;
 using Ism.Common.Core.Configuration.Models;
 using Ism.Storage.Core.DataManagement.V1.Protos;
+using Newtonsoft.Json;
 using System.Collections.Generic;
+using System.Dynamic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -29,7 +31,7 @@ namespace Avalanche.Api.Managers.Metadata
             _mapper = mapper;
         }
 
-        public async Task<List<KeyValuePairViewModel>> GetMetadata(User user, MetadataTypes type)
+        public async Task<IList<KeyValuePairViewModel>> GetMetadata(User user, MetadataTypes type)
         {
             var configurationContext = _mapper.Map<User, ConfigurationContext>(user);
 
@@ -37,18 +39,18 @@ namespace Avalanche.Api.Managers.Metadata
             {
                 case MetadataTypes.Sex:
                     return (await _storageService.GetJsonObject<ListContainerViewModel>("SexTypes", 1, configurationContext)).Items;
-                case MetadataTypes.ContentTypes:
-                    return (await _storageService.GetJsonObject<ListContainerViewModel>("ContentTypes", 1, configurationContext)).Items;
                 case MetadataTypes.SourceTypes:
                     return (await _storageService.GetJsonObject<ListContainerViewModel>("SourceTypes", 1, configurationContext)).Items;
                 case MetadataTypes.SettingTypes:
                     return (await _storageService.GetJsonObject<ListContainerViewModel>("SettingTypes", 1, configurationContext)).Items;
+                case MetadataTypes.PgsVideoFiles:
+                    return (await _storageService.GetJsonObject<ListContainerViewModel>("PgsVideoFiles", 1, configurationContext)).Items;
                 default:
                     return new List<KeyValuePairViewModel>();
             }
         }
 
-        public async Task<List<SourceKeyValuePairViewModel>> GetSource(User user, MetadataTypes type)
+        public async Task<IList<DynamicSourceKeyValuePairViewModel>> GetSource(User user, MetadataTypes type)
         {
             var configurationContext = _mapper.Map<User, ConfigurationContext>(user);
 
@@ -56,9 +58,18 @@ namespace Avalanche.Api.Managers.Metadata
             {
                 case MetadataTypes.SearchColumns:
                     return (await _storageService.GetJsonObject<SourceListContainerViewModel>("SearchColumns", 1, configurationContext)).Items;
+                case MetadataTypes.PgsVideoFiles:
+                    return (await _storageService.GetJsonObject<SourceListContainerViewModel>("PgsVideoFiles", 1, configurationContext)).Items;
                 default:
-                    return new List<SourceKeyValuePairViewModel>();
+                    return new List<DynamicSourceKeyValuePairViewModel>();
             }
+        }
+
+        public async Task<ExpandoObject> GetDynamicSource(User user, string key)
+        {
+            var configurationContext = _mapper.Map<User, ConfigurationContext>(user);
+            var dynamicObject = await _storageService.GetJsonDynamic(key, 1, configurationContext);
+            return JsonConvert.DeserializeObject<ExpandoObject>(JsonConvert.SerializeObject(dynamicObject));
         }
 
         public async Task<Department> AddDepartment(Avalanche.Shared.Domain.Models.User user, Department department)
@@ -77,7 +88,7 @@ namespace Avalanche.Api.Managers.Metadata
             await _dataManagementService.DeleteDepartment(new DeleteDepartmentRequest() { DepartmentId = departmentId });
         }
 
-        public async Task<List<Department>> GetAllDepartments(User user)
+        public async Task<IList<Department>> GetAllDepartments(User user)
         {
             await ValidateDepartmentsSupport(user);
 
@@ -104,7 +115,7 @@ namespace Avalanche.Api.Managers.Metadata
             await _dataManagementService.DeleteProcedureType(_mapper.Map<ProcedureType, DeleteProcedureTypeRequest>(procedureType));
         }
 
-        public async Task<List<ProcedureType>> GetProceduresByDepartment(Avalanche.Shared.Domain.Models.User user, int? departmentId)
+        public async Task<List<ProcedureType>> GetProcedureTypesByDepartment(Avalanche.Shared.Domain.Models.User user, int? departmentId)
         {
             await ValidateDepartmentsSupport(user, departmentId);
 
@@ -135,7 +146,7 @@ namespace Avalanche.Api.Managers.Metadata
 
             bool departmentSupported = setupSettings.General.DepartmentsSupported;
 #warning TODO: Check the strategy to throw business logic exceptions. Same exceptions in Patients Manager
-            if (!departmentSupported)
+            if (departmentSupported)
             {
                 if (departmentId == null || departmentId == 0)
                     throw new System.ArgumentNullException("Department value is invalid. It should not be null. Departments are supported.");

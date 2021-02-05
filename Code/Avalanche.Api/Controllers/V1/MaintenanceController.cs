@@ -32,7 +32,7 @@ namespace Avalanche.Api.Controllers.V1
         }
 
         [HttpPut("categories/{key}/policies")]
-        public async Task<IActionResult> SaveCategoryPolicies(string key, [FromBody] SectionViewModel section, [FromServices] IWebHostEnvironment env)
+        public async Task<IActionResult> SaveCategoryPolicies(string key, [FromBody] DynamicSectionViewModel section, [FromServices] IWebHostEnvironment env)
         {
             try
             {
@@ -53,12 +53,75 @@ namespace Avalanche.Api.Controllers.V1
         }
 
         [HttpPut("categories/{key}")]
-        public async Task<IActionResult> SaveCategory(string key, [FromBody]SectionViewModel section,[FromServices]IWebHostEnvironment env)
+        public async Task<IActionResult> SaveCategory(string key, [FromBody]DynamicSectionViewModel section,[FromServices]IWebHostEnvironment env)
         {
             try
             {
                 _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
                 await _maintenanceManager.SaveCategory(User.GetUser(), section);
+
+                return Ok();
+            }
+            catch (Exception exception)
+            {
+                _appLoggerService.LogError(LoggerHelper.GetLogMessage(DebugLogType.Exception), exception);
+                return new BadRequestObjectResult(exception.Get(env.IsDevelopment()));
+            }
+            finally
+            {
+                _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
+            }
+        }
+
+        [HttpPost("categories/lists/{key}")]
+        public async Task<IActionResult> AddEntity(string key, [FromBody] DynamicListViewModel list, [FromServices] IWebHostEnvironment env)
+        {
+            try
+            {
+                _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
+                await _maintenanceManager.SaveEntityChanges(User.GetUser(), list, DynamicListActions.Insert);
+
+                return Ok();
+            }
+            catch (Exception exception)
+            {
+                _appLoggerService.LogError(LoggerHelper.GetLogMessage(DebugLogType.Exception), exception);
+                return new BadRequestObjectResult(exception.Get(env.IsDevelopment()));
+            }
+            finally
+            {
+                _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
+            }
+        }
+
+        [HttpPut("categories/lists/{key}")]
+        public async Task<IActionResult> UpdateEntity(string key, [FromBody] DynamicListViewModel list, [FromServices] IWebHostEnvironment env)
+        {
+            try
+            {
+                _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
+                await _maintenanceManager.SaveEntityChanges(User.GetUser(), list, DynamicListActions.Update);
+
+                return Ok();
+            }
+            catch (Exception exception)
+            {
+                _appLoggerService.LogError(LoggerHelper.GetLogMessage(DebugLogType.Exception), exception);
+                return new BadRequestObjectResult(exception.Get(env.IsDevelopment()));
+            }
+            finally
+            {
+                _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
+            }
+        }
+
+        [HttpDelete("categories/lists/{key}")]
+        public async Task<IActionResult> DeleteEntity(string key, [FromBody] DynamicListViewModel list, [FromServices] IWebHostEnvironment env)
+        {
+            try
+            {
+                _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
+                await _maintenanceManager.SaveEntityChanges(User.GetUser(), list, DynamicListActions.Delete);
 
                 return Ok();
             }
@@ -80,6 +143,27 @@ namespace Avalanche.Api.Controllers.V1
             {
                 _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
                 var result = await _maintenanceManager.GetCategoryByKey(User.GetUser(), key);
+
+                return Ok(result);
+            }
+            catch (Exception exception)
+            {
+                _appLoggerService.LogError(LoggerHelper.GetLogMessage(DebugLogType.Exception), exception);
+                return new BadRequestObjectResult(exception.Get(env.IsDevelopment()));
+            }
+            finally
+            {
+                _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
+            }
+        }
+
+        [HttpGet("categories/lists/{key}")]
+        public async Task<IActionResult> GetCategoryListByKey(string key, [FromServices] IWebHostEnvironment env)
+        {
+            try
+            {
+                _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
+                var result = await _maintenanceManager.GetCategoryListByKey(User.GetUser(), key);
 
                 return Ok(result);
             }

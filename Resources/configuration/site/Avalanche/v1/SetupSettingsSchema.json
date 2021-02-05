@@ -1,0 +1,68 @@
+{
+  "$id": "https://www.olympus-global.com/setupsettings.schema.json",
+  "$schema": "http://json-schema.org/draft-2019-9/schema#",
+  "title": "SetupSettings",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "General": {
+      "$ref": "#/definitions/General"
+    },
+    "Registration": {
+      "$ref": "#/definitions/Registration"
+    }
+  },
+  "definitions": {
+    "General": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "Mode": {
+          "type": "number"
+        },
+        "ScreenMode": {
+          "type": "number"
+        },
+        "DepartmentsSupported": {
+          "type": "boolean"
+        }
+      }
+    },
+    "Registration": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "Quick": {
+          "$ref": "#/definitions/Quick"
+        },
+        "Manual": {
+          "$ref": "#/definitions/Manual"
+        }
+      }
+    },
+    "Quick": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "IsAllowed": {
+          "type": "boolean"
+        },
+        "DateFormat": {
+          "type": "string"
+        },
+        "UseAdministratorAsPhysician": {
+          "type": "boolean"
+        }
+      }
+    },
+    "Manual": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "PhysicianAsLoggedInUser": {
+          "type": "boolean"
+        }
+      }
+    }
+  }
+}
