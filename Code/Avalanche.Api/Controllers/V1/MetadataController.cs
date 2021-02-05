@@ -37,15 +37,40 @@ namespace Avalanche.Api.Controllers.V1
         /// <summary>
         /// Get content types for PGS 
         /// </summary>
-        [HttpGet("contenttypes")]
+        [HttpGet("dynamic/{key}")]
         [Produces(typeof(List<KeyValuePairViewModel>))]
-        public async Task<IActionResult> GetContentTypes([FromServices]IWebHostEnvironment env)
+        public async Task<IActionResult> GetDynamicSource(string key, [FromServices] IWebHostEnvironment env)
         {
             try
             {
                 _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
 
-                var result = await _metadataManager.GetMetadata(User.GetUser(), MetadataTypes.ContentTypes);
+                var result = await _metadataManager.GetDynamicSource(User.GetUser(), key);
+                return Ok(result);
+            }
+            catch (Exception exception)
+            {
+                _appLoggerService.LogError(LoggerHelper.GetLogMessage(DebugLogType.Exception), exception);
+                return new BadRequestObjectResult(exception.Get(env.IsDevelopment()));
+            }
+            finally
+            {
+                _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
+            }
+        }
+
+        /// <summary>
+        /// Get content types for PGS 
+        /// </summary>
+        [HttpGet("pgs/videofiles")]
+        [Produces(typeof(List<KeyValuePairViewModel>))]
+        public async Task<IActionResult> GetPgsVideoFiles([FromServices]IWebHostEnvironment env)
+        {
+            try
+            {
+                _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
+
+                var result = await _metadataManager.GetMetadata(User.GetUser(), MetadataTypes.PgsVideoFiles);
                 return Ok(result);
             }
             catch (Exception exception)
@@ -137,7 +162,7 @@ namespace Avalanche.Api.Controllers.V1
         /// Get content search columns
         /// </summary>
         [HttpGet("searchColumns")]
-        [Produces(typeof(List<SourceKeyValuePairViewModel>))]
+        [Produces(typeof(List<DynamicSourceKeyValuePairViewModel>))]
         public async Task<IActionResult> GetSearchColumns([FromServices]IWebHostEnvironment env)
         {
             try
@@ -258,6 +283,9 @@ namespace Avalanche.Api.Controllers.V1
             }
         }
 
+        /// <summary>
+        /// Delete department
+        /// </summary>
         [HttpDelete("departments/{departmentId}")]
         public async Task<IActionResult> DeleteDepartment(int departmentId, [FromServices] IWebHostEnvironment env)
         {
@@ -290,7 +318,7 @@ namespace Avalanche.Api.Controllers.V1
             {
                 _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
 
-                var result = await _metadataManager.GetProceduresByDepartment(User.GetUser(), departmentId);
+                var result = await _metadataManager.GetProcedureTypesByDepartment(User.GetUser(), departmentId);
                 return Ok(result);
             }
             catch (Exception exception)
@@ -315,7 +343,7 @@ namespace Avalanche.Api.Controllers.V1
             {
                 _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
 
-                var result = await _metadataManager.GetProceduresByDepartment(User.GetUser(), null);
+                var result = await _metadataManager.GetProcedureTypesByDepartment(User.GetUser(), null);
                 return Ok(result);
             }
             catch (Exception exception)

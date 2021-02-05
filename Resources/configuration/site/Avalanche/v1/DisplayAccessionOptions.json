@@ -1,0 +1,19 @@
+{
+  "Items": [
+    {
+      "TranslationKey": "displayAccessionOptions.no",
+      "Id": "0",
+      "Value": "No"
+    },
+    {
+      "TranslationKey": "displayAccessionOptions.yes",
+      "Id": "1",
+      "Value": "Yes"
+    },
+    {
+      "TranslationKey": "displayAccessionOptions.yes_required",
+      "Id": "2",
+      "Value": "Yes, Required"
+    }
+  ]
+}

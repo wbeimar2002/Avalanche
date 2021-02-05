@@ -7,6 +7,6 @@ namespace Avalanche.Api.ViewModels
 {
     public class SourceListContainerViewModel
     {
-        public List<SourceKeyValuePairViewModel> Items { get; set; }
+        public List<DynamicSourceKeyValuePairViewModel> Items { get; set; }
     }
 }

@@ -1,0 +1,14 @@
+{
+  "Items": [
+    {
+      "TranslationKey": null,
+      "Id": "0",
+      "Value": "2x3"
+    },
+    {
+      "TranslationKey": null,
+      "Id": "1",
+      "Value": "3x3"
+    }
+  ]
+}

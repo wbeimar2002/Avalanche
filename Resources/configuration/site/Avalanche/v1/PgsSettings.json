@@ -1,0 +1,105 @@
+{
+  "TitleTranslationKey": "pgsSettings.title",
+  "JsonKey": "PgsSettings",
+  "ReadOnly": true,
+  "Sections": [
+    {
+      "TitleTranslationKey": "pgsSettings.content",
+      "JsonKey": "",
+      "Sections": null,
+      "Settings": [
+        {
+          "LabelTranslationKey": "pgsSettings.video-always-on-label",
+          "DescriptionTranslationKey": null,
+          "Format": null,
+          "PlaceHolder": null,
+          "Icon": null,
+          "MaxValue": 0,
+          "MinValue": 0,
+          "Steps": 0,
+          "DefaultValue": "false",
+          "ReadOnly": false,
+          "Required": false,
+          "MaxLength": 0,
+          "JsonKey": "AlwaysOn",
+          "Policy": "0",
+          "SettingType": 2,
+          "VisualStyle": 3,
+          "SourceKey": null,
+          "SourceVisualStyle": 0
+        },
+        {
+          "LabelTranslationKey": "pgsSettings.video-files",
+          "DescriptionTranslationKey": null,
+          "Format": null,
+          "PlaceHolderTranslationKey": null,
+          "Icon": null,
+          "MaxValue": 0,
+          "MinValue": 0,
+          "Steps": 0,
+          "DefaultValue": "",
+          "Required": false,
+          "MaxLength": 0,
+          "JsonKey": null,
+          "Policy": "0",
+          "SettingType": 0,
+          "VisualStyle": 4,
+          "SourceKey": "PgsVideoFiles",
+          "SourceVisualStyle": 0
+        }
+      ]
+    },
+    {
+      "TitleTranslationKey": "pgsSettings.hardware",
+      "JsonKey": "",
+      "Sections": null,
+      "Settings": [
+        {
+          "LabelTranslationKey": "pgsSettings.sinks",
+          "DescriptionTranslationKey": null,
+          "Format": null,
+          "PlaceHolderTranslationKey": null,
+          "Icon": null,
+          "MaxValue": 0,
+          "MinValue": 0,
+          "Steps": 0,
+          "DefaultValue": "",
+          "Required": false,
+          "MaxLength": 0,
+          "JsonKey": null,
+          "Policy": "0",
+          "SettingType": 0,
+          "VisualStyle": 6,
+          "SourceKey": "SinksMetadata",
+          "SourceVisualStyle": 0
+        }
+      ]
+    },
+    {
+      "TitleTranslationKey": "pgsSettings.sources",
+      "JsonKey": "",
+      "Sections": null,
+      "Settings": [
+        {
+          "LabelTranslationKey": "pgsSettings.streams",
+          "DescriptionTranslationKey": null,
+          "Format": null,
+          "PlaceHolderTranslationKey": null,
+          "Icon": null,
+          "MaxValue": 0,
+          "MinValue": 0,
+          "Steps": 0,
+          "DefaultValue": "",
+          "Required": false,
+          "MaxLength": 0,
+          "JsonKey": null,
+          "Policy": "0",
+          "SettingType": 0,
+          "VisualStyle": 6,
+          "SourceKey": "StreamSourcesMetadata",
+          "SourceVisualStyle": 0
+        }
+      ]
+    }
+  ]  
+}

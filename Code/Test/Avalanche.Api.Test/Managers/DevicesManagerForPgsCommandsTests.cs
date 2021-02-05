@@ -51,9 +51,9 @@ namespace Avalanche.Api.Tests.Managers
         {
             _mapperConfiguration = new MapperConfiguration(cfg =>
             {
-                cfg.AddProfile(new HealthMappingConfigurations());
-                cfg.AddProfile(new RoutingMappingConfigurations());
-                cfg.AddProfile(new MediaMappingConfigurations());
+                cfg.AddProfile(new HealthMappingConfiguration());
+                cfg.AddProfile(new RoutingMappingConfiguration());
+                cfg.AddProfile(new MediaMappingConfiguration());
             });
 
             _mapper = _mapperConfiguration.CreateMapper();

@@ -1,0 +1,33 @@
+{
+  "Features": {
+    "Login": {
+      "AutoLogin": "true",
+      "AutoLoginRestrictred": "true"
+    },
+    "Logout": {
+      "AutoLogout": "false"
+    },
+    "Printing": {
+      "EnablePrinting": "true",
+      "EnablePrintPreview": "false"
+    },
+    "AdditionalFeatures": {
+      "AllowAddProcTypes": "false",
+      "AllowAddMediaLabels": "false",
+      "AllowNoRemotes": "false",
+      "AllowUSBExport": "false"
+    }
+  },
+  "UserInterface": {
+    "ShowDefaultSearchLibrary": "true",
+    "VideoSwitcherLabelText": "0",
+    "EnableClinicalNotes": "true",
+    "ShowNotesInLibrarySearch": "true",
+    "DisplayAccession": "0"
+  },
+  "Capture": {
+    "VideoMode": "1",
+    "MaxClipTime": "240",
+    "IncludeBitmaps": "true"
+  }
+}

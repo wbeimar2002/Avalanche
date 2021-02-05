@@ -1,0 +1,40 @@
+{
+  "ModalityWorklist": {
+    "Ip": "0.0.0.0",
+    "Port": "3200",
+    "Device": "ISM",
+    "MWL": "SERVER",
+    "ModalityTypeInfo": "ES",
+    "DateRangeInfo": "-1",
+    "DicomMpps": "true",
+    "FilerSearchByRoom": "true",
+    "TimeoutInfo": "9000",
+    "PollingInfo": "-1"
+  },
+  "Servers": {
+    "Server1": {
+      "Ip": "0.0.0.0",
+      "Port": "80",
+      "Device": "ISM",
+      "MWL": "SERVER1"
+    },
+    "Server2": {
+      "Ip": "0.0.0.0",
+      "Port": "80",
+      "Device": "ISM",
+      "MWL": "SERVER2"
+    },
+    "Server3": {
+      "Ip": "0.0.0.0",
+      "Port": "80",
+      "Device": "ISM",
+      "MWL": "SERVER3"
+    }
+  },
+  "ServersConfig": {
+    "ModalityTypeA": "",
+    "ModalityTypeB": "",
+    "AutomaticDicomExport": "true",
+    "DelayExports": "0"
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "General": {
+    "Overscan": "true",
+    "PicAndPicLocation": "0",
+    "ShowVoiceAnalyzer": "true"
+  },
+  "Overlays": {
+    "OverlayPicAndPic": "true",
+    "OverlayRecorderInfo": "true",
+    "OverlayLogo": "false",
+    "Overscan": "0"
+  }
+}

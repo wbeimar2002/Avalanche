@@ -1,8 +1,0 @@
-{
-  "Mode": 0,
-  "CacheDuration" : 10000,
-  "DepartmentsSupported": true,
-  "QuickRegistrationAllowed": true,
-  "AutoFillPhysician": false,
-  "QuickRegistrationDateFormat": "yyyy_MM_dd_T_HH_mm_ss_ff"
-}

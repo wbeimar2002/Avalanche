@@ -1,0 +1,18 @@
+{
+  "Items": [
+    {
+      "FriendlyName": "Testing B",
+      "Sink": {
+        "Alias": "none",
+        "Index": "0"
+      }
+    },
+    {
+      "FriendlyName": "Testing C",
+      "Sink": {
+        "Alias": "none",
+        "Index": 2
+      }
+    }
+  ]
+}

@@ -8,9 +8,9 @@ using System;
 
 namespace Avalanche.Api.MappingConfigurations
 {
-    public class HealthMappingConfigurations : Profile
+    public class HealthMappingConfiguration : Profile
     {
-        public HealthMappingConfigurations()
+        public HealthMappingConfiguration()
         {
             CreateMap<ProcedureType, DeleteProcedureTypeRequest>()
                 .ForMember(dest =>

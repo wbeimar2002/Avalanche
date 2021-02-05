@@ -4,11 +4,11 @@ using System;
 
 namespace Avalanche.Api.MappingConfigurations
 {
-    public class MediaMappingConfigurations : Profile
+    public class MediaMappingConfiguration : Profile
     {
 
         //
-        public MediaMappingConfigurations()
+        public MediaMappingConfiguration()
         {
             CreateMap<Command, Ism.Streaming.V1.Protos.InitSessionRequest>()
                 .ForPath(dest =>
