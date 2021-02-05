@@ -264,15 +264,25 @@ namespace Avalanche.Api.Managers.Health
                 var repositoryId = "cache"; // TODO: this is wrong and needs to come from Library Service
 
                 _stateClient.PersistData(new Ism.SystemState.Models.Procedure.ActiveProcedureState(
-                    _mapper.Map<Ism.SystemState.Models.Procedure.Patient>(patient),
-                    new List<Ism.SystemState.Models.Procedure.ProcedureImage>(),
-                    new List<string>(),
-                    libId,
-                    repositoryId,
-                    _mapper.Map<Ism.SystemState.Models.Procedure.Department>(patient.Department),
-                    _mapper.Map<Ism.SystemState.Models.Procedure.ProcedureType>(patient.ProcedureType),
-                    _mapper.Map<Ism.SystemState.Models.Procedure.Physician>(patient.Physician),
-                    false));
+                    patient: _mapper.Map<Ism.SystemState.Models.Procedure.Patient>(patient),
+                    images: new List<Ism.SystemState.Models.Procedure.ProcedureImage>(),
+                    videos: new List<Ism.SystemState.Models.Procedure.ProcedureVideo>(),
+                    libraryId: libId,
+                    repositoryId: repositoryId,
+
+                    // TODO:
+                    procedureRelativePath: string.Empty,
+
+                    department: _mapper.Map<Ism.SystemState.Models.Procedure.Department>(patient.Department),
+                    procedureType: _mapper.Map<Ism.SystemState.Models.Procedure.ProcedureType>(patient.ProcedureType),
+                    physician: _mapper.Map<Ism.SystemState.Models.Procedure.Physician>(patient.Physician),
+                    requiresUserConfirmation: false,
+
+                    // TODO:
+                    procedureStartTimeUtc: DateTimeOffset.UtcNow,
+
+                    // TODO:
+                    procedureTimezoneId: TimeZoneInfo.Local.DisplayName));
             }
             else
             {

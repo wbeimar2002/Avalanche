@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Avalanche.Shared.Domain.Enumerations
 {
-    public enum TimeoutModes
+    public enum PgsTimeoutModes
     {
         Idle = 0,
         Pgs = 1,

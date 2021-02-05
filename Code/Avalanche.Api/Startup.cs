@@ -7,6 +7,7 @@ using Avalanche.Api.Managers.Licensing;
 using Avalanche.Api.Managers.Maintenance;
 using Avalanche.Api.Managers.Metadata;
 using Avalanche.Api.Managers.Notifications;
+using Avalanche.Api.Managers.PgsTimeout;
 using Avalanche.Api.Managers.Procedures;
 using Avalanche.Api.Services.Configuration;
 using Avalanche.Api.Services.Health;
@@ -85,6 +86,7 @@ namespace Avalanche.Api
             services.AddSingleton<ILicensingManager, LicensingManagerMock>();
             services.AddSingleton<IMediaService, MediaService>();
             services.AddSingleton<IDevicesManager, DevicesManager>();
+            services.AddSingleton<IPgsTimeoutManager, PgsTimeoutManager>();
             services.AddSingleton<IMediaManager, MediaManager>();
             services.AddSingleton<IProceduresManager, ProceduresManager>();
             services.AddSingleton<IPieService, PieService>();
@@ -94,6 +96,7 @@ namespace Avalanche.Api
             services.AddSingleton<IAvidisService, AvidisService>();
             services.AddSingleton<IRecorderService, RecorderService>();
             services.AddSingleton<IStorageService, StorageService>();
+            services.AddSingleton<IPgsTimeoutService, PgsTimeoutService>();
             services.AddSingleton<IDataManagementService, DataManagementService>();
             services.AddSingleton<ICertificateProvider>(new FileSystemCertificateProvider(grpcCertificate, grpcPassword, grpcServerValidationCertificate));
             services.AddSingleton<IGrpcClientFactory<DataManagementStorageClient>, GrpcClientFactory<DataManagementStorageClient>>();

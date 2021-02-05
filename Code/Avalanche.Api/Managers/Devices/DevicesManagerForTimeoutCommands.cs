@@ -35,11 +35,11 @@ namespace Avalanche.Api.Managers.Devices
 
         private async Task<CommandResponse> PlayTimeoutSlides(Command command)
         {
-            command.Message = ((int)TimeoutModes.Timeout).ToString();
+            command.Message = ((int)PgsTimeoutModes.Timeout).ToString();
             var setTimeOutModeCommand = new Command()
             {
                 Device = command.Device,
-                Message = ((int)TimeoutModes.Timeout).ToString()
+                Message = ((int)PgsTimeoutModes.Timeout).ToString()
             };
 
             await _mediaService.SetPgsTimeoutModeAsync(_mapper.Map<Command, SetPgsTimeoutModeRequest>(command));

@@ -91,7 +91,7 @@ namespace Avalanche.Api.Tests.Managers
 
             var commandResponse = _manager.SendCommand(commandViewModel);
 
-            _mediaService.Verify(mock => mock.SetPgsTimeoutModeAsync(It.Is<Ism.PgsTimeout.V1.Protos.SetPgsTimeoutModeRequest>(args => (int)args.Mode == (int)TimeoutModes.Pgs)), Times.Once);
+            _mediaService.Verify(mock => mock.SetPgsTimeoutModeAsync(It.Is<Ism.PgsTimeout.V1.Protos.SetPgsTimeoutModeRequest>(args => (int)args.Mode == (int)PgsTimeoutModes.Pgs)), Times.Once);
             _mediaService.Verify(mock => mock.InitSessionAsync(It.IsAny<Ism.Streaming.V1.Protos.InitSessionRequest>()), Times.Once);
 
             Assert.IsNotNull(commandResponse);
