@@ -70,5 +70,36 @@ namespace Avalanche.Api.Extensions
             };
         }
 
+        /// <summary>
+        /// Turn a pgstimeout pgs video file message into an api model
+        /// </summary>
+        /// <param name="message"></param>
+        /// <returns></returns>
+        public static PgsVideoFile ToApiPgsVideoFile(this Ism.PgsTimeout.V1.Protos.PgsVideoFileMessage message)
+        {
+            ThrowIfNull(nameof(message), message);
+            return new PgsVideoFile
+            {
+                FilePath = message.FilePath,
+                Name = message.Name,
+                Index = message.VideoIndex
+            };
+        }
+
+        /// <summary>
+        /// Turns a api pgs file model into a pgs proto model
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        public static Ism.PgsTimeout.V1.Protos.PgsVideoFileMessage ToPlayerPgsVideoFile(this PgsVideoFile model)
+        {
+            ThrowIfNull(nameof(model), model);
+            return new Ism.PgsTimeout.V1.Protos.PgsVideoFileMessage
+            {
+                FilePath = model.FilePath,
+                Name = model.Name,
+                VideoIndex = model.Index
+            };
+        }
     }
 }

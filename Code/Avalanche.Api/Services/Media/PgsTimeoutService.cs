@@ -29,66 +29,35 @@ namespace Avalanche.Api.Services.Media
             var port = _configurationService.GetEnvironmentVariable("PgsTimeoutGrpcPort");
 
             _client = new PgsTimeoutSecureClient(grpcClientFactory, ip, port, certificateProvider);
+            
         }
 
-        public Task SetPgsTimeoutMode(SetPgsTimeoutModeRequest request)
-        {
-            throw new NotImplementedException();
-        }
+        public async Task<GetPgsTimeoutModeResponse> GetPgsTimeoutMode() => await _client.GetPgsTimeoutMode();
+        public async Task SetPgsTimeoutMode(SetPgsTimeoutModeRequest request) => await _client.SetPgsTimeoutMode(request);
 
-        public Task<GetPgsTimeoutModeResponse> GetPgsTimeoutMode()
-        {
-            throw new NotImplementedException();
-        }
+        public async Task<GetPgsVolumeResponse> GetPgsVolume() => await _client.GetPgsVolume();
+        public async Task SetPgsVolume(SetPgsVolumeRequest request) => await _client.SetPgsVolume(request);
 
-        public Task<GetPgsVideoFileResponse> GetPgsVideoFile()
-        {
-            throw new NotImplementedException();
-        }
+        public async Task<GetPgsMuteResponse> GetPgsMute() => await _client.GetPgsMute();
+        public async Task SetPgsMute(SetPgsMuteRequest request) => await _client.SetPgsMute(request);
 
-        public Task<GetPgsVideoListResponse> GetPgsVideoFileList()
-        {
-            throw new NotImplementedException();
-        }
+        public async Task<GetPgsPlaybackStateResponse> GetPgsPlaybackState() => await _client.GetPgsPlaybackState();
+        public async Task SetPgsPlaybackState(SetPgsPlaybackStateRequest request) => await _client.SetPgsPlaybackState(request);
 
-        public Task SetPgsVideoFile(SetPgsVideoFileRequest request)
-        {
-            throw new NotImplementedException();
-        }
+        public async Task<GetPgsVideoListResponse> GetPgsVideoFileList() => await _client.GetPgsVideoFileList();
+        public async Task<GetPgsVideoFileResponse> GetPgsVideoFile() => await _client.GetPgsVideoFile();
+        public async Task SetPgsVideoFile(SetPgsVideoFileRequest request) => await _client.SetPgsVideoFile(request);
 
-        public Task SetCurrentVideoToRandomTime(RandomPosRequest request)
-        {
-            throw new NotImplementedException();
-        }
+        public async Task SetPgsVideoPosition(SetPgsVideoPositionRequest request) => await _client.SetPgsVideoPosition(request);
 
-        public Task<GetTimeoutPageResponse> GetTimeoutPage()
-        {
-            throw new NotImplementedException();
-        }
 
-        public Task SetTimeoutPage(SetTimeoutPageRequest request)
-        {
-            throw new NotImplementedException();
-        }
 
-        public Task<GetTimeoutPageCountResponse> GetTimeoutPageCount()
-        {
-            throw new NotImplementedException();
-        }
+        public async Task<GetTimeoutPdfPathResponse> GetTimeoutPdfPath() => await _client.GetTimeoutPdfPath();
+        public async Task<GetTimeoutPageCountResponse> GetTimeoutPageCount() => await _client.GetTimeoutPageCount();
+        public async Task<GetTimeoutPageResponse> GetTimeoutPage() => await _client.GetTimeoutPage();
+        public async Task SetTimeoutPage(SetTimeoutPageRequest request) => await _client.SetTimeoutPage(request);
+        public async Task NextPage() => await _client.NextPage();
+        public async Task PreviousPage() => await _client.PreviousPage();
 
-        public Task<GetTimeoutPdfPathResponse> GetTimeoutPdfPath()
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task NextPage()
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task PreviousPage()
-        {
-            throw new NotImplementedException();
-        }
     }
 }

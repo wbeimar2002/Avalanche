@@ -6,6 +6,7 @@ using Avalanche.Shared.Domain.Enumerations;
 using Avalanche.Shared.Domain.Models;
 using Ism.Common.Core.Configuration.Models;
 using Ism.PgsTimeout.Client.V1;
+using Ism.PgsTimeout.V1.Protos;
 using Ism.Routing.V1.Protos;
 using Ism.Security.Grpc.Interfaces;
 using Ism.SystemState.Client;
@@ -73,16 +74,6 @@ namespace Avalanche.Api.Managers.PgsTimeout
         /// </summary>
         private readonly SemaphoreSlim _startStopLock = new SemaphoreSlim(1, 1);
 
-        // fake values for pgs volume and mute
-#warning add endpoints to pgs player for this
-
-        private readonly PgsVideoFile _generalFile = new PgsVideoFile { Name = "General", FilePath = @"C:\Resources\PgsVideo\General.mp4" };
-        private readonly PgsVideoFile _pediatricFile = new PgsVideoFile { Name = "Pediatric", FilePath = @"C:\Resources\PgsVideo\Pediatric.mp4" };
-
-        private double _pgsVolume = 0.5;
-        private bool _pgsMute = false;
-        private PgsVideoFile _currentVideoFile;
-
         public PgsTimeoutManager(
             IStorageService storageService,
             IRoutingService routingService,
@@ -95,8 +86,6 @@ namespace Avalanche.Api.Managers.PgsTimeout
             _stateClient = ThrowIfNullOrReturn(nameof(stateClient), stateClient);
             _pgsTimeoutService = ThrowIfNullOrReturn(nameof(pgsTimeoutService), pgsTimeoutService);
             _mapper = ThrowIfNullOrReturn(nameof(mapper), mapper);
-
-            _currentVideoFile = _generalFile;
         }
 
         public async Task StartPgs()
@@ -107,7 +96,6 @@ namespace Avalanche.Api.Managers.PgsTimeout
                 var config = await GetConfig();
 
                 await SaveCurrentRoutes();
-
 
                 var sinks = await GetPgsSinks();
                 foreach (var sink in sinks)
@@ -124,6 +112,11 @@ namespace Avalanche.Api.Managers.PgsTimeout
                     });
                 }
 
+                // tell the player to go to pgs mode
+                // note that the player's idle mode is different than api's idle mode
+                await _pgsTimeoutService.SetPgsTimeoutMode(new SetPgsTimeoutModeRequest { Mode = PgsTimeoutModeEnum.PgsTimeoutModePgs });
+                // tell the player to play video if it isn't
+                await _pgsTimeoutService.SetPgsPlaybackState(new SetPgsPlaybackStateRequest { IsPlaying = true });
                 _currentPgsTimeoutState = PgsTimeoutModes.Pgs;
             }
             finally
@@ -142,6 +135,8 @@ namespace Avalanche.Api.Managers.PgsTimeout
 
                 // TODO: might need to revisit state tracking when we need to implement timeout
                 _currentPgsTimeoutState = PgsTimeoutModes.Idle;
+
+                // TODO: audio?
             }
             finally
             {
@@ -181,61 +176,35 @@ namespace Avalanche.Api.Managers.PgsTimeout
         public async Task<IList<PgsVideoFile>> GetPgsVideoFiles()
         {
             // TODO: integrate with player app
-            //var files = await _pgsTimeoutService.GetPgsVideoFileList();
-            var files = new List<PgsVideoFile> { _generalFile, _pediatricFile };
-            return await Task.FromResult(files);
+            var files = await _pgsTimeoutService.GetPgsVideoFileList();
+
+            var domainFiles = files.VideoFiles.Select(x => x.ToApiPgsVideoFile());
+
+            return domainFiles.ToList();
         }
 
-        public async Task<PgsVideoFile> GetPgsVideoFile() 
-        {
-            // TODO:
-            return await Task.FromResult(_currentVideoFile);
-        }
+        public async Task<PgsVideoFile> GetPgsVideoFile() => (await _pgsTimeoutService.GetPgsVideoFile()).VideoFile.ToApiPgsVideoFile();
 
-        public async Task SetPgsVideoFile(PgsVideoFile file)
-        {
-            // TODO: integrate with player
-            //await _pgsTimeoutService.SetPgsVideoFile(new Ism.PgsTimeout.V1.Protos.SetPgsVideoFileRequest { VideoFile = path });
-            _currentVideoFile = file;
-            await Task.CompletedTask;
-        }
+        public async Task SetPgsVideoFile(PgsVideoFile file) => await _pgsTimeoutService.SetPgsVideoFile(new SetPgsVideoFileRequest { VideoFile = file.ToPlayerPgsVideoFile() });
 
-        public async Task SetPlaybackPosition(double position)
-        {
-            // TODO: implement set video position
-            await Task.CompletedTask;
-        }
+        public async Task SetPlaybackPosition(double position) => await _pgsTimeoutService.SetPgsVideoPosition(new SetPgsVideoPositionRequest { Position = position });
 
-        public async Task<double> GetPgsVolume()
-        {
-            return await Task.FromResult(_pgsVolume);
-        }
+        public async Task<double> GetPgsVolume() => (await _pgsTimeoutService.GetPgsVolume()).Volume;
 
-        public async Task SetPgsVolume(double volume)
-        {
-            _pgsVolume = volume;
-            await Task.CompletedTask;
-        }
+        public async Task SetPgsVolume(double volume) => await _pgsTimeoutService.SetPgsVolume(new SetPgsVolumeRequest { Volume = volume });
 
         /// <summary>
         /// Returns true if PGS is muted
         /// </summary>
         /// <returns></returns>
-        public async Task<bool> GetPgsMute()
-        {
-            return await Task.FromResult(_pgsMute);
-        }
+        public async Task<bool> GetPgsMute() => (await _pgsTimeoutService.GetPgsMute()).IsMuted;
 
         /// <summary>
         /// Set to true to mute PGS audio
         /// </summary>
         /// <param name="mute"></param>
         /// <returns></returns>
-        public async Task SetPgsMute(bool mute)
-        {
-            _pgsMute = mute;
-            await Task.CompletedTask;
-        }
+        public async Task SetPgsMute(bool mute) => await _pgsTimeoutService.SetPgsMute(new SetPgsMuteRequest { IsMuted = mute });
 
         #endregion
 
