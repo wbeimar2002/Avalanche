@@ -1,6 +1,7 @@
 ﻿using Avalanche.Api.ViewModels;
 using Ism.SystemState.Models.Procedure;
 using Ism.SystemState.Models.VideoRouting;
+using Ism.SystemState.Models.PgsTimeout;
 using System.Threading.Tasks;
 
 namespace Avalanche.Api.Hubs
@@ -18,5 +19,9 @@ namespace Avalanche.Api.Hubs
         Task OnVideoSinkSourceChanged(VideoSinkSourceChangedEvent videoSinkSourceChangedEvent);
 
         Task OnActiveProcedureStateChanged(ActiveProcedureViewModel activeProcedureState);
+
+        Task OnPgsDisplayStateDataChanged(PgsDisplayStateData pgsDisplayStateData);
+
+        Task OnPgsTimeoutPlayerDataChanged(PgsTimeoutPlayerData pgsTimeoutPlayerData);
     }
 }

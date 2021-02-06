@@ -29,7 +29,6 @@ namespace Avalanche.Api.Services.Media
             var port = _configurationService.GetEnvironmentVariable("PgsTimeoutGrpcPort");
 
             _client = new PgsTimeoutSecureClient(grpcClientFactory, ip, port, certificateProvider);
-            
         }
 
         public async Task<GetPgsTimeoutModeResponse> GetPgsTimeoutMode() => await _client.GetPgsTimeoutMode();

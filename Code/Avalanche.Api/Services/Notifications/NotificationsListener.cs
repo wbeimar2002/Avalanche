@@ -6,8 +6,8 @@ using Ism.SystemState.Client;
 using Ism.SystemState.Models;
 using Ism.SystemState.Models.Procedure;
 using Ism.SystemState.Models.VideoRouting;
+using Ism.SystemState.Models.PgsTimeout;
 using Microsoft.AspNetCore.SignalR;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using System;
@@ -52,6 +52,9 @@ namespace Avalanche.Api.Services.Notifications
             AddSubscription<VideoSourceIdentityChangedEvent>(evt => _hubContext.Clients.All.OnVideoSourceIdentityChanged(evt));
             AddSubscription<VideoSinkSourceChangedEvent>(evt => _hubContext.Clients.All.OnVideoSinkSourceChanged(evt));
             AddDataSubscription<ActiveProcedureState>(data => _hubContext.Clients.All.OnActiveProcedureStateChanged(_mapper.Map<Avalanche.Api.ViewModels.ActiveProcedureViewModel>(data)));
+
+            AddDataSubscription<PgsDisplayStateData>(data => _hubContext.Clients.All.OnPgsDisplayStateDataChanged(data));
+            AddDataSubscription<PgsTimeoutPlayerData>(data => _hubContext.Clients.All.OnPgsTimeoutPlayerDataChanged(data));
 
             return Task.CompletedTask;
         }
