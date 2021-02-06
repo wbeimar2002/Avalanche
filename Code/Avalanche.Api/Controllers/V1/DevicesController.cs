@@ -22,8 +22,7 @@ namespace Avalanche.Api.Controllers.V1
 {
     [Route("[controller]")]
     [ApiController]
-#warning uncomment this before PR
-    //[Authorize]
+    [Authorize]
     public class DevicesController : ControllerBase
     {
         readonly ILogger _appLoggerService;
