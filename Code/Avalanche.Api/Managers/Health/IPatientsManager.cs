@@ -8,9 +8,9 @@ namespace Avalanche.Api.Managers.Health
     {
         Task<IList<PatientViewModel>> Search(PatientKeywordSearchFilterViewModel filter);
         Task<IList<PatientViewModel>> Search(PatientDetailsSearchFilterViewModel filter);
-        Task<PatientViewModel> RegisterPatient(PatientViewModel newPatient, Avalanche.Shared.Domain.Models.User user);
-        Task<PatientViewModel> QuickPatientRegistration(Avalanche.Shared.Domain.Models.User user);
-        Task UpdatePatient(PatientViewModel existing, Avalanche.Shared.Domain.Models.User user);
+        Task<PatientViewModel> RegisterPatient(PatientViewModel newPatient);
+        Task<PatientViewModel> QuickPatientRegistration();
+        Task UpdatePatient(PatientViewModel existing);
         Task DeletePatient(ulong id);
     }
 }

@@ -25,7 +25,9 @@ using Ism.SystemState.Client;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Features;
+using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -78,26 +80,28 @@ namespace Avalanche.Api
             var grpcCertificate = configurationService.GetEnvironmentVariable("grpcCertificate");
             var grpcPassword = configurationService.GetEnvironmentVariable("grpcPassword");
             var grpcServerValidationCertificate = configurationService.GetEnvironmentVariable("grpcServerValidationCertificate");
+          
+            services.AddTransient<IMaintenanceManager, MaintenanceManager>();
+            services.AddTransient<IPatientsManager, PatientsManager>();
+            services.AddTransient<IPhysiciansManager, PhysiciansManager>();
+            services.AddTransient<IMetadataManager, MetadataManager>();
+            services.AddTransient<ILicensingManager, LicensingManagerMock>();
+            services.AddTransient<IDevicesManager, DevicesManager>();
+            services.AddTransient<IPgsTimeoutManager, PgsTimeoutManager>();
+            services.AddTransient<IMediaManager, MediaManager>();
+            services.AddTransient<IProceduresManager, ProceduresManager>();
+            services.AddTransient<INotificationsManager, NotificationsManager>();
 
-            services.AddSingleton<IMaintenanceManager, MaintenanceManager>();
-            services.AddSingleton<IPatientsManager, PatientsManager>();
-            services.AddSingleton<IPhysiciansManager, PhysiciansManager>();
-            services.AddSingleton<IMetadataManager, MetadataManager>();
-            services.AddSingleton<ILicensingManager, LicensingManagerMock>();
             services.AddSingleton<IMediaService, MediaService>();
-            services.AddSingleton<IDevicesManager, DevicesManager>();
-            services.AddSingleton<IPgsTimeoutManager, PgsTimeoutManager>();
-            services.AddSingleton<IMediaManager, MediaManager>();
-            services.AddSingleton<IProceduresManager, ProceduresManager>();
             services.AddSingleton<IPieService, PieService>();
             services.AddSingleton<IBroadcastService, BroadcastService>();
-            services.AddSingleton<INotificationsManager, NotificationsManager>();
             services.AddSingleton<IRoutingService, RoutingService>();
             services.AddSingleton<IAvidisService, AvidisService>();
             services.AddSingleton<IRecorderService, RecorderService>();
             services.AddSingleton<IStorageService, StorageService>();
             services.AddSingleton<IPgsTimeoutService, PgsTimeoutService>();
             services.AddSingleton<IDataManagementService, DataManagementService>();
+
             services.AddSingleton<ICertificateProvider>(new FileSystemCertificateProvider(grpcCertificate, grpcPassword, grpcServerValidationCertificate));
             services.AddSingleton<IGrpcClientFactory<DataManagementStorageClient>, GrpcClientFactory<DataManagementStorageClient>>();
             services.AddSingleton<IGrpcClientFactory<PatientListServiceClient>, GrpcClientFactory<PatientListServiceClient>>();

@@ -38,7 +38,7 @@
   <ItemGroup>
     <PackageReference Include="AutoFixture" Version="4.13.0" />
     <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="8.0.1" />
-    <PackageReference Include="AvidisDeviceInterface.Client" Version="1.0.0-prerelease0002" />
+    <PackageReference Include="AvidisDeviceInterface.Client" Version="1.0.0-prerelease0003" />
     <PackageReference Include="Google.Protobuf" Version="3.13.0" />
     <PackageReference Include="Grpc.Core" Version="2.32.0" />
     <PackageReference Include="Grpc.Core.Testing" Version="2.31.0" />
@@ -53,8 +53,8 @@
     <PackageReference Include="Ism.Recorder.Client" Version="1.0.0-prerelease0009" />
     <PackageReference Include="Ism.Routing.Client" Version="1.0.0-prerelease0002" />
     <PackageReference Include="Ism.Security.Grpc.Standard" Version="1.0.0-prerelease004" />
-    <PackageReference Include="Ism.Storage.Configuration.Client" Version="1.0.0-prerelease0007" />
-    <PackageReference Include="Ism.Storage.DataManagement.Client" Version="1.0.0-prerelease0006" />
+    <PackageReference Include="Ism.Storage.Configuration.Client" Version="1.0.0-prerelease0008" />
+    <PackageReference Include="Ism.Storage.DataManagement.Client" Version="1.0.0-prerelease0007" />
     <PackageReference Include="Ism.Storage.PatientList.Client" Version="1.0.0-prerelease0004" />
     <PackageReference Include="Ism.Streaming.Client" Version="1.0.0-prerelease0003" />
     <PackageReference Include="Ism.SystemState.Client" Version="1.0.0-prerelease0015" />

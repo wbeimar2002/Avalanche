@@ -5,8 +5,5 @@
   "type": "object",
   "additionalProperties": false,
   "properties": {
-    "AlwaysOn": {
-      "type": "boolean"
-    }
   }
 }

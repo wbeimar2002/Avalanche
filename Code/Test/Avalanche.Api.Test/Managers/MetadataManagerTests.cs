@@ -10,6 +10,7 @@ using Avalanche.Shared.Infrastructure.Models;
 using Avalanche.Shared.Infrastructure.Services.Settings;
 using Ism.Common.Core.Configuration.Models;
 using Ism.Security.Grpc.Interfaces;
+using Microsoft.AspNetCore.Http;
 using Moq;
 using NUnit.Framework;
 using System;
@@ -24,6 +25,7 @@ namespace Avalanche.Api.Tests.Managers
     {
         Mock<IStorageService> _storageService;
         Mock<IDataManagementService> _dataManagementService;
+        Mock<IHttpContextAccessor> _httpContextAccessor;
 
         IMapper _mapper;
         MetadataManager _manager;
@@ -33,6 +35,7 @@ namespace Avalanche.Api.Tests.Managers
         {
             _storageService = new Mock<IStorageService>();
             _dataManagementService = new Mock<IDataManagementService>();
+            _httpContextAccessor = new Mock<IHttpContextAccessor>();
 
             var config = new MapperConfiguration(cfg =>
             {
@@ -40,7 +43,7 @@ namespace Avalanche.Api.Tests.Managers
             });
 
             _mapper = config.CreateMapper();
-            _manager = new MetadataManager(_storageService.Object, _dataManagementService.Object, _mapper);
+            _manager = new MetadataManager(_storageService.Object, _dataManagementService.Object, _mapper, _httpContextAccessor.Object);
         }
 
         [Test]
@@ -54,7 +57,7 @@ namespace Avalanche.Api.Tests.Managers
                 }
             };
 
-            _storageService.Setup(mock => mock.GetJsonDynamic("SetupSettingsValues",1,  It.IsAny<ConfigurationContext>())).ReturnsAsync(settingsDepartmenSupported);
+            _storageService.Setup(mock => mock.GetJsonDynamic("SetupSettingsData",1,  It.IsAny<ConfigurationContext>())).ReturnsAsync(settingsDepartmenSupported);
 
             var newProcedureType = new ProcedureType()
             {
@@ -63,10 +66,7 @@ namespace Avalanche.Api.Tests.Managers
                 DepartmentId = 1
             };
 
-            Fixture fixture = new Fixture();
-            var user = fixture.Create<User>();
-
-            Task Act() => _manager.AddProcedureType(user, newProcedureType);
+            Task Act() => _manager.AddProcedureType(newProcedureType);
 
             Assert.That(Act, Throws.TypeOf<ArgumentException>());
         }
@@ -82,7 +82,7 @@ namespace Avalanche.Api.Tests.Managers
                 }
             };
 
-            _storageService.Setup(mock => mock.GetJsonDynamic("SetupSettingsValues", 1, It.IsAny<ConfigurationContext>())).ReturnsAsync(settingsDepartmenSupported);
+            _storageService.Setup(mock => mock.GetJsonDynamic("SetupSettingsData", 1, It.IsAny<ConfigurationContext>())).ReturnsAsync(settingsDepartmenSupported);
 
             var newProcedureType = new ProcedureType()
             {
@@ -91,10 +91,7 @@ namespace Avalanche.Api.Tests.Managers
                 DepartmentId = null
             };
 
-            Fixture fixture = new Fixture();
-            var user = fixture.Create<User>();
-
-            Task Act() => _manager.AddProcedureType(user, newProcedureType);
+            Task Act() => _manager.AddProcedureType(newProcedureType);
 
             Assert.That(Act, Throws.TypeOf<ArgumentNullException>());
         }
@@ -110,7 +107,7 @@ namespace Avalanche.Api.Tests.Managers
                 }
             };
 
-            _storageService.Setup(mock => mock.GetJsonDynamic("SetupSettingsValues", 1, It.IsAny<ConfigurationContext>())).ReturnsAsync(settingsDepartmenSupported);
+            _storageService.Setup(mock => mock.GetJsonDynamic("SetupSettingsData", 1, It.IsAny<ConfigurationContext>())).ReturnsAsync(settingsDepartmenSupported);
 
             var procedureType = new ProcedureType()
             {
@@ -119,10 +116,7 @@ namespace Avalanche.Api.Tests.Managers
                 DepartmentId = 1
             };
 
-            Fixture fixture = new Fixture();
-            var user = fixture.Create<User>();
-
-            Task Act() => _manager.DeleteProcedureType(user, procedureType);
+            Task Act() => _manager.DeleteProcedureType(procedureType);
 
             Assert.That(Act, Throws.TypeOf<ArgumentException>());
         }
@@ -138,7 +132,7 @@ namespace Avalanche.Api.Tests.Managers
                 }
             };
 
-            _storageService.Setup(mock => mock.GetJsonDynamic("SetupSettingsValues", 1, It.IsAny<ConfigurationContext>())).ReturnsAsync(settingsDepartmenSupported);
+            _storageService.Setup(mock => mock.GetJsonDynamic("SetupSettingsData", 1, It.IsAny<ConfigurationContext>())).ReturnsAsync(settingsDepartmenSupported);
 
             var procedureType = new ProcedureType()
             {
@@ -147,10 +141,7 @@ namespace Avalanche.Api.Tests.Managers
                 DepartmentId = null
             };
 
-            Fixture fixture = new Fixture();
-            var user = fixture.Create<User>();
-
-            Task Act() => _manager.DeleteProcedureType(user, procedureType);
+            Task Act() => _manager.DeleteProcedureType(procedureType);
 
             Assert.That(Act, Throws.TypeOf<ArgumentNullException>());
         }
@@ -158,9 +149,6 @@ namespace Avalanche.Api.Tests.Managers
         [Test]
         public void GetProceduresByDepartmentShouldFailIfHasDepartmentAndDepartmentIsNotSupported()
         {
-            Fixture fixture = new Fixture();
-            var user = fixture.Create<User>();
-
             var settingsDepartmenSupported = new
             {
                 General = new
@@ -169,9 +157,9 @@ namespace Avalanche.Api.Tests.Managers
                 }
             };
 
-            _storageService.Setup(mock => mock.GetJsonDynamic("SetupSettingsValues", 1, It.IsAny<ConfigurationContext>())).ReturnsAsync(settingsDepartmenSupported);
+            _storageService.Setup(mock => mock.GetJsonDynamic("SetupSettingsData", 1, It.IsAny<ConfigurationContext>())).ReturnsAsync(settingsDepartmenSupported);
 
-            Task Act() => _manager.GetProcedureTypesByDepartment(user, 1);
+            Task Act() => _manager.GetProcedureTypesByDepartment(1);
 
             Assert.That(Act, Throws.TypeOf<ArgumentException>());
         }
@@ -179,9 +167,6 @@ namespace Avalanche.Api.Tests.Managers
         [Test]
         public void GetProceduresByDepartmentShouldFailIfDepartmentIsNullAndDepartmentIsSupported()
         {
-            Fixture fixture = new Fixture();
-            var user = fixture.Create<User>();
-
             var settingsDepartmenSupported = new
             {
                 General = new
@@ -190,9 +175,9 @@ namespace Avalanche.Api.Tests.Managers
                 }
             };
 
-            _storageService.Setup(mock => mock.GetJsonDynamic("SetupSettingsValues", 1, It.IsAny<ConfigurationContext>())).ReturnsAsync(settingsDepartmenSupported);
+            _storageService.Setup(mock => mock.GetJsonDynamic("SetupSettingsData", 1, It.IsAny<ConfigurationContext>())).ReturnsAsync(settingsDepartmenSupported);
 
-            Task Act() => _manager.GetProcedureTypesByDepartment(user, null);
+            Task Act() => _manager.GetProcedureTypesByDepartment(null);
 
             Assert.That(Act, Throws.TypeOf<ArgumentNullException>());
         }
@@ -200,9 +185,6 @@ namespace Avalanche.Api.Tests.Managers
         [Test]
         public void AddDepartmentShouldFailIfDepartmentIsNotSupported()
         {
-            Fixture fixture = new Fixture();
-            var user = fixture.Create<User>();
-
             var settingsDepartmenSupported = new
             {
                 General = new
@@ -211,9 +193,9 @@ namespace Avalanche.Api.Tests.Managers
                 }
             };
 
-            _storageService.Setup(mock => mock.GetJsonDynamic("SetupSettingsValues", 1, It.IsAny<ConfigurationContext>())).ReturnsAsync(settingsDepartmenSupported);
+            _storageService.Setup(mock => mock.GetJsonDynamic("SetupSettingsData", 1, It.IsAny<ConfigurationContext>())).ReturnsAsync(settingsDepartmenSupported);
 
-            Task Act() => _manager.AddDepartment(user, It.IsAny<Department>());
+            Task Act() => _manager.AddDepartment(It.IsAny<Department>());
 
             Assert.That(Act, Throws.TypeOf<InvalidOperationException>());
         }
@@ -221,9 +203,6 @@ namespace Avalanche.Api.Tests.Managers
         [Test]
         public void DeleteDepartmentShouldFailIfDepartmentIsNotSupported()
         {
-            Fixture fixture = new Fixture();
-            var user = fixture.Create<User>();
-
             var settingsDepartmenSupported = new
             {
                 General = new
@@ -232,9 +211,9 @@ namespace Avalanche.Api.Tests.Managers
                 }
             };
 
-            _storageService.Setup(mock => mock.GetJsonDynamic("SetupSettingsValues", 1, It.IsAny<ConfigurationContext>())).ReturnsAsync(settingsDepartmenSupported);
+            _storageService.Setup(mock => mock.GetJsonDynamic("SetupSettingsData", 1, It.IsAny<ConfigurationContext>())).ReturnsAsync(settingsDepartmenSupported);
 
-            Task Act() => _manager.DeleteDepartment(user, 1);
+            Task Act() => _manager.DeleteDepartment(1);
 
             Assert.That(Act, Throws.TypeOf<InvalidOperationException>());
         }

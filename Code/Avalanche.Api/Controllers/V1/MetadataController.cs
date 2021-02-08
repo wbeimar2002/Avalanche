@@ -45,7 +45,7 @@ namespace Avalanche.Api.Controllers.V1
             {
                 _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
 
-                var result = await _metadataManager.GetDynamicSource(User.GetUser(), key);
+                var result = await _metadataManager.GetDynamicSource(key);
                 return Ok(result);
             }
             catch (Exception exception)
@@ -70,7 +70,7 @@ namespace Avalanche.Api.Controllers.V1
             {
                 _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
 
-                var result = await _metadataManager.GetMetadata(User.GetUser(), MetadataTypes.PgsVideoFiles);
+                var result = await _metadataManager.GetMetadata(MetadataTypes.PgsVideoFiles);
                 return Ok(result);
             }
             catch (Exception exception)
@@ -119,7 +119,7 @@ namespace Avalanche.Api.Controllers.V1
             {
                 _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
 
-                var result = await _metadataManager.GetMetadata(User.GetUser(), MetadataTypes.SetupModes);
+                var result = await _metadataManager.GetMetadata(MetadataTypes.SetupModes);
                 return Ok(result);
             }
             catch (Exception exception)
@@ -144,7 +144,7 @@ namespace Avalanche.Api.Controllers.V1
             {
                 _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
 
-                var result = await _metadataManager.GetMetadata(User.GetUser(), MetadataTypes.SettingTypes);
+                var result = await _metadataManager.GetMetadata(MetadataTypes.SettingTypes);
                 return Ok(result);
             }
             catch (Exception exception)
@@ -169,7 +169,7 @@ namespace Avalanche.Api.Controllers.V1
             {
                 _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
 
-                var result = await _metadataManager.GetSource(User.GetUser(), MetadataTypes.SearchColumns);
+                var result = await _metadataManager.GetSource(MetadataTypes.SearchColumns);
                 return Ok(result);
             }
             catch (Exception exception)
@@ -194,7 +194,7 @@ namespace Avalanche.Api.Controllers.V1
             {
                 _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
 
-                var result = await _metadataManager.GetMetadata(User.GetUser(), MetadataTypes.Sex);
+                var result = await _metadataManager.GetMetadata(MetadataTypes.Sex);
                 return Ok(result);
             }
             catch (Exception exception)
@@ -219,7 +219,7 @@ namespace Avalanche.Api.Controllers.V1
             {
                 _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
 
-                var result = await _metadataManager.GetMetadata(User.GetUser(), MetadataTypes.SourceTypes);
+                var result = await _metadataManager.GetMetadata(MetadataTypes.SourceTypes);
                 return Ok(result);
             }
             catch (Exception exception)
@@ -244,7 +244,7 @@ namespace Avalanche.Api.Controllers.V1
             {
                 _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
 
-                var result = await _metadataManager.GetAllDepartments(User.GetUser());
+                var result = await _metadataManager.GetAllDepartments();
                 return Ok(result);
             }
             catch (Exception exception)
@@ -269,7 +269,7 @@ namespace Avalanche.Api.Controllers.V1
             {
                 _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
 
-                var result = await _metadataManager.AddDepartment(User.GetUser(), department);
+                var result = await _metadataManager.AddDepartment(department);
                 return Ok(result);
             }
             catch (Exception exception)
@@ -293,7 +293,7 @@ namespace Avalanche.Api.Controllers.V1
             {
                 _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
 
-                await _metadataManager.DeleteDepartment(User.GetUser(), departmentId);
+                await _metadataManager.DeleteDepartment(departmentId);
                 return Ok();
             }
             catch (Exception exception)
@@ -318,7 +318,7 @@ namespace Avalanche.Api.Controllers.V1
             {
                 _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
 
-                var result = await _metadataManager.GetProcedureTypesByDepartment(User.GetUser(), departmentId);
+                var result = await _metadataManager.GetProcedureTypesByDepartment(departmentId);
                 return Ok(result);
             }
             catch (Exception exception)
@@ -343,7 +343,7 @@ namespace Avalanche.Api.Controllers.V1
             {
                 _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
 
-                var result = await _metadataManager.GetProcedureTypesByDepartment(User.GetUser(), null);
+                var result = await _metadataManager.GetProcedureTypesByDepartment(null);
                 return Ok(result);
             }
             catch (Exception exception)
@@ -365,7 +365,7 @@ namespace Avalanche.Api.Controllers.V1
             {
                 _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
 
-                var result = await _metadataManager.AddProcedureType(User.GetUser(), procedureType);
+                var result = await _metadataManager.AddProcedureType(procedureType);
                 return Ok(result);
             }
             catch (Exception exception)
@@ -386,7 +386,7 @@ namespace Avalanche.Api.Controllers.V1
             {
                 _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
 
-                await _metadataManager.DeleteProcedureType(User.GetUser(), new ProcedureType()
+                await _metadataManager.DeleteProcedureType(new ProcedureType()
                 {
                     Name = procedureTypeName
                 });
@@ -411,7 +411,7 @@ namespace Avalanche.Api.Controllers.V1
             {
                 _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
 
-                await _metadataManager.DeleteProcedureType(User.GetUser(), new ProcedureType()
+                await _metadataManager.DeleteProcedureType(new ProcedureType()
                 {
                     DepartmentId = departmentId,
                     Id = procedureTypeId

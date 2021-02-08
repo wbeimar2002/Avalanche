@@ -1,8 +1,10 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Avalanche.Shared.Domain.Models;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Primitives;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 
 namespace Avalanche.Api.Utilities
 {
@@ -45,6 +47,24 @@ namespace Avalanche.Api.Utilities
             }
 
             return returnValue;
+        }
+
+        internal static User GetUser(HttpContext httpContext)
+        {
+            var claimPrincipal = httpContext?.User?.Identity as ClaimsIdentity;
+            return claimPrincipal == null ? new Shared.Domain.Models.User()
+            {
+                Id = "Unidentified",
+                FirstName = "Unidentified",
+                LastName = "Unidentified",
+            }
+            :
+            new Avalanche.Shared.Domain.Models.User()
+            {
+                Id = claimPrincipal.FindFirst("Id")?.Value,
+                FirstName = claimPrincipal.FindFirst("FirstName")?.Value,
+                LastName = claimPrincipal.FindFirst("LastName")?.Value,
+            };
         }
 
         public static string GetHostAddress(HttpContext context, bool replaceLocalhostWithLoopback)

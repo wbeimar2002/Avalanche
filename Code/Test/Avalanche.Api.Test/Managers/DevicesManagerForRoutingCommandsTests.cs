@@ -94,7 +94,7 @@ namespace Avalanche.Api.Tests.Managers
         [Test]
         public void ShowVideoRoutingPreviewHarwareModeShouldReturnResponse()
         {
-            _storageService.Setup(mock => mock.GetJsonDynamic("SurgerySettingsValues", 1, It.IsAny<ConfigurationContext>())).ReturnsAsync(new
+            _storageService.Setup(mock => mock.GetJsonDynamic("SurgerySettingsData", 1, It.IsAny<ConfigurationContext>())).ReturnsAsync(new
             {
                 Mode = RoutingModes.Hardware
             });
@@ -117,7 +117,7 @@ namespace Avalanche.Api.Tests.Managers
         [Test]
         public void ShowVideoRoutingPreviewSoftwareModeShouldReturnResponse()
         {
-            _storageService.Setup(mock => mock.GetJsonDynamic("SurgerySettingsValues", 1, It.IsAny<ConfigurationContext>())).ReturnsAsync(new
+            _storageService.Setup(mock => mock.GetJsonDynamic("SurgerySettingsData", 1, It.IsAny<ConfigurationContext>())).ReturnsAsync(new
             {
                 Mode = RoutingModes.Software
             });

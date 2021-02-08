@@ -1,6 +1,6 @@
 {
   "TitleTranslationKey": "surgery.title",
-  "JsonKey": "SurgerySettings",
+  "JsonKey": "SurgerySettingsData",
   "ReadOnly": true,
   "Settings": null,
   "Sections": [

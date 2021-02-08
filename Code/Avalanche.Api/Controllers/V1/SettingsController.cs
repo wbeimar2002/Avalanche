@@ -38,7 +38,7 @@ namespace Avalanche.Api.Controllers.V1
             try
             {
                 _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
-                var response = await _maintenanceManager.GetSettingValues(key + "Values",User.GetUser());
+                var response = await _maintenanceManager.GetSettingValues(key);
                 return Content(JsonConvert.SerializeObject(response), "application/json");
             }
             catch (Exception exception)

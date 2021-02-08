@@ -31,6 +31,8 @@ namespace Avalanche.Api.Managers.Devices
         readonly IHttpContextAccessor _httpContextAccessor;
         readonly IStorageService _storageService;
 
+        readonly User user;
+
         public DevicesManager(IMediaService mediaService,
             IRoutingService routingService,
             ILogger<MediaManager> appLoggerService,
@@ -50,10 +52,14 @@ namespace Avalanche.Api.Managers.Devices
             _accessInfoFactory = accessInfoFactory;
             _mapper = mapper;
             _httpContextAccessor = httpContextAccessor;
+
+            user = HttpContextUtilities.GetUser(_httpContextAccessor.HttpContext);
         }
 
-        public async Task<List<CommandResponse>> SendCommand(CommandViewModel command, User user = null)
+        public async Task<List<CommandResponse>> SendCommand(CommandViewModel command)
         {
+            command.User = user;
+
             Preconditions.ThrowIfCountIsLessThan(nameof(command.Devices), command.Devices, 1);
 
             List<CommandResponse> responses = new List<CommandResponse>();

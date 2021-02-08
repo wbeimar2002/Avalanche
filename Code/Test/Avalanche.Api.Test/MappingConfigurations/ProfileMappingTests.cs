@@ -36,22 +36,22 @@ namespace Avalanche.Api.Tests.MappingConfigurations
         }
 
         [Test]
-        public void VideoRoutingMappingConfigurations_IsValid()
-        {
-            AssertProfileIsValid<RoutingMappingConfiguration>();
-        }
-
-        [Test]
         public void MediaMappingConfigurations_IsValid()
         {
             AssertProfileIsValid<MediaMappingConfiguration>();
         }
 
-        [Test]
-        public void ProceduresMappingConfigurations_IsValid()
-        {
-            AssertProfileIsValid<ProceduresMappingConfiguration>();
-        }
+        //[Test]
+        //public void ProceduresMappingConfigurations_IsValid()
+        //{
+        //    AssertProfileIsValid<ProceduresMappingConfiguration>();
+        //}
+
+        //[Test]
+        //public void VideoRoutingMappingConfigurations_IsValid()
+        //{
+        //    AssertProfileIsValid<RoutingMappingConfiguration>();
+        //}
 
         [Test]
         public void TestPatientViewModelToStateModel()
