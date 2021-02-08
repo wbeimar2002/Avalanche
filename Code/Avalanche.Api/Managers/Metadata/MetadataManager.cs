@@ -129,7 +129,7 @@ namespace Avalanche.Api.Managers.Metadata
         {
             await ValidateDepartmentsSupport(departmentId);
 
-            var result = await _dataManagementService.GetProceduresByDepartment(new Ism.Storage.Core.DataManagement.V1.Protos.GetProceduresByDepartmentRequest()
+            var result = await _dataManagementService.GetProceduresByDepartment(new Ism.Storage.Core.DataManagement.V1.Protos.GetProcedureTypesByDepartmentRequest()
             {
                 DepartmentId = departmentId
             });
