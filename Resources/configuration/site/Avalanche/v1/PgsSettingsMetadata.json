@@ -135,28 +135,6 @@
             },
           ]
         }
-      ],
-      "Settings": [
-        {
-          "LabelTranslationKey": "pgsSettings.video-always-on-label",
-          "DescriptionTranslationKey": null,
-          "Format": null,
-          "PlaceHolder": null,
-          "Icon": null,
-          "MaxValue": 0,
-          "MinValue": 0,
-          "Steps": 0,
-          "DefaultValue": "false",
-          "ReadOnly": false,
-          "Required": false,
-          "MaxLength": 0,
-          "JsonKey": "AlwaysOn",
-          "Policy": "0",
-          "SettingType": 2,
-          "VisualStyle": 3,
-          "SourceKey": null,
-          "SourceVisualStyle": 0
-        }
       ]
     },
     {
