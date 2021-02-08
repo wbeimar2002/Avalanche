@@ -1,3 +1,9 @@
 {
-  "AlwaysOn": false
+  "AlwaysOn": false,
+  "ScreenConfig": {
+    "X": 1920,
+    "Y": 0,
+    "Width": 1920,
+    "Height": 1080
+  }
 }

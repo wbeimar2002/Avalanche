@@ -1,60 +1,14 @@
 {
   "Items": [
     {
-      "Type": "0",
-      "Types": [
-        {
-          "TranslationKey": "settingType.Text",
-          "Id": "0",
-          "Value": "Text"
-        },
-        {
-          "TranslationKey": "settingType.Number",
-          "Id": "1",
-          "Value": "Number"
-        },
-        {
-          "TranslationKey": "settingType.Boolean",
-          "Id": "2",
-          "Value": "Boolean"
-        },
-        {
-          "TranslationKey": "settingType.Date",
-          "Id": "4",
-          "Value": "Date"
-        }
-      ],
-      "TranslationKey": "pgsVideoFiles.pediatric",
-      "Id": "P",
-      "Value": "..\\..\\..\\..\\Resources\\PgsVideo\\Pediatric.mp4"
+      "Index": 0,
+      "FilePath": "..\\..\\..\\..\\Resources\\PgsVideo\\General.mp4",
+      "Name": "General"
     },
     {
-      "Type": "0",
-      "Types": [
-        {
-          "TranslationKey": "settingType.Text",
-          "Id": "0",
-          "Value": "Text"
-        },
-        {
-          "TranslationKey": "settingType.Number",
-          "Id": "1",
-          "Value": "Number"
-        },
-        {
-          "TranslationKey": "settingType.Boolean",
-          "Id": "2",
-          "Value": "Boolean"
-        },
-        {
-          "TranslationKey": "settingType.Date",
-          "Id": "4",
-          "Value": "Date"
-        }
-      ],
-      "TranslationKey": "pgsVideoFiles.general",
-      "Id": "G",
-      "Value": "..\\..\\..\\..\\Resources\\PgsVideo\\General.mp4"
+      "Index": 1,
+      "FilePath": "..\\..\\..\\..\\Resources\\PgsVideo\\Pediatric.mp4",
+      "Name": "Pediatric"
     }
   ]
 }

@@ -4,9 +4,138 @@
   "ReadOnly": true,
   "Sections": [
     {
-      "TitleTranslationKey": "pgsSettings.content",
+      "TitleTranslationKey": "pgsSettings.configuration",
       "JsonKey": "",
-      "Sections": null,
+      "Sections": [
+        {
+          "TitleTranslationKey": "pgsSettings.screen-config",
+          "JsonKey": "PlayerConfig",
+          "Sections": null,
+          "Settings": [
+            {
+              "LabelTranslationKey": "pgsSettings.x",
+              "DescriptionTranslationKey": null,
+              "Format": null,
+              "PlaceHolderTranslationKey": null,
+              "Icon": null,
+              "MaxValue": 0,
+              "MinValue": 0,
+              "Steps": 0,
+              "DefaultValue": "",
+              "Required": false,
+              "MaxLength": 0,
+              "JsonKey": "X",
+              "Policy": "0",
+              "SettingType": 0,
+              "VisualStyle": 0,
+              "SourceKey": null,
+              "SourceVisualStyle": 0
+            },
+            {
+              "LabelTranslationKey": "pgsSettings.y",
+              "DescriptionTranslationKey": null,
+              "Format": null,
+              "PlaceHolderTranslationKey": null,
+              "Icon": null,
+              "MaxValue": 0,
+              "MinValue": 0,
+              "Steps": 0,
+              "DefaultValue": "",
+              "Required": false,
+              "MaxLength": 0,
+              "JsonKey": "Y",
+              "Policy": "0",
+              "SettingType": 0,
+              "VisualStyle": 0,
+              "SourceKey": null,
+              "SourceVisualStyle": 0
+            },
+            {
+              "LabelTranslationKey": "pgsSettings.width",
+              "DescriptionTranslationKey": null,
+              "Format": null,
+              "PlaceHolderTranslationKey": null,
+              "Icon": null,
+              "MaxValue": 0,
+              "MinValue": 0,
+              "Steps": 0,
+              "DefaultValue": "",
+              "Required": false,
+              "MaxLength": 0,
+              "JsonKey": "Width",
+              "Policy": "0",
+              "SettingType": 0,
+              "VisualStyle": 0,
+              "SourceKey": null,
+              "SourceVisualStyle": 0
+            },
+            {
+              "LabelTranslationKey": "pgsSettings.height",
+              "DescriptionTranslationKey": null,
+              "Format": null,
+              "PlaceHolderTranslationKey": null,
+              "Icon": null,
+              "MaxValue": 0,
+              "MinValue": 0,
+              "Steps": 0,
+              "DefaultValue": "",
+              "Required": false,
+              "MaxLength": 0,
+              "JsonKey": "Height",
+              "Policy": "0",
+              "SettingType": 0,
+              "VisualStyle": 0,
+              "SourceKey": null,
+              "SourceVisualStyle": 0
+            }
+          ]
+        },
+        {
+          "TitleTranslationKey": "pgsSettings.main-source",
+          "JsonKey": "MainSource",
+          "Sections": null,
+          "Settings": [
+            {
+              "LabelTranslationKey": "pgsSettings.alias",
+              "DescriptionTranslationKey": null,
+              "Format": null,
+              "PlaceHolderTranslationKey": null,
+              "Icon": null,
+              "MaxValue": 0,
+              "MinValue": 0,
+              "Steps": 0,
+              "DefaultValue": "",
+              "Required": false,
+              "MaxLength": 0,
+              "JsonKey": "Alias",
+              "Policy": "0",
+              "SettingType": 0,
+              "VisualStyle": 0,
+              "SourceKey": null,
+              "SourceVisualStyle": 0
+            },
+            {
+              "LabelTranslationKey": "pgsSettings.index",
+              "DescriptionTranslationKey": null,
+              "Format": null,
+              "PlaceHolderTranslationKey": null,
+              "Icon": null,
+              "MaxValue": 0,
+              "MinValue": 0,
+              "Steps": 0,
+              "DefaultValue": "",
+              "Required": false,
+              "MaxLength": 0,
+              "JsonKey": "Index",
+              "Policy": "0",
+              "SettingType": 0,
+              "VisualStyle": 0,
+              "SourceKey": null,
+              "SourceVisualStyle": 0
+            },
+          ]
+        }
+      ],
       "Settings": [
         {
           "LabelTranslationKey": "pgsSettings.video-always-on-label",
@@ -27,7 +156,14 @@
           "VisualStyle": 3,
           "SourceKey": null,
           "SourceVisualStyle": 0
-        },
+        }
+      ]
+    },
+    {
+      "TitleTranslationKey": "pgsSettings.content",
+      "JsonKey": "",
+      "Sections": null,
+      "Settings": [
         {
           "LabelTranslationKey": "pgsSettings.video-files",
           "DescriptionTranslationKey": null,
@@ -43,8 +179,8 @@
           "JsonKey": null,
           "Policy": "0",
           "SettingType": 0,
-          "VisualStyle": 4,
-          "SourceKey": "PgsVideoFilesData",
+          "VisualStyle": 6,
+          "SourceKey": "PgsVideoFilesMetadata",
           "SourceVisualStyle": 0
         }
       ]
