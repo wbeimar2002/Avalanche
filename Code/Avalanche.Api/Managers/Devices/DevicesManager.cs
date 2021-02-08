@@ -66,12 +66,27 @@ namespace Avalanche.Api.Managers.Devices
 
             foreach (var item in command.Devices)
             {
-                var device = _mapper.Map<VideoDevice, VideoSource>(item);
+                //var device = _mapper.Map<VideoDeviceViewModel, VideoSource>(item);
 
+                // TODO: use automapper
                 CommandResponse response = await ExecuteCommandAsync(command.CommandType, new Command()
                 {
-                    Device = device,
-                    Destinations = command.Destinations,
+                    Device = new VideoDevice
+                    {
+                        Type = item.Type,
+                        PositionInScreen = item.PositionInScreen,
+                        Name = item.Name,
+                        IsVisible = item.IsVisible,
+                        Id = new AliasIndexApiModel(item.Id.Alias, item.Id.Index)
+                    },
+                    Destinations = command.Destinations.Select(x => new VideoDevice()
+                    {
+                        Id = new AliasIndexApiModel(x.Id.Alias, x.Id.Index),
+                        IsVisible = x.IsVisible,
+                        Name = x.Name,
+                        PositionInScreen = x.PositionInScreen,
+                        Type = x.Type
+                    }).ToList(),
                     Message = command.Message,
                     AdditionalInfo = command.AdditionalInfo,
                     Type = command.Type,
@@ -95,7 +110,7 @@ namespace Avalanche.Api.Managers.Devices
                 // leaving as is for now as to not break the existing preview implementation
                 #region PGS Commands
                 case CommandTypes.PgsPlayVideo:
-                    return await InitializeVideo(command, user);
+                 return await InitializeVideo(command, user);
                 case CommandTypes.PgsStopVideo:
                     return await StopVideo(command);
                 case CommandTypes.PgsHandleMessageForVideo:
@@ -189,7 +204,7 @@ namespace Avalanche.Api.Managers.Devices
             var routes = await _routingService.GetCurrentRoutes();
 
             var listResult = _mapper.Map<IList<Ism.Routing.V1.Protos.VideoSinkMessage>, IList<VideoSink>>(sinks.VideoSinks);
-            foreach (var sink in listResult) 
+            foreach (var sink in listResult)
             {
                 var route = routes.Routes.SingleOrDefault(x => x.Sink.EqualsVideoDevice(sink));
                 // get the current source

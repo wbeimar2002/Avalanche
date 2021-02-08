@@ -13,8 +13,8 @@ namespace Avalanche.Api.ViewModels
         public string Message { get; set; }
         public string Type { get; set; }
 
-        public List<VideoDevice> Devices { get; set; }
-        public List<VideoDevice> Destinations { get; set; }
+        public List<VideoDeviceViewModel> Devices { get; set; }
+        public List<VideoDeviceViewModel> Destinations { get; set; }
         public User User { get; set; }
     }
 }

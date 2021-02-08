@@ -73,8 +73,8 @@ namespace Avalanche.Api.Tests.Managers
                 CommandType = CommandTypes.PgsPlayVideo,
                 Message = "SampleMessage",
                 Type = "OfferType",
-                Devices = new List<VideoDevice>() { new VideoDevice() { Id = new AliasIndexApiModel("Preview", 0), Name = string.Empty, Type = string.Empty } },
-                Destinations = new List<VideoDevice>(),
+                Devices = new List<VideoDeviceViewModel>() { new VideoDeviceViewModel() { Id = "Preview", Name = string.Empty, Type = string.Empty } },
+                Destinations = new List<VideoDeviceViewModel>(),
                 AdditionalInfo = Guid.NewGuid().ToString()
             };
 
@@ -105,8 +105,8 @@ namespace Avalanche.Api.Tests.Managers
                 CommandType = CommandTypes.PgsStopVideo,
                 Message = "SampleMessage",
                 Type = "OfferType",
-                Devices = new List<VideoDevice>() { new VideoDevice() { Id = new AliasIndexApiModel("Preview", 0), Name = string.Empty, Type = string.Empty } },
-                Destinations = new List<VideoDevice>(),
+                Devices = new List<VideoDeviceViewModel>() { new VideoDeviceViewModel() { Id = "Preview", Name = string.Empty, Type = string.Empty } },
+                Destinations = new List<VideoDeviceViewModel>(),
                 AdditionalInfo = Guid.NewGuid().ToString()
             };
 
@@ -130,8 +130,8 @@ namespace Avalanche.Api.Tests.Managers
                 CommandType = CommandTypes.PgsHandleMessageForVideo,
                 Message = "SampleMessage",
                 Type = "OfferType",
-                Devices = new List<VideoDevice>() { new VideoDevice() { Id = new AliasIndexApiModel("Preview", 0), Name = string.Empty, Type = string.Empty } },
-                Destinations = new List<VideoDevice>(),
+                Devices = new List<VideoDeviceViewModel>() { new VideoDeviceViewModel() { Id = "Preview", Name = string.Empty, Type = string.Empty } },
+                Destinations = new List<VideoDeviceViewModel>(),
                 AdditionalInfo = Guid.NewGuid().ToString()
             };
 

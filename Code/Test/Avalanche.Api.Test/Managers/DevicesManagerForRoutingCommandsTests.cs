@@ -31,8 +31,8 @@ namespace Avalanche.Api.Tests.Managers
             CommandViewModel commandViewModel = new CommandViewModel()
             {
                 CommandType = CommandTypes.RouteVideoSource,
-                Devices = new List<VideoDevice>() { new VideoDevice() { Id = new AliasIndexApiModel("TP1", 0) } },
-                Destinations = new List<VideoDevice>() { new VideoDevice() { Id = new AliasIndexApiModel("TP1", 0) } }
+                Devices = new List<VideoDeviceViewModel>() { new VideoDeviceViewModel() { Id = "TP1" } },
+                Destinations = new List<VideoDeviceViewModel>() { new VideoDeviceViewModel() { Id = "TP1" } }
             };
 
             var commandResponse = _manager.SendCommand(commandViewModel);
@@ -48,8 +48,8 @@ namespace Avalanche.Api.Tests.Managers
             CommandViewModel commandViewModel = new CommandViewModel()
             {
                 CommandType = CommandTypes.UnrouteVideoSource,
-                Devices = new List<VideoDevice>() { new VideoDevice() { Id = new AliasIndexApiModel("TP1", 0) } },
-                Destinations = new List<VideoDevice>() { new VideoDevice() { Id = new AliasIndexApiModel("TP1", 0) } }
+                Devices = new List<VideoDeviceViewModel>() { new VideoDeviceViewModel() { Id = "TP1" } },
+                Destinations = new List<VideoDeviceViewModel>() { new VideoDeviceViewModel() { Id = "TP1" } }
             };
 
             var commandResponse = _manager.SendCommand(commandViewModel);
@@ -65,7 +65,7 @@ namespace Avalanche.Api.Tests.Managers
             CommandViewModel commandViewModel = new CommandViewModel()
             {
                 CommandType = CommandTypes.EnterFullScreen,
-                Devices = new List<VideoDevice>() { new VideoDevice() { Id = new AliasIndexApiModel("TP1", 0) } }
+                Devices = new List<VideoDeviceViewModel>() { new VideoDeviceViewModel() { Id = "TP1" } }
             };
 
             var commandResponse = _manager.SendCommand(commandViewModel);
@@ -81,7 +81,7 @@ namespace Avalanche.Api.Tests.Managers
             CommandViewModel commandViewModel = new CommandViewModel()
             {
                 CommandType = CommandTypes.ExitFullScreen,
-                Devices = new List<VideoDevice>() { new VideoDevice() { Id = new AliasIndexApiModel("TP1", 0) } }
+                Devices = new List<VideoDeviceViewModel>() { new VideoDeviceViewModel() { Id = "TP1" } }
             };
 
             var commandResponse = _manager.SendCommand(commandViewModel);
@@ -103,7 +103,7 @@ namespace Avalanche.Api.Tests.Managers
             {
                 AdditionalInfo = "{\"X\":180.75,\"Y\":221,\"Width\":300,\"Height\":230.40625}",
                 CommandType = CommandTypes.ShowVideoRoutingPreview,
-                Devices = new List<VideoDevice>() { new VideoDevice() { Id = new AliasIndexApiModel("TP1", 0) } }
+                Devices = new List<VideoDeviceViewModel>() { new VideoDeviceViewModel() { Id = "TP1" } }
             };
 
             var commandResponse = _manager.SendCommand(commandViewModel);
@@ -126,7 +126,7 @@ namespace Avalanche.Api.Tests.Managers
             {
                 AdditionalInfo = "{\"X\":180.75,\"Y\":221,\"Width\":300,\"Height\":230.40625}",
                 CommandType = CommandTypes.ShowVideoRoutingPreview,
-                Devices = new List<VideoDevice>() { new VideoDevice() { Id = new AliasIndexApiModel("TP1", 0) } }
+                Devices = new List<VideoDeviceViewModel>() { new VideoDeviceViewModel() { Id = "TP1" } }
             };
 
             var commandResponse = _manager.SendCommand(commandViewModel);
@@ -142,7 +142,7 @@ namespace Avalanche.Api.Tests.Managers
             CommandViewModel commandViewModel = new CommandViewModel()
             {
                 CommandType = CommandTypes.HideVideoRoutingPreview,
-                Devices = new List<VideoDevice>() { new VideoDevice() { Id = new AliasIndexApiModel("TP1", 0) } }
+                Devices = new List<VideoDeviceViewModel>() { new VideoDeviceViewModel() { Id = "TP1" } }
             };
 
             var commandResponse = _manager.SendCommand(commandViewModel);

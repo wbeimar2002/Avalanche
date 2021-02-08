@@ -32,7 +32,7 @@ namespace Avalanche.Api.Tests.Managers
             CommandViewModel commandViewModel = new CommandViewModel()
             {
                 CommandType = CommandTypes.StartRecording,
-                Devices = new List<VideoDevice>() { new VideoDevice() { Id = new AliasIndexApiModel("TP1", 0) } }
+                Devices = new List<VideoDeviceViewModel>() { new VideoDeviceViewModel() { Id = "TP1" } }
             };
 
             var commandResponse = _manager.SendCommand(commandViewModel);
@@ -48,7 +48,7 @@ namespace Avalanche.Api.Tests.Managers
             CommandViewModel commandViewModel = new CommandViewModel()
             {
                 CommandType = CommandTypes.StopRecording,
-                Devices = new List<VideoDevice>() { new VideoDevice() { Id = new AliasIndexApiModel("TP1", 0) } }
+                Devices = new List<VideoDeviceViewModel>() { new VideoDeviceViewModel() { Id = "TP1" } }
             };
 
             var commandResponse = _manager.SendCommand(commandViewModel);
