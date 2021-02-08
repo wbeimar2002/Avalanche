@@ -49,9 +49,7 @@ namespace Avalanche.Api.Controllers.V1
             {
                 _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
 
-                command.User = User.GetUser();
-
-                var result = await _devicesManager.SendCommand(command, User.GetUser());
+                var result = await _devicesManager.SendCommand(command);
 
                 return Ok(result);
             }

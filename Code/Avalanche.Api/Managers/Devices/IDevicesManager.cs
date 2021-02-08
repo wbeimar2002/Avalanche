@@ -9,7 +9,7 @@ namespace Avalanche.Api.Managers.Devices
 {
     public interface IDevicesManager
     {
-        Task<List<CommandResponse>> SendCommand(CommandViewModel command, User user);
+        Task<List<CommandResponse>> SendCommand(CommandViewModel command);
         
         Task<IList<VideoSource>> GetRoutingSources();
         Task<VideoSource> GetAlternativeSource(string alias, int index);

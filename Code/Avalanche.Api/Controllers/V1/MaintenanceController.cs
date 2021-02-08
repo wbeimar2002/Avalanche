@@ -37,7 +37,7 @@ namespace Avalanche.Api.Controllers.V1
             try
             {
                 _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
-                await _maintenanceManager.SaveCategoryPolicies(User.GetUser(), section);
+                await _maintenanceManager.SaveCategoryPolicies(section);
 
                 return Ok();
             }
@@ -58,7 +58,7 @@ namespace Avalanche.Api.Controllers.V1
             try
             {
                 _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
-                await _maintenanceManager.SaveCategory(User.GetUser(), section);
+                await _maintenanceManager.SaveCategory(section);
 
                 return Ok();
             }
@@ -79,7 +79,7 @@ namespace Avalanche.Api.Controllers.V1
             try
             {
                 _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
-                await _maintenanceManager.SaveEntityChanges(User.GetUser(), list, DynamicListActions.Insert);
+                await _maintenanceManager.SaveEntityChanges(list, DynamicListActions.Insert);
 
                 return Ok();
             }
@@ -100,7 +100,7 @@ namespace Avalanche.Api.Controllers.V1
             try
             {
                 _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
-                await _maintenanceManager.SaveEntityChanges(User.GetUser(), list, DynamicListActions.Update);
+                await _maintenanceManager.SaveEntityChanges(list, DynamicListActions.Update);
 
                 return Ok();
             }
@@ -121,7 +121,7 @@ namespace Avalanche.Api.Controllers.V1
             try
             {
                 _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
-                await _maintenanceManager.SaveEntityChanges(User.GetUser(), list, DynamicListActions.Delete);
+                await _maintenanceManager.SaveEntityChanges(list, DynamicListActions.Delete);
 
                 return Ok();
             }
@@ -142,7 +142,7 @@ namespace Avalanche.Api.Controllers.V1
             try
             {
                 _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
-                var result = await _maintenanceManager.GetCategoryByKey(User.GetUser(), key);
+                var result = await _maintenanceManager.GetCategoryByKey(key);
 
                 return Ok(result);
             }
@@ -163,7 +163,7 @@ namespace Avalanche.Api.Controllers.V1
             try
             {
                 _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
-                var result = await _maintenanceManager.GetCategoryListByKey(User.GetUser(), key);
+                var result = await _maintenanceManager.GetCategoryListByKey(key);
 
                 return Ok(result);
             }

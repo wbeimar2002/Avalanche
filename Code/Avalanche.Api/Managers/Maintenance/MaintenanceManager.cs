@@ -2,10 +2,12 @@
 using Avalanche.Api.Helpers;
 using Avalanche.Api.Managers.Metadata;
 using Avalanche.Api.Services.Maintenance;
+using Avalanche.Api.Utilities;
 using Avalanche.Api.ViewModels;
 using Avalanche.Shared.Domain.Models;
 using Avalanche.Shared.Infrastructure.Enumerations;
 using Ism.Common.Core.Configuration.Models;
+using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json.Schema;
@@ -23,19 +25,28 @@ namespace Avalanche.Api.Managers.Maintenance
         readonly IStorageService _storageService;
         readonly IMetadataManager _metadataManager;
         readonly IMapper _mapper;
+        readonly IHttpContextAccessor _httpContextAccessor;
 
-        public MaintenanceManager(IStorageService storageService, IMetadataManager metadataManager, IMapper mapper)
+        readonly User user;
+        readonly ConfigurationContext configurationContext;
+
+        public MaintenanceManager(IStorageService storageService, 
+            IMetadataManager metadataManager, 
+            IMapper mapper, 
+            IHttpContextAccessor httpContextAccessor)
         {
             _storageService = storageService;
             _metadataManager = metadataManager;
+            _httpContextAccessor = httpContextAccessor;
             _mapper = mapper;
+
+            user = HttpContextUtilities.GetUser(_httpContextAccessor.HttpContext);
+            configurationContext = _mapper.Map<Shared.Domain.Models.User, ConfigurationContext>(user);
+            configurationContext.IdnId = Guid.NewGuid().ToString();
         }
 
-        public async Task SaveCategoryPolicies(User user, DynamicSectionViewModel category)
+        public async Task SaveCategoryPolicies(DynamicSectionViewModel category)
         {
-            var configurationContext = _mapper.Map<Shared.Domain.Models.User, ConfigurationContext>(user);
-            configurationContext.IdnId = Guid.NewGuid().ToString();
-
             await SaveJsonValues(category, configurationContext);
 
             SettingsHelper.CleanSettings(category);
@@ -43,38 +54,33 @@ namespace Avalanche.Api.Managers.Maintenance
             await _storageService.SaveJson(category.JsonKey, JsonConvert.SerializeObject(category), 1, configurationContext);
         }
 
-        public async Task SaveCategory(User user, DynamicSectionViewModel category)
+        public async Task SaveCategory(DynamicSectionViewModel category)
         {
-            var configurationContext = _mapper.Map<User, ConfigurationContext>(user);
-            configurationContext.IdnId = Guid.NewGuid().ToString();
-
-            await SaveSources(user, configurationContext, category);
+            await SaveSources(category);
 
             if (category.Sections != null)
             {
                 foreach (var section in category.Sections)
                 {
-                    await SaveSources(user, configurationContext, section);
+                    await SaveSources(section);
                 }
             }
 
             await SaveJsonValues(category, configurationContext);
         }
 
-        public async Task SaveEntityChanges(User user, DynamicListViewModel category, DynamicListActions action)
+        public async Task SaveEntityChanges(DynamicListViewModel category, DynamicListActions action)
         {
-            var configurationContext = _mapper.Map<User, ConfigurationContext>(user);
-            configurationContext.IdnId = Guid.NewGuid().ToString();
 
             if (category.SaveAsFile)
             {
-                await SaveCustomListFile(category, configurationContext);
+                await SaveCustomListFile(category);
             }
             else
                 await SaveCustomEntity(user, category, action);
         }
 
-        private async Task SaveCustomListFile(DynamicListViewModel category, ConfigurationContext configurationContext)
+        private async Task SaveCustomListFile(DynamicListViewModel category)
         {
             var result = JsonConvert.SerializeObject(new { Items = category.Data });
 
@@ -88,32 +94,30 @@ namespace Avalanche.Api.Managers.Maintenance
             }
         }
 
-        public async Task<DynamicSectionViewModel> GetCategoryByKey(User user, string key)
+        public async Task<DynamicSectionViewModel> GetCategoryByKey(string key)
         {
             var configurationContext = _mapper.Map<User, ConfigurationContext>(user);
             var category = await _storageService.GetJsonObject<DynamicSectionViewModel>(key, 1, configurationContext);
             var settingValues = await _storageService.GetJsonDynamic(key + "Values", 1, configurationContext);
 
-            var types = await _metadataManager.GetMetadata(user, MetadataTypes.SettingTypes);
+            var types = await _metadataManager.GetMetadata(MetadataTypes.SettingTypes);
             var policiesTypes = (await _storageService.GetJsonObject<ListContainerViewModel>("SettingsPolicies", 1, configurationContext)).Items;           
 
-            await SetSources(user, configurationContext, category, types);
+            await SetSources(category, types);
             SettingsHelper.SetSettingValues(category, settingValues, policiesTypes);
 
             if (category.Sections != null)
             {
-                await SetSettingsValues(user, configurationContext, category, settingValues, types, policiesTypes);
+                await SetSettingsValues(category, settingValues, types, policiesTypes);
             }
 
             category.JsonKey = key;
             return category;
         }
 
-        public async Task<DynamicListViewModel> GetCategoryListByKey(User user, string key)
+        public async Task<DynamicListViewModel> GetCategoryListByKey(string key)
         {
-            var configurationContext = _mapper.Map<User, ConfigurationContext>(user);
             var category = await _storageService.GetJsonObject<DynamicListViewModel>(key, 1, configurationContext);
-
             if (category.SaveAsFile)
             {
                 var values = await _storageService.GetJsonObject<DynamicListContainerViewModel>(category.SourceKey, 1, configurationContext);
@@ -123,13 +127,13 @@ namespace Avalanche.Api.Managers.Maintenance
                 {
                     if (!string.IsNullOrEmpty(item.SourceKey))
                     {
-                        item.SourceValues = await GetDynamicSourceValues(item.SourceKey, configurationContext, user);
+                        item.SourceValues = await GetDynamicSourceValues(item.SourceKey);
                     }
                 }
             }
             else
             {
-                category.Data = await GetData(user, category.SourceKey);
+                category.Data = await GetData(category.SourceKey);
 
                 foreach (var item in category.Properties)
                 {
@@ -137,7 +141,7 @@ namespace Avalanche.Api.Managers.Maintenance
 
                     if (!string.IsNullOrEmpty(item.SourceKey))
                     {
-                        item.SourceValues = await GetDynamicSourceValues(item.SourceKey, configurationContext, user);
+                        item.SourceValues = await GetDynamicSourceValues(item.SourceKey);
 
                         foreach (var element in category.Data)
                         {
@@ -180,14 +184,14 @@ namespace Avalanche.Api.Managers.Maintenance
             }
         }
 
-        private async Task<IList<KeyValuePairObjectViewModel>> GetDynamicSourceValues(string sourceKey, ConfigurationContext configurationContext, User user)
+        private async Task<IList<KeyValuePairObjectViewModel>> GetDynamicSourceValues(string sourceKey)
         {
             try
             {
                 switch (sourceKey)
                 {
                     case "Departments":
-                        var departments = await GetData(user, "Departments");
+                        var departments = await GetData("Departments");
                         return departments.Select(d => new KeyValuePairObjectViewModel()
                         {
                             Id = ((dynamic)d).Id.ToString(),
@@ -212,29 +216,29 @@ namespace Avalanche.Api.Managers.Maintenance
             }
         }
 
-        private async Task SetSettingsValues(User user, ConfigurationContext configurationContext, DynamicSectionViewModel rootSection, dynamic settingValues, IList<KeyValuePairViewModel> types, IList<KeyValuePairViewModel> policiesTypes)
+        private async Task SetSettingsValues(DynamicSectionViewModel rootSection, dynamic settingValues, IList<KeyValuePairViewModel> types, IList<KeyValuePairViewModel> policiesTypes)
         {
             foreach (var section in rootSection.Sections)
             {
                 var sectionValues = settingValues == null ? null : settingValues[section.JsonKey];
 
-                await SetSources(user, configurationContext, section, types);
+                await SetSources(section, types);
                 SettingsHelper.SetSettingValues(section, sectionValues, policiesTypes);
 
                 if (section.Sections != null)
                 {
-                    await SetSettingsValues(user, configurationContext, section, sectionValues, types, policiesTypes);
+                    await SetSettingsValues(section, sectionValues, types, policiesTypes);
                 }
             }
         }
 
-        public async Task<JObject> GetSettingValues(string key, User user)
+        public async Task<JObject> GetSettingValues(string key)
         {
             var configurationContext = _mapper.Map<Shared.Domain.Models.User, ConfigurationContext>(user);
             return await _storageService.GetJsonDynamic(key, 1, configurationContext);
         }
 
-        private async Task SetSources(User user, ConfigurationContext configurationContext, DynamicSectionViewModel category, IList<KeyValuePairViewModel> types)
+        private async Task SetSources(DynamicSectionViewModel category, IList<KeyValuePairViewModel> types)
         {
             if (category!= null && category.Settings != null)
             {
@@ -242,7 +246,7 @@ namespace Avalanche.Api.Managers.Maintenance
                 {
                     if (item.VisualStyle == VisualStyles.CustomList)
                     {
-                        item.CustomList = await GetCategoryListByKey(user, item.SourceKey);
+                        item.CustomList = await GetCategoryListByKey(item.SourceKey);
                     }
                     else
                     {
@@ -256,7 +260,7 @@ namespace Avalanche.Api.Managers.Maintenance
             }
         }
 
-        private async Task SaveSources(User user, ConfigurationContext configurationContext, DynamicSectionViewModel section)
+        private async Task SaveSources(DynamicSectionViewModel section)
         {
             if (section.Settings != null)
             {
@@ -269,7 +273,7 @@ namespace Avalanche.Api.Managers.Maintenance
                             var category = item.CustomList;
 
                             if (category.SaveAsFile)
-                                SaveCustomListFile(category, configurationContext);
+                                SaveCustomListFile(category);
                             else
                                 await SaveCustomEntities(user, category);
                         }
@@ -324,10 +328,10 @@ namespace Avalanche.Api.Managers.Maintenance
             switch (category.SourceKey)
             {
                 case "Departments":
-                    await SaveDepartments(user, action, category.Entity);
+                    await SaveDepartments(action, category.Entity);
                     break;
                 case "ProcedureTypes":
-                    await SaveProcedureTypes(user, action, category.Entity);
+                    await SaveProcedureTypes(action, category.Entity);
                     break;
                 default:
                     //TODO: Pending Exceptions strategy
@@ -342,19 +346,19 @@ namespace Avalanche.Api.Managers.Maintenance
                 case "Departments":
                     foreach (var item in category.NewData)
                     {
-                        await SaveDepartments(user, DynamicListActions.Insert, item);
+                        await SaveDepartments(DynamicListActions.Insert, item);
                     }
                     break;
                 case "ProcedureTypes":
                     foreach (var item in category.DeletedData)
                     {
-                        await SaveDepartments(user, DynamicListActions.Delete, item);
+                        await SaveDepartments(DynamicListActions.Delete, item);
                     }
                     break;
             }
         }
 
-        private async Task SaveProcedureTypes(User user, DynamicListActions action, dynamic source)
+        private async Task SaveProcedureTypes(DynamicListActions action, dynamic source)
         {
             var procedureType = new ProcedureType();
             procedureType.DepartmentId = Convert.ToInt32(source.Department?.Id);
@@ -364,10 +368,10 @@ namespace Avalanche.Api.Managers.Maintenance
             switch (action)
             {
                 case DynamicListActions.Insert:
-                    await _metadataManager.AddProcedureType(user, procedureType);
+                    await _metadataManager.AddProcedureType(procedureType);
                     break;
                 case DynamicListActions.Delete:
-                    await _metadataManager.DeleteProcedureType(user, procedureType);
+                    await _metadataManager.DeleteProcedureType(procedureType);
                     break;
                 default:
                     //TODO: Pending Exceptions strategy
@@ -375,7 +379,7 @@ namespace Avalanche.Api.Managers.Maintenance
             }
         }
 
-        private async Task SaveDepartments(User user, DynamicListActions action, dynamic source)
+        private async Task SaveDepartments(DynamicListActions action, dynamic source)
         {
             var department = new Department();
             Helpers.Mapper.Map(source, department);
@@ -383,22 +387,22 @@ namespace Avalanche.Api.Managers.Maintenance
             switch (action)
             {
                 case DynamicListActions.Insert:
-                    await _metadataManager.AddDepartment(user, department);
+                    await _metadataManager.AddDepartment(department);
                     break;
                 case DynamicListActions.Delete:
-                    await _metadataManager.DeleteDepartment(user, department.Id);
+                    await _metadataManager.DeleteDepartment(department.Id);
                     break;
                 default:
                     throw new ValidationException("Method Not Allowed");
             }
         }
 
-        private async Task<List<ExpandoObject>> GetData(User user, string sourceKey)
+        private async Task<List<ExpandoObject>> GetData(string sourceKey)
         {
             switch (sourceKey)
             {
                 case "Departments":
-                    var departments = await _metadataManager.GetAllDepartments(user);
+                    var departments = await _metadataManager.GetAllDepartments();
 
                     return  departments
                         .Select(item =>
@@ -411,7 +415,7 @@ namespace Avalanche.Api.Managers.Maintenance
                         .ToList();
                 case "ProcedureTypes":
 
-                    var procedureTypes = await _metadataManager.GetProcedureTypesByDepartment(user, 1);
+                    var procedureTypes = await _metadataManager.GetProcedureTypesByDepartment(1);
 
                     return procedureTypes
                         .Select(item =>

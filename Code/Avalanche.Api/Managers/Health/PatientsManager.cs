@@ -12,6 +12,7 @@ using Ism.Common.Core.Configuration.Models;
 using Ism.PatientInfoEngine.V1.Protos;
 using Ism.Storage.Core.DataManagement.V1.Protos;
 using Ism.SystemState.Client;
+using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -27,13 +28,18 @@ namespace Avalanche.Api.Managers.Health
         readonly IMapper _mapper;
         readonly IDataManagementService _dataManagementService;
         readonly IStateClient _stateClient;
+        readonly IHttpContextAccessor _httpContextAccessor;
+
+        readonly User user;
+        readonly ConfigurationContext configurationContext;
 
         public PatientsManager(IPieService pieService, 
             IAccessInfoFactory accessInfoFactory,
             IStorageService storageService,
             IMapper mapper, 
             IDataManagementService dataManagementService,
-            IStateClient stateClient)
+            IStateClient stateClient,
+            IHttpContextAccessor httpContextAccessor)
         {
             _pieService = pieService;
             _storageService = storageService;
@@ -41,9 +47,14 @@ namespace Avalanche.Api.Managers.Health
             _dataManagementService = dataManagementService;
             _mapper = mapper;
             _stateClient = stateClient;
+            _httpContextAccessor = httpContextAccessor;
+
+            user = HttpContextUtilities.GetUser(_httpContextAccessor.HttpContext);
+            configurationContext = _mapper.Map<Shared.Domain.Models.User, ConfigurationContext>(user);
+            configurationContext.IdnId = Guid.NewGuid().ToString();
         }
 
-        public async Task<PatientViewModel> RegisterPatient(PatientViewModel newPatient, Avalanche.Shared.Domain.Models.User user)
+        public async Task<PatientViewModel> RegisterPatient(PatientViewModel newPatient)
         {
             Preconditions.ThrowIfNull(nameof(newPatient), newPatient);
             Preconditions.ThrowIfNull(nameof(newPatient.MRN), newPatient.MRN);
@@ -57,7 +68,6 @@ namespace Avalanche.Api.Managers.Health
             var accessInfo = _accessInfoFactory.GenerateAccessInfo();
             newPatient.AccessInformation = _mapper.Map<AccessInfo>(accessInfo);
 
-            var configurationContext = _mapper.Map<Avalanche.Shared.Domain.Models.User, ConfigurationContext>(user);
             var setupSettings = await _storageService.GetJsonDynamic("SetupSettingsValues", 1, configurationContext);
 
             //TODO: Pending facility
@@ -88,9 +98,8 @@ namespace Avalanche.Api.Managers.Health
             return response;
         }
 
-        public async Task<PatientViewModel> QuickPatientRegistration(Avalanche.Shared.Domain.Models.User user)
+        public async Task<PatientViewModel> QuickPatientRegistration()
         {
-            var configurationContext = _mapper.Map<Avalanche.Shared.Domain.Models.User, ConfigurationContext>(user);
             var setupSettings = await _storageService.GetJsonDynamic("SetupSettingsValues", 1, configurationContext);
             string quickRegistrationDateFormat = setupSettings.Registration.Quick.DateFormat;
             string formattedDate = DateTime.UtcNow.ToLocalTime().ToString(quickRegistrationDateFormat);
@@ -137,7 +146,7 @@ namespace Avalanche.Api.Managers.Health
             return _mapper.Map<Ism.Storage.Core.PatientList.V1.Protos.AddPatientRecordResponse, PatientViewModel>(result);
         }
 
-        public async Task UpdatePatient(PatientViewModel existingPatient, Avalanche.Shared.Domain.Models.User user)
+        public async Task UpdatePatient(PatientViewModel existingPatient)
         {
             Preconditions.ThrowIfNull(nameof(existingPatient), existingPatient);
             Preconditions.ThrowIfNull(nameof(existingPatient.Id), existingPatient.Id);
@@ -149,7 +158,6 @@ namespace Avalanche.Api.Managers.Health
             Preconditions.ThrowIfNull(nameof(existingPatient.Sex.Id), existingPatient.Sex.Id);
             Preconditions.ThrowIfNull(nameof(existingPatient.ProcedureType.Name), existingPatient.ProcedureType.Name);
 
-            var configurationContext = _mapper.Map<Avalanche.Shared.Domain.Models.User, ConfigurationContext>(user);
             var setupSettings = await _storageService.GetJsonDynamic("SetupSettingsValues", 1, configurationContext);
 
             var accessInfo = _accessInfoFactory.GenerateAccessInfo();

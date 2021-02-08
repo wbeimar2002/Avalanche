@@ -10,6 +10,7 @@ using Avalanche.Api.ViewModels;
 using Avalanche.Shared.Domain.Models;
 using Ism.Common.Core.Configuration.Models;
 using Ism.SystemState.Client;
+using Microsoft.AspNetCore.Http;
 using Moq;
 using NUnit.Framework;
 using System;
@@ -28,6 +29,7 @@ namespace Avalanche.Api.Tests.Managers
         Mock<IAccessInfoFactory> _accessInfoFactory;
         Mock<IDataManagementService> _dataManagementService;
         Mock<IStateClient> _stateClient;
+        Mock<IHttpContextAccessor> _httpContextAccessor;
 
         IMapper _mapper;
         PatientsManager _manager;
@@ -40,6 +42,7 @@ namespace Avalanche.Api.Tests.Managers
             _accessInfoFactory = new Mock<IAccessInfoFactory>();
             _dataManagementService = new Mock<IDataManagementService>();
             _stateClient = new Mock<IStateClient>();
+            _httpContextAccessor = new Mock<IHttpContextAccessor>();
 
             var config = new MapperConfiguration(cfg =>
             {
@@ -47,7 +50,7 @@ namespace Avalanche.Api.Tests.Managers
             });
 
             _mapper = config.CreateMapper();
-            _manager = new PatientsManager(_pieService.Object, _accessInfoFactory.Object, _storageService.Object, _mapper, _dataManagementService.Object, _stateClient.Object);
+            _manager = new PatientsManager(_pieService.Object, _accessInfoFactory.Object, _storageService.Object, _mapper, _dataManagementService.Object, _stateClient.Object, _httpContextAccessor.Object);
         }
 
         public static IEnumerable<TestCaseData> NewPatientViewModelWrongDataTestCases
@@ -209,12 +212,9 @@ namespace Avalanche.Api.Tests.Managers
         
         public void RegisterPatientShouldFailIfNullOrIncompleteData(PatientViewModel newPatient)
         {
-            Fixture fixture = new Fixture();
-            var user = fixture.Create<User>();
-
             _pieService.Setup(mock => mock.RegisterPatient(new Ism.Storage.Core.PatientList.V1.Protos.AddPatientRecordRequest()));
 
-            Task Act() => _manager.RegisterPatient(newPatient, user);
+            Task Act() => _manager.RegisterPatient(newPatient);
 
             Assert.That(Act, Throws.TypeOf<ArgumentNullException>());
 
@@ -265,9 +265,6 @@ namespace Avalanche.Api.Tests.Managers
                 }
             };
 
-            Fixture fixture = new Fixture();
-            var user = fixture.Create<User>();
-
             _dataManagementService.Setup(mock => mock.GetProcedureType(It.IsAny<Ism.Storage.Core.DataManagement.V1.Protos.GetProcedureTypeRequest>()))
                 .ReturnsAsync(new Ism.Storage.Core.DataManagement.V1.Protos.ProcedureTypeMessage()
                 {
@@ -280,7 +277,7 @@ namespace Avalanche.Api.Tests.Managers
 
             _pieService.Setup(mock => mock.RegisterPatient(It.IsAny<Ism.Storage.Core.PatientList.V1.Protos.AddPatientRecordRequest>())).ReturnsAsync(response);
 
-            var result = _manager.RegisterPatient(newPatient, user);
+            var result = _manager.RegisterPatient(newPatient);
 
             _dataManagementService.Verify(mock => mock.GetProcedureType(It.IsAny<Ism.Storage.Core.DataManagement.V1.Protos.GetProcedureTypeRequest>()), Times.Once);
             _dataManagementService.Verify(mock => mock.AddProcedureType(It.IsAny<Ism.Storage.Core.DataManagement.V1.Protos.AddProcedureTypeRequest>()), Times.Once);
@@ -331,9 +328,6 @@ namespace Avalanche.Api.Tests.Managers
                 }
             };
 
-            Fixture fixture = new Fixture();
-            var user = fixture.Create<User>();
-
             _dataManagementService.Setup(mock => mock.GetProcedureType(It.IsAny<Ism.Storage.Core.DataManagement.V1.Protos.GetProcedureTypeRequest>()))
                 .ReturnsAsync(new Ism.Storage.Core.DataManagement.V1.Protos.ProcedureTypeMessage()
                 {
@@ -346,7 +340,7 @@ namespace Avalanche.Api.Tests.Managers
 
             _pieService.Setup(mock => mock.RegisterPatient(It.IsAny<Ism.Storage.Core.PatientList.V1.Protos.AddPatientRecordRequest>())).ReturnsAsync(response);
 
-            var result = _manager.RegisterPatient(newPatient, user);
+            var result = _manager.RegisterPatient(newPatient);
 
             _dataManagementService.Verify(mock => mock.GetProcedureType(It.IsAny<Ism.Storage.Core.DataManagement.V1.Protos.GetProcedureTypeRequest>()), Times.Once);
             _dataManagementService.Verify(mock => mock.AddProcedureType(It.IsAny<Ism.Storage.Core.DataManagement.V1.Protos.AddProcedureTypeRequest>()), Times.Never);
@@ -356,9 +350,6 @@ namespace Avalanche.Api.Tests.Managers
         [Test]
         public void QuickPatientRegistrationWorks()
         {
-            Fixture fixture = new Fixture();
-            var user = fixture.Create<User>();
-
             var setupSettings = new 
             {
                 Registration = new 
@@ -374,7 +365,7 @@ namespace Avalanche.Api.Tests.Managers
 
             _pieService.Setup(mock => mock.RegisterPatient(It.IsAny<Ism.Storage.Core.PatientList.V1.Protos.AddPatientRecordRequest>()));
 
-            var result = _manager.QuickPatientRegistration(user);
+            var result = _manager.QuickPatientRegistration();
 
             _pieService.Verify(mock => mock.RegisterPatient(It.IsAny<Ism.Storage.Core.PatientList.V1.Protos.AddPatientRecordRequest>()), Times.Once);
         }
@@ -383,9 +374,6 @@ namespace Avalanche.Api.Tests.Managers
 
         public void UpdatePatientShouldFailIfNullOrIncompleteData(PatientViewModel patient)
         {
-            Fixture fixture = new Fixture();
-            var user = fixture.Create<User>();
-
             var setupSettings = new 
             {
                 Registration = new 
@@ -400,7 +388,7 @@ namespace Avalanche.Api.Tests.Managers
             _pieService.Setup(mock => mock.UpdatePatient(new Ism.Storage.Core.PatientList.V1.Protos.UpdatePatientRecordRequest()));
             _storageService.Setup(mock => mock.GetJsonDynamic("SetupSettingsValues", 1, It.IsAny<ConfigurationContext>())).ReturnsAsync(setupSettings);
 
-            Task Act() => _manager.UpdatePatient(patient, user);
+            Task Act() => _manager.UpdatePatient(patient);
             Assert.That(Act, Throws.TypeOf<ArgumentNullException>());
 
             _pieService.Verify(mock => mock.UpdatePatient(new Ism.Storage.Core.PatientList.V1.Protos.UpdatePatientRecordRequest()), Times.Never);
@@ -444,9 +432,6 @@ namespace Avalanche.Api.Tests.Managers
                 }
             };
 
-            Fixture fixture = new Fixture();
-            var user = fixture.Create<User>();
-
             _dataManagementService.Setup(mock => mock.GetProcedureType(It.IsAny<Ism.Storage.Core.DataManagement.V1.Protos.GetProcedureTypeRequest>()))
                 .ReturnsAsync(new Ism.Storage.Core.DataManagement.V1.Protos.ProcedureTypeMessage()
                 {
@@ -458,7 +443,7 @@ namespace Avalanche.Api.Tests.Managers
             _storageService.Setup(mock => mock.GetJsonDynamic("SetupSettingsValues", 1, It.IsAny<ConfigurationContext>())).ReturnsAsync(setupSettings);
             _pieService.Setup(mock => mock.UpdatePatient(It.IsAny<Ism.Storage.Core.PatientList.V1.Protos.UpdatePatientRecordRequest>()));
 
-            var result = _manager.UpdatePatient(existingPatient, user);
+            var result = _manager.UpdatePatient(existingPatient);
 
             _dataManagementService.Verify(mock => mock.GetProcedureType(It.IsAny<Ism.Storage.Core.DataManagement.V1.Protos.GetProcedureTypeRequest>()), Times.Once);
             _dataManagementService.Verify(mock => mock.AddProcedureType(It.IsAny<Ism.Storage.Core.DataManagement.V1.Protos.AddProcedureTypeRequest>()), Times.Once);
@@ -511,9 +496,6 @@ namespace Avalanche.Api.Tests.Managers
                 }
             };
 
-            Fixture fixture = new Fixture();
-            var user = fixture.Create<User>();
-
             _dataManagementService.Setup(mock => mock.GetProcedureType(It.IsAny< Ism.Storage.Core.DataManagement.V1.Protos.GetProcedureTypeRequest>()))
                 .ReturnsAsync(new Ism.Storage.Core.DataManagement.V1.Protos.ProcedureTypeMessage()
                 {
@@ -525,7 +507,7 @@ namespace Avalanche.Api.Tests.Managers
             _storageService.Setup(mock => mock.GetJsonDynamic("SetupSettingsValues", 1, It.IsAny<ConfigurationContext>())).ReturnsAsync(setupSettings);
             _pieService.Setup(mock => mock.UpdatePatient(It.IsAny<Ism.Storage.Core.PatientList.V1.Protos.UpdatePatientRecordRequest>()));
 
-            var result = _manager.UpdatePatient(existingPatient, user);
+            var result = _manager.UpdatePatient(existingPatient);
 
             _dataManagementService.Verify(mock => mock.GetProcedureType(It.IsAny<Ism.Storage.Core.DataManagement.V1.Protos.GetProcedureTypeRequest>()), Times.Once);
             _dataManagementService.Verify(mock => mock.AddProcedureType(It.IsAny<Ism.Storage.Core.DataManagement.V1.Protos.AddProcedureTypeRequest>()), Times.Never);

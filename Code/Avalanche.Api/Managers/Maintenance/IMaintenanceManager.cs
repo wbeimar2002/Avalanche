@@ -9,11 +9,11 @@ namespace Avalanche.Api.Managers.Maintenance
 {
     public interface IMaintenanceManager
     {
-        Task SaveCategory(User user, DynamicSectionViewModel category);
-        Task SaveEntityChanges(User user, DynamicListViewModel category, DynamicListActions action);
-        Task<DynamicSectionViewModel> GetCategoryByKey(User user, string key);
-        Task<DynamicListViewModel> GetCategoryListByKey(User user, string key);
-        Task<JObject> GetSettingValues(string key, User user);
-        Task SaveCategoryPolicies(User user, DynamicSectionViewModel category);
+        Task SaveCategory(DynamicSectionViewModel category);
+        Task SaveEntityChanges(DynamicListViewModel category, DynamicListActions action);
+        Task<DynamicSectionViewModel> GetCategoryByKey(string key);
+        Task<DynamicListViewModel> GetCategoryListByKey(string key);
+        Task<JObject> GetSettingValues(string key);
+        Task SaveCategoryPolicies(DynamicSectionViewModel category);
     }
 }

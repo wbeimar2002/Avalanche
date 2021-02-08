@@ -62,7 +62,7 @@ namespace Avalanche.Api.Tests.Controllers
         [Test]
         public void GetSexesShouldReturnBadResultIfFails()
         {
-            _metadataManager.Setup(mock => mock.GetMetadata(It.IsAny<User>(), MetadataTypes.Sex)).Throws(It.IsAny<Exception>());
+            _metadataManager.Setup(mock => mock.GetMetadata(MetadataTypes.Sex)).Throws(It.IsAny<Exception>());
 
             var badResult = _controller.GetSexes(_environment.Object);
 
@@ -94,7 +94,7 @@ namespace Avalanche.Api.Tests.Controllers
         [Test]
         public void GetContentTypesShouldReturnBadResultIfFails()
         {
-            _metadataManager.Setup(mock => mock.GetMetadata(It.IsAny<User>(), MetadataTypes.PgsVideoFiles)).Throws(It.IsAny<Exception>());
+            _metadataManager.Setup(mock => mock.GetMetadata(MetadataTypes.PgsVideoFiles)).Throws(It.IsAny<Exception>());
 
             var badResult = _controller.GetPgsVideoFiles(_environment.Object);
 
@@ -126,7 +126,7 @@ namespace Avalanche.Api.Tests.Controllers
         [Test]
         public void GetSourceTypesShouldReturnBadResultIfFails()
         {
-            _metadataManager.Setup(mock => mock.GetMetadata(It.IsAny<User>(), MetadataTypes.SourceTypes)).Throws(It.IsAny<Exception>());
+            _metadataManager.Setup(mock => mock.GetMetadata(MetadataTypes.SourceTypes)).Throws(It.IsAny<Exception>());
 
             var badResult = _controller.GetSourceTypes(_environment.Object);
 
@@ -158,7 +158,7 @@ namespace Avalanche.Api.Tests.Controllers
         [Test]
         public void GetDepartmentsShouldReturnBadResultIfFails()
         {
-            _metadataManager.Setup(mock => mock.GetAllDepartments(It.IsAny<User>())).Throws(It.IsAny<Exception>());
+            _metadataManager.Setup(mock => mock.GetAllDepartments()).Throws(It.IsAny<Exception>());
 
             var badResult = _controller.GetDepartments(_environment.Object);
 
@@ -190,7 +190,7 @@ namespace Avalanche.Api.Tests.Controllers
         [Test]
         public void GetProcedureTypesShouldReturnBadResultIfFails()
         {
-            _metadataManager.Setup(mock => mock.GetProcedureTypesByDepartment(It.IsAny<User>(), null)).Throws(It.IsAny<Exception>());
+            _metadataManager.Setup(mock => mock.GetProcedureTypesByDepartment(null)).Throws(It.IsAny<Exception>());
 
             var badResult = _controller.GetProcedureTypes(_environment.Object);
 
@@ -222,7 +222,7 @@ namespace Avalanche.Api.Tests.Controllers
         [Test]
         public void GetProcedureTypesByDepartmentShouldReturnBadResultIfFails()
         {
-            _metadataManager.Setup(mock => mock.GetProcedureTypesByDepartment(It.IsAny<User>(), It.IsAny<int>())).Throws(It.IsAny<Exception>());
+            _metadataManager.Setup(mock => mock.GetProcedureTypesByDepartment(It.IsAny<int>())).Throws(It.IsAny<Exception>());
 
             var badResult = _controller.GetProcedureTypesByDepartment(It.IsAny<int>(), _environment.Object);
 

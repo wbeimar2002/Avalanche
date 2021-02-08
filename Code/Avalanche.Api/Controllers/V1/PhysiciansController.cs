@@ -47,7 +47,7 @@ namespace Avalanche.Api.Controllers.V1
             {
                 _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
 
-                var result = await _metadataManager.GetDynamicSource(User.GetUser(), "PhysiciansData");
+                var result = await _metadataManager.GetDynamicSource("PhysiciansData");
                 return Ok(result);
             }
             catch (Exception exception)

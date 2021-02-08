@@ -10,16 +10,16 @@ namespace Avalanche.Api.Managers.Metadata
 {
     public interface IMetadataManager
     {
-        Task<IList<KeyValuePairViewModel>> GetMetadata(User user, MetadataTypes type);
-        Task<IList<DynamicSourceKeyValuePairViewModel>> GetSource(User user, MetadataTypes settingTypes);
-        Task<Department> AddDepartment(User user, Department department);
-        Task DeleteDepartment(User user, int departmentId);
-        Task<IList<Department>> GetAllDepartments(User user);
-        Task<ProcedureType> AddProcedureType(User user, ProcedureType procedureType);
-        Task DeleteProcedureType(User user, ProcedureType procedureType);
-        Task<List<ProcedureType>> GetProcedureTypesByDepartment(User user, int? departmentId);
-        Task ValidateDepartmentsSupport(User user);
-        Task ValidateDepartmentsSupport(User user, int? departmentId);
-        Task<ExpandoObject> GetDynamicSource(User user, string key);
+        Task<IList<KeyValuePairViewModel>> GetMetadata(MetadataTypes type);
+        Task<IList<DynamicSourceKeyValuePairViewModel>> GetSource(MetadataTypes settingTypes);
+        Task<Department> AddDepartment(Department department);
+        Task DeleteDepartment(int departmentId);
+        Task<IList<Department>> GetAllDepartments();
+        Task<ProcedureType> AddProcedureType(ProcedureType procedureType);
+        Task DeleteProcedureType(ProcedureType procedureType);
+        Task<List<ProcedureType>> GetProcedureTypesByDepartment(int? departmentId);
+        Task ValidateDepartmentsSupport();
+        Task ValidateDepartmentsSupport(int? departmentId);
+        Task<ExpandoObject> GetDynamicSource(string key);
     }
 }
