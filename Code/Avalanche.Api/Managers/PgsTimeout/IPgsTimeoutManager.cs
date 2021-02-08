@@ -21,18 +21,21 @@ namespace Avalanche.Api.Managers.PgsTimeout
         /// <returns></returns>
         Task StopPgs();
 
+
+        #region PgsTimeout player methods
+
         /// <summary>
         /// Returns a list of PGS video files
         /// </summary>
         /// <returns></returns>
-        Task<IList<string>> GetPgsVideoFiles();
+        Task<IList<PgsVideoFile>> GetPgsVideoFiles();
 
         /// <summary>
         /// Sets the current video file of the PGS player
         /// </summary>
         /// <param name="path"></param>
         /// <returns></returns>
-        Task SetPgsVideoFile(string path);
+        Task SetPgsVideoFile(PgsVideoFile path);
 
         /// <summary>
         /// Sets the playback position to the specified value
@@ -43,23 +46,41 @@ namespace Avalanche.Api.Managers.PgsTimeout
         Task SetPlaybackPosition(double position);
 
         /// <summary>
-        /// Gets a collection of configured PGS displays
+        /// Gets the current pgs volume level. Range is from 0-1
         /// </summary>
         /// <returns></returns>
-        Task<IList<Output>> GetPgsOutputs();
+        Task<double> GetPgsVolume();
 
-        // TODO: implement volume control
-        // will PGS volume go thru something like a virtual audio device? 
-        // or can we simply set the volume on the MediaElement in the player?
-        // same for muted
-        // is PGS audio its own thing or can audio itself be an isolated element?
+        /// <summary>
+        /// Sets the pgs player volume level. Range is from 0-1
+        /// </summary>
+        /// <param name="volume"></param>
+        /// <returns></returns>
         Task SetPgsVolume(double volume);
 
-        // this is internal to the pgs player
-        // pgs manager calls into wpf app to tell it this
-        //Task SetPgsTimeoutPlayerMode(TimeoutModes mode);
+        /// <summary>
+        /// Returns true if PGS is muted
+        /// </summary>
+        /// <returns></returns>
+        Task<bool> GetPgsMute();
 
-        // TODO: methods for the checkbox
+        /// <summary>
+        /// Set to true to mute PGS audio
+        /// </summary>
+        /// <param name="mute"></param>
+        /// <returns></returns>
+        Task SetPgsMute(bool mute);
+
+        #endregion
+
+        #region api methods
+
+        /// <summary>
+        /// Returns true/false if the specified display is checked
+        /// </summary>
+        /// <param name="displayId"></param>
+        /// <returns></returns>
+        Task<bool> GetPgsStateForSink(AliasIndexApiModel displayId);
 
         /// <summary>
         /// Should map to checked/unchecked when toggling PGS from a display
@@ -67,8 +88,21 @@ namespace Avalanche.Api.Managers.PgsTimeout
         /// <param name="displayId"></param>
         /// <param name="enabled"></param>
         /// <returns></returns>
-        Task SetPgsStateForDisplay(AliasIndexApiModel displayId, bool enabled);
+        Task SetPgsStateForSink(AliasIndexApiModel displayId, bool enabled);
 
-        Task<List<Output>> GetTimeoutOutputs();
+        /// <summary>
+        /// Gets a collection of configured PGS displays
+        /// </summary>
+        /// <returns></returns>
+        Task<IList<VideoSink>> GetPgsSinks();
+
+        // TODO: determine if this can be removed, timeout displays aren't changed at runtime
+        /// <summary>
+        /// Gets a collection of configured timeout sinks
+        /// </summary>
+        /// <returns></returns>
+        Task<IList<VideoSink>> GetTimeoutSinks();
+
+        #endregion
     }
 }

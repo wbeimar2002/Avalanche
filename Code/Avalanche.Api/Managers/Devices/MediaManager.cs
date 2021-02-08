@@ -30,11 +30,11 @@ namespace Avalanche.Api.Managers.Devices
             await Task.CompletedTask;
         }
 
-        public async Task<IList<Device>> GetSourceStreams()
+        public async Task<IList<VideoDevice>> GetSourceStreams()
         {
             //TODO: Check this
             var result = await _mediaService.GetSourceStreamsAsync();
-            IList<Device> listResult = _mapper.Map<IList<Ism.Streaming.V1.Protos.WebRtcSourceMessage>, IList<Device>>(result.Sources);
+            IList<VideoDevice> listResult = _mapper.Map<IList<Ism.Streaming.V1.Protos.WebRtcSourceMessage>, IList<VideoDevice>>(result.Sources);
             return listResult;
         }
 

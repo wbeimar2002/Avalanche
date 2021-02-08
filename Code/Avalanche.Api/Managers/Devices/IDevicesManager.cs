@@ -11,8 +11,8 @@ namespace Avalanche.Api.Managers.Devices
     {
         Task<List<CommandResponse>> SendCommand(CommandViewModel command, User user);
         
-        Task<IList<Source>> GetOperationsSources();
-        Task<Source> GetAlternativeSource(string alias, int index);
-        Task<IList<Output>> GetOperationsOutputs();
+        Task<IList<VideoSource>> GetRoutingSources();
+        Task<VideoSource> GetAlternativeSource(string alias, int index);
+        Task<IList<VideoSink>> GetRoutingSinks();
     }
 }

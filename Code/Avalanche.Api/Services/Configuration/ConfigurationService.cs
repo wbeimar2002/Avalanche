@@ -20,9 +20,9 @@ namespace Avalanche.Api.Services.Configuration
             return Environment.GetEnvironmentVariable(variableName);
         }
 
-        public T GetValue<T>(string key)
+        public T GetSection<T>(string key)
         {
-            return _configuration.GetValue<T>(key);
+            return _configuration.GetSection(key).Get<T>(x => x.BindNonPublicProperties = true);
         }
     }
 }

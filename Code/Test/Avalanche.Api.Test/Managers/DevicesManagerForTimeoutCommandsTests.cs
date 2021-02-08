@@ -30,7 +30,7 @@ namespace Avalanche.Api.Tests.Managers
             CommandViewModel commandViewModel = new CommandViewModel()
             {
                 CommandType = CommandTypes.TimeoutPlayPdfSlides,
-                Devices = new List<Device>() { new Device() { Id = "Timeout" } }
+                Devices = new List<VideoDevice>() { new VideoDevice() { Id = new AliasIndexApiModel("Timeout", 0) } }
             };
 
             var commandResponse = _manager.SendCommand(commandViewModel);
@@ -46,10 +46,10 @@ namespace Avalanche.Api.Tests.Managers
             CommandViewModel commandViewModel = new CommandViewModel()
             {
                 CommandType = CommandTypes.TimeoutStopPdfSlides,
-                Devices = new List<Device>() { new Device() { Id = "Timeout" } }
+                Devices = new List<VideoDevice>() { new VideoDevice() { Id = new AliasIndexApiModel("Timeout", 0) } }
             };
 
-            var pgsSettings = new 
+            var pgsSettings = new
             {
                 PgsVideoAlwaysOn = true
             };
@@ -69,10 +69,10 @@ namespace Avalanche.Api.Tests.Managers
             CommandViewModel commandViewModel = new CommandViewModel()
             {
                 CommandType = CommandTypes.TimeoutStopPdfSlides,
-                Devices = new List<Device>() { new Device() { Id = "Timeout" } }
+                Devices = new List<VideoDevice>() { new VideoDevice() { Id = new AliasIndexApiModel("Timeout", 0) } }
             };
 
-            var pgsSettings = new 
+            var pgsSettings = new
             {
                 PgsVideoAlwaysOn = false
             };
@@ -92,9 +92,9 @@ namespace Avalanche.Api.Tests.Managers
             CommandViewModel commandViewModel = new CommandViewModel()
             {
                 CommandType = CommandTypes.TimeoutNextPdfSlide,
-                Devices = new List<Device>() { new Device() { Id = "Timeout" } }
+                Devices = new List<VideoDevice>() { new VideoDevice() { Id = new AliasIndexApiModel("Timeout", 0) } }
             };
-            
+
             var commandResponse = _manager.SendCommand(commandViewModel);
 
             _mediaService.Verify(mock => mock.NextPageAsync(), Times.Once);
@@ -108,7 +108,7 @@ namespace Avalanche.Api.Tests.Managers
             CommandViewModel commandViewModel = new CommandViewModel()
             {
                 CommandType = CommandTypes.TimeoutPreviousPdfSlide,
-                Devices = new List<Device>() { new Device() { Id = "Timeout" } }
+                Devices = new List<VideoDevice>() { new VideoDevice() { Id = new AliasIndexApiModel("Timeout", 0) } }
             };
 
             var commandResponse = _manager.SendCommand(commandViewModel);
@@ -124,7 +124,7 @@ namespace Avalanche.Api.Tests.Managers
             CommandViewModel commandViewModel = new CommandViewModel()
             {
                 CommandType = CommandTypes.TimeoutSetCurrentSlide,
-                Devices = new List<Device>() { new Device() { Id = "Testing" } },
+                Devices = new List<VideoDevice>() { new VideoDevice() { Id = new AliasIndexApiModel("Testing", 0) } },
                 Message = "0"
             };
 

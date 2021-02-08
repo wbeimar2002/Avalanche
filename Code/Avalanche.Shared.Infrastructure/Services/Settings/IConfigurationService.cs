@@ -7,7 +7,7 @@ namespace Avalanche.Shared.Infrastructure.Services.Settings
 {
     public interface IConfigurationService
     {
-        T GetValue<T>(string key);
+        T GetSection<T>(string key);
         string GetEnvironmentVariable(string variableName);
     }
 }

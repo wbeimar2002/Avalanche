@@ -17,8 +17,8 @@ namespace Avalanche.Api.Managers.Devices
             {
                 await _routingService.RouteVideo(new Ism.Routing.V1.Protos.RouteVideoRequest()
                 {
-                    Sink = _mapper.Map<Device, Ism.Routing.V1.Protos.AliasIndexMessage>(item),
-                    Source = _mapper.Map<Device, Ism.Routing.V1.Protos.AliasIndexMessage>(command.Device),
+                    Sink = _mapper.Map<VideoDevice, Ism.Routing.V1.Protos.AliasIndexMessage>(item),
+                    Source = _mapper.Map<VideoDevice, Ism.Routing.V1.Protos.AliasIndexMessage>(command.Device),
                 });
             }
 
@@ -29,7 +29,7 @@ namespace Avalanche.Api.Managers.Devices
         {
             await _routingService.RouteVideo(new Ism.Routing.V1.Protos.RouteVideoRequest()
             {
-                Sink = _mapper.Map<Device, Ism.Routing.V1.Protos.AliasIndexMessage>(command.Device),
+                Sink = _mapper.Map<VideoDevice, Ism.Routing.V1.Protos.AliasIndexMessage>(command.Device),
                 Source = new Ism.Routing.V1.Protos.AliasIndexMessage(),
             });
 
@@ -50,7 +50,7 @@ namespace Avalanche.Api.Managers.Devices
         {
             await _routingService.EnterFullScreen(new Ism.Routing.V1.Protos.EnterFullScreenRequest()
             {
-                Source = _mapper.Map<Device, Ism.Routing.V1.Protos.AliasIndexMessage>(command.Device),
+                Source = _mapper.Map<VideoDevice, Ism.Routing.V1.Protos.AliasIndexMessage>(command.Device),
                 UserInterfaceId = Convert.ToInt32(command.AdditionalInfo)
             });
 

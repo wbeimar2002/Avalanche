@@ -10,28 +10,28 @@ namespace Avalanche.Shared.Domain.Models
         /// <summary>
         /// Id of the video source to use for PGS
         /// </summary>
-        AliasIndexApiModel PgsSource { get; set; }
+        public AliasIndexApiModel PgsSource { get; set; }
 
         /// <summary>
         /// List of displays to route PGS to
         /// </summary>
-        public List<AliasIndexApiModel> PgsDisplays { get; set; }
+        public List<AliasIndexApiModel> PgsSinks { get; set; }
 
         /// <summary>
         /// Id of the video source to use for timeout
         /// If timeout is a pdf file, this should be the same as the PGS source
         /// If not, it is typically nurse pc
         /// </summary>
-        AliasIndexApiModel TimeoutSource { get; set; }
+        public AliasIndexApiModel TimeoutSource { get; set; }
 
         /// <summary>
         /// Is timeout a pdf file or video source?
         /// </summary>
-        TimeoutMode TimeoutMode { get; set; }
+        public TimeoutMode TimeoutMode { get; set; }
 
         /// <summary>
         /// List of displays to send timeout to
         /// </summary>
-        public List<AliasIndexApiModel> TimeoutDisplays { get; set; }
+        public List<AliasIndexApiModel> TimeoutSinks { get; set; }
     }
 }

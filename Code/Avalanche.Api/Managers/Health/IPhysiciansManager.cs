@@ -9,6 +9,6 @@ namespace Avalanche.Api.Managers.Health
     public interface IPhysiciansManager
     {
         Task<List<Physician>> GetAllPhysicians();
-        Task<List<Source>> GetPresetsByPhysician(string id, PresetTypes presetType);
+        Task<List<VideoSource>> GetPresetsByPhysician(string id, PresetTypes presetType);
     }
 }

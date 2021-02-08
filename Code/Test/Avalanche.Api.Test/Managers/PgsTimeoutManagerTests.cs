@@ -34,6 +34,14 @@ namespace Avalanche.Api.Tests.Managers
             var stateClientMock = new Mock<IStateClient>();
             var pgsTimeoutMock = new Mock<IPgsTimeoutService>();
 
+            var mapperConfig = new MapperConfiguration(cfg =>
+            {
+                cfg.AddProfile(new RoutingMappingConfiguration());
+                cfg.AddProfile(new MediaMappingConfiguration());
+            });
+            var mapper = mapperConfig.CreateMapper();
+
+
             var config = new ConfigurationBuilder()
                 .SetBasePath(Directory.GetCurrentDirectory())
                 .AddJsonFile("appsettings.Development.json", false, true).Build();
@@ -42,7 +50,7 @@ namespace Avalanche.Api.Tests.Managers
 
             storageMock.Setup(x => x.GetJsonObject<PgsTimeoutConfig>(nameof(PgsTimeoutConfig), 1, It.IsAny<ConfigurationContext>())).ReturnsAsync(pgsTimeoutConfig);
 
-            _pgsTimeoutManager =  new PgsTimeoutManager(storageMock.Object, routingMock.Object, stateClientMock.Object, pgsTimeoutMock.Object);
+            _pgsTimeoutManager =  new PgsTimeoutManager(storageMock.Object, routingMock.Object, stateClientMock.Object, pgsTimeoutMock.Object, mapper);
         }
 
         [Test]
