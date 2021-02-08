@@ -1,5 +1,6 @@
 {
   "TitleTranslationKey": "setupSettings.title",
+  "JsonKey": "SetupSettingsMetadata",
   "ReadOnly": false,
   "Sections": [
     {
@@ -18,7 +19,7 @@
           "Policy": "1",
           "SettingType": 1,
           "VisualStyle": 1,
-          "SourceKey": "SetupModes",
+          "SourceKey": "SetupModesData",
           "SourceVisualStyle": 0
         },
         {
@@ -33,7 +34,7 @@
           "Policy": "0",
           "SettingType": 1,
           "VisualStyle": 1,
-          "SourceKey": "SetupScreenModes",
+          "SourceKey": "SetupScreenModesData",
           "SourceVisualStyle": 0
         },
         {
@@ -141,13 +142,27 @@
           "Policy": "0",
           "SettingType": 2,
           "VisualStyle": 4,
-          "SourceKey": "SearchColumns",
+          "SourceKey": "SearchColumnsData",
           "SourceVisualStyle": 3
         }
       ]
     }
   ],
-  "JsonKey": "SetupSettings",
   "Schema": "SetupSettingsSchema",
-  "Settings": null
+  "Settings": null,
+  "General": {
+    "Mode": 1,
+    "ScreenMode": 0,
+    "DepartmentsSupported": false
+  },
+  "Registration": {
+    "Quick": {
+      "IsAllowed": true,
+      "DateFormat": "yyyy_MM_dd_T_HH_mm_ss_ff",
+      "UseAdministratorAsPhysician": true
+    },
+    "Manual": {
+      "PhysicianAsLoggedInUser": true
+    }
+  }
 }

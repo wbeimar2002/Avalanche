@@ -101,7 +101,7 @@ namespace Avalanche.Api.Managers.Maintenance
             var settingValues = await _storageService.GetJsonDynamic(category.JsonKey, 1, configurationContext);
 
             var types = await _metadataManager.GetMetadata(MetadataTypes.SettingTypes);
-            var policiesTypes = (await _storageService.GetJsonObject<ListContainerViewModel>("SettingsPolicies", 1, configurationContext)).Items;           
+            var policiesTypes = (await _storageService.GetJsonObject<ListContainerViewModel>("SettingsPoliciesData", 1, configurationContext)).Items;           
 
             await SetSources(category, types);
             SettingsHelper.SetSettingValues(category, settingValues, policiesTypes);

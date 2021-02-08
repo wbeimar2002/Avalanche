@@ -1,6 +1,6 @@
 {
   "TitleTranslationKey": "pgsSettings.title",
-  "JsonKey": "PgsSettings",
+  "JsonKey": "PgsSettingsData",
   "ReadOnly": true,
   "Sections": [
     {
@@ -44,7 +44,7 @@
           "Policy": "0",
           "SettingType": 0,
           "VisualStyle": 4,
-          "SourceKey": "PgsVideoFiles",
+          "SourceKey": "PgsVideoFilesData",
           "SourceVisualStyle": 0
         }
       ]
