@@ -90,7 +90,7 @@ namespace Avalanche.Api.Managers.Maintenance
             }
             else
             {   //TODO: Pending Exceptions strategy
-                throw new ValidationException("Json Schema Invalid for " + category.SourceKey + " values");
+                throw new ValidationException("Json Schema Invalid for " + category.SourceKey);
             }
         }
 
@@ -98,7 +98,7 @@ namespace Avalanche.Api.Managers.Maintenance
         {
             var configurationContext = _mapper.Map<User, ConfigurationContext>(user);
             var category = await _storageService.GetJsonObject<DynamicSectionViewModel>(key, 1, configurationContext);
-            var settingValues = await _storageService.GetJsonDynamic(key + "Values", 1, configurationContext);
+            var settingValues = await _storageService.GetJsonDynamic(category.JsonKey, 1, configurationContext);
 
             var types = await _metadataManager.GetMetadata(MetadataTypes.SettingTypes);
             var policiesTypes = (await _storageService.GetJsonObject<ListContainerViewModel>("SettingsPolicies", 1, configurationContext)).Items;           
@@ -176,7 +176,7 @@ namespace Avalanche.Api.Managers.Maintenance
                     switch (item.JsonKey)
                     {
                         case "DepartmentId":
-                            dynamic setupSettings = await _storageService.GetJsonDynamic("SetupSettingsValues", 1, configurationContext);
+                            dynamic setupSettings = await _storageService.GetJsonDynamic("SetupSettingsData", 1, configurationContext);
                             item.Required = setupSettings.General.DepartmentsSupported;
                             break;
                     }
@@ -293,11 +293,11 @@ namespace Avalanche.Api.Managers.Maintenance
 
             if (await SchemaIsValid(category.Schema, result, configurationContext))
             {
-                await _storageService.SaveJson(category.JsonKey + "Values", result, 1, configurationContext);
+                await _storageService.SaveJson(category.JsonKey, result, 1, configurationContext);
             }
             else
             {   //TODO: Pending Exceptions strategy
-                throw new ValidationException("Json Schema Invalid for " + category.JsonKey + " values");
+                throw new ValidationException("Json Schema Invalid for " + category.JsonKey);
             }
         }
 
