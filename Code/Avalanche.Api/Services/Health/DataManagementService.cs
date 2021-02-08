@@ -41,7 +41,7 @@ namespace Avalanche.Api.Services.Health
 
         public async Task<GetDepartmentsResponse> GetAllDepartments() => await DataManagementStorageClient.GetAllDepartments(new Empty());
 
-        public async Task<GetProceduresByDepartmentResponse> GetProceduresByDepartment(GetProceduresByDepartmentRequest request) => await DataManagementStorageClient.GetProceduresByDepartment(request);
+        public async Task<GetProcedureTypesResponse> GetProceduresByDepartment(GetProcedureTypesByDepartmentRequest request) => await DataManagementStorageClient.GetProcedureTypesByDepartment(request);
 
         public async Task<ProcedureTypeMessage> GetProcedureType(GetProcedureTypeRequest request) => await DataManagementStorageClient.GetProcedureType(request);
     }
