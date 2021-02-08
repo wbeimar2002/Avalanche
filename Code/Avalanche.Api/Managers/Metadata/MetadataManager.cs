@@ -51,13 +51,13 @@ namespace Avalanche.Api.Managers.Metadata
             switch (type)
             {
                 case MetadataTypes.Sex:
-                    return (await _storageService.GetJsonObject<ListContainerViewModel>("SexTypes", 1, configurationContext)).Items;
+                    return (await _storageService.GetJsonObject<ListContainerViewModel>("SexTypesData", 1, configurationContext)).Items;
                 case MetadataTypes.SourceTypes:
-                    return (await _storageService.GetJsonObject<ListContainerViewModel>("SourceTypes", 1, configurationContext)).Items;
+                    return (await _storageService.GetJsonObject<ListContainerViewModel>("SourceTypesData", 1, configurationContext)).Items;
                 case MetadataTypes.SettingTypes:
-                    return (await _storageService.GetJsonObject<ListContainerViewModel>("SettingTypes", 1, configurationContext)).Items;
+                    return (await _storageService.GetJsonObject<ListContainerViewModel>("SettingTypesData", 1, configurationContext)).Items;
                 case MetadataTypes.PgsVideoFiles:
-                    return (await _storageService.GetJsonObject<ListContainerViewModel>("PgsVideoFiles", 1, configurationContext)).Items;
+                    return (await _storageService.GetJsonObject<ListContainerViewModel>("PgsVideoFilesData", 1, configurationContext)).Items;
                 default:
                     return new List<KeyValuePairViewModel>();
             }
@@ -68,9 +68,9 @@ namespace Avalanche.Api.Managers.Metadata
             switch (type)
             {
                 case MetadataTypes.SearchColumns:
-                    return (await _storageService.GetJsonObject<SourceListContainerViewModel>("SearchColumns", 1, configurationContext)).Items;
+                    return (await _storageService.GetJsonObject<SourceListContainerViewModel>("SearchColumnsData", 1, configurationContext)).Items;
                 case MetadataTypes.PgsVideoFiles:
-                    return (await _storageService.GetJsonObject<SourceListContainerViewModel>("PgsVideoFiles", 1, configurationContext)).Items;
+                    return (await _storageService.GetJsonObject<SourceListContainerViewModel>("PgsVideoFilesData", 1, configurationContext)).Items;
                 default:
                     return new List<DynamicSourceKeyValuePairViewModel>();
             }
