@@ -51,7 +51,7 @@ namespace Avalanche.Api.Utilities
 
         internal static User GetUser(HttpContext httpContext)
         {
-            var claimPrincipal = httpContext.User.Identity as ClaimsIdentity;
+            var claimPrincipal = httpContext?.User?.Identity as ClaimsIdentity;
             return claimPrincipal == null ? new Shared.Domain.Models.User()
             {
                 Id = "Unidentified",

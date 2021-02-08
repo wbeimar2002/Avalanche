@@ -52,11 +52,5 @@ namespace Avalanche.Api.Tests.Managers
 
             _pgsTimeoutManager =  new PgsTimeoutManager(storageMock.Object, routingMock.Object, stateClientMock.Object, pgsTimeoutMock.Object, mapper);
         }
-
-        [Test]
-        public async Task StartPgsUpdatesInternalState()
-        {
-            await _pgsTimeoutManager.StartPgs();
-        }
     }
 }

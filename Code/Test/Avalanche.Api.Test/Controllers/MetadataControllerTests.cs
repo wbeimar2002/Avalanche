@@ -77,38 +77,6 @@ namespace Avalanche.Api.Tests.Controllers
         }
 
         [Test]
-        public void GetContentTypesShouldReturnOkResult()
-        {
-            var okResult = _controller.GetPgsVideoFiles(_environment.Object);
-
-            if (_checkLogger)
-            {
-                _appLoggerService.Verify(LogLevel.Error, $"Exception {_controller.GetType().Name}.GetContentTypes", Times.Never());
-                _appLoggerService.Verify(LogLevel.Debug, $"Requested {_controller.GetType().Name}.GetContentTypes", Times.Once());
-                _appLoggerService.Verify(LogLevel.Debug, $"Completed {_controller.GetType().Name}.GetContentTypes", Times.Once());
-            }
-
-            Assert.IsInstanceOf<OkObjectResult>(okResult.Result);
-        }
-
-        [Test]
-        public void GetContentTypesShouldReturnBadResultIfFails()
-        {
-            _metadataManager.Setup(mock => mock.GetMetadata(MetadataTypes.PgsVideoFiles)).Throws(It.IsAny<Exception>());
-
-            var badResult = _controller.GetPgsVideoFiles(_environment.Object);
-
-            if (_checkLogger)
-            {
-                _appLoggerService.Verify(LogLevel.Error, $"Exception {_controller.GetType().Name}.GetContentTypes", Times.Once());
-                _appLoggerService.Verify(LogLevel.Debug, $"Requested {_controller.GetType().Name}.GetContentTypes", Times.Once());
-                _appLoggerService.Verify(LogLevel.Debug, $"Completed {_controller.GetType().Name}.GetContentTypes", Times.Once());
-            }
-
-            Assert.IsInstanceOf<BadRequestObjectResult>(badResult.Result);
-        }
-
-        [Test]
         public void GetSourceTypesShouldReturnOkResult()
         {
             var okResult = _controller.GetSourceTypes(_environment.Object);
