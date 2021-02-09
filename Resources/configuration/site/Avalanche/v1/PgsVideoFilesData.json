@@ -1,12 +1,12 @@
 {
   "Items": [
     {
-      "Index": 0,
+      "Index": "0",
       "FilePath": "..\\..\\..\\..\\Resources\\PgsVideo\\General.mp4",
       "Name": "General"
     },
     {
-      "Index": 1,
+      "Index": "1",
       "FilePath": "..\\..\\..\\..\\Resources\\PgsVideo\\Pediatric.mp4",
       "Name": "Pediatric"
     }

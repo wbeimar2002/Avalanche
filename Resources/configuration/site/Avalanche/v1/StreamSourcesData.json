@@ -2,17 +2,11 @@
   "Items": [
     {
       "FriendlyName": "Testing B",
-      "Sink": {
-        "Alias": "none",
-        "Index": "0"
-      }
+      "Sink": "[object Object]"
     },
     {
       "FriendlyName": "Testing C",
-      "Sink": {
-        "Alias": "none",
-        "Index": 2
-      }
+      "Sink": "[object Object]"
     }
   ]
 }

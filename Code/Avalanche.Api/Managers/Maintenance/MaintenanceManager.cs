@@ -111,7 +111,6 @@ namespace Avalanche.Api.Managers.Maintenance
                 await SetSettingsValues(category, settingValues, types, policiesTypes);
             }
 
-            category.JsonKey = key;
             return category;
         }
 

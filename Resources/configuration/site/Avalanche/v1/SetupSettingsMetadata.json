@@ -153,7 +153,7 @@
   "General": {
     "Mode": 1,
     "ScreenMode": 0,
-    "DepartmentsSupported": false
+    "DepartmentsSupported": true
   },
   "Registration": {
     "Quick": {
