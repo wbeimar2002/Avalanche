@@ -8,7 +8,7 @@
   "SaveAsFile": "true",
   "Properties": [
     {
-      "LabelTranslationKey": "sinks.index",
+      "LabelTranslationKey": "pgsVideoFiles.index",
       "DescriptionTranslationKey": null,
       "Format": null,
       "PlaceHolderTranslationKey": null,
