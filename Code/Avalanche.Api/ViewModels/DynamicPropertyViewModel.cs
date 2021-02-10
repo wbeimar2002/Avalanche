@@ -22,6 +22,7 @@ namespace Avalanche.Api.ViewModels
         public bool IsHidden { get; set; }
         public int MaxLength { get; set; }  
         public string JsonKey { get; set; }
+        public string JsonKeyToShowFromRelatedObject { get; set; }
         public string JsonKeyForRelatedObject { get; set; }
 
         public SettingTypes SettingType { get; set; }
