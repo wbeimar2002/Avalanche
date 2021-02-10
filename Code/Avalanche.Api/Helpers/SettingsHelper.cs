@@ -4,6 +4,7 @@ using Avalanche.Shared.Infrastructure.Enumerations;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
+using System.Dynamic;
 using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -12,6 +13,14 @@ namespace Avalanche.Api.Helpers
 {
     public static class SettingsHelper
     {
+        public static bool IsPropertyExist(dynamic entity, string name)
+        {
+            if (entity is ExpandoObject)
+                return ((IDictionary<string, object>)entity).ContainsKey(name);
+
+            return entity.GetType().GetProperty(name) != null;
+        }
+
         public static string GetJsonValues(DynamicSectionViewModel category)
         {
             string json = @"{}";
