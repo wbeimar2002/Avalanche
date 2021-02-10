@@ -59,14 +59,14 @@ namespace Avalanche.Security.Server.Controllers
 
         [Route("/api/token/revoke")]
         [HttpPost]
-        public IActionResult RevokeToken([FromBody] RevokeTokenResource revokeTokenResource)
+        public async Task<IActionResult> RevokeToken([FromBody] RevokeTokenResource revokeTokenResource)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            _authenticationService.RevokeRefreshToken(revokeTokenResource.Token);
+            await _authenticationService.RevokeRefreshToken(revokeTokenResource.Token);
             return NoContent();
         }
     }

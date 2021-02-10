@@ -180,6 +180,17 @@ namespace Avalanche.Api
                         return Task.CompletedTask;
                     }
                 };
+            })
+            .AddCookie(cookieOptions => 
+            {
+                cookieOptions.Cookie.HttpOnly = true;
+                cookieOptions.Cookie.Path = "/Files";
+
+                // forward anything not to the files controller to jwt auth handler
+                cookieOptions.ForwardDefaultSelector = ctx =>
+                {
+                    return ctx.Request.Path.StartsWithSegments("/Files", StringComparison.OrdinalIgnoreCase) ? null : JwtBearerDefaults.AuthenticationScheme;
+                };
             });
         }
 

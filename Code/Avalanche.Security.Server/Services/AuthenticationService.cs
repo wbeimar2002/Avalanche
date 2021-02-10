@@ -1,8 +1,10 @@
+using System;
 using System.Threading.Tasks;
 using Avalanche.Security.Server.Core.Security.Hashing;
 using Avalanche.Security.Server.Core.Security.Tokens;
 using Avalanche.Security.Server.Core.Services;
 using Avalanche.Security.Server.Core.Services.Communication;
+using Avalanche.Security.Server.Security.Cookie;
 
 namespace Avalanche.Security.Server.Services
 {
@@ -11,12 +13,14 @@ namespace Avalanche.Security.Server.Services
         private readonly IUserService _userService;
         private readonly IPasswordHasher _passwordHasher;
         private readonly ITokenHandler _tokenHandler;
+        private readonly ICookieHandler _cookieHandler;
         
-        public AuthenticationService(IUserService userService, IPasswordHasher passwordHasher, ITokenHandler tokenHandler)
+        public AuthenticationService(IUserService userService, IPasswordHasher passwordHasher, ITokenHandler tokenHandler, ICookieHandler cookieHandler)
         {
             _tokenHandler = tokenHandler;
             _passwordHasher = passwordHasher;
             _userService = userService;
+            _cookieHandler = cookieHandler;
         }
 
         public async Task<TokenResponse> CreateAccessTokenAsync(string email, string password)
@@ -29,6 +33,7 @@ namespace Avalanche.Security.Server.Services
             }
 
             var token = _tokenHandler.CreateAccessToken(user);
+            await _cookieHandler.SignInUser(user);
 
             return new TokenResponse(true, null, token);
         }
@@ -57,9 +62,10 @@ namespace Avalanche.Security.Server.Services
             return new TokenResponse(true, null, accessToken);
         }
 
-        public void RevokeRefreshToken(string refreshToken)
+        public async Task RevokeRefreshToken(string refreshToken)
         {
             _tokenHandler.RevokeRefreshToken(refreshToken);
+            await _cookieHandler.SignOut();
         }
     }
 }

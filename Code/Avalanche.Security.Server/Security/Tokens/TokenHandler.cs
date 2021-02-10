@@ -18,12 +18,14 @@ namespace Avalanche.Security.Server.Security.Tokens
         private readonly TokenOptions _tokenOptions;
         private readonly SigningConfigurations _signingConfigurations;
         private readonly IPasswordHasher _passwordHaser;
+        private readonly IClaimMapper _claimMapper;
 
-        public TokenHandler(IOptions<TokenOptions> tokenOptionsSnapshot, SigningConfigurations signingConfigurations, IPasswordHasher passwordHaser)
+        public TokenHandler(IOptions<TokenOptions> tokenOptionsSnapshot, SigningConfigurations signingConfigurations, IPasswordHasher passwordHaser, IClaimMapper claimMapper)
         {
             _passwordHaser = passwordHaser;
             _tokenOptions = tokenOptionsSnapshot.Value;
             _signingConfigurations = signingConfigurations;
+            _claimMapper = claimMapper;
         }
 
         public AccessToken CreateAccessToken(User user)
@@ -71,7 +73,7 @@ namespace Avalanche.Security.Server.Security.Tokens
             (
                 issuer : _tokenOptions.Issuer,
                 audience : _tokenOptions.Audience,
-                claims : GetClaims(user),
+                claims : _claimMapper.GetClaims(user),
                 expires : accessTokenExpiration,
                 notBefore : DateTime.UtcNow,
                 signingCredentials : _signingConfigurations.SigningCredentials
@@ -81,25 +83,6 @@ namespace Avalanche.Security.Server.Security.Tokens
             var accessToken = handler.WriteToken(securityToken);
 
             return new AccessToken(accessToken, accessTokenExpiration.Ticks, refreshToken);
-        }
-
-        private IEnumerable<Claim> GetClaims(User user)
-        {
-            var claims = new List<Claim>
-            {
-                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-                new Claim(JwtRegisteredClaimNames.Sub, user.Email),
-                new Claim("Id", user.Id.ToString()),
-                new Claim("FirstName", user.FirstName),
-                new Claim("LastName", user.LastName),
-            };
-
-            foreach (var userRole in user.UserRoles)
-            {
-                claims.Add(new Claim(ClaimTypes.Role, userRole.Role.Name));
-            }
-
-            return claims;
         }
     }
 }

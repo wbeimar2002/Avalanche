@@ -6,6 +6,8 @@ using Avalanche.Security.Server.Core.Security.Tokens;
 using Avalanche.Security.Server.Core.Services;
 using Avalanche.Security.Server.Extensions;
 using Avalanche.Security.Server.Persistence;
+using Avalanche.Security.Server.Security;
+using Avalanche.Security.Server.Security.Cookie;
 using Avalanche.Security.Server.Security.Hashing;
 using Avalanche.Security.Server.Security.Tokens;
 using Avalanche.Security.Server.Services;
@@ -58,11 +60,15 @@ namespace Avalanche.Security.Server
 
 			services.AddCustomSwagger();
 
+			services.AddHttpContextAccessor();
+
 			services.AddScoped<IUserRepository, UserRepository>();
 			services.AddScoped<IUnitOfWork, UnitOfWork>();
 
 			services.AddSingleton<IPasswordHasher, PasswordHasher>();
 			services.AddSingleton<ITokenHandler, Security.Tokens.TokenHandler>();
+			services.AddSingleton<ICookieHandler, CookieHandler>();
+			services.AddSingleton<IClaimMapper, ClaimMapper>();
 
 			services.AddScoped<IUserService, UserService>();
 			services.AddScoped<IAuthenticationService, AuthenticationService>();
@@ -94,6 +100,10 @@ namespace Avalanche.Security.Server
 					IssuerSigningKey = signingConfigurations.Key,
 					ClockSkew = TimeSpan.Zero
 				};
+			})
+			.AddCookie(cookieOptions =>
+			{
+				cookieOptions.Cookie.HttpOnly = true;
 			});
 
 			services.AddAutoMapper(this.GetType().Assembly);

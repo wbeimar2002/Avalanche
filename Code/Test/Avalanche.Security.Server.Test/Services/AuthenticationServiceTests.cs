@@ -5,6 +5,7 @@ using Avalanche.Security.Server.Core.Models;
 using Avalanche.Security.Server.Core.Security.Hashing;
 using Avalanche.Security.Server.Core.Security.Tokens;
 using Avalanche.Security.Server.Core.Services;
+using Avalanche.Security.Server.Security.Cookie;
 using Avalanche.Security.Server.Services;
 using Moq;
 using Xunit;
@@ -18,13 +19,14 @@ namespace Avalanche.Security.Tests.Services
         private Mock<IUserService> _userService;
         private Mock<IPasswordHasher> _passwordHasher;
         private Mock<ITokenHandler> _tokenHandler;
+        private Mock<ICookieHandler> _cookieHandler;
 
         private IAuthenticationService _authenticationService;
 
         public AuthenticationServiceTests()
         {
             SetupMocks();
-            _authenticationService = new AuthenticationService(_userService.Object, _passwordHasher.Object, _tokenHandler.Object);
+            _authenticationService = new AuthenticationService(_userService.Object, _passwordHasher.Object, _tokenHandler.Object, _cookieHandler.Object);
         }
 
         private void SetupMocks()
