@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Avalanche.Api.ViewModels
 {
@@ -11,22 +8,22 @@ namespace Avalanche.Api.ViewModels
         public string SourceName { get; set; }
         public string ChannelName { get; set; }
         public bool Is4k { get; set; }
-        public string ImagePath { get; set; }
+        public string RelativePath { get; set; }
 
         public TimeSpan? CaptureOffsetFromVideoStart { get; set; }
-        public DateTimeOffset CaptureTime { get; set; }
+        public DateTimeOffset CaptureTimeUtc { get; set; }
 
         public ProcedureImageViewModel() 
         { }
-        public ProcedureImageViewModel(Guid imageId, string sourceName, string channelName, bool is4k, string imagePath, TimeSpan? captureOffsetFromVideoStart, DateTimeOffset captureTime)
+        public ProcedureImageViewModel(Guid imageId, string sourceName, string channelName, bool is4k, string relativePath, TimeSpan? captureOffsetFromVideoStart, DateTimeOffset captureTimeUtc)
         {
             ImageId = imageId;
             SourceName = sourceName;
             ChannelName = channelName;
             Is4k = is4k;
-            ImagePath = imagePath;
+            RelativePath = relativePath;
             CaptureOffsetFromVideoStart = captureOffsetFromVideoStart;
-            CaptureTime = captureTime;
+            CaptureTimeUtc = captureTimeUtc;
         }
     }
 }

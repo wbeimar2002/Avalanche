@@ -33,24 +33,20 @@ namespace Avalanche.Api.Test.Managers
         {
             var stateClient = new Mock<IStateClient>();
 
-            stateClient.Setup(s =>
-            s.GetData<ActiveProcedureState>()).ReturnsAsync(
+            stateClient.Setup(s => s.GetData<ActiveProcedureState>()).ReturnsAsync(
                 new ActiveProcedureState(
-                    new Patient()
-                    {
-                        LastName = "name"
-                    },
+                    new Patient() { LastName = "name" },
                     new List<ProcedureImage>(),
                     new List<ProcedureVideo>(),
                     "libId",
                     "repId",
-                    "relPath",
+                    "path",
                     null,
                     null,
                     null,
                     false,
                     DateTimeOffset.UtcNow,
-                    "TimeZoneId"));
+                    TimeZoneInfo.Local.Id));
 
             var manager = new ProceduresManager(stateClient.Object, _mapper);
 

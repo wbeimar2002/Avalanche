@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Avalanche.Api.ViewModels
 {
@@ -12,8 +10,17 @@ namespace Avalanche.Api.ViewModels
         public ActiveProcedureViewModel()
         { }
 
-        public ActiveProcedureViewModel(PatientViewModel patient, string libraryId, string repositoryId, List<ProcedureImageViewModel> images, bool requiresUserConfirmation)
-            : base(patient, libraryId, repositoryId, images)
+        public ActiveProcedureViewModel(
+            PatientViewModel patient,
+            string libraryId,
+            string repositoryId,
+            string procedureRelativePath,
+            DateTimeOffset procedureStartTimeUtc,
+            string procedureTimezoneId,
+            List<ProcedureImageViewModel> images,
+            List<ProcedureVideoViewModel> videos,
+            bool requiresUserConfirmation)
+            : base(patient, libraryId, repositoryId, procedureRelativePath, procedureStartTimeUtc, procedureTimezoneId, images, videos)
         {
             RequiresUserConfirmation = requiresUserConfirmation;
         }

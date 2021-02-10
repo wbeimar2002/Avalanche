@@ -290,7 +290,7 @@ namespace Avalanche.Api.Managers.Health
                     procedureStartTimeUtc: DateTimeOffset.UtcNow,
 
                     // TODO:
-                    procedureTimezoneId: TimeZoneInfo.Local.DisplayName));
+                    procedureTimezoneId: TimeZoneInfo.Local.Id));
             }
             else
             {
