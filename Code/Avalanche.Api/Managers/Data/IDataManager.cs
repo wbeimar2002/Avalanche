@@ -6,9 +6,9 @@ using System.Collections.Generic;
 using System.Dynamic;
 using System.Threading.Tasks;
 
-namespace Avalanche.Api.Managers.Metadata
+namespace Avalanche.Api.Managers.Data
 {
-    public interface IMetadataManager
+    public interface IDataManager
     {
         Task<IList<KeyValuePairViewModel>> GetMetadata(MetadataTypes type);
         Task<IList<DynamicSourceKeyValuePairViewModel>> GetSource(MetadataTypes settingTypes);

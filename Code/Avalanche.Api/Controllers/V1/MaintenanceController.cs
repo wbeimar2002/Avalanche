@@ -1,10 +1,8 @@
-﻿using Avalanche.Api.Extensions;
-using Avalanche.Api.Managers.Maintenance;
+﻿using Avalanche.Api.Managers.Maintenance;
 using Avalanche.Api.ViewModels;
 using Avalanche.Shared.Infrastructure.Enumerations;
 using Avalanche.Shared.Infrastructure.Extensions;
 using Avalanche.Shared.Infrastructure.Helpers;
-using Avalanche.Shared.Infrastructure.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -25,7 +23,7 @@ namespace Avalanche.Api.Controllers.V1
         readonly ILogger _appLoggerService;
         readonly IMaintenanceManager _maintenanceManager;
 
-        public MaintenanceController(IMaintenanceManager maintenanceManager, ILogger<FilesController> appLoggerService)
+        public MaintenanceController(IMaintenanceManager maintenanceManager, ILogger<MaintenanceController> appLoggerService)
         {
             _appLoggerService = appLoggerService;
             _maintenanceManager = maintenanceManager;

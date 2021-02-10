@@ -1,6 +1,6 @@
 ﻿using AutoFixture;
 using AutoMapper;
-using Avalanche.Api.Managers.Metadata;
+using Avalanche.Api.Managers.Data;
 using Avalanche.Api.MappingConfigurations;
 using Avalanche.Api.Services.Configuration;
 using Avalanche.Api.Services.Health;
@@ -21,14 +21,14 @@ using System.Threading.Tasks;
 namespace Avalanche.Api.Tests.Managers
 {
     [TestFixture()]
-    public class MetadataManagerTests
+    public class DataManagerTests
     {
         Mock<IStorageService> _storageService;
         Mock<IDataManagementService> _dataManagementService;
         Mock<IHttpContextAccessor> _httpContextAccessor;
 
         IMapper _mapper;
-        MetadataManager _manager;
+        DataManager _manager;
 
         [SetUp]
         public void Setup()
@@ -43,7 +43,7 @@ namespace Avalanche.Api.Tests.Managers
             });
 
             _mapper = config.CreateMapper();
-            _manager = new MetadataManager(_storageService.Object, _dataManagementService.Object, _mapper, _httpContextAccessor.Object);
+            _manager = new DataManager(_storageService.Object, _dataManagementService.Object, _mapper, _httpContextAccessor.Object);
         }
 
         [Test]

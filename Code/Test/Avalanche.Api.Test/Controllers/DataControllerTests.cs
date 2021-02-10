@@ -1,8 +1,6 @@
 ﻿using Avalanche.Api.Controllers.V1;
-using Avalanche.Api.Managers.Devices;
-using Avalanche.Api.Managers.Metadata;
+using Avalanche.Api.Managers.Data;
 using Avalanche.Api.Tests.Extensions;
-using Avalanche.Shared.Domain.Enumerations;
 using Avalanche.Shared.Domain.Models;
 using Avalanche.Shared.Infrastructure.Enumerations;
 using Microsoft.AspNetCore.Hosting;
@@ -11,32 +9,28 @@ using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Avalanche.Api.Tests.Controllers
 {
     [TestFixture()]
-    public class MetadataControllerTests
+    public class DataControllerTests
     {
-        Mock<ILogger<MetadataController>> _appLoggerService;
+        Mock<ILogger<DataController>> _appLoggerService;
         Mock<IWebHostEnvironment> _environment;
-        Mock<IMetadataManager> _metadataManager;
-        Mock<IMediaManager> _mediaManager;
+        Mock<IDataManager> _metadataManager;
 
-        MetadataController _controller;
+        DataController _controller;
 
         bool _checkLogger = false;
 
         [SetUp]
         public void Setup()
         {
-            _appLoggerService = new Mock<ILogger<MetadataController>>();
+            _appLoggerService = new Mock<ILogger<DataController>>();
             _environment = new Mock<IWebHostEnvironment>();
-            _metadataManager = new Mock<IMetadataManager>();
-            _mediaManager = new Mock<IMediaManager>();
+            _metadataManager = new Mock<IDataManager>();
 
-            _controller = new MetadataController(_appLoggerService.Object, _metadataManager.Object, _mediaManager.Object);
+            _controller = new DataController(_appLoggerService.Object, _metadataManager.Object);
 
             OperatingSystem os = Environment.OSVersion;
 
@@ -71,38 +65,6 @@ namespace Avalanche.Api.Tests.Controllers
                 _appLoggerService.Verify(LogLevel.Error, $"Exception {_controller.GetType().Name}.GetSexes", Times.Once());
                 _appLoggerService.Verify(LogLevel.Debug, $"Requested {_controller.GetType().Name}.GetSexes", Times.Once());
                 _appLoggerService.Verify(LogLevel.Debug, $"Completed {_controller.GetType().Name}.GetSexes", Times.Once());
-            }
-
-            Assert.IsInstanceOf<BadRequestObjectResult>(badResult.Result);
-        }
-
-        [Test]
-        public void GetSourceTypesShouldReturnOkResult()
-        {
-            var okResult = _controller.GetSourceTypes(_environment.Object);
-
-            if (_checkLogger)
-            {
-                _appLoggerService.Verify(LogLevel.Error, $"Exception {_controller.GetType().Name}.GetSourceTypes", Times.Never());
-                _appLoggerService.Verify(LogLevel.Debug, $"Requested {_controller.GetType().Name}.GetSourceTypes", Times.Once());
-                _appLoggerService.Verify(LogLevel.Debug, $"Completed {_controller.GetType().Name}.GetSourceTypes", Times.Once());
-            }
-
-            Assert.IsInstanceOf<OkObjectResult>(okResult.Result);
-        }
-
-        [Test]
-        public void GetSourceTypesShouldReturnBadResultIfFails()
-        {
-            _metadataManager.Setup(mock => mock.GetMetadata(MetadataTypes.SourceTypes)).Throws(It.IsAny<Exception>());
-
-            var badResult = _controller.GetSourceTypes(_environment.Object);
-
-            if (_checkLogger)
-            {
-                _appLoggerService.Verify(LogLevel.Error, $"Exception {_controller.GetType().Name}.GetSourceTypes", Times.Once());
-                _appLoggerService.Verify(LogLevel.Debug, $"Requested {_controller.GetType().Name}.GetSourceTypes", Times.Once());
-                _appLoggerService.Verify(LogLevel.Debug, $"Completed {_controller.GetType().Name}.GetSourceTypes", Times.Once());
             }
 
             Assert.IsInstanceOf<BadRequestObjectResult>(badResult.Result);

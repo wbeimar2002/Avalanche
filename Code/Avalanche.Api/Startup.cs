@@ -1,11 +1,10 @@
 using AutoMapper;
 using Avalanche.Api.Extensions;
 using Avalanche.Api.Hubs;
-using Avalanche.Api.Managers.Devices;
 using Avalanche.Api.Managers.Health;
 using Avalanche.Api.Managers.Licensing;
 using Avalanche.Api.Managers.Maintenance;
-using Avalanche.Api.Managers.Metadata;
+using Avalanche.Api.Managers.Data;
 using Avalanche.Api.Managers.Notifications;
 using Avalanche.Api.Managers.PgsTimeout;
 using Avalanche.Api.Managers.Procedures;
@@ -84,11 +83,9 @@ namespace Avalanche.Api
             services.AddTransient<IMaintenanceManager, MaintenanceManager>();
             services.AddTransient<IPatientsManager, PatientsManager>();
             services.AddTransient<IPhysiciansManager, PhysiciansManager>();
-            services.AddTransient<IMetadataManager, MetadataManager>();
+            services.AddTransient<IDataManager, DataManager>();
             services.AddTransient<ILicensingManager, LicensingManagerMock>();
-            services.AddTransient<IDevicesManager, DevicesManager>();
             services.AddTransient<IPgsTimeoutManager, PgsTimeoutManager>();
-            services.AddTransient<IMediaManager, MediaManager>();
             services.AddTransient<IProceduresManager, ProceduresManager>();
             services.AddTransient<INotificationsManager, NotificationsManager>();
 

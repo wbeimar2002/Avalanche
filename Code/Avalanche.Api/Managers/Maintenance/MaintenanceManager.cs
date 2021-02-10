@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using Avalanche.Api.Helpers;
-using Avalanche.Api.Managers.Metadata;
+using Avalanche.Api.Managers.Data;
 using Avalanche.Api.Services.Maintenance;
 using Avalanche.Api.Utilities;
 using Avalanche.Api.ViewModels;
@@ -23,7 +23,7 @@ namespace Avalanche.Api.Managers.Maintenance
     public class MaintenanceManager : IMaintenanceManager
     {
         readonly IStorageService _storageService;
-        readonly IMetadataManager _metadataManager;
+        readonly IDataManager _metadataManager;
         readonly IMapper _mapper;
         readonly IHttpContextAccessor _httpContextAccessor;
 
@@ -31,7 +31,7 @@ namespace Avalanche.Api.Managers.Maintenance
         readonly ConfigurationContext configurationContext;
 
         public MaintenanceManager(IStorageService storageService, 
-            IMetadataManager metadataManager, 
+            IDataManager metadataManager, 
             IMapper mapper, 
             IHttpContextAccessor httpContextAccessor)
         {
@@ -370,7 +370,7 @@ namespace Avalanche.Api.Managers.Maintenance
             if (SettingsHelper.IsPropertyExist(source.Department, "Id"))
                 procedureType.DepartmentId = Convert.ToInt32(source.Department?.Id);
 
-            Helpers.Mapper.Map(source, procedureType);
+            SettingsHelper.Map(source, procedureType);
 
             switch (action)
             {
@@ -389,7 +389,7 @@ namespace Avalanche.Api.Managers.Maintenance
         private async Task SaveDepartments(DynamicListActions action, dynamic source)
         {
             var department = new Department();
-            Helpers.Mapper.Map(source, department);
+            SettingsHelper.Map(source, department);
 
             switch (action)
             {

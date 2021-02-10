@@ -1,6 +1,4 @@
-﻿using Avalanche.Api.Extensions;
-using Avalanche.Api.Managers.Devices;
-using Avalanche.Api.Managers.Metadata;
+﻿using Avalanche.Api.Managers.Data;
 using Avalanche.Api.ViewModels;
 using Avalanche.Shared.Domain.Models;
 using Avalanche.Shared.Infrastructure.Enumerations;
@@ -21,141 +19,15 @@ namespace Avalanche.Api.Controllers.V1
     [Route("[controller]")]
     [ApiController]
     [Authorize]
-    public class MetadataController : ControllerBase
+    public class DataController : ControllerBase
     {
         readonly ILogger _appLoggerService;
-        readonly IMetadataManager _metadataManager;
-        readonly IMediaManager _mediaManager;
+        readonly IDataManager _metadataManager;
 
-        public MetadataController(ILogger<MetadataController> appLoggerService, IMetadataManager metadataManager, IMediaManager mediaManager)
+        public DataController(ILogger<DataController> appLoggerService, IDataManager metadataManager)
         {
             _appLoggerService = appLoggerService;
             _metadataManager = metadataManager;
-            _mediaManager = mediaManager;
-        }
-
-        /// <summary>
-        /// Get content types for PGS 
-        /// </summary>
-        [HttpGet("dynamic/{key}")]
-        [Produces(typeof(List<KeyValuePairViewModel>))]
-        public async Task<IActionResult> GetDynamicSource(string key, [FromServices] IWebHostEnvironment env)
-        {
-            try
-            {
-                _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
-
-                var result = await _metadataManager.GetDynamicSource(key);
-                return Ok(result);
-            }
-            catch (Exception exception)
-            {
-                _appLoggerService.LogError(LoggerHelper.GetLogMessage(DebugLogType.Exception), exception);
-                return new BadRequestObjectResult(exception.Get(env.IsDevelopment()));
-            }
-            finally
-            {
-                _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
-            }
-        }
-
-        /// <summary>
-        /// Get content types for PGS 
-        /// </summary>
-        [HttpGet("pgs/videofiles")]
-        [Produces(typeof(List<KeyValuePairViewModel>))]
-        public async Task<IActionResult> GetPgsVideoFiles([FromServices]IWebHostEnvironment env)
-        {
-            try
-            {
-                _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
-
-                var result = await _metadataManager.GetMetadata(MetadataTypes.PgsVideoFiles);
-                return Ok(result);
-            }
-            catch (Exception exception)
-            {
-                _appLoggerService.LogError(LoggerHelper.GetLogMessage(DebugLogType.Exception), exception);
-                return new BadRequestObjectResult(exception.Get(env.IsDevelopment()));
-            }
-            finally
-            {
-                _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
-            }
-        }
-
-        /// <summary>
-        /// Get content by type for PGS 
-        /// </summary>
-        [HttpGet("content/{contentTypeId}")]
-        [Produces(typeof(List<KeyValuePairViewModel>))]
-        public async Task<IActionResult> GetContentByType(string contentTypeId, [FromServices] IWebHostEnvironment env)
-        {
-            try
-            {
-                _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
-                var result = await _mediaManager.GetContent(contentTypeId);
-                return Ok(result);
-            }
-            catch (Exception exception)
-            {
-                _appLoggerService.LogError(LoggerHelper.GetLogMessage(DebugLogType.Exception), exception);
-                return new BadRequestObjectResult(exception.Get(env.IsDevelopment()));
-            }
-            finally
-            {
-                _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
-            }
-        }
-
-        /// <summary>
-        /// Get content setup modes
-        /// </summary>
-        [HttpGet("setupModes")]
-        [Produces(typeof(List<KeyValuePairViewModel>))]
-        public async Task<IActionResult> GetSetupModes([FromServices] IWebHostEnvironment env)
-        {
-            try
-            {
-                _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
-
-                var result = await _metadataManager.GetMetadata(MetadataTypes.SetupModes);
-                return Ok(result);
-            }
-            catch (Exception exception)
-            {
-                _appLoggerService.LogError(LoggerHelper.GetLogMessage(DebugLogType.Exception), exception);
-                return new BadRequestObjectResult(exception.Get(env.IsDevelopment()));
-            }
-            finally
-            {
-                _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
-            }
-        }
-
-        /// <summary>
-        /// Get content routing modes
-        /// </summary>
-        [HttpGet("settingTypes")]
-        [Produces(typeof(List<KeyValuePairViewModel>))]
-        public async Task<IActionResult> GetSettingTypes([FromServices] IWebHostEnvironment env)
-        {
-            try
-            {
-                _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
-
-                var result = await _metadataManager.GetMetadata(MetadataTypes.SettingTypes);
-                return Ok(result);
-            }
-            catch (Exception exception)
-            {
-                _appLoggerService.LogError(LoggerHelper.GetLogMessage(DebugLogType.Exception), exception);
-                return new BadRequestObjectResult(exception.Get(env.IsDevelopment()));
-            }
-            finally
-            {
-                _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
-            }
         }
 
         /// <summary>
@@ -195,31 +67,6 @@ namespace Avalanche.Api.Controllers.V1
                 _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
 
                 var result = await _metadataManager.GetMetadata(MetadataTypes.Sex);
-                return Ok(result);
-            }
-            catch (Exception exception)
-            {
-                _appLoggerService.LogError(LoggerHelper.GetLogMessage(DebugLogType.Exception), exception);
-                return new BadRequestObjectResult(exception.Get(env.IsDevelopment()));
-            }
-            finally
-            {
-                _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
-            }
-        }
-
-        /// <summary>
-        /// Get procedure types
-        /// </summary>
-        [HttpGet("sourcetypes")]
-        [Produces(typeof(List<KeyValuePairViewModel>))]
-        public async Task<IActionResult> GetSourceTypes([FromServices]IWebHostEnvironment env)
-        {
-            try
-            {
-                _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
-
-                var result = await _metadataManager.GetMetadata(MetadataTypes.SourceTypes);
                 return Ok(result);
             }
             catch (Exception exception)

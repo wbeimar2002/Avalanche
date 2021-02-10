@@ -17,9 +17,9 @@ using System.Dynamic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Avalanche.Api.Managers.Metadata
+namespace Avalanche.Api.Managers.Data
 {
-    public class MetadataManager : IMetadataManager
+    public class DataManager : IDataManager
     {
         readonly IStorageService _storageService;
         readonly IMapper _mapper;
@@ -29,7 +29,7 @@ namespace Avalanche.Api.Managers.Metadata
         readonly User user;
         readonly ConfigurationContext configurationContext;
 
-        public MetadataManager(IStorageService storageService,
+        public DataManager(IStorageService storageService,
             IDataManagementService dataManagementService,
             IMapper mapper,
             IHttpContextAccessor httpContextAccessor)

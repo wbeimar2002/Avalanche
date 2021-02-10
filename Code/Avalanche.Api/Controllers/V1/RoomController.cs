@@ -17,28 +17,26 @@ using static Ism.Utility.Core.Preconditions;
 
 namespace Avalanche.Api.Controllers.V1
 {
-    [Route("room/[controller]")]
+    [Route("[controller]")]
     [ApiController]
     [Authorize]
-    public class PgsController : ControllerBase
+    public class RoomController : ControllerBase
     {
-        private readonly ILogger<PgsController> _logger;
+        private readonly ILogger<RoomController> _logger;
         private readonly IPgsTimeoutManager _pgsTimeoutManager;
 
-        public PgsController(IPgsTimeoutManager pgsTimeoutManager, ILogger<PgsController> logger)
+        public RoomController(IPgsTimeoutManager pgsTimeoutManager, ILogger<RoomController> logger)
         {
             _logger = ThrowIfNullOrReturn(nameof(logger), logger);
             _pgsTimeoutManager = ThrowIfNullOrReturn(nameof(pgsTimeoutManager), pgsTimeoutManager);
         }
-
-        #region PgsTimeoutPlayer methods
 
         /// <summary>
         /// Gets a collection of video files from the player
         /// </summary>
         /// <param name="env"></param>
         /// <returns></returns>
-        [HttpGet("videoFiles")]
+        [HttpGet("pgs/videoFiles")]
         public async Task<IActionResult> GetPgsVideoFiles([FromServices] IWebHostEnvironment env)
         {
             try
@@ -64,7 +62,7 @@ namespace Avalanche.Api.Controllers.V1
         /// <param name="file"></param>
         /// <param name="env"></param>
         /// <returns></returns>
-        [HttpPut("videoFile")]
+        [HttpPut("pgs/videoFile")]
         public async Task<IActionResult> SetCurrentFile([FromBody] PgsVideoFile file, [FromServices] IWebHostEnvironment env)
         {
             try
@@ -91,7 +89,7 @@ namespace Avalanche.Api.Controllers.V1
         /// <param name="position"></param>
         /// <param name="env"></param>
         /// <returns></returns>
-        [HttpPut("videoPosition")]
+        [HttpPut("pgs/videoPosition")]
         public async Task<IActionResult> SetPgsVideoPosition([FromBody] double position, [FromServices] IWebHostEnvironment env)
         {
             try
@@ -118,7 +116,7 @@ namespace Avalanche.Api.Controllers.V1
         /// <param name="level"></param>
         /// <param name="env"></param>
         /// <returns></returns>
-        [HttpPut("volume/level")]
+        [HttpPut("pgs/volume/level")]
         public async Task<IActionResult> SetPgsVolume([FromBody] double level, [FromServices] IWebHostEnvironment env)
         {
             try
@@ -143,7 +141,7 @@ namespace Avalanche.Api.Controllers.V1
         /// </summary>
         /// <param name="env"></param>
         /// <returns></returns>
-        [HttpGet("volume/level")]
+        [HttpGet("pgs/volume/level")]
         public async Task<IActionResult> GetPgsVolume([FromServices] IWebHostEnvironment env)
         {
             try
@@ -168,7 +166,7 @@ namespace Avalanche.Api.Controllers.V1
         /// </summary>
         /// <param name="env"></param>
         /// <returns></returns>
-        [HttpPut("volume/mute")]
+        [HttpPut("pgs/volume/mute")]
         public async Task<IActionResult> SetPgsMute([FromBody] bool mute, [FromServices] IWebHostEnvironment env)
         {
             try
@@ -193,7 +191,7 @@ namespace Avalanche.Api.Controllers.V1
         /// </summary>
         /// <param name="env"></param>
         /// <returns></returns>
-        [HttpGet("volume/mute")]
+        [HttpGet("pgs/volume/mute")]
         public async Task<IActionResult> GetPgsMute([FromServices] IWebHostEnvironment env)
         {
             try
@@ -213,17 +211,13 @@ namespace Avalanche.Api.Controllers.V1
             }
         }
 
-        #endregion
-
-        #region API methods
-
         /// <summary>
         /// Starts or stops PGS mode
         /// </summary>
         /// <param name="pgsState"></param>
         /// <param name="env"></param>
         /// <returns></returns>
-        [HttpPut("state")]
+        [HttpPut("pgs/state")]
         public async Task<IActionResult> SetPgsState([FromBody] bool pgsState, [FromServices] IWebHostEnvironment env)
         {
             try
@@ -256,7 +250,7 @@ namespace Avalanche.Api.Controllers.V1
         /// </summary>
         /// <param name="env"></param>
         /// <returns></returns>
-        [HttpGet("sinks")]
+        [HttpGet("pgs/sinks")]
         [Produces(typeof(List<VideoSink>))]
         public async Task<IActionResult> GetPgsSinks([FromServices] IWebHostEnvironment env)
         {
@@ -285,7 +279,7 @@ namespace Avalanche.Api.Controllers.V1
         /// <param name="enabled"></param>
         /// <param name="env"></param>
         /// <returns></returns>
-        [HttpPut("sink/{alias}:{index}/state")]
+        [HttpPut("pgs/sinks/{alias}:{index}/state")]
         public async Task<IActionResult> SetPgsStateForSink(string alias, int index, [FromBody] bool enabled, [FromServices] IWebHostEnvironment env)
         {
             try
@@ -312,7 +306,7 @@ namespace Avalanche.Api.Controllers.V1
         /// <param name="index"></param>
         /// <param name="env"></param>
         /// <returns></returns>
-        [HttpGet("sink/{alias}:{index}/state")]
+        [HttpGet("pgs/sinks/{alias}:{index}/state")]
         public async Task<IActionResult> GetPgsStateForSink(string alias, int index, [FromServices] IWebHostEnvironment env)
         {
             try
@@ -331,8 +325,6 @@ namespace Avalanche.Api.Controllers.V1
                 _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
             }
         }
-
-        #endregion
 
     }
 }
