@@ -31,7 +31,7 @@
           "Required": false,
           "MaxLength": 0,
           "JsonKey": "ScreenMode",
-          "Policy": "0",
+          "Policy": "1",
           "SettingType": 1,
           "VisualStyle": 1,
           "SourceKey": "SetupScreenModesData",
@@ -118,7 +118,7 @@
               "Required": false,
               "MaxLength": 0,
               "JsonKey": "PhysicianAsLoggedInUser",
-              "Policy": "2",
+              "Policy": "0",
               "SettingType": 2,
               "VisualStyle": 3,
               "SourceVisualStyle": 0
@@ -153,7 +153,7 @@
   "General": {
     "Mode": 1,
     "ScreenMode": 0,
-    "DepartmentsSupported": false
+    "DepartmentsSupported": true
   },
   "Registration": {
     "Quick": {

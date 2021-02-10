@@ -5,11 +5,11 @@
   "Sections": [
     {
       "TitleTranslationKey": "pgsSettings.configuration",
-      "JsonKey": "",
+      "JsonKey": "Configuration",
       "Sections": [
         {
           "TitleTranslationKey": "pgsSettings.screen-config",
-          "JsonKey": "PlayerConfig",
+          "JsonKey": "Player",
           "Sections": null,
           "Settings": [
             {
@@ -18,7 +18,7 @@
               "Format": null,
               "PlaceHolderTranslationKey": null,
               "Icon": null,
-              "MaxValue": 0,
+              "MaxValue": 3200,
               "MinValue": 0,
               "Steps": 0,
               "DefaultValue": "",
@@ -37,7 +37,7 @@
               "Format": null,
               "PlaceHolderTranslationKey": null,
               "Icon": null,
-              "MaxValue": 0,
+              "MaxValue": 3200,
               "MinValue": 0,
               "Steps": 0,
               "DefaultValue": "",
@@ -56,7 +56,7 @@
               "Format": null,
               "PlaceHolderTranslationKey": null,
               "Icon": null,
-              "MaxValue": 0,
+              "MaxValue": 3200,
               "MinValue": 0,
               "Steps": 0,
               "DefaultValue": "",
@@ -75,7 +75,7 @@
               "Format": null,
               "PlaceHolderTranslationKey": null,
               "Icon": null,
-              "MaxValue": 0,
+              "MaxValue": 3200,
               "MinValue": 0,
               "Steps": 0,
               "DefaultValue": "",
@@ -91,8 +91,8 @@
           ]
         },
         {
-          "TitleTranslationKey": "pgsSettings.main-source",
-          "JsonKey": "MainSource",
+          "TitleTranslationKey": "pgsSettings.source",
+          "JsonKey": "Source",
           "Sections": null,
           "Settings": [
             {
@@ -120,7 +120,7 @@
               "Format": null,
               "PlaceHolderTranslationKey": null,
               "Icon": null,
-              "MaxValue": 0,
+              "MaxValue": 2,
               "MinValue": 0,
               "Steps": 0,
               "DefaultValue": "",
@@ -132,7 +132,7 @@
               "VisualStyle": 0,
               "SourceKey": null,
               "SourceVisualStyle": 0
-            },
+            }
           ]
         }
       ]
@@ -215,5 +215,17 @@
         }
       ]
     }
-  ]  
+  ],
+  "Configuration": {
+    "Player": {
+      "X": "1920",
+      "Y": "0",
+      "Width": "1920",
+      "Height": "1080"
+    },
+    "Source": {
+      "Alias": "4kiDp0testtt",
+      "Index": "0"
+    }
+  }
 }

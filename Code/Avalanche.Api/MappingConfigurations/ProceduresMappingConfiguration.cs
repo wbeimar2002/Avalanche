@@ -10,7 +10,8 @@ namespace Avalanche.Api.MappingConfigurations
         public ProceduresMappingConfiguration()
         {
             CreateMap<ProcedureImage, ProcedureImageViewModel>();
-
+            CreateMap<ProcedureVideo, ProcedureVideoViewModel>();
+            
             CreateMap<PatientViewModel, Patient>()
                 .ConstructUsing(p => new Patient())
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
@@ -53,18 +54,14 @@ namespace Avalanche.Api.MappingConfigurations
                             Sex = null != src.Patient?.Sex ? MappingUtilities.GetSexViewModel(src.Patient.Sex) : null
                         }: null
                     )) 
-                .ForMember(
-                    dest => dest.LibraryId,
-                    opt => opt.MapFrom(src => src.LibraryId))
-                .ForMember(
-                    dest => dest.RepositoryId,
-                    opt => opt.MapFrom(src => src.RepositoryId))
-                .ForMember(
-                    dest => dest.RequiresUserConfirmation,
-                    opt => opt.MapFrom(src => src.RequiresUserConfirmation))
-                .ForMember(
-                    dest => dest.Images,
-                    opt => opt.MapFrom(src => src.Images));
+                .ForMember(dest => dest.LibraryId, opt => opt.MapFrom(src => src.LibraryId))
+                .ForMember(dest => dest.RepositoryId, opt => opt.MapFrom(src => src.RepositoryId))
+                .ForMember(dest => dest.ProcedureRelativePath, opt => opt.MapFrom(src => src.ProcedureRelativePath))
+                .ForMember(dest => dest.ProcedureStartTimeUtc, opt => opt.MapFrom(src => src.ProcedureStartTimeUtc))
+                .ForMember(dest => dest.ProcedureTimezoneId, opt => opt.MapFrom(src => src.ProcedureTimezoneId))
+                .ForMember(dest => dest.RequiresUserConfirmation, opt => opt.MapFrom(src => src.RequiresUserConfirmation))
+                .ForMember(dest => dest.Images, opt => opt.MapFrom(src => src.Images))
+                .ForMember(dest => dest.Videos, opt => opt.MapFrom(src => src.Videos));
         }
     }
 }

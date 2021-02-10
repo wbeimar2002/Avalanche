@@ -3,15 +3,8 @@
     {
       "FriendlyName": "Testing B",
       "Sink": {
-        "Alias": "none",
+        "Alias": "4koDp2-test",
         "Index": "0"
-      }
-    },
-    {
-      "FriendlyName": "Testing C",
-      "Sink": {
-        "Alias": "none",
-        "Index": 2
       }
     }
   ]
