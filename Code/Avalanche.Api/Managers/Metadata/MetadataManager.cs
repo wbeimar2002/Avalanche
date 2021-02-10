@@ -119,7 +119,6 @@ namespace Avalanche.Api.Managers.Metadata
 
         public async Task DeleteProcedureType(ProcedureType procedureType)
         {
-            await ValidateDepartmentsSupport(procedureType.DepartmentId);
             Preconditions.ThrowIfNull(nameof(procedureType.Name), procedureType.Name);
 
             await _dataManagementService.DeleteProcedureType(_mapper.Map<ProcedureType, DeleteProcedureTypeRequest>(procedureType));
@@ -129,10 +128,17 @@ namespace Avalanche.Api.Managers.Metadata
         {
             await ValidateDepartmentsSupport(departmentId);
 
-            var result = await _dataManagementService.GetProceduresByDepartment(new Ism.Storage.Core.DataManagement.V1.Protos.GetProcedureTypesByDepartmentRequest()
+            var result = await _dataManagementService.GetProcedureTypesByDepartment(new Ism.Storage.Core.DataManagement.V1.Protos.GetProcedureTypesByDepartmentRequest()
             {
                 DepartmentId = departmentId
             });
+
+            return _mapper.Map<IList<ProcedureTypeMessage>, IList<ProcedureType>>(result.ProcedureTypeList).ToList();
+        }
+
+        public async Task<List<ProcedureType>> GetAllProcedureTypes()
+        {
+            var result = await _dataManagementService.GetAllProcedureTypes();
 
             return _mapper.Map<IList<ProcedureTypeMessage>, IList<ProcedureType>>(result.ProcedureTypeList).ToList();
         }

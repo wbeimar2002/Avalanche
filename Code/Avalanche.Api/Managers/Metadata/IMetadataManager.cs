@@ -21,5 +21,6 @@ namespace Avalanche.Api.Managers.Metadata
         Task ValidateDepartmentsSupport();
         Task ValidateDepartmentsSupport(int? departmentId);
         Task<ExpandoObject> GetDynamicSource(string key);
+        Task<List<ProcedureType>> GetAllProcedureTypes();
     }
 }

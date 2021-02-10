@@ -1,4 +1,5 @@
-﻿using Ism.Storage.Core.DataManagement.V1.Protos;
+﻿using Google.Protobuf.WellKnownTypes;
+using Ism.Storage.Core.DataManagement.V1.Protos;
 using System.Threading.Tasks;
 
 namespace Avalanche.Api.Services.Health
@@ -10,7 +11,8 @@ namespace Avalanche.Api.Services.Health
         Task DeleteDepartment(DeleteDepartmentRequest request);
         Task DeleteProcedureType(DeleteProcedureTypeRequest request);
         Task<GetDepartmentsResponse> GetAllDepartments();
-        Task<GetProcedureTypesResponse> GetProceduresByDepartment(GetProcedureTypesByDepartmentRequest request);
+        Task<GetProcedureTypesResponse> GetProcedureTypesByDepartment(GetProcedureTypesByDepartmentRequest request);
         Task<ProcedureTypeMessage> GetProcedureType(GetProcedureTypeRequest request);
+        Task<GetProcedureTypesResponse> GetAllProcedureTypes();
     }
 }
