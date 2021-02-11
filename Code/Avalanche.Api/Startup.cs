@@ -22,8 +22,11 @@ using Ism.Broadcaster.Services;
 using Ism.Security.Grpc;
 using Ism.Security.Grpc.Interfaces;
 using Ism.SystemState.Client;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Features;
@@ -35,6 +38,7 @@ using Microsoft.IdentityModel.Tokens;
 using Serilog;
 using System;
 using System.Diagnostics.CodeAnalysis;
+using System.IO;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
 using static AvidisDeviceInterface.V1.Protos.Avidis;
@@ -181,7 +185,7 @@ namespace Avalanche.Api
                     }
                 };
             })
-            .AddCookie(cookieOptions => 
+            .AddCookie(cookieOptions =>
             {
                 cookieOptions.Cookie.HttpOnly = true;
                 cookieOptions.Cookie.Path = "/Files";
@@ -192,6 +196,26 @@ namespace Avalanche.Api
                     return ctx.Request.Path.StartsWithSegments("/Files", StringComparison.OrdinalIgnoreCase) ? null : JwtBearerDefaults.AuthenticationScheme;
                 };
             });
+
+            var dataprotectionPath = Configuration.GetSection("dataprotectionPath")?.Value;
+            var dataprotectionName = Configuration.GetSection("dataprotectionAppName")?.Value;
+            var dataprotectionCertificatePath = Configuration.GetSection("dataprotectionCertificate")?.Value;
+            var dataprotectionCertificatePassword = Configuration.GetSection("dataprotectionPassword")?.Value;
+
+            var dataprotectionCertificate = new X509Certificate2(dataprotectionCertificatePath, dataprotectionCertificatePassword);
+
+            services.AddDataProtection()
+                .PersistKeysToFileSystem(new DirectoryInfo(dataprotectionPath))
+                .ProtectKeysWithCertificate(dataprotectionCertificate)
+                .SetApplicationName(dataprotectionName);
+
+            services.AddAuthorization(options =>
+            {
+                options.DefaultPolicy = new AuthorizationPolicyBuilder(CookieAuthenticationDefaults.AuthenticationScheme, JwtBearerDefaults.AuthenticationScheme)
+                    .RequireAuthenticatedUser()
+                    .Build();
+            });
+            
         }
 
         private static void ConfigureCorsPolicy(IServiceCollection services)

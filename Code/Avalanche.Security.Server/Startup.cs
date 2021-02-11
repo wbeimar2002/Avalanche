@@ -1,4 +1,6 @@
 ﻿using System;
+using System.IO;
+using System.Security.Cryptography.X509Certificates;
 using AutoMapper;
 using Avalanche.Security.Server.Core.Repositories;
 using Avalanche.Security.Server.Core.Security.Hashing;
@@ -14,6 +16,7 @@ using Avalanche.Security.Server.Services;
 using Avalanche.Shared.Infrastructure.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -105,6 +108,18 @@ namespace Avalanche.Security.Server
 			{
 				cookieOptions.Cookie.HttpOnly = true;
 			});
+
+			var dataprotectionPath = Configuration.GetSection("dataprotectionPath")?.Value;
+			var dataprotectionName = Configuration.GetSection("dataprotectionAppName")?.Value;
+			var dataprotectionCertificatePath = Configuration.GetSection("dataprotectionCertificate")?.Value;
+			var dataprotectionCertificatePassword = Configuration.GetSection("dataprotectionPassword")?.Value;
+
+			var dataprotectionCertificate = new X509Certificate2(dataprotectionCertificatePath, dataprotectionCertificatePassword);
+
+			services.AddDataProtection()
+				.PersistKeysToFileSystem(new DirectoryInfo(dataprotectionPath))
+				.ProtectKeysWithCertificate(dataprotectionCertificate)
+				.SetApplicationName(dataprotectionName);
 
 			services.AddAutoMapper(this.GetType().Assembly);
 		}
