@@ -6,7 +6,7 @@ using System.Text;
 
 namespace Avalanche.Api.ViewModels
 {
-    public class DependencySettingViewModel
+    public class DynamicDependencySettingViewModel
     {
         public string Value { get; set; }
         public string JsonKey { get; set; }

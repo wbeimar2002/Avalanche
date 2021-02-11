@@ -27,7 +27,7 @@ namespace Avalanche.Api.ViewModels
         public DynamicListViewModel CustomList { get; set; }
         public IList<DynamicSourceKeyValuePairViewModel> SourceValues { get; set; }
         public IList<KeyValuePairViewModel> PoliciesValues { get; set; }
-        public IList<DependencySettingViewModel> Dependencies { get; set; }
+        public IList<DynamicDependencySettingViewModel> Dependencies { get; set; }
         public string Value { get; set; }
     }
 }

@@ -27,13 +27,11 @@ namespace Avalanche.Api.Controllers.V1
     public class PhysiciansController : ControllerBase
     {
         readonly ILogger _appLoggerService;
-        readonly IPhysiciansManager _physiciansManager;
         readonly IDataManager _metadataManager;
 
-        public PhysiciansController(ILogger<PhysiciansController> appLoggerService, IPhysiciansManager physiciansManager, IDataManager metadataManager)
+        public PhysiciansController(ILogger<PhysiciansController> appLoggerService, IDataManager metadataManager)
         {
             _appLoggerService = appLoggerService;
-            _physiciansManager = physiciansManager;
             _metadataManager = metadataManager;
         }
 

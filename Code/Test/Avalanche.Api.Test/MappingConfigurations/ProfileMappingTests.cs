@@ -21,8 +21,6 @@ namespace Avalanche.Api.Tests.MappingConfigurations
             var config = new MapperConfiguration(cfg =>
             {
                 cfg.AddProfile(new HealthMappingConfiguration());
-                cfg.AddProfile(new RoutingMappingConfiguration());
-                cfg.AddProfile(new MediaMappingConfiguration());
                 cfg.AddProfile(new ProceduresMappingConfiguration());
             });
 
@@ -36,22 +34,10 @@ namespace Avalanche.Api.Tests.MappingConfigurations
         }
 
         [Test]
-        public void MediaMappingConfigurations_IsValid()
+        public void ProceduresMappingConfigurations_IsValid()
         {
-            AssertProfileIsValid<MediaMappingConfiguration>();
+            AssertProfileIsValid<ProceduresMappingConfiguration>();
         }
-
-        //[Test]
-        //public void ProceduresMappingConfigurations_IsValid()
-        //{
-        //    AssertProfileIsValid<ProceduresMappingConfiguration>();
-        //}
-
-        //[Test]
-        //public void VideoRoutingMappingConfigurations_IsValid()
-        //{
-        //    AssertProfileIsValid<RoutingMappingConfiguration>();
-        //}
 
         [Test]
         public void TestPatientViewModelToStateModel()
