@@ -26,7 +26,7 @@ namespace Avalanche.Api.MappingConfigurations
                     opt => opt.MapFrom(src => 0))
                 .ForPath(dest =>
                     dest.Sink.Alias,
-                    opt => opt.MapFrom(src => string.Empty))
+                    opt => opt.Ignore())
                 .ForMember(dest =>
                     dest.Type,
                     opt => opt.MapFrom(src => src.StreamType))
