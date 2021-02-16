@@ -9,7 +9,6 @@ using Avalanche.Api.Managers.Procedures;
 using Avalanche.Api.Services.Configuration;
 using Avalanche.Api.Services.Health;
 using Avalanche.Api.Services.Maintenance;
-using Avalanche.Api.Services.Media;
 using Avalanche.Api.Services.Notifications;
 using Avalanche.Api.Utilities;
 using Avalanche.Shared.Infrastructure.Models;
@@ -81,14 +80,9 @@ namespace Avalanche.Api
             services.AddTransient<IProceduresManager, ProceduresManager>();
             services.AddTransient<INotificationsManager, NotificationsManager>();
 
-            services.AddSingleton<IMediaService, MediaService>();
             services.AddSingleton<IPieService, PieService>();
             services.AddSingleton<IBroadcastService, BroadcastService>();
-            services.AddSingleton<IRoutingService, RoutingService>();
-            services.AddSingleton<IAvidisService, AvidisService>();
-            services.AddSingleton<IRecorderService, RecorderService>();
             services.AddSingleton<IStorageService, StorageService>();
-            services.AddSingleton<IPgsTimeoutService, PgsTimeoutService>();
             services.AddSingleton<IDataManagementService, DataManagementService>();
 
             services.AddSingleton<ICertificateProvider>(new FileSystemCertificateProvider(grpcCertificate, grpcPassword, grpcServerValidationCertificate));

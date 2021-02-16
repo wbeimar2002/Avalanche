@@ -13,6 +13,7 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using static Ism.Utility.Core.Preconditions;
 
 namespace Avalanche.Api.Controllers.V1
 {
@@ -26,8 +27,8 @@ namespace Avalanche.Api.Controllers.V1
 
         public DataController(ILogger<DataController> appLoggerService, IDataManager metadataManager)
         {
-            _appLoggerService = appLoggerService;
-            _metadataManager = metadataManager;
+            _appLoggerService = ThrowIfNullOrReturn(nameof(appLoggerService), appLoggerService);
+            _metadataManager = ThrowIfNullOrReturn(nameof(metadataManager), metadataManager); ;
         }
 
         /// <summary>
