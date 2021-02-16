@@ -12,12 +12,12 @@ namespace Avalanche.Shared.Domain.Models.Media
         /// <summary>
         /// Used to identify this source/sink
         /// </summary>
-        public SinkModel Sink { get; set; } = new SinkModel();
+        public SinkModel? Sink { get; set; }
 
         /// <summary>
         /// Friendly (display) name
         /// </summary>
-        public string Name { get; set; } = string.Empty;
+        public string? Name { get; set; }
 
         /// <summary>
         /// Should this source/display show up in the UI?
@@ -33,6 +33,6 @@ namespace Avalanche.Shared.Domain.Models.Media
         /// <summary>
         /// UI type, which icon to use for sources and which button graphic to use for displays
         /// </summary>
-        public string Type { get; set; } = string.Empty;
+        public string? Type { get; set; }
     }
 }

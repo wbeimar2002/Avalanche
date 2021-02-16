@@ -32,6 +32,6 @@ namespace Avalanche.Api.Services.Media
 
         public async Task StopRecording() => await RecorderClient.StopRecording();
 
-        public async Task CaptureImage(CaptureImageRequest imageMessage) => await RecorderClient.CaptureImage(imageMessage);
+        public async Task CaptureImage(CaptureImageRequest captureRequest) => await RecorderClient.CaptureImage(captureRequest);
     }
 }

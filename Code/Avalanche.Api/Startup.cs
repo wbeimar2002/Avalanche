@@ -4,11 +4,13 @@ using Avalanche.Api.Managers.Data;
 using Avalanche.Api.Managers.Health;
 using Avalanche.Api.Managers.Licensing;
 using Avalanche.Api.Managers.Maintenance;
+using Avalanche.Api.Managers.Media;
 using Avalanche.Api.Managers.Notifications;
 using Avalanche.Api.Managers.Procedures;
 using Avalanche.Api.Services.Configuration;
 using Avalanche.Api.Services.Health;
 using Avalanche.Api.Services.Maintenance;
+using Avalanche.Api.Services.Media;
 using Avalanche.Api.Services.Notifications;
 using Avalanche.Api.Utilities;
 using Avalanche.Shared.Infrastructure.Models;
@@ -72,7 +74,9 @@ namespace Avalanche.Api
             var grpcCertificate = configurationService.GetEnvironmentVariable("grpcCertificate");
             var grpcPassword = configurationService.GetEnvironmentVariable("grpcPassword");
             var grpcServerValidationCertificate = configurationService.GetEnvironmentVariable("grpcServerValidationCertificate");
-          
+
+            services.AddTransient<IWebRTCManager, WebRTCManager>();
+            services.AddTransient<IRecordingManager, RecordingManager>();
             services.AddTransient<IMaintenanceManager, MaintenanceManager>();
             services.AddTransient<IPatientsManager, PatientsManager>();
             services.AddTransient<IDataManager, DataManager>();
@@ -80,6 +84,8 @@ namespace Avalanche.Api
             services.AddTransient<IProceduresManager, ProceduresManager>();
             services.AddTransient<INotificationsManager, NotificationsManager>();
 
+            services.AddSingleton<IWebRTCService, WebRTCService>();
+            services.AddSingleton<IRecorderService, RecorderService>();
             services.AddSingleton<IPieService, PieService>();
             services.AddSingleton<IBroadcastService, BroadcastService>();
             services.AddSingleton<IStorageService, StorageService>();

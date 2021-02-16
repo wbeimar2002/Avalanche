@@ -21,6 +21,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Shared", "Shared", "{C0B1EA
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{694C7231-4426-427B-A66E-FCBF2959A040}"
 	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
 		NuGet.Config = NuGet.Config
 	EndProjectSection
 EndProject

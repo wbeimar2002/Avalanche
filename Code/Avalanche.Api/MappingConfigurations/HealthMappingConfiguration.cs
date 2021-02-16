@@ -122,15 +122,15 @@ namespace Avalanche.Api.MappingConfigurations
                .ForPath(dest =>
                    dest.SearchFields.Department,
                    opt => opt.MapFrom(src => src.Department))
-               .ForPath(dest =>
-                   dest.SearchFields.Keyword,
-                   opt => opt.MapFrom(src => string.Empty))
-               .ForPath(dest =>
-                   dest.SearchFields.MaxDate,
-                   opt => opt.MapFrom(src => src.MaxDate == null? null : src.MaxDate.Value.ToTimestamp()))
-               .ForPath(dest =>
-                   dest.SearchFields.MinDate,
-                   opt => opt.MapFrom(src => src.MinDate == null ? null : src.MinDate.Value.ToTimestamp()))
+            //   .ForPath(dest =>
+            //       dest.SearchFields.Keyword,
+            //       opt => opt.MapFrom(src => string.Empty))
+            //   .ForPath(dest =>
+            //       dest.SearchFields.MaxDate,
+            //       opt => opt.MapFrom(src => src.MaxDate == null ? null : src.MaxDate.Value.ToTimestamp()))
+            //   .ForPath(dest =>
+            //       dest.SearchFields.MinDate,
+            //       opt => opt.MapFrom(src => src.MinDate == null ? null : src.MinDate.Value.ToTimestamp()))
                .ForPath(dest =>
                    dest.SearchFields.MRN,
                    opt => opt.MapFrom(src => src.MRN))
@@ -173,30 +173,30 @@ namespace Avalanche.Api.MappingConfigurations
                .ReverseMap();
 
             CreateMap<PatientKeywordSearchFilterViewModel, Ism.PatientInfoEngine.V1.Protos.SearchRequest>()
-                .ForPath(dest =>
-                    dest.SearchFields.Accession,
-                    opt => opt.MapFrom(src => string.Empty))
-                .ForPath(dest =>
-                    dest.SearchFields.Department,
-                    opt => opt.MapFrom(src => string.Empty))
-                .ForPath(dest =>
-                    dest.SearchFields.MaxDate,
-                    opt => opt.Ignore()) 
-                .ForPath(dest =>
-                    dest.SearchFields.MinDate,
-                    opt => opt.Ignore()) 
-                .ForPath(dest =>
-                    dest.SearchFields.MRN,
-                    opt => opt.MapFrom(src => string.Empty))
-                .ForPath(dest =>
-                    dest.SearchFields.RoomName,
-                    opt => opt.MapFrom(src => string.Empty))
-                .ForPath(dest =>
-                    dest.SearchFields.LastName,
-                    opt => opt.MapFrom(src => string.Empty))
-                .ForPath(dest =>
-                    dest.SearchFields.Keyword,
-                    opt => opt.MapFrom(src => src.Term))
+                //.ForPath(dest =>
+                //    dest.SearchFields.Accession,
+                //    opt => opt.MapFrom(src => string.Empty))
+                //.ForPath(dest =>
+                //    dest.SearchFields.Department,
+                //    opt => opt.MapFrom(src => string.Empty))
+                //.ForPath(dest =>
+                //    dest.SearchFields.MaxDate,
+                //    opt => opt.Ignore())
+                //.ForPath(dest =>
+                //    dest.SearchFields.MinDate,
+                //    opt => opt.Ignore())
+                //.ForPath(dest =>
+                //    dest.SearchFields.MRN,
+                //    opt => opt.MapFrom(src => string.Empty))
+                //.ForPath(dest =>
+                //    dest.SearchFields.RoomName,
+                //    opt => opt.MapFrom(src => string.Empty))
+                //.ForPath(dest =>
+                //    dest.SearchFields.LastName,
+                //    opt => opt.MapFrom(src => string.Empty))
+                //.ForPath(dest =>
+                //    dest.SearchFields.Keyword,
+                //    opt => opt.MapFrom(src => src.Term))
                 .ForMember(dest =>
                     dest.FirstRecordIndex,
                     opt => opt.MapFrom(src => src.Page))
@@ -229,9 +229,6 @@ namespace Avalanche.Api.MappingConfigurations
             CreateMap<Ism.IsmLogCommon.Core.AccessInfo, AccessInfoModel>();
 
             CreateMap<Ism.Storage.Core.PatientList.V1.Protos.AddPatientRecordResponse, PatientViewModel>()
-                //.ForMember(dest =>
-                //    dest.ScopeSerialNumber,
-                //    opt => opt.Ignore())
                 .ForMember(dest =>
                     dest.AccessInformation,
                     opt => opt.Ignore())
@@ -271,9 +268,6 @@ namespace Avalanche.Api.MappingConfigurations
                 .ReverseMap();
 
             CreateMap<Ism.PatientInfoEngine.V1.Protos.PatientRecordMessage, PatientViewModel>()
-                //.ForMember(dest =>
-                //    dest.ScopeSerialNumber,
-                //    opt => opt.Ignore())
                 .ForMember(dest =>
                     dest.AccessInformation,
                     opt => opt.Ignore())

@@ -17,6 +17,7 @@ namespace Avalanche.Api.ViewModels
 
         [JsonIgnore]
         public AccessInfoModel AccessInformation { get; set; }
+
         [JsonIgnore]
         public string CultureName { get; set; }
 

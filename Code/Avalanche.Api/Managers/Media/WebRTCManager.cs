@@ -49,6 +49,12 @@ namespace Avalanche.Api.Managers.Media
 
         public async Task InitSessionAsync(WebRTCSessionModel session)
         {
+            Preconditions.ThrowIfNull(nameof(session.SessionId), session.SessionId);
+            Preconditions.ThrowIfNull(nameof(session.Message), session.Message);
+            Preconditions.ThrowIfNull(nameof(session.Type), session.Type);
+
+            //TODO: Complete preconditions
+
             var accessInfo = _accessInfoFactory.GenerateAccessInfo();
             session.AccessInformation = _mapper.Map<Ism.IsmLogCommon.Core.AccessInfo, AccessInfoModel>(accessInfo);
 
