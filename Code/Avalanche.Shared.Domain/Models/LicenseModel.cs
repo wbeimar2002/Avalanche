@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Avalanche.Shared.Domain.Models
 {
-    public class License
+    public class LicenseModel
     {
         public string Key { get; set; }
         public DateTime ActivationDate { get; set; }

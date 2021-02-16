@@ -56,13 +56,13 @@ namespace Avalanche.Api.Controllers.V1
         /// Get all active software installed
         /// </summary>
         [HttpGet("")]
-        [Produces(typeof(List<License>))]
+        [Produces(typeof(List<LicenseModel>))]
         public async Task<IActionResult> GetAllActive([FromServices]IWebHostEnvironment env)
         {
             try
             {
                 _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
-                List<License> result = await _licensingManager.GetAllActive();
+                List<LicenseModel> result = await _licensingManager.GetAllActive();
                 return Ok(result);
             }
             catch (Exception exception)

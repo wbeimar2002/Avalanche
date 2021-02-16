@@ -21,16 +21,16 @@ namespace Avalanche.Api.MappingConfigurations
                 .ForMember(dest => dest.DateOfBirth, opt => opt.MapFrom(src => src.DateOfBirth))
                 .ForMember(dest => dest.Sex, opt => opt.MapFrom(src => src.Sex.Id));
 
-            CreateMap<Avalanche.Shared.Domain.Models.Department, Department>()
+            CreateMap<Avalanche.Shared.Domain.Models.DepartmentModel, Department>()
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
                 .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name));
 
-            CreateMap<Avalanche.Shared.Domain.Models.ProcedureType, ProcedureType>()
+            CreateMap<Avalanche.Shared.Domain.Models.ProcedureTypeModel, ProcedureType>()
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
                 .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name));
 
 
-            CreateMap<Avalanche.Shared.Domain.Models.Physician, Physician>()
+            CreateMap<Avalanche.Shared.Domain.Models.PhysicianModel, Physician>()
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
                 .ForMember(dest => dest.FirstName, opt => opt.MapFrom(src => src.FirstName))
                 .ForMember(dest => dest.LastName, opt => opt.MapFrom(src => src.LastName));
@@ -45,11 +45,11 @@ namespace Avalanche.Api.MappingConfigurations
                             LastName = src.Patient?.LastName,
                             FirstName = src.Patient?.FirstName,
                             DateOfBirth = src.Patient?.DateOfBirth ?? DateTime.MinValue,
-                            Department = null != src.Department ? new Shared.Domain.Models.Department { Id = src.Department.Id, IsNew = false, Name = src.Department.Name } : null,
+                            Department = null != src.Department ? new Shared.Domain.Models.DepartmentModel { Id = src.Department.Id, IsNew = false, Name = src.Department.Name } : null,
                             Id = src.Patient?.Id,
                             MRN = src.Patient?.MRN,
-                            Physician = null != src.Physician ? new Shared.Domain.Models.Physician {  Id= src.Physician.Id, FirstName = src.Physician.FirstName, LastName = src.Physician.LastName } : null,
-                            ProcedureType = null != src.ProcedureType ? new Shared.Domain.Models.ProcedureType { Id = src.ProcedureType.Id, DepartmentId = src.Department?.Id, IsNew = false, Name = src.ProcedureType.Name}: null,
+                            Physician = null != src.Physician ? new Shared.Domain.Models.PhysicianModel {  Id= src.Physician.Id, FirstName = src.Physician.FirstName, LastName = src.Physician.LastName } : null,
+                            ProcedureType = null != src.ProcedureType ? new Shared.Domain.Models.ProcedureTypeModel { Id = src.ProcedureType.Id, DepartmentId = src.Department?.Id, IsNew = false, Name = src.ProcedureType.Name}: null,
                             AccessInformation = null,
                             Sex = null != src.Patient?.Sex ? MappingUtilities.GetSexViewModel(src.Patient.Sex) : null
                         }: null

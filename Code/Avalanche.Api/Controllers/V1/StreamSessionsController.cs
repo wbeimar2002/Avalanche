@@ -1,13 +1,8 @@
-﻿using AutoMapper;
-using Avalanche.Api.Managers.Procedures;
-using Avalanche.Api.ViewModels;
-using Avalanche.Shared.Domain.Models;
+﻿using Avalanche.Api.Managers.Media;
+using Avalanche.Shared.Domain.Models.Media;
 using Avalanche.Shared.Infrastructure.Enumerations;
 using Avalanche.Shared.Infrastructure.Extensions;
 using Avalanche.Shared.Infrastructure.Helpers;
-using Ism.SystemState.Client;
-using Ism.SystemState.Models.Procedure;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -15,86 +10,31 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 
 namespace Avalanche.Api.Controllers.V1
 {
     [Route("[controller]")]
     [ApiController]
-    [Authorize]
-    [ExcludeFromCodeCoverage]
-    public class ProceduresController : ControllerBase
+    public class StreamSessionsController : ControllerBase
     {
         readonly ILogger _appLoggerService;
-        private readonly IProceduresManager _proceduresManager;
+        readonly IWebRTCManager _webRTCManager;
 
-        public ProceduresController(ILogger<ProceduresController> appLoggerService, IProceduresManager proceduresManager)
+        public StreamSessionsController(ILogger<LicensesController> appLoggerService, IWebRTCManager webRTCManager)
         {
             _appLoggerService = appLoggerService;
-            _proceduresManager = proceduresManager;
+            _webRTCManager = webRTCManager;
         }
 
-        /// <summary>
-        /// Search procedures
-        /// </summary>
-        [HttpPost("")]
-        [Produces(typeof(List<ProcedureModel>))]
-        public async Task<IActionResult> Search(ProcedureSearchFilterViewModel filter, [FromServices]IWebHostEnvironment env)
+        [HttpGet("sources")]
+        [Produces(typeof(IList<VideoDeviceModel>))]
+        public async Task<IActionResult> GetSourceStreams(WebRTCSessionModel session, [FromServices] IWebHostEnvironment env)
         {
             try
             {
                 _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
-                await Task.CompletedTask;
-                return Ok();
-            }
-            catch (Exception exception)
-            {
-                _appLoggerService.LogError(LoggerHelper.GetLogMessage(DebugLogType.Exception), exception);
-                return new BadRequestObjectResult(exception.Get(env.IsDevelopment()));
-            }
-            finally
-            {
-                _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
-            }
-        }
-
-        /// <summary>
-        /// Get procedure
-        /// </summary>
-        [HttpGet("{id}")]
-        [Produces(typeof(ProcedureDetailsViewModel))]
-        public async Task<IActionResult> Get([FromServices]IWebHostEnvironment env)
-        {
-            try
-            {
-                _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
-                await Task.CompletedTask;
-                return Ok();
-            }
-            catch (Exception exception)
-            {
-                _appLoggerService.LogError(LoggerHelper.GetLogMessage(DebugLogType.Exception), exception);
-                return new BadRequestObjectResult(exception.Get(env.IsDevelopment()));
-            }
-            finally
-            {
-                _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
-            }
-        }
-        /// <summary>
-        /// Load the active procedure (if exists)
-        /// </summary>
-        /// <returns>Active Procedure model or null</returns>
-        [HttpGet("active")]
-        [Produces(typeof(ProcedureDetailsViewModel))]
-        public async Task<IActionResult> GetActive([FromServices]IWebHostEnvironment env)
-        {
-            try
-            {
-                _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
-
-                var result = await _proceduresManager.GetActiveProcedure();
+                var result = await _webRTCManager.GetSourceStreams();
                 return Ok(result);
             }
             catch (Exception exception)
@@ -108,17 +48,13 @@ namespace Avalanche.Api.Controllers.V1
             }
         }
 
-        /// <summary>
-        /// Set ActiveProcedure's "RequiresUserConfirmation" flag to false.
-        /// </summary>
-        [HttpPost("confirmActive")]
-        public async Task<IActionResult> ConfirmActiveProcedure([FromServices]IWebHostEnvironment env)
+        [HttpPost("")]
+        public async Task<IActionResult> InitSession(WebRTCSessionModel session, [FromServices] IWebHostEnvironment env)
         {
             try
             {
                 _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
-
-                await _proceduresManager.ConfirmActiveProcedure();
+                await _webRTCManager.InitSessionAsync(session);
                 return Ok();
             }
             catch (Exception exception)
@@ -132,5 +68,44 @@ namespace Avalanche.Api.Controllers.V1
             }
         }
 
+        [HttpPut("")]
+        public async Task<IActionResult> HandleMessage(WebRTCMessaggeModel message, [FromServices] IWebHostEnvironment env)
+        {
+            try
+            {
+                _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
+                await _webRTCManager.HandleMessageForVideo(message);
+                return Ok();
+            }
+            catch (Exception exception)
+            {
+                _appLoggerService.LogError(LoggerHelper.GetLogMessage(DebugLogType.Exception), exception);
+                return new BadRequestObjectResult(exception.Get(env.IsDevelopment()));
+            }
+            finally
+            {
+                _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
+            }
+        }
+
+        [HttpDelete("")]
+        public async Task<IActionResult> DeInitSession(WebRTCMessaggeModel message, [FromServices] IWebHostEnvironment env)
+        {
+            try
+            {
+                _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
+                await _webRTCManager.DeInitSessionAsync(message);
+                return Ok();
+            }
+            catch (Exception exception)
+            {
+                _appLoggerService.LogError(LoggerHelper.GetLogMessage(DebugLogType.Exception), exception);
+                return new BadRequestObjectResult(exception.Get(env.IsDevelopment()));
+            }
+            finally
+            {
+                _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
+            }
+        }
     }
 }

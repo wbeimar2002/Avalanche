@@ -56,7 +56,7 @@ namespace Avalanche.Api.Tests.Controllers
         [Test]
         public void GetSexesShouldReturnBadResultIfFails()
         {
-            _metadataManager.Setup(mock => mock.GetMetadata(MetadataTypes.Sex)).Throws(It.IsAny<Exception>());
+            _metadataManager.Setup(mock => mock.GetMetadata(DataTypes.Sex)).Throws(It.IsAny<Exception>());
 
             var badResult = _controller.GetSexes(_environment.Object);
 
@@ -169,7 +169,7 @@ namespace Avalanche.Api.Tests.Controllers
         [Test]
         public void AddDepartmentShouldReturnOkResult()
         {
-            var okResult = _controller.AddDepartment(It.IsAny<Department>(), _environment.Object);
+            var okResult = _controller.AddDepartment(It.IsAny<DepartmentModel>(), _environment.Object);
 
             if (_checkLogger)
             {
@@ -184,7 +184,7 @@ namespace Avalanche.Api.Tests.Controllers
         [Test]
         public void AddProcedureTypeShouldReturnOkResult()
         {
-            var okResult = _controller.AddProcedureType(It.IsAny<ProcedureType>(), _environment.Object);
+            var okResult = _controller.AddProcedureType(It.IsAny<ProcedureTypeModel>(), _environment.Object);
 
             if (_checkLogger)
             {

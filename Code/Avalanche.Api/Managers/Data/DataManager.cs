@@ -26,7 +26,7 @@ namespace Avalanche.Api.Managers.Data
         readonly IDataManagementService _dataManagementService;
         readonly IHttpContextAccessor _httpContextAccessor;
 
-        readonly User user;
+        readonly UserModel user;
         readonly ConfigurationContext configurationContext;
 
         public DataManager(IStorageService storageService,
@@ -40,36 +40,36 @@ namespace Avalanche.Api.Managers.Data
             _mapper = mapper;
 
             user = HttpContextUtilities.GetUser(_httpContextAccessor.HttpContext);
-            configurationContext = _mapper.Map<Shared.Domain.Models.User, ConfigurationContext>(user);
+            configurationContext = _mapper.Map<Shared.Domain.Models.UserModel, ConfigurationContext>(user);
             configurationContext.IdnId = Guid.NewGuid().ToString();
         }
 
-        public async Task<IList<KeyValuePairViewModel>> GetMetadata(MetadataTypes type)
+        public async Task<IList<KeyValuePairViewModel>> GetMetadata(DataTypes type)
         {
-            var configurationContext = _mapper.Map<User, ConfigurationContext>(user);
+            var configurationContext = _mapper.Map<UserModel, ConfigurationContext>(user);
 
             switch (type)
             {
-                case MetadataTypes.Sex:
+                case DataTypes.Sex:
                     return (await _storageService.GetJsonObject<ListContainerViewModel>("SexTypesData", 1, configurationContext)).Items;
-                case MetadataTypes.SourceTypes:
+                case DataTypes.SourceTypes:
                     return (await _storageService.GetJsonObject<ListContainerViewModel>("SourceTypesData", 1, configurationContext)).Items;
-                case MetadataTypes.SettingTypes:
+                case DataTypes.SettingTypes:
                     return (await _storageService.GetJsonObject<ListContainerViewModel>("SettingTypesData", 1, configurationContext)).Items;
-                case MetadataTypes.PgsVideoFiles:
+                case DataTypes.PgsVideoFiles:
                     return (await _storageService.GetJsonObject<ListContainerViewModel>("PgsVideoFilesData", 1, configurationContext)).Items;
                 default:
                     return new List<KeyValuePairViewModel>();
             }
         }
 
-        public async Task<IList<DynamicSourceKeyValuePairViewModel>> GetSource(MetadataTypes type)
+        public async Task<IList<DynamicSourceKeyValuePairViewModel>> GetSource(DataTypes type)
         {
             switch (type)
             {
-                case MetadataTypes.SearchColumns:
+                case DataTypes.SearchColumns:
                     return (await _storageService.GetJsonObject<SourceListContainerViewModel>("SearchColumnsData", 1, configurationContext)).Items;
-                case MetadataTypes.PgsVideoFiles:
+                case DataTypes.PgsVideoFiles:
                     return (await _storageService.GetJsonObject<SourceListContainerViewModel>("PgsVideoFilesData", 1, configurationContext)).Items;
                 default:
                     return new List<DynamicSourceKeyValuePairViewModel>();
@@ -82,13 +82,13 @@ namespace Avalanche.Api.Managers.Data
             return JsonConvert.DeserializeObject<ExpandoObject>(JsonConvert.SerializeObject(dynamicObject));
         }
 
-        public async Task<Department> AddDepartment(Department department)
+        public async Task<DepartmentModel> AddDepartment(DepartmentModel department)
         {
             await ValidateDepartmentsSupport();
             Preconditions.ThrowIfNull(nameof(department.Name), department.Name);
 
-            var result = await _dataManagementService.AddDepartment(_mapper.Map<Department, AddDepartmentRequest>(department));
-            return _mapper.Map<AddDepartmentResponse, Department>(result);
+            var result = await _dataManagementService.AddDepartment(_mapper.Map<DepartmentModel, AddDepartmentRequest>(department));
+            return _mapper.Map<AddDepartmentResponse, DepartmentModel>(result);
         }
 
         public async Task DeleteDepartment(int departmentId)
@@ -98,33 +98,33 @@ namespace Avalanche.Api.Managers.Data
             await _dataManagementService.DeleteDepartment(new DeleteDepartmentRequest() { DepartmentId = departmentId });
         }
 
-        public async Task<IList<Department>> GetAllDepartments()
+        public async Task<IList<DepartmentModel>> GetAllDepartments()
         {
             await ValidateDepartmentsSupport();
 
             var result = await _dataManagementService.GetAllDepartments();
 
-            return _mapper.Map<IList<DepartmentMessage>, IList<Department>>(result.DepartmentList)
+            return _mapper.Map<IList<DepartmentMessage>, IList<DepartmentModel>>(result.DepartmentList)
                 .OrderBy(d => d.Name).ToList();
         }
 
-        public async Task<ProcedureType> AddProcedureType(ProcedureType procedureType)
+        public async Task<ProcedureTypeModel> AddProcedureType(ProcedureTypeModel procedureType)
         {
             await ValidateDepartmentsSupport(procedureType.DepartmentId);
             Preconditions.ThrowIfNull(nameof(procedureType.Name), procedureType.Name);
 
-            var result = await _dataManagementService.AddProcedureType(_mapper.Map<ProcedureType, AddProcedureTypeRequest>(procedureType));
-            return _mapper.Map<AddProcedureTypeResponse, ProcedureType>(result);
+            var result = await _dataManagementService.AddProcedureType(_mapper.Map<ProcedureTypeModel, AddProcedureTypeRequest>(procedureType));
+            return _mapper.Map<AddProcedureTypeResponse, ProcedureTypeModel>(result);
         }
 
-        public async Task DeleteProcedureType(ProcedureType procedureType)
+        public async Task DeleteProcedureType(ProcedureTypeModel procedureType)
         {
             Preconditions.ThrowIfNull(nameof(procedureType.Name), procedureType.Name);
 
-            await _dataManagementService.DeleteProcedureType(_mapper.Map<ProcedureType, DeleteProcedureTypeRequest>(procedureType));
+            await _dataManagementService.DeleteProcedureType(_mapper.Map<ProcedureTypeModel, DeleteProcedureTypeRequest>(procedureType));
         }
 
-        public async Task<List<ProcedureType>> GetProcedureTypesByDepartment(int? departmentId)
+        public async Task<List<ProcedureTypeModel>> GetProcedureTypesByDepartment(int? departmentId)
         {
             await ValidateDepartmentsSupport(departmentId);
 
@@ -133,14 +133,14 @@ namespace Avalanche.Api.Managers.Data
                 DepartmentId = departmentId
             });
 
-            return _mapper.Map<IList<ProcedureTypeMessage>, IList<ProcedureType>>(result.ProcedureTypeList).ToList();
+            return _mapper.Map<IList<ProcedureTypeMessage>, IList<ProcedureTypeModel>>(result.ProcedureTypeList).ToList();
         }
 
-        public async Task<List<ProcedureType>> GetAllProcedureTypes()
+        public async Task<List<ProcedureTypeModel>> GetAllProcedureTypes()
         {
             var result = await _dataManagementService.GetAllProcedureTypes();
 
-            return _mapper.Map<IList<ProcedureTypeMessage>, IList<ProcedureType>>(result.ProcedureTypeList).ToList();
+            return _mapper.Map<IList<ProcedureTypeMessage>, IList<ProcedureTypeModel>>(result.ProcedureTypeList).ToList();
         }
 
         public async Task ValidateDepartmentsSupport()

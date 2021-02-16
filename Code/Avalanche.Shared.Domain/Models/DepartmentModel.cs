@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Avalanche.Shared.Domain.Models
 {
-    public class Department
+    public class DepartmentModel
     {
         public int Id { get; set; }
         public string Name { get; set; }

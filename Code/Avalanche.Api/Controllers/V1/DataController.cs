@@ -42,7 +42,7 @@ namespace Avalanche.Api.Controllers.V1
             {
                 _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
 
-                var result = await _metadataManager.GetSource(MetadataTypes.SearchColumns);
+                var result = await _metadataManager.GetSource(DataTypes.SearchColumns);
                 return Ok(result);
             }
             catch (Exception exception)
@@ -67,7 +67,7 @@ namespace Avalanche.Api.Controllers.V1
             {
                 _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
 
-                var result = await _metadataManager.GetMetadata(MetadataTypes.Sex);
+                var result = await _metadataManager.GetMetadata(DataTypes.Sex);
                 return Ok(result);
             }
             catch (Exception exception)
@@ -85,7 +85,7 @@ namespace Avalanche.Api.Controllers.V1
         /// Get departments
         /// </summary>
         [HttpGet("departments")]
-        [Produces(typeof(List<Department>))]
+        [Produces(typeof(List<DepartmentModel>))]
         public async Task<IActionResult> GetDepartments([FromServices] IWebHostEnvironment env)
         {
             try
@@ -110,8 +110,8 @@ namespace Avalanche.Api.Controllers.V1
         /// Get departments
         /// </summary>
         [HttpPost("departments")]
-        [Produces(typeof(Department))]
-        public async Task<IActionResult> AddDepartment(Department department, [FromServices] IWebHostEnvironment env)
+        [Produces(typeof(DepartmentModel))]
+        public async Task<IActionResult> AddDepartment(DepartmentModel department, [FromServices] IWebHostEnvironment env)
         {
             try
             {
@@ -159,7 +159,7 @@ namespace Avalanche.Api.Controllers.V1
         /// Get procedure types by department
         /// </summary>
         [HttpGet("departments/{departmentId}/procedureTypes")]
-        [Produces(typeof(List<ProcedureType>))]
+        [Produces(typeof(List<ProcedureTypeModel>))]
         public async Task<IActionResult> GetProcedureTypesByDepartment(int departmentId, [FromServices] IWebHostEnvironment env)
         {
             try
@@ -184,7 +184,7 @@ namespace Avalanche.Api.Controllers.V1
         /// Get procedure types by department
         /// </summary>
         [HttpGet("procedureTypes")]
-        [Produces(typeof(List<ProcedureType>))]
+        [Produces(typeof(List<ProcedureTypeModel>))]
         public async Task<IActionResult> GetProcedureTypes([FromServices] IWebHostEnvironment env)
         {
             try
@@ -206,8 +206,8 @@ namespace Avalanche.Api.Controllers.V1
         }
 
         [HttpPost("procedureTypes")]
-        [Produces(typeof(ProcedureType))]
-        public async Task<IActionResult> AddProcedureType(ProcedureType procedureType, [FromServices] IWebHostEnvironment env)
+        [Produces(typeof(ProcedureTypeModel))]
+        public async Task<IActionResult> AddProcedureType(ProcedureTypeModel procedureType, [FromServices] IWebHostEnvironment env)
         {
             try
             {
@@ -234,7 +234,7 @@ namespace Avalanche.Api.Controllers.V1
             {
                 _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
 
-                await _metadataManager.DeleteProcedureType(new ProcedureType()
+                await _metadataManager.DeleteProcedureType(new ProcedureTypeModel()
                 {
                     Name = procedureTypeName
                 });
@@ -259,7 +259,7 @@ namespace Avalanche.Api.Controllers.V1
             {
                 _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
 
-                await _metadataManager.DeleteProcedureType(new ProcedureType()
+                await _metadataManager.DeleteProcedureType(new ProcedureTypeModel()
                 {
                     DepartmentId = departmentId,
                     Id = procedureTypeId

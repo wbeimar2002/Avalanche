@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Avalanche.Shared.Domain.Models
 {
-    public class User
+    public class UserModel
     {
         public string Id { get; set; }
         public string FirstName { get; set; }

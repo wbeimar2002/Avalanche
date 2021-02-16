@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Avalanche.Shared.Domain.Models
 {
-    public class AccessInfo
+    public class AccessInfoModel
     {
         public string ApplicationName { get; set; }
         public string Details { get; set; }

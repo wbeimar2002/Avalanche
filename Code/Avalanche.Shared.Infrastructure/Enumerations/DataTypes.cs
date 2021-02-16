@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Avalanche.Shared.Infrastructure.Enumerations
 {
-    public enum MetadataTypes
+    public enum DataTypes
     {
         Sex,
         PgsVideoFiles,

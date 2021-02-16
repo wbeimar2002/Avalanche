@@ -80,7 +80,7 @@ namespace Avalanche.Api.Tests.Controllers
             string licenseKey = Guid.NewGuid().ToString();
 
             var fixture = new Fixture();
-            var list = fixture.CreateMany<License>(10).ToList();
+            var list = fixture.CreateMany<LicenseModel>(10).ToList();
 
             _licensingManager.Setup(mock => mock.GetAllActive()).ReturnsAsync(list);
 

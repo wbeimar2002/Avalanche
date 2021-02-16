@@ -30,7 +30,7 @@ namespace Avalanche.Api.Managers.Health
         readonly IStateClient _stateClient;
         readonly IHttpContextAccessor _httpContextAccessor;
 
-        readonly User user;
+        readonly UserModel user;
         readonly ConfigurationContext configurationContext;
 
         public PatientsManager(IPieService pieService, 
@@ -50,7 +50,7 @@ namespace Avalanche.Api.Managers.Health
             _httpContextAccessor = httpContextAccessor;
 
             user = HttpContextUtilities.GetUser(_httpContextAccessor.HttpContext);
-            configurationContext = _mapper.Map<Shared.Domain.Models.User, ConfigurationContext>(user);
+            configurationContext = _mapper.Map<Shared.Domain.Models.UserModel, ConfigurationContext>(user);
             configurationContext.IdnId = Guid.NewGuid().ToString();
         }
 
@@ -66,7 +66,7 @@ namespace Avalanche.Api.Managers.Health
             Preconditions.ThrowIfNull(nameof(newPatient.ProcedureType.Name), newPatient.ProcedureType.Name);
 
             var accessInfo = _accessInfoFactory.GenerateAccessInfo();
-            newPatient.AccessInformation = _mapper.Map<AccessInfo>(accessInfo);
+            newPatient.AccessInformation = _mapper.Map<AccessInfoModel>(accessInfo);
 
             var setupSettings = await _storageService.GetJsonDynamic("SetupSettingsData", 1, configurationContext);
 
@@ -75,7 +75,7 @@ namespace Avalanche.Api.Managers.Health
             {
                 if (setupSettings.Registration.Manual.AutoFillPhysician)
                 {
-                    newPatient.Physician = new Physician()
+                    newPatient.Physician = new PhysicianModel()
                     {
                         Id = user.Id,
                         FirstName = user.FirstName,
@@ -116,19 +116,19 @@ namespace Avalanche.Api.Managers.Health
                 {
                     Id = "U"
                 },
-                Department = new Department()
+                Department = new DepartmentModel()
                 {
                     Id = 0,
                     Name = "Unknown"
                 },
-                ProcedureType = new ProcedureType() //TODO: What should be this value
+                ProcedureType = new ProcedureTypeModel() //TODO: What should be this value
                 {
                     Id = 0,
                     Name = "Unknown"
                 },
                 //TODO: Performing physician is administrator by default
                 //Which are theose values? Temporary I am assigning the user that made the request
-                Physician = new Physician()
+                Physician = new PhysicianModel()
                 {
                     Id = user.Id,
                     FirstName = user.FirstName,
@@ -137,7 +137,7 @@ namespace Avalanche.Api.Managers.Health
             };
 
             var accessInfo = _accessInfoFactory.GenerateAccessInfo();
-            newPatient.AccessInformation = _mapper.Map<AccessInfo>(accessInfo);
+            newPatient.AccessInformation = _mapper.Map<AccessInfoModel>(accessInfo);
 
             var patientRequest = _mapper.Map<PatientViewModel, Ism.Storage.Core.PatientList.V1.Protos.AddPatientRecordRequest>(newPatient);
             var result = await _pieService.RegisterPatient(patientRequest);
@@ -161,7 +161,7 @@ namespace Avalanche.Api.Managers.Health
             var setupSettings = await _storageService.GetJsonDynamic("SetupSettingsData", 1, configurationContext);
 
             var accessInfo = _accessInfoFactory.GenerateAccessInfo();
-            existingPatient.AccessInformation = _mapper.Map<AccessInfo>(accessInfo);
+            existingPatient.AccessInformation = _mapper.Map<AccessInfoModel>(accessInfo);
 
             await CheckProcedureType(existingPatient.ProcedureType, existingPatient.Department);
 
@@ -198,7 +198,7 @@ namespace Avalanche.Api.Managers.Health
 
             //TODO: This is the final implementation?
             var accessInfo = _accessInfoFactory.GenerateAccessInfo();
-            filter.AccessInformation = _mapper.Map<AccessInfo>(accessInfo);
+            filter.AccessInformation = _mapper.Map<AccessInfoModel>(accessInfo);
 
             var request = _mapper.Map<Ism.PatientInfoEngine.V1.Protos.SearchRequest>(filter);
             var queryResult = await _pieService.Search(request);
@@ -226,7 +226,7 @@ namespace Avalanche.Api.Managers.Health
             //TODO: Facility is internal??? just backend??? Un check box en configuraciones que dice si se filtra o no por facility
             //TODO: This is the final implementation?
             var accessInfo = _accessInfoFactory.GenerateAccessInfo();
-            filter.AccessInformation = _mapper.Map<AccessInfo>(accessInfo);
+            filter.AccessInformation = _mapper.Map<AccessInfoModel>(accessInfo);
 
             // TODO - get valid culture (either system configuration or passed in via caller)
             var cultureName = CultureInfo.CurrentCulture.Name;
@@ -239,7 +239,7 @@ namespace Avalanche.Api.Managers.Health
 
         }
 
-        private async Task CheckProcedureType(ProcedureType procedureType, Department department)
+        private async Task CheckProcedureType(ProcedureTypeModel procedureType, DepartmentModel department)
         {
             //TODO: Validate department support
             var existingProcedureType = await _dataManagementService.GetProcedureType(new GetProcedureTypeRequest()

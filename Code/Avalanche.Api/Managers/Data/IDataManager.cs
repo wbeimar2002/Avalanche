@@ -10,17 +10,17 @@ namespace Avalanche.Api.Managers.Data
 {
     public interface IDataManager
     {
-        Task<IList<KeyValuePairViewModel>> GetMetadata(MetadataTypes type);
-        Task<IList<DynamicSourceKeyValuePairViewModel>> GetSource(MetadataTypes settingTypes);
-        Task<Department> AddDepartment(Department department);
+        Task<IList<KeyValuePairViewModel>> GetMetadata(DataTypes type);
+        Task<IList<DynamicSourceKeyValuePairViewModel>> GetSource(DataTypes settingTypes);
+        Task<DepartmentModel> AddDepartment(DepartmentModel department);
         Task DeleteDepartment(int departmentId);
-        Task<IList<Department>> GetAllDepartments();
-        Task<ProcedureType> AddProcedureType(ProcedureType procedureType);
-        Task DeleteProcedureType(ProcedureType procedureType);
-        Task<List<ProcedureType>> GetProcedureTypesByDepartment(int? departmentId);
+        Task<IList<DepartmentModel>> GetAllDepartments();
+        Task<ProcedureTypeModel> AddProcedureType(ProcedureTypeModel procedureType);
+        Task DeleteProcedureType(ProcedureTypeModel procedureType);
+        Task<List<ProcedureTypeModel>> GetProcedureTypesByDepartment(int? departmentId);
         Task ValidateDepartmentsSupport();
         Task ValidateDepartmentsSupport(int? departmentId);
         Task<ExpandoObject> GetDynamicSource(string key);
-        Task<List<ProcedureType>> GetAllProcedureTypes();
+        Task<List<ProcedureTypeModel>> GetAllProcedureTypes();
     }
 }

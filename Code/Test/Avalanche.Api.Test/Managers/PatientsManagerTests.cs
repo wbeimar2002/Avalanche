@@ -236,14 +236,14 @@ namespace Avalanche.Api.Tests.Managers
                     TranslationKey = "SampleKey",
                     Value = "Sample"
                 },
-                Department = new Department() { Id = 1, Name = "SampleDepartment" },
-                Physician = new Physician()
+                Department = new DepartmentModel() { Id = 1, Name = "SampleDepartment" },
+                Physician = new PhysicianModel()
                 {
                     Id = "SampleId",
                     FirstName = "SampleFirstName",
                     LastName = "SampleLastName"
                 },
-                ProcedureType = new ProcedureType() { Id = 1, Name = "SampleProcedureType" }
+                ProcedureType = new ProcedureTypeModel() { Id = 1, Name = "SampleProcedureType" }
             };
 
             var response = new Ism.Storage.Core.PatientList.V1.Protos.AddPatientRecordResponse()
@@ -299,14 +299,14 @@ namespace Avalanche.Api.Tests.Managers
                     TranslationKey = "SampleKey",
                     Value = "Sample"
                 },
-                Department = new Department() { Id = 1, Name = "SampleDepartment" },
-                Physician = new Physician()
+                Department = new DepartmentModel() { Id = 1, Name = "SampleDepartment" },
+                Physician = new PhysicianModel()
                 {
                     Id = "SampleId",
                     FirstName = "SampleFirstName",
                     LastName = "SampleLastName"
                 },
-                ProcedureType = new ProcedureType() { Id = 1, Name = "SampleProcedureType" }
+                ProcedureType = new ProcedureTypeModel() { Id = 1, Name = "SampleProcedureType" }
             };
 
             var response = new Ism.Storage.Core.PatientList.V1.Protos.AddPatientRecordResponse()
@@ -411,14 +411,14 @@ namespace Avalanche.Api.Tests.Managers
                     TranslationKey = "SampleKey",
                     Value = "Sample"
                 },
-                Department = new Department() { Id = 1, Name = "SampleDepartment" },
-                Physician = new Physician()
+                Department = new DepartmentModel() { Id = 1, Name = "SampleDepartment" },
+                Physician = new PhysicianModel()
                 {
                     Id = "SampleId",
                     FirstName = "SampleFirstName",
                     LastName = "SampleLastName"
                 },
-                ProcedureType = new ProcedureType() { Id = 1, Name = "SampleProcedureType" }
+                ProcedureType = new ProcedureTypeModel() { Id = 1, Name = "SampleProcedureType" }
             };
 
             var setupSettings = new 
@@ -467,18 +467,18 @@ namespace Avalanche.Api.Tests.Managers
                     TranslationKey = "SampleKey",
                     Value = "Sample"
                 },
-                Department = new Department() 
+                Department = new DepartmentModel() 
                 {
                     Id = 1,
                     Name = "SampleDepartment" 
                 },
-                Physician = new Physician()
+                Physician = new PhysicianModel()
                 {
                     Id = "SampleId",
                     FirstName = "SampleFirstName",
                     LastName = "SampleLastName"
                 },
-                ProcedureType = new ProcedureType() 
+                ProcedureType = new ProcedureTypeModel() 
                 {
                     Id = 1,
                     Name = "SampleProcedureType" 

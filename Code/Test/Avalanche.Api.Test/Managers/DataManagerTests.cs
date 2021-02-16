@@ -59,7 +59,7 @@ namespace Avalanche.Api.Tests.Managers
 
             _storageService.Setup(mock => mock.GetJsonDynamic("SetupSettingsData",1,  It.IsAny<ConfigurationContext>())).ReturnsAsync(settingsDepartmenSupported);
 
-            var newProcedureType = new ProcedureType()
+            var newProcedureType = new ProcedureTypeModel()
             {
                 Id = 1,
                 Name = "Sample",
@@ -84,7 +84,7 @@ namespace Avalanche.Api.Tests.Managers
 
             _storageService.Setup(mock => mock.GetJsonDynamic("SetupSettingsData", 1, It.IsAny<ConfigurationContext>())).ReturnsAsync(settingsDepartmenSupported);
 
-            var newProcedureType = new ProcedureType()
+            var newProcedureType = new ProcedureTypeModel()
             {
                 Id = 1,
                 Name = "Sample",
@@ -109,7 +109,7 @@ namespace Avalanche.Api.Tests.Managers
 
             _storageService.Setup(mock => mock.GetJsonDynamic("SetupSettingsData", 1, It.IsAny<ConfigurationContext>())).ReturnsAsync(settingsDepartmenSupported);
 
-            var procedureType = new ProcedureType()
+            var procedureType = new ProcedureTypeModel()
             {
                 Id = 1,
                 Name = "Sample",
@@ -134,7 +134,7 @@ namespace Avalanche.Api.Tests.Managers
 
             _storageService.Setup(mock => mock.GetJsonDynamic("SetupSettingsData", 1, It.IsAny<ConfigurationContext>())).ReturnsAsync(settingsDepartmenSupported);
 
-            var procedureType = new ProcedureType()
+            var procedureType = new ProcedureTypeModel()
             {
                 Id = 1,
                 Name = "Sample",
@@ -195,7 +195,7 @@ namespace Avalanche.Api.Tests.Managers
 
             _storageService.Setup(mock => mock.GetJsonDynamic("SetupSettingsData", 1, It.IsAny<ConfigurationContext>())).ReturnsAsync(settingsDepartmenSupported);
 
-            Task Act() => _manager.AddDepartment(It.IsAny<Department>());
+            Task Act() => _manager.AddDepartment(It.IsAny<DepartmentModel>());
 
             Assert.That(Act, Throws.TypeOf<InvalidOperationException>());
         }
