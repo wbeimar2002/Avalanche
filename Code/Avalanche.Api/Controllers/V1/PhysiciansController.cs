@@ -1,5 +1,5 @@
 ﻿using Avalanche.Api.Extensions;
-using Avalanche.Api.Managers.Health;
+using Avalanche.Api.Managers.Patients;
 using Avalanche.Api.Managers.Data;
 using Avalanche.Api.ViewModels;
 using Avalanche.Shared.Domain.Models;
@@ -22,7 +22,6 @@ namespace Avalanche.Api.Controllers.V1
     [Route("[controller]")]
     [ApiController]
     [Authorize]
-    [ExcludeFromCodeCoverage]
     public class PhysiciansController : ControllerBase
     {
         readonly ILogger _appLoggerService;
@@ -34,9 +33,6 @@ namespace Avalanche.Api.Controllers.V1
             _metadataManager = metadataManager;
         }
 
-        /// <summary>
-        /// Get all physicians
-        /// </summary>
         [HttpGet("")]
         public async Task<IActionResult> GetAllPhysicians([FromServices]IWebHostEnvironment env)
         {

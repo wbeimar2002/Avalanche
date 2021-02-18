@@ -1,5 +1,5 @@
 ﻿using Avalanche.Api.Extensions;
-using Avalanche.Api.Managers.Health;
+using Avalanche.Api.Managers.Patients;
 using Avalanche.Api.ViewModels;
 using Avalanche.Shared.Infrastructure.Enumerations;
 using Avalanche.Shared.Infrastructure.Extensions;

@@ -1,7 +1,7 @@
 using Avalanche.Api.Extensions;
 using Avalanche.Api.Hubs;
 using Avalanche.Api.Managers.Data;
-using Avalanche.Api.Managers.Health;
+using Avalanche.Api.Managers.Patients;
 using Avalanche.Api.Managers.Licensing;
 using Avalanche.Api.Managers.Maintenance;
 using Avalanche.Api.Managers.Media;

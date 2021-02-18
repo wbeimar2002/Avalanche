@@ -1,6 +1,6 @@
 ﻿using AutoFixture;
 using AutoMapper;
-using Avalanche.Api.Managers.Health;
+using Avalanche.Api.Managers.Patients;
 using Avalanche.Api.MappingConfigurations;
 using Avalanche.Api.Services.Configuration;
 using Avalanche.Api.Services.Health;

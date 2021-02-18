@@ -1,6 +1,6 @@
 ﻿using AutoFixture;
 using Avalanche.Api.Controllers.V1;
-using Avalanche.Api.Managers.Health;
+using Avalanche.Api.Managers.Patients;
 using Avalanche.Api.Tests.Extensions;
 using Avalanche.Api.ViewModels;
 using Avalanche.Shared.Domain.Models;

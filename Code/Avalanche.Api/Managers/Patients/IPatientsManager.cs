@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace Avalanche.Api.Managers.Health
+namespace Avalanche.Api.Managers.Patients
 {
     public interface IPatientsManager
     {
