@@ -20,7 +20,7 @@ namespace Avalanche.Api.Managers.Media
         Task SetPgsMute(StateViewModel requestViewModel);
 
         Task<StateViewModel> GetPgsPlaybackState();
-        Task SetPgsPlaybackState(StateViewModel requestViewModel);
+        Task SetPgsState(StateViewModel requestViewModel);
 
         Task<List<GreetingVideo>> GetPgsVideoFileList();
         Task<GreetingVideo> GetPgsVideoFile();
@@ -38,6 +38,6 @@ namespace Avalanche.Api.Managers.Media
 
         Task<StateViewModel> GetPgsStateForSink(SinkModel sink);
         Task SetPgsStateForSink(SinkStateViewModel sinkState);
-        Task<List<VideoDeviceModel>> GetPgsSinks();
+        Task<IList<VideoDeviceModel>> GetPgsSinks();
     }
 }

@@ -32,6 +32,8 @@ namespace Avalanche.Api.Controllers.V1
             _pgsTimeoutManager = ThrowIfNullOrReturn(nameof(pgsTimeoutManager), pgsTimeoutManager);
         }
 
+        #region Routing
+
         [HttpGet("pgs/sinks")]
         [Produces(typeof(List<VideoDeviceModel>))]
         public async Task<IActionResult> GetPgsSinks([FromServices] IWebHostEnvironment env)
@@ -93,6 +95,8 @@ namespace Avalanche.Api.Controllers.V1
                 _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
             }
         }
+
+        #endregion Routing
 
         #region PGS
 
@@ -265,7 +269,7 @@ namespace Avalanche.Api.Controllers.V1
             try
             {
                 _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
-                await _pgsTimeoutManager.SetPgsPlaybackState(new StateViewModel() { Value = state.ToString() });
+                await _pgsTimeoutManager.SetPgsState(new StateViewModel() { Value = state.ToString() });
                 return Ok();
             }
             catch (Exception ex)

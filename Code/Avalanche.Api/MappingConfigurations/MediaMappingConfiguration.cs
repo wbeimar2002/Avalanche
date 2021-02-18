@@ -12,6 +12,33 @@ namespace Avalanche.Api.MappingConfigurations
     {
         public MediaMappingConfiguration()
         {
+            CreateMap<SinkModel, AvidisDeviceInterface.V1.Protos.AliasIndexMessage>()
+               .ForMember(dest =>
+                   dest.Alias,
+                   opt => opt.MapFrom(src => src.Alias))
+                .ForMember(dest =>
+                   dest.Index,
+                   opt => opt.MapFrom(src => src.Index))
+               .ReverseMap();
+
+            CreateMap<SinkModel, Ism.Routing.V1.Protos.AliasIndexMessage>()
+               .ForMember(dest =>
+                   dest.Alias,
+                   opt => opt.MapFrom(src => src.Alias))
+                .ForMember(dest =>
+                   dest.Index,
+                   opt => opt.MapFrom(src => src.Index))
+               .ReverseMap();
+
+            CreateMap<VideoDeviceModel, Ism.Routing.V1.Protos.AliasIndexMessage>()
+               .ForMember(dest =>
+                   dest.Alias,
+                   opt => opt.MapFrom(src => src.Sink.Alias))
+                .ForMember(dest =>
+                   dest.Index,
+                   opt => opt.MapFrom(src => src.Sink.Index))
+               .ReverseMap();
+
             CreateMap<Ism.PgsTimeout.V1.Protos.GetPgsVideoFileResponse, GreetingVideo>()
                .ForMember(dest =>
                    dest.Index,
