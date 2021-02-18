@@ -75,6 +75,8 @@ namespace Avalanche.Api
             var grpcPassword = configurationService.GetEnvironmentVariable("grpcPassword");
             var grpcServerValidationCertificate = configurationService.GetEnvironmentVariable("grpcServerValidationCertificate");
 
+            services.AddTransient<IRoutingManager, RoutingManager>();
+            services.AddTransient<IPgsTimeoutManager, PgsTimeoutManager>();
             services.AddTransient<IWebRTCManager, WebRTCManager>();
             services.AddTransient<IRecordingManager, RecordingManager>();
             services.AddTransient<IMaintenanceManager, MaintenanceManager>();
@@ -86,6 +88,9 @@ namespace Avalanche.Api
 
             services.AddSingleton<IWebRTCService, WebRTCService>();
             services.AddSingleton<IRecorderService, RecorderService>();
+            services.AddSingleton<IAvidisService, AvidisService>();
+            services.AddSingleton<IRoutingService, RoutingService>();
+            services.AddSingleton<IPgsTimeoutService, PgsTimeoutService>();
             services.AddSingleton<IPieService, PieService>();
             services.AddSingleton<IBroadcastService, BroadcastService>();
             services.AddSingleton<IStorageService, StorageService>();

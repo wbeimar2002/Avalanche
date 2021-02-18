@@ -28,12 +28,13 @@ namespace Avalanche.Api.Controllers.V1
         }
 
         [HttpPost("")]
-        public async Task<IActionResult> StartRecording(RecordMessage message, [FromServices] IWebHostEnvironment env)
+        public async Task<IActionResult> StartRecording([FromServices] IWebHostEnvironment env)
         {
             try
             {
+                
                 _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
-                await _recordingManager.StartRecording(message);
+                await _recordingManager.StartRecording();
                 return Ok();
             }
             catch (Exception exception)
@@ -68,12 +69,12 @@ namespace Avalanche.Api.Controllers.V1
         }
 
         [HttpPost("captures")]
-        public async Task<IActionResult> CaptureImages(CaptureImageRequest request, [FromServices] IWebHostEnvironment env)
+        public async Task<IActionResult> CaptureImages([FromServices] IWebHostEnvironment env)
         {
             try
             {
                 _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
-                await _recordingManager.CaptureImage(request);
+                await _recordingManager.CaptureImage();
                 return Ok();
             }
             catch (Exception exception)

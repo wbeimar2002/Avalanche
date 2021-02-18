@@ -8,11 +8,11 @@ namespace Avalanche.Api.Managers.Media
 {
     public interface IRecordingManager
     {
-        Task StartRecording(RecordMessage messsage);
+        Task StartRecording();
 
         Task StopRecording();
 
-        Task CaptureImage(CaptureImageRequest request);
+        Task CaptureImage();
 
     }
 }
