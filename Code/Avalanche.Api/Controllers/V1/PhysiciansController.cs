@@ -2,7 +2,6 @@
 using Avalanche.Api.Managers.Health;
 using Avalanche.Api.Managers.Data;
 using Avalanche.Api.ViewModels;
-using Avalanche.Shared.Domain.Enumerations;
 using Avalanche.Shared.Domain.Models;
 using Avalanche.Shared.Infrastructure.Enumerations;
 using Avalanche.Shared.Infrastructure.Extensions;

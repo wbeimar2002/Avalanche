@@ -33,12 +33,14 @@ namespace Avalanche.Api.Controllers.V1
         }
 
         [HttpGet("pgs/sinks")]
+        [Produces(typeof(List<VideoDeviceModel>))]
         public async Task<IActionResult> GetPgsSinks([FromServices] IWebHostEnvironment env)
         {
             try
             {
                 _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
-                return Ok();
+                var result = await _pgsTimeoutManager.GetPgsSinks();
+                return Ok(result);
             }
             catch (Exception ex)
             {
@@ -52,11 +54,12 @@ namespace Avalanche.Api.Controllers.V1
         }
 
         [HttpPut("pgs/sinks/state")]
-        public async Task<IActionResult> SetPgsStateForSink([FromBody] SinkStateViewModel sinkUpdate, [FromServices] IWebHostEnvironment env)
+        public async Task<IActionResult> SetPgsStateForSink([FromBody] SinkStateViewModel sinkState, [FromServices] IWebHostEnvironment env)
         {
             try
             {
                 _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
+                await _pgsTimeoutManager.SetPgsStateForSink(sinkState);
                 return Ok();
             }
             catch (Exception ex)
@@ -71,12 +74,14 @@ namespace Avalanche.Api.Controllers.V1
         }
 
         [HttpGet("pgs/sinks/state")]
-        public async Task<IActionResult> GetPgsStateForSink([FromBody] SinkModel sink, [FromServices] IWebHostEnvironment env)
+        [Produces(typeof(StateViewModel))]
+        public async Task<IActionResult> GetPgsStateForSink([FromBody]SinkModel sink, [FromServices] IWebHostEnvironment env)
         {
             try
             {
                 _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
-                return Ok();
+                var result = await _pgsTimeoutManager.GetPgsStateForSink(sink);
+                return Ok(result);
             }
             catch (Exception ex)
             {

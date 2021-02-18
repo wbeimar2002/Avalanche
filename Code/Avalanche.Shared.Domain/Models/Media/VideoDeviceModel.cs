@@ -34,5 +34,6 @@ namespace Avalanche.Shared.Domain.Models.Media
         /// UI type, which icon to use for sources and which button graphic to use for displays
         /// </summary>
         public string? Type { get; set; }
+        public SinkModel Source { get; set; }
     }
 }

@@ -34,5 +34,10 @@ namespace Avalanche.Api.Managers.Media
         Task SetTimeoutPage(StateViewModel requestViewModel);
         Task NextPage();
         Task PreviousPage();
+
+
+        Task<StateViewModel> GetPgsStateForSink(SinkModel sink);
+        Task SetPgsStateForSink(SinkStateViewModel sinkState);
+        Task<List<VideoDeviceModel>> GetPgsSinks();
     }
 }

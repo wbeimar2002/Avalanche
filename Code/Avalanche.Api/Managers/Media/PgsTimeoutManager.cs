@@ -1,8 +1,17 @@
 ﻿using AutoMapper;
+using Avalanche.Api.Services.Maintenance;
 using Avalanche.Api.Services.Media;
+using Avalanche.Api.Utilities;
 using Avalanche.Api.ViewModels;
+using Avalanche.Shared.Domain.Models;
 using Avalanche.Shared.Domain.Models.Media;
+using Ism.Common.Core.Configuration.Models;
 using Ism.PgsTimeout.V1.Protos;
+using Ism.Routing.V1.Protos;
+using Ism.SystemState.Client;
+using Ism.SystemState.Models.PgsTimeout;
+using Ism.SystemState.Models.VideoRouting;
+using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,13 +21,33 @@ namespace Avalanche.Api.Managers.Media
 {
     public class PgsTimeoutManager : IPgsTimeoutManager
     {
+        readonly IRoutingService _routingService;
         readonly IPgsTimeoutService _pgsTimeoutService;
+        readonly IStorageService _storageService;
+        readonly IStateClient _stateClient;
+        readonly IHttpContextAccessor _httpContextAccessor;
         readonly IMapper _mapper;
 
-        public PgsTimeoutManager(IPgsTimeoutService pgsTimeoutService, IMapper mapper)
+        readonly UserModel user;
+        readonly ConfigurationContext configurationContext;
+
+        public PgsTimeoutManager(IPgsTimeoutService pgsTimeoutService, 
+            IStateClient stateClient, 
+            IRoutingService routingService,
+            IStorageService storageService,
+            IHttpContextAccessor httpContextAccessor,
+            IMapper mapper)
         {
             _mapper = mapper;
+            _storageService = storageService;
             _pgsTimeoutService = pgsTimeoutService;
+            _routingService = routingService;
+            _stateClient = stateClient;
+            _httpContextAccessor = httpContextAccessor;
+
+            user = HttpContextUtilities.GetUser(_httpContextAccessor.HttpContext);
+            configurationContext = _mapper.Map<Shared.Domain.Models.UserModel, ConfigurationContext>(user);
+            configurationContext.IdnId = Guid.NewGuid().ToString();
         }
 
         public async Task SetPgsVideoFile(GreetingVideo video)
@@ -125,6 +154,28 @@ namespace Avalanche.Api.Managers.Media
         {
             var request = _mapper.Map<StateViewModel, SetTimeoutPageRequest>(requestViewModel);
             await _pgsTimeoutService.SetTimeoutPage(request);
+        }
+
+        public async Task<StateViewModel> GetPgsStateForSink(SinkModel sink)
+        {
+            // pgs checkbox state must persist reboots
+            // state client should handle this
+            var pgsData = await _stateClient.GetData<PgsDisplayStateData>();
+
+            var state = pgsData?.DisplayStates.SingleOrDefault(x =>
+                string.Equals(x.AliasIndex.Alias, sink.Alias, StringComparison.OrdinalIgnoreCase) && x.AliasIndex.Index == sink.Index);
+
+            return new StateViewModel() { Value = (state?.Enabled ?? true).ToString() };
+        }
+
+        public async Task SetPgsStateForSink(SinkStateViewModel sinkState)
+        {
+
+        }
+
+        public async Task<List<VideoDeviceModel>> GetPgsSinks()
+        {
+            return new List<VideoDeviceModel>();
         }
     }
 }
