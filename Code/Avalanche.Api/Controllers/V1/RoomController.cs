@@ -141,33 +141,13 @@ namespace Avalanche.Api.Controllers.V1
             }
         }
 
-        [HttpPost("volume")]
-        public async Task<IActionResult> SetPgsMute([FromServices] IWebHostEnvironment env)
+        [HttpPut("volume/mute/{muteState}")]
+        public async Task<IActionResult> SetPgsMute(bool muteState, [FromServices] IWebHostEnvironment env)
         {
             try
             {
                 _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
-                await _pgsTimeoutManager.SetPgsMute(new StateViewModel() { Value = "true" });
-                return Ok();
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(LoggerHelper.GetLogMessage(DebugLogType.Exception), ex);
-                return new BadRequestObjectResult(ex.Get(env.IsDevelopment()));
-            }
-            finally
-            {
-                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
-            }
-        }
-
-        [HttpDelete("volume")]
-        public async Task<IActionResult> SetPgsUnmute([FromServices] IWebHostEnvironment env)
-        {
-            try
-            {
-                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
-                await _pgsTimeoutManager.SetPgsMute(new StateViewModel() { Value = "false" });
+                await _pgsTimeoutManager.SetPgsMute(new StateViewModel() { Value = muteState.ToString() });
                 return Ok();
             }
             catch (Exception ex)
