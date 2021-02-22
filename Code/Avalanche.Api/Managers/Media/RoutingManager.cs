@@ -129,5 +129,79 @@ namespace Avalanche.Api.Managers.Media
                 }
             }
         }
+
+        public async Task<IList<VideoSourceModel>> GetRoutingSources()
+        {
+            // get video sources and their states
+            // the state collection only contains the AliasIndex and a bool
+            var sources = await _routingService.GetVideoSources();
+            var states = await _routingService.GetVideoStateForAllSources();
+
+            var listResult = _mapper.Map<IList<Ism.Routing.V1.Protos.VideoSourceMessage>, IList<VideoSourceModel>>(sources.VideoSources);
+
+            foreach (var source in listResult)
+            {
+                // need to merge the HasVideo and VideoSource collections
+                var state = states.SourceStates.SingleOrDefault(x => string.Equals(x.Source.Alias, source.Sink.Alias, StringComparison.OrdinalIgnoreCase)
+                && x.Source.Index == source.Sink.Index);
+
+                source.HasVideo = state?.HasVideo ?? false;
+            }
+
+            return listResult;
+        }
+
+        public async Task<VideoSourceModel> GetAlternativeSource(SinkModel sinkModel)
+        {
+            var source = await _routingService.GetAlternativeVideoSource(
+                new Ism.Routing.V1.Protos.GetAlternativeVideoSourceRequest 
+                { 
+                    Source = new Ism.Routing.V1.Protos.AliasIndexMessage 
+                    { 
+                        Alias = sinkModel.Alias, 
+                        Index = sinkModel.Index 
+                    } 
+                });
+
+            var hasVideo = await _routingService.GetVideoStateForSource(
+                new Ism.Routing.V1.Protos.GetVideoStateForSourceRequest 
+                { 
+                    Source = new Ism.Routing.V1.Protos.AliasIndexMessage
+                    {
+                        Alias = sinkModel.Alias,
+                        Index = sinkModel.Index
+                    }
+                });
+
+            var mappedSource = _mapper.Map<Ism.Routing.V1.Protos.VideoSourceMessage, VideoSourceModel>(source.Source);
+
+            mappedSource.Sink = sinkModel;
+
+            // you could plug in an ela that has no video connected to it
+            mappedSource.HasVideo = hasVideo.HasVideo;
+
+            return mappedSource;
+        }
+
+        public async Task<IList<VideoSinkModel>> GetRoutingSinks()
+        {
+            var sinks = await _routingService.GetVideoSinks();
+            var routes = await _routingService.GetCurrentRoutes();
+
+            var listResult = _mapper.Map<IList<Ism.Routing.V1.Protos.VideoSinkMessage>, IList<VideoSinkModel>>(sinks.VideoSinks);
+            foreach (var sink in listResult)
+            {
+                var route = routes.Routes.SingleOrDefault(x => string.Equals(x.Sink.Alias, sink.Sink.Alias, StringComparison.OrdinalIgnoreCase)
+                    && x.Sink.Index == sink.Sink.Index);
+
+                //get the current source
+                sink.Source = new SinkModel() 
+                {
+                    Alias = route.Source.Alias, 
+                    Index = route.Source.Index
+                };
+            }
+            return listResult;
+        }
     }
 }

@@ -183,7 +183,7 @@ namespace Avalanche.Api.Controllers.V1
         }
 
         [HttpPut("pgs/files/videos")]
-        public async Task<IActionResult> SetCurrentGreetingVideo([FromBody]GreetingVideo greetingVideo, [FromServices] IWebHostEnvironment env)
+        public async Task<IActionResult> SetCurrentGreetingVideo([FromBody]GreetingVideoModel greetingVideo, [FromServices] IWebHostEnvironment env)
         {
             try
             {
@@ -203,7 +203,7 @@ namespace Avalanche.Api.Controllers.V1
         }
 
         [HttpGet("pgs/files/videos")]
-        [Produces(typeof(List<GreetingVideo>))]
+        [Produces(typeof(List<GreetingVideoModel>))]
         public async Task<IActionResult> GetPgsVideoFiles([FromServices] IWebHostEnvironment env)
         {
             try

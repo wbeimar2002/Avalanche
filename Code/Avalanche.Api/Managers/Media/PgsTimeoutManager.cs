@@ -211,7 +211,6 @@ namespace Avalanche.Api.Managers.Media
                         Source = _mapper.Map<SinkModel, AliasIndexMessage>(config.PgsSource),
                         Sink = _mapper.Map<SinkModel, AliasIndexMessage>(sinkStateViewModel.Sink)
                     });
-
                 }
                 else
                 {
@@ -237,7 +236,9 @@ namespace Avalanche.Api.Managers.Media
 
                 // add entry or update existing
                 if (existing == null)
-                    x.DisplayStates.Add(new PgsDisplayState { AliasIndex = new AliasIndexModel(sinkStateViewModel.Sink.Alias, sinkStateViewModel.Sink.Index), Enabled = enabled });
+                    x.DisplayStates.Add(new PgsDisplayState
+                    { 
+                        AliasIndex = new AliasIndexModel(sinkStateViewModel.Sink.Alias, sinkStateViewModel.Sink.Index), Enabled = enabled });
                 else
                     existing.Enabled = enabled;
             });
@@ -271,22 +272,22 @@ namespace Avalanche.Api.Managers.Media
             return _mapper.Map<GetPgsPlaybackStateResponse, StateViewModel>(result);
         }
 
-        public async Task SetPgsVideoFile(GreetingVideo video)
+        public async Task SetPgsVideoFile(GreetingVideoModel video)
         {
-            var request = _mapper.Map<GreetingVideo, SetPgsVideoFileRequest>(video);
+            var request = _mapper.Map<GreetingVideoModel, SetPgsVideoFileRequest>(video);
             await _pgsTimeoutService.SetPgsVideoFile(request);
         }
 
-        public async Task<GreetingVideo> GetPgsVideoFile()
+        public async Task<GreetingVideoModel> GetPgsVideoFile()
         {
             var result = await _pgsTimeoutService.GetPgsVideoFile();
-            return _mapper.Map<GetPgsVideoFileResponse, GreetingVideo>(result);
+            return _mapper.Map<GetPgsVideoFileResponse, GreetingVideoModel>(result);
         }
 
-        public async Task<List<GreetingVideo>> GetPgsVideoFileList()
+        public async Task<List<GreetingVideoModel>> GetPgsVideoFileList()
         {
             var result = await _pgsTimeoutService.GetPgsVideoFileList();
-            return _mapper.Map<IList<PgsVideoFileMessage>, IList<GreetingVideo>>(result.VideoFiles).ToList();
+            return _mapper.Map<IList<PgsVideoFileMessage>, IList<GreetingVideoModel>>(result.VideoFiles).ToList();
         }
 
         public async Task<StateViewModel> GetPgsVolume()
@@ -437,7 +438,11 @@ namespace Avalanche.Api.Managers.Media
 
             foreach (var route in _currentRoutes.Routes)
             {
-                await _routingService.RouteVideo(new RouteVideoRequest { Sink = route.Sink, Source = route.Source });
+                await _routingService.RouteVideo(new RouteVideoRequest 
+                { 
+                    Sink = route.Sink, 
+                    Source = route.Source 
+                });
             }
         }
 

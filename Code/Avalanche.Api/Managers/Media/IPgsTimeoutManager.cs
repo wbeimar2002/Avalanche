@@ -22,9 +22,9 @@ namespace Avalanche.Api.Managers.Media
         Task<StateViewModel> GetPgsPlaybackState();
         Task SetPgsState(StateViewModel requestViewModel);
 
-        Task<List<GreetingVideo>> GetPgsVideoFileList();
-        Task<GreetingVideo> GetPgsVideoFile();
-        Task SetPgsVideoFile(GreetingVideo video);
+        Task<List<GreetingVideoModel>> GetPgsVideoFileList();
+        Task<GreetingVideoModel> GetPgsVideoFile();
+        Task SetPgsVideoFile(GreetingVideoModel video);
 
         Task SetPgsVideoPosition(StateViewModel requestViewModel);
 

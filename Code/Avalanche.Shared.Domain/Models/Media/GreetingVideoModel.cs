@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Avalanche.Shared.Domain.Models.Media
 {
-    public class GreetingVideo
+    public class GreetingVideoModel
     {
         public int Index { get; set; } = 0;
         public string FilePath { get; set; } = string.Empty;

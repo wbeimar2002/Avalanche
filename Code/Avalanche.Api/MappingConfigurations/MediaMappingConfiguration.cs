@@ -39,7 +39,7 @@ namespace Avalanche.Api.MappingConfigurations
                    opt => opt.MapFrom(src => src.Sink.Index))
                .ReverseMap();
 
-            CreateMap<Ism.PgsTimeout.V1.Protos.GetPgsVideoFileResponse, GreetingVideo>()
+            CreateMap<Ism.PgsTimeout.V1.Protos.GetPgsVideoFileResponse, GreetingVideoModel>()
                .ForMember(dest =>
                    dest.Index,
                    opt => opt.MapFrom(src => src.VideoFile.VideoIndex))
@@ -51,7 +51,7 @@ namespace Avalanche.Api.MappingConfigurations
                    opt => opt.MapFrom(src => src.VideoFile.FilePath))
                .ReverseMap();
 
-            CreateMap<Ism.PgsTimeout.V1.Protos.PgsVideoFileMessage, GreetingVideo>()
+            CreateMap<Ism.PgsTimeout.V1.Protos.PgsVideoFileMessage, GreetingVideoModel>()
                .ForMember(dest =>
                    dest.Index,
                    opt => opt.MapFrom(src => src.VideoIndex))
@@ -63,7 +63,7 @@ namespace Avalanche.Api.MappingConfigurations
                    opt => opt.MapFrom(src => src.FilePath))
                .ReverseMap();
 
-            CreateMap<GreetingVideo, Ism.PgsTimeout.V1.Protos.SetPgsVideoFileRequest>()
+            CreateMap<GreetingVideoModel, Ism.PgsTimeout.V1.Protos.SetPgsVideoFileRequest>()
                .ForPath(dest =>
                    dest.VideoFile.VideoIndex,
                    opt => opt.MapFrom(src => src.Index))
