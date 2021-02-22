@@ -1,0 +1,50 @@
+﻿using Avalanche.Shared.Infrastructure.Enumerations;
+using Avalanche.Shared.Infrastructure.Extensions;
+using Avalanche.Shared.Infrastructure.Helpers;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
+using System.Linq;
+using System.Threading.Tasks;
+
+namespace Avalanche.Api.Controllers.V1
+{
+    [Route("[controller]")]
+    [ApiController]
+    [Authorize]
+    [ExcludeFromCodeCoverage]
+    public class SecurityController : ControllerBase
+    {
+        readonly ILogger _appLoggerService;
+
+
+        [HttpPost("acquireFileCookie")]
+        public async Task<IActionResult> AcquireFileCookie([FromServices]IWebHostEnvironment env)
+        {
+            try
+            {
+                _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
+                var user = Request.HttpContext.User;
+                
+
+
+                return Ok();
+            }
+            catch (Exception exception)
+            {
+                _appLoggerService.LogError(LoggerHelper.GetLogMessage(DebugLogType.Exception), exception);
+                return new BadRequestObjectResult(exception.Get(env.IsDevelopment()));
+            }
+            finally
+            {
+                _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
+            }
+
+        }
+    }
+}
