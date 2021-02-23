@@ -75,7 +75,7 @@ namespace Avalanche.Api.Controllers.V1
             }
         }
 
-        [HttpGet("pgs/sinks/state?alias={alias}&index={index}")]
+        [HttpGet("pgs/sinks/state/{alias}/{index}")]
         [Produces(typeof(StateViewModel))]
         public async Task<IActionResult> GetPgsStateForSink(string alias, int index, [FromServices] IWebHostEnvironment env)
         {

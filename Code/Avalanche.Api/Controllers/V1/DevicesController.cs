@@ -195,7 +195,7 @@ namespace Avalanche.Api.Controllers.V1
             }
         }
 
-        [HttpGet("operating/sources/alternative?alias={alias}&index={index}")]
+        [HttpGet("operating/sources/alternative/{alias}/{index}")]
         [Produces(typeof(VideoSourceModel))]
         public async Task<IActionResult> GetAlternativeSource(string alias, int index, [FromServices] IWebHostEnvironment env)
         {
