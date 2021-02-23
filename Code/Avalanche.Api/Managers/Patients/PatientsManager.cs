@@ -279,7 +279,7 @@ namespace Avalanche.Api.Managers.Patients
                     repositoryId: repositoryId,
 
                     // TODO:
-                    procedureRelativePath: string.Empty,
+                    procedureRelativePath: libId,
 
                     department: _mapper.Map<Ism.SystemState.Models.Procedure.Department>(patient.Department),
                     procedureType: _mapper.Map<Ism.SystemState.Models.Procedure.ProcedureType>(patient.ProcedureType),
