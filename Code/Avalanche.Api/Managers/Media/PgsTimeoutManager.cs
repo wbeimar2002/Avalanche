@@ -1,17 +1,12 @@
 ﻿using AutoMapper;
-using Avalanche.Api.Extensions;
 using Avalanche.Api.Services.Maintenance;
 using Avalanche.Api.Services.Media;
 using Avalanche.Api.ViewModels;
 using Avalanche.Shared.Domain.Enumerations;
-using Avalanche.Shared.Domain.Models;
 using Avalanche.Shared.Domain.Models.Media;
 using Avalanche.Shared.Infrastructure.Models.Configuration;
 using Ism.Common.Core.Configuration.Models;
-using Ism.PgsTimeout.Client.V1;
 using Ism.PgsTimeout.V1.Protos;
-using Ism.Routing.V1.Protos;
-using Ism.Security.Grpc.Interfaces;
 using Ism.SystemState.Client;
 using Ism.SystemState.Models.PgsTimeout;
 using Ism.SystemState.Models.VideoRouting;
@@ -20,7 +15,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using static Ism.PgsTimeout.V1.Protos.PgsTimeout;
 using static Ism.Utility.Core.Preconditions;
 
 namespace Avalanche.Api.Managers.Media
@@ -47,6 +41,8 @@ namespace Avalanche.Api.Managers.Media
 
         // mapper for various gRPC types to api types
         private readonly IMapper _mapper;
+
+        private Ism.Routing.V1.Protos.GetCurrentRoutesResponse _currentRoutes = new Ism.Routing.V1.Protos.GetCurrentRoutesResponse();
 
         /// <summary>
         /// Is the room in PGS, timeout or none
@@ -151,7 +147,7 @@ namespace Avalanche.Api.Managers.Media
         }
 
 
-        public async Task<IList<VideoDeviceModel>> GetPgsSinks()
+        public async Task<IList<VideoSinkModel>> GetPgsSinks()
         {
             // this needs to return the same data that routing does
             var config = await GetConfig();
@@ -168,7 +164,7 @@ namespace Avalanche.Api.Managers.Media
                 config.PgsSinks.Any(pgsSink => string.Equals(routingSink.Sink.Alias, routingSink.Sink.Alias, StringComparison.OrdinalIgnoreCase)
                 && pgsSink.Index == routingSink.Sink.Index));
 
-            var apiSinks = _mapper.Map<IList<VideoSinkMessage>, IList<VideoDeviceModel>>(pgsSinks.ToList());
+            var apiSinks = _mapper.Map<IList<Ism.Routing.V1.Protos.VideoSinkMessage>, IList<VideoSinkModel>>(pgsSinks.ToList());
 
             foreach (var sink in apiSinks)
             {
@@ -206,10 +202,10 @@ namespace Avalanche.Api.Managers.Media
                 if (enabled)
                 {
                     // send pgs back to this display
-                    await _routingService.RouteVideo(new RouteVideoRequest
+                    await _routingService.RouteVideo(new Ism.Routing.V1.Protos.RouteVideoRequest
                     {
-                        Source = _mapper.Map<SinkModel, AliasIndexMessage>(config.PgsSource),
-                        Sink = _mapper.Map<SinkModel, AliasIndexMessage>(sinkStateViewModel.Sink)
+                        Source = _mapper.Map<SinkModel, Ism.Routing.V1.Protos.AliasIndexMessage>(config.PgsSource),
+                        Sink = _mapper.Map<SinkModel, Ism.Routing.V1.Protos.AliasIndexMessage>(sinkStateViewModel.Sink)
                     });
                 }
                 else
@@ -217,10 +213,10 @@ namespace Avalanche.Api.Managers.Media
                     // restore whatever was routed to this display
                     if (route != null)
                     {
-                        await _routingService.RouteVideo(new RouteVideoRequest
+                        await _routingService.RouteVideo(new Ism.Routing.V1.Protos.RouteVideoRequest
                         {
                             Source = route.Source,
-                            Sink = _mapper.Map<SinkModel, AliasIndexMessage>(sinkStateViewModel.Sink)
+                            Sink = _mapper.Map<SinkModel, Ism.Routing.V1.Protos.AliasIndexMessage>(sinkStateViewModel.Sink)
                         });
                     }
                 }
@@ -372,10 +368,10 @@ namespace Avalanche.Api.Managers.Media
                     if (!enabled)
                         continue;
 
-                    await _routingService.RouteVideo(new RouteVideoRequest
+                    await _routingService.RouteVideo(new Ism.Routing.V1.Protos.RouteVideoRequest
                     {
-                        Source = _mapper.Map<SinkModel, AliasIndexMessage>(config.PgsSource),
-                        Sink = _mapper.Map<VideoDeviceModel, AliasIndexMessage>(sink)
+                        Source = _mapper.Map<SinkModel, Ism.Routing.V1.Protos.AliasIndexMessage>(config.PgsSource),
+                        Sink = _mapper.Map<VideoDeviceModel, Ism.Routing.V1.Protos.AliasIndexMessage>(sink)
                     });
                 }
 
@@ -416,8 +412,6 @@ namespace Avalanche.Api.Managers.Media
             return await _storageService.GetJsonObject<PgsTimeoutConfig>(nameof(PgsTimeoutConfig), 1, ConfigurationContext.FromEnvironment());
         }
 
-        private GetCurrentRoutesResponse _currentRoutes = new GetCurrentRoutesResponse();
-
         private async Task SaveCurrentRoutes()
         {
             // TODO: determine if previous routes have to survive a reboot
@@ -438,7 +432,7 @@ namespace Avalanche.Api.Managers.Media
 
             foreach (var route in _currentRoutes.Routes)
             {
-                await _routingService.RouteVideo(new RouteVideoRequest 
+                await _routingService.RouteVideo(new Ism.Routing.V1.Protos.RouteVideoRequest 
                 { 
                     Sink = route.Sink, 
                     Source = route.Source 

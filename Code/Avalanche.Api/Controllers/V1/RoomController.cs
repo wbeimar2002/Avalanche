@@ -35,7 +35,7 @@ namespace Avalanche.Api.Controllers.V1
         #region Routing
 
         [HttpGet("pgs/sinks")]
-        [Produces(typeof(List<VideoDeviceModel>))]
+        [Produces(typeof(List<VideoSinkModel>))]
         public async Task<IActionResult> GetPgsSinks([FromServices] IWebHostEnvironment env)
         {
             try

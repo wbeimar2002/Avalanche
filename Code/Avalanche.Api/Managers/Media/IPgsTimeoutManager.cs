@@ -38,6 +38,6 @@ namespace Avalanche.Api.Managers.Media
 
         Task<StateViewModel> GetPgsStateForSink(SinkModel sink);
         Task SetPgsStateForSink(SinkStateViewModel sinkState);
-        Task<IList<VideoDeviceModel>> GetPgsSinks();
+        Task<IList<VideoSinkModel>> GetPgsSinks();
     }
 }
