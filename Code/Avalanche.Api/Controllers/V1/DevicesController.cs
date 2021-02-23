@@ -155,7 +155,7 @@ namespace Avalanche.Api.Controllers.V1
 
         [HttpGet("operating/sources")]
         [Produces(typeof(IList<VideoSourceModel>))]
-        public async Task<IActionResult> GetRoutingSources(RoutesViewModel routesViewModel, [FromServices] IWebHostEnvironment env)
+        public async Task<IActionResult> GetRoutingSources([FromServices] IWebHostEnvironment env)
         {
             try
             {
@@ -176,7 +176,7 @@ namespace Avalanche.Api.Controllers.V1
 
         [HttpGet("operating/outputs")]
         [Produces(typeof(IList<VideoSinkModel>))]
-        public async Task<IActionResult> GetRoutingSinks(RoutesViewModel routesViewModel, [FromServices] IWebHostEnvironment env)
+        public async Task<IActionResult> GetRoutingSinks([FromServices] IWebHostEnvironment env)
         {
             try
             {
@@ -195,14 +195,19 @@ namespace Avalanche.Api.Controllers.V1
             }
         }
 
-        [HttpGet("operating/sources/alternative")]
+        [HttpGet("operating/sources/alternative?alias={alias}&index={index}")]
         [Produces(typeof(VideoSourceModel))]
-        public async Task<IActionResult> GetAlternativeSource(SinkModel sinkModel , [FromServices] IWebHostEnvironment env)
+        public async Task<IActionResult> GetAlternativeSource(string alias, int index, [FromServices] IWebHostEnvironment env)
         {
             try
             {
                 _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
-                var result = await _routingManager.GetAlternativeSource(sinkModel);
+                var result = await _routingManager.GetAlternativeSource(new SinkModel()
+                {
+                    Alias = alias,
+                    Index = index
+                });
+
                 return Ok(result);
             }
             catch (Exception exception)

@@ -56,7 +56,7 @@ namespace Avalanche.Api.Controllers.V1
         }
 
         [HttpPut("pgs/sinks/state")]
-        public async Task<IActionResult> SetPgsStateForSink([FromBody] SinkStateViewModel sinkState, [FromServices] IWebHostEnvironment env)
+        public async Task<IActionResult> SetPgsStateForSink([FromBody]SinkStateViewModel sinkState, [FromServices] IWebHostEnvironment env)
         {
             try
             {
@@ -75,14 +75,19 @@ namespace Avalanche.Api.Controllers.V1
             }
         }
 
-        [HttpGet("pgs/sinks/state")]
+        [HttpGet("pgs/sinks/state?alias={alias}&index={index}")]
         [Produces(typeof(StateViewModel))]
-        public async Task<IActionResult> GetPgsStateForSink([FromBody]SinkModel sink, [FromServices] IWebHostEnvironment env)
+        public async Task<IActionResult> GetPgsStateForSink(string alias, int index, [FromServices] IWebHostEnvironment env)
         {
             try
             {
                 _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
-                var result = await _pgsTimeoutManager.GetPgsStateForSink(sink);
+                var result = await _pgsTimeoutManager.GetPgsStateForSink(new SinkModel()
+                {
+                    Alias = alias,
+                    Index = index
+                });
+
                 return Ok(result);
             }
             catch (Exception ex)
