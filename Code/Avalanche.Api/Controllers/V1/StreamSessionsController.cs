@@ -51,13 +51,14 @@ namespace Avalanche.Api.Controllers.V1
         }
 
         [HttpPost("")]
+        [Produces(typeof(List<string>))]
         public async Task<IActionResult> InitSession(WebRTCSessionModel session, [FromServices] IWebHostEnvironment env)
         {
             try
             {
                 _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
-                await _webRTCManager.InitSessionAsync(session);
-                return Ok();
+                var result = await _webRTCManager.InitSessionAsync(session);
+                return Ok(result);
             }
             catch (Exception exception)
             {

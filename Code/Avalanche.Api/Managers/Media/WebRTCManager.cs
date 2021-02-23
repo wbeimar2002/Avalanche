@@ -47,7 +47,7 @@ namespace Avalanche.Api.Managers.Media
             await _webRTCService.HandleMessageAsync(_mapper.Map<WebRTCMessaggeModel, HandleMessageRequest>(message));
         }
 
-        public async Task InitSessionAsync(WebRTCSessionModel session)
+        public async Task<List<string>> InitSessionAsync(WebRTCSessionModel session)
         {
             Preconditions.ThrowIfNull(nameof(session.SessionId), session.SessionId);
             Preconditions.ThrowIfNull(nameof(session.Message), session.Message);
@@ -56,10 +56,22 @@ namespace Avalanche.Api.Managers.Media
             //TODO: Complete preconditions
 
             var accessInfo = _accessInfoFactory.GenerateAccessInfo();
-            session.AccessInformation = _mapper.Map<Ism.IsmLogCommon.Core.AccessInfo, AccessInfoModel>(accessInfo);
 
             var initRequest = _mapper.Map<WebRTCMessaggeModel, InitSessionRequest>(session);
+            initRequest.AccessInfo = _mapper.Map<Ism.IsmLogCommon.Core.AccessInfo, AccessInfoMessage>(accessInfo);
+
             SetInitRequestIpInfo(initRequest);
+
+            var actionResponse = await _webRTCService.InitSessionAsync(initRequest);
+
+            var messages = new List<string>();
+
+            foreach (var item in actionResponse.Answer)
+            {
+                messages.Add(item.Message);
+            }
+
+            return messages;
         }
 
         public async Task DeInitSessionAsync(WebRTCMessaggeModel message)

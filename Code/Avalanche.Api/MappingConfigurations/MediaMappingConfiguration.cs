@@ -194,25 +194,49 @@ namespace Avalanche.Api.MappingConfigurations
                         opt => opt.MapFrom(src => src.Type))
                     .ReverseMap();
 
+            CreateMap<Ism.IsmLogCommon.Core.AccessInfo, Ism.Streaming.V1.Protos.AccessInfoMessage>()
+                .ForPath(dest =>
+                    dest.ApplicationName,
+                    opt => opt.MapFrom(src => src.ApplicationName))
+                .ForPath(dest =>
+                    dest.Details,
+                    opt => opt.MapFrom(src => src.Details))
+                .ForPath(dest =>
+                    dest.Id,
+                    opt => opt.MapFrom(src => src.Id))
+                .ForPath(dest =>
+                    dest.Ip,
+                    opt => opt.MapFrom(src => src.Ip))
+                .ForPath(dest =>
+                    dest.MachineName,
+                    opt => opt.MapFrom(src => src.MachineName))
+                .ForPath(dest =>
+                    dest.UserName,
+                    opt => opt.MapFrom(src => src.UserName))
+                .ReverseMap();
+
             CreateMap<WebRTCSessionModel, Ism.Streaming.V1.Protos.InitSessionRequest>()
                 .ForPath(dest =>
                     dest.AccessInfo.ApplicationName,
-                    opt => opt.MapFrom(src => src.AccessInformation.ApplicationName))
+                    opt => opt.Ignore())
                 .ForPath(dest =>
                     dest.AccessInfo.Details,
-                    opt => opt.MapFrom(src => src.AccessInformation.Details))
+                    opt => opt.Ignore())
                 .ForPath(dest =>
                     dest.AccessInfo.Id,
-                    opt => opt.MapFrom(src => src.AccessInformation.Id))
+                    opt => opt.Ignore())
                 .ForPath(dest =>
                     dest.AccessInfo.Ip,
-                    opt => opt.MapFrom(src => src.AccessInformation.Ip))
+                    opt => opt.Ignore())
                 .ForPath(dest =>
                     dest.AccessInfo.MachineName,
-                    opt => opt.MapFrom(src => src.AccessInformation.MachineName))
+                    opt => opt.Ignore())
                 .ForPath(dest =>
                     dest.AccessInfo.UserName,
-                    opt => opt.MapFrom(src => src.AccessInformation.UserName))
+                    opt => opt.Ignore())
+                .ForPath(dest =>
+                    dest.ExternalObservedIp,
+                    opt => opt.Ignore())
                 .ForMember(dest =>
                     dest.StreamId,
                     opt => opt.MapFrom(src => src.Sink.Alias))
@@ -231,9 +255,6 @@ namespace Avalanche.Api.MappingConfigurations
                 .ForPath(dest =>
                     dest.Offer.Type,
                     opt => opt.MapFrom(src => src.Type))
-                .ForPath(dest =>
-                    dest.ExternalObservedIp,
-                    opt => opt.MapFrom(src => src.AccessInformation.Ip))
                 .ReverseMap();
 
             CreateMap<WebRTCMessaggeModel, Ism.Streaming.V1.Protos.DeInitSessionRequest>()

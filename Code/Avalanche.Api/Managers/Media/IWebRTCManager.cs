@@ -6,7 +6,7 @@ namespace Avalanche.Api.Managers.Media
 {
     public interface IWebRTCManager
     {
-        Task InitSessionAsync(WebRTCSessionModel session);
+        Task<List<string>> InitSessionAsync(WebRTCSessionModel session);
         Task DeInitSessionAsync(WebRTCMessaggeModel message);
         Task<IList<VideoDeviceModel>> GetSourceStreams();
         Task HandleMessageForVideo(WebRTCMessaggeModel message);
