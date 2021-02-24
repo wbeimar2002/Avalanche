@@ -30,6 +30,9 @@ namespace Avalanche.Api.Controllers.V1
         /// <summary>
         /// Send broadcast to Signal R
         /// </summary>
+        /// <param name="messageRequest"></param>
+        /// <param name="env"></param>
+        /// <returns></returns>
         [HttpPost("direct")]
         public IActionResult SendDirectMessage([FromBody]Ism.Broadcaster.Models.MessageRequest messageRequest, [FromServices]IWebHostEnvironment env)
         {

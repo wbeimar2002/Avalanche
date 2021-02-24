@@ -37,6 +37,9 @@ namespace Avalanche.Api.Controllers.V1
         /// <summary>
         /// Search procedures
         /// </summary>
+        /// <param name="filter"></param>
+        /// <param name="env"></param>
+        /// <returns></returns>
         [HttpPost("")]
         [Produces(typeof(List<ProcedureModel>))]
         public async Task<IActionResult> Search(ProcedureSearchFilterViewModel filter, [FromServices]IWebHostEnvironment env)
@@ -61,6 +64,8 @@ namespace Avalanche.Api.Controllers.V1
         /// <summary>
         /// Get procedure
         /// </summary>
+        /// <param name="env"></param>
+        /// <returns></returns>
         [HttpGet("{id}")]
         [Produces(typeof(ProcedureDetailsViewModel))]
         public async Task<IActionResult> Get([FromServices]IWebHostEnvironment env)
@@ -84,6 +89,7 @@ namespace Avalanche.Api.Controllers.V1
         /// <summary>
         /// Load the active procedure (if exists)
         /// </summary>
+        /// <param name="env"></param>
         /// <returns>Active Procedure model or null</returns>
         [HttpGet("active")]
         [Produces(typeof(ProcedureDetailsViewModel))]
@@ -110,6 +116,8 @@ namespace Avalanche.Api.Controllers.V1
         /// <summary>
         /// Set ActiveProcedure's "RequiresUserConfirmation" flag to false.
         /// </summary>
+        /// <param name="env"></param>
+        /// <returns></returns>
         [HttpPost("confirmActive")]
         public async Task<IActionResult> ConfirmActiveProcedure([FromServices]IWebHostEnvironment env)
         {

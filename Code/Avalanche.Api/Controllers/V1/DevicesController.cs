@@ -32,6 +32,12 @@ namespace Avalanche.Api.Controllers.V1
             _routingManager = ThrowIfNullOrReturn(nameof(routingManager), routingManager); ;
         }
 
+        /// <summary>
+        /// Enter full screen mode 
+        /// </summary>
+        /// <param name="routingActionViewModel"></param>
+        /// <param name="env"></param>
+        /// <returns></returns>
         [HttpPost("fullscreen")]
         public async Task<IActionResult> EnterFullScreen(RoutingActionViewModel routingActionViewModel, [FromServices] IWebHostEnvironment env)
         {
@@ -52,6 +58,12 @@ namespace Avalanche.Api.Controllers.V1
             }
         }
 
+        /// <summary>
+        /// Exit full screen mode
+        /// </summary>
+        /// <param name="routingActionViewModel"></param>
+        /// <param name="env"></param>
+        /// <returns></returns>
         [HttpDelete("fullscreen")]
         public async Task<IActionResult> ExitFullScreen(RoutingActionViewModel routingActionViewModel, [FromServices] IWebHostEnvironment env)
         {
@@ -72,6 +84,12 @@ namespace Avalanche.Api.Controllers.V1
             }
         }
 
+        /// <summary>
+        /// Hide preview 
+        /// </summary>
+        /// <param name="routingPreviewViewModel"></param>
+        /// <param name="env"></param>
+        /// <returns></returns>
         [HttpDelete("preview")]
         public async Task<IActionResult> HidePreview(RoutingPreviewViewModel routingPreviewViewModel, [FromServices] IWebHostEnvironment env)
         {
@@ -92,6 +110,12 @@ namespace Avalanche.Api.Controllers.V1
             }
         }
 
+        /// <summary>
+        /// Show preview
+        /// </summary>
+        /// <param name="routingPreviewViewModel"></param>
+        /// <param name="env"></param>
+        /// <returns></returns>
         [HttpPost("preview")]
         public async Task<IActionResult> ShowPreview(RoutingPreviewViewModel routingPreviewViewModel, [FromServices] IWebHostEnvironment env)
         {
@@ -112,6 +136,12 @@ namespace Avalanche.Api.Controllers.V1
             }
         }
 
+        /// <summary>
+        /// Add a new route
+        /// </summary>
+        /// <param name="routesViewModel"></param>
+        /// <param name="env"></param>
+        /// <returns></returns>
         [HttpPut("routes")]
         public async Task<IActionResult> RouteVideoSource(RoutesViewModel routesViewModel, [FromServices] IWebHostEnvironment env)
         {
@@ -132,7 +162,12 @@ namespace Avalanche.Api.Controllers.V1
             }
         }
 
-
+        /// <summary>
+        /// Delete a route
+        /// </summary>
+        /// <param name="routesViewModel"></param>
+        /// <param name="env"></param>
+        /// <returns></returns>
         [HttpDelete("routes")]
         public async Task<IActionResult> UnrouteVideoSource(RoutesViewModel routesViewModel, [FromServices] IWebHostEnvironment env)
         {
@@ -153,6 +188,11 @@ namespace Avalanche.Api.Controllers.V1
             }
         }
 
+        /// <summary>
+        /// Get operating sources
+        /// </summary>
+        /// <param name="env"></param>
+        /// <returns></returns>
         [HttpGet("operating/sources")]
         [Produces(typeof(IList<VideoSourceModel>))]
         public async Task<IActionResult> GetRoutingSources([FromServices] IWebHostEnvironment env)
@@ -174,6 +214,11 @@ namespace Avalanche.Api.Controllers.V1
             }
         }
 
+        /// <summary>
+        /// Get operating outputs
+        /// </summary>
+        /// <param name="env"></param>
+        /// <returns></returns>
         [HttpGet("operating/outputs")]
         [Produces(typeof(IList<VideoSinkModel>))]
         public async Task<IActionResult> GetRoutingSinks([FromServices] IWebHostEnvironment env)
@@ -195,6 +240,13 @@ namespace Avalanche.Api.Controllers.V1
             }
         }
 
+        /// <summary>
+        /// Get alternative source for a sink
+        /// </summary>
+        /// <param name="alias"></param>
+        /// <param name="index"></param>
+        /// <param name="env"></param>
+        /// <returns></returns>
         [HttpGet("operating/sources/alternative")]
         [Produces(typeof(VideoSourceModel))]
         public async Task<IActionResult> GetAlternativeSource([FromQuery] string alias, [FromQuery] int index, [FromServices] IWebHostEnvironment env)

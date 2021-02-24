@@ -29,6 +29,11 @@ namespace Avalanche.Api.Controllers.V1
             _recordingManager = recordingManager;
         }
 
+        /// <summary>
+        /// Start recording
+        /// </summary>
+        /// <param name="env"></param>
+        /// <returns></returns>
         [HttpPost("")]
         public async Task<IActionResult> StartRecording([FromServices] IWebHostEnvironment env)
         {
@@ -50,6 +55,11 @@ namespace Avalanche.Api.Controllers.V1
             }
         }
 
+        /// <summary>
+        /// Stop recording
+        /// </summary>
+        /// <param name="env"></param>
+        /// <returns></returns>
         [HttpDelete("")]
         public async Task<IActionResult> StopRecording([FromServices] IWebHostEnvironment env)
         {
@@ -70,6 +80,11 @@ namespace Avalanche.Api.Controllers.V1
             }
         }
 
+        /// <summary>
+        /// Add a capture
+        /// </summary>
+        /// <param name="env"></param>
+        /// <returns></returns>
         [HttpPost("captures")]
         public async Task<IActionResult> CaptureImages([FromServices] IWebHostEnvironment env)
         {

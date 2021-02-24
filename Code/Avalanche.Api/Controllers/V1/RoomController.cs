@@ -34,6 +34,11 @@ namespace Avalanche.Api.Controllers.V1
 
         #region Routing
 
+        /// <summary>
+        /// Gets the list of pgs sinks and their current checked state
+        /// </summary>
+        /// <param name="env"></param>
+        /// <returns></returns>
         [HttpGet("pgs/sinks")]
         [Produces(typeof(List<VideoSinkModel>))]
         public async Task<IActionResult> GetPgsSinks([FromServices] IWebHostEnvironment env)
@@ -55,6 +60,12 @@ namespace Avalanche.Api.Controllers.V1
             }
         }
 
+        /// <summary>
+        /// Sets the checked state of a pgs sink and internally it gets broadcast
+        /// </summary>
+        /// <param name="sinkState"></param>
+        /// <param name="env"></param>
+        /// <returns></returns>
         [HttpPut("pgs/sinks/state")]
         public async Task<IActionResult> SetPgsStateForSink([FromBody]SinkStateViewModel sinkState, [FromServices] IWebHostEnvironment env)
         {
@@ -75,6 +86,13 @@ namespace Avalanche.Api.Controllers.V1
             }
         }
 
+        /// <summary>
+        /// Gets the checked state of a pgs sink
+        /// </summary>
+        /// <param name="alias"></param>
+        /// <param name="index"></param>
+        /// <param name="env"></param>
+        /// <returns></returns>
         [HttpGet("pgs/sinks/state")]
         [Produces(typeof(StateViewModel))]
         public async Task<IActionResult> GetPgsStateForSink([FromQuery] string alias, [FromQuery] int index, [FromServices] IWebHostEnvironment env)
@@ -104,7 +122,13 @@ namespace Avalanche.Api.Controllers.V1
         #endregion Routing
 
         #region PGS
-
+        /// <summary>
+        /// Sets the volume of pgs audio
+        /// 0.0 means mute, 1.0 means loudest. Note that 0.0 is different than muting
+        /// </summary>
+        /// <param name="level"></param>
+        /// <param name="env"></param>
+        /// <returns></returns>
         [HttpPut("volume/level/{level}")]
         public async Task<IActionResult> SetPgsVolume(double level, [FromServices] IWebHostEnvironment env)
         {
@@ -125,6 +149,11 @@ namespace Avalanche.Api.Controllers.V1
             }
         }
 
+        /// <summary>
+        /// Gets the current pgs audio volume. Range is from 0-1
+        /// </summary>
+        /// <param name="env"></param>
+        /// <returns></returns>
         [HttpGet("volume/level")]
         [Produces(typeof(StateViewModel))]
         public async Task<IActionResult> GetPgsVolume([FromServices] IWebHostEnvironment env)
@@ -146,6 +175,11 @@ namespace Avalanche.Api.Controllers.V1
             }
         }
 
+        /// <summary>
+        /// Sets the PGS player audio mute
+        /// </summary>
+        /// <param name="env"></param>
+        /// <returns></returns>
         [HttpPut("volume/mute/{muteState}")]
         public async Task<IActionResult> SetPgsMute(bool muteState, [FromServices] IWebHostEnvironment env)
         {
@@ -166,6 +200,11 @@ namespace Avalanche.Api.Controllers.V1
             }
         }
 
+        /// <summary>
+        /// Gets if the pgs player audio is muted
+        /// </summary>
+        /// <param name="env"></param>
+        /// <returns></returns>
         [HttpGet("volume")]
         [Produces(typeof(StateViewModel))]
         public async Task<IActionResult> GetPgsMute([FromServices] IWebHostEnvironment env)
@@ -187,6 +226,12 @@ namespace Avalanche.Api.Controllers.V1
             }
         }
 
+        /// <summary>
+        /// Sets the current video file of the player
+        /// </summary>
+        /// <param name="greetingVideo"></param>
+        /// <param name="env"></param>
+        /// <returns></returns>
         [HttpPut("pgs/files/videos")]
         public async Task<IActionResult> SetCurrentGreetingVideo([FromBody]GreetingVideoModel greetingVideo, [FromServices] IWebHostEnvironment env)
         {
@@ -207,6 +252,11 @@ namespace Avalanche.Api.Controllers.V1
             }
         }
 
+        /// <summary>
+        /// Gets a collection of video files from the player
+        /// </summary>
+        /// <param name="env"></param>
+        /// <returns></returns>
         [HttpGet("pgs/files/videos")]
         [Produces(typeof(List<GreetingVideoModel>))]
         public async Task<IActionResult> GetPgsVideoFiles([FromServices] IWebHostEnvironment env)
@@ -228,6 +278,13 @@ namespace Avalanche.Api.Controllers.V1
             }
         }
 
+        /// <summary>
+        /// Sets the current position in video playback
+        /// 0.0 means start of file, 1.0 means end of file
+        /// </summary>
+        /// <param name="position"></param>
+        /// <param name="env"></param>
+        /// <returns></returns>
         [HttpPut("pgs/currentvideo/position/{position}")]
         public async Task<IActionResult> SetPgsVideoPosition(double position, [FromServices] IWebHostEnvironment env)
         {
@@ -248,8 +305,14 @@ namespace Avalanche.Api.Controllers.V1
             }
         }
 
+        /// <summary>
+        /// Starts or stops PGS mode
+        /// </summary>
+        /// <param name="state"></param>
+        /// <param name="env"></param>
+        /// <returns></returns>
         [HttpPut("pgs/state/{state}")]
-        public async Task<IActionResult> SetPgsPlaybackState(bool state, [FromServices] IWebHostEnvironment env)
+        public async Task<IActionResult> SetPgsState(bool state, [FromServices] IWebHostEnvironment env)
         {
             try
             {
@@ -271,7 +334,11 @@ namespace Avalanche.Api.Controllers.V1
         #endregion
 
         #region Timeout
-
+        /// <summary>
+        /// Request Next Page for Timeout
+        /// </summary>
+        /// <param name="env"></param>
+        /// <returns></returns>
         [HttpPut("timeout/pages/next")]
         public async Task<IActionResult> NextPage([FromServices] IWebHostEnvironment env)
         {
@@ -292,6 +359,11 @@ namespace Avalanche.Api.Controllers.V1
             }
         }
 
+        /// <summary>
+        /// Request Previous Page for Timeout
+        /// </summary>
+        /// <param name="env"></param>
+        /// <returns></returns>
         [HttpPut("timeout/pages/previous")]
         public async Task<IActionResult> PreviousPage([FromServices] IWebHostEnvironment env)
         {
@@ -312,6 +384,12 @@ namespace Avalanche.Api.Controllers.V1
             }
         }
 
+        /// <summary>
+        /// Set current page number for timeout
+        /// </summary>
+        /// <param name="pageNumber"></param>
+        /// <param name="env"></param>
+        /// <returns></returns>
         [HttpPut("timeout/pages/{pageNumber}")]
         public async Task<IActionResult> SetPage(string pageNumber, [FromServices] IWebHostEnvironment env)
         {
@@ -332,6 +410,11 @@ namespace Avalanche.Api.Controllers.V1
             }
         }
 
+        /// <summary>
+        /// Get current page in timeout file
+        /// </summary>
+        /// <param name="env"></param>
+        /// <returns></returns>
         [HttpGet("timeout/pages/current")]
         [Produces(typeof(StateViewModel))]
         public async Task<IActionResult> GetCurrentPage([FromServices] IWebHostEnvironment env)
@@ -353,6 +436,11 @@ namespace Avalanche.Api.Controllers.V1
             }
         }
 
+        /// <summary>
+        /// Get pages count from timeout file 
+        /// </summary>
+        /// <param name="env"></param>
+        /// <returns></returns>
         [HttpGet("timeout/pages/count")]
         [Produces(typeof(StateViewModel))]
         public async Task<IActionResult> GetPagesCount([FromServices] IWebHostEnvironment env)
@@ -374,6 +462,11 @@ namespace Avalanche.Api.Controllers.V1
             }
         }
 
+        /// <summary>
+        /// Get timeout's file path
+        /// </summary>
+        /// <param name="env"></param>
+        /// <returns></returns>
         [HttpGet("timeout/file/path")]
         [Produces(typeof(StateViewModel))]
         public async Task<IActionResult> GetFilePath([FromServices] IWebHostEnvironment env)

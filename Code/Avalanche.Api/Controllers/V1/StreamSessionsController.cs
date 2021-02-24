@@ -29,6 +29,11 @@ namespace Avalanche.Api.Controllers.V1
             _webRTCManager = webRTCManager;
         }
 
+        /// <summary>
+        /// Get source strems for WebRTC
+        /// </summary>
+        /// <param name="env"></param>
+        /// <returns></returns>
         [HttpGet("sources")]
         [Produces(typeof(IList<VideoDeviceModel>))]
         public async Task<IActionResult> GetSourceStreams([FromServices] IWebHostEnvironment env)
@@ -50,6 +55,12 @@ namespace Avalanche.Api.Controllers.V1
             }
         }
 
+        /// <summary>
+        /// Play video with WebRTC
+        /// </summary>
+        /// <param name="session"></param>
+        /// <param name="env"></param>
+        /// <returns></returns>
         [HttpPost("")]
         [Produces(typeof(List<string>))]
         public async Task<IActionResult> InitSession(WebRTCSessionModel session, [FromServices] IWebHostEnvironment env)
@@ -71,6 +82,12 @@ namespace Avalanche.Api.Controllers.V1
             }
         }
 
+        /// <summary>
+        /// Handle WebRTC message
+        /// </summary>
+        /// <param name="message"></param>
+        /// <param name="env"></param>
+        /// <returns></returns>
         [HttpPut("")]
         public async Task<IActionResult> HandleMessage(WebRTCMessaggeModel message, [FromServices] IWebHostEnvironment env)
         {
@@ -91,6 +108,12 @@ namespace Avalanche.Api.Controllers.V1
             }
         }
 
+        /// <summary>
+        /// Stop WebRTC video reproduction
+        /// </summary>
+        /// <param name="message"></param>
+        /// <param name="env"></param>
+        /// <returns></returns>
         [HttpDelete("")]
         public async Task<IActionResult> DeInitSession(WebRTCMessaggeModel message, [FromServices] IWebHostEnvironment env)
         {
