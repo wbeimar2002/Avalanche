@@ -27,17 +27,11 @@ namespace Avalanche.Api
             string seqUrl = Environment.GetEnvironmentVariable("seqUrl") ?? "http://seq:5341";//"http://localhost:5341"; 
 
             LogEventLevel level = LogEventLevel.Information;
-#if DEBUG
-            level = LogEventLevel.Debug;
-#endif
+
             Log.Logger = new LoggerConfiguration()
                 .ReadFrom.AppSettings()
                 .Enrich.With(new ApplicationNameEnricher("Avalanche.Api"))
                 .Enrich.FromLogContext()
-#if DEBUG
-                .MinimumLevel.Override("Microsoft.AspNetCore", LogEventLevel.Debug)
-                .MinimumLevel.Debug()
-#endif
                 .WriteTo.File(
                     path: logFilePath,
                     rollingInterval: RollingInterval.Day,

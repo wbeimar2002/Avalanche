@@ -54,8 +54,10 @@ services:
       grpcPassword: '0123456789'
       grpcServerValidationCertificate: '/certificates/grpc_localhost_root_l1.cer'
       grpcThumprint: '86CD34D2FADDFFE00D31F4C12294782ECCB9041F'
+      CookieSettings:Path: '/api/files' #note the browser treats this as case sensitive
+      CookieSettings:ExpirationSeconds: '86400'
       seqUrl: 'http://seq:5341'
-      logging:loglevel:default: 'debug'
+      logging:loglevel:default: 'Information'
       loggerFileName: 'avalancheapilogs.txt'
       loggerFolder: '/logs'
       loggerFileSizeLimit: 209715200

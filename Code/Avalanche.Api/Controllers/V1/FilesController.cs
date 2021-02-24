@@ -55,7 +55,6 @@ namespace Avalanche.Api.Controllers.V1
 #warning TODO: This is entirely wrong and intended only for a workflow demo. Remove.
         // Need to define and implement correct image retrieval patterns. Not in scope of current work, but the following is not at all correct.
         [HttpGet("DemoGetImageFile")]
-        [AllowAnonymous]
         public IActionResult DemoGetImageFile([FromQuery]string path)
         {
             try
