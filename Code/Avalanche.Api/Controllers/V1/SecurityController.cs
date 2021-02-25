@@ -1,10 +1,12 @@
 ﻿using Avalanche.Api.Utilities;
+using Avalanche.Shared.Infrastructure.Constants;
 using Avalanche.Shared.Infrastructure.Enumerations;
 using Avalanche.Shared.Infrastructure.Extensions;
 using Avalanche.Shared.Infrastructure.Helpers;
 using Avalanche.Shared.Infrastructure.Models;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -32,14 +34,12 @@ namespace Avalanche.Api.Controllers.V1
     public class SecurityController : ControllerBase
     {
         private readonly ILogger _appLoggerService;
-        private readonly IHttpContextAccessor _httpContextAccessor;
         private SigningConfigurations _signingConfigurations;
         private IOptions<TokenOptions> _tokenOptions;
 
-        public SecurityController(ILogger<SecurityController> appLoggerService, IHttpContextAccessor httpContextAccessor, SigningConfigurations signingConfigurations, IOptions<TokenOptions> tokenOptions)
+        public SecurityController(ILogger<SecurityController> appLoggerService, SigningConfigurations signingConfigurations, IOptions<TokenOptions> tokenOptions)
         {
             _appLoggerService = appLoggerService;
-            _httpContextAccessor = httpContextAccessor;
             _tokenOptions = tokenOptions;
             _signingConfigurations = signingConfigurations;
         }
@@ -54,7 +54,7 @@ namespace Avalanche.Api.Controllers.V1
                 var tokenUser = JwtUtilities.ValidateToken(jwtToken, JwtUtilities.GetDefaultJwtValidationParameters(_tokenOptions.Value, _signingConfigurations));
 
                 var identity = new ClaimsIdentity(tokenUser.Claims, CookieAuthenticationDefaults.AuthenticationScheme);
-                await _httpContextAccessor.HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(identity));
+                await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(identity));
 
                 return Ok();
             }
@@ -62,6 +62,36 @@ namespace Avalanche.Api.Controllers.V1
             {
                 _appLoggerService.LogError(LoggerHelper.GetLogMessage(DebugLogType.Exception), exception);
                 return new BadRequestObjectResult(exception.Get(env.IsDevelopment()));
+            }
+            finally
+            {
+                _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
+            }
+        }
+
+        [HttpPost("logout")]
+        [Authorize]
+        public async Task<IActionResult> Logout([FromServices]IWebHostEnvironment env)
+        {
+            try
+            {
+                _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
+
+                Claim redirect = null;
+
+                var user = HttpContext.User;
+                if (user?.Identity?.IsAuthenticated ?? false)
+                {
+                    redirect = user.Claims.FirstOrDefault(c => string.Equals(c.Type, AvalancheClaimTypes.SignoutRedirectUrl, StringComparison.OrdinalIgnoreCase));
+                    await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+                }
+
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                _appLoggerService.LogError(LoggerHelper.GetLogMessage(DebugLogType.Exception), ex);
+                return new BadRequestObjectResult(ex.Get(env.IsDevelopment()));
             }
             finally
             {

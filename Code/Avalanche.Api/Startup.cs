@@ -142,6 +142,8 @@ namespace Avalanche.Api
             var signingConfigurations = new SigningConfigurations(authSettings.SecretKey);
             services.AddSingleton(signingConfigurations);
 
+            var rootPath = Configuration.GetSection("hostingRootPath")?.Value ?? "/";
+
             services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
             .AddJwtBearer(jwtBearerOptions =>
             {
@@ -180,8 +182,8 @@ namespace Avalanche.Api
                 cookieOptions.Cookie.SameSite = SameSiteMode.Strict;
                 cookieOptions.ExpireTimeSpan = TimeSpan.FromSeconds(cookieSettings.ExpirationSeconds);
 
-                cookieOptions.Cookie.Path = cookieSettings.Path; //"/api/files";
-                cookieOptions.LoginPath = "/login";
+                cookieOptions.Cookie.Path = rootPath + cookieSettings.Path; //"/api/files";
+                cookieOptions.LoginPath = "/login"; // this is route to angular app login page
 
                 // forward anything not to the files controller to jwt auth handler
                 cookieOptions.ForwardDefaultSelector = ctx =>
