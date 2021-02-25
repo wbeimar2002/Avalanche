@@ -21,12 +21,12 @@ namespace Avalanche.Api.Controllers.V1
     [Route("[controller]")]
     [ApiController]
     [Authorize]
-    public class RoomController : ControllerBase
+    public class MediaController : ControllerBase
     {
-        readonly ILogger<RoomController> _logger;
+        readonly ILogger<MediaController> _logger;
         readonly IPgsTimeoutManager _pgsTimeoutManager;
 
-        public RoomController(ILogger<RoomController> logger, IPgsTimeoutManager pgsTimeoutManager)
+        public MediaController(ILogger<MediaController> logger, IPgsTimeoutManager pgsTimeoutManager)
         {
             _logger = ThrowIfNullOrReturn(nameof(logger), logger);
             _pgsTimeoutManager = ThrowIfNullOrReturn(nameof(pgsTimeoutManager), pgsTimeoutManager);
@@ -129,7 +129,7 @@ namespace Avalanche.Api.Controllers.V1
         /// <param name="level"></param>
         /// <param name="env"></param>
         /// <returns></returns>
-        [HttpPut("volume/level/{level}")]
+        [HttpPut("pgs/volume/level/{level}")]
         public async Task<IActionResult> SetPgsVolume(double level, [FromServices] IWebHostEnvironment env)
         {
             try
@@ -154,7 +154,7 @@ namespace Avalanche.Api.Controllers.V1
         /// </summary>
         /// <param name="env"></param>
         /// <returns></returns>
-        [HttpGet("volume/level")]
+        [HttpGet("pgs/volume/level")]
         [Produces(typeof(StateViewModel))]
         public async Task<IActionResult> GetPgsVolume([FromServices] IWebHostEnvironment env)
         {
@@ -180,7 +180,7 @@ namespace Avalanche.Api.Controllers.V1
         /// </summary>
         /// <param name="env"></param>
         /// <returns></returns>
-        [HttpPut("volume/mute/{muteState}")]
+        [HttpPut("pgs/volume/mute/{muteState}")]
         public async Task<IActionResult> SetPgsMute(bool muteState, [FromServices] IWebHostEnvironment env)
         {
             try
@@ -205,7 +205,7 @@ namespace Avalanche.Api.Controllers.V1
         /// </summary>
         /// <param name="env"></param>
         /// <returns></returns>
-        [HttpGet("volume")]
+        [HttpGet("pgs/volume")]
         [Produces(typeof(StateViewModel))]
         public async Task<IActionResult> GetPgsMute([FromServices] IWebHostEnvironment env)
         {
