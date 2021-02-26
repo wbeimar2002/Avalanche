@@ -3,6 +3,7 @@ using Ism.Routing.Client.V1;
 using Ism.Security.Grpc.Interfaces;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
+using static Ism.Utility.Core.Preconditions;
 using static Ism.Routing.V1.Protos.Routing;
 
 namespace Avalanche.Api.Services.Media
@@ -15,7 +16,9 @@ namespace Avalanche.Api.Services.Media
 
         public RoutingService(IConfigurationService configurationService, IGrpcClientFactory<RoutingClient> grpcClientFactory, ICertificateProvider certificateProvider)
         {
-            _configurationService = configurationService;
+            _configurationService = ThrowIfNullOrReturn(nameof(configurationService), configurationService);
+            ThrowIfNull(nameof(grpcClientFactory), grpcClientFactory);
+            ThrowIfNull(nameof(certificateProvider), certificateProvider);
 
             var hostIpAddress = _configurationService.GetEnvironmentVariable("hostIpAddress");
             var mediaServiceGrpcPort = _configurationService.GetEnvironmentVariable("mediaServiceGrpcPort");

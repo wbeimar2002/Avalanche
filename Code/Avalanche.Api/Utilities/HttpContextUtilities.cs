@@ -49,17 +49,17 @@ namespace Avalanche.Api.Utilities
             return returnValue;
         }
 
-        internal static User GetUser(HttpContext httpContext)
+        internal static UserModel GetUser(HttpContext httpContext)
         {
             var claimPrincipal = httpContext?.User?.Identity as ClaimsIdentity;
-            return claimPrincipal == null ? new Shared.Domain.Models.User()
+            return claimPrincipal == null ? new Shared.Domain.Models.UserModel()
             {
                 Id = "Unidentified",
                 FirstName = "Unidentified",
                 LastName = "Unidentified",
             }
             :
-            new Avalanche.Shared.Domain.Models.User()
+            new Avalanche.Shared.Domain.Models.UserModel()
             {
                 Id = claimPrincipal.FindFirst("Id")?.Value,
                 FirstName = claimPrincipal.FindFirst("FirstName")?.Value,

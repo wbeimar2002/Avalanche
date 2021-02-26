@@ -23,8 +23,10 @@ namespace Avalanche.Api.Controllers.V1
         }
 
         /// <summary>
-        /// Health check without secure
+        ///  Health check without secure
         /// </summary>
+        /// <param name="env"></param>
+        /// <returns></returns>
         [Route("check")]
         [HttpGet]
         public IActionResult HealthCheck([FromServices]IWebHostEnvironment env)
@@ -55,6 +57,8 @@ namespace Avalanche.Api.Controllers.V1
         /// <summary>
         /// Health check with secure
         /// </summary>
+        /// <param name="env"></param>
+        /// <returns></returns>
         [Authorize]
         [Route("check/secure")]
         [HttpGet]

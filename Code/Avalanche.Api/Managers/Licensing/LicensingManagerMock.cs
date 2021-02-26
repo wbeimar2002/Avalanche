@@ -10,10 +10,10 @@ namespace Avalanche.Api.Managers.Licensing
     [ExcludeFromCodeCoverage]
     public class LicensingManagerMock : ILicensingManager
     {
-        public Task<List<License>> GetAllActive()
+        public Task<List<LicenseModel>> GetAllActive()
         {
             var fixture = new Fixture();
-            return Task.FromResult(fixture.CreateMany<License>(10).ToList());
+            return Task.FromResult(fixture.CreateMany<LicenseModel>(10).ToList());
         }
 
         public Task<bool> Validate(string key)

@@ -21,9 +21,8 @@ namespace Avalanche.Api.Tests.MappingConfigurations
             var config = new MapperConfiguration(cfg =>
             {
                 cfg.AddProfile(new HealthMappingConfiguration());
-                cfg.AddProfile(new RoutingMappingConfiguration());
-                cfg.AddProfile(new MediaMappingConfiguration());
                 cfg.AddProfile(new ProceduresMappingConfiguration());
+                cfg.AddProfile(new MediaMappingConfiguration());
             });
 
             _mapper = config.CreateMapper();
@@ -36,22 +35,16 @@ namespace Avalanche.Api.Tests.MappingConfigurations
         }
 
         [Test]
-        public void MediaMappingConfigurations_IsValid()
+        public void ProceduresMappingConfigurations_IsValid()
+        {
+            AssertProfileIsValid<ProceduresMappingConfiguration>();
+        }
+
+        [Test]
+        public void MediaMappingConfiguration_IsValid()
         {
             AssertProfileIsValid<MediaMappingConfiguration>();
         }
-
-        //[Test]
-        //public void ProceduresMappingConfigurations_IsValid()
-        //{
-        //    AssertProfileIsValid<ProceduresMappingConfiguration>();
-        //}
-
-        //[Test]
-        //public void VideoRoutingMappingConfigurations_IsValid()
-        //{
-        //    AssertProfileIsValid<RoutingMappingConfiguration>();
-        //}
 
         [Test]
         public void TestPatientViewModelToStateModel()
@@ -60,13 +53,13 @@ namespace Avalanche.Api.Tests.MappingConfigurations
             var viewModel = new PatientViewModel
             {
                 DateOfBirth = now,
-                Department = new Shared.Domain.Models.Department { Id = 1, IsNew = false, Name = "Dept" },
+                Department = new Shared.Domain.Models.DepartmentModel { Id = 1, IsNew = false, Name = "Dept" },
                 FirstName = "First",
                 Id = 2,
                 LastName = "Last",
                 MRN = "1234",
-                Physician = new Shared.Domain.Models.Physician { Id = "3", FirstName = "f", LastName = "l" },
-                ProcedureType = new Shared.Domain.Models.ProcedureType { Id = 4, IsNew = false, DepartmentId = 1, Name = "proc" },
+                Physician = new Shared.Domain.Models.PhysicianModel { Id = "3", FirstName = "f", LastName = "l" },
+                ProcedureType = new Shared.Domain.Models.ProcedureTypeModel { Id = 4, IsNew = false, DepartmentId = 1, Name = "proc" },
                 Sex = new KeyValuePairViewModel { Id = "M", TranslationKey = "key", Value = "M" }
             };
             var stateModel = _mapper.Map<Patient>(viewModel);

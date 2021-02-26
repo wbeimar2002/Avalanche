@@ -12,11 +12,11 @@ namespace Avalanche.Api.ViewModels
         public string LastName { get; set; }
         public DateTime DateOfBirth { get; set; }
         public KeyValuePairViewModel Sex { get; set; }
-        public Department Department { get; set; }
-        public ProcedureType ProcedureType { get; set; }
-        public Physician Physician { get; set; }
+        public DepartmentModel Department { get; set; }
+        public ProcedureTypeModel ProcedureType { get; set; }
+        public PhysicianModel Physician { get; set; }
 
         [JsonIgnore]
-        public AccessInfo AccessInformation { get; set; }
+        public AccessInfoModel AccessInformation { get; set; }
     }
 }

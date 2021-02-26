@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.OpenApi.Models;
+using NSwag;
+using NSwag.AspNetCore;
+using NSwag.Generation.Processors.Security;
 using System;
 using System.Diagnostics.CodeAnalysis;
 
@@ -11,60 +13,40 @@ namespace Avalanche.Api.Extensions
 	{
 		public static IServiceCollection AddCustomSwagger(this IServiceCollection services)
 		{
-			services.AddSwaggerGen(cfg =>
+			services.AddSwaggerDocument(config =>
 			{
-				cfg.SwaggerDoc("v1", new OpenApiInfo
+				config.OperationProcessors.Add(new OperationSecurityScopeProcessor("JWT token"));
+				config.AddSecurity("JWT token", new OpenApiSecurityScheme
 				{
-					Title = "Avalanche Api",
-					Version = "v1",
-					Description = "Api Gateway for Avalanche.",
-					Contact = new OpenApiContact
+					Type = OpenApiSecuritySchemeType.ApiKey,
+					Name = "Authorization",
+					Description = "Copy 'Bearer ' + valid JWT token into field",
+					In = OpenApiSecurityApiKeyLocation.Header
+				});
+				config.PostProcess = document =>
+				{
+					document.Info.Version = "v1";
+					document.Info.Title = "Avalanche API";
+					document.Info.Description = "Api Gateway for Avalanche.";
+					document.Info.TermsOfService = "None";
+					document.Info.Contact = new NSwag.OpenApiContact
 					{
 						Name = "Olympus",
-						Url = new Uri("https://www.olympus-global.com/")
-					},
-					License = new OpenApiLicense
+						//			Url = new Uri("https://www.olympus-global.com/")
+					};
+					document.Info.License = new NSwag.OpenApiLicense
 					{
 						Name = "All rights reserved",
-					},
-				});
-
-				cfg.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
-				{
-					In = ParameterLocation.Header,
-					Description = "JSON Web Token to access resources. Example: Bearer {token}",
-					Name = "Authorization",
-					Type = SecuritySchemeType.ApiKey
-				});
-
-				cfg.AddSecurityRequirement(new OpenApiSecurityRequirement
-				{
-					{
-						new OpenApiSecurityScheme
-						{
-							Reference = new OpenApiReference { Type = ReferenceType.SecurityScheme, Id = "Bearer" }
-						},
-						new [] { string.Empty }
-					}
-				});
-
-				// Set the comments path for the Swagger JSON and UI.
-				// TODO uncomment for PR to dev
-				//var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
-				//var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
-				//cfg.IncludeXmlComments(xmlPath);
+					};
+				};
 			});
-
 			return services;
 		}
 
 		public static IApplicationBuilder UseCustomSwagger(this IApplicationBuilder app)
 		{
-			app.UseSwagger().UseSwaggerUI(options =>
-			{
-				options.SwaggerEndpoint("/swagger/v1/swagger.json", "Avalanche.Api");
-				options.DocumentTitle = "Avalanche Api";
-			});
+			app.UseOpenApi();
+			app.UseSwaggerUi3();
 
 			return app;
 		}

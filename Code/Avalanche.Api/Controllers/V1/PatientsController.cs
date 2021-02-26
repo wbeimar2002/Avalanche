@@ -1,5 +1,6 @@
 ﻿using Avalanche.Api.Extensions;
-using Avalanche.Api.Managers.Health;
+using Avalanche.Api.Helpers;
+using Avalanche.Api.Managers.Patients;
 using Avalanche.Api.ViewModels;
 using Avalanche.Shared.Infrastructure.Enumerations;
 using Avalanche.Shared.Infrastructure.Extensions;
@@ -33,6 +34,9 @@ namespace Avalanche.Api.Controllers.V1
         /// <summary>
         /// Register new patient
         /// </summary>
+        /// <param name="newPatient"></param>
+        /// <param name="env"></param>
+        /// <returns></returns>
         [HttpPost("")]
         [Produces(typeof(PatientViewModel))]
         public async Task<IActionResult> ManualPatientRegistration(PatientViewModel newPatient, [FromServices]IWebHostEnvironment env)
@@ -56,6 +60,12 @@ namespace Avalanche.Api.Controllers.V1
             }
         }
 
+        /// <summary>
+        /// Update patient
+        /// </summary>
+        /// <param name="existing"></param>
+        /// <param name="env"></param>
+        /// <returns></returns>
         [HttpPut("{id}")]
         [Produces(typeof(PatientViewModel))]
         public async Task<IActionResult> UpdatePatient(PatientViewModel existing, [FromServices] IWebHostEnvironment env)
@@ -78,6 +88,12 @@ namespace Avalanche.Api.Controllers.V1
             }
         }
 
+        /// <summary>
+        /// Delete patient
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="env"></param>
+        /// <returns></returns>
         [HttpDelete("{id}")]
         [Produces(typeof(PatientViewModel))]
         public async Task<IActionResult> DeletePatient(ulong id, [FromServices] IWebHostEnvironment env)
@@ -101,8 +117,10 @@ namespace Avalanche.Api.Controllers.V1
         }
 
         /// <summary>
-        /// Get a quick patient registration
+        /// Quick patient registration
         /// </summary>
+        /// <param name="env"></param>
+        /// <returns></returns>
         [HttpPost("quick")]
         [Produces(typeof(PatientViewModel))]
         public async Task<IActionResult> QuickPatientRegistration([FromServices]IWebHostEnvironment env)
@@ -127,8 +145,11 @@ namespace Avalanche.Api.Controllers.V1
         }
 
         /// <summary>
-        /// Search patient using criteria and paging
+        /// Search patient using keyword and paging
         /// </summary>
+        /// <param name="filter"></param>
+        /// <param name="env"></param>
+        /// <returns></returns>
         [HttpPost("filtered")]
         [Produces(typeof(PagedCollectionViewModel<PatientViewModel>))]
         public async Task<IActionResult> Search([FromBody]PatientKeywordSearchFilterViewModel filter, [FromServices]IWebHostEnvironment env)
@@ -140,7 +161,7 @@ namespace Avalanche.Api.Controllers.V1
                 var result = new PagedCollectionViewModel<PatientViewModel>();
                 result.Items = await _patientsManager.Search(filter);
 
-                AppendPagingContext(filter, result);
+                PagingHelper.AppendPagingContext(this.Url, this.Request, filter, result);
                 return Ok(result);
             }
             catch (Exception exception)
@@ -155,8 +176,11 @@ namespace Avalanche.Api.Controllers.V1
         }
 
         /// <summary>
-        /// Search patient using criteria and paging
+        /// Search patient using criterias and paging
         /// </summary>
+        /// <param name="filter"></param>
+        /// <param name="env"></param>
+        /// <returns></returns>
         [HttpPost("filteredDetailed")]
         [Produces(typeof(PagedCollectionViewModel<PatientViewModel>))]
         public async Task<IActionResult> SearchDetailed([FromBody]PatientDetailsSearchFilterViewModel filter, [FromServices]IWebHostEnvironment env)
@@ -168,7 +192,7 @@ namespace Avalanche.Api.Controllers.V1
                 var result = new PagedCollectionViewModel<PatientViewModel>();
                 result.Items = await _patientsManager.Search(filter);
 
-                AppendPagingContext(filter, result);
+                PagingHelper.AppendPagingContext(this.Url, this.Request, filter, result);
                 return Ok(result);
             }
             catch (Exception exception)
@@ -180,26 +204,6 @@ namespace Avalanche.Api.Controllers.V1
             {
                 _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
             }
-        }
-
-        private void AppendPagingContext<TFilterViewModel, TResult>(TFilterViewModel filter, PagedCollectionViewModel<TResult> result)
-            where TFilterViewModel : FilterViewModelBase
-            where TResult : class
-        {
-            //TODO: Not sure the UI is consuming this at the moment.  May need to revisit paging mechanism later depending on UI implementation?
-
-            //Get next page URL string  
-            TFilterViewModel nextFilter = filter.Clone() as TFilterViewModel;
-            nextFilter.Page += 1;
-            String nextUrl = result.Items.Count() <= 0 ? null : this.Url.Action("Get", null, nextFilter, Request.Scheme);
-
-            //Get previous page URL string  
-            TFilterViewModel previousFilter = filter.Clone() as TFilterViewModel;
-            previousFilter.Page -= 1;
-            String previousUrl = previousFilter.Page <= 0 ? null : this.Url.Action("Get", null, previousFilter, Request.Scheme);
-
-            result.NextPage = !String.IsNullOrWhiteSpace(nextUrl) ? new Uri(nextUrl) : null;
-            result.PreviousPage = !String.IsNullOrWhiteSpace(previousUrl) ? new Uri(previousUrl) : null;
         }
     }
 }

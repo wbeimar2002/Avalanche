@@ -4,6 +4,7 @@ using AvidisDeviceInterface.V1.Protos;
 using Ism.Security.Grpc.Interfaces;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
+using static Ism.Utility.Core.Preconditions;
 using static AvidisDeviceInterface.V1.Protos.Avidis;
 
 namespace Avalanche.Api.Services.Media
@@ -16,7 +17,9 @@ namespace Avalanche.Api.Services.Media
 
         public AvidisService(IConfigurationService configurationService, IGrpcClientFactory<AvidisClient> grpcClientFactory, ICertificateProvider certificateProvider)
         {
-            _configurationService = configurationService;
+            _configurationService = ThrowIfNullOrReturn(nameof(configurationService), configurationService);
+            ThrowIfNull(nameof(grpcClientFactory), grpcClientFactory);
+            ThrowIfNull(nameof(certificateProvider), certificateProvider);
 
             var hostIpAddress = _configurationService.GetEnvironmentVariable("hostIpAddress");
             var mediaServiceGrpcPort = _configurationService.GetEnvironmentVariable("mediaServiceGrpcPort");
