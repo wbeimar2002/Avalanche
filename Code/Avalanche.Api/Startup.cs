@@ -76,7 +76,6 @@ namespace Avalanche.Api
             var grpcServerValidationCertificate = configurationService.GetEnvironmentVariable("grpcServerValidationCertificate");
 
             services.AddTransient<IRoutingManager, RoutingManager>();
-            services.AddTransient<IPgsTimeoutManager, PgsTimeoutManager>();
             services.AddTransient<IWebRTCManager, WebRTCManager>();
             services.AddTransient<IRecordingManager, RecordingManager>();
             services.AddTransient<IMaintenanceManager, MaintenanceManager>();
@@ -85,6 +84,9 @@ namespace Avalanche.Api
             services.AddTransient<ILicensingManager, LicensingManagerMock>();
             services.AddTransient<IProceduresManager, ProceduresManager>();
             services.AddTransient<INotificationsManager, NotificationsManager>();
+
+            //Don't change this, this need to be Singleton due to its behavior, until a good architecture will be applied
+            services.AddSingleton<IPgsTimeoutManager, PgsTimeoutManager>();
 
             services.AddSingleton<IWebRTCService, WebRTCService>();
             services.AddSingleton<IRecorderService, RecorderService>();
