@@ -104,5 +104,22 @@ namespace Avalanche.Api.Controllers.V1
                 _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
             }
         }
+
+        [HttpGet("captures/preview")]
+        [AllowAnonymous]
+        public IActionResult GetCapturesPreview([FromQuery] string path)
+        {
+            try
+            {
+                _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
+                var fullPath = _recordingManager.GetCapturePreview(path);
+                return PhysicalFile(fullPath, "image/jpeg");
+            }
+            catch (Exception ex)
+            {
+                _appLoggerService.LogError(LoggerHelper.GetLogMessage(DebugLogType.Exception), ex);
+                return BadRequest();
+            }
+        }
     }
 }

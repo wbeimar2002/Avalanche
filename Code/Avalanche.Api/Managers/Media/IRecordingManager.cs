@@ -14,5 +14,6 @@ namespace Avalanche.Api.Managers.Media
 
         Task CaptureImage();
 
+        string GetCapturePreview(string path);
     }
 }
