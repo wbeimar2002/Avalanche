@@ -31,6 +31,7 @@ namespace Avalanche.Api.Controllers.V1
             _securityManager = securityManager;
         }
 
+        // NOTE: keeping cookie management on the same controller (route) as file access means we can easily scope both the cookie and authentication scheme to just this controller
         [HttpPost("acquireFileCookie")]
         [AllowAnonymous]
         public async Task<IActionResult> AcquireFileCookie([FromServices]IWebHostEnvironment env, [FromBody] string jwtToken)
