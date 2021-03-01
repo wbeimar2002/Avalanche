@@ -43,6 +43,7 @@ using static Ism.Storage.Core.DataManagement.V1.Protos.DataManagementStorage;
 using static Ism.Storage.Core.PatientList.V1.Protos.PatientListStorage;
 using static Ism.Streaming.V1.Protos.WebRtcStreamer;
 using Microsoft.AspNetCore.Http;
+using Avalanche.Api.Managers.Security;
 
 namespace Avalanche.Api
 {
@@ -88,6 +89,7 @@ namespace Avalanche.Api
             services.AddTransient<ILicensingManager, LicensingManagerMock>();
             services.AddTransient<IProceduresManager, ProceduresManager>();
             services.AddTransient<INotificationsManager, NotificationsManager>();
+            services.AddTransient<ISecurityManager, SecurityManager>();
 
             services.AddSingleton<IWebRTCService, WebRTCService>();
             services.AddSingleton<IRecorderService, RecorderService>();
@@ -177,14 +179,13 @@ namespace Avalanche.Api
                 cookieOptions.Cookie.SameSite = SameSiteMode.Strict;
                 cookieOptions.ExpireTimeSpan = TimeSpan.FromSeconds(cookieSettings.ExpirationSeconds);
 
-                cookieOptions.Cookie.Path = rootPath + cookieSettings.Path; //"/api/files";
+                cookieOptions.Cookie.Path = rootPath + cookieSettings.Path;
                 cookieOptions.LoginPath = "/login"; // this is route to angular app login page
 
-                // forward anything not to the files controller to jwt auth handler
+                // forward anything not to the cookie path to the jwt auth handler
                 cookieOptions.ForwardDefaultSelector = ctx =>
                 {
-                    if (ctx.Request.Path.StartsWithSegments("/Files", StringComparison.OrdinalIgnoreCase)
-                        || ctx.Request.Path.StartsWithSegments("/Security", StringComparison.OrdinalIgnoreCase)) 
+                    if (ctx.Request.Path.StartsWithSegments(cookieSettings.Path, StringComparison.OrdinalIgnoreCase)) 
                     { 
                         return null;
                     }

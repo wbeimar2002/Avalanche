@@ -1,10 +1,18 @@
-﻿using Avalanche.Shared.Infrastructure.Enumerations;
+﻿using Avalanche.Api.Managers.Security;
+using Avalanche.Shared.Infrastructure.Enumerations;
+using Avalanche.Shared.Infrastructure.Extensions;
 using Avalanche.Shared.Infrastructure.Helpers;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Diagnostics.CodeAnalysis;
+using System.Security.Claims;
+using System.Threading.Tasks;
 
 namespace Avalanche.Api.Controllers.V1
 {
@@ -15,13 +23,67 @@ namespace Avalanche.Api.Controllers.V1
     public class FilesController : ControllerBase
     {
         readonly ILogger _appLoggerService;
+        private ISecurityManager _securityManager;
 
-        public FilesController(ILogger<FilesController> appLoggerService)
+        public FilesController(ILogger<FilesController> appLoggerService, ISecurityManager securityManager)
         {
             _appLoggerService = appLoggerService;
+            _securityManager = securityManager;
         }
 
-#warning TODO: This is entirely wrong and intended only for a workflow demo. Replace.
+        [HttpPost("acquireFileCookie")]
+        [AllowAnonymous]
+        public async Task<IActionResult> AcquireFileCookie([FromServices]IWebHostEnvironment env, [FromBody] string jwtToken)
+        {
+            try
+            {
+                _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
+
+                var identity = _securityManager.CreateTokenIdentity(jwtToken, CookieAuthenticationDefaults.AuthenticationScheme);
+                await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(identity));
+
+                return Ok();
+            }
+            catch (Exception exception)
+            {
+                _appLoggerService.LogError(LoggerHelper.GetLogMessage(DebugLogType.Exception), exception);
+                return new BadRequestObjectResult(exception.Get(env.IsDevelopment()));
+            }
+            finally
+            {
+                _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
+            }
+        }
+
+        [HttpPost("revokeFileCookie")]
+        public async Task<IActionResult> RevokeFileCookie([FromServices]IWebHostEnvironment env)
+        {
+            try
+            {
+                _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
+
+                var user = HttpContext.User;
+                if (user?.Identity?.IsAuthenticated ?? false)
+                {
+                    await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+                }
+
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                _appLoggerService.LogError(LoggerHelper.GetLogMessage(DebugLogType.Exception), ex);
+                return new BadRequestObjectResult(ex.Get(env.IsDevelopment()));
+            }
+            finally
+            {
+                _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
+            }
+
+        }
+
+
+#warning TODO: This is wrong and intended only for a workflow demo. Replace.
         // TODO: Need to define and implement correct image retrieval patterns. Not in scope of current work.  
         //      - Library ID needs to come with request, so we can determine the correct root path.
         //      - Need some sort of "local" vs "vss" status so we know if we need to proxy the request to the vss.
