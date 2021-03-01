@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using Avalanche.Api.Helpers;
-using Avalanche.Api.Managers.Metadata;
+using Avalanche.Api.Managers.Data;
 using Avalanche.Api.Services.Maintenance;
 using Avalanche.Api.Utilities;
 using Avalanche.Api.ViewModels;
@@ -23,15 +23,15 @@ namespace Avalanche.Api.Managers.Maintenance
     public class MaintenanceManager : IMaintenanceManager
     {
         readonly IStorageService _storageService;
-        readonly IMetadataManager _metadataManager;
+        readonly IDataManager _metadataManager;
         readonly IMapper _mapper;
         readonly IHttpContextAccessor _httpContextAccessor;
 
-        readonly User user;
+        readonly UserModel user;
         readonly ConfigurationContext configurationContext;
 
         public MaintenanceManager(IStorageService storageService, 
-            IMetadataManager metadataManager, 
+            IDataManager metadataManager, 
             IMapper mapper, 
             IHttpContextAccessor httpContextAccessor)
         {
@@ -41,7 +41,7 @@ namespace Avalanche.Api.Managers.Maintenance
             _mapper = mapper;
 
             user = HttpContextUtilities.GetUser(_httpContextAccessor.HttpContext);
-            configurationContext = _mapper.Map<Shared.Domain.Models.User, ConfigurationContext>(user);
+            configurationContext = _mapper.Map<Shared.Domain.Models.UserModel, ConfigurationContext>(user);
             configurationContext.IdnId = Guid.NewGuid().ToString();
         }
 
@@ -93,11 +93,11 @@ namespace Avalanche.Api.Managers.Maintenance
 
         public async Task<DynamicSectionViewModel> GetCategoryByKey(string key)
         {
-            var configurationContext = _mapper.Map<User, ConfigurationContext>(user);
+            var configurationContext = _mapper.Map<UserModel, ConfigurationContext>(user);
             var category = await _storageService.GetJsonObject<DynamicSectionViewModel>(key, 1, configurationContext);
             var settingValues = await _storageService.GetJsonDynamic(category.JsonKey, 1, configurationContext);
 
-            var types = await _metadataManager.GetMetadata(MetadataTypes.SettingTypes);
+            var types = await _metadataManager.GetMetadata(DataTypes.SettingTypes);
             var policiesTypes = (await _storageService.GetJsonObject<ListContainerViewModel>("SettingsPoliciesData", 1, configurationContext)).Items;           
 
             await SetSources(category, types);
@@ -239,7 +239,7 @@ namespace Avalanche.Api.Managers.Maintenance
 
         public async Task<JObject> GetSettingValues(string key)
         {
-            var configurationContext = _mapper.Map<Shared.Domain.Models.User, ConfigurationContext>(user);
+            var configurationContext = _mapper.Map<Shared.Domain.Models.UserModel, ConfigurationContext>(user);
             return await _storageService.GetJsonDynamic(key, 1, configurationContext);
         }
 
@@ -328,7 +328,7 @@ namespace Avalanche.Api.Managers.Maintenance
             }
         }
 
-        private async Task SaveCustomEntity(User user, DynamicListViewModel category, DynamicListActions action)
+        private async Task SaveCustomEntity(UserModel user, DynamicListViewModel category, DynamicListActions action)
         {
             switch (category.SourceKey)
             {
@@ -344,7 +344,7 @@ namespace Avalanche.Api.Managers.Maintenance
             }
         }
 
-        private async Task SaveCustomEntities(User user, DynamicListViewModel category)
+        private async Task SaveCustomEntities(UserModel user, DynamicListViewModel category)
         {
             switch (category.SourceKey)
             {
@@ -365,12 +365,12 @@ namespace Avalanche.Api.Managers.Maintenance
 
         private async Task SaveProcedureTypes(DynamicListActions action, dynamic source)
         {
-            var procedureType = new ProcedureType();
+            var procedureType = new ProcedureTypeModel();
 
             if (SettingsHelper.IsPropertyExist(source.Department, "Id"))
                 procedureType.DepartmentId = Convert.ToInt32(source.Department?.Id);
 
-            Helpers.Mapper.Map(source, procedureType);
+            SettingsHelper.Map(source, procedureType);
 
             switch (action)
             {
@@ -388,8 +388,8 @@ namespace Avalanche.Api.Managers.Maintenance
 
         private async Task SaveDepartments(DynamicListActions action, dynamic source)
         {
-            var department = new Department();
-            Helpers.Mapper.Map(source, department);
+            var department = new DepartmentModel();
+            SettingsHelper.Map(source, department);
 
             switch (action)
             {

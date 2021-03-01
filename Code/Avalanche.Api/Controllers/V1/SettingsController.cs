@@ -1,10 +1,7 @@
-﻿using Avalanche.Api.Extensions;
-using Avalanche.Api.Managers.Maintenance;
-using Avalanche.Api.ViewModels;
+﻿using Avalanche.Api.Managers.Maintenance;
 using Avalanche.Shared.Infrastructure.Enumerations;
 using Avalanche.Shared.Infrastructure.Extensions;
 using Avalanche.Shared.Infrastructure.Helpers;
-using Avalanche.Shared.Infrastructure.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -13,7 +10,6 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Avalanche.Api.Controllers.V1
@@ -26,12 +22,18 @@ namespace Avalanche.Api.Controllers.V1
         readonly ILogger _appLoggerService;
         readonly IMaintenanceManager _maintenanceManager;
 
-        public SettingsController(IMaintenanceManager maintenanceManager, ILogger<FilesController> appLoggerService)
+        public SettingsController(IMaintenanceManager maintenanceManager, ILogger<SettingsController> appLoggerService)
         {
             _appLoggerService = appLoggerService;
             _maintenanceManager = maintenanceManager;
         }
 
+        /// <summary>
+        /// Get any settings values using the filename (key)
+        /// </summary>
+        /// <param name="key"></param>
+        /// <param name="env"></param>
+        /// <returns></returns>
         [HttpGet("{key}")]
         public async Task<IActionResult> GetSettings(string key, [FromServices] IWebHostEnvironment env)
         {

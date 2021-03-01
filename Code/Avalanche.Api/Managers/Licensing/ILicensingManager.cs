@@ -7,6 +7,6 @@ namespace Avalanche.Api.Managers.Licensing
     public interface ILicensingManager
     {
         Task<bool> Validate(string key);
-        Task<List<License>> GetAllActive();
+        Task<List<LicenseModel>> GetAllActive();
     }
 }

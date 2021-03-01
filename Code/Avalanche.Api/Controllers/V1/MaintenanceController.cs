@@ -1,10 +1,8 @@
-﻿using Avalanche.Api.Extensions;
-using Avalanche.Api.Managers.Maintenance;
+﻿using Avalanche.Api.Managers.Maintenance;
 using Avalanche.Api.ViewModels;
 using Avalanche.Shared.Infrastructure.Enumerations;
 using Avalanche.Shared.Infrastructure.Extensions;
 using Avalanche.Shared.Infrastructure.Helpers;
-using Avalanche.Shared.Infrastructure.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -25,12 +23,19 @@ namespace Avalanche.Api.Controllers.V1
         readonly ILogger _appLoggerService;
         readonly IMaintenanceManager _maintenanceManager;
 
-        public MaintenanceController(IMaintenanceManager maintenanceManager, ILogger<FilesController> appLoggerService)
+        public MaintenanceController(IMaintenanceManager maintenanceManager, ILogger<MaintenanceController> appLoggerService)
         {
             _appLoggerService = appLoggerService;
             _maintenanceManager = maintenanceManager;
         }
 
+        /// <summary>
+        /// Update policies of a maintenance page and the json values if needed
+        /// </summary>
+        /// <param name="key"></param>
+        /// <param name="section"></param>
+        /// <param name="env"></param>
+        /// <returns></returns>
         [HttpPut("categories/{key}/policies")]
         public async Task<IActionResult> SaveCategoryPolicies(string key, [FromBody] DynamicSectionViewModel section, [FromServices] IWebHostEnvironment env)
         {
@@ -52,6 +57,13 @@ namespace Avalanche.Api.Controllers.V1
             }
         }
 
+        /// <summary>
+        /// Save json values of a maintenance page.
+        /// </summary>
+        /// <param name="key"></param>
+        /// <param name="section"></param>
+        /// <param name="env"></param>
+        /// <returns></returns>
         [HttpPut("categories/{key}")]
         public async Task<IActionResult> SaveCategory(string key, [FromBody]DynamicSectionViewModel section,[FromServices]IWebHostEnvironment env)
         {
@@ -73,6 +85,13 @@ namespace Avalanche.Api.Controllers.V1
             }
         }
 
+        /// <summary>
+        /// Add a new item to a list
+        /// </summary>
+        /// <param name="key"></param>
+        /// <param name="list"></param>
+        /// <param name="env"></param>
+        /// <returns></returns>
         [HttpPost("categories/lists/{key}")]
         public async Task<IActionResult> AddEntity(string key, [FromBody] DynamicListViewModel list, [FromServices] IWebHostEnvironment env)
         {
@@ -94,6 +113,13 @@ namespace Avalanche.Api.Controllers.V1
             }
         }
 
+        /// <summary>
+        /// Update an item from a list
+        /// </summary>
+        /// <param name="key"></param>
+        /// <param name="list"></param>
+        /// <param name="env"></param>
+        /// <returns></returns>
         [HttpPut("categories/lists/{key}")]
         public async Task<IActionResult> UpdateEntity(string key, [FromBody] DynamicListViewModel list, [FromServices] IWebHostEnvironment env)
         {
@@ -115,6 +141,13 @@ namespace Avalanche.Api.Controllers.V1
             }
         }
 
+        /// <summary>
+        /// Delete an item from a list
+        /// </summary>
+        /// <param name="key"></param>
+        /// <param name="list"></param>
+        /// <param name="env"></param>
+        /// <returns></returns>
         [HttpDelete("categories/lists/{key}")]
         public async Task<IActionResult> DeleteEntity(string key, [FromBody] DynamicListViewModel list, [FromServices] IWebHostEnvironment env)
         {
@@ -136,6 +169,12 @@ namespace Avalanche.Api.Controllers.V1
             }
         }
 
+        /// <summary>
+        /// Get metadata and values for a Maintenance Page
+        /// </summary>
+        /// <param name="key"></param>
+        /// <param name="env"></param>
+        /// <returns></returns>
         [HttpGet("categories/{key}")]
         public async Task<IActionResult> GetCategoryByKey(string key, [FromServices]IWebHostEnvironment env)
         {
@@ -157,6 +196,12 @@ namespace Avalanche.Api.Controllers.V1
             }
         }
 
+        /// <summary>
+        /// Get metadata and values for a List Maintenance Page
+        /// </summary>
+        /// <param name="key"></param>
+        /// <param name="env"></param>
+        /// <returns></returns>
         [HttpGet("categories/lists/{key}")]
         public async Task<IActionResult> GetCategoryListByKey(string key, [FromServices] IWebHostEnvironment env)
         {

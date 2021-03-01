@@ -1,13 +1,11 @@
-using AutoMapper;
 using Avalanche.Api.Extensions;
 using Avalanche.Api.Hubs;
-using Avalanche.Api.Managers.Devices;
-using Avalanche.Api.Managers.Health;
+using Avalanche.Api.Managers.Data;
+using Avalanche.Api.Managers.Patients;
 using Avalanche.Api.Managers.Licensing;
 using Avalanche.Api.Managers.Maintenance;
-using Avalanche.Api.Managers.Metadata;
+using Avalanche.Api.Managers.Media;
 using Avalanche.Api.Managers.Notifications;
-using Avalanche.Api.Managers.PgsTimeout;
 using Avalanche.Api.Managers.Procedures;
 using Avalanche.Api.Services.Configuration;
 using Avalanche.Api.Services.Health;
@@ -15,7 +13,6 @@ using Avalanche.Api.Services.Maintenance;
 using Avalanche.Api.Services.Media;
 using Avalanche.Api.Services.Notifications;
 using Avalanche.Api.Utilities;
-using Avalanche.Shared.Domain.Models;
 using Avalanche.Shared.Infrastructure.Models;
 using Avalanche.Shared.Infrastructure.Services.Settings;
 using Ism.Broadcaster.Services;
@@ -27,9 +24,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Features;
-using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -37,7 +32,6 @@ using Microsoft.IdentityModel.Tokens;
 using Serilog;
 using System;
 using System.Diagnostics.CodeAnalysis;
-using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
 using static AvidisDeviceInterface.V1.Protos.Avidis;
 using static Ism.PatientInfoEngine.V1.Protos.PatientListService;
@@ -48,6 +42,7 @@ using static Ism.Storage.Core.Configuration.V1.Protos.ConfigurationService;
 using static Ism.Storage.Core.DataManagement.V1.Protos.DataManagementStorage;
 using static Ism.Storage.Core.PatientList.V1.Protos.PatientListStorage;
 using static Ism.Streaming.V1.Protos.WebRtcStreamer;
+using Microsoft.AspNetCore.Http;
 
 namespace Avalanche.Api
 {
@@ -82,26 +77,26 @@ namespace Avalanche.Api
             var grpcCertificate = configurationService.GetEnvironmentVariable("grpcCertificate");
             var grpcPassword = configurationService.GetEnvironmentVariable("grpcPassword");
             var grpcServerValidationCertificate = configurationService.GetEnvironmentVariable("grpcServerValidationCertificate");
-          
+
+            services.AddTransient<IRoutingManager, RoutingManager>();
+            services.AddTransient<IPgsTimeoutManager, PgsTimeoutManager>();
+            services.AddTransient<IWebRTCManager, WebRTCManager>();
+            services.AddTransient<IRecordingManager, RecordingManager>();
             services.AddTransient<IMaintenanceManager, MaintenanceManager>();
             services.AddTransient<IPatientsManager, PatientsManager>();
-            services.AddTransient<IPhysiciansManager, PhysiciansManager>();
-            services.AddTransient<IMetadataManager, MetadataManager>();
+            services.AddTransient<IDataManager, DataManager>();
             services.AddTransient<ILicensingManager, LicensingManagerMock>();
-            services.AddTransient<IDevicesManager, DevicesManager>();
-            services.AddTransient<IPgsTimeoutManager, PgsTimeoutManager>();
-            services.AddTransient<IMediaManager, MediaManager>();
             services.AddTransient<IProceduresManager, ProceduresManager>();
             services.AddTransient<INotificationsManager, NotificationsManager>();
 
-            services.AddSingleton<IMediaService, MediaService>();
+            services.AddSingleton<IWebRTCService, WebRTCService>();
+            services.AddSingleton<IRecorderService, RecorderService>();
+            services.AddSingleton<IAvidisService, AvidisService>();
+            services.AddSingleton<IRoutingService, RoutingService>();
+            services.AddSingleton<IPgsTimeoutService, PgsTimeoutService>();
             services.AddSingleton<IPieService, PieService>();
             services.AddSingleton<IBroadcastService, BroadcastService>();
-            services.AddSingleton<IRoutingService, RoutingService>();
-            services.AddSingleton<IAvidisService, AvidisService>();
-            services.AddSingleton<IRecorderService, RecorderService>();
             services.AddSingleton<IStorageService, StorageService>();
-            services.AddSingleton<IPgsTimeoutService, PgsTimeoutService>();
             services.AddSingleton<IDataManagementService, DataManagementService>();
 
             services.AddSingleton<ICertificateProvider>(new FileSystemCertificateProvider(grpcCertificate, grpcPassword, grpcServerValidationCertificate));
