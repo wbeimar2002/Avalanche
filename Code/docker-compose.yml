@@ -54,6 +54,11 @@ services:
       grpcPassword: '0123456789'
       grpcServerValidationCertificate: '/certificates/grpc_localhost_root_l1.cer'
       grpcThumprint: '86CD34D2FADDFFE00D31F4C12294782ECCB9041F'
+      AVALANCHE_CLIENT_CERTIFICATE_PASSWORD: '0123456789'
+      AVALANCHE_CLIENT_CERTIFICATE_PATH: '/certificates/grpc_localhost_root_l1.pfx'
+      AVALANCHE_SERVER_VALIDATION_CERTIFICATE_PATH: '/certificates/grpc_localhost_root_l1.cer'
+      AVALANCHE_CONFIGURATION_SERVICE_HOST: 'host.docker.internal'
+      AVALANCHE_CONFIGURATION_SERVICE_PORT: '5012'
       CookieSettings:Path: '/files' #note the browser treats this as case sensitive
       CookieSettings:ExpirationSeconds: '86400'
       hostingRootPath: '/api' 

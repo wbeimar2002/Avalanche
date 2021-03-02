@@ -1,4 +1,6 @@
 ﻿using Avalanche.Api.Managers.Security;
+using Avalanche.Api.Services.Security;
+using Avalanche.Shared.Infrastructure.Constants;
 using Avalanche.Shared.Infrastructure.Enumerations;
 using Avalanche.Shared.Infrastructure.Extensions;
 using Avalanche.Shared.Infrastructure.Helpers;
@@ -24,6 +26,7 @@ namespace Avalanche.Api.Controllers.V1
     {
         readonly ILogger _appLoggerService;
         private ISecurityManager _securityManager;
+        private ICookieValidationService _cookieValidationService;
 
         public FilesController(ILogger<FilesController> appLoggerService, ISecurityManager securityManager)
         {
@@ -41,6 +44,8 @@ namespace Avalanche.Api.Controllers.V1
                 _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
 
                 var identity = _securityManager.CreateTokenIdentity(jwtToken, CookieAuthenticationDefaults.AuthenticationScheme);
+                identity.AddClaim(new Claim(AvalancheClaimTypes.LastChanged, DateTimeOffset.Now.ToString()));
+                
                 await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(identity));
 
                 return Ok();
@@ -66,6 +71,7 @@ namespace Avalanche.Api.Controllers.V1
                 var user = HttpContext.User;
                 if (user?.Identity?.IsAuthenticated ?? false)
                 {
+                    _cookieValidationService.RevokePrincipal(user);
                     await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
                 }
 

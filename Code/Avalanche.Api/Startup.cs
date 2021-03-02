@@ -44,6 +44,12 @@ using static Ism.Storage.Core.PatientList.V1.Protos.PatientListStorage;
 using static Ism.Streaming.V1.Protos.WebRtcStreamer;
 using Microsoft.AspNetCore.Http;
 using Avalanche.Api.Managers.Security;
+using Ism.Security.Grpc.Configuration;
+using System.Collections.Generic;
+using Ism.SystemState.Client.V1;
+using Avalanche.Api.Services.Security;
+using System.IdentityModel.Tokens.Jwt;
+using Ism.Common.Core.Configuration.Extensions;
 
 namespace Avalanche.Api
 {
@@ -74,6 +80,10 @@ namespace Avalanche.Api
 
             IConfigurationService configurationService = new ConfigurationService(Configuration);
             services.AddSingleton(c => configurationService);
+
+            // needed for state client and maybe others
+            services.AddPocoConfiguration<GrpcServiceRegistry>(Configuration, nameof(GrpcServiceRegistry));
+
 
             var grpcCertificate = configurationService.GetEnvironmentVariable("grpcCertificate");
             var grpcPassword = configurationService.GetEnvironmentVariable("grpcPassword");
@@ -112,6 +122,7 @@ namespace Avalanche.Api
             services.AddSingleton<IGrpcClientFactory<PgsTimeoutClient>, GrpcClientFactory<PgsTimeoutClient>>();
             services.AddSingleton<IGrpcClientFactory<ConfigurationServiceClient>, GrpcClientFactory<ConfigurationServiceClient>>();
             services.AddSingleton<IAccessInfoFactory, AccessInfoFactory>();
+            services.AddSingleton<ICookieValidationService, CookieValidationService>();
 
             services.AddHostedService<NotificationsListener>();
 
@@ -119,7 +130,7 @@ namespace Avalanche.Api
 
             var stateServiceAddress = configurationService.GetEnvironmentVariable("stateServiceGrpcAddress");
             var stateServicePort = configurationService.GetEnvironmentVariable("stateServiceGrpcPort");
-            services.AddGrpcStateClient(stateServiceAddress, uint.Parse(stateServicePort), "AvalancheApi");
+            services.AddGrpcStateClient("AvalancheApi");
 
             ConfigureAuthorization(services);
             ConfigureCorsPolicy(services);
@@ -191,7 +202,12 @@ namespace Avalanche.Api
                     }
                     return JwtBearerDefaults.AuthenticationScheme;
                 };
+
+                cookieOptions.EventsType = typeof(AvalancheCookieAuthenticationEvents);
             });
+
+            services.AddScoped<AvalancheCookieAuthenticationEvents>();
+            services.AddSingleton<ICookieValidationService, CookieValidationService>();
 
             services.AddAuthorization(options =>
             {

@@ -25,15 +25,18 @@ namespace Avalanche.Api.Utilities
                 ValidIssuer = tokenOptions.Issuer,
                 ValidAudience = tokenOptions.Audience,
                 IssuerSigningKey = signingConfigurations.Key,
-                ClockSkew = TimeSpan.Zero
+                ClockSkew = TimeSpan.Zero,
             };
         }
 
         public static ClaimsPrincipal ValidateToken(string jwtToken, TokenValidationParameters tokenValidationParameters)
         {
             var handler = new JwtSecurityTokenHandler();
+            handler.InboundClaimTypeMap.Clear(); // this prevents mangling of some claim types like "sub"
+
             return handler.ValidateToken(jwtToken, tokenValidationParameters, out _);
         }
 
     }
 }
+ 
