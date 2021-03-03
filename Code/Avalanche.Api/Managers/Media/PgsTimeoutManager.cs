@@ -222,21 +222,23 @@ namespace Avalanche.Api.Managers.Media
                 }
             }
 
+
+            var currentData = await _stateClient.GetData<PgsDisplayStateData>();
+            var displayIndex = currentData.DisplayStates.FindIndex(x =>
+                string.Equals(x.AliasIndex.Alias, sinkStateViewModel.Sink.Alias, StringComparison.OrdinalIgnoreCase) &&
+                x.AliasIndex.Index == sinkStateViewModel.Sink.Index);
             // update the state data
             await _stateClient.UpdateData<PgsDisplayStateData>(x =>
             {
                 // default state won't have an entry for a display
-                var existing = x.DisplayStates.SingleOrDefault(x =>
-                    string.Equals(x.AliasIndex.Alias, sinkStateViewModel.Sink.Alias, StringComparison.OrdinalIgnoreCase) &&
-                    x.AliasIndex.Index == sinkStateViewModel.Sink.Index);
-
-                // add entry or update existing
-                if (existing == null)
-                    x.DisplayStates.Add(new PgsDisplayState
-                    { 
-                        AliasIndex = new AliasIndexModel(sinkStateViewModel.Sink.Alias, sinkStateViewModel.Sink.Index), Enabled = enabled });
+                if (displayIndex < 0)
+                {
+                    x.Add(data => data.DisplayStates, new PgsDisplayState { AliasIndex = new AliasIndexModel(sinkStateViewModel.Sink.Alias, sinkStateViewModel.Sink.Index), Enabled = enabled });
+                }
                 else
-                    existing.Enabled = enabled;
+                {
+                    x.Replace(data => data.DisplayStates[displayIndex].Enabled, enabled);
+                }
             });
         }
 

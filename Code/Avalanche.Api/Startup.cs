@@ -19,7 +19,9 @@ using Ism.Broadcaster.Services;
 using Ism.Security.Grpc;
 using Ism.Security.Grpc.Interfaces;
 using Ism.SystemState.Client;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http.Features;
@@ -40,6 +42,14 @@ using static Ism.Storage.Core.Configuration.V1.Protos.ConfigurationService;
 using static Ism.Storage.Core.DataManagement.V1.Protos.DataManagementStorage;
 using static Ism.Storage.Core.PatientList.V1.Protos.PatientListStorage;
 using static Ism.Streaming.V1.Protos.WebRtcStreamer;
+using Microsoft.AspNetCore.Http;
+using Avalanche.Api.Managers.Security;
+using Ism.Security.Grpc.Configuration;
+using System.Collections.Generic;
+using Ism.SystemState.Client.V1;
+using Avalanche.Api.Services.Security;
+using System.IdentityModel.Tokens.Jwt;
+using Ism.Common.Core.Configuration.Extensions;
 
 namespace Avalanche.Api
 {
@@ -71,6 +81,10 @@ namespace Avalanche.Api
             IConfigurationService configurationService = new ConfigurationService(Configuration);
             services.AddSingleton(c => configurationService);
 
+            // needed for state client and maybe others
+            services.AddPocoConfiguration<GrpcServiceRegistry>(Configuration, nameof(GrpcServiceRegistry));
+
+
             var grpcCertificate = configurationService.GetEnvironmentVariable("grpcCertificate");
             var grpcPassword = configurationService.GetEnvironmentVariable("grpcPassword");
             var grpcServerValidationCertificate = configurationService.GetEnvironmentVariable("grpcServerValidationCertificate");
@@ -84,6 +98,7 @@ namespace Avalanche.Api
             services.AddTransient<ILicensingManager, LicensingManagerMock>();
             services.AddTransient<IProceduresManager, ProceduresManager>();
             services.AddTransient<INotificationsManager, NotificationsManager>();
+            services.AddTransient<ISecurityManager, SecurityManager>();
 
             //Don't change this, this need to be Singleton due to its behavior, until a good architecture will be applied
             services.AddSingleton<IPgsTimeoutManager, PgsTimeoutManager>();
@@ -109,6 +124,7 @@ namespace Avalanche.Api
             services.AddSingleton<IGrpcClientFactory<PgsTimeoutClient>, GrpcClientFactory<PgsTimeoutClient>>();
             services.AddSingleton<IGrpcClientFactory<ConfigurationServiceClient>, GrpcClientFactory<ConfigurationServiceClient>>();
             services.AddSingleton<IAccessInfoFactory, AccessInfoFactory>();
+            services.AddSingleton<ICookieValidationService, CookieValidationService>();
 
             services.AddHostedService<NotificationsListener>();
 
@@ -116,7 +132,7 @@ namespace Avalanche.Api
 
             var stateServiceAddress = configurationService.GetEnvironmentVariable("stateServiceGrpcAddress");
             var stateServicePort = configurationService.GetEnvironmentVariable("stateServiceGrpcPort");
-            services.AddGrpcStateClient(stateServiceAddress, uint.Parse(stateServicePort), "AvalancheApi");
+            services.AddGrpcStateClient("AvalancheApi");
 
             ConfigureAuthorization(services);
             ConfigureCorsPolicy(services);
@@ -127,30 +143,21 @@ namespace Avalanche.Api
             services.Configure<TokenOptions>(Configuration.GetSection("TokenOptions"));
             var tokenOptions = Configuration.GetSection("TokenOptions").Get<TokenOptions>();
 
-            services.Configure<TokenOptions>(Configuration.GetSection("AuthSettings"));
+            services.Configure<AuthSettings>(Configuration.GetSection("AuthSettings"));
             var authSettings = Configuration.GetSection("AuthSettings").Get<AuthSettings>();
+
+            services.Configure<CookieSettings>(Configuration.GetSection("CookieSettings"));
+            var cookieSettings = Configuration.GetSection("CookieSettings").Get<CookieSettings>();
 
             var signingConfigurations = new SigningConfigurations(authSettings.SecretKey);
             services.AddSingleton(signingConfigurations);
 
-            services.AddAuthentication(options =>
-            {
-                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-                options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
-            })
+            var rootPath = Configuration.GetSection("hostingRootPath")?.Value ?? "/";
+
+            services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
             .AddJwtBearer(jwtBearerOptions =>
             {
-                jwtBearerOptions.TokenValidationParameters = new TokenValidationParameters()
-                {
-                    ValidateAudience = true,
-                    ValidateLifetime = true,
-                    ValidateIssuerSigningKey = true,
-                    ValidIssuer = tokenOptions.Issuer,
-                    ValidAudience = tokenOptions.Audience,
-                    IssuerSigningKey = signingConfigurations.Key,
-                    ClockSkew = TimeSpan.Zero
-                };
+                jwtBearerOptions.TokenValidationParameters = JwtUtilities.GetDefaultJwtValidationParameters(tokenOptions, signingConfigurations);
 
                 // From: https://docs.microsoft.com/en-us/aspnet/core/signalr/authn-and-authz?view=aspnetcore-3.1
                 // We have to hook the OnMessageReceived event in order to
@@ -176,6 +183,39 @@ namespace Avalanche.Api
                         return Task.CompletedTask;
                     }
                 };
+            })
+            .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, cookieOptions =>
+            {
+                cookieOptions.Cookie.HttpOnly = true;
+                cookieOptions.Cookie.IsEssential = true;
+                cookieOptions.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+                cookieOptions.Cookie.SameSite = SameSiteMode.Strict;
+                cookieOptions.ExpireTimeSpan = TimeSpan.FromSeconds(cookieSettings.ExpirationSeconds);
+
+                cookieOptions.Cookie.Path = rootPath + cookieSettings.Path;
+                cookieOptions.LoginPath = "/login"; // this is route to angular app login page
+
+                // forward anything not to the cookie path to the jwt auth handler
+                cookieOptions.ForwardDefaultSelector = ctx =>
+                {
+                    if (ctx.Request.Path.StartsWithSegments(cookieSettings.Path, StringComparison.OrdinalIgnoreCase)) 
+                    { 
+                        return null;
+                    }
+                    return JwtBearerDefaults.AuthenticationScheme;
+                };
+
+                cookieOptions.EventsType = typeof(AvalancheCookieAuthenticationEvents);
+            });
+
+            services.AddScoped<AvalancheCookieAuthenticationEvents>();
+            services.AddSingleton<ICookieValidationService, CookieValidationService>();
+
+            services.AddAuthorization(options =>
+            {
+                var builder = new AuthorizationPolicyBuilder(CookieAuthenticationDefaults.AuthenticationScheme, JwtBearerDefaults.AuthenticationScheme)
+                    .RequireAuthenticatedUser();
+                options.DefaultPolicy = builder.Build();
             });
         }
 
