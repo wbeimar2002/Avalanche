@@ -8,7 +8,7 @@ using Avalanche.Shared.Domain.Models;
 using Avalanche.Shared.Infrastructure.Enumerations;
 using Avalanche.Shared.Infrastructure.Helpers;
 using Ism.Common.Core.Configuration.Models;
-using Ism.Storage.Core.DataManagement.V1.Protos;
+using Ism.Storage.DataManagement.Client.V1.Protos;
 using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
 using System;
@@ -128,7 +128,7 @@ namespace Avalanche.Api.Managers.Data
         {
             await ValidateDepartmentsSupport(departmentId);
 
-            var result = await _dataManagementService.GetProcedureTypesByDepartment(new Ism.Storage.Core.DataManagement.V1.Protos.GetProcedureTypesByDepartmentRequest()
+            var result = await _dataManagementService.GetProcedureTypesByDepartment(new Ism.Storage.DataManagement.Client.V1.Protos.GetProcedureTypesByDepartmentRequest()
             {
                 DepartmentId = departmentId
             });

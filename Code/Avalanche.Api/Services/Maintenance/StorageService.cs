@@ -9,7 +9,7 @@ using System;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Threading.Tasks;
-using static Ism.Storage.Core.Configuration.V1.Protos.ConfigurationService;
+using static Ism.Storage.Configuration.Client.V1.Protos.ConfigurationService;
 
 namespace Avalanche.Api.Services.Maintenance
 {

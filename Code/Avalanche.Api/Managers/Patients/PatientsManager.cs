@@ -10,7 +10,7 @@ using Avalanche.Shared.Infrastructure.Models;
 using Google.Protobuf.WellKnownTypes;
 using Ism.Common.Core.Configuration.Models;
 using Ism.PatientInfoEngine.V1.Protos;
-using Ism.Storage.Core.DataManagement.V1.Protos;
+using Ism.Storage.DataManagement.Client.V1.Protos;
 using Ism.SystemState.Client;
 using Microsoft.AspNetCore.Http;
 using System;
@@ -90,11 +90,11 @@ namespace Avalanche.Api.Managers.Patients
 
             await CheckProcedureType(newPatient.ProcedureType, newPatient.Department);
 
-            var patientRequest = _mapper.Map<PatientViewModel, Ism.Storage.Core.PatientList.V1.Protos.AddPatientRecordRequest>(newPatient);
+            var patientRequest = _mapper.Map<PatientViewModel, Ism.Storage.PatientList.Client.V1.Protos.AddPatientRecordRequest>(newPatient);
             var result = await _pieService.RegisterPatient(patientRequest);
             PublishActiveProcedure(newPatient);
 
-            var response = _mapper.Map<Ism.Storage.Core.PatientList.V1.Protos.AddPatientRecordResponse, PatientViewModel>(result);
+            var response = _mapper.Map<Ism.Storage.PatientList.Client.V1.Protos.AddPatientRecordResponse, PatientViewModel>(result);
             return response;
         }
 
@@ -139,11 +139,11 @@ namespace Avalanche.Api.Managers.Patients
             var accessInfo = _accessInfoFactory.GenerateAccessInfo();
             newPatient.AccessInformation = _mapper.Map<AccessInfoModel>(accessInfo);
 
-            var patientRequest = _mapper.Map<PatientViewModel, Ism.Storage.Core.PatientList.V1.Protos.AddPatientRecordRequest>(newPatient);
+            var patientRequest = _mapper.Map<PatientViewModel, Ism.Storage.PatientList.Client.V1.Protos.AddPatientRecordRequest>(newPatient);
             var result = await _pieService.RegisterPatient(patientRequest);
             PublishActiveProcedure(newPatient);
 
-            return _mapper.Map<Ism.Storage.Core.PatientList.V1.Protos.AddPatientRecordResponse, PatientViewModel>(result);
+            return _mapper.Map<Ism.Storage.PatientList.Client.V1.Protos.AddPatientRecordResponse, PatientViewModel>(result);
         }
 
         public async Task UpdatePatient(PatientViewModel existingPatient)
@@ -165,7 +165,7 @@ namespace Avalanche.Api.Managers.Patients
 
             await CheckProcedureType(existingPatient.ProcedureType, existingPatient.Department);
 
-            var patientRequest = _mapper.Map<PatientViewModel, Ism.Storage.Core.PatientList.V1.Protos.UpdatePatientRecordRequest>(existingPatient);
+            var patientRequest = _mapper.Map<PatientViewModel, Ism.Storage.PatientList.Client.V1.Protos.UpdatePatientRecordRequest>(existingPatient);
             await _pieService.UpdatePatient(patientRequest);
         }
 
@@ -174,9 +174,9 @@ namespace Avalanche.Api.Managers.Patients
             Preconditions.ThrowIfNull(nameof(id), id);
 
             var accessInfo = _accessInfoFactory.GenerateAccessInfo();
-            var accessInfoMessage = _mapper.Map<Ism.Storage.Core.PatientList.V1.Protos.AccessInfoMessage>(accessInfo);
+            var accessInfoMessage = _mapper.Map<Ism.Storage.PatientList.Client.V1.Protos.AccessInfoMessage>(accessInfo);
 
-            await _pieService.DeletePatient(new Ism.Storage.Core.PatientList.V1.Protos.DeletePatientRecordRequest()
+            await _pieService.DeletePatient(new Ism.Storage.PatientList.Client.V1.Protos.DeletePatientRecordRequest()
             {
                 AccessInfo = accessInfoMessage,
                 PatientRecordId = id

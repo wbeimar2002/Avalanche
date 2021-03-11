@@ -1,12 +1,11 @@
 ﻿using Avalanche.Shared.Infrastructure.Services.Settings;
 using Google.Protobuf.WellKnownTypes;
 using Ism.Security.Grpc.Interfaces;
-using Ism.Storage.Core.DataManagement.V1.Protos;
-using Ism.Storage.DataManagement.Client;
+using Ism.Storage.DataManagement.Client.V1.Protos;
 using Ism.Storage.DataManagement.Client.V1;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
-using static Ism.Storage.Core.DataManagement.V1.Protos.DataManagementStorage;
+using static Ism.Storage.DataManagement.Client.V1.Protos.DataManagementStorage;
 
 namespace Avalanche.Api.Services.Health
 {

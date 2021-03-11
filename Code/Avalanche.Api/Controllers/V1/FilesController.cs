@@ -28,10 +28,11 @@ namespace Avalanche.Api.Controllers.V1
         private ISecurityManager _securityManager;
         private ICookieValidationService _cookieValidationService;
 
-        public FilesController(ILogger<FilesController> appLoggerService, ISecurityManager securityManager)
+        public FilesController(ILogger<FilesController> appLoggerService, ISecurityManager securityManager, ICookieValidationService cookieValidationService)
         {
             _appLoggerService = appLoggerService;
             _securityManager = securityManager;
+            _cookieValidationService = cookieValidationService;
         }
 
         // NOTE: keeping cookie management on the same controller (route) as file access means we can easily scope both the cookie and authentication scheme to just this controller
