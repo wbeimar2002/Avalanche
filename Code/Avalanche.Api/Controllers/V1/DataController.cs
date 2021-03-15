@@ -71,7 +71,7 @@ namespace Avalanche.Api.Controllers.V1
             {
                 _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
 
-                var result = await _metadataManager.GetMetadata(DataTypes.Sex);
+                var result = await _metadataManager.GetData(DataTypes.Sex);
                 return Ok(result);
             }
             catch (Exception exception)

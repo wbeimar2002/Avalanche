@@ -44,7 +44,7 @@ namespace Avalanche.Api.Managers.Data
             configurationContext.IdnId = Guid.NewGuid().ToString();
         }
 
-        public async Task<IList<KeyValuePairViewModel>> GetMetadata(DataTypes type)
+        public async Task<IList<KeyValuePairViewModel>> GetData(DataTypes type)
         {
             var configurationContext = _mapper.Map<UserModel, ConfigurationContext>(user);
 
