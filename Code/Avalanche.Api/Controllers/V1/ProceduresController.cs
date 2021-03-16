@@ -86,6 +86,7 @@ namespace Avalanche.Api.Controllers.V1
                 _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
             }
         }
+
         /// <summary>
         /// Load the active procedure (if exists)
         /// </summary>
@@ -114,11 +115,65 @@ namespace Avalanche.Api.Controllers.V1
         }
 
         /// <summary>
+        /// Discard Active Procedure
+        /// </summary>
+        /// <param name="env"></param>
+        /// <returns></returns>
+        [HttpDelete("active")]
+        [Produces(typeof(ProcedureDetailsViewModel))]
+        public async Task<IActionResult> DiscardActiveProcedure([FromServices] IWebHostEnvironment env)
+        {
+            try
+            {
+                _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
+
+                await _proceduresManager.DiscardActiveProcedure();
+                return Ok();
+            }
+            catch (Exception exception)
+            {
+                _appLoggerService.LogError(LoggerHelper.GetLogMessage(DebugLogType.Exception), exception);
+                return new BadRequestObjectResult(exception.Get(env.IsDevelopment()));
+            }
+            finally
+            {
+                _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
+            }
+        }
+
+        /// <summary>
+        /// Finish Active Procedure
+        /// </summary>
+        /// <param name="env"></param>
+        /// <returns></returns>
+        [HttpPut("active")]
+        [Produces(typeof(ProcedureDetailsViewModel))]
+        public async Task<IActionResult> FinishActiveProcedure([FromServices] IWebHostEnvironment env)
+        {
+            try
+            {
+                _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
+
+                await _proceduresManager.FinishActiveProcedure();
+                return Ok();
+            }
+            catch (Exception exception)
+            {
+                _appLoggerService.LogError(LoggerHelper.GetLogMessage(DebugLogType.Exception), exception);
+                return new BadRequestObjectResult(exception.Get(env.IsDevelopment()));
+            }
+            finally
+            {
+                _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
+            }
+        }
+
+        /// <summary>
         /// Set ActiveProcedure's "RequiresUserConfirmation" flag to false.
         /// </summary>
         /// <param name="env"></param>
         /// <returns></returns>
-        [HttpPost("confirmActive")]
+        [HttpDelete("active/confirmation")]
         public async Task<IActionResult> ConfirmActiveProcedure([FromServices]IWebHostEnvironment env)
         {
             try

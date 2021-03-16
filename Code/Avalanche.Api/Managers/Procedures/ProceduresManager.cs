@@ -39,5 +39,15 @@ namespace Avalanche.Api.Managers.Procedures
             activeProcedure.RequiresUserConfirmation = false;
             await _stateClient.PersistData(activeProcedure);
         }
+
+        public async Task DiscardActiveProcedure()
+        {
+            var activeProcedure = await _stateClient.GetData<ActiveProcedureState>();
+        }
+
+        public async Task FinishActiveProcedure()
+        {
+            var activeProcedure = await _stateClient.GetData<ActiveProcedureState>();
+        }
     }
 }
