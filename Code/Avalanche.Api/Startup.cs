@@ -28,7 +28,6 @@ using Microsoft.AspNetCore.Http.Features;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.IdentityModel.Tokens;
 using Serilog;
 using System;
 using System.Diagnostics.CodeAnalysis;
@@ -45,10 +44,7 @@ using static Ism.Streaming.V1.Protos.WebRtcStreamer;
 using Microsoft.AspNetCore.Http;
 using Avalanche.Api.Managers.Security;
 using Ism.Security.Grpc.Configuration;
-using System.Collections.Generic;
-using Ism.SystemState.Client.V1;
 using Avalanche.Api.Services.Security;
-using System.IdentityModel.Tokens.Jwt;
 using Ism.Common.Core.Configuration.Extensions;
 
 namespace Avalanche.Api
@@ -82,7 +78,7 @@ namespace Avalanche.Api
             services.AddSingleton(c => configurationService);
 
             // needed for state client and maybe others
-            services.AddPocoConfiguration<GrpcServiceRegistry>(Configuration, nameof(GrpcServiceRegistry));
+            services.AddConfigurationPoco<GrpcServiceRegistry>(Configuration, nameof(GrpcServiceRegistry));
 
 
             var grpcCertificate = configurationService.GetEnvironmentVariable("grpcCertificate");
