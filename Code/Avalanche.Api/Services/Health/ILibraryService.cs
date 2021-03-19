@@ -10,6 +10,6 @@ namespace Avalanche.Api.Services.Health
     {
         Task DiscardActiveProcedure(DiscardActiveProcedureRequest discardActiveProcedureRequest);
         Task CommitActiveProcedure(CommitActiveProcedureRequest commitActiveProcedureRequest);
-        Task<AllocateNewProcedureResponse> CommitActiveProcedure(AllocateNewProcedureRequest allocateNewProcedureRequest);
+        Task<AllocateNewProcedureResponse> AllocateNewProcedure(AllocateNewProcedureRequest allocateNewProcedureRequest);
     }
 }

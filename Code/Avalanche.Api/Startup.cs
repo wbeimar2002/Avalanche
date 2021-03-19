@@ -50,6 +50,7 @@ using Ism.SystemState.Client.V1;
 using Avalanche.Api.Services.Security;
 using System.IdentityModel.Tokens.Jwt;
 using Ism.Common.Core.Configuration.Extensions;
+using static Ism.Library.Core.V1.Protos.LibraryService;
 
 namespace Avalanche.Api
 {
@@ -123,6 +124,7 @@ namespace Avalanche.Api
             services.AddSingleton<IGrpcClientFactory<WebRtcStreamerClient>, GrpcClientFactory<WebRtcStreamerClient>>();
             services.AddSingleton<IGrpcClientFactory<PgsTimeoutClient>, GrpcClientFactory<PgsTimeoutClient>>();
             services.AddSingleton<IGrpcClientFactory<ConfigurationServiceClient>, GrpcClientFactory<ConfigurationServiceClient>>();
+            services.AddSingleton<IGrpcClientFactory<LibraryServiceClient>, GrpcClientFactory<LibraryServiceClient>>();
             services.AddSingleton<IAccessInfoFactory, AccessInfoFactory>();
             services.AddSingleton<ICookieValidationService, CookieValidationService>();
 

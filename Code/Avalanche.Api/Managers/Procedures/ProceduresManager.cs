@@ -2,13 +2,9 @@
 using Avalanche.Api.Services.Health;
 using Avalanche.Api.Utilities;
 using Avalanche.Api.ViewModels;
-using Avalanche.Shared.Domain.Models;
 using Ism.Library.Core.V1.Protos;
 using Ism.SystemState.Client;
 using Ism.SystemState.Models.Procedure;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace Avalanche.Api.Managers.Procedures
@@ -26,6 +22,8 @@ namespace Avalanche.Api.Managers.Procedures
             _libraryService = libraryService;
             _accessInfoFactory = accessInfoFactory;
             _mapper = mapper;
+            _libraryService = libraryService;
+            _accessInfoFactory = accessInfoFactory;
         }
 
         /// <summary>
@@ -69,6 +67,19 @@ namespace Avalanche.Api.Managers.Procedures
             request.AccessInfo = _mapper.Map<AccessInfoMessage>(accessInfo);
 
             await _libraryService.CommitActiveProcedure(request);
+        }
+
+        public async Task<ProcedureAllocationViewModel> AllocateNewProcedure()
+        {
+            var accessInfo = _accessInfoFactory.GenerateAccessInfo();
+            var response = await _libraryService.AllocateNewProcedure(new AllocateNewProcedureRequest
+            {
+                AccessInfo = _mapper.Map<AccessInfoMessage>(accessInfo),
+                Clinical = true
+            });
+
+
+            return _mapper.Map<ProcedureAllocationViewModel>(response);
         }
     }
 }

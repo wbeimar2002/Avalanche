@@ -2,10 +2,7 @@
 using Ism.Library.Client.Core.V1;
 using Ism.Library.Core.V1.Protos;
 using Ism.Security.Grpc.Interfaces;
-using System;
-using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.Linq;
 using System.Threading.Tasks;
 using static Ism.Library.Core.V1.Protos.LibraryService;
 
@@ -19,9 +16,9 @@ namespace Avalanche.Api.Services.Health
         public LibraryService(IConfigurationService configurationService, IGrpcClientFactory<LibraryServiceClient> grpcClientFactory, ICertificateProvider certificateProvider)
         {
             var hostIpAddress = configurationService.GetEnvironmentVariable("hostIpAddress");
-            var serviceGrpcPort = configurationService.GetEnvironmentVariable("storageServiceGrpcPort");
+            var libraryServiceGrpcPort = configurationService.GetEnvironmentVariable("libraryServiceGrpcPort");
 
-            _libraryServiceClient = new LibraryServiceSecureClient(grpcClientFactory, hostIpAddress, serviceGrpcPort, certificateProvider);
+            _libraryServiceClient = new LibraryServiceSecureClient(grpcClientFactory, hostIpAddress, libraryServiceGrpcPort, certificateProvider);
         }
 
         public async Task DiscardActiveProcedure(DiscardActiveProcedureRequest discardActiveProcedureRequest)
@@ -37,6 +34,11 @@ namespace Avalanche.Api.Services.Health
         public async Task<AllocateNewProcedureResponse> CommitActiveProcedure(AllocateNewProcedureRequest allocateNewProcedureRequest)
         {
             return await _libraryServiceClient.AllocateNewProcedure(allocateNewProcedureRequest);
+        }
+
+        public async Task<AllocateNewProcedureResponse> AllocateNewProcedure(AllocateNewProcedureRequest request)
+        {
+            return await _libraryServiceClient.AllocateNewProcedure(request);
         }
     }
 }

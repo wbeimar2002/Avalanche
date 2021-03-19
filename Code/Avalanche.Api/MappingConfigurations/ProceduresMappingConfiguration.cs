@@ -14,10 +14,14 @@ namespace Avalanche.Api.MappingConfigurations
             CreateMap<ProcedureVideo, ProcedureVideoViewModel>();
 
             CreateMap<ActiveProcedureState, DiscardActiveProcedureRequest>()
-                .ForMember(dest => dest.ProcedureId, opt => opt.MapFrom(src => src.LibraryId));
+                .ForPath(dest => dest.ProcedureId.Id, opt => opt.MapFrom(src => src.LibraryId))
+                .ForPath(dest => dest.ProcedureId.RepositoryName, opt => opt.MapFrom(src => src.RepositoryId))
+                .ForMember(dest => dest.AccessInfo, opt => opt.Ignore());
 
             CreateMap<ActiveProcedureState, CommitActiveProcedureRequest>()
-                .ForMember(dest => dest.ProcedureId, opt => opt.MapFrom(src => src.LibraryId));
+                .ForPath(dest => dest.ProcedureId.Id, opt => opt.MapFrom(src => src.LibraryId))
+                .ForPath(dest => dest.ProcedureId.RepositoryName, opt => opt.MapFrom(src => src.RepositoryId))
+                .ForMember(dest => dest.AccessInfo, opt => opt.Ignore());
 
             CreateMap<Ism.IsmLogCommon.Core.AccessInfo, AccessInfoMessage>()
                 .ForPath(dest =>
@@ -90,6 +94,17 @@ namespace Avalanche.Api.MappingConfigurations
                 .ForMember(dest => dest.RequiresUserConfirmation, opt => opt.MapFrom(src => src.RequiresUserConfirmation))
                 .ForMember(dest => dest.Images, opt => opt.MapFrom(src => src.Images))
                 .ForMember(dest => dest.Videos, opt => opt.MapFrom(src => src.Videos));
+
+            CreateMap<Shared.Domain.Models.AccessInfoModel, Ism.Library.Core.V1.Protos.AccessInfoMessage>()
+                .ReverseMap();
+
+            CreateMap<Ism.Library.Core.V1.Protos.ProcedureIdMessage, ProcedureIdViewModel>()
+                .ReverseMap();
+
+            CreateMap<Ism.Library.Core.V1.Protos.AllocateNewProcedureResponse, ProcedureAllocationViewModel>()
+                .ReverseMap();
+
+
         }
     }
 }
