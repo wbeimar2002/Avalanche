@@ -82,8 +82,7 @@ namespace Avalanche.Api
             services.AddSingleton(c => configurationService);
 
             // needed for state client and maybe others
-            services.AddPocoConfiguration<GrpcServiceRegistry>(Configuration, nameof(GrpcServiceRegistry));
-
+            services.AddConfigurationPoco<GrpcServiceRegistry>(Configuration, nameof(GrpcServiceRegistry));
 
             var grpcCertificate = configurationService.GetEnvironmentVariable("grpcCertificate");
             var grpcPassword = configurationService.GetEnvironmentVariable("grpcPassword");
@@ -112,7 +111,8 @@ namespace Avalanche.Api
             services.AddSingleton<IBroadcastService, BroadcastService>();
             services.AddSingleton<IStorageService, StorageService>();
             services.AddSingleton<IDataManagementService, DataManagementService>();
-
+            services.AddSingleton<ILibraryService, LibraryService>();
+            
             services.AddSingleton<ICertificateProvider>(new FileSystemCertificateProvider(grpcCertificate, grpcPassword, grpcServerValidationCertificate));
             services.AddSingleton<IGrpcClientFactory<DataManagementStorageClient>, GrpcClientFactory<DataManagementStorageClient>>();
             services.AddSingleton<IGrpcClientFactory<PatientListServiceClient>, GrpcClientFactory<PatientListServiceClient>>();
