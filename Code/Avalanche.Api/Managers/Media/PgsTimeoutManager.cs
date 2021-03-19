@@ -398,6 +398,12 @@ namespace Avalanche.Api.Managers.Media
                 // restore saved routes
                 await LoadSavedRoutes();
 
+                //Bug: 11910 Solved
+                await _pgsTimeoutService.SetPgsMute(new SetPgsMuteRequest()
+                {
+                    IsMuted = true
+                });
+
                 // TODO: might need to revisit state tracking when we need to implement timeout
                 _currentPgsTimeoutState = PgsTimeoutModes.Idle;
 

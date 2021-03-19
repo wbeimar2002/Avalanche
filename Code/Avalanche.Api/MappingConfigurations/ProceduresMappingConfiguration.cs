@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Avalanche.Api.ViewModels;
+using Ism.Library.Core.V1.Protos;
 using Ism.SystemState.Models.Procedure;
 using System;
 
@@ -11,7 +12,34 @@ namespace Avalanche.Api.MappingConfigurations
         {
             CreateMap<ProcedureImage, ProcedureImageViewModel>();
             CreateMap<ProcedureVideo, ProcedureVideoViewModel>();
-            
+
+            CreateMap<ActiveProcedureState, DiscardActiveProcedureRequest>()
+                .ForMember(dest => dest.ProcedureId, opt => opt.MapFrom(src => src.LibraryId));
+
+            CreateMap<ActiveProcedureState, CommitActiveProcedureRequest>()
+                .ForMember(dest => dest.ProcedureId, opt => opt.MapFrom(src => src.LibraryId));
+
+            CreateMap<Ism.IsmLogCommon.Core.AccessInfo, AccessInfoMessage>()
+                .ForPath(dest =>
+                    dest.ApplicationName,
+                    opt => opt.MapFrom(src => src.ApplicationName))
+                .ForPath(dest =>
+                    dest.Details,
+                    opt => opt.MapFrom(src => src.Details))
+                .ForPath(dest =>
+                    dest.Id,
+                    opt => opt.MapFrom(src => src.Id))
+                .ForPath(dest =>
+                    dest.Ip,
+                    opt => opt.MapFrom(src => src.Ip))
+                .ForPath(dest =>
+                    dest.MachineName,
+                    opt => opt.MapFrom(src => src.MachineName))
+                .ForPath(dest =>
+                    dest.UserName,
+                    opt => opt.MapFrom(src => src.UserName))
+                .ReverseMap();
+
             CreateMap<PatientViewModel, Patient>()
                 .ConstructUsing(p => new Patient())
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
