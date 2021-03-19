@@ -31,7 +31,7 @@
     <PackageReference Include="AutoFixture" Version="4.15.0" />
     <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="8.1.1" />
     <PackageReference Include="AvidisDeviceInterface.Client" Version="1.0.0-prerelease0006" />
-    <PackageReference Include="Google.Protobuf" Version="3.15.5" />
+    <PackageReference Include="Google.Protobuf" Version="3.15.6" />
     <PackageReference Include="Grpc.Core" Version="2.36.1" />
     <PackageReference Include="Grpc.Core.Testing" Version="2.36.1" />
     <PackageReference Include="Grpc.Net.Client" Version="2.35.0" />
@@ -40,28 +40,32 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Ism.Broadcaster.Standard" Version="1.0.0-prerelease0002" />
-    <PackageReference Include="Ism.PatientInfoEngine.Client" Version="1.0.0-prerelease0009" />
-    <PackageReference Include="Ism.PgsTimeout.Client" Version="1.0.0-prerelease0004" />
-    <PackageReference Include="Ism.Recorder.Client" Version="1.0.0-prerelease0012" />
-    <PackageReference Include="Ism.Routing.Client" Version="1.0.0-prerelease0004" />
-    <PackageReference Include="Ism.Security.Grpc.Standard" Version="1.0.0-prerelease012" />
-    <PackageReference Include="Ism.Storage.Configuration.Client" Version="1.0.0-prerelease0011" />
-    <PackageReference Include="Ism.Storage.DataManagement.Client" Version="1.0.0-prerelease0010" />
-    <PackageReference Include="Ism.Storage.PatientList.Client" Version="1.0.0-prerelease0007" />
-    <PackageReference Include="Ism.Streaming.Client" Version="1.0.0-prerelease0006" />
-    <PackageReference Include="Ism.SystemState.Client" Version="1.0.0-prerelease0020" />
+    <PackageReference Include="Ism.Library.Client" Version="1.0.0-prerelease0002" />
+    <PackageReference Include="Ism.PatientInfoEngine.Client" Version="1.0.0-prerelease0011" />
+    <PackageReference Include="Ism.PgsTimeout.Client" Version="1.0.0-prerelease0005" />
+    <PackageReference Include="Ism.Recorder.Client" Version="1.0.0-prerelease0013" />
+    <PackageReference Include="Ism.Routing.Client" Version="1.0.0-prerelease0006" />
+    <PackageReference Include="Ism.Security.Grpc.Standard" Version="1.0.0-prerelease013" />
+    <PackageReference Include="Ism.Storage.Configuration.Client" Version="1.0.0-prerelease0014" />
+    <PackageReference Include="Ism.Storage.DataManagement.Client" Version="1.0.0-prerelease0012" />
+    <PackageReference Include="Ism.Storage.PatientList.Client" Version="1.0.0-prerelease0011" />
+    <PackageReference Include="Ism.Streaming.Client" Version="1.0.0-prerelease0007" />
+    <PackageReference Include="Ism.SystemState.Client" Version="1.0.0-prerelease0023" />
+    <!--<PackageReference Include="Ism.PatientInfoEngine.Client.Core" Version="1.0.0-prerelease3" />-->
+    <!--<PackageReference Include="Ism.Utility.Core" Version="1.0.1-prerelease9" />-->
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="3.1.12" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Cors" Version="2.2.0" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="3.1.12" />
     <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="5.0.0" />
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.10.9" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="3.1.5" />
-    <PackageReference Include="Moq" Version="4.16.1" />
-    <PackageReference Include="Newtonsoft.Json.Schema" Version="3.0.14" />
+    <PackageReference Include="Moq" Version="4.16.0" />
+    <PackageReference Include="Newtonsoft.Json.Schema" Version="3.0.13" />
     <PackageReference Include="NodaTime" Version="3.0.5" />
-    <PackageReference Include="NSwag.AspNetCore" Version="13.10.8" />
-    <PackageReference Include="Serilog.AspNetCore" Version="4.0.0" />
+    <PackageReference Include="NSwag.AspNetCore" Version="13.10.2" />
+    <PackageReference Include="Serilog.AspNetCore" Version="3.4.0" />
     <PackageReference Include="Serilog.Extensions.Logging" Version="3.0.1" />
+    <!--<PackageReference Include="Serilog.Sinks.Seq" Version="4.0.0" />-->
     <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.8.0" />
 
     <PackageReference Include="StackExchange.Redis" Version="2.2.4" />

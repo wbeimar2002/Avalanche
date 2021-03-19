@@ -3,7 +3,7 @@ using Avalanche.Api.ViewModels;
 using Avalanche.Shared.Domain.Models;
 using Google.Protobuf.WellKnownTypes;
 using Ism.Common.Core.Configuration.Models;
-using Ism.Storage.Core.DataManagement.V1.Protos;
+using Ism.Storage.DataManagement.Client.V1.Protos;
 using System;
 
 namespace Avalanche.Api.MappingConfigurations
@@ -228,7 +228,7 @@ namespace Avalanche.Api.MappingConfigurations
 
             CreateMap<Ism.IsmLogCommon.Core.AccessInfo, AccessInfoModel>();
 
-            CreateMap<Ism.Storage.Core.PatientList.V1.Protos.AddPatientRecordResponse, PatientViewModel>()
+            CreateMap<Ism.Storage.PatientList.Client.V1.Protos.AddPatientRecordResponse, PatientViewModel>()
                 .ForMember(dest =>
                     dest.AccessInformation,
                     opt => opt.Ignore())
@@ -306,7 +306,7 @@ namespace Avalanche.Api.MappingConfigurations
                     opt => opt.MapFrom(src => GetSex(src.Patient.Sex)))
                 .ReverseMap();
 
-            CreateMap<PatientViewModel, Ism.Storage.Core.PatientList.V1.Protos.AddPatientRecordRequest>()
+            CreateMap<PatientViewModel, Ism.Storage.PatientList.Client.V1.Protos.AddPatientRecordRequest>()
                 .ForPath(dest =>
                     dest.AccessInfo.ApplicationName,
                     opt => opt.MapFrom(src => src.AccessInformation.ApplicationName))
@@ -333,7 +333,7 @@ namespace Avalanche.Api.MappingConfigurations
                     opt => opt.MapFrom(src => src.Department.Name))
                 .ForPath(dest =>
                     dest.PatientRecord.AdmissionStatus,
-                    opt => opt.MapFrom(src => new Ism.Storage.Core.PatientList.V1.Protos.AdmissionStatusMessage()))
+                    opt => opt.MapFrom(src => new Ism.Storage.PatientList.Client.V1.Protos.AdmissionStatusMessage()))
                 .ForPath(dest =>
                     dest.PatientRecord.InternalId,
                     opt => opt.MapFrom(src => 0))
@@ -363,7 +363,7 @@ namespace Avalanche.Api.MappingConfigurations
                     opt => opt.MapFrom(src => GetSex(src.Sex.Id)))
                 .ForPath(dest =>
                     dest.PatientRecord.Patient.Dob,
-                    opt => opt.MapFrom(src => new Ism.Storage.Core.PatientList.V1.Protos.FixedDateMessage
+                    opt => opt.MapFrom(src => new Ism.Storage.PatientList.Client.V1.Protos.FixedDateMessage
                     {
                         Day = src.DateOfBirth.Day,
                         Month = src.DateOfBirth.Month,
@@ -386,7 +386,7 @@ namespace Avalanche.Api.MappingConfigurations
                     opt => opt.Ignore())
                 .ReverseMap();
 
-            CreateMap<PatientViewModel, Ism.Storage.Core.PatientList.V1.Protos.UpdatePatientRecordRequest>()
+            CreateMap<PatientViewModel, Ism.Storage.PatientList.Client.V1.Protos.UpdatePatientRecordRequest>()
                 .ForPath(dest =>
                     dest.AccessInfo.ApplicationName,
                     opt => opt.MapFrom(src => src.AccessInformation.ApplicationName))
@@ -413,7 +413,7 @@ namespace Avalanche.Api.MappingConfigurations
                     opt => opt.MapFrom(src => src.Department.Name))
                 .ForPath(dest =>
                     dest.PatientRecord.AdmissionStatus,
-                    opt => opt.MapFrom(src => new Ism.Storage.Core.PatientList.V1.Protos.AdmissionStatusMessage()))
+                    opt => opt.MapFrom(src => new Ism.Storage.PatientList.Client.V1.Protos.AdmissionStatusMessage()))
                 .ForPath(dest =>
                     dest.PatientRecord.InternalId,
                     opt => opt.MapFrom(src => src.Id))
@@ -443,7 +443,7 @@ namespace Avalanche.Api.MappingConfigurations
                     opt => opt.MapFrom(src => GetSex(src.Sex.Id)))
                 .ForPath(dest =>
                     dest.PatientRecord.Patient.Dob,
-                    opt => opt.MapFrom(src => new Ism.Storage.Core.PatientList.V1.Protos.FixedDateMessage
+                    opt => opt.MapFrom(src => new Ism.Storage.PatientList.Client.V1.Protos.FixedDateMessage
                     {
                         Day = src.DateOfBirth.Day,
                         Month = src.DateOfBirth.Month,
@@ -468,9 +468,9 @@ namespace Avalanche.Api.MappingConfigurations
 
         }
 
-        private KeyValuePairViewModel GetSex(Ism.Storage.Core.PatientList.V1.Protos.SexMessage sex)
+        private KeyValuePairViewModel GetSex(Ism.Storage.PatientList.Client.V1.Protos.SexMessage sex)
         {
-            string id = System.Enum.GetName(typeof(Ism.Storage.Core.PatientList.V1.Protos.SexMessage), sex);
+            string id = System.Enum.GetName(typeof(Ism.Storage.PatientList.Client.V1.Protos.SexMessage), sex);
             return MappingUtilities.GetSexViewModel(id);
         }
         private KeyValuePairViewModel GetSex(Ism.PatientInfoEngine.V1.Protos.Sex sex)
@@ -479,18 +479,18 @@ namespace Avalanche.Api.MappingConfigurations
             return MappingUtilities.GetSexViewModel(id);
         }
 
-        private Ism.Storage.Core.PatientList.V1.Protos.SexMessage GetSex(string sex)
+        private Ism.Storage.PatientList.Client.V1.Protos.SexMessage GetSex(string sex)
         {
             switch (sex)
             {
                 case "F":
-                    return Ism.Storage.Core.PatientList.V1.Protos.SexMessage.F;
+                    return Ism.Storage.PatientList.Client.V1.Protos.SexMessage.F;
                 case "M":
-                    return Ism.Storage.Core.PatientList.V1.Protos.SexMessage.M;
+                    return Ism.Storage.PatientList.Client.V1.Protos.SexMessage.M;
                 case "O": //TODO: Check this O is not supported by Pie Service
                 case "U":
                 default:
-                    return Ism.Storage.Core.PatientList.V1.Protos.SexMessage.U;
+                    return Ism.Storage.PatientList.Client.V1.Protos.SexMessage.U;
             }
         }
     }

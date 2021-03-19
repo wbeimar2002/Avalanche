@@ -8,5 +8,9 @@ namespace Avalanche.Api.Managers.Procedures
         Task<ActiveProcedureViewModel> GetActiveProcedure();
 
         Task ConfirmActiveProcedure();
+        Task DiscardActiveProcedure();
+        Task FinishActiveProcedure();
+
+        Task<ProcedureAllocationViewModel> AllocateNewProcedure();
     }
 }

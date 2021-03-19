@@ -1,5 +1,5 @@
 ﻿using Google.Protobuf.WellKnownTypes;
-using Ism.Storage.Core.DataManagement.V1.Protos;
+using Ism.Storage.DataManagement.Client.V1.Protos;
 using System.Threading.Tasks;
 
 namespace Avalanche.Api.Services.Health

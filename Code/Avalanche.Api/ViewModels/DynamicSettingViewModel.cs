@@ -1,6 +1,7 @@
 ﻿using Avalanche.Shared.Infrastructure.Enumerations;
 using Newtonsoft.Json;
 using System.Collections.Generic;
+using System.Dynamic;
 
 namespace Avalanche.Api.ViewModels
 {
@@ -25,7 +26,7 @@ namespace Avalanche.Api.ViewModels
         public string SourceKey { get; set; }
         public VisualStyles SourceVisualStyle { get; set; }
         public DynamicListViewModel CustomList { get; set; }
-        public IList<DynamicSourceKeyValuePairViewModel> SourceValues { get; set; }
+        public List<ExpandoObject> SourceValues { get; set; }
         public IList<KeyValuePairViewModel> PoliciesValues { get; set; }
         public IList<DynamicDependencySettingViewModel> Dependencies { get; set; }
         public string Value { get; set; }

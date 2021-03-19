@@ -5,7 +5,7 @@ using Ism.Storage.PatientList.Client.V1;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using static Ism.PatientInfoEngine.V1.Protos.PatientListService;
-using static Ism.Storage.Core.PatientList.V1.Protos.PatientListStorage;
+using static Ism.Storage.PatientList.Client.V1.Protos.PatientListStorage;
 
 namespace Avalanche.Api.Services.Health
 {
@@ -35,17 +35,17 @@ namespace Avalanche.Api.Services.Health
             return await PatientListServiceClient.Search(searchRequest);
         }
 
-        public async Task<Ism.Storage.Core.PatientList.V1.Protos.AddPatientRecordResponse> RegisterPatient(Ism.Storage.Core.PatientList.V1.Protos.AddPatientRecordRequest addPatientRecordRequest)
+        public async Task<Ism.Storage.PatientList.Client.V1.Protos.AddPatientRecordResponse> RegisterPatient(Ism.Storage.PatientList.Client.V1.Protos.AddPatientRecordRequest addPatientRecordRequest)
         {
             return await PatientListStorageClient.AddPatientRecord(addPatientRecordRequest);
         }
 
-        public async Task UpdatePatient(Ism.Storage.Core.PatientList.V1.Protos.UpdatePatientRecordRequest updatePatientRecordRequest)
+        public async Task UpdatePatient(Ism.Storage.PatientList.Client.V1.Protos.UpdatePatientRecordRequest updatePatientRecordRequest)
         {
             await PatientListStorageClient.UpdatePatientRecord(updatePatientRecordRequest);
         }
 
-        public async Task<Ism.Storage.Core.PatientList.V1.Protos.DeletePatientRecordResponse> DeletePatient(Ism.Storage.Core.PatientList.V1.Protos.DeletePatientRecordRequest deletePatientRecordRequest)
+        public async Task<Ism.Storage.PatientList.Client.V1.Protos.DeletePatientRecordResponse> DeletePatient(Ism.Storage.PatientList.Client.V1.Protos.DeletePatientRecordRequest deletePatientRecordRequest)
         {
             return await PatientListStorageClient.DeletePatientRecord(deletePatientRecordRequest);
         }

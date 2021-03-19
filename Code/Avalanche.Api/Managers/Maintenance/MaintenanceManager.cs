@@ -97,10 +97,11 @@ namespace Avalanche.Api.Managers.Maintenance
             var category = await _storageService.GetJsonObject<DynamicSectionViewModel>(key, 1, configurationContext);
             var settingValues = await _storageService.GetJsonDynamic(category.JsonKey, 1, configurationContext);
 
-            var types = await _metadataManager.GetMetadata(DataTypes.SettingTypes);
+            var types = await _metadataManager.GetData(DataTypes.SettingTypes);
             var policiesTypes = (await _storageService.GetJsonObject<ListContainerViewModel>("SettingsPoliciesData", 1, configurationContext)).Items;           
 
             await SetSources(category, types);
+
             SettingsHelper.SetSettingValues(category, settingValues, policiesTypes);
 
             if (category.Sections != null)
@@ -228,6 +229,7 @@ namespace Avalanche.Api.Managers.Maintenance
                 var sectionValues = settingValues == null ? null : settingValues[section.JsonKey];
 
                 await SetSources(section, types);
+
                 SettingsHelper.SetSettingValues(section, sectionValues, policiesTypes);
 
                 if (section.Sections != null)
@@ -257,8 +259,16 @@ namespace Avalanche.Api.Managers.Maintenance
                     {
                         if (!string.IsNullOrEmpty(item.SourceKey))
                         {
-                            item.SourceValues = (await _storageService.GetJsonObject<SourceListContainerViewModel>(item.SourceKey, 1, configurationContext)).Items;
-                            item.SourceValues.ToList().ForEach(s => s.Types = types);
+                            var sourceValues = await GetData(item.SourceKey);
+                            sourceValues.ToList().ForEach(s => s.TryAdd("Types", types));
+
+                            item.SourceValues = new List<ExpandoObject>();
+
+                            foreach (var sourceValue in sourceValues)
+                            {
+                                var jsonObject = JsonConvert.SerializeObject(sourceValue);
+                                item.SourceValues.Add(JsonConvert.DeserializeObject<ExpandoObject>(jsonObject));
+                            }
                         }
                     }
                 }
@@ -278,7 +288,7 @@ namespace Avalanche.Api.Managers.Maintenance
                             var category = item.CustomList;
 
                             if (category.SaveAsFile)
-                                SaveCustomListFile(category);
+                                await SaveCustomListFile(category);
                             else
                                 await SaveCustomEntities(user, category);
                         }
@@ -421,7 +431,6 @@ namespace Avalanche.Api.Managers.Maintenance
                         })
                         .ToList();
                 case "ProcedureTypes":
-
                     var procedureTypes = await _metadataManager.GetAllProcedureTypes();
 
                     return procedureTypes
@@ -435,7 +444,10 @@ namespace Avalanche.Api.Managers.Maintenance
                         })
                         .ToList();
                 default:
-                    return new List<ExpandoObject>();
+                    var list = await _storageService.GetJsonDynamic(sourceKey, 1, configurationContext);
+
+                    var jsonObject = JsonConvert.SerializeObject(list.Items);
+                    return JsonConvert.DeserializeObject<List<ExpandoObject>>(jsonObject);
             }
         }
     }

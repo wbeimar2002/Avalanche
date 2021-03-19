@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Avalanche.Api.Managers.Procedures;
 using Avalanche.Api.Services.Configuration;
 using Avalanche.Api.Services.Health;
 using Avalanche.Api.Services.Maintenance;
@@ -10,7 +11,7 @@ using Avalanche.Shared.Infrastructure.Models;
 using Google.Protobuf.WellKnownTypes;
 using Ism.Common.Core.Configuration.Models;
 using Ism.PatientInfoEngine.V1.Protos;
-using Ism.Storage.Core.DataManagement.V1.Protos;
+using Ism.Storage.DataManagement.Client.V1.Protos;
 using Ism.SystemState.Client;
 using Microsoft.AspNetCore.Http;
 using System;
@@ -29,6 +30,7 @@ namespace Avalanche.Api.Managers.Patients
         readonly IDataManagementService _dataManagementService;
         readonly IStateClient _stateClient;
         readonly IHttpContextAccessor _httpContextAccessor;
+        readonly IProceduresManager _proceduresManager;
 
         readonly UserModel user;
         readonly ConfigurationContext configurationContext;
@@ -39,6 +41,7 @@ namespace Avalanche.Api.Managers.Patients
             IMapper mapper, 
             IDataManagementService dataManagementService,
             IStateClient stateClient,
+            IProceduresManager proceduresManager,
             IHttpContextAccessor httpContextAccessor)
         {
             _pieService = pieService;
@@ -47,6 +50,7 @@ namespace Avalanche.Api.Managers.Patients
             _dataManagementService = dataManagementService;
             _mapper = mapper;
             _stateClient = stateClient;
+            _proceduresManager = proceduresManager;
             _httpContextAccessor = httpContextAccessor;
 
             user = HttpContextUtilities.GetUser(_httpContextAccessor.HttpContext);
@@ -90,11 +94,13 @@ namespace Avalanche.Api.Managers.Patients
 
             await CheckProcedureType(newPatient.ProcedureType, newPatient.Department);
 
-            var patientRequest = _mapper.Map<PatientViewModel, Ism.Storage.Core.PatientList.V1.Protos.AddPatientRecordRequest>(newPatient);
-            var result = await _pieService.RegisterPatient(patientRequest);
-            PublishActiveProcedure(newPatient);
+            var allocatedProcedure = await _proceduresManager.AllocateNewProcedure();
 
-            var response = _mapper.Map<Ism.Storage.Core.PatientList.V1.Protos.AddPatientRecordResponse, PatientViewModel>(result);
+            var patientRequest = _mapper.Map<PatientViewModel, Ism.Storage.PatientList.Client.V1.Protos.AddPatientRecordRequest>(newPatient);
+            var result = await _pieService.RegisterPatient(patientRequest);
+            PublishActiveProcedure(newPatient, allocatedProcedure);
+
+            var response = _mapper.Map<Ism.Storage.PatientList.Client.V1.Protos.AddPatientRecordResponse, PatientViewModel>(result);
             return response;
         }
 
@@ -139,11 +145,13 @@ namespace Avalanche.Api.Managers.Patients
             var accessInfo = _accessInfoFactory.GenerateAccessInfo();
             newPatient.AccessInformation = _mapper.Map<AccessInfoModel>(accessInfo);
 
-            var patientRequest = _mapper.Map<PatientViewModel, Ism.Storage.Core.PatientList.V1.Protos.AddPatientRecordRequest>(newPatient);
-            var result = await _pieService.RegisterPatient(patientRequest);
-            PublishActiveProcedure(newPatient);
+            var allocatedProcedure = await _proceduresManager.AllocateNewProcedure();
 
-            return _mapper.Map<Ism.Storage.Core.PatientList.V1.Protos.AddPatientRecordResponse, PatientViewModel>(result);
+            var patientRequest = _mapper.Map<PatientViewModel, Ism.Storage.PatientList.Client.V1.Protos.AddPatientRecordRequest>(newPatient);
+            var result = await _pieService.RegisterPatient(patientRequest);
+            PublishActiveProcedure(newPatient, allocatedProcedure);
+
+            return _mapper.Map<Ism.Storage.PatientList.Client.V1.Protos.AddPatientRecordResponse, PatientViewModel>(result);
         }
 
         public async Task UpdatePatient(PatientViewModel existingPatient)
@@ -165,7 +173,7 @@ namespace Avalanche.Api.Managers.Patients
 
             await CheckProcedureType(existingPatient.ProcedureType, existingPatient.Department);
 
-            var patientRequest = _mapper.Map<PatientViewModel, Ism.Storage.Core.PatientList.V1.Protos.UpdatePatientRecordRequest>(existingPatient);
+            var patientRequest = _mapper.Map<PatientViewModel, Ism.Storage.PatientList.Client.V1.Protos.UpdatePatientRecordRequest>(existingPatient);
             await _pieService.UpdatePatient(patientRequest);
         }
 
@@ -174,9 +182,9 @@ namespace Avalanche.Api.Managers.Patients
             Preconditions.ThrowIfNull(nameof(id), id);
 
             var accessInfo = _accessInfoFactory.GenerateAccessInfo();
-            var accessInfoMessage = _mapper.Map<Ism.Storage.Core.PatientList.V1.Protos.AccessInfoMessage>(accessInfo);
+            var accessInfoMessage = _mapper.Map<Ism.Storage.PatientList.Client.V1.Protos.AccessInfoMessage>(accessInfo);
 
-            await _pieService.DeletePatient(new Ism.Storage.Core.PatientList.V1.Protos.DeletePatientRecordRequest()
+            await _pieService.DeletePatient(new Ism.Storage.PatientList.Client.V1.Protos.DeletePatientRecordRequest()
             {
                 AccessInfo = accessInfoMessage,
                 PatientRecordId = id
@@ -262,24 +270,18 @@ namespace Avalanche.Api.Managers.Patients
             }
         }
 
-        private void PublishActiveProcedure(PatientViewModel patient)
+        private void PublishActiveProcedure(PatientViewModel patient, ProcedureAllocationViewModel allocatedProcedure)
         {
             if (null != patient)
             {
-                var now = DateTime.Now;
-                var hacky_temp_libid_for_demo = $"{now.Year}_{now.Month}_{now.Day}T{now.Hour}_{now.Minute}_{now.Second}";
-                var libId = hacky_temp_libid_for_demo; // TODO: this is wrong and needs to come from Library Service
-                var repositoryId = "cache"; // TODO: this is wrong and needs to come from Library Service
-
                 _stateClient.PersistData(new Ism.SystemState.Models.Procedure.ActiveProcedureState(
                     patient: _mapper.Map<Ism.SystemState.Models.Procedure.Patient>(patient),
                     images: new List<Ism.SystemState.Models.Procedure.ProcedureImage>(),
                     videos: new List<Ism.SystemState.Models.Procedure.ProcedureVideo>(),
-                    libraryId: libId,
-                    repositoryId: repositoryId,
+                    libraryId: allocatedProcedure.ProcedureId.Id,
+                    repositoryId: allocatedProcedure.ProcedureId.RepositoryName,
 
-                    // TODO:
-                    procedureRelativePath: libId,
+                    procedureRelativePath: allocatedProcedure.RelativePath,
 
                     department: _mapper.Map<Ism.SystemState.Models.Procedure.Department>(patient.Department),
                     procedureType: _mapper.Map<Ism.SystemState.Models.Procedure.ProcedureType>(patient.ProcedureType),

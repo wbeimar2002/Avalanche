@@ -56,7 +56,7 @@ namespace Avalanche.Api.Tests.Controllers
         [Test]
         public void GetSexesShouldReturnBadResultIfFails()
         {
-            _metadataManager.Setup(mock => mock.GetMetadata(DataTypes.Sex)).Throws(It.IsAny<Exception>());
+            _metadataManager.Setup(mock => mock.GetData(DataTypes.Sex)).Throws(It.IsAny<Exception>());
 
             var badResult = _controller.GetSexes(_environment.Object);
 

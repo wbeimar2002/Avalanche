@@ -27,6 +27,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Avalanche.Security.Server.T
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Avalanche.Security.Server", "Avalanche.Security.Server\Avalanche.Security.Server.csproj", "{64B98C2E-E809-4FB7-AE4E-F66B982B1302}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Avalanche.Api.Test", "Test\Avalanche.Api.Test\Avalanche.Api.Test.csproj", "{45B87C4C-1C93-4490-98E3-C0E8BA6D2128}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -53,10 +55,6 @@ Global
 		{2B25461E-C6CB-4AD1-8C19-227A5C301F9B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2B25461E-C6CB-4AD1-8C19-227A5C301F9B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2B25461E-C6CB-4AD1-8C19-227A5C301F9B}.Release|Any CPU.Build.0 = Release|Any CPU
-		{64B98C2E-E809-4FB7-AE4E-F66B982B1302}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{64B98C2E-E809-4FB7-AE4E-F66B982B1302}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{64B98C2E-E809-4FB7-AE4E-F66B982B1302}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{64B98C2E-E809-4FB7-AE4E-F66B982B1302}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -66,7 +64,6 @@ Global
 		{4DBF83D8-AD38-4D39-8F4B-97EB71D5B25D} = {C0B1EA2E-9724-4020-A2B1-5653D739E661}
 		{81F9FDCC-1A67-45AF-B7EE-B8AF52F7B88A} = {C0B1EA2E-9724-4020-A2B1-5653D739E661}
 		{2B25461E-C6CB-4AD1-8C19-227A5C301F9B} = {907645CA-DE39-41DE-9B95-3C233CE26ABA}
-		{64B98C2E-E809-4FB7-AE4E-F66B982B1302} = {24C247C0-1728-41DE-AEE0-0BF32F2758C4}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {054B7929-176A-44EB-BF77-6C11E9C160D7}

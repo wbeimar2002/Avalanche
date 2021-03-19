@@ -38,9 +38,9 @@ using static Ism.PatientInfoEngine.V1.Protos.PatientListService;
 using static Ism.PgsTimeout.V1.Protos.PgsTimeout;
 using static Ism.Recorder.Core.V1.Protos.Recorder;
 using static Ism.Routing.V1.Protos.Routing;
-using static Ism.Storage.Core.Configuration.V1.Protos.ConfigurationService;
-using static Ism.Storage.Core.DataManagement.V1.Protos.DataManagementStorage;
-using static Ism.Storage.Core.PatientList.V1.Protos.PatientListStorage;
+using static Ism.Storage.Configuration.Client.V1.Protos.ConfigurationService;
+using static Ism.Storage.DataManagement.Client.V1.Protos.DataManagementStorage;
+using static Ism.Storage.PatientList.Client.V1.Protos.PatientListStorage;
 using static Ism.Streaming.V1.Protos.WebRtcStreamer;
 using Microsoft.AspNetCore.Http;
 using Avalanche.Api.Managers.Security;
@@ -50,6 +50,7 @@ using Ism.SystemState.Client.V1;
 using Avalanche.Api.Services.Security;
 using System.IdentityModel.Tokens.Jwt;
 using Ism.Common.Core.Configuration.Extensions;
+using static Ism.Library.Core.V1.Protos.LibraryService;
 
 namespace Avalanche.Api
 {
@@ -82,8 +83,7 @@ namespace Avalanche.Api
             services.AddSingleton(c => configurationService);
 
             // needed for state client and maybe others
-            services.AddPocoConfiguration<GrpcServiceRegistry>(Configuration, nameof(GrpcServiceRegistry));
-
+            services.AddConfigurationPoco<GrpcServiceRegistry>(Configuration, nameof(GrpcServiceRegistry));
 
             var grpcCertificate = configurationService.GetEnvironmentVariable("grpcCertificate");
             var grpcPassword = configurationService.GetEnvironmentVariable("grpcPassword");
@@ -112,7 +112,8 @@ namespace Avalanche.Api
             services.AddSingleton<IBroadcastService, BroadcastService>();
             services.AddSingleton<IStorageService, StorageService>();
             services.AddSingleton<IDataManagementService, DataManagementService>();
-
+            services.AddSingleton<ILibraryService, LibraryService>();
+            
             services.AddSingleton<ICertificateProvider>(new FileSystemCertificateProvider(grpcCertificate, grpcPassword, grpcServerValidationCertificate));
             services.AddSingleton<IGrpcClientFactory<DataManagementStorageClient>, GrpcClientFactory<DataManagementStorageClient>>();
             services.AddSingleton<IGrpcClientFactory<PatientListServiceClient>, GrpcClientFactory<PatientListServiceClient>>();
@@ -123,6 +124,7 @@ namespace Avalanche.Api
             services.AddSingleton<IGrpcClientFactory<WebRtcStreamerClient>, GrpcClientFactory<WebRtcStreamerClient>>();
             services.AddSingleton<IGrpcClientFactory<PgsTimeoutClient>, GrpcClientFactory<PgsTimeoutClient>>();
             services.AddSingleton<IGrpcClientFactory<ConfigurationServiceClient>, GrpcClientFactory<ConfigurationServiceClient>>();
+            services.AddSingleton<IGrpcClientFactory<LibraryServiceClient>, GrpcClientFactory<LibraryServiceClient>>();
             services.AddSingleton<IAccessInfoFactory, AccessInfoFactory>();
             services.AddSingleton<ICookieValidationService, CookieValidationService>();
 
