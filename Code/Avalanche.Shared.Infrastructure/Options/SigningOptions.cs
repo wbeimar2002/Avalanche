@@ -1,15 +1,16 @@
-using System.Security.Cryptography;
-using System.Text;
 using Microsoft.IdentityModel.Tokens;
 
-namespace Avalanche.Shared.Infrastructure.Models
+using System.Security.Cryptography;
+using System.Text;
+
+namespace Avalanche.Shared.Infrastructure.Options
 {
-    public class SigningConfigurations
+    public class SigningOptions
     {
         public SecurityKey Key { get; }
         public SigningCredentials SigningCredentials { get; }
 
-        public SigningConfigurations(string secretKey = null)
+        public SigningOptions(string secretKey = null)
         {
             if (string.IsNullOrEmpty(secretKey))
             {

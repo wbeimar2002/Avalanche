@@ -1,15 +1,18 @@
 ﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Models;
+
 using System;
-using System.IO;
-using System.Reflection;
 
 namespace Avalanche.Security.Server.Extensions
 {
-	public static class MiddlewareExtensions
+    public static class MiddlewareExtensions
 	{
-		public static IServiceCollection AddCustomSwagger(this IServiceCollection services)
+#pragma warning disable S1075 // URIs should not be hardcoded
+        private const string OlympusUri = "https://www.olympus-global.com/";
+#pragma warning restore S1075 // URIs should not be hardcoded
+
+        public static IServiceCollection AddCustomSwagger(this IServiceCollection services)
 		{
 			services.AddSwaggerGen(cfg =>
 			{
@@ -21,7 +24,7 @@ namespace Avalanche.Security.Server.Extensions
 					Contact = new OpenApiContact
 					{
 						Name = "Olympus",
-						Url = new Uri("https://www.olympus-global.com/")
+						Url = new Uri(OlympusUri)
 					},
 					License = new OpenApiLicense
 					{
@@ -47,10 +50,6 @@ namespace Avalanche.Security.Server.Extensions
 						new [] { string.Empty }
 					}
 				});
-
-				/*var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
-				var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
-				cfg.IncludeXmlComments(xmlPath);*/
 			});
 
 			return services;

@@ -51,8 +51,6 @@
     <PackageReference Include="Ism.Storage.PatientList.Client" Version="1.0.0-prerelease0011" />
     <PackageReference Include="Ism.Streaming.Client" Version="1.0.0-prerelease0007" />
     <PackageReference Include="Ism.SystemState.Client" Version="1.0.0-prerelease0023" />
-    <!--<PackageReference Include="Ism.PatientInfoEngine.Client.Core" Version="1.0.0-prerelease3" />-->
-    <!--<PackageReference Include="Ism.Utility.Core" Version="1.0.1-prerelease9" />-->
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="3.1.12" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Cors" Version="2.2.0" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="3.1.12" />
@@ -65,7 +63,6 @@
     <PackageReference Include="NSwag.AspNetCore" Version="13.10.2" />
     <PackageReference Include="Serilog.AspNetCore" Version="3.4.0" />
     <PackageReference Include="Serilog.Extensions.Logging" Version="3.0.1" />
-    <!--<PackageReference Include="Serilog.Sinks.Seq" Version="4.0.0" />-->
     <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.8.0" />
 
     <PackageReference Include="StackExchange.Redis" Version="2.2.4" />
@@ -78,12 +75,6 @@
   <ItemGroup>
     <ProjectReference Include="..\Avalanche.Shared.Domain\Avalanche.Shared.Domain.csproj" />
     <ProjectReference Include="..\Avalanche.Shared.Infrastructure\Avalanche.Shared.Infrastructure.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Update="Avalanche.Api.xml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
   </ItemGroup>
 
 </Project>

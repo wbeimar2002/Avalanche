@@ -8,9 +8,9 @@ namespace Avalanche.Security.Server.Persistence
 {
     public class UserRepository : IUserRepository
     {
-        private readonly AppDbContext _context;
+        private readonly SecurityDbContext _context;
 
-        public UserRepository(AppDbContext context)
+        public UserRepository(SecurityDbContext context)
         {
             _context = context;
         }

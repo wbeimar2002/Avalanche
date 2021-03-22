@@ -51,6 +51,7 @@ using Avalanche.Api.Services.Security;
 using System.IdentityModel.Tokens.Jwt;
 using Ism.Common.Core.Configuration.Extensions;
 using static Ism.Library.Core.V1.Protos.LibraryService;
+using Avalanche.Shared.Infrastructure.Options;
 
 namespace Avalanche.Api
 {
@@ -142,16 +143,16 @@ namespace Avalanche.Api
 
         private void ConfigureAuthorization(IServiceCollection services)
         {
-            services.Configure<TokenOptions>(Configuration.GetSection("TokenOptions"));
-            var tokenOptions = Configuration.GetSection("TokenOptions").Get<TokenOptions>();
+            services.Configure<TokenConfiguration>(Configuration.GetSection("TokenOptions"));
+            var tokenOptions = Configuration.GetSection("TokenOptions").Get<TokenConfiguration>();
 
-            services.Configure<AuthSettings>(Configuration.GetSection("AuthSettings"));
-            var authSettings = Configuration.GetSection("AuthSettings").Get<AuthSettings>();
+            services.Configure<AuthConfiguration>(Configuration.GetSection("AuthSettings"));
+            var authSettings = Configuration.GetSection("AuthSettings").Get<AuthConfiguration>();
 
             services.Configure<CookieSettings>(Configuration.GetSection("CookieSettings"));
             var cookieSettings = Configuration.GetSection("CookieSettings").Get<CookieSettings>();
 
-            var signingConfigurations = new SigningConfigurations(authSettings.SecretKey);
+            var signingConfigurations = new SigningOptions(authSettings.SecretKey);
             services.AddSingleton(signingConfigurations);
 
             var rootPath = Configuration.GetSection("hostingRootPath")?.Value ?? "/";

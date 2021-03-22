@@ -1,24 +1,24 @@
 ﻿using Avalanche.Api.Utilities;
-using Avalanche.Shared.Infrastructure.Models;
-using Microsoft.Extensions.Options;
+using Avalanche.Shared.Infrastructure.Options;
+
 using System.Security.Claims;
 
 namespace Avalanche.Api.Managers.Security
 {
     public class SecurityManager : ISecurityManager
     {
-        private SigningConfigurations _signingConfigurations;
-        private IOptions<TokenOptions> _tokenOptions;
+        private readonly SigningOptions _signingConfigurations;
+        private readonly TokenConfiguration _tokenConfiguration;
 
-        public SecurityManager(SigningConfigurations signingConfigurations, IOptions<TokenOptions> tokenOptions)
+        public SecurityManager(SigningOptions signingConfigurations, TokenConfiguration tokenConfiguration)
         {
             _signingConfigurations = signingConfigurations;
-            _tokenOptions = tokenOptions;
+            _tokenConfiguration = tokenConfiguration;
         }
 
         public ClaimsIdentity CreateTokenIdentity(string jwtToken, string authenticationScheme)
         {
-            var tokenUser = JwtUtilities.ValidateToken(jwtToken, JwtUtilities.GetDefaultJwtValidationParameters(_tokenOptions.Value, _signingConfigurations));
+            var tokenUser = JwtUtilities.ValidateToken(jwtToken, JwtUtilities.GetDefaultJwtValidationParameters(_tokenConfiguration, _signingConfigurations));
 
             return new ClaimsIdentity(tokenUser.Claims, authenticationScheme);
         }

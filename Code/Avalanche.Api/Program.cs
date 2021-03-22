@@ -16,7 +16,7 @@ using System.IO;
 namespace Avalanche.Api
 {
     [ExcludeFromCodeCoverage]
-    public class Program
+    public static class Program
     {
         public static void Main(string[] args)
         {
@@ -84,10 +84,11 @@ namespace Avalanche.Api
         {
             // config types may be decorated with guid and version and other helper attributes
             var context = new ConfigurationContext();
-            var requests = new List<ConfigurationServiceRequest>();
-
-            // needed for grpc clients
-            requests.Add(new ConfigurationServiceRequest(nameof(GrpcServiceRegistry), 1, context));
+            var requests = new List<ConfigurationServiceRequest>
+            {
+                // needed for grpc clients
+                new ConfigurationServiceRequest(nameof(GrpcServiceRegistry), 1, context)
+            };
 
             return requests;
         }
