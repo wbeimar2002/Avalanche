@@ -9,7 +9,7 @@ namespace Avalanche.Api.Managers.Data
 {
     public interface IDataManager
     {
-        Task<IList<KeyValuePairViewModel>> GetMetadata(DataTypes type);
+        Task<IList<KeyValuePairViewModel>> GetData(DataTypes type);
         Task<IList<DynamicSourceKeyValuePairViewModel>> GetSource(DataTypes settingTypes);
         Task<DepartmentModel> AddDepartment(DepartmentModel department);
         Task DeleteDepartment(int departmentId);

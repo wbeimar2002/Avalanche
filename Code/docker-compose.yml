@@ -49,6 +49,7 @@ services:
       dataManagementGrpcPort: '5012'
       stateServiceGrpcAddress: 'avalanche-systemstate-host'
       stateServiceGrpcPort: '7011'
+      libraryServiceGrpcPort: '8001'
       demoLibraryFolder: '/library' #this is a temporary demo hack setting. storage should not be a concern of the api
       grpcCertificate: '/certificates/grpc_localhost_root_l1.pfx' 
       grpcPassword: '0123456789'

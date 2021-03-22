@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Avalanche.Api.ViewModels;
+using Ism.Library.Core.V1.Protos;
 using Ism.SystemState.Models.Procedure;
 using System;
 
@@ -11,7 +12,38 @@ namespace Avalanche.Api.MappingConfigurations
         {
             CreateMap<ProcedureImage, ProcedureImageViewModel>();
             CreateMap<ProcedureVideo, ProcedureVideoViewModel>();
-            
+
+            CreateMap<ActiveProcedureState, DiscardActiveProcedureRequest>()
+                .ForPath(dest => dest.ProcedureId.Id, opt => opt.MapFrom(src => src.LibraryId))
+                .ForPath(dest => dest.ProcedureId.RepositoryName, opt => opt.MapFrom(src => src.RepositoryId))
+                .ForMember(dest => dest.AccessInfo, opt => opt.Ignore());
+
+            CreateMap<ActiveProcedureState, CommitActiveProcedureRequest>()
+                .ForPath(dest => dest.ProcedureId.Id, opt => opt.MapFrom(src => src.LibraryId))
+                .ForPath(dest => dest.ProcedureId.RepositoryName, opt => opt.MapFrom(src => src.RepositoryId))
+                .ForMember(dest => dest.AccessInfo, opt => opt.Ignore());
+
+            CreateMap<Ism.IsmLogCommon.Core.AccessInfo, AccessInfoMessage>()
+                .ForPath(dest =>
+                    dest.ApplicationName,
+                    opt => opt.MapFrom(src => src.ApplicationName))
+                .ForPath(dest =>
+                    dest.Details,
+                    opt => opt.MapFrom(src => src.Details))
+                .ForPath(dest =>
+                    dest.Id,
+                    opt => opt.MapFrom(src => src.Id))
+                .ForPath(dest =>
+                    dest.Ip,
+                    opt => opt.MapFrom(src => src.Ip))
+                .ForPath(dest =>
+                    dest.MachineName,
+                    opt => opt.MapFrom(src => src.MachineName))
+                .ForPath(dest =>
+                    dest.UserName,
+                    opt => opt.MapFrom(src => src.UserName))
+                .ReverseMap();
+
             CreateMap<PatientViewModel, Patient>()
                 .ConstructUsing(p => new Patient())
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
@@ -62,6 +94,17 @@ namespace Avalanche.Api.MappingConfigurations
                 .ForMember(dest => dest.RequiresUserConfirmation, opt => opt.MapFrom(src => src.RequiresUserConfirmation))
                 .ForMember(dest => dest.Images, opt => opt.MapFrom(src => src.Images))
                 .ForMember(dest => dest.Videos, opt => opt.MapFrom(src => src.Videos));
+
+            CreateMap<Shared.Domain.Models.AccessInfoModel, Ism.Library.Core.V1.Protos.AccessInfoMessage>()
+                .ReverseMap();
+
+            CreateMap<Ism.Library.Core.V1.Protos.ProcedureIdMessage, ProcedureIdViewModel>()
+                .ReverseMap();
+
+            CreateMap<Ism.Library.Core.V1.Protos.AllocateNewProcedureResponse, ProcedureAllocationViewModel>()
+                .ReverseMap();
+
+
         }
     }
 }

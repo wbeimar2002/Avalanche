@@ -40,6 +40,7 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Ism.Broadcaster.Standard" Version="1.0.0-prerelease0002" />
+    <PackageReference Include="Ism.Library.Client" Version="1.0.0-prerelease0002" />
     <PackageReference Include="Ism.PatientInfoEngine.Client" Version="1.0.0-prerelease0011" />
     <PackageReference Include="Ism.PgsTimeout.Client" Version="1.0.0-prerelease0005" />
     <PackageReference Include="Ism.Recorder.Client" Version="1.0.0-prerelease0013" />
@@ -61,7 +62,7 @@
     <PackageReference Include="Moq" Version="4.16.0" />
     <PackageReference Include="Newtonsoft.Json.Schema" Version="3.0.13" />
     <PackageReference Include="NodaTime" Version="3.0.5" />
-    <PackageReference Include="NSwag.AspNetCore" Version="13.10.8" />
+    <PackageReference Include="NSwag.AspNetCore" Version="13.10.2" />
     <PackageReference Include="Serilog.AspNetCore" Version="3.4.0" />
     <PackageReference Include="Serilog.Extensions.Logging" Version="3.0.1" />
     <!--<PackageReference Include="Serilog.Sinks.Seq" Version="4.0.0" />-->

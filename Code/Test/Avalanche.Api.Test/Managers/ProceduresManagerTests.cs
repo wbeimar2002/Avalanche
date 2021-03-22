@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
 using Avalanche.Api.Managers.Procedures;
 using Avalanche.Api.MappingConfigurations;
+using Avalanche.Api.Services.Health;
+using Avalanche.Api.Utilities;
 using Ism.SystemState.Client;
 using Ism.SystemState.Models.Procedure;
 using Moq;
@@ -16,6 +18,8 @@ namespace Avalanche.Api.Test.Managers
     public class ProceduresManagerTests
     {
         IMapper _mapper;
+        Mock<IAccessInfoFactory> _accessInfoFactory;
+        Mock<ILibraryService> _libraryService;
 
         [SetUp]
         public void Setup()
@@ -26,6 +30,8 @@ namespace Avalanche.Api.Test.Managers
             });
 
             _mapper = config.CreateMapper();
+            _accessInfoFactory = new Mock<IAccessInfoFactory>();
+            _libraryService = new Mock<ILibraryService>();
         }
 
         [Test]
@@ -48,7 +54,7 @@ namespace Avalanche.Api.Test.Managers
                     DateTimeOffset.UtcNow,
                     TimeZoneInfo.Local.Id));
 
-            var manager = new ProceduresManager(stateClient.Object, _mapper);
+            var manager = new ProceduresManager(stateClient.Object, _libraryService.Object, _accessInfoFactory.Object, _mapper);
 
             var result = await manager.GetActiveProcedure();
 
