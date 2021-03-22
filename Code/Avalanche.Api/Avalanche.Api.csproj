@@ -40,6 +40,7 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Ism.Broadcaster.Standard" Version="1.0.0-prerelease0002" />
+    <PackageReference Include="Ism.Common.Core.Hosting" Version="1.0.0-prerelease025" />
     <PackageReference Include="Ism.Library.Client" Version="1.0.0-prerelease0002" />
     <PackageReference Include="Ism.PatientInfoEngine.Client" Version="1.0.0-prerelease0011" />
     <PackageReference Include="Ism.PgsTimeout.Client" Version="1.0.0-prerelease0005" />

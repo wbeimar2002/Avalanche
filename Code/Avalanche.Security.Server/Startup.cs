@@ -14,23 +14,20 @@ using Ism.Common.Core.Extensions;
 
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.DataProtection.KeyManagement;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Options;
-using Microsoft.IdentityModel.Tokens;
 
 using Serilog;
 
-using System;
-using System.Configuration;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 
 namespace Avalanche.Security.Server
 {
+    [ExcludeFromCodeCoverage]
     public class Startup
 	{
         private readonly IConfiguration _configuration;
@@ -118,6 +115,6 @@ namespace Avalanche.Security.Server
 
         private static string MakeConnectionString(string databasePath) => $"Data Source={databasePath}";
 
-        private string GetDatabaseLocation(string database) => Path.Combine(Path.GetDirectoryName(typeof(Startup).Assembly.Location) ?? _environment.ContentRootPath, "database", database);
+        private string GetDatabaseLocation(string database, string subDirectory = "database") => Path.Combine(Path.GetDirectoryName(typeof(Startup).Assembly.Location) ?? _environment.ContentRootPath, subDirectory, database);
 	}
 }

@@ -8,11 +8,13 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 
 using static Ism.Common.Core.Hosting.HostingUtilities;
 
 namespace Avalanche.Security.Server
 {
+    [ExcludeFromCodeCoverage]
     public static class Program
 	{
         public static void Main(string[] args)
