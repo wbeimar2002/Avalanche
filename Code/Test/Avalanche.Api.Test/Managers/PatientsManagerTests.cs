@@ -1,21 +1,28 @@
 ﻿using AutoFixture;
+
 using AutoMapper;
+
 using Avalanche.Api.Managers.Patients;
 using Avalanche.Api.Managers.Procedures;
 using Avalanche.Api.MappingConfigurations;
-using Avalanche.Api.Services.Configuration;
 using Avalanche.Api.Services.Health;
 using Avalanche.Api.Services.Maintenance;
 using Avalanche.Api.Utilities;
 using Avalanche.Api.ViewModels;
 using Avalanche.Shared.Domain.Models;
+
 using Bogus;
+
 using Ism.Common.Core.Configuration.Models;
 using Ism.Storage.PatientList.Client.V1.Protos;
 using Ism.SystemState.Client;
+
 using Microsoft.AspNetCore.Http;
+
 using Moq;
+
 using NUnit.Framework;
+
 using System;
 using System.Collections.Generic;
 using System.Globalization;

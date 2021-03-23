@@ -9,8 +9,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Avalanche.Shared.Domain", "
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Avalanche.Shared.Infrastructure", "Avalanche.Shared.Infrastructure\Avalanche.Shared.Infrastructure.csproj", "{81F9FDCC-1A67-45AF-B7EE-B8AF52F7B88A}"
 EndProject
-Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{0F48DC9B-EFED-46F2-A5B8-48B05D85678E}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Api", "Api", "{24C247C0-1728-41DE-AEE0-0BF32F2758C4}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{907645CA-DE39-41DE-9B95-3C233CE26ABA}"
@@ -47,10 +45,6 @@ Global
 		{81F9FDCC-1A67-45AF-B7EE-B8AF52F7B88A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{81F9FDCC-1A67-45AF-B7EE-B8AF52F7B88A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{81F9FDCC-1A67-45AF-B7EE-B8AF52F7B88A}.Release|Any CPU.Build.0 = Release|Any CPU
-		{0F48DC9B-EFED-46F2-A5B8-48B05D85678E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{0F48DC9B-EFED-46F2-A5B8-48B05D85678E}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{0F48DC9B-EFED-46F2-A5B8-48B05D85678E}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{0F48DC9B-EFED-46F2-A5B8-48B05D85678E}.Release|Any CPU.Build.0 = Release|Any CPU
 		{2B25461E-C6CB-4AD1-8C19-227A5C301F9B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{2B25461E-C6CB-4AD1-8C19-227A5C301F9B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2B25461E-C6CB-4AD1-8C19-227A5C301F9B}.Release|Any CPU.ActiveCfg = Release|Any CPU
