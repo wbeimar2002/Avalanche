@@ -1,10 +1,10 @@
 ﻿using Avalanche.Shared.Infrastructure.Services.Settings;
-using Ism.Library.Client.Core.V1;
-using Ism.Library.Core.V1.Protos;
+using Ism.Library.Client.V1;
+using Ism.Library.V1.Protos;
 using Ism.Security.Grpc.Interfaces;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
-using static Ism.Library.Core.V1.Protos.LibraryService;
+using static Ism.Library.V1.Protos.LibraryService;
 
 namespace Avalanche.Api.Services.Health
 {
@@ -31,14 +31,9 @@ namespace Avalanche.Api.Services.Health
             await _libraryServiceClient.CommitActiveProcedure(commitActiveProcedureRequest);
         }
 
-        public async Task<AllocateNewProcedureResponse> CommitActiveProcedure(AllocateNewProcedureRequest allocateNewProcedureRequest)
+        public async Task<AllocateNewProcedureResponse> AllocateNewProcedure(AllocateNewProcedureRequest allocateNewProcedureRequest)
         {
             return await _libraryServiceClient.AllocateNewProcedure(allocateNewProcedureRequest);
-        }
-
-        public async Task<AllocateNewProcedureResponse> AllocateNewProcedure(AllocateNewProcedureRequest request)
-        {
-            return await _libraryServiceClient.AllocateNewProcedure(request);
         }
     }
 }

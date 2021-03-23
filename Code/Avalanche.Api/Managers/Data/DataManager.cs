@@ -121,6 +121,8 @@ namespace Avalanche.Api.Managers.Data
         {
             Preconditions.ThrowIfNull(nameof(procedureType.Name), procedureType.Name);
 
+            await ValidateDepartmentsSupport(procedureType.DepartmentId);
+
             await _dataManagementService.DeleteProcedureType(_mapper.Map<ProcedureTypeModel, DeleteProcedureTypeRequest>(procedureType));
         }
 

@@ -2,7 +2,7 @@
 using Avalanche.Api.Services.Health;
 using Avalanche.Api.Utilities;
 using Avalanche.Api.ViewModels;
-using Ism.Library.Core.V1.Protos;
+using Ism.Library.V1.Protos;
 using Ism.SystemState.Client;
 using Ism.SystemState.Models.Procedure;
 using System.Threading.Tasks;
