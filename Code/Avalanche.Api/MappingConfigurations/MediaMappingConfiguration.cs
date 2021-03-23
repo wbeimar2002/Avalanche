@@ -180,6 +180,9 @@ namespace Avalanche.Api.MappingConfigurations
                 .ForMember(dest =>
                     dest.Type,
                     opt => opt.MapFrom(src => src.StreamType))
+                .ForMember(dest =>
+                    dest.Source,
+                    opt => opt.Ignore()) //TODO: Gabe should validate this
                 .ReverseMap();
 
             CreateMap<WebRTCMessaggeModel, Ism.Streaming.V1.Protos.HandleMessageRequest>()

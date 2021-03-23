@@ -1,39 +1,39 @@
-﻿using Ism.Library.Client.V1;
+﻿using Avalanche.Shared.Infrastructure.Services.Settings;
+using Ism.Library.Client.V1;
 using Ism.Library.V1.Protos;
-
+using Ism.Security.Grpc.Interfaces;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
+using static Ism.Library.V1.Protos.LibraryService;
 
 namespace Avalanche.Api.Services.Health
 {
     [ExcludeFromCodeCoverage]
     public class LibraryService : ILibraryService
     {
-        private readonly LibraryServiceSecureClient _client;
+        LibraryServiceSecureClient _libraryServiceClient { get; set; }
 
-        public LibraryService(LibraryServiceSecureClient client)
+        public LibraryService(IConfigurationService configurationService, IGrpcClientFactory<LibraryServiceClient> grpcClientFactory, ICertificateProvider certificateProvider)
         {
-            _client = client;
-        }
+            var hostIpAddress = configurationService.GetEnvironmentVariable("hostIpAddress");
+            var libraryServiceGrpcPort = configurationService.GetEnvironmentVariable("libraryServiceGrpcPort");
 
-        public async Task<AllocateNewProcedureResponse> AllocateNewProcedure(AllocateNewProcedureRequest allocateNewProcedureRequest)
-        {
-            return await _client.AllocateNewProcedure(allocateNewProcedureRequest);
-        }
-
-        public async Task CommitActiveProcedure(CommitActiveProcedureRequest commitActiveProcedureRequest)
-        {
-            await _client.CommitActiveProcedure(commitActiveProcedureRequest);
-        }
-
-        public async Task<AllocateNewProcedureResponse> CommitActiveProcedure(AllocateNewProcedureRequest allocateNewProcedureRequest)
-        {
-            return await _client.AllocateNewProcedure(allocateNewProcedureRequest);
+            _libraryServiceClient = new LibraryServiceSecureClient(grpcClientFactory, hostIpAddress, libraryServiceGrpcPort, certificateProvider);
         }
 
         public async Task DiscardActiveProcedure(DiscardActiveProcedureRequest discardActiveProcedureRequest)
         {
-            await _client.DiscardActiveProcedure(discardActiveProcedureRequest);
+            await _libraryServiceClient.DiscardActiveProcedure(discardActiveProcedureRequest);
+        }
+
+        public async Task CommitActiveProcedure(CommitActiveProcedureRequest commitActiveProcedureRequest)
+        {
+            await _libraryServiceClient.CommitActiveProcedure(commitActiveProcedureRequest);
+        }
+
+        public async Task<AllocateNewProcedureResponse> AllocateNewProcedure(AllocateNewProcedureRequest allocateNewProcedureRequest)
+        {
+            return await _libraryServiceClient.AllocateNewProcedure(allocateNewProcedureRequest);
         }
     }
 }
