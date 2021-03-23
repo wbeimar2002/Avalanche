@@ -196,7 +196,7 @@ stages:
         PathtoPublish: '$(Repo)/DevOps/certificates'
         ArtifactName: certificates
 
-- stage: push_to_acr
+#- stage: push_to_acr
 
   #condition: and(succeeded(), eq(variables['Build.SourceBranchName'], 'dev'))
   # jobs:
