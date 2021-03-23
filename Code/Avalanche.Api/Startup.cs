@@ -34,7 +34,7 @@ using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using static AvidisDeviceInterface.V1.Protos.Avidis;
-using static Ism.PatientInfoEngine.V1.Protos.PatientListService;
+using static Ism.PatientInfoEngine.V1.Protos.PatientList;
 using static Ism.PgsTimeout.V1.Protos.PgsTimeout;
 using static Ism.Recorder.Core.V1.Protos.Recorder;
 using static Ism.Routing.V1.Protos.Routing;
@@ -116,7 +116,7 @@ namespace Avalanche.Api
             
             services.AddSingleton<ICertificateProvider>(new FileSystemCertificateProvider(grpcCertificate, grpcPassword, grpcServerValidationCertificate));
             services.AddSingleton<IGrpcClientFactory<DataManagementStorageClient>, GrpcClientFactory<DataManagementStorageClient>>();
-            services.AddSingleton<IGrpcClientFactory<PatientListServiceClient>, GrpcClientFactory<PatientListServiceClient>>();
+            services.AddSingleton<IGrpcClientFactory<PatientListClient>, GrpcClientFactory<PatientListClient>>();
             services.AddSingleton<IGrpcClientFactory<PatientListStorageClient>, GrpcClientFactory<PatientListStorageClient>>();
             services.AddSingleton<IGrpcClientFactory<RecorderClient>, GrpcClientFactory<RecorderClient>>();
             services.AddSingleton<IGrpcClientFactory<RoutingClient>, GrpcClientFactory<RoutingClient>>();

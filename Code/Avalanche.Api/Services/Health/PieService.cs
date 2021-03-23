@@ -4,7 +4,7 @@ using Ism.Security.Grpc.Interfaces;
 using Ism.Storage.PatientList.Client.V1;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
-using static Ism.PatientInfoEngine.V1.Protos.PatientListService;
+using static Ism.PatientInfoEngine.V1.Protos.PatientList;
 using static Ism.Storage.PatientList.Client.V1.Protos.PatientListStorage;
 
 namespace Avalanche.Api.Services.Health
@@ -17,7 +17,7 @@ namespace Avalanche.Api.Services.Health
         PatientListSecureClient PatientListServiceClient { get; set; }
         PatientListStorageSecureClient PatientListStorageClient { get; set; }
 
-        public PieService(IConfigurationService configurationService, IGrpcClientFactory<PatientListServiceClient> grpcClientFactory, IGrpcClientFactory<PatientListStorageClient> storageClientFactory, ICertificateProvider certificateProvider)
+        public PieService(IConfigurationService configurationService, IGrpcClientFactory<PatientListClient> grpcClientFactory, IGrpcClientFactory<PatientListStorageClient> storageClientFactory, ICertificateProvider certificateProvider)
         {
             _configurationService = configurationService;
             var hostIpAddress = _configurationService.GetEnvironmentVariable("hostIpAddress");
@@ -26,7 +26,7 @@ namespace Avalanche.Api.Services.Health
             var pieServiceGrpcPort = _configurationService.GetEnvironmentVariable("pieServiceGrpcPort");
             var storageServiceGrpcPort = _configurationService.GetEnvironmentVariable("storageServiceGrpcPort");
             
-            PatientListServiceClient = new PatientListSecureClient(grpcClientFactory, /*pieAddress*/hostIpAddress, pieServiceGrpcPort, certificateProvider);
+            PatientListServiceClient = new PatientListSecureClient(grpcClientFactory, /*pieAddress*/hostIpAddress, System.Convert.ToUInt32(pieServiceGrpcPort), certificateProvider);
             PatientListStorageClient = new PatientListStorageSecureClient(storageClientFactory, hostIpAddress, storageServiceGrpcPort, certificateProvider);
         }
 
