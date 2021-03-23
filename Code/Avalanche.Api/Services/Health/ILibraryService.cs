@@ -1,4 +1,4 @@
-﻿using Ism.Library.Core.V1.Protos;
+﻿using Ism.Library.V1.Protos;
 using System;
 using System.Collections.Generic;
 using System.Linq;

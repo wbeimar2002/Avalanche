@@ -50,7 +50,7 @@ using Ism.SystemState.Client.V1;
 using Avalanche.Api.Services.Security;
 using System.IdentityModel.Tokens.Jwt;
 using Ism.Common.Core.Configuration.Extensions;
-using static Ism.Library.Core.V1.Protos.LibraryService;
+using static Ism.Library.V1.Protos.LibraryService;
 
 namespace Avalanche.Api
 {

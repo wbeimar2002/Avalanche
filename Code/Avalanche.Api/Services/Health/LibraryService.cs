@@ -1,10 +1,10 @@
 ﻿using Avalanche.Shared.Infrastructure.Services.Settings;
-using Ism.Library.Client.Core.V1;
-using Ism.Library.Core.V1.Protos;
+using Ism.Library.Client.V1;
+using Ism.Library.V1.Protos;
 using Ism.Security.Grpc.Interfaces;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
-using static Ism.Library.Core.V1.Protos.LibraryService;
+using static Ism.Library.V1.Protos.LibraryService;
 
 namespace Avalanche.Api.Services.Health
 {
