@@ -12,7 +12,7 @@ namespace Avalanche.Api.Utilities
 {
     public class JwtUtilities
     {
-        public static TokenValidationParameters GetDefaultJwtValidationParameters(TokenConfiguration tokenOptions, SigningOptions signingConfigurations)
+        public static TokenValidationParameters GetDefaultJwtValidationParameters(TokenAuthConfiguration tokenOptions, SigningOptions signingConfigurations)
         {
             Preconditions.ThrowIfNull(nameof(tokenOptions), tokenOptions);
             Preconditions.ThrowIfNull(nameof(signingConfigurations), signingConfigurations);

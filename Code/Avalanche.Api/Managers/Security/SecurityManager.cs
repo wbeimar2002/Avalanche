@@ -8,9 +8,9 @@ namespace Avalanche.Api.Managers.Security
     public class SecurityManager : ISecurityManager
     {
         private readonly SigningOptions _signingConfigurations;
-        private readonly TokenConfiguration _tokenConfiguration;
+        private readonly TokenAuthConfiguration _tokenConfiguration;
 
-        public SecurityManager(SigningOptions signingConfigurations, TokenConfiguration tokenConfiguration)
+        public SecurityManager(SigningOptions signingConfigurations, TokenAuthConfiguration tokenConfiguration)
         {
             _signingConfigurations = signingConfigurations;
             _tokenConfiguration = tokenConfiguration;

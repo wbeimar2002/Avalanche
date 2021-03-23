@@ -41,36 +41,36 @@ services:
       app_net:
         ipv4_address: 192.168.1.60
     environment:
-      hostIpAddress: 'host.docker.internal'
-      mediaServiceGrpcPort: '7001'
-      pieServiceAddress: 'patientInfoEngine'
-      pieServiceGrpcPort: '9089'
-      storageServiceGrpcPort: '5012'
-      dataManagementGrpcPort: '5012'
-      stateServiceGrpcAddress: 'avalanche-systemstate-host'
-      stateServiceGrpcPort: '7011'
-      libraryServiceGrpcPort: '8001'
+      #hostIpAddress: 'host.docker.internal'
+      #mediaServiceGrpcPort: '7001'
+      #pieServiceAddress: 'patientInfoEngine'
+      #pieServiceGrpcPort: '9089'
+      #storageServiceGrpcPort: '5012'
+      #dataManagementGrpcPort: '5012'
+      #stateServiceGrpcAddress: 'avalanche-systemstate-host'
+      #stateServiceGrpcPort: '7011'
+      #libraryServiceGrpcPort: '8001'
       demoLibraryFolder: '/library' #this is a temporary demo hack setting. storage should not be a concern of the api
-      grpcCertificate: '/certificates/grpc_localhost_root_l1.pfx' 
-      grpcPassword: '0123456789'
-      grpcServerValidationCertificate: '/certificates/grpc_localhost_root_l1.cer'
-      grpcThumprint: '86CD34D2FADDFFE00D31F4C12294782ECCB9041F'
-      AVALANCHE_CLIENT_CERTIFICATE_PASSWORD: '0123456789'
-      AVALANCHE_CLIENT_CERTIFICATE_PATH: '/certificates/grpc_localhost_root_l1.pfx'
-      AVALANCHE_SERVER_VALIDATION_CERTIFICATE_PATH: '/certificates/grpc_localhost_root_l1.cer'
-      AVALANCHE_CONFIGURATION_SERVICE_HOST: 'host.docker.internal'
-      AVALANCHE_CONFIGURATION_SERVICE_PORT: '5012'
-      CookieSettings:Path: '/files' #note the browser treats this as case sensitive
-      CookieSettings:ExpirationSeconds: '86400'
-      hostingRootPath: '/api' 
-      seqUrl: 'http://seq:5341'
-      logging:loglevel:default: 'Information'
-      loggerFileName: 'avalancheapilogs.txt'
-      loggerFolder: '/logs'
-      loggerFileSizeLimit: 209715200
-      loggerRetainedFileCountLimit: 5
+      #grpcCertificate: '/certificates/grpc_localhost_root_l1.pfx' 
+      #grpcPassword: '0123456789'
+      #grpcServerValidationCertificate: '/certificates/grpc_localhost_root_l1.cer'
+      #grpcThumprint: '86CD34D2FADDFFE00D31F4C12294782ECCB9041F'
+      #AVALANCHE_CLIENT_CERTIFICATE_PASSWORD: '0123456789'
+      #AVALANCHE_CLIENT_CERTIFICATE_PATH: '/certificates/grpc_localhost_root_l1.pfx'
+      #AVALANCHE_SERVER_VALIDATION_CERTIFICATE_PATH: '/certificates/grpc_localhost_root_l1.cer'
+      #AVALANCHE_CONFIGURATION_SERVICE_HOST: 'host.docker.internal'
+      #AVALANCHE_CONFIGURATION_SERVICE_PORT: '5012'
+      #CookieSettings:Path: '/files' #note the browser treats this as case sensitive
+      #CookieSettings:ExpirationSeconds: '86400'
+      #hostingRootPath: '/api' 
+      #seqUrl: 'http://seq:5341'
+      #logging:loglevel:default: 'Information'
+      #loggerFileName: 'avalancheapilogs.txt'
+      #loggerFolder: '/logs'
+      #loggerFileSizeLimit: 209715200
+      #loggerRetainedFileCountLimit: 5
       TZ: "America/Los_Angeles"
-      PgsTimeoutGrpcPort: '9500'
+      #PgsTimeoutGrpcPort: '9500'
     depends_on:
 #      - seqserver
       - avalanche.security.server

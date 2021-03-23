@@ -4,15 +4,18 @@ using Avalanche.Shared.Domain.Models;
 using Avalanche.Shared.Infrastructure.Enumerations;
 using Avalanche.Shared.Infrastructure.Extensions;
 using Avalanche.Shared.Infrastructure.Helpers;
+
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+
 using static Ism.Utility.Core.Preconditions;
 
 namespace Avalanche.Api.Controllers.V1
@@ -28,7 +31,7 @@ namespace Avalanche.Api.Controllers.V1
         public DataController(ILogger<DataController> appLoggerService, IDataManager metadataManager)
         {
             _appLoggerService = ThrowIfNullOrReturn(nameof(appLoggerService), appLoggerService);
-            _metadataManager = ThrowIfNullOrReturn(nameof(metadataManager), metadataManager); ;
+            _metadataManager = ThrowIfNullOrReturn(nameof(metadataManager), metadataManager);
         }
 
         /// <summary>

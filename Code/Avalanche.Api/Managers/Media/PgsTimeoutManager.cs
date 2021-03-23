@@ -1,20 +1,24 @@
 ﻿using AutoMapper;
+
 using Avalanche.Api.Services.Maintenance;
 using Avalanche.Api.Services.Media;
 using Avalanche.Api.ViewModels;
 using Avalanche.Shared.Domain.Enumerations;
 using Avalanche.Shared.Domain.Models.Media;
 using Avalanche.Shared.Infrastructure.Models.Configuration;
+
 using Ism.Common.Core.Configuration.Models;
 using Ism.PgsTimeout.V1.Protos;
 using Ism.SystemState.Client;
 using Ism.SystemState.Models.PgsTimeout;
 using Ism.SystemState.Models.VideoRouting;
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+
 using static Ism.Utility.Core.Preconditions;
 
 namespace Avalanche.Api.Managers.Media

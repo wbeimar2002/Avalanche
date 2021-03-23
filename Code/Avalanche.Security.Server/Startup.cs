@@ -3,6 +3,7 @@ using Avalanche.Security.Server.Core.Security.Hashing;
 using Avalanche.Security.Server.Core.Security.Tokens;
 using Avalanche.Security.Server.Core.Services;
 using Avalanche.Security.Server.Extensions;
+using Avalanche.Security.Server.Options;
 using Avalanche.Security.Server.Persistence;
 using Avalanche.Security.Server.Security.Hashing;
 using Avalanche.Security.Server.Services;
@@ -59,7 +60,7 @@ namespace Avalanche.Security.Server
             services.AddSingleton<ITokenHandler, Security.Tokens.TokenHandler>();
 
             // Configuration
-            services.AddConfigurationPoco<TokenConfiguration>(_configuration, nameof(TokenConfiguration));
+            services.AddConfigurationPoco<TokenAuthConfiguration>(_configuration, nameof(TokenAuthConfiguration));
             services.AddConfigurationPoco<AuthConfiguration>(_configuration, nameof(AuthConfiguration));
             services.AddSingleton(sp => new SigningOptions(sp.GetRequiredService<AuthConfiguration>().SecretKey));
             services.AddConfigurationLoggingOnStartup();

@@ -7,7 +7,7 @@ namespace Avalanche.Api.Utilities
 {
     public class AvalancheCookieAuthenticationEvents: CookieAuthenticationEvents
     {
-        private ICookieValidationService _cookieValidationService;
+        private readonly ICookieValidationService _cookieValidationService;
 
         public AvalancheCookieAuthenticationEvents(ICookieValidationService cookieValidationService)
         {

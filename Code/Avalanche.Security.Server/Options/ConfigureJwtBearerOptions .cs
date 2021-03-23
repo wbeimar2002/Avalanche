@@ -1,16 +1,18 @@
-﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+﻿using Avalanche.Shared.Infrastructure.Options;
+
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 
 using System;
 
-namespace Avalanche.Shared.Infrastructure.Options
+namespace Avalanche.Security.Server.Options
 {
     public class ConfigureJwtBearerOptions: IConfigureNamedOptions<JwtBearerOptions>
     {
         private readonly SigningOptions _signingOptions;
-        private readonly TokenConfiguration _tokenConfiguration;
-        public ConfigureJwtBearerOptions(TokenConfiguration tokenConfiguration, SigningOptions signingOptions)
+        private readonly TokenAuthConfiguration _tokenConfiguration;
+        public ConfigureJwtBearerOptions(TokenAuthConfiguration tokenConfiguration, SigningOptions signingOptions)
 {
             _tokenConfiguration = tokenConfiguration;
             _signingOptions = signingOptions;

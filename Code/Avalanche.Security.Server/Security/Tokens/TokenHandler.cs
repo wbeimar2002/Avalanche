@@ -15,11 +15,11 @@ namespace Avalanche.Security.Server.Security.Tokens
     {
         private readonly ISet<RefreshToken> _refreshTokens = new HashSet<RefreshToken>();
 
-        private readonly TokenConfiguration _tokenConfiguration;
+        private readonly TokenAuthConfiguration _tokenConfiguration;
         private readonly SigningOptions _signingConfigurations;
         private readonly IPasswordHasher _passwordHaser;
 
-        public TokenHandler(TokenConfiguration tokenConfiguration, SigningOptions signingConfigurations, IPasswordHasher passwordHaser)
+        public TokenHandler(TokenAuthConfiguration tokenConfiguration, SigningOptions signingConfigurations, IPasswordHasher passwordHaser)
         {
             _passwordHaser = passwordHaser;
             _tokenConfiguration = tokenConfiguration;
@@ -57,7 +57,7 @@ namespace Avalanche.Security.Server.Security.Tokens
             var refreshToken = new RefreshToken
             (
                 token : _passwordHaser.HashPassword(Guid.NewGuid().ToString()),
-                expiration : DateTime.UtcNow.AddSeconds(_tokenConfiguration.RefreshTokenExpiration).Ticks
+                expiration : DateTime.UtcNow.AddSeconds(_tokenConfiguration.ExpirationSeconds).Ticks
             );
 
             return refreshToken;
@@ -65,7 +65,7 @@ namespace Avalanche.Security.Server.Security.Tokens
 
         private AccessToken BuildAccessToken(User user, RefreshToken refreshToken)
         {
-            var accessTokenExpiration = DateTime.UtcNow.AddSeconds(_tokenConfiguration.AccessTokenExpiration);
+            var accessTokenExpiration = DateTime.UtcNow.AddSeconds(_tokenConfiguration.ExpirationSeconds);
 
             var securityToken = new JwtSecurityToken
             (

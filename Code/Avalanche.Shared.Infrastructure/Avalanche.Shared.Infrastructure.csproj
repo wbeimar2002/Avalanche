@@ -5,12 +5,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Services\Logger\**" />
-    <EmbeddedResource Remove="Services\Logger\**" />
-    <None Remove="Services\Logger\**" />
-  </ItemGroup>
-
-  <ItemGroup>
     <Compile Remove="Models\AdministratorSettings.cs" />
     <Compile Remove="Models\ApiSettings.cs" />
     <Compile Remove="Models\ConfigSettings.cs" />
