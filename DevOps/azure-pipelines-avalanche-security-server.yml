@@ -192,7 +192,7 @@ stages:
     
 # - stage: push_to_acr
   
-condition: and(succeeded(), eq(variables['Build.SourceBranchName'], 'dev'))
+##condition: and(succeeded(), eq(variables['Build.SourceBranchName'], 'dev'))
   # jobs:
    # - job: push
     
@@ -282,7 +282,7 @@ condition: and(succeeded(), eq(variables['Build.SourceBranchName'], 'dev'))
         # arguments: '$(azuresubscription) $(acrname) $(ip)'        
 
 - stage: octopus_release
-  dependsOn: push_to_acr
+  #dependsOn: push_to_acr
 
 
   jobs:
