@@ -31,14 +31,9 @@ namespace Avalanche.Api.Services.Health
             await _libraryServiceClient.CommitActiveProcedure(commitActiveProcedureRequest);
         }
 
-        public async Task<AllocateNewProcedureResponse> CommitActiveProcedure(AllocateNewProcedureRequest allocateNewProcedureRequest)
+        public async Task<AllocateNewProcedureResponse> AllocateNewProcedure(AllocateNewProcedureRequest allocateNewProcedureRequest)
         {
             return await _libraryServiceClient.AllocateNewProcedure(allocateNewProcedureRequest);
-        }
-
-        public async Task<AllocateNewProcedureResponse> AllocateNewProcedure(AllocateNewProcedureRequest request)
-        {
-            return await _libraryServiceClient.AllocateNewProcedure(request);
         }
     }
 }
