@@ -1,10 +1,13 @@
 ﻿using AutoMapper;
+
 using Avalanche.Api.Services.Health;
 using Avalanche.Api.Utilities;
 using Avalanche.Api.ViewModels;
+
 using Ism.Library.V1.Protos;
 using Ism.SystemState.Client;
 using Ism.SystemState.Models.Procedure;
+
 using System.Threading.Tasks;
 
 namespace Avalanche.Api.Managers.Procedures

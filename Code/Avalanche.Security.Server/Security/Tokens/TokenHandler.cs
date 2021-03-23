@@ -1,13 +1,13 @@
+using Avalanche.Security.Server.Core.Models;
+using Avalanche.Security.Server.Core.Security.Hashing;
+using Avalanche.Security.Server.Core.Security.Tokens;
+using Avalanche.Shared.Infrastructure.Options;
+
 using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
-using Avalanche.Security.Server.Core.Models;
-using Avalanche.Security.Server.Core.Security.Hashing;
-using Avalanche.Security.Server.Core.Security.Tokens;
-using Avalanche.Shared.Infrastructure.Models;
-using Microsoft.Extensions.Options;
 
 namespace Avalanche.Security.Server.Security.Tokens
 {
@@ -15,14 +15,14 @@ namespace Avalanche.Security.Server.Security.Tokens
     {
         private readonly ISet<RefreshToken> _refreshTokens = new HashSet<RefreshToken>();
 
-        private readonly TokenOptions _tokenOptions;
-        private readonly SigningConfigurations _signingConfigurations;
+        private readonly TokenAuthConfiguration _tokenConfiguration;
+        private readonly SigningOptions _signingConfigurations;
         private readonly IPasswordHasher _passwordHaser;
 
-        public TokenHandler(IOptions<TokenOptions> tokenOptionsSnapshot, SigningConfigurations signingConfigurations, IPasswordHasher passwordHaser)
+        public TokenHandler(TokenAuthConfiguration tokenConfiguration, SigningOptions signingConfigurations, IPasswordHasher passwordHaser)
         {
             _passwordHaser = passwordHaser;
-            _tokenOptions = tokenOptionsSnapshot.Value;
+            _tokenConfiguration = tokenConfiguration;
             _signingConfigurations = signingConfigurations;
         }
 
@@ -57,7 +57,7 @@ namespace Avalanche.Security.Server.Security.Tokens
             var refreshToken = new RefreshToken
             (
                 token : _passwordHaser.HashPassword(Guid.NewGuid().ToString()),
-                expiration : DateTime.UtcNow.AddSeconds(_tokenOptions.RefreshTokenExpiration).Ticks
+                expiration : DateTime.UtcNow.AddSeconds(_tokenConfiguration.ExpirationSeconds).Ticks
             );
 
             return refreshToken;
@@ -65,12 +65,12 @@ namespace Avalanche.Security.Server.Security.Tokens
 
         private AccessToken BuildAccessToken(User user, RefreshToken refreshToken)
         {
-            var accessTokenExpiration = DateTime.UtcNow.AddSeconds(_tokenOptions.AccessTokenExpiration);
+            var accessTokenExpiration = DateTime.UtcNow.AddSeconds(_tokenConfiguration.ExpirationSeconds);
 
             var securityToken = new JwtSecurityToken
             (
-                issuer : _tokenOptions.Issuer,
-                audience : _tokenOptions.Audience,
+                issuer : _tokenConfiguration.Issuer,
+                audience : _tokenConfiguration.Audience,
                 claims : GetClaims(user),
                 expires : accessTokenExpiration,
                 notBefore : DateTime.UtcNow,

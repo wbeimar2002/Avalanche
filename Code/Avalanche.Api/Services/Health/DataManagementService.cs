@@ -1,50 +1,37 @@
-﻿using Avalanche.Shared.Infrastructure.Services.Settings;
-using Google.Protobuf.WellKnownTypes;
-using Ism.Security.Grpc.Interfaces;
-using Ism.Storage.DataManagement.Client.V1.Protos;
+﻿using Google.Protobuf.WellKnownTypes;
+
 using Ism.Storage.DataManagement.Client.V1;
+using Ism.Storage.DataManagement.Client.V1.Protos;
+
 using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
-using static Ism.Storage.DataManagement.Client.V1.Protos.DataManagementStorage;
 
 namespace Avalanche.Api.Services.Health
 {
     [ExcludeFromCodeCoverage]
     public class DataManagementService : IDataManagementService
     {
-        readonly IConfigurationService _configurationService;
-        readonly string _hostIpAddress;
-        readonly string _dataManagementGrpcPort;
+        private readonly DataManagementStorageSecureClient _client;
 
-        DataManagementStorageSecureClient DataManagementStorageClient { get; set; }
-
-        public DataManagementService(
-            IGrpcClientFactory<DataManagementStorageClient> grpcClientFactory,
-            ICertificateProvider certificateProvider,
-            IConfigurationService configurationService)
+        public DataManagementService(DataManagementStorageSecureClient client)
         {
-            _configurationService = configurationService;
-
-            _hostIpAddress = _configurationService.GetEnvironmentVariable("hostIpAddress");
-            _dataManagementGrpcPort = _configurationService.GetEnvironmentVariable("dataManagementGrpcPort");
-
-            DataManagementStorageClient = new DataManagementStorageSecureClient(grpcClientFactory, _hostIpAddress, _dataManagementGrpcPort, certificateProvider);
+            _client = client;
         }
 
-        public async Task<AddDepartmentResponse> AddDepartment(AddDepartmentRequest request) => await DataManagementStorageClient.AddDepartment(request);
+        public async Task<AddDepartmentResponse> AddDepartment(AddDepartmentRequest request) => await _client.AddDepartment(request);
 
-        public async Task<AddProcedureTypeResponse> AddProcedureType(AddProcedureTypeRequest request) => await DataManagementStorageClient.AddProcedureType(request);
+        public async Task<AddProcedureTypeResponse> AddProcedureType(AddProcedureTypeRequest request) => await _client.AddProcedureType(request);
 
-        public async Task DeleteDepartment(DeleteDepartmentRequest request) => await DataManagementStorageClient.DeleteDepartment(request);
+        public async Task DeleteDepartment(DeleteDepartmentRequest request) => await _client.DeleteDepartment(request);
 
-        public async Task DeleteProcedureType(DeleteProcedureTypeRequest request) => await DataManagementStorageClient.DeleteProcedureType(request);
+        public async Task DeleteProcedureType(DeleteProcedureTypeRequest request) => await _client.DeleteProcedureType(request);
 
-        public async Task<GetDepartmentsResponse> GetAllDepartments() => await DataManagementStorageClient.GetAllDepartments(new Empty());
+        public async Task<GetDepartmentsResponse> GetAllDepartments() => await _client.GetAllDepartments(new Empty());
 
-        public async Task<GetProcedureTypesResponse> GetProcedureTypesByDepartment(GetProcedureTypesByDepartmentRequest request) => await DataManagementStorageClient.GetProcedureTypesByDepartment(request);
+        public async Task<GetProcedureTypesResponse> GetProcedureTypesByDepartment(GetProcedureTypesByDepartmentRequest request) => await _client.GetProcedureTypesByDepartment(request);
 
-        public async Task<GetProcedureTypesResponse> GetAllProcedureTypes() => await DataManagementStorageClient.GetProceduresTypes(new Empty());
+        public async Task<GetProcedureTypesResponse> GetAllProcedureTypes() => await _client.GetProceduresTypes(new Empty());
 
-        public async Task<ProcedureTypeMessage> GetProcedureType(GetProcedureTypeRequest request) => await DataManagementStorageClient.GetProcedureType(request);
+        public async Task<ProcedureTypeMessage> GetProcedureType(GetProcedureTypeRequest request) => await _client.GetProcedureType(request);
     }
 }

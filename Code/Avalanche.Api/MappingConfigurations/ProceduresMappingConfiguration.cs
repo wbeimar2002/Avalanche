@@ -1,7 +1,10 @@
 ﻿using AutoMapper;
+
 using Avalanche.Api.ViewModels;
+
 using Ism.Library.V1.Protos;
 using Ism.SystemState.Models.Procedure;
+
 using System;
 
 namespace Avalanche.Api.MappingConfigurations

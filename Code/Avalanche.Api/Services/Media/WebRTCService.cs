@@ -1,46 +1,27 @@
-﻿using Avalanche.Shared.Infrastructure.Services.Settings;
-using Ism.Security.Grpc.Interfaces;
-using Ism.Streaming.Client.V1;
+﻿using Ism.Streaming.Client.V1;
 using Ism.Streaming.V1.Protos;
+
 using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
-using static Ism.Streaming.V1.Protos.WebRtcStreamer;
-using static Ism.Utility.Core.Preconditions;
 
 namespace Avalanche.Api.Services.Media
 {
     [ExcludeFromCodeCoverage]
-    public partial class WebRTCService : IWebRTCService
+    public partial class WebRtcService : IWebRTCService
     {
-        readonly IConfigurationService _configurationService;
-        readonly string _hostIpAddress;
+        private readonly WebRtcStreamerSecureClient _client;
 
-        WebRtcStreamerSecureClient WebRtcStreamerClient { get; set; }
-
-        public WebRTCService(IConfigurationService configurationService, 
-            IGrpcClientFactory<WebRtcStreamerClient> grpcClientFactory, 
-            ICertificateProvider certificateProvider)
+        public WebRtcService(WebRtcStreamerSecureClient client)
         {
-            _configurationService = ThrowIfNullOrReturn(nameof(configurationService), configurationService);
-            ThrowIfNull(nameof(grpcClientFactory), grpcClientFactory);
-            ThrowIfNull(nameof(certificateProvider), certificateProvider);
-
-            _hostIpAddress = _configurationService.GetEnvironmentVariable("hostIpAddress");
-            var mediaServiceGrpcPort = _configurationService.GetEnvironmentVariable("mediaServiceGrpcPort");
-
-            WebRtcStreamerClient = new WebRtcStreamerSecureClient(grpcClientFactory, _hostIpAddress, mediaServiceGrpcPort, certificateProvider);
+            _client = client;
         }
 
-        #region WebRTC
-        
-        public async Task<GetSourceStreamsResponse> GetSourceStreamsAsync() => await WebRtcStreamerClient.GetSourceStreams();
+        public Task DeInitSessionAsync(DeInitSessionRequest deInitSessionRequest) => _client.DeInitSession(deInitSessionRequest);
 
-        public Task HandleMessageAsync(HandleMessageRequest handleMessageRequest) => WebRtcStreamerClient.HandleMessage(handleMessageRequest);
+        public async Task<GetSourceStreamsResponse> GetSourceStreamsAsync() => await _client.GetSourceStreams();
 
-        public async Task<Ism.Streaming.V1.Protos.InitSessionResponse> InitSessionAsync(InitSessionRequest initSessionRequest) => await WebRtcStreamerClient.InitSession(initSessionRequest);
+        public Task HandleMessageAsync(HandleMessageRequest handleMessageRequest) => _client.HandleMessage(handleMessageRequest);
 
-        public Task DeInitSessionAsync(DeInitSessionRequest deInitSessionRequest) => WebRtcStreamerClient.DeInitSession(deInitSessionRequest);
-
-        #endregion WebRTC
+        public async Task<InitSessionResponse> InitSessionAsync(InitSessionRequest initSessionRequest) => await _client.InitSession(initSessionRequest);
     }
 }

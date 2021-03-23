@@ -1,33 +1,4 @@
-#See https://aka.ms/containerfastmode to understand how Visual Studio uses this Dockerfile to build your images for faster debugging.
-
-FROM mcr.microsoft.com/dotnet/core/aspnet:3.1-buster-slim AS base
+FROM mcr.microsoft.com/dotnet/core/aspnet:3.1.1-buster-slim
 WORKDIR /app
-EXPOSE 80
-EXPOSE 443
-
-FROM mcr.microsoft.com/dotnet/core/sdk:3.1-buster AS build
-WORKDIR /src
-COPY ["Avalanche.Api/Avalanche.Api.csproj", "Avalanche.Api/"]
-COPY ["Avalanche.Shared.Infrastructure/Avalanche.Shared.Infrastructure.csproj", "Avalanche.Shared.Infrastructure/"]
-COPY ["Avalanche.Shared.Domain/Avalanche.Shared.Domain.csproj", "Avalanche.Shared.Domain/"]
-
-COPY NuGet.Config ./
-RUN dotnet restore "Avalanche.Api/Avalanche.Api.csproj" --configfile NuGet.Config -nowarn:msb3202,nu1503
-
-COPY . .
-WORKDIR "/src/Avalanche.Api"
-
-ONBUILD RUN apt-get update --option Acquire::Check-Date=false && \
-            apt-get install --yes --no-install-recommends procps unzip && \
-            apt-get clean --yes && \
-            rm -rf /var/lib/apt/lists/*
-
-RUN dotnet build "Avalanche.Api.csproj" -c Release -o /app/build
-
-FROM build AS publish
-RUN dotnet publish "Avalanche.Api.csproj" -c Release -o /app/publish
-
-FROM base AS final
-WORKDIR /app
-COPY --from=publish /app/publish .
+COPY /publish .
 ENTRYPOINT ["dotnet", "Avalanche.Api.dll"]

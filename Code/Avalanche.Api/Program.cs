@@ -1,93 +1,61 @@
-using Avalanche.Shared.Infrastructure.Helpers;
 using Ism.Common.Core.Configuration.Models;
-using Ism.Common.Core.Extensions;
-using Ism.Security.Grpc.Configuration;
 using Ism.Storage.Configuration.Client.V1;
-using Microsoft.AspNetCore;
+
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.Extensions.Hosting;
-using Serilog;
-using Serilog.Events;
+using Microsoft.Extensions.Logging;
+
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.IO;
+
+using static Ism.Common.Core.Hosting.HostingUtilities;
 
 namespace Avalanche.Api
 {
     [ExcludeFromCodeCoverage]
-    public class Program
+    public static class Program
     {
         public static void Main(string[] args)
         {
-            var logFile = Environment.GetEnvironmentVariable("loggerFileName") ?? "avalancheapilogs.txt";
-            var logFolder = Environment.GetEnvironmentVariable("loggerFolder") ?? "/logs";
-
-            var logFilePath = Path.Combine(logFolder, logFile);
-
-            Int32 logFileSizeLimit = Convert.ToInt32(Environment.GetEnvironmentVariable("loggerFileSizeLimit") ?? "209715200");
-            Int32 retainedFileCountLimit = Convert.ToInt32(Environment.GetEnvironmentVariable("loggerRetainedFileCountLimit") ?? "5");
-
-            //https://github.com/serilog/serilog/wiki/Configuration-Basics
-            string seqUrl = Environment.GetEnvironmentVariable("seqUrl") ?? "http://seq:5341";//"http://localhost:5341"; 
-
-            LogEventLevel level = LogEventLevel.Information;
-
-            Log.Logger = new LoggerConfiguration()
-                .ReadFrom.AppSettings()
-                .Enrich.With(new ApplicationNameEnricher("Avalanche.Api"))
-                .Enrich.FromLogContext()
-                .WriteTo.File(
-                    path: logFilePath,
-                    rollingInterval: RollingInterval.Day,
-                    retainedFileCountLimit: retainedFileCountLimit,
-                    fileSizeLimitBytes: logFileSizeLimit,
-                    restrictedToMinimumLevel: level)
-                .WriteTo.Seq(seqUrl)
-                .WriteTo.Console(restrictedToMinimumLevel: level)
-                .CreateLogger();
-
+            // Create a simple hostLogger to log an exception during or before calling host.Build()
+            var hostLogger = CreateDefaultHostLogger(typeof(Program));
             try
             {
-                var configClient = ConfigurationServiceSecureClient.FromEnvironment();
-                CreateWebHostBuilder(args, configClient).Build().Run();
+                var configClient = ConfigurationServiceSecureClient.FromEnvironment(hostLogger);
+                var host = CreateInsecureIsmHostBuilder<Startup>(
+                    args,
+                    hostLogger,
+                    typeof(Program).Assembly,
+                    GetConfigurationServiceRequests(),
+                    configClient,
+                    HttpProtocols.Http1AndHttp2
+                )
+                .Build();
+
+                var loggerFactory = InitializeApplicationLoggerFactory(host);
+
+                // Overwrite the default hostLogger with one from DI so we can get better logging if there is a failure calling host.Run()
+                hostLogger = loggerFactory.CreateLogger(nameof(Program));
+                host.Run();
             }
             catch (Exception ex)
             {
-                Log.Fatal(ex, "Host terminated unexpectedly");
+                hostLogger.LogError(ex, $"{nameof(Avalanche)}.{nameof(Api)} host terminated unexpectedly");
                 throw;
             }
-            finally
-            {
-                Log.CloseAndFlush();
-            }
         }
-
-        public static IWebHostBuilder CreateWebHostBuilder(string[] args, ConfigurationServiceSecureClient configClient) =>
-            WebHost.CreateDefaultBuilder(args)
-                .UseSerilog()
-                .UseStartup<Startup>()
-                .ConfigureAppConfiguration((hostingContext, configBuilder) =>
-                {
-                    configBuilder.UseIsmConfigurationPattern(
-                        hostingContext.HostingEnvironment,
-                        GetConfigurationServiceRequests(),
-                        configClient,
-                        args);
-                })
-                .UseKestrel(options =>
-                {
-                    options.Limits.MaxRequestBodySize = 209715200;
-                });
 
         private static IEnumerable<ConfigurationServiceRequest> GetConfigurationServiceRequests()
         {
             // config types may be decorated with guid and version and other helper attributes
             var context = new ConfigurationContext();
-            var requests = new List<ConfigurationServiceRequest>();
-
-            // needed for grpc clients
-            requests.Add(new ConfigurationServiceRequest(nameof(GrpcServiceRegistry), 1, context));
+            var requests = new List<ConfigurationServiceRequest>
+            {
+                // needed for grpc clients
+                // new ConfigurationServiceRequest(nameof(GrpcServiceRegistry), 1, context)
+            };
 
             return requests;
         }

@@ -24,9 +24,9 @@ namespace Avalanche.Api.Controllers.V1
     [ExcludeFromCodeCoverage]
     public class FilesController : ControllerBase
     {
-        readonly ILogger _appLoggerService;
-        private ISecurityManager _securityManager;
-        private ICookieValidationService _cookieValidationService;
+        private readonly ILogger _appLoggerService;
+        private readonly ISecurityManager _securityManager;
+        private readonly ICookieValidationService _cookieValidationService;
 
         public FilesController(ILogger<FilesController> appLoggerService, ISecurityManager securityManager, ICookieValidationService cookieValidationService)
         {

@@ -1,53 +1,41 @@
-﻿using Avalanche.Shared.Infrastructure.Services.Settings;
-using Ism.PatientInfoEngine.Grpc;
-using Ism.Security.Grpc.Interfaces;
+﻿using Ism.PatientInfoEngine.Grpc;
 using Ism.Storage.PatientList.Client.V1;
+
 using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
-using static Ism.PatientInfoEngine.V1.Protos.PatientListService;
-using static Ism.Storage.PatientList.Client.V1.Protos.PatientListStorage;
 
 namespace Avalanche.Api.Services.Health
 {
     [ExcludeFromCodeCoverage]
     public class PieService : IPieService
     {
-        readonly IConfigurationService _configurationService;
+        private readonly PatientListSecureClient _patientListClient;
+        private readonly PatientListStorageSecureClient _storageClient;
 
-        PatientListSecureClient PatientListServiceClient { get; set; }
-        PatientListStorageSecureClient PatientListStorageClient { get; set; }
-
-        public PieService(IConfigurationService configurationService, IGrpcClientFactory<PatientListServiceClient> grpcClientFactory, IGrpcClientFactory<PatientListStorageClient> storageClientFactory, ICertificateProvider certificateProvider)
+        public PieService(PatientListStorageSecureClient storageClient, PatientListSecureClient patientListClient)
         {
-            _configurationService = configurationService;
-            var hostIpAddress = _configurationService.GetEnvironmentVariable("hostIpAddress");
-            var pieAddress = _configurationService.GetEnvironmentVariable("pieServiceAddress");
-
-            var pieServiceGrpcPort = _configurationService.GetEnvironmentVariable("pieServiceGrpcPort");
-            var storageServiceGrpcPort = _configurationService.GetEnvironmentVariable("storageServiceGrpcPort");
-            
-            PatientListServiceClient = new PatientListSecureClient(grpcClientFactory, /*pieAddress*/hostIpAddress, pieServiceGrpcPort, certificateProvider);
-            PatientListStorageClient = new PatientListStorageSecureClient(storageClientFactory, hostIpAddress, storageServiceGrpcPort, certificateProvider);
-        }
-
-        public async Task<Ism.PatientInfoEngine.V1.Protos.SearchResponse> Search(Ism.PatientInfoEngine.V1.Protos.SearchRequest searchRequest)
-        {
-            return await PatientListServiceClient.Search(searchRequest);
-        }
-
-        public async Task<Ism.Storage.PatientList.Client.V1.Protos.AddPatientRecordResponse> RegisterPatient(Ism.Storage.PatientList.Client.V1.Protos.AddPatientRecordRequest addPatientRecordRequest)
-        {
-            return await PatientListStorageClient.AddPatientRecord(addPatientRecordRequest);
-        }
-
-        public async Task UpdatePatient(Ism.Storage.PatientList.Client.V1.Protos.UpdatePatientRecordRequest updatePatientRecordRequest)
-        {
-            await PatientListStorageClient.UpdatePatientRecord(updatePatientRecordRequest);
+            _patientListClient = patientListClient;
+            _storageClient = storageClient;
         }
 
         public async Task<Ism.Storage.PatientList.Client.V1.Protos.DeletePatientRecordResponse> DeletePatient(Ism.Storage.PatientList.Client.V1.Protos.DeletePatientRecordRequest deletePatientRecordRequest)
         {
-            return await PatientListStorageClient.DeletePatientRecord(deletePatientRecordRequest);
+            return await _storageClient.DeletePatientRecord(deletePatientRecordRequest);
+        }
+
+        public async Task<Ism.Storage.PatientList.Client.V1.Protos.AddPatientRecordResponse> RegisterPatient(Ism.Storage.PatientList.Client.V1.Protos.AddPatientRecordRequest addPatientRecordRequest)
+        {
+            return await _storageClient.AddPatientRecord(addPatientRecordRequest);
+        }
+
+        public async Task<Ism.PatientInfoEngine.V1.Protos.SearchResponse> Search(Ism.PatientInfoEngine.V1.Protos.SearchRequest searchRequest)
+        {
+            return await _patientListClient.Search(searchRequest);
+        }
+
+        public async Task UpdatePatient(Ism.Storage.PatientList.Client.V1.Protos.UpdatePatientRecordRequest updatePatientRecordRequest)
+        {
+            await _storageClient.UpdatePatientRecord(updatePatientRecordRequest);
         }
     }
 }

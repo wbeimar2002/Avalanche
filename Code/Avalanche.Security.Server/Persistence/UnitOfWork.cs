@@ -5,9 +5,9 @@ namespace Avalanche.Security.Server.Persistence
 {
     public class UnitOfWork : IUnitOfWork
     {
-        private readonly AppDbContext _context;
+        private readonly SecurityDbContext _context;
 
-        public UnitOfWork(AppDbContext context)
+        public UnitOfWork(SecurityDbContext context)
         {
             _context = context;
         }
