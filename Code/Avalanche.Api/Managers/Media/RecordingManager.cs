@@ -1,5 +1,7 @@
 ﻿using Avalanche.Api.Services.Media;
 using Ism.Recorder.Core.V1.Protos;
+using Ism.SystemState.Client;
+using Ism.SystemState.Models.Procedure;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,23 +11,29 @@ namespace Avalanche.Api.Managers.Media
 {
     public class RecordingManager : IRecordingManager
     {
+        private readonly IStateClient _stateClient;
         readonly IRecorderService _recorderService;
 
-        public RecordingManager(IRecorderService recorderService)
+        public RecordingManager(IRecorderService recorderService, IStateClient stateClient)
         {
             _recorderService = recorderService;
+            _stateClient = stateClient;
         }
 
         public async Task CaptureImage()
         {
-            var now = DateTime.Now;
-            var hacky_temp_libid_for_demo = $"{now.Year}_{now.Month}_{now.Day}T{now.Hour}_{now.Minute}_{now.Second}";
+            var activeProcedure = await _stateClient.GetData<ActiveProcedureState>();
+            if (null == activeProcedure)
+            {
+                throw new InvalidOperationException("No active procedure exists");
+            }
+
             var message = new CaptureImageRequest()
             {
                 Record = new RecordMessage
                 {
-                    LibId = hacky_temp_libid_for_demo, // TODO: this is wrong and needs to come from the procedure
-                    RepositoryId = "cache" // TODO: this is wrong and needs to come from the procedure
+                    LibId = activeProcedure.LibraryId, 
+                    RepositoryId = activeProcedure.RepositoryId
                 },
             };
             await _recorderService.CaptureImage(message);
@@ -42,16 +50,16 @@ namespace Avalanche.Api.Managers.Media
 
         public async Task StartRecording()
         {
-#warning TODO: determine sourcing of this info.
-            //NOTE: it seems a bit awkward for the UI/API to need to know and/or generate this? Especially "libId"? 
-
-            var now = DateTime.Now;
-            var hacky_temp_libid_for_demo = $"{now.Year}_{now.Month}_{now.Day}T{now.Hour}_{now.Minute}_{now.Second}";
+            var activeProcedure = await _stateClient.GetData<ActiveProcedureState>();
+            if (null == activeProcedure)
+            {
+                throw new InvalidOperationException("No active procedure exists");
+            }
 
             var message = new RecordMessage
             {
-                LibId = hacky_temp_libid_for_demo,
-                RepositoryId = "cache"
+                LibId = activeProcedure.LibraryId,
+                RepositoryId = activeProcedure.RepositoryId
             };
 
             await _recorderService.StartRecording(message);

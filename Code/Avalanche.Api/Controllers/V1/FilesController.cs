@@ -53,7 +53,7 @@ namespace Avalanche.Api.Controllers.V1
             }
             catch (Exception exception)
             {
-                _appLoggerService.LogError(LoggerHelper.GetLogMessage(DebugLogType.Exception), exception);
+                _appLoggerService.LogError(exception, LoggerHelper.GetLogMessage(DebugLogType.Exception));
                 return new BadRequestObjectResult(exception.Get(env.IsDevelopment()));
             }
             finally
@@ -80,7 +80,7 @@ namespace Avalanche.Api.Controllers.V1
             }
             catch (Exception ex)
             {
-                _appLoggerService.LogError(LoggerHelper.GetLogMessage(DebugLogType.Exception), ex);
+                _appLoggerService.LogError(ex, LoggerHelper.GetLogMessage(DebugLogType.Exception));
                 return new BadRequestObjectResult(ex.Get(env.IsDevelopment()));
             }
             finally
@@ -97,18 +97,19 @@ namespace Avalanche.Api.Controllers.V1
         //      - Need some sort of "local" vs "vss" status so we know if we need to proxy the request to the vss.
         // NOTE: A separate endpoint is probably best for video files as well, since those need to support range headers / chunking
         [HttpGet("DemoGetImageFile")]
+        [ResponseCache(Location = ResponseCacheLocation.Client, Duration = 60 * 60 * 24)]
         public IActionResult DemoGetImageFile([FromQuery]string path)
         {
             try
             {
-                var libraryRoot = Environment.GetEnvironmentVariable("demoLibraryFolder");
+                var libraryRoot = Environment.GetEnvironmentVariable("LibraryDataRoot");
                 var translated = path.Replace('\\', '/').TrimStart('/');
                 var fullPath = System.IO.Path.Combine(libraryRoot, translated);
                 return PhysicalFile(fullPath, "image/jpeg");
             }
             catch (Exception ex)
             {
-                _appLoggerService.LogError(LoggerHelper.GetLogMessage(DebugLogType.Exception), ex);
+                _appLoggerService.LogError(ex, LoggerHelper.GetLogMessage(DebugLogType.Exception));
                 return BadRequest();
             }
         }
