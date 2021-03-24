@@ -189,12 +189,7 @@ stages:
 
 - stage: publish_te
   dependsOn: 'push_to_acr'
-  condition: |
-        and
-        (
-          eq(variables['Build.SourceBranchName'], 'dev'),
-          eq(variables['publish_te'], 'true')
-        )
+  
   
   jobs:
   - job: octo_rel_and_copy_to_network_share
