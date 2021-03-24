@@ -51,25 +51,6 @@ using Microsoft.Extensions.Hosting;
 using Serilog;
 
 using System.Diagnostics.CodeAnalysis;
-using System.Threading.Tasks;
-using static AvidisDeviceInterface.V1.Protos.Avidis;
-using static Ism.PatientInfoEngine.V1.Protos.PatientListService;
-using static Ism.PgsTimeout.V1.Protos.PgsTimeout;
-using static Ism.Recorder.Core.V1.Protos.Recorder;
-using static Ism.Routing.V1.Protos.Routing;
-using static Ism.Storage.Configuration.Client.V1.Protos.ConfigurationService;
-using static Ism.Storage.DataManagement.Client.V1.Protos.DataManagementStorage;
-using static Ism.Storage.PatientList.Client.V1.Protos.PatientListStorage;
-using static Ism.Streaming.V1.Protos.WebRtcStreamer;
-using Microsoft.AspNetCore.Http;
-using Avalanche.Api.Managers.Security;
-using Ism.Security.Grpc.Configuration;
-using System.Collections.Generic;
-using Ism.SystemState.Client.V1;
-using Avalanche.Api.Services.Security;
-using System.IdentityModel.Tokens.Jwt;
-using Ism.Common.Core.Configuration.Extensions;
-using static Ism.Library.Core.V1.Protos.LibraryService;
 
 namespace Avalanche.Api
 {
