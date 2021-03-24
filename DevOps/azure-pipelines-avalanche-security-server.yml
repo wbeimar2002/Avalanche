@@ -136,6 +136,13 @@ stages:
         arguments: '$(ImageNameLowercase) $(acrname).azurecr.io/$(ImageNameLowercase):$(tag)'
         addPipelineData: false
      
+     - task: Docker@2
+       displayName: 'Docker image -Tag w/ latest'
+       inputs:
+          command: 'tag'
+          arguments: '$(ImageNameLowercase) $(acrname).azurecr.io/$(ImageNameLowercase):latest'
+          addPipelineData: false
+
      # get ip so acr can give access for push
      # ip of the router if server is behing a firewall
      - bash: |
