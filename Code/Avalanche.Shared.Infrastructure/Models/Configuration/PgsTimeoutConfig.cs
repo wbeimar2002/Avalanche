@@ -1,8 +1,7 @@
 ﻿using Avalanche.Shared.Domain.Enumerations;
 using Avalanche.Shared.Domain.Models.Media;
-using System;
+
 using System.Collections.Generic;
-using System.Text;
 
 namespace Avalanche.Shared.Infrastructure.Models.Configuration
 {

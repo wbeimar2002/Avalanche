@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using Avalanche.Api.Services.Configuration;
+
 using Avalanche.Api.Services.Health;
 using Avalanche.Api.Services.Maintenance;
 using Avalanche.Api.Utilities;
@@ -7,10 +7,14 @@ using Avalanche.Api.ViewModels;
 using Avalanche.Shared.Domain.Models;
 using Avalanche.Shared.Infrastructure.Enumerations;
 using Avalanche.Shared.Infrastructure.Helpers;
+
 using Ism.Common.Core.Configuration.Models;
 using Ism.Storage.DataManagement.Client.V1.Protos;
+
 using Microsoft.AspNetCore.Http;
+
 using Newtonsoft.Json;
+
 using System;
 using System.Collections.Generic;
 using System.Dynamic;

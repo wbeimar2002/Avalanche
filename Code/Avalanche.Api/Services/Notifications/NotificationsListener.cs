@@ -13,9 +13,9 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Ism.SystemState.Models.Library;
 
 namespace Avalanche.Api.Services.Notifications
 {
@@ -51,9 +51,9 @@ namespace Avalanche.Api.Services.Notifications
             AddSubscription<VideoSourceStateChangedEvent>(evt => _hubContext.Clients.All.OnVideoSourceStateChanged(evt));
             AddSubscription<VideoSourceIdentityChangedEvent>(evt => _hubContext.Clients.All.OnVideoSourceIdentityChanged(evt));
             AddSubscription<VideoSinkSourceChangedEvent>(evt => _hubContext.Clients.All.OnVideoSinkSourceChanged(evt));
+            AddSubscription<DiskSpaceEvent>(evt => _hubContext.Clients.All.OnDiskSpaceStateChanged(evt));
 
             AddDataSubscription<ActiveProcedureState>(data => _hubContext.Clients.All.OnActiveProcedureStateChanged(_mapper.Map<Avalanche.Api.ViewModels.ActiveProcedureViewModel>(data)));
-
             AddDataSubscription<PgsDisplayStateData>(data => _hubContext.Clients.All.OnPgsDisplayStateDataChanged(data));
             AddDataSubscription<PgsTimeoutPlayerData>(data => _hubContext.Clients.All.OnPgsTimeoutPlayerDataChanged(data));
 

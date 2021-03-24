@@ -1,24 +1,43 @@
 using Avalanche.Api.Extensions;
 using Avalanche.Api.Hubs;
 using Avalanche.Api.Managers.Data;
-using Avalanche.Api.Managers.Patients;
 using Avalanche.Api.Managers.Licensing;
 using Avalanche.Api.Managers.Maintenance;
 using Avalanche.Api.Managers.Media;
 using Avalanche.Api.Managers.Notifications;
+using Avalanche.Api.Managers.Patients;
 using Avalanche.Api.Managers.Procedures;
-using Avalanche.Api.Services.Configuration;
+using Avalanche.Api.Managers.Security;
+using Avalanche.Api.Options;
 using Avalanche.Api.Services.Health;
 using Avalanche.Api.Services.Maintenance;
 using Avalanche.Api.Services.Media;
 using Avalanche.Api.Services.Notifications;
+using Avalanche.Api.Services.Security;
 using Avalanche.Api.Utilities;
 using Avalanche.Shared.Infrastructure.Models;
-using Avalanche.Shared.Infrastructure.Services.Settings;
+using Avalanche.Shared.Infrastructure.Options;
+
+using AvidisDeviceInterface.Client.V1;
+
 using Ism.Broadcaster.Services;
+using Ism.Common.Core.Configuration.Extensions;
+using Ism.Common.Core.Extensions;
+using Ism.Common.Core.Hosting.Configuration;
+using Ism.Library.Client.V1;
+using Ism.PatientInfoEngine.Client.V1.Extensions;
+using Ism.PgsTimeout.Client.V1;
+using Ism.Recorder.Client.V1;
+using Ism.Routing.Client.V1;
 using Ism.Security.Grpc;
+using Ism.Security.Grpc.Configuration;
 using Ism.Security.Grpc.Interfaces;
+using Ism.Storage.Configuration.Client.V1.Extensions;
+using Ism.Storage.DataManagement.Client.V1.Extensions;
+using Ism.Storage.PatientList.Client.V1.Extensions;
+using Ism.Streaming.Client.V1;
 using Ism.SystemState.Client;
+
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -28,29 +47,10 @@ using Microsoft.AspNetCore.Http.Features;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.IdentityModel.Tokens;
+
 using Serilog;
-using System;
+
 using System.Diagnostics.CodeAnalysis;
-using System.Threading.Tasks;
-using static AvidisDeviceInterface.V1.Protos.Avidis;
-using static Ism.PatientInfoEngine.V1.Protos.PatientList;
-using static Ism.PgsTimeout.V1.Protos.PgsTimeout;
-using static Ism.Recorder.Core.V1.Protos.Recorder;
-using static Ism.Routing.V1.Protos.Routing;
-using static Ism.Storage.Configuration.Client.V1.Protos.ConfigurationService;
-using static Ism.Storage.DataManagement.Client.V1.Protos.DataManagementStorage;
-using static Ism.Storage.PatientList.Client.V1.Protos.PatientListStorage;
-using static Ism.Streaming.V1.Protos.WebRtcStreamer;
-using Microsoft.AspNetCore.Http;
-using Avalanche.Api.Managers.Security;
-using Ism.Security.Grpc.Configuration;
-using System.Collections.Generic;
-using Ism.SystemState.Client.V1;
-using Avalanche.Api.Services.Security;
-using System.IdentityModel.Tokens.Jwt;
-using Ism.Common.Core.Configuration.Extensions;
-using static Ism.Library.V1.Protos.LibraryService;
 
 namespace Avalanche.Api
 {
@@ -59,36 +59,33 @@ namespace Avalanche.Api
     {
         public Startup(IConfiguration configuration)
         {
-            Configuration = configuration;
+            _configuration = configuration;
         }
 
-        public IConfiguration Configuration { get; }
+        private readonly IConfiguration _configuration;
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            //ASP.NET Features
             services.AddControllers();
             services.AddSignalR();
             services.AddMvc().AddNewtonsoftJson();
-
-            services.AddCustomSwagger();
             services.AddHttpContextAccessor();
-
+            services.AddCustomSwagger();
+            services.AddAutoMapper(typeof(Startup));
             services.Configure<FormOptions>(x =>
             {
                 x.MultipartBodyLengthLimit = 209715200;
             });
 
-            IConfigurationService configurationService = new ConfigurationService(Configuration);
-            services.AddSingleton(c => configurationService);
+            ConfigureAuthorization(services);
+            ConfigureCorsPolicy(services);
 
-            // needed for state client and maybe others
-            services.AddConfigurationPoco<GrpcServiceRegistry>(Configuration, nameof(GrpcServiceRegistry));
+            // Configuration
+            services.AddConfigurationLoggingOnStartup();
 
-            var grpcCertificate = configurationService.GetEnvironmentVariable("grpcCertificate");
-            var grpcPassword = configurationService.GetEnvironmentVariable("grpcPassword");
-            var grpcServerValidationCertificate = configurationService.GetEnvironmentVariable("grpcServerValidationCertificate");
-
+            // Transient
             services.AddTransient<IRoutingManager, RoutingManager>();
             services.AddTransient<IWebRTCManager, WebRTCManager>();
             services.AddTransient<IRecordingManager, RecordingManager>();
@@ -100,10 +97,9 @@ namespace Avalanche.Api
             services.AddTransient<INotificationsManager, NotificationsManager>();
             services.AddTransient<ISecurityManager, SecurityManager>();
 
-            //Don't change this, this need to be Singleton due to its behavior, until a good architecture will be applied
+            // Singleton
             services.AddSingleton<IPgsTimeoutManager, PgsTimeoutManager>();
-
-            services.AddSingleton<IWebRTCService, WebRTCService>();
+            services.AddSingleton<IWebRTCService, WebRtcService>();
             services.AddSingleton<IRecorderService, RecorderService>();
             services.AddSingleton<IAvidisService, AvidisService>();
             services.AddSingleton<IRoutingService, RoutingService>();
@@ -113,102 +109,46 @@ namespace Avalanche.Api
             services.AddSingleton<IStorageService, StorageService>();
             services.AddSingleton<IDataManagementService, DataManagementService>();
             services.AddSingleton<ILibraryService, LibraryService>();
-            
-            services.AddSingleton<ICertificateProvider>(new FileSystemCertificateProvider(grpcCertificate, grpcPassword, grpcServerValidationCertificate));
-            services.AddSingleton<IGrpcClientFactory<DataManagementStorageClient>, GrpcClientFactory<DataManagementStorageClient>>();
-            services.AddSingleton<IGrpcClientFactory<PatientListClient>, GrpcClientFactory<PatientListClient>>();
-            services.AddSingleton<IGrpcClientFactory<PatientListStorageClient>, GrpcClientFactory<PatientListStorageClient>>();
-            services.AddSingleton<IGrpcClientFactory<RecorderClient>, GrpcClientFactory<RecorderClient>>();
-            services.AddSingleton<IGrpcClientFactory<RoutingClient>, GrpcClientFactory<RoutingClient>>();
-            services.AddSingleton<IGrpcClientFactory<AvidisClient>, GrpcClientFactory<AvidisClient>>();
-            services.AddSingleton<IGrpcClientFactory<WebRtcStreamerClient>, GrpcClientFactory<WebRtcStreamerClient>>();
-            services.AddSingleton<IGrpcClientFactory<PgsTimeoutClient>, GrpcClientFactory<PgsTimeoutClient>>();
-            services.AddSingleton<IGrpcClientFactory<ConfigurationServiceClient>, GrpcClientFactory<ConfigurationServiceClient>>();
-            services.AddSingleton<IGrpcClientFactory<LibraryServiceClient>, GrpcClientFactory<LibraryServiceClient>>();
             services.AddSingleton<IAccessInfoFactory, AccessInfoFactory>();
-            services.AddSingleton<ICookieValidationService, CookieValidationService>();
 
-            services.AddHostedService<NotificationsListener>();
+            // gRPC Infrastructure
+            _ = services.AddConfigurationPoco<GrpcServiceRegistry>(_configuration, nameof(GrpcServiceRegistry));
+            _ = services.AddConfigurationPoco<HostingConfiguration>(_configuration, nameof(HostingConfiguration));
+            _ = services.AddConfigurationPoco<ClientCertificateConfiguration>(_configuration, nameof(ClientCertificateConfiguration));
+            _ = services.AddSingleton<ICertificateProvider, FileSystemCertificateProvider>();
 
-            services.AddAutoMapper(typeof(Startup));
+            // gRPC Clients
+            _ = services.AddAvidisSecureClient();
+            _ = services.AddConfigurationServiceSecureClient();
+            _ = services.AddDataManagementStorageSecureClient();
+            _ = services.AddLibraryServiceSecureClient();
+            _ = services.AddPatientListSecureClient();
+            _ = services.AddPatientListStorageSecureClient();
+            _ = services.AddPgsTimeoutSecureClient();
+            _ = services.AddRecorderSecureClient();
+            _ = services.AddRoutingSecureClient();
+            _ = services.AddWebRtcStreamerSecureClient();
+            _ = services.AddGrpcStateClient("AvalancheApi");
 
-            var stateServiceAddress = configurationService.GetEnvironmentVariable("stateServiceGrpcAddress");
-            var stateServicePort = configurationService.GetEnvironmentVariable("stateServiceGrpcPort");
-            services.AddGrpcStateClient("AvalancheApi");
-
-            ConfigureAuthorization(services);
-            ConfigureCorsPolicy(services);
+            // Hosted Services
+            services.AddHostedService<NotificationsListener>();            
         }
 
         private void ConfigureAuthorization(IServiceCollection services)
         {
-            services.Configure<TokenOptions>(Configuration.GetSection("TokenOptions"));
-            var tokenOptions = Configuration.GetSection("TokenOptions").Get<TokenOptions>();
+            // Add configuration for Auth
+            services.AddConfigurationPoco<TokenAuthConfiguration>(_configuration, nameof(TokenAuthConfiguration));
+            services.AddConfigurationPoco<AuthConfiguration>(_configuration, nameof(AuthConfiguration));
+            services.AddConfigurationPoco<CookieAuthConfiguration>(_configuration, nameof(CookieAuthConfiguration));
+            services.AddSingleton(sp => new SigningOptions(sp.GetRequiredService<AuthConfiguration>().SecretKey));
 
-            services.Configure<AuthSettings>(Configuration.GetSection("AuthSettings"));
-            var authSettings = Configuration.GetSection("AuthSettings").Get<AuthSettings>();
-
-            services.Configure<CookieSettings>(Configuration.GetSection("CookieSettings"));
-            var cookieSettings = Configuration.GetSection("CookieSettings").Get<CookieSettings>();
-
-            var signingConfigurations = new SigningConfigurations(authSettings.SecretKey);
-            services.AddSingleton(signingConfigurations);
-
-            var rootPath = Configuration.GetSection("hostingRootPath")?.Value ?? "/";
-
+            // Configure
             services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
-            .AddJwtBearer(jwtBearerOptions =>
-            {
-                jwtBearerOptions.TokenValidationParameters = JwtUtilities.GetDefaultJwtValidationParameters(tokenOptions, signingConfigurations);
+            .AddJwtBearer()
+            .AddCookie();
+            services.ConfigureOptions<ConfigureJwtBearerOptions>();
+            services.ConfigureOptions<ConfigureCookieAuthenticiationOptions>();
 
-                // From: https://docs.microsoft.com/en-us/aspnet/core/signalr/authn-and-authz?view=aspnetcore-3.1
-                // We have to hook the OnMessageReceived event in order to
-                // allow the JWT authentication handler to read the access
-                // token from the query string when a WebSocket or 
-                // Server-Sent Events request comes in.
-                jwtBearerOptions.Events = new JwtBearerEvents
-                {
-                    OnMessageReceived = context =>
-                    {
-                        var accessToken = context.Request.Query["access_token"];
-
-                        // If the request is for our hub...
-                        var path = context.HttpContext.Request.Path;
-                        if (!string.IsNullOrEmpty(accessToken))
-                        {
-                            if (path.StartsWithSegments(BroadcastHub.BroadcastHubRoute))
-                            {
-                                // Read the token out of the query string
-                                context.Token = accessToken;
-                            }
-                        }
-                        return Task.CompletedTask;
-                    }
-                };
-            })
-            .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, cookieOptions =>
-            {
-                cookieOptions.Cookie.HttpOnly = true;
-                cookieOptions.Cookie.IsEssential = true;
-                cookieOptions.Cookie.SecurePolicy = CookieSecurePolicy.Always;
-                cookieOptions.Cookie.SameSite = SameSiteMode.Strict;
-                cookieOptions.ExpireTimeSpan = TimeSpan.FromSeconds(cookieSettings.ExpirationSeconds);
-
-                cookieOptions.Cookie.Path = rootPath + cookieSettings.Path;
-                cookieOptions.LoginPath = "/login"; // this is route to angular app login page
-
-                // forward anything not to the cookie path to the jwt auth handler
-                cookieOptions.ForwardDefaultSelector = ctx =>
-                {
-                    if (ctx.Request.Path.StartsWithSegments(cookieSettings.Path, StringComparison.OrdinalIgnoreCase)) 
-                    { 
-                        return null;
-                    }
-                    return JwtBearerDefaults.AuthenticationScheme;
-                };
-
-                cookieOptions.EventsType = typeof(AvalancheCookieAuthenticationEvents);
-            });
 
             services.AddScoped<AvalancheCookieAuthenticationEvents>();
             services.AddSingleton<ICookieValidationService, CookieValidationService>();

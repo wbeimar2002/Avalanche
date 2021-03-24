@@ -6,6 +6,8 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
 using System;
+using Avalanche.Shared.Infrastructure.Options;
+
 using System.Security.Claims;
 using System.Threading.Tasks;
 
@@ -13,23 +15,19 @@ namespace Avalanche.Api.Managers.Security
 {
     public class SecurityManager : ISecurityManager
     {
-        readonly ICookieValidationService _cookieValidationService;
-        readonly SigningConfigurations _signingConfigurations;
-        readonly IOptions<TokenOptions> _tokenOptions;
-        readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly SigningOptions _signingConfigurations;
+        private readonly TokenAuthConfiguration _tokenConfiguration;
 
-        public SecurityManager(SigningConfigurations signingConfigurations,
-            IHttpContextAccessor httpContextAccessor,
-            IOptions<TokenOptions> tokenOptions)
+        public SecurityManager(SigningOptions signingConfigurations, TokenAuthConfiguration tokenConfiguration)
         {
             _signingConfigurations = signingConfigurations;
+            _tokenConfiguration = tokenConfiguration;
             _httpContextAccessor = httpContextAccessor;
-            _tokenOptions = tokenOptions;
         }
 
         public ClaimsIdentity CreateTokenIdentity(string jwtToken, string authenticationScheme)
         {
-            var tokenUser = JwtUtilities.ValidateToken(jwtToken, JwtUtilities.GetDefaultJwtValidationParameters(_tokenOptions.Value, _signingConfigurations));
+            var tokenUser = JwtUtilities.ValidateToken(jwtToken, JwtUtilities.GetDefaultJwtValidationParameters(_tokenConfiguration, _signingConfigurations));
 
             return new ClaimsIdentity(tokenUser.Claims, authenticationScheme);
         }

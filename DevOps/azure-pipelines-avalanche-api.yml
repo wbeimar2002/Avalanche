@@ -10,12 +10,10 @@ resources:
   - repository: devops
     type: git
     name: devops
-    ref: nh-pipeline-add-restore-build-test-yml
+    ref: dev
 
-#pool: #'ism-build-pool-on-prem'
-  
-  # use only ubuntu-latest
-  #vmImage: '$(pool_vm_image)'
+#pool:
+  #vmImage: $(PoolVmImage)
 
 variables:
 
@@ -41,132 +39,34 @@ stages:
      - checkout: self
      - checkout: devops
 
-    # resore solution
-
-     - task: NuGetCommand@2
-       displayName: 'NuGet restore **/*.sln'
-       inputs:
-          restoreSolution: '$(ProjectSolution)'
-          feedsToUse: 'select'
-          vstsFeed: '$(VstsFeed)'
-
-    # sonar 1 of 3
-     - task: SonarQubePrepare@4
-       condition: |
-        and
-        (
-          ne(variables['Build.Reason'], 'PullRequest'),
-          eq(variables['check_sonar_analysis'], 'true')
-        )
-      #condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))
-       displayName: 'Prepare analysis on SonarQube'
-       inputs:
-          SonarQube: sonarqube
-          projectKey: '$(SonarProjectKey)'
-          projectName: '$(SonarProject)'
-        
-     - task: SonarQubePrepare@4
-       condition: |
-        and
-        (
-          eq(variables['Build.Reason'], 'PullRequest'),
-          eq(variables['check_sonar_analysis'], 'true')
-        )
-       displayName: 'PR Prepare analysis on SonarQube'
-       #condition: and(succeeded(), eq(variables['Build.Reason'], 'PullRequest'))
-       inputs:
-          SonarQube: 'sonarqube'
-          projectKey: '$(SonarProjectKey)'
-          scannerMode: 'MSBuild'
-          extraProperties: |
-            sonar.pullrequest.vsts.instanceUrl=https://dev.azure.com/ismclouddev
-            sonar.pullrequest.vsts.project=$(AdoProject)
-            sonar.pullrequest.vsts.repository=$(Build.Repository.Name) 
-
-     - task: DotNetCoreCLI@2
-       displayName: 'dotnet build **/*.sln'
-       inputs:
-          projects: '$(ProjectSolution)'
-          ##arguments: '/p:Configuration=release'
-          #arguments: '--configuration=Avalanche-Api-Sonar'
-          arguments: '-c $(BuildConfiguration)'
-          vstsFeed: '$(VstsFeed)'
-          ##configuration: 'release'
-     
-     # test project 
-     - task: DotNetCoreCLI@2
-       displayName: 'dotnet test'
-       inputs:
-        command: test
-        projects: '$(TestProject)'
-        testRunTitle: TestResults
-        workingDirectory: avalanche-api/Code/Avalanche.Api.Tests
-        vstsFeed: '$(VstsFeed)'
-
-     - script: >-
-        dotnet tool install dotnet-reportgenerator-globaltool --global --configfile $(repo)\Reports\NuGet.Config
-       displayName: Install reportgenerator
-
      - task: PowerShell@2
-       displayName: Generate ADO Code Coverage reports
+       displayName: List environmental variables
        inputs:
-        filePath: 'devops\pipeline\coverage\publish_ado_code_coverage.ps1'
-        # filePath: 'avalanche-system-state\Reports\publish_ado_code_coverage.ps1'
-        arguments: '"$(Agent.TempDirectory)\TestResults" "$(repo)\Code\Test" "HtmlInline_AzurePipelines_Dark;Cobertura" "true" "true"'
-     
-     - task: PublishCodeCoverageResults@1
-       displayName: Publish ADO Code Coverage
-       inputs:
-        codeCoverageTool: "Cobertura"
-        summaryFileLocation: '$(Agent.TempDirectory)\TestResults\codecoverage\target\Cobertura.xml'
-        reportDirectory: '$(Agent.TempDirectory)\TestResults\codecoverage\target'
-        failIfCoverageEmpty: true
-        
-     #- script: >-
-        #dotnet test $(TestProject) /p:CollectCoverage=true /p:CoverletOutputFormat=cobertura
-       #displayName: 'code coverage analysis'
+        targetType: 'inline'
+        script: 'Get-ChildItem -Path Env:\'
 
-     #- task: PublishCodeCoverageResults@1
-       #displayName: 'Publish code coverage report'
-       #inputs:
-        #codeCoverageTool: 'Cobertura'
-        #summaryFileLocation: 'avalanche-api/Code/Avalanche.Api.Tests/coverage.cobertura.xml'
-     
-     #- task: CopyFiles@2
-       #displayName: 'Copy Files to: $(Agent.BuildDirectory)\TestResults'
-       #inputs:
-        #SourceFolder: '$(Agent.TempDirectory)'
-        #Contents: '*.trx'
-        #TargetFolder: '$(Agent.BuildDirectory)\TestResults'
+     - template: 'pipeline\templates\restore-build-test-msbuild4.yml@devops'
+       parameters: 
+          repo: '$(Repo)'
+          projectsolution: '$(ProjectSolution)'
+          buildConfiguration: '$(BuildConfiguration)'
+          buildplatform: '$(BuildPlatform)'
+          vstsfeed: '$(VstsFeed)'
+          adoproject: '$(AdoProject)'
+          testprojects: '$(TestProjects)'
+          sonarprojectkey: '$(SonarProjectKey)'
+          sonarprojetname: '$(SonarProjectKey)'
 
-     - task: CopyFiles@2
-       displayName: 'Copy Files to: $(Agent.BuildDirectory)\TestResults'
-       inputs:
-          SourceFolder: '$(Agent.TempDirectory)'
-          Contents: '*.trx'
-          TargetFolder: '$(Agent.BuildDirectory)\TestResults'
-     
-     - task: SonarQubeAnalyze@4
-       condition: and(succeeded(), eq(variables['check_sonar_analysis'], 'true'))
-      
-     - task: SonarQubePublish@4
-       condition: and(succeeded(), eq(variables['check_sonar_analysis'], 'true'))
-       inputs:
-        pollingTimeoutSec: 300
-        projectKey: $(SonarProjectKey)
-        projectName: $(SonarProject)
+     - template: 'pipeline\coverage\publish_ado_code_coverage-3.yml@devops'
 
-     # publishe code coverage to sonarqube   
-     - template: pipeline\templates\pub-sonarqube-codecoverage-win.yml@devops
-
-    # make app artifacts
+     # make app artifacts
      - task: DotNetCoreCLI@2
        displayName: 'Publish project'
        inputs:
         command: publish
         publishWebProjects: false
         projects: '$(CsProject)'
-        arguments: '-c $(BuildConfiguration)  -o app'
+        arguments: '-c $(BuildConfiguration)  -o publish'
         zipAfterPublish: false
         modifyOutputPath: false
 
@@ -177,31 +77,21 @@ stages:
         PathtoPublish: '$(PathtoApp)'
         ArtifactName: '$(PathtoApp)'
 
-     # make drop that is used later in copy to network a variable
-     - task: PublishBuildArtifacts@1
-       displayName: 'Publish Build Artifacts'
-       inputs:
-        PathtoPublish: '$(PathtoApp)'
-        ArtifactName: 'drop'
-    
-     - task: CopyFiles@2
-       inputs:
-        SourceFolder: '$(Repo)/DevOps/certificates'
-        Contents: '**'
-        TargetFolder: 'certificates'
-
-     - task: PublishBuildArtifacts@1
-       displayName: 'Publish Certiifcates'
-       inputs:
-        PathtoPublish: '$(Repo)/DevOps/certificates'
-        ArtifactName: certificates
-
 - stage: push_to_acr
+  condition: |
+        and
+        (
+          eq(variables['Build.SourceBranchName'], 'dev'),
+          eq(variables['push_to_acr'], 'true')
+        )
 
-  #condition: and(succeeded(), eq(variables['Build.SourceBranchName'], 'dev'))
   jobs:
      - job: push
-      
+       
+       #pool:
+    
+        #vmImage: 'ubuntu-latest'
+
        steps:  
        - checkout: self
        - checkout: devops
@@ -249,10 +139,17 @@ stages:
          displayName: "Set environment variable tag number"
 
        - task: Docker@2
-         displayName: 'Docker image -Tag'
+         displayName: 'Docker image -Tag w/ build number'
          inputs:
           command: 'tag'
           arguments: '$(ImageNameLowercase) $(acrname).azurecr.io/$(ImageNameLowercase):$(tag)'
+          addPipelineData: false
+          
+       - task: Docker@2
+         displayName: 'Docker image -Tag w/ latest'
+         inputs:
+          command: 'tag'
+          arguments: '$(ImageNameLowercase) $(acrname).azurecr.io/$(ImageNameLowercase):latest'
           addPipelineData: false
        
        # get ip so acr can give access for push
@@ -273,12 +170,20 @@ stages:
           arguments: '$(azuresubscription) $(acrname) $(ip)'
 
        - task: Docker@1
-         displayName: 'Docker push'
+         displayName: 'Docker push w/ build number'
          inputs:
           azureSubscriptionEndpoint: $(azuresubscription)
           azureContainerRegistry: '$(acrname).azurecr.io'
           command: 'Push an image'
           imageName: '$(acrname).azurecr.io/$(ImageNameLowercase):$(tag)'
+
+       - task: Docker@1
+         displayName: 'Docker push w/ latest'
+         inputs:
+          azureSubscriptionEndpoint: $(azuresubscription)
+          azureContainerRegistry: '$(acrname).azurecr.io'
+          command: 'Push an image'
+          imageName: '$(acrname).azurecr.io/$(ImageNameLowercase):latest'
           
        - task: AzureCLI@1
          displayName: 'Delete build server external ip from acr firewall'
@@ -289,10 +194,15 @@ stages:
 
 - stage: publish_te
   dependsOn: 'push_to_acr'
-  #condition: and(succeeded(), eq(variables['publish_te_to_octopus'], 'true'))
+  condition: |
+        and
+        (
+          eq(variables['Build.SourceBranchName'], 'dev'),
+          eq(variables['publish_te'], 'true')
+        )
   
   jobs:
-  - job: push_certifcates_to_octopus
+  - job: octo_rel_and_copy_to_network_share
 
     pool:
       name: ism-build-pool-on-prem
@@ -300,15 +210,12 @@ stages:
         - msbuild
 
     steps:
-  
-    - download: current
-      artifact: 'certificates'
- 
+
     - task: DownloadPipelineArtifact@2
       displayName: 'Download Pipeline Artifact'
       inputs:
         source: 'current'
-        artifactName: drop
+        artifactName: publish
         targetPath: '$(System.DefaultWorkingDirectory)\drop'
     
     - powershell: |
@@ -334,24 +241,6 @@ stages:
         write-host "package version="$ENV:PACKAGEVERSION
       displayName: 'Print package version'
 
-    - task: 'octopusdeploy.octopus-deploy-build-release-tasks.octopus-pack.OctopusPack@4'
-      displayName: 'Package avalanche-dicom'
-      inputs:
-        PackageId: '$(OctopusProject)'
-        PackageFormat: Zip
-        PackageVersion: '$(PackageVersion)'
-        SourcePath: '$(Pipeline.Workspace)/$(PathToCerificates)'
-        #SourcePath: '$(System.DefaultWorkingDirectory)/$(PathToCerificates)'
-        #SourcePath: '$(System.DefaultWorkingDirectory)/_avalanche-dicom/drop/Ism.Dicom/bin/Release'
-        OutputPath: '$(RELEASE.PRIMARYARTIFACTSOURCEALIAS)/Packages'
-
-    - task: octopusdeploy.octopus-deploy-build-release-tasks.octopus-push.OctopusPush@4
-      displayName: 'Push Packages to Octopus'
-      inputs:
-        OctoConnectedServiceName: 'Octopus Server'
-        Space: 'Spaces-1'
-        Package: '$(RELEASE.PRIMARYARTIFACTSOURCEALIAS)/Packages/$(OctopusProject).$(PackageVersion).zip'
-
     - task: octopusdeploy.octopus-deploy-build-release-tasks.octopus-create-release.OctopusCreateRelease@4
       displayName: 'Create Octopus Release'
       inputs:
@@ -361,6 +250,16 @@ stages:
        ReleaseNumber: '$(PackageVersion)'
        #Channel: 'Channels-167'
     
+    - template: 'pipeline\templates\copy-release-to-network-share.yml@devops'
+      parameters: 
+        adoProject: '$(AdoProject)'
+        vsProjectNamePrefix: '$(VsProjectNamePrefix)'
+        networkShare: '$(NetworkShare)'
+        networkSubPath: '$(NetworkSubPath)'
+        networkUser: '$(NetworkUser)'
+        networkPassword: '$(NetworkPassword)'
+        builidNumber: '$Env:BUILD_BUILDNUMBER'
+
     - template: 'pipeline\templates\copy-release-to-network-share.yml@devops'
       parameters: 
         adoProject: '$(AdoProject)'

@@ -1,19 +1,22 @@
 ﻿using AutoMapper;
+
 using Avalanche.Api.Managers.Procedures;
-using Avalanche.Api.Services.Configuration;
 using Avalanche.Api.Services.Health;
 using Avalanche.Api.Services.Maintenance;
 using Avalanche.Api.Utilities;
 using Avalanche.Api.ViewModels;
 using Avalanche.Shared.Domain.Models;
 using Avalanche.Shared.Infrastructure.Helpers;
-using Avalanche.Shared.Infrastructure.Models;
+
 using Google.Protobuf.WellKnownTypes;
+
 using Ism.Common.Core.Configuration.Models;
 using Ism.PatientInfoEngine.V1.Protos;
 using Ism.Storage.DataManagement.Client.V1.Protos;
 using Ism.SystemState.Client;
+
 using Microsoft.AspNetCore.Http;
+
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -54,7 +57,7 @@ namespace Avalanche.Api.Managers.Patients
             _httpContextAccessor = httpContextAccessor;
 
             user = HttpContextUtilities.GetUser(_httpContextAccessor.HttpContext);
-            configurationContext = _mapper.Map<Shared.Domain.Models.UserModel, ConfigurationContext>(user);
+            configurationContext = _mapper.Map<UserModel, ConfigurationContext>(user);
             configurationContext.IdnId = Guid.NewGuid().ToString();
         }
 
