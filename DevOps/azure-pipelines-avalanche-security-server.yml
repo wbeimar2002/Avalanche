@@ -78,7 +78,12 @@ stages:
 
     
 - stage: push_to_acr
-  
+  condition: |
+        and
+        (
+          eq(variables['Build.SourceBranchName'], 'dev'),
+          eq(variables['push_to_acr'], 'true')
+        )
 #condition: and(succeeded(), eq(variables['Build.SourceBranchName'], 'dev'))
   jobs:
    - job: push
@@ -185,7 +190,12 @@ stages:
 
 - stage: octopus_release
   dependsOn: push_to_acr
-
+  condition: |
+        and
+        (
+          eq(variables['Build.SourceBranchName'], 'dev'),
+          eq(variables['publish_te'], 'true')
+        )
 
   jobs:
    - job: push
