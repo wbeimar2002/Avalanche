@@ -167,6 +167,14 @@ stages:
         azureContainerRegistry: '$(acrname).azurecr.io'
         command: 'Push an image'
         imageName: '$(acrname).azurecr.io/$(ImageNameLowercase):$(tag)'
+
+     - task: Docker@1
+       displayName: 'Docker push'
+       inputs:
+        azureSubscriptionEndpoint: $(azuresubscription)
+        azureContainerRegistry: '$(acrname).azurecr.io'
+        command: 'Push an image'
+        imageName: '$(acrname).azurecr.io/$(ImageNameLowercase):latest'
         
      - task: AzureCLI@1
        displayName: 'Delete build server external ip from acr firewall'
