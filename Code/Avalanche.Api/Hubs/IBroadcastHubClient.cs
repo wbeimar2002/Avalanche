@@ -2,6 +2,7 @@
 using Ism.SystemState.Models.VideoRouting;
 using Ism.SystemState.Models.PgsTimeout;
 using System.Threading.Tasks;
+using Ism.SystemState.Models.Library;
 
 namespace Avalanche.Api.Hubs
 {
@@ -20,5 +21,7 @@ namespace Avalanche.Api.Hubs
         Task OnPgsDisplayStateDataChanged(PgsDisplayStateData pgsDisplayStateData);
 
         Task OnPgsTimeoutPlayerDataChanged(PgsTimeoutPlayerData pgsTimeoutPlayerData);
+
+        Task OnDiskSpaceStateChanged(DiskSpaceEvent diskSpaceEvent);
     }
 }
