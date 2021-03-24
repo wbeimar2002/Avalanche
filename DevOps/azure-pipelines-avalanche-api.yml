@@ -78,12 +78,7 @@ stages:
         ArtifactName: '$(PathtoApp)'
 
 - stage: push_to_acr
-  condition: |
-        and
-        (
-          eq(variables['Build.SourceBranchName'], 'dev'),
-          eq(variables['push_to_acr'], 'true')
-        )
+  
 
   jobs:
      - job: push
