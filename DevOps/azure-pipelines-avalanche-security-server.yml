@@ -56,7 +56,7 @@ stages:
           sonarprojectkey: '$(SonarProjectKey)'
           sonarprojetname: '$(SonarProjectKey)'
 
-     - template: 'pipeline\coverage\publish_ado_code_coverage-3.yml@devops'
+     #- template: 'pipeline\coverage\publish_ado_code_coverage-3.yml@devops'
 
      # make app artifacts
      - task: DotNetCoreCLI@2
