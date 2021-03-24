@@ -212,11 +212,11 @@ stages:
         Write-Host "##vso[task.setvariable variable=ImageNameLowercase;]$temp"
        displayName: 'Set image name'
      
-     - task: Docker@0
-       displayName: 'Docker command -Build'
-       inputs:
-        action: 'Run a Docker command'
-        customCommand: 'build -t $(ImageNameLowercase) . -f $(DockerFile)' 
+     # - task: Docker@0
+       # displayName: 'Docker command -Build'
+       # inputs:
+        # action: 'Run a Docker command'
+        # customCommand: 'build -t $(ImageNameLowercase) . -f $(DockerFile)' 
      
      - bash: |
         acrname='acr$(env)$(AppPlatform)global'
@@ -242,12 +242,12 @@ stages:
           }
        displayName: "Set environment variable tag number"
 
-     - task: Docker@2
-       displayName: 'Docker image -Tag'
-       inputs:
-        command: 'tag'
-        arguments: '$(ImageNameLowercase) $(acrname).azurecr.io/$(ImageNameLowercase):$(tag)'
-        addPipelineData: false
+     # - task: Docker@2
+       # displayName: 'Docker image -Tag'
+       # inputs:
+        # command: 'tag'
+        # arguments: '$(ImageNameLowercase) $(acrname).azurecr.io/$(ImageNameLowercase):$(tag)'
+        # addPipelineData: false
      
      # get ip so acr can give access for push
      # ip of the router if server is behing a firewall
@@ -266,13 +266,13 @@ stages:
         scriptPath: 'devops/resources/add-acr-firewall-ip.sh'
         arguments: '$(azuresubscription) $(acrname) $(ip)'
 
-     - task: Docker@1
-       displayName: 'Docker push'
-       inputs:
-        azureSubscriptionEndpoint: $(azuresubscription)
-        azureContainerRegistry: '$(acrname).azurecr.io'
-        command: 'Push an image'
-        imageName: '$(acrname).azurecr.io/$(ImageNameLowercase):$(tag)'
+     # - task: Docker@1
+       # displayName: 'Docker push'
+       # inputs:
+        # azureSubscriptionEndpoint: $(azuresubscription)
+        # azureContainerRegistry: '$(acrname).azurecr.io'
+        # command: 'Push an image'
+        # imageName: '$(acrname).azurecr.io/$(ImageNameLowercase):$(tag)'
         
      - task: AzureCLI@1
        displayName: 'Delete build server external ip from acr firewall'

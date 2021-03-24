@@ -1,21 +1,20 @@
-﻿using AutoFixture;
-using AutoMapper;
+﻿using AutoMapper;
+
 using Avalanche.Api.Managers.Data;
 using Avalanche.Api.MappingConfigurations;
-using Avalanche.Api.Services.Configuration;
 using Avalanche.Api.Services.Health;
 using Avalanche.Api.Services.Maintenance;
 using Avalanche.Shared.Domain.Models;
-using Avalanche.Shared.Infrastructure.Models;
-using Avalanche.Shared.Infrastructure.Services.Settings;
+
 using Ism.Common.Core.Configuration.Models;
-using Ism.Security.Grpc.Interfaces;
+
 using Microsoft.AspNetCore.Http;
+
 using Moq;
+
 using NUnit.Framework;
+
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Avalanche.Api.Tests.Managers

@@ -1,18 +1,18 @@
-﻿using Avalanche.Shared.Infrastructure.Models;
+﻿using Avalanche.Shared.Infrastructure.Options;
+
 using Ism.Utility.Core;
+
 using Microsoft.IdentityModel.Tokens;
+
 using System;
-using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
 using System.Security.Claims;
-using System.Threading.Tasks;
 
 namespace Avalanche.Api.Utilities
 {
     public class JwtUtilities
     {
-        public static TokenValidationParameters GetDefaultJwtValidationParameters(TokenOptions tokenOptions, SigningConfigurations signingConfigurations)
+        public static TokenValidationParameters GetDefaultJwtValidationParameters(TokenAuthConfiguration tokenOptions, SigningOptions signingConfigurations)
         {
             Preconditions.ThrowIfNull(nameof(tokenOptions), tokenOptions);
             Preconditions.ThrowIfNull(nameof(signingConfigurations), signingConfigurations);

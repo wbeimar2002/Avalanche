@@ -1,9 +1,12 @@
-using System.Threading.Tasks;
 using AutoMapper;
+
 using Avalanche.Security.Server.Controllers.Resources;
 using Avalanche.Security.Server.Core.Security.Tokens;
 using Avalanche.Security.Server.Core.Services;
+
 using Microsoft.AspNetCore.Mvc;
+
+using System.Threading.Tasks;
 
 namespace Avalanche.Security.Server.Controllers
 {

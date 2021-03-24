@@ -12,7 +12,7 @@ namespace Avalanche.Security.Server.Persistence
     /// </summary>
     public class DatabaseSeed
     {
-        public static void Seed(AppDbContext context, IPasswordHasher passwordHasher)
+        public static void Seed(SecurityDbContext context, IPasswordHasher passwordHasher)
         {
             context.Database.EnsureCreated();
             

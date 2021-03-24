@@ -1,20 +1,24 @@
 ﻿using AutoMapper;
+
 using Avalanche.Api.Services.Maintenance;
 using Avalanche.Api.Services.Media;
 using Avalanche.Api.ViewModels;
 using Avalanche.Shared.Domain.Enumerations;
 using Avalanche.Shared.Domain.Models.Media;
 using Avalanche.Shared.Infrastructure.Models.Configuration;
+
 using Ism.Common.Core.Configuration.Models;
 using Ism.PgsTimeout.V1.Protos;
 using Ism.SystemState.Client;
 using Ism.SystemState.Models.PgsTimeout;
 using Ism.SystemState.Models.VideoRouting;
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+
 using static Ism.Utility.Core.Preconditions;
 
 namespace Avalanche.Api.Managers.Media
@@ -141,7 +145,8 @@ namespace Avalanche.Api.Managers.Media
             var pgsData = await _stateClient.GetData<PgsDisplayStateData>();
 
             var state = pgsData?.DisplayStates.SingleOrDefault(x =>
-                string.Equals(x.AliasIndex.Alias, sink.Alias, StringComparison.OrdinalIgnoreCase) && x.AliasIndex.Index == sink.Index);
+                string.Equals(x.AliasIndex.Alias, sink.Alias, StringComparison.OrdinalIgnoreCase) 
+                && x.AliasIndex.Index == sink.Index.ToString()); //TODO: ToString temporary fix, Index should be int
 
             return new StateViewModel() { Value = (state?.Enabled ?? true).ToString() };
         }
@@ -226,14 +231,15 @@ namespace Avalanche.Api.Managers.Media
             var currentData = await _stateClient.GetData<PgsDisplayStateData>();
             var displayIndex = currentData.DisplayStates.FindIndex(x =>
                 string.Equals(x.AliasIndex.Alias, sinkStateViewModel.Sink.Alias, StringComparison.OrdinalIgnoreCase) &&
-                x.AliasIndex.Index == sinkStateViewModel.Sink.Index);
+                x.AliasIndex.Index == sinkStateViewModel.Sink.Index.ToString()); //TODO: Tostring on index is a temporary fix
             // update the state data
             await _stateClient.UpdateData<PgsDisplayStateData>(x =>
             {
                 // default state won't have an entry for a display
                 if (displayIndex < 0)
                 {
-                    x.Add(data => data.DisplayStates, new PgsDisplayState { AliasIndex = new AliasIndexModel(sinkStateViewModel.Sink.Alias, sinkStateViewModel.Sink.Index), Enabled = enabled });
+                    //TODO: Tostring on index is a temporary fix
+                    x.Add(data => data.DisplayStates, new PgsDisplayState { AliasIndex = new AliasIndexModel(sinkStateViewModel.Sink.Alias, sinkStateViewModel.Sink.Index.ToString()), Enabled = enabled });
                 }
                 else
                 {

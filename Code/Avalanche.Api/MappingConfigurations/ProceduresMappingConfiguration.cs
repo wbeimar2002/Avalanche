@@ -1,7 +1,10 @@
 ﻿using AutoMapper;
+
 using Avalanche.Api.ViewModels;
-using Ism.Library.Core.V1.Protos;
+
+using Ism.Library.V1.Protos;
 using Ism.SystemState.Models.Procedure;
+
 using System;
 
 namespace Avalanche.Api.MappingConfigurations
@@ -95,13 +98,13 @@ namespace Avalanche.Api.MappingConfigurations
                 .ForMember(dest => dest.Images, opt => opt.MapFrom(src => src.Images))
                 .ForMember(dest => dest.Videos, opt => opt.MapFrom(src => src.Videos));
 
-            CreateMap<Shared.Domain.Models.AccessInfoModel, Ism.Library.Core.V1.Protos.AccessInfoMessage>()
+            CreateMap<Shared.Domain.Models.AccessInfoModel, Ism.Library.V1.Protos.AccessInfoMessage>()
                 .ReverseMap();
 
-            CreateMap<Ism.Library.Core.V1.Protos.ProcedureIdMessage, ProcedureIdViewModel>()
+            CreateMap<Ism.Library.V1.Protos.ProcedureIdMessage, ProcedureIdViewModel>()
                 .ReverseMap();
 
-            CreateMap<Ism.Library.Core.V1.Protos.AllocateNewProcedureResponse, ProcedureAllocationViewModel>()
+            CreateMap<Ism.Library.V1.Protos.AllocateNewProcedureResponse, ProcedureAllocationViewModel>()
                 .ReverseMap();
 
 

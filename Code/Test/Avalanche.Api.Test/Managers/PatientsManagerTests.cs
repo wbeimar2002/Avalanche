@@ -1,20 +1,28 @@
 ﻿using AutoFixture;
+
 using AutoMapper;
+
 using Avalanche.Api.Managers.Patients;
 using Avalanche.Api.Managers.Procedures;
 using Avalanche.Api.MappingConfigurations;
-using Avalanche.Api.Services.Configuration;
 using Avalanche.Api.Services.Health;
 using Avalanche.Api.Services.Maintenance;
 using Avalanche.Api.Utilities;
 using Avalanche.Api.ViewModels;
 using Avalanche.Shared.Domain.Models;
+
 using Bogus;
+
 using Ism.Common.Core.Configuration.Models;
+using Ism.Storage.PatientList.Client.V1.Protos;
 using Ism.SystemState.Client;
+
 using Microsoft.AspNetCore.Http;
+
 using Moq;
+
 using NUnit.Framework;
+
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -521,23 +529,23 @@ namespace Avalanche.Api.Tests.Managers
                 });
 
             _storageService.Setup(mock => mock.GetJsonDynamic("SetupSettingsData", 1, It.IsAny<ConfigurationContext>())).ReturnsAsync(setupSettings);
-            _pieService.Setup(mock => mock.UpdatePatient(It.IsAny<Ism.Storage.PatientList.Client.V1.Protos.UpdatePatientRecordRequest>()));
+            _pieService.Setup(mock => mock.UpdatePatient(It.IsAny<UpdatePatientRecordRequest>()));
 
             var result = _manager.UpdatePatient(existingPatient);
 
             _dataManagementService.Verify(mock => mock.GetProcedureType(It.IsAny<Ism.Storage.DataManagement.Client.V1.Protos.GetProcedureTypeRequest>()), Times.Once);
             _dataManagementService.Verify(mock => mock.AddProcedureType(It.IsAny<Ism.Storage.DataManagement.Client.V1.Protos.AddProcedureTypeRequest>()), Times.Never);
-            _pieService.Verify(mock => mock.UpdatePatient(It.IsAny<Ism.Storage.PatientList.Client.V1.Protos.UpdatePatientRecordRequest>()), Times.Once);
+            _pieService.Verify(mock => mock.UpdatePatient(It.IsAny<UpdatePatientRecordRequest>()), Times.Once);
         }
 
         [Test]
         public async Task DeleteWorks()
         {
-            _pieService.Setup(mock => mock.DeletePatient(new Ism.Storage.PatientList.Client.V1.Protos.DeletePatientRecordRequest()));
+            _pieService.Setup(mock => mock.DeletePatient(It.IsAny<DeletePatientRecordRequest>()));
 
             await _manager.DeletePatient(It.IsAny<ulong>());
 
-            _pieService.Verify(mock => mock.DeletePatient(new Ism.Storage.PatientList.Client.V1.Protos.DeletePatientRecordRequest()), Times.Once);
+            _pieService.Verify(mock => mock.DeletePatient(It.IsAny<DeletePatientRecordRequest>()), Times.Once);
         }
 
 
