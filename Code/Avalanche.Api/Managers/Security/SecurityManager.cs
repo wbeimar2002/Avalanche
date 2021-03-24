@@ -17,12 +17,18 @@ namespace Avalanche.Api.Managers.Security
     {
         private readonly SigningOptions _signingConfigurations;
         private readonly TokenAuthConfiguration _tokenConfiguration;
+        private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly ICookieValidationService _cookieValidationService;
 
-        public SecurityManager(SigningOptions signingConfigurations, TokenAuthConfiguration tokenConfiguration)
+        public SecurityManager(SigningOptions signingConfigurations, 
+            TokenAuthConfiguration tokenConfiguration, 
+            IHttpContextAccessor httpContextAccessor,
+            ICookieValidationService cookieValidationService)
         {
             _signingConfigurations = signingConfigurations;
             _tokenConfiguration = tokenConfiguration;
             _httpContextAccessor = httpContextAccessor;
+            _cookieValidationService = cookieValidationService;
         }
 
         public ClaimsIdentity CreateTokenIdentity(string jwtToken, string authenticationScheme)
@@ -39,13 +45,16 @@ namespace Avalanche.Api.Managers.Security
             return identity;
         }
 
-        public void RevokeFileCookie()
+        public bool RevokeFileCookie()
         {
             var user = _httpContextAccessor.HttpContext.User;
             if (user?.Identity?.IsAuthenticated ?? false)
             {
                 _cookieValidationService.RevokePrincipal(user);
+                return true;
             }
+
+            return false;
         }
     }
 }

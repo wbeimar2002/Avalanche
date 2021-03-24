@@ -6,6 +6,6 @@ namespace Avalanche.Api.Managers.Security
     {
         ClaimsIdentity CreateTokenIdentity(string jwtToken, string authenticationScheme);
         ClaimsIdentity AcquireFileCookie(string jwtToken);
-        void RevokeFileCookie();
+        bool RevokeFileCookie();
     }
 }
