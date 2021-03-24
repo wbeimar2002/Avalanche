@@ -7,7 +7,6 @@ param (
         $localdisplay
       )
 
-
 write-host "home="$homedir                      # root directory reports folder
 write-host "testdir="$testdir                   # directory where reports are saved
 write-host "reporttype="$reporttype             # report type e.g. xml, html
@@ -55,3 +54,7 @@ if ( $localdisplay -eq 'true')
 {
         start $targetdir\index.Html
 }
+
+
+
+
