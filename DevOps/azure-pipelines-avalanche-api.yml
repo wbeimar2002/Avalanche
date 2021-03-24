@@ -205,7 +205,7 @@ stages:
       displayName: 'Download Pipeline Artifact'
       inputs:
         source: 'current'
-        artifactName: app
+        artifactName: publish
         targetPath: '$(System.DefaultWorkingDirectory)\drop'
     
     - powershell: |
