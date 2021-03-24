@@ -142,8 +142,9 @@ namespace Avalanche.Api.Managers.Media
             foreach (var source in listResult)
             {
                 // need to merge the HasVideo and VideoSource collections
-                var state = states.SourceStates.SingleOrDefault(x => string.Equals(x.Source.Alias, source.Sink.Alias, StringComparison.OrdinalIgnoreCase)
-                && x.Source.Index == source.Sink.Index);
+                var state = states.SourceStates.SingleOrDefault(x => 
+                string.Equals(x.Source.Alias, source.Sink.Alias, StringComparison.OrdinalIgnoreCase) &&
+                string.Equals(x.Source.Index, source.Sink.Index, StringComparison.OrdinalIgnoreCase));
 
                 source.HasVideo = state?.HasVideo ?? false;
             }
@@ -154,18 +155,18 @@ namespace Avalanche.Api.Managers.Media
         public async Task<VideoSourceModel> GetAlternativeSource(SinkModel sinkModel)
         {
             var source = await _routingService.GetAlternativeVideoSource(
-                new Ism.Routing.V1.Protos.GetAlternativeVideoSourceRequest 
-                { 
-                    Source = new Ism.Routing.V1.Protos.AliasIndexMessage 
-                    { 
-                        Alias = sinkModel.Alias, 
-                        Index = sinkModel.Index 
-                    } 
+                new Ism.Routing.V1.Protos.GetAlternativeVideoSourceRequest
+                {
+                    Source = new Ism.Routing.V1.Protos.AliasIndexMessage
+                    {
+                        Alias = sinkModel.Alias,
+                        Index = sinkModel.Index
+                    }
                 });
 
             var hasVideo = await _routingService.GetVideoStateForSource(
-                new Ism.Routing.V1.Protos.GetVideoStateForSourceRequest 
-                { 
+                new Ism.Routing.V1.Protos.GetVideoStateForSourceRequest
+                {
                     Source = new Ism.Routing.V1.Protos.AliasIndexMessage
                     {
                         Alias = sinkModel.Alias,
@@ -195,9 +196,9 @@ namespace Avalanche.Api.Managers.Media
                     && x.Sink.Index == sink.Sink.Index);
 
                 //get the current source
-                sink.Source = new SinkModel() 
+                sink.Source = new SinkModel()
                 {
-                    Alias = route.Source.Alias, 
+                    Alias = route.Source.Alias,
                     Index = route.Source.Index
                 };
             }
