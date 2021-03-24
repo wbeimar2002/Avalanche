@@ -23,6 +23,7 @@ using AvidisDeviceInterface.Client.V1;
 using Ism.Broadcaster.Services;
 using Ism.Common.Core.Configuration.Extensions;
 using Ism.Common.Core.Extensions;
+using Ism.Common.Core.Hosting.Configuration;
 using Ism.Library.Client.V1;
 using Ism.PatientInfoEngine.Client.V1.Extensions;
 using Ism.PgsTimeout.Client.V1;
@@ -112,6 +113,7 @@ namespace Avalanche.Api
 
             // gRPC Infrastructure
             _ = services.AddConfigurationPoco<GrpcServiceRegistry>(_configuration, nameof(GrpcServiceRegistry));
+            _ = services.AddConfigurationPoco<HostingConfiguration>(_configuration, nameof(HostingConfiguration));
             _ = services.AddConfigurationPoco<ClientCertificateConfiguration>(_configuration, nameof(ClientCertificateConfiguration));
             _ = services.AddSingleton<ICertificateProvider, FileSystemCertificateProvider>();
 
