@@ -10,7 +10,7 @@ resources:
   - repository: devops
     type: git
     name: devops
-    ref: generelize-template-for-test-root
+    ref: dev
 
 #pool:
   #vmImage: $(PoolVmImage)
