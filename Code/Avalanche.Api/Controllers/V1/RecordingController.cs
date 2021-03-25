@@ -79,5 +79,35 @@ namespace Avalanche.Api.Controllers.V1
                 _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
             }
         }
+
+        /// <summary>
+        /// Add a capture
+        /// </summary>
+        /// <param name="env"></param>
+        /// <returns></returns>
+        [HttpPost("captures")]
+        public async Task<IActionResult> CaptureImages([FromServices] IWebHostEnvironment env)
+        {
+            try
+            {
+                _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
+                await _recordingManager.CaptureImage();
+                return Ok();
+            }
+            catch (Grpc.Core.RpcException ex)
+            {
+                _appLoggerService.LogError(ex, LoggerHelper.GetLogMessage(DebugLogType.Exception), ex);
+                return BadRequest(ex.Get(Request.Path.ToString(), env.IsDevelopment()));
+            }
+            catch (Exception ex)
+            {
+                _appLoggerService.LogError(ex, LoggerHelper.GetLogMessage(DebugLogType.Exception), ex);
+                return new BadRequestObjectResult(ex.Get(env.IsDevelopment()));
+            }
+            finally
+            {
+                _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
+            }
+        }
     }
 }
