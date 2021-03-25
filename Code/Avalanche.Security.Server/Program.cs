@@ -16,7 +16,7 @@ namespace Avalanche.Security.Server
 {
     [ExcludeFromCodeCoverage]
     public static class Program
-	{
+    {
         public static void Main(string[] args)
         {
             // Create a simple hostLogger to log an exception during or before calling host.Build()
@@ -52,7 +52,7 @@ namespace Avalanche.Security.Server
             {
                 hostLogger.LogError(ex, $"{nameof(Avalanche.Security)}.{nameof(Server)} host terminated unexpectedly");
                 throw;
-            }     
+            }
         }
     }
 }

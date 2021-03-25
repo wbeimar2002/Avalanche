@@ -94,31 +94,19 @@ namespace Avalanche.Api.Controllers.V1
                 await _recordingManager.CaptureImage();
                 return Ok();
             }
-            catch (Exception exception)
+            catch (Grpc.Core.RpcException ex)
             {
-                _appLoggerService.LogError(LoggerHelper.GetLogMessage(DebugLogType.Exception), exception);
-                return new BadRequestObjectResult(exception.Get(env.IsDevelopment()));
+                _appLoggerService.LogError(ex, LoggerHelper.GetLogMessage(DebugLogType.Exception), ex);
+                return BadRequest(ex.Get(Request.Path.ToString(), env.IsDevelopment()));
+            }
+            catch (Exception ex)
+            {
+                _appLoggerService.LogError(ex, LoggerHelper.GetLogMessage(DebugLogType.Exception), ex);
+                return new BadRequestObjectResult(ex.Get(env.IsDevelopment()));
             }
             finally
             {
                 _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
-            }
-        }
-
-        [HttpGet("captures/preview")]
-        [AllowAnonymous]
-        public IActionResult GetCapturesPreview([FromQuery] string path)
-        {
-            try
-            {
-                _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
-                var fullPath = _recordingManager.GetCapturePreview(path);
-                return PhysicalFile(fullPath, "image/jpeg");
-            }
-            catch (Exception ex)
-            {
-                _appLoggerService.LogError(LoggerHelper.GetLogMessage(DebugLogType.Exception), ex);
-                return BadRequest();
             }
         }
     }

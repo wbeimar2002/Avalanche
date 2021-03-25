@@ -11,6 +11,6 @@ namespace Avalanche.Shared.Infrastructure.Models
         public string ReasonPhrase { get; set; }
         public string Description { get; set; }
         public string StackTrace { get; set; }
-        public int Result { get; set; }
+        public Dictionary<string,string> FieldViolations { get; set; }
     }
 }

@@ -7,6 +7,7 @@ using Ism.SystemState.Models;
 using Ism.SystemState.Models.Procedure;
 using Ism.SystemState.Models.VideoRouting;
 using Ism.SystemState.Models.PgsTimeout;
+using Ism.SystemState.Models.Exceptions;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
@@ -55,6 +56,8 @@ namespace Avalanche.Api.Services.Notifications
             AddDataSubscription<ActiveProcedureState>(data => _hubContext.Clients.All.OnActiveProcedureStateChanged(_mapper.Map<Avalanche.Api.ViewModels.ActiveProcedureViewModel>(data)));
             AddDataSubscription<PgsDisplayStateData>(data => _hubContext.Clients.All.OnPgsDisplayStateDataChanged(data));
             AddDataSubscription<PgsTimeoutPlayerData>(data => _hubContext.Clients.All.OnPgsTimeoutPlayerDataChanged(data));
+
+            AddSubscription<SystemErrorRaisedEvent>(evt => _hubContext.Clients.All.OnSystemErrorRaised(evt));
 
             return Task.CompletedTask;
         }

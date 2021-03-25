@@ -1,9 +1,0 @@
-{
-  "Routing": {
-    "Mode": "1"
-  },
-  "Recording": {
-    "BackgroundRecordingEnabled": "true",
-    "AutoClip": "true"
-  }
-}

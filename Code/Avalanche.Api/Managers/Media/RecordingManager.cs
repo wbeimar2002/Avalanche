@@ -43,9 +43,9 @@ namespace Avalanche.Api.Managers.Media
         // Need to define and implement correct image retrieval patterns. Not in scope of current work, but the following is not at all correct.
         public string GetCapturePreview(string path)
         {
-            var libraryRoot = Environment.GetEnvironmentVariable("demoLibraryFolder");
+            var libraryRoot = Environment.GetEnvironmentVariable("LibraryDataRoot");
             var translated = path.Replace('\\', '/').TrimStart('/');
-            return System.IO.Path.Combine(libraryRoot, translated);
+            return System.IO.Path.Combine(libraryRoot, translated);           
         }
 
         public async Task StartRecording()
