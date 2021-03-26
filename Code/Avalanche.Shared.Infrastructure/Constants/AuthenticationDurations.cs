@@ -6,6 +6,7 @@ namespace Avalanche.Shared.Infrastructure.Constants
     {
         public const long MaxSessionDuration = 86400;
         public const long MinSessionDuration = 60;
+        public const long DefaultTokenDuration = 600;
         public const long DefaultSessionDuration = 900;
 
         public static bool Validate(long sessionDuration)

@@ -57,7 +57,7 @@ namespace Avalanche.Security.Server.Security.Tokens
             var refreshToken = new RefreshToken
             (
                 token : _passwordHaser.HashPassword(Guid.NewGuid().ToString()),
-                expiration : DateTime.UtcNow.AddSeconds(_tokenConfiguration.ExpirationSeconds).Ticks
+                expiration : DateTime.UtcNow.AddSeconds(_tokenConfiguration.RefreshExpirationSeconds).Ticks
             );
 
             return refreshToken;
