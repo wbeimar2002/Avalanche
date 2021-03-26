@@ -9,9 +9,9 @@ namespace Avalanche.Api.Services.Health
     [ExcludeFromCodeCoverage]
     public class LibraryService : ILibraryService
     {
-        private readonly LibraryServiceSecureClient _client;
+        private readonly LibraryActiveProcedureServiceSecureClient _client;
 
-        public LibraryService(LibraryServiceSecureClient client)
+        public LibraryService(LibraryActiveProcedureServiceSecureClient client)
         {
             _client = client;
         }

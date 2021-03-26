@@ -52,7 +52,7 @@ namespace Avalanche.Api.Controllers.V1
             }
             catch (Exception exception)
             {
-                _appLoggerService.LogError(LoggerHelper.GetLogMessage(DebugLogType.Exception), exception);
+                _appLoggerService.LogError(exception, LoggerHelper.GetLogMessage(DebugLogType.Exception));
                 return new BadRequestObjectResult(exception.Get(env.IsDevelopment()));
             }
             finally
@@ -78,7 +78,7 @@ namespace Avalanche.Api.Controllers.V1
             }
             catch (Exception exception)
             {
-                _appLoggerService.LogError(LoggerHelper.GetLogMessage(DebugLogType.Exception), exception);
+                _appLoggerService.LogError(exception, LoggerHelper.GetLogMessage(DebugLogType.Exception));
                 return new BadRequestObjectResult(exception.Get(env.IsDevelopment()));
             }
             finally
@@ -105,7 +105,7 @@ namespace Avalanche.Api.Controllers.V1
             }
             catch (Exception exception)
             {
-                _appLoggerService.LogError(LoggerHelper.GetLogMessage(DebugLogType.Exception), exception);
+                _appLoggerService.LogError(exception, LoggerHelper.GetLogMessage(DebugLogType.Exception));
                 return new BadRequestObjectResult(exception.Get(env.IsDevelopment()));
             }
             finally
@@ -132,7 +132,7 @@ namespace Avalanche.Api.Controllers.V1
             }
             catch (Exception exception)
             {
-                _appLoggerService.LogError(LoggerHelper.GetLogMessage(DebugLogType.Exception), exception);
+                _appLoggerService.LogError(exception, LoggerHelper.GetLogMessage(DebugLogType.Exception));
                 return new BadRequestObjectResult(exception.Get(env.IsDevelopment()));
             }
             finally
@@ -159,7 +159,7 @@ namespace Avalanche.Api.Controllers.V1
             }
             catch (Exception exception)
             {
-                _appLoggerService.LogError(LoggerHelper.GetLogMessage(DebugLogType.Exception), exception);
+                _appLoggerService.LogError(exception, LoggerHelper.GetLogMessage(DebugLogType.Exception));
                 return new BadRequestObjectResult(exception.Get(env.IsDevelopment()));
             }
             finally
@@ -185,7 +185,7 @@ namespace Avalanche.Api.Controllers.V1
             }
             catch (Exception exception)
             {
-                _appLoggerService.LogError(LoggerHelper.GetLogMessage(DebugLogType.Exception), exception);
+                _appLoggerService.LogError(exception, LoggerHelper.GetLogMessage(DebugLogType.Exception));
                 return new BadRequestObjectResult(exception.Get(env.IsDevelopment()));
             }
             finally
