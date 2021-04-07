@@ -94,11 +94,6 @@ namespace Avalanche.Api.Controllers.V1
                 await _recordingManager.CaptureImage();
                 return Ok();
             }
-            catch (Grpc.Core.RpcException ex)
-            {
-                _appLoggerService.LogError(ex, LoggerHelper.GetLogMessage(DebugLogType.Exception), ex);
-                return BadRequest(ex.Get(Request.Path.ToString(), env.IsDevelopment()));
-            }
             catch (Exception ex)
             {
                 _appLoggerService.LogError(ex, LoggerHelper.GetLogMessage(DebugLogType.Exception), ex);

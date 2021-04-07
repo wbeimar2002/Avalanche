@@ -6,6 +6,8 @@ using System.Text;
 using Ism.Common.Core.Grpc.Extensions;
 using Google.Protobuf.Collections;
 using static Google.Rpc.BadRequest.Types;
+using Newtonsoft.Json;
+using Ism.Common.Core.Protos.V1;
 
 namespace Avalanche.Shared.Infrastructure.Extensions
 {
@@ -13,38 +15,46 @@ namespace Avalanche.Shared.Infrastructure.Extensions
     {
         public static Error Get(this Exception exception, bool isDevelopment)
         {
-            return new Error()
+            if ((exception is RpcException rpcException))
             {
-                Code = -1,
-                Description = exception.Message,
-                StackTrace = isDevelopment ? exception.StackTrace : string.Empty
-            };
-        }
+                var customError = rpcException.GetDetail<CustomError>();
 
-        public static Error Get(this RpcException exception, string path, bool isDevelopment)
-        {
-            var info = exception.GetDetail<Google.Rpc.ErrorInfo>();
-            var badRequest = exception.GetDetail<Google.Rpc.BadRequest>();
-
-            if (info == null)
-            {
-                return new Error()
+                if (customError == null)
                 {
-                    Code = -1,
-                    RequestUrl = path,
-                    Description = exception.Message,
-                    StackTrace = isDevelopment ? exception.StackTrace : string.Empty
-                };
+                    return new Error()
+                    {
+                        Code = -1,
+                        Description = rpcException.Message,
+                        StackTrace = isDevelopment ? rpcException.StackTrace : string.Empty
+                    };
+                }
+                else
+                {
+                    var fieldViolations = new Dictionary<string, string>();
+                    if (customError.FieldViolations != null)
+                    {
+                        foreach (var item in customError.FieldViolations)
+                        {
+                            fieldViolations.Add(item.Key, item.Value);
+                        }
+                    }
+
+                    return new Error()
+                    {
+                        Code = customError.Code,
+                        Description = customError.Description,
+                        StackTrace = customError.StackTrace,
+                        FieldViolations = fieldViolations
+                    };
+                }
             }
             else
             {
                 return new Error()
                 {
-                    Code = (int)exception.StatusCode,
-                    RequestUrl = path,
-                    ReasonPhrase = info.Reason,
-                    StackTrace = isDevelopment ? exception.StackTrace : string.Empty,
-                    FieldViolations = badRequest == null ? null : badRequest.FieldViolations.GetDictionary()
+                    Code = -1,
+                    Description = exception.Message,
+                    StackTrace = isDevelopment ? exception.StackTrace : string.Empty
                 };
             }
         }

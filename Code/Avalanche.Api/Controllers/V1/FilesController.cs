@@ -102,11 +102,6 @@ namespace Avalanche.Api.Controllers.V1
                 var fullPath = _recordingManager.GetCapturePreview(path);
                 return PhysicalFile(fullPath, "image/jpeg");
             }
-            catch (Grpc.Core.RpcException ex)
-            {
-                _appLoggerService.LogError(LoggerHelper.GetLogMessage(DebugLogType.Exception), ex);
-                return BadRequest(ex.Get(Request.Path.ToString(), env.IsDevelopment()));
-            }
             catch (Exception ex)
             {
                 _appLoggerService.LogError(LoggerHelper.GetLogMessage(DebugLogType.Exception), ex);
