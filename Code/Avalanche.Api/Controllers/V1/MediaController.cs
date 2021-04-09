@@ -25,9 +25,11 @@ namespace Avalanche.Api.Controllers.V1
     {
         readonly ILogger<MediaController> _logger;
         readonly IPgsTimeoutManager _pgsTimeoutManager;
+        readonly IWebHostEnvironment _environment;
 
-        public MediaController(ILogger<MediaController> logger, IPgsTimeoutManager pgsTimeoutManager)
+        public MediaController(ILogger<MediaController> logger, IPgsTimeoutManager pgsTimeoutManager, IWebHostEnvironment environment)
         {
+            _environment = environment;
             _logger = ThrowIfNullOrReturn(nameof(logger), logger);
             _pgsTimeoutManager = ThrowIfNullOrReturn(nameof(pgsTimeoutManager), pgsTimeoutManager);
         }
@@ -51,8 +53,8 @@ namespace Avalanche.Api.Controllers.V1
             }
             catch (Exception ex)
             {
-                _logger.LogError(LoggerHelper.GetLogMessage(DebugLogType.Exception), ex);
-                return new BadRequestObjectResult(ex.Get(env.IsDevelopment()));
+                _logger.LogError(ex, LoggerHelper.GetLogMessage(DebugLogType.Exception), ex);
+                return new BadRequestObjectResult(ex.Get(_environment.IsDevelopment()));
             }
             finally
             {
@@ -67,7 +69,7 @@ namespace Avalanche.Api.Controllers.V1
         /// <param name="env"></param>
         /// <returns></returns>
         [HttpPut("pgs/sinks/state")]
-        public async Task<IActionResult> SetPgsStateForSink([FromBody]SinkStateViewModel sinkState, [FromServices] IWebHostEnvironment env)
+        public async Task<IActionResult> SetPgsStateForSink([FromBody]SinkStateViewModel sinkState)
         {
             try
             {
@@ -77,8 +79,8 @@ namespace Avalanche.Api.Controllers.V1
             }
             catch (Exception ex)
             {
-                _logger.LogError(LoggerHelper.GetLogMessage(DebugLogType.Exception), ex);
-                return new BadRequestObjectResult(ex.Get(env.IsDevelopment()));
+                _logger.LogError(ex, LoggerHelper.GetLogMessage(DebugLogType.Exception), ex);
+                return new BadRequestObjectResult(ex.Get(_environment.IsDevelopment()));
             }
             finally
             {
@@ -95,7 +97,7 @@ namespace Avalanche.Api.Controllers.V1
         /// <returns></returns>
         [HttpGet("pgs/sinks/state")]
         [Produces(typeof(StateViewModel))]
-        public async Task<IActionResult> GetPgsStateForSink([FromQuery] string alias, [FromQuery] string index, [FromServices] IWebHostEnvironment env)
+        public async Task<IActionResult> GetPgsStateForSink([FromQuery] string alias, [FromQuery] string index)
         {
             try
             {
@@ -110,8 +112,8 @@ namespace Avalanche.Api.Controllers.V1
             }
             catch (Exception ex)
             {
-                _logger.LogError(LoggerHelper.GetLogMessage(DebugLogType.Exception), ex);
-                return new BadRequestObjectResult(ex.Get(env.IsDevelopment()));
+                _logger.LogError(ex, LoggerHelper.GetLogMessage(DebugLogType.Exception), ex);
+                return new BadRequestObjectResult(ex.Get(_environment.IsDevelopment()));
             }
             finally
             {
@@ -130,7 +132,7 @@ namespace Avalanche.Api.Controllers.V1
         /// <param name="env"></param>
         /// <returns></returns>
         [HttpPut("pgs/volume/level/{level}")]
-        public async Task<IActionResult> SetPgsVolume(double level, [FromServices] IWebHostEnvironment env)
+        public async Task<IActionResult> SetPgsVolume(double level)
         {
             try
             {
@@ -140,8 +142,8 @@ namespace Avalanche.Api.Controllers.V1
             }
             catch (Exception ex)
             {
-                _logger.LogError(LoggerHelper.GetLogMessage(DebugLogType.Exception), ex);
-                return new BadRequestObjectResult(ex.Get(env.IsDevelopment()));
+                _logger.LogError(ex, LoggerHelper.GetLogMessage(DebugLogType.Exception), ex);
+                return new BadRequestObjectResult(ex.Get(_environment.IsDevelopment()));
             }
             finally
             {
@@ -166,8 +168,8 @@ namespace Avalanche.Api.Controllers.V1
             }
             catch (Exception ex)
             {
-                _logger.LogError(LoggerHelper.GetLogMessage(DebugLogType.Exception), ex);
-                return new BadRequestObjectResult(ex.Get(env.IsDevelopment()));
+                _logger.LogError(ex, LoggerHelper.GetLogMessage(DebugLogType.Exception), ex);
+                return new BadRequestObjectResult(ex.Get(_environment.IsDevelopment()));
             }
             finally
             {
@@ -181,7 +183,7 @@ namespace Avalanche.Api.Controllers.V1
         /// <param name="env"></param>
         /// <returns></returns>
         [HttpPut("pgs/volume/mute/{muteState}")]
-        public async Task<IActionResult> SetPgsMute(bool muteState, [FromServices] IWebHostEnvironment env)
+        public async Task<IActionResult> SetPgsMute(bool muteState)
         {
             try
             {
@@ -191,8 +193,8 @@ namespace Avalanche.Api.Controllers.V1
             }
             catch (Exception ex)
             {
-                _logger.LogError(LoggerHelper.GetLogMessage(DebugLogType.Exception), ex);
-                return new BadRequestObjectResult(ex.Get(env.IsDevelopment()));
+                _logger.LogError(ex, LoggerHelper.GetLogMessage(DebugLogType.Exception), ex);
+                return new BadRequestObjectResult(ex.Get(_environment.IsDevelopment()));
             }
             finally
             {
@@ -217,8 +219,8 @@ namespace Avalanche.Api.Controllers.V1
             }
             catch (Exception ex)
             {
-                _logger.LogError(LoggerHelper.GetLogMessage(DebugLogType.Exception), ex);
-                return new BadRequestObjectResult(ex.Get(env.IsDevelopment()));
+                _logger.LogError(ex, LoggerHelper.GetLogMessage(DebugLogType.Exception), ex);
+                return new BadRequestObjectResult(ex.Get(_environment.IsDevelopment()));
             }
             finally
             {
@@ -233,7 +235,7 @@ namespace Avalanche.Api.Controllers.V1
         /// <param name="env"></param>
         /// <returns></returns>
         [HttpPut("pgs/files/videos")]
-        public async Task<IActionResult> SetCurrentGreetingVideo([FromBody]GreetingVideoModel greetingVideo, [FromServices] IWebHostEnvironment env)
+        public async Task<IActionResult> SetCurrentGreetingVideo([FromBody]GreetingVideoModel greetingVideo)
         {
             try
             {
@@ -243,8 +245,8 @@ namespace Avalanche.Api.Controllers.V1
             }
             catch (Exception ex)
             {
-                _logger.LogError(LoggerHelper.GetLogMessage(DebugLogType.Exception), ex);
-                return new BadRequestObjectResult(ex.Get(env.IsDevelopment()));
+                _logger.LogError(ex, LoggerHelper.GetLogMessage(DebugLogType.Exception), ex);
+                return new BadRequestObjectResult(ex.Get(_environment.IsDevelopment()));
             }
             finally
             {
@@ -269,8 +271,8 @@ namespace Avalanche.Api.Controllers.V1
             }
             catch (Exception ex)
             {
-                _logger.LogError(LoggerHelper.GetLogMessage(DebugLogType.Exception), ex);
-                return new BadRequestObjectResult(ex.Get(env.IsDevelopment()));
+                _logger.LogError(ex, LoggerHelper.GetLogMessage(DebugLogType.Exception), ex);
+                return new BadRequestObjectResult(ex.Get(_environment.IsDevelopment()));
             }
             finally
             {
@@ -286,7 +288,7 @@ namespace Avalanche.Api.Controllers.V1
         /// <param name="env"></param>
         /// <returns></returns>
         [HttpPut("pgs/currentvideo/position/{position}")]
-        public async Task<IActionResult> SetPgsVideoPosition(double position, [FromServices] IWebHostEnvironment env)
+        public async Task<IActionResult> SetPgsVideoPosition(double position)
         {
             try
             {
@@ -296,8 +298,8 @@ namespace Avalanche.Api.Controllers.V1
             }
             catch (Exception ex)
             {
-                _logger.LogError(LoggerHelper.GetLogMessage(DebugLogType.Exception), ex);
-                return new BadRequestObjectResult(ex.Get(env.IsDevelopment()));
+                _logger.LogError(ex, LoggerHelper.GetLogMessage(DebugLogType.Exception), ex);
+                return new BadRequestObjectResult(ex.Get(_environment.IsDevelopment()));
             }
             finally
             {
@@ -312,7 +314,7 @@ namespace Avalanche.Api.Controllers.V1
         /// <param name="env"></param>
         /// <returns></returns>
         [HttpPut("pgs/state/{state}")]
-        public async Task<IActionResult> SetPgsState(bool state, [FromServices] IWebHostEnvironment env)
+        public async Task<IActionResult> SetPgsState(bool state)
         {
             try
             {
@@ -322,8 +324,8 @@ namespace Avalanche.Api.Controllers.V1
             }
             catch (Exception ex)
             {
-                _logger.LogError(LoggerHelper.GetLogMessage(DebugLogType.Exception), ex);
-                return new BadRequestObjectResult(ex.Get(env.IsDevelopment()));
+                _logger.LogError(ex, LoggerHelper.GetLogMessage(DebugLogType.Exception), ex);
+                return new BadRequestObjectResult(ex.Get(_environment.IsDevelopment()));
             }
             finally
             {
@@ -350,8 +352,8 @@ namespace Avalanche.Api.Controllers.V1
             }
             catch (Exception ex)
             {
-                _logger.LogError(LoggerHelper.GetLogMessage(DebugLogType.Exception), ex);
-                return new BadRequestObjectResult(ex.Get(env.IsDevelopment()));
+                _logger.LogError(ex, LoggerHelper.GetLogMessage(DebugLogType.Exception), ex);
+                return new BadRequestObjectResult(ex.Get(_environment.IsDevelopment()));
             }
             finally
             {
@@ -375,8 +377,8 @@ namespace Avalanche.Api.Controllers.V1
             }
             catch (Exception ex)
             {
-                _logger.LogError(LoggerHelper.GetLogMessage(DebugLogType.Exception), ex);
-                return new BadRequestObjectResult(ex.Get(env.IsDevelopment()));
+                _logger.LogError(ex, LoggerHelper.GetLogMessage(DebugLogType.Exception), ex);
+                return new BadRequestObjectResult(ex.Get(_environment.IsDevelopment()));
             }
             finally
             {
@@ -391,7 +393,7 @@ namespace Avalanche.Api.Controllers.V1
         /// <param name="env"></param>
         /// <returns></returns>
         [HttpPut("timeout/pages/{pageNumber}")]
-        public async Task<IActionResult> SetPage(string pageNumber, [FromServices] IWebHostEnvironment env)
+        public async Task<IActionResult> SetPage(string pageNumber)
         {
             try
             {
@@ -401,8 +403,8 @@ namespace Avalanche.Api.Controllers.V1
             }
             catch (Exception ex)
             {
-                _logger.LogError(LoggerHelper.GetLogMessage(DebugLogType.Exception), ex);
-                return new BadRequestObjectResult(ex.Get(env.IsDevelopment()));
+                _logger.LogError(ex, LoggerHelper.GetLogMessage(DebugLogType.Exception), ex);
+                return new BadRequestObjectResult(ex.Get(_environment.IsDevelopment()));
             }
             finally
             {
@@ -427,8 +429,8 @@ namespace Avalanche.Api.Controllers.V1
             }
             catch (Exception ex)
             {
-                _logger.LogError(LoggerHelper.GetLogMessage(DebugLogType.Exception), ex);
-                return new BadRequestObjectResult(ex.Get(env.IsDevelopment()));
+                _logger.LogError(ex, LoggerHelper.GetLogMessage(DebugLogType.Exception), ex);
+                return new BadRequestObjectResult(ex.Get(_environment.IsDevelopment()));
             }
             finally
             {
@@ -453,8 +455,8 @@ namespace Avalanche.Api.Controllers.V1
             }
             catch (Exception ex)
             {
-                _logger.LogError(LoggerHelper.GetLogMessage(DebugLogType.Exception), ex);
-                return new BadRequestObjectResult(ex.Get(env.IsDevelopment()));
+                _logger.LogError(ex, LoggerHelper.GetLogMessage(DebugLogType.Exception), ex);
+                return new BadRequestObjectResult(ex.Get(_environment.IsDevelopment()));
             }
             finally
             {
@@ -479,8 +481,8 @@ namespace Avalanche.Api.Controllers.V1
             }
             catch (Exception ex)
             {
-                _logger.LogError(LoggerHelper.GetLogMessage(DebugLogType.Exception), ex);
-                return new BadRequestObjectResult(ex.Get(env.IsDevelopment()));
+                _logger.LogError(ex, LoggerHelper.GetLogMessage(DebugLogType.Exception), ex);
+                return new BadRequestObjectResult(ex.Get(_environment.IsDevelopment()));
             }
             finally
             {

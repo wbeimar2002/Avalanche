@@ -15,7 +15,7 @@ namespace Avalanche.Api.Tests.Controllers
     [TestFixture()]
     public class DataControllerTests
     {
-        Mock<ILogger<DataController>> _appLoggerService;
+        Mock<ILogger<DataController>> _logger;
         Mock<IWebHostEnvironment> _environment;
         Mock<IDataManager> _metadataManager;
 
@@ -26,11 +26,11 @@ namespace Avalanche.Api.Tests.Controllers
         [SetUp]
         public void Setup()
         {
-            _appLoggerService = new Mock<ILogger<DataController>>();
+            _logger = new Mock<ILogger<DataController>>();
             _environment = new Mock<IWebHostEnvironment>();
             _metadataManager = new Mock<IDataManager>();
 
-            _controller = new DataController(_appLoggerService.Object, _metadataManager.Object);
+            _controller = new DataController(_logger.Object, _metadataManager.Object, _environment.Object);
 
             OperatingSystem os = Environment.OSVersion;
 
@@ -45,9 +45,9 @@ namespace Avalanche.Api.Tests.Controllers
 
             if (_checkLogger)
             {
-                _appLoggerService.Verify(LogLevel.Error, $"Exception {_controller.GetType().Name}.GetSexes", Times.Never());
-                _appLoggerService.Verify(LogLevel.Debug, $"Requested {_controller.GetType().Name}.GetSexes", Times.Once());
-                _appLoggerService.Verify(LogLevel.Debug, $"Completed {_controller.GetType().Name}.GetSexes", Times.Once());
+                _logger.Verify(LogLevel.Error, $"Exception {_controller.GetType().Name}.GetSexes", Times.Never());
+                _logger.Verify(LogLevel.Debug, $"Requested {_controller.GetType().Name}.GetSexes", Times.Once());
+                _logger.Verify(LogLevel.Debug, $"Completed {_controller.GetType().Name}.GetSexes", Times.Once());
             }
 
             Assert.IsInstanceOf<OkObjectResult>(okResult.Result);
@@ -62,9 +62,9 @@ namespace Avalanche.Api.Tests.Controllers
 
             if (_checkLogger)
             {
-                _appLoggerService.Verify(LogLevel.Error, $"Exception {_controller.GetType().Name}.GetSexes", Times.Once());
-                _appLoggerService.Verify(LogLevel.Debug, $"Requested {_controller.GetType().Name}.GetSexes", Times.Once());
-                _appLoggerService.Verify(LogLevel.Debug, $"Completed {_controller.GetType().Name}.GetSexes", Times.Once());
+                _logger.Verify(LogLevel.Error, $"Exception {_controller.GetType().Name}.GetSexes", Times.Once());
+                _logger.Verify(LogLevel.Debug, $"Requested {_controller.GetType().Name}.GetSexes", Times.Once());
+                _logger.Verify(LogLevel.Debug, $"Completed {_controller.GetType().Name}.GetSexes", Times.Once());
             }
 
             Assert.IsInstanceOf<BadRequestObjectResult>(badResult.Result);
@@ -77,9 +77,9 @@ namespace Avalanche.Api.Tests.Controllers
 
             if (_checkLogger)
             {
-                _appLoggerService.Verify(LogLevel.Error, $"Exception {_controller.GetType().Name}.GetDepartments", Times.Never());
-                _appLoggerService.Verify(LogLevel.Debug, $"Requested {_controller.GetType().Name}.GetDepartments", Times.Once());
-                _appLoggerService.Verify(LogLevel.Debug, $"Completed {_controller.GetType().Name}.GetDepartments", Times.Once());
+                _logger.Verify(LogLevel.Error, $"Exception {_controller.GetType().Name}.GetDepartments", Times.Never());
+                _logger.Verify(LogLevel.Debug, $"Requested {_controller.GetType().Name}.GetDepartments", Times.Once());
+                _logger.Verify(LogLevel.Debug, $"Completed {_controller.GetType().Name}.GetDepartments", Times.Once());
             }
 
             Assert.IsInstanceOf<OkObjectResult>(okResult.Result);
@@ -94,9 +94,9 @@ namespace Avalanche.Api.Tests.Controllers
 
             if (_checkLogger)
             {
-                _appLoggerService.Verify(LogLevel.Error, $"Exception {_controller.GetType().Name}.GetDepartments", Times.Once());
-                _appLoggerService.Verify(LogLevel.Debug, $"Requested {_controller.GetType().Name}.GetDepartments", Times.Once());
-                _appLoggerService.Verify(LogLevel.Debug, $"Completed {_controller.GetType().Name}.GetDepartments", Times.Once());
+                _logger.Verify(LogLevel.Error, $"Exception {_controller.GetType().Name}.GetDepartments", Times.Once());
+                _logger.Verify(LogLevel.Debug, $"Requested {_controller.GetType().Name}.GetDepartments", Times.Once());
+                _logger.Verify(LogLevel.Debug, $"Completed {_controller.GetType().Name}.GetDepartments", Times.Once());
             }
 
             Assert.IsInstanceOf<BadRequestObjectResult>(badResult.Result);
@@ -109,9 +109,9 @@ namespace Avalanche.Api.Tests.Controllers
 
             if (_checkLogger)
             {
-                _appLoggerService.Verify(LogLevel.Error, $"Exception {_controller.GetType().Name}.GetProcedureTypes", Times.Never());
-                _appLoggerService.Verify(LogLevel.Debug, $"Requested {_controller.GetType().Name}.GetProcedureTypes", Times.Once());
-                _appLoggerService.Verify(LogLevel.Debug, $"Completed {_controller.GetType().Name}.GetProcedureTypes", Times.Once());
+                _logger.Verify(LogLevel.Error, $"Exception {_controller.GetType().Name}.GetProcedureTypes", Times.Never());
+                _logger.Verify(LogLevel.Debug, $"Requested {_controller.GetType().Name}.GetProcedureTypes", Times.Once());
+                _logger.Verify(LogLevel.Debug, $"Completed {_controller.GetType().Name}.GetProcedureTypes", Times.Once());
             }
 
             Assert.IsInstanceOf<OkObjectResult>(okResult.Result);
@@ -126,9 +126,9 @@ namespace Avalanche.Api.Tests.Controllers
 
             if (_checkLogger)
             {
-                _appLoggerService.Verify(LogLevel.Error, $"Exception {_controller.GetType().Name}.GetProcedureTypes", Times.Once());
-                _appLoggerService.Verify(LogLevel.Debug, $"Requested {_controller.GetType().Name}.GetProcedureTypes", Times.Once());
-                _appLoggerService.Verify(LogLevel.Debug, $"Completed {_controller.GetType().Name}.GetProcedureTypes", Times.Once());
+                _logger.Verify(LogLevel.Error, $"Exception {_controller.GetType().Name}.GetProcedureTypes", Times.Once());
+                _logger.Verify(LogLevel.Debug, $"Requested {_controller.GetType().Name}.GetProcedureTypes", Times.Once());
+                _logger.Verify(LogLevel.Debug, $"Completed {_controller.GetType().Name}.GetProcedureTypes", Times.Once());
             }
 
             Assert.IsInstanceOf<BadRequestObjectResult>(badResult.Result);
@@ -137,13 +137,13 @@ namespace Avalanche.Api.Tests.Controllers
         [Test]
         public void GetProceduresByDepartmentShouldReturnOkResult()
         {
-            var okResult = _controller.GetProcedureTypesByDepartment(It.IsAny<int>(), _environment.Object);
+            var okResult = _controller.GetProcedureTypesByDepartment(It.IsAny<int>());
 
             if (_checkLogger)
             {
-                _appLoggerService.Verify(LogLevel.Error, $"Exception {_controller.GetType().Name}.GetProcedureTypesByDepartment", Times.Never());
-                _appLoggerService.Verify(LogLevel.Debug, $"Requested {_controller.GetType().Name}.GetProcedureTypesByDepartment", Times.Once());
-                _appLoggerService.Verify(LogLevel.Debug, $"Completed {_controller.GetType().Name}.GetProcedureTypesByDepartment", Times.Once());
+                _logger.Verify(LogLevel.Error, $"Exception {_controller.GetType().Name}.GetProcedureTypesByDepartment", Times.Never());
+                _logger.Verify(LogLevel.Debug, $"Requested {_controller.GetType().Name}.GetProcedureTypesByDepartment", Times.Once());
+                _logger.Verify(LogLevel.Debug, $"Completed {_controller.GetType().Name}.GetProcedureTypesByDepartment", Times.Once());
             }
 
             Assert.IsInstanceOf<OkObjectResult>(okResult.Result);
@@ -154,13 +154,13 @@ namespace Avalanche.Api.Tests.Controllers
         {
             _metadataManager.Setup(mock => mock.GetProcedureTypesByDepartment(It.IsAny<int>())).Throws(It.IsAny<Exception>());
 
-            var badResult = _controller.GetProcedureTypesByDepartment(It.IsAny<int>(), _environment.Object);
+            var badResult = _controller.GetProcedureTypesByDepartment(It.IsAny<int>());
 
             if (_checkLogger)
             {
-                _appLoggerService.Verify(LogLevel.Error, $"Exception {_controller.GetType().Name}.GetProcedureTypesByDepartment", Times.Once());
-                _appLoggerService.Verify(LogLevel.Debug, $"Requested {_controller.GetType().Name}.GetProcedureTypesByDepartment", Times.Once());
-                _appLoggerService.Verify(LogLevel.Debug, $"Completed {_controller.GetType().Name}.GetProcedureTypesByDepartment", Times.Once());
+                _logger.Verify(LogLevel.Error, $"Exception {_controller.GetType().Name}.GetProcedureTypesByDepartment", Times.Once());
+                _logger.Verify(LogLevel.Debug, $"Requested {_controller.GetType().Name}.GetProcedureTypesByDepartment", Times.Once());
+                _logger.Verify(LogLevel.Debug, $"Completed {_controller.GetType().Name}.GetProcedureTypesByDepartment", Times.Once());
             }
 
             Assert.IsInstanceOf<BadRequestObjectResult>(badResult.Result);
@@ -169,13 +169,13 @@ namespace Avalanche.Api.Tests.Controllers
         [Test]
         public void AddDepartmentShouldReturnOkResult()
         {
-            var okResult = _controller.AddDepartment(It.IsAny<DepartmentModel>(), _environment.Object);
+            var okResult = _controller.AddDepartment(It.IsAny<DepartmentModel>());
 
             if (_checkLogger)
             {
-                _appLoggerService.Verify(LogLevel.Error, $"Exception {_controller.GetType().Name}.AddDepartment", Times.Never());
-                _appLoggerService.Verify(LogLevel.Debug, $"Requested {_controller.GetType().Name}.AddDepartment", Times.Once());
-                _appLoggerService.Verify(LogLevel.Debug, $"Completed {_controller.GetType().Name}.AddDepartment", Times.Once());
+                _logger.Verify(LogLevel.Error, $"Exception {_controller.GetType().Name}.AddDepartment", Times.Never());
+                _logger.Verify(LogLevel.Debug, $"Requested {_controller.GetType().Name}.AddDepartment", Times.Once());
+                _logger.Verify(LogLevel.Debug, $"Completed {_controller.GetType().Name}.AddDepartment", Times.Once());
             }
 
             Assert.IsInstanceOf<OkObjectResult>(okResult.Result);
@@ -184,13 +184,13 @@ namespace Avalanche.Api.Tests.Controllers
         [Test]
         public void AddProcedureTypeShouldReturnOkResult()
         {
-            var okResult = _controller.AddProcedureType(It.IsAny<ProcedureTypeModel>(), _environment.Object);
+            var okResult = _controller.AddProcedureType(It.IsAny<ProcedureTypeModel>());
 
             if (_checkLogger)
             {
-                _appLoggerService.Verify(LogLevel.Error, $"Exception {_controller.GetType().Name}.AddProcedureType", Times.Never());
-                _appLoggerService.Verify(LogLevel.Debug, $"Requested {_controller.GetType().Name}.AddProcedureType", Times.Once());
-                _appLoggerService.Verify(LogLevel.Debug, $"Completed {_controller.GetType().Name}.AddProcedureType", Times.Once());
+                _logger.Verify(LogLevel.Error, $"Exception {_controller.GetType().Name}.AddProcedureType", Times.Never());
+                _logger.Verify(LogLevel.Debug, $"Requested {_controller.GetType().Name}.AddProcedureType", Times.Once());
+                _logger.Verify(LogLevel.Debug, $"Completed {_controller.GetType().Name}.AddProcedureType", Times.Once());
             }
 
             Assert.IsInstanceOf<OkObjectResult>(okResult.Result);
@@ -199,13 +199,13 @@ namespace Avalanche.Api.Tests.Controllers
         [Test]
         public void DeleteDepartmentShouldReturnOkResult()
         {
-            var okResult = _controller.DeleteDepartment(It.IsAny<int>(), _environment.Object);
+            var okResult = _controller.DeleteDepartment(It.IsAny<int>());
 
             if (_checkLogger)
             {
-                _appLoggerService.Verify(LogLevel.Error, $"Exception {_controller.GetType().Name}.DeleteDepartment", Times.Never());
-                _appLoggerService.Verify(LogLevel.Debug, $"Requested {_controller.GetType().Name}.DeleteDepartment", Times.Once());
-                _appLoggerService.Verify(LogLevel.Debug, $"Completed {_controller.GetType().Name}.DeleteDepartment", Times.Once());
+                _logger.Verify(LogLevel.Error, $"Exception {_controller.GetType().Name}.DeleteDepartment", Times.Never());
+                _logger.Verify(LogLevel.Debug, $"Requested {_controller.GetType().Name}.DeleteDepartment", Times.Once());
+                _logger.Verify(LogLevel.Debug, $"Completed {_controller.GetType().Name}.DeleteDepartment", Times.Once());
             }
 
             Assert.IsInstanceOf<OkResult>(okResult.Result);
@@ -214,13 +214,13 @@ namespace Avalanche.Api.Tests.Controllers
         [Test]
         public void DeleteProcedureTypeShouldReturnOkResult()
         {
-            var okResult = _controller.DeleteProcedureType(It.IsAny<string>(), _environment.Object);
+            var okResult = _controller.DeleteProcedureType(It.IsAny<string>());
 
             if (_checkLogger)
             {
-                _appLoggerService.Verify(LogLevel.Error, $"Exception {_controller.GetType().Name}.DeleteProcedureType", Times.Never());
-                _appLoggerService.Verify(LogLevel.Debug, $"Requested {_controller.GetType().Name}.DeleteProcedureType", Times.Once());
-                _appLoggerService.Verify(LogLevel.Debug, $"Completed {_controller.GetType().Name}.DeleteProcedureType", Times.Once());
+                _logger.Verify(LogLevel.Error, $"Exception {_controller.GetType().Name}.DeleteProcedureType", Times.Never());
+                _logger.Verify(LogLevel.Debug, $"Requested {_controller.GetType().Name}.DeleteProcedureType", Times.Once());
+                _logger.Verify(LogLevel.Debug, $"Completed {_controller.GetType().Name}.DeleteProcedureType", Times.Once());
             }
 
             Assert.IsInstanceOf<OkResult>(okResult.Result);
@@ -229,13 +229,13 @@ namespace Avalanche.Api.Tests.Controllers
         [Test]
         public void DeleteProcedureTypeByDepartmentShouldReturnOkResult()
         {
-            var okResult = _controller.DeleteProcedureType(It.IsAny<int>(), It.IsAny<int>(), _environment.Object);
+            var okResult = _controller.DeleteProcedureType(It.IsAny<int>(), It.IsAny<int>());
 
             if (_checkLogger)
             {
-                _appLoggerService.Verify(LogLevel.Error, $"Exception {_controller.GetType().Name}.DeleteProcedureType", Times.Never());
-                _appLoggerService.Verify(LogLevel.Debug, $"Requested {_controller.GetType().Name}.DeleteProcedureType", Times.Once());
-                _appLoggerService.Verify(LogLevel.Debug, $"Completed {_controller.GetType().Name}.DeleteProcedureType", Times.Once());
+                _logger.Verify(LogLevel.Error, $"Exception {_controller.GetType().Name}.DeleteProcedureType", Times.Never());
+                _logger.Verify(LogLevel.Debug, $"Requested {_controller.GetType().Name}.DeleteProcedureType", Times.Once());
+                _logger.Verify(LogLevel.Debug, $"Completed {_controller.GetType().Name}.DeleteProcedureType", Times.Once());
             }
 
             Assert.IsInstanceOf<OkResult>(okResult.Result);

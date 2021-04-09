@@ -20,12 +20,14 @@ namespace Avalanche.Api.Controllers.V1
     [Authorize]
     public class RecordingController : ControllerBase
     {
-        readonly ILogger _appLoggerService;
+        readonly ILogger _logger;
         readonly IRecordingManager _recordingManager;
+        readonly IWebHostEnvironment _environment;
 
-        public RecordingController(ILogger<LicensesController> appLoggerService, IRecordingManager recordingManager)
+        public RecordingController(ILogger<LicensesController> logger, IRecordingManager recordingManager, IWebHostEnvironment environment)
         {
-            _appLoggerService = appLoggerService;
+            _environment = environment;
+            _logger = logger;
             _recordingManager = recordingManager;
         }
 
@@ -40,18 +42,18 @@ namespace Avalanche.Api.Controllers.V1
             try
             {
                 
-                _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
+                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
                 await _recordingManager.StartRecording();
                 return Ok();
             }
-            catch (Exception exception)
+            catch (Exception ex)
             {
-                _appLoggerService.LogError(LoggerHelper.GetLogMessage(DebugLogType.Exception), exception);
-                return new BadRequestObjectResult(exception.Get(env.IsDevelopment()));
+                _logger.LogError(ex, LoggerHelper.GetLogMessage(DebugLogType.Exception), ex);
+                return new BadRequestObjectResult(ex.Get(_environment.IsDevelopment()));
             }
             finally
             {
-                _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
+                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
             }
         }
 
@@ -65,18 +67,18 @@ namespace Avalanche.Api.Controllers.V1
         {
             try
             {
-                _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
+                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
                 await _recordingManager.StopRecording();
                 return Ok();
             }
-            catch (Exception exception)
+            catch (Exception ex)
             {
-                _appLoggerService.LogError(LoggerHelper.GetLogMessage(DebugLogType.Exception), exception);
-                return new BadRequestObjectResult(exception.Get(env.IsDevelopment()));
+                _logger.LogError(ex, LoggerHelper.GetLogMessage(DebugLogType.Exception), ex);
+                return new BadRequestObjectResult(ex.Get(_environment.IsDevelopment()));
             }
             finally
             {
-                _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
+                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
             }
         }
 
@@ -90,23 +92,18 @@ namespace Avalanche.Api.Controllers.V1
         {
             try
             {
-                _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
+                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
                 await _recordingManager.CaptureImage();
                 return Ok();
             }
-            catch (Grpc.Core.RpcException ex)
-            {
-                _appLoggerService.LogError(ex, LoggerHelper.GetLogMessage(DebugLogType.Exception), ex);
-                return BadRequest(ex.Get(Request.Path.ToString(), env.IsDevelopment()));
-            }
             catch (Exception ex)
             {
-                _appLoggerService.LogError(ex, LoggerHelper.GetLogMessage(DebugLogType.Exception), ex);
-                return new BadRequestObjectResult(ex.Get(env.IsDevelopment()));
+                _logger.LogError(ex, LoggerHelper.GetLogMessage(DebugLogType.Exception), ex);
+                return new BadRequestObjectResult(ex.Get(_environment.IsDevelopment()));
             }
             finally
             {
-                _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
+                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
             }
         }
     }

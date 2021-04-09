@@ -13,7 +13,7 @@ namespace Avalanche.Api.Tests.Controllers
     [TestFixture()]
     public class NotificationsControllerTests
     {
-        Mock<ILogger<NotificationsController>> _appLoggerService;
+        Mock<ILogger<NotificationsController>> _logger;
         Mock<IWebHostEnvironment> _environment;
         Mock<INotificationsManager> _notificationsManager;
 
@@ -24,11 +24,11 @@ namespace Avalanche.Api.Tests.Controllers
         [SetUp]
         public void Setup()
         {
-            _appLoggerService = new Mock<ILogger<NotificationsController>>();
+            _logger = new Mock<ILogger<NotificationsController>>();
             _notificationsManager = new Mock<INotificationsManager>();
             _environment = new Mock<IWebHostEnvironment>();
 
-            _controller = new NotificationsController(_appLoggerService.Object, _notificationsManager.Object);
+            _controller = new NotificationsController(_logger.Object, _notificationsManager.Object, _environment.Object);
 
             OperatingSystem os = Environment.OSVersion;
 
@@ -42,13 +42,13 @@ namespace Avalanche.Api.Tests.Controllers
             var message = new Ism.Broadcaster.Models.MessageRequest();
             _notificationsManager.Setup(mock => mock.SendDirectMessage(It.IsAny<Ism.Broadcaster.Models.MessageRequest>()));
 
-            var okResult = _controller.SendDirectMessage(message, _environment.Object);
+            var okResult = _controller.SendDirectMessage(message);
 
             if (_checkLogger)
             {
-                _appLoggerService.Verify(LogLevel.Error, $"Exception {_controller.GetType().Name}.SendDirectMessage", Times.Never());
-                _appLoggerService.Verify(LogLevel.Debug, $"Requested {_controller.GetType().Name}.SendDirectMessage", Times.Once());
-                _appLoggerService.Verify(LogLevel.Debug, $"Completed {_controller.GetType().Name}.SendDirectMessage", Times.Once());
+                _logger.Verify(LogLevel.Error, $"Exception {_controller.GetType().Name}.SendDirectMessage", Times.Never());
+                _logger.Verify(LogLevel.Debug, $"Requested {_controller.GetType().Name}.SendDirectMessage", Times.Once());
+                _logger.Verify(LogLevel.Debug, $"Completed {_controller.GetType().Name}.SendDirectMessage", Times.Once());
             }
 
             Assert.IsInstanceOf<AcceptedResult>(okResult);
@@ -60,13 +60,13 @@ namespace Avalanche.Api.Tests.Controllers
             _notificationsManager.Setup(mock => mock.SendDirectMessage(It.IsAny<Ism.Broadcaster.Models.MessageRequest>())).Throws(It.IsAny<Exception>());
 
             var message = new Ism.Broadcaster.Models.MessageRequest();
-            var badResult = _controller.SendDirectMessage(message, _environment.Object);
+            var badResult = _controller.SendDirectMessage(message);
 
             if (_checkLogger)
             {
-                _appLoggerService.Verify(LogLevel.Error, $"Exception {_controller.GetType().Name}.SendDirectMessage", Times.Once());
-                _appLoggerService.Verify(LogLevel.Debug, $"Requested {_controller.GetType().Name}.SendDirectMessage", Times.Once());
-                _appLoggerService.Verify(LogLevel.Debug, $"Completed {_controller.GetType().Name}.SendDirectMessage", Times.Once());
+                _logger.Verify(LogLevel.Error, $"Exception {_controller.GetType().Name}.SendDirectMessage", Times.Once());
+                _logger.Verify(LogLevel.Debug, $"Requested {_controller.GetType().Name}.SendDirectMessage", Times.Once());
+                _logger.Verify(LogLevel.Debug, $"Completed {_controller.GetType().Name}.SendDirectMessage", Times.Once());
             }
 
             Assert.IsInstanceOf<BadRequestObjectResult>(badResult);

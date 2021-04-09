@@ -24,17 +24,18 @@ namespace Avalanche.Api.Controllers.V1
     [ExcludeFromCodeCoverage]
     public class FilesController : ControllerBase
     {
-        private readonly ILogger _appLoggerService;
-        private readonly ISecurityManager _securityManager;
-        private readonly IRecordingManager _recordingManager;
+        readonly ILogger _logger;
+        readonly ISecurityManager _securityManager;
+        readonly IRecordingManager _recordingManager;
+        readonly IWebHostEnvironment _environment;
 
-
-        public FilesController(ILogger<FilesController> appLoggerService, 
+        public FilesController(ILogger<FilesController> logger, 
             ISecurityManager securityManager, 
             ICookieValidationService cookieValidationService,
-            IRecordingManager recordingManager)
+            IRecordingManager recordingManager, IWebHostEnvironment environment)
         {
-            _appLoggerService = appLoggerService;
+            _environment = environment;
+            _logger = logger;
             _securityManager = securityManager;
             _recordingManager = recordingManager;
         }
@@ -46,7 +47,7 @@ namespace Avalanche.Api.Controllers.V1
         {
             try
             {
-                _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
+                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
 
                 var identity = _securityManager.AcquireFileCookie(jwtToken);
                 await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(identity));
@@ -55,12 +56,12 @@ namespace Avalanche.Api.Controllers.V1
             }
             catch (Exception ex)
             {
-                _appLoggerService.LogError(ex, LoggerHelper.GetLogMessage(DebugLogType.Exception), ex);
-                return new BadRequestObjectResult(ex.Get(env.IsDevelopment()));
+                _logger.LogError(ex, LoggerHelper.GetLogMessage(DebugLogType.Exception), ex);
+                return new BadRequestObjectResult(ex.Get(_environment.IsDevelopment()));
             }
             finally
             {
-                _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
+                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
             }
         }
 
@@ -69,7 +70,7 @@ namespace Avalanche.Api.Controllers.V1
         {
             try
             {
-                _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
+                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
 
                 if (_securityManager.RevokeFileCookie())
                     await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
@@ -78,12 +79,12 @@ namespace Avalanche.Api.Controllers.V1
             }
             catch (Exception ex)
             {
-                _appLoggerService.LogError(ex, LoggerHelper.GetLogMessage(DebugLogType.Exception), ex);
-                return new BadRequestObjectResult(ex.Get(env.IsDevelopment()));
+                _logger.LogError(ex, LoggerHelper.GetLogMessage(DebugLogType.Exception), ex);
+                return new BadRequestObjectResult(ex.Get(_environment.IsDevelopment()));
             }
             finally
             {
-                _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
+                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
             }
         }
 
@@ -94,27 +95,22 @@ namespace Avalanche.Api.Controllers.V1
         // NOTE: A separate endpoint is probably best for video files as well, since those need to support range headers / chunking
         [ResponseCache(Location = ResponseCacheLocation.Client, Duration = 60 * 60 * 24)]
         [HttpGet("captures/preview")]
-        public IActionResult GetCapturesPreview([FromQuery]string path, [FromServices] IWebHostEnvironment env)
+        public IActionResult GetCapturesPreview([FromQuery]string path)
         {
             try
             {
-                _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
+                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
                 var fullPath = _recordingManager.GetCapturePreview(path);
                 return PhysicalFile(fullPath, "image/jpeg");
             }
-            catch (Grpc.Core.RpcException ex)
-            {
-                _appLoggerService.LogError(LoggerHelper.GetLogMessage(DebugLogType.Exception), ex);
-                return BadRequest(ex.Get(Request.Path.ToString(), env.IsDevelopment()));
-            }
             catch (Exception ex)
             {
-                _appLoggerService.LogError(LoggerHelper.GetLogMessage(DebugLogType.Exception), ex);
+                _logger.LogError(LoggerHelper.GetLogMessage(DebugLogType.Exception), ex);
                 return BadRequest();
             }
             finally
             {
-                _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
+                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
             }
         }
     }

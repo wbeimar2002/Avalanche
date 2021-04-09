@@ -19,12 +19,14 @@ namespace Avalanche.Api.Controllers.V1
     [Authorize]
     public class SettingsController : ControllerBase
     {
-        readonly ILogger _appLoggerService;
+        readonly ILogger _logger;
         readonly IMaintenanceManager _maintenanceManager;
+        readonly IWebHostEnvironment _environment;
 
-        public SettingsController(IMaintenanceManager maintenanceManager, ILogger<SettingsController> appLoggerService)
+        public SettingsController(IMaintenanceManager maintenanceManager, ILogger<SettingsController> logger, IWebHostEnvironment environment)
         {
-            _appLoggerService = appLoggerService;
+            _environment = environment;
+            _logger = logger;
             _maintenanceManager = maintenanceManager;
         }
 
@@ -35,22 +37,22 @@ namespace Avalanche.Api.Controllers.V1
         /// <param name="env"></param>
         /// <returns></returns>
         [HttpGet("{key}")]
-        public async Task<IActionResult> GetSettings(string key, [FromServices] IWebHostEnvironment env)
+        public async Task<IActionResult> GetSettings(string key)
         {
             try
             {
-                _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
+                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
                 var response = await _maintenanceManager.GetSettingValues(key);
                 return Content(JsonConvert.SerializeObject(response), "application/json");
             }
-            catch (Exception exception)
+            catch (Exception ex)
             {
-                _appLoggerService.LogError(LoggerHelper.GetLogMessage(DebugLogType.Exception), exception);
-                return new BadRequestObjectResult(exception.Get(env.IsDevelopment()));
+                _logger.LogError(ex, LoggerHelper.GetLogMessage(DebugLogType.Exception), ex);
+                return new BadRequestObjectResult(ex.Get(_environment.IsDevelopment()));
             }
             finally
             {
-                _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
+                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
             }
         }
     }

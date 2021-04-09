@@ -18,7 +18,7 @@ namespace Avalanche.Api.Tests.Controllers
     [TestFixture()]
     public class LicensesControllerTests
     {
-        Mock<ILogger<LicensesController>> _appLoggerService;
+        Mock<ILogger<LicensesController>> _logger;
         Mock<IWebHostEnvironment> _environment;
         Mock<ILicensingManager> _licensingManager;
 
@@ -29,11 +29,11 @@ namespace Avalanche.Api.Tests.Controllers
         [SetUp]
         public void Setup()
         {
-            _appLoggerService = new Mock<ILogger<LicensesController>>();
+            _logger = new Mock<ILogger<LicensesController>>();
             _environment = new Mock<IWebHostEnvironment>();
             _licensingManager = new Mock<ILicensingManager>();
 
-            _controller = new LicensesController(_appLoggerService.Object, _licensingManager.Object);
+            _controller = new LicensesController(_logger.Object, _licensingManager.Object, _environment.Object);
 
             OperatingSystem os = Environment.OSVersion;
 
@@ -45,13 +45,13 @@ namespace Avalanche.Api.Tests.Controllers
         public void ValidateShouldReturnOkResult()
         {
             string licenseKey = Guid.NewGuid().ToString();
-            var okResult = _controller.Validate(licenseKey, _environment.Object);
+            var okResult = _controller.Validate(licenseKey);
 
             if (_checkLogger)
             {
-                _appLoggerService.Verify(LogLevel.Error, $"Exception {_controller.GetType().Name}.Validate", Times.Never());
-                _appLoggerService.Verify(LogLevel.Debug, $"Requested {_controller.GetType().Name}.Validate", Times.Once());
-                _appLoggerService.Verify(LogLevel.Debug, $"Completed {_controller.GetType().Name}.Validate", Times.Once());
+                _logger.Verify(LogLevel.Error, $"Exception {_controller.GetType().Name}.Validate", Times.Never());
+                _logger.Verify(LogLevel.Debug, $"Requested {_controller.GetType().Name}.Validate", Times.Once());
+                _logger.Verify(LogLevel.Debug, $"Completed {_controller.GetType().Name}.Validate", Times.Once());
             }
 
             Assert.IsInstanceOf<OkResult>(okResult.Result);
@@ -62,13 +62,13 @@ namespace Avalanche.Api.Tests.Controllers
         {
             _licensingManager.Setup(mock => mock.Validate(It.IsAny<string>())).Throws(It.IsAny<Exception>());
 
-            var badResult = _controller.Validate(It.IsAny<string>(), _environment.Object);
+            var badResult = _controller.Validate(It.IsAny<string>());
 
             if (_checkLogger)
             {
-                _appLoggerService.Verify(LogLevel.Error, $"Exception {_controller.GetType().Name}.Validate", Times.Once());
-                _appLoggerService.Verify(LogLevel.Debug, $"Requested {_controller.GetType().Name}.Validate", Times.Once());
-                _appLoggerService.Verify(LogLevel.Debug, $"Completed {_controller.GetType().Name}.Validate", Times.Once());
+                _logger.Verify(LogLevel.Error, $"Exception {_controller.GetType().Name}.Validate", Times.Once());
+                _logger.Verify(LogLevel.Debug, $"Requested {_controller.GetType().Name}.Validate", Times.Once());
+                _logger.Verify(LogLevel.Debug, $"Completed {_controller.GetType().Name}.Validate", Times.Once());
             }
 
             Assert.IsInstanceOf<BadRequestObjectResult>(badResult.Result);
@@ -88,9 +88,9 @@ namespace Avalanche.Api.Tests.Controllers
 
             if (_checkLogger)
             {
-                _appLoggerService.Verify(LogLevel.Error, $"Exception {_controller.GetType().Name}.GetAllActive", Times.Never());
-                _appLoggerService.Verify(LogLevel.Debug, $"Requested {_controller.GetType().Name}.GetAllActive", Times.Once());
-                _appLoggerService.Verify(LogLevel.Debug, $"Completed {_controller.GetType().Name}.GetAllActive", Times.Once());
+                _logger.Verify(LogLevel.Error, $"Exception {_controller.GetType().Name}.GetAllActive", Times.Never());
+                _logger.Verify(LogLevel.Debug, $"Requested {_controller.GetType().Name}.GetAllActive", Times.Once());
+                _logger.Verify(LogLevel.Debug, $"Completed {_controller.GetType().Name}.GetAllActive", Times.Once());
             }
 
             Assert.IsInstanceOf<OkObjectResult>(okResult.Result);
@@ -105,9 +105,9 @@ namespace Avalanche.Api.Tests.Controllers
 
             if (_checkLogger)
             {
-                _appLoggerService.Verify(LogLevel.Error, $"Exception {_controller.GetType().Name}.GetAllActive", Times.Once());
-                _appLoggerService.Verify(LogLevel.Debug, $"Requested {_controller.GetType().Name}.GetAllActive", Times.Once());
-                _appLoggerService.Verify(LogLevel.Debug, $"Completed {_controller.GetType().Name}.GetAllActive", Times.Once());
+                _logger.Verify(LogLevel.Error, $"Exception {_controller.GetType().Name}.GetAllActive", Times.Once());
+                _logger.Verify(LogLevel.Debug, $"Requested {_controller.GetType().Name}.GetAllActive", Times.Once());
+                _logger.Verify(LogLevel.Debug, $"Completed {_controller.GetType().Name}.GetAllActive", Times.Once());
             }
 
             Assert.IsInstanceOf<BadRequestObjectResult>(badResult.Result);
