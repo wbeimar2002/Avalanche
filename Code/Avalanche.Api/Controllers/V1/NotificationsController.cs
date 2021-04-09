@@ -16,15 +16,17 @@ namespace Avalanche.Api.Controllers.V1
     //[Authorize]
     public class NotificationsController : ControllerBase
     {
-        readonly ILogger _appLoggerService;
+        readonly ILogger _logger;
         readonly INotificationsManager _notificationsManager;
+        readonly IWebHostEnvironment _environment;
 
         public NotificationsController(
-            ILogger<NotificationsController> appLoggerService,
-            INotificationsManager notificationsManager)
+            ILogger<NotificationsController> logger,
+            INotificationsManager notificationsManager, IWebHostEnvironment environment)
         {
+            _environment = environment;
             _notificationsManager = notificationsManager;
-            _appLoggerService = appLoggerService;
+            _logger = logger;
         }
 
         /// <summary>
@@ -34,23 +36,23 @@ namespace Avalanche.Api.Controllers.V1
         /// <param name="env"></param>
         /// <returns></returns>
         [HttpPost("direct")]
-        public IActionResult SendDirectMessage([FromBody]Ism.Broadcaster.Models.MessageRequest messageRequest, [FromServices]IWebHostEnvironment env)
+        public IActionResult SendDirectMessage([FromBody]Ism.Broadcaster.Models.MessageRequest messageRequest)
         {
             try
             {
-                _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
+                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
                 _notificationsManager.SendDirectMessage(messageRequest);
 
                 return Accepted();
             }
-            catch (Exception exception)
+            catch (Exception ex)
             {
-                _appLoggerService.LogError(LoggerHelper.GetLogMessage(DebugLogType.Exception), exception);
-                return new BadRequestObjectResult(exception.Get(env.IsDevelopment()));
+                _logger.LogError(ex, LoggerHelper.GetLogMessage(DebugLogType.Exception), ex);
+                return new BadRequestObjectResult(ex.Get(_environment.IsDevelopment()));
             }
             finally
             {
-                _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
+                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
             }
         }
     }

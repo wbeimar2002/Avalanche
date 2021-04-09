@@ -18,7 +18,7 @@ namespace Avalanche.Api.Test.Controllers
 {
     class ProceduresContollerTests
     {
-        Mock<ILogger<ProceduresController>> _appLoggerService;
+        Mock<ILogger<ProceduresController>> _logger;
         Mock<IWebHostEnvironment> _environment;
         Mock<IProceduresManager> _proceduresManager;
 
@@ -29,11 +29,11 @@ namespace Avalanche.Api.Test.Controllers
         [SetUp]
         public void Setup()
         {
-            _appLoggerService = new Mock<ILogger<ProceduresController>>();
+            _logger = new Mock<ILogger<ProceduresController>>();
             _environment = new Mock<IWebHostEnvironment>();
             _proceduresManager = new Mock<IProceduresManager>();
 
-            _controller = new ProceduresController(_appLoggerService.Object, _proceduresManager.Object);
+            _controller = new ProceduresController(_logger.Object, _proceduresManager.Object, _environment.Object);
 
             var mockUrlHelper = new Mock<IUrlHelper>(MockBehavior.Strict);
             mockUrlHelper
@@ -68,9 +68,9 @@ namespace Avalanche.Api.Test.Controllers
 
             if (_checkLogger)
             {
-                _appLoggerService.Verify(LogLevel.Error, $"Exception {nameof(ProceduresController)}.{nameof(ProceduresController.GetActive)}", Times.Never());
-                _appLoggerService.Verify(LogLevel.Debug, $"Requested {nameof(ProceduresController)}.{nameof(ProceduresController.GetActive)}", Times.Once());
-                _appLoggerService.Verify(LogLevel.Debug, $"Completed {nameof(ProceduresController)}.{nameof(ProceduresController.GetActive)}", Times.Once());
+                _logger.Verify(LogLevel.Error, $"Exception {nameof(ProceduresController)}.{nameof(ProceduresController.GetActive)}", Times.Never());
+                _logger.Verify(LogLevel.Debug, $"Requested {nameof(ProceduresController)}.{nameof(ProceduresController.GetActive)}", Times.Once());
+                _logger.Verify(LogLevel.Debug, $"Completed {nameof(ProceduresController)}.{nameof(ProceduresController.GetActive)}", Times.Once());
             }
 
             Assert.IsInstanceOf<OkObjectResult>(okResult.Result);

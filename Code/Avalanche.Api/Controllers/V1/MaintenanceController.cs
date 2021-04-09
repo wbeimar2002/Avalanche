@@ -20,12 +20,14 @@ namespace Avalanche.Api.Controllers.V1
     [Authorize]
     public class MaintenanceController : ControllerBase
     {
-        readonly ILogger _appLoggerService;
+        readonly ILogger _logger;
         readonly IMaintenanceManager _maintenanceManager;
+        readonly IWebHostEnvironment _environment;
 
-        public MaintenanceController(IMaintenanceManager maintenanceManager, ILogger<MaintenanceController> appLoggerService)
+        public MaintenanceController(IMaintenanceManager maintenanceManager, ILogger<MaintenanceController> logger, IWebHostEnvironment environment)
         {
-            _appLoggerService = appLoggerService;
+            _environment = environment;
+            _logger = logger;
             _maintenanceManager = maintenanceManager;
         }
 
@@ -37,23 +39,23 @@ namespace Avalanche.Api.Controllers.V1
         /// <param name="env"></param>
         /// <returns></returns>
         [HttpPut("categories/{key}/policies")]
-        public async Task<IActionResult> SaveCategoryPolicies(string key, [FromBody] DynamicSectionViewModel section, [FromServices] IWebHostEnvironment env)
+        public async Task<IActionResult> SaveCategoryPolicies(string key, [FromBody] DynamicSectionViewModel section)
         {
             try
             {
-                _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
+                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
                 await _maintenanceManager.SaveCategoryPolicies(section);
 
                 return Ok();
             }
-            catch (Exception exception)
+            catch (Exception ex)
             {
-                _appLoggerService.LogError(LoggerHelper.GetLogMessage(DebugLogType.Exception), exception);
-                return new BadRequestObjectResult(exception.Get(env.IsDevelopment()));
+                _logger.LogError(ex, LoggerHelper.GetLogMessage(DebugLogType.Exception), ex);
+                return new BadRequestObjectResult(ex.Get(_environment.IsDevelopment()));
             }
             finally
             {
-                _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
+                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
             }
         }
 
@@ -69,19 +71,19 @@ namespace Avalanche.Api.Controllers.V1
         {
             try
             {
-                _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
+                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
                 await _maintenanceManager.SaveCategory(section);
 
                 return Ok();
             }
-            catch (Exception exception)
+            catch (Exception ex)
             {
-                _appLoggerService.LogError(LoggerHelper.GetLogMessage(DebugLogType.Exception), exception);
-                return new BadRequestObjectResult(exception.Get(env.IsDevelopment()));
+                _logger.LogError(ex, LoggerHelper.GetLogMessage(DebugLogType.Exception), ex);
+                return new BadRequestObjectResult(ex.Get(_environment.IsDevelopment()));
             }
             finally
             {
-                _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
+                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
             }
         }
 
@@ -93,23 +95,23 @@ namespace Avalanche.Api.Controllers.V1
         /// <param name="env"></param>
         /// <returns></returns>
         [HttpPost("categories/lists/{key}")]
-        public async Task<IActionResult> AddEntity(string key, [FromBody] DynamicListViewModel list, [FromServices] IWebHostEnvironment env)
+        public async Task<IActionResult> AddEntity(string key, [FromBody] DynamicListViewModel list)
         {
             try
             {
-                _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
+                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
                 await _maintenanceManager.SaveEntityChanges(list, DynamicListActions.Insert);
 
                 return Ok();
             }
-            catch (Exception exception)
+            catch (Exception ex)
             {
-                _appLoggerService.LogError(LoggerHelper.GetLogMessage(DebugLogType.Exception), exception);
-                return new BadRequestObjectResult(exception.Get(env.IsDevelopment()));
+                _logger.LogError(ex, LoggerHelper.GetLogMessage(DebugLogType.Exception), ex);
+                return new BadRequestObjectResult(ex.Get(_environment.IsDevelopment()));
             }
             finally
             {
-                _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
+                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
             }
         }
 
@@ -121,23 +123,23 @@ namespace Avalanche.Api.Controllers.V1
         /// <param name="env"></param>
         /// <returns></returns>
         [HttpPut("categories/lists/{key}")]
-        public async Task<IActionResult> UpdateEntity(string key, [FromBody] DynamicListViewModel list, [FromServices] IWebHostEnvironment env)
+        public async Task<IActionResult> UpdateEntity(string key, [FromBody] DynamicListViewModel list)
         {
             try
             {
-                _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
+                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
                 await _maintenanceManager.SaveEntityChanges(list, DynamicListActions.Update);
 
                 return Ok();
             }
-            catch (Exception exception)
+            catch (Exception ex)
             {
-                _appLoggerService.LogError(LoggerHelper.GetLogMessage(DebugLogType.Exception), exception);
-                return new BadRequestObjectResult(exception.Get(env.IsDevelopment()));
+                _logger.LogError(ex, LoggerHelper.GetLogMessage(DebugLogType.Exception), ex);
+                return new BadRequestObjectResult(ex.Get(_environment.IsDevelopment()));
             }
             finally
             {
-                _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
+                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
             }
         }
 
@@ -149,23 +151,23 @@ namespace Avalanche.Api.Controllers.V1
         /// <param name="env"></param>
         /// <returns></returns>
         [HttpDelete("categories/lists/{key}")]
-        public async Task<IActionResult> DeleteEntity(string key, [FromBody] DynamicListViewModel list, [FromServices] IWebHostEnvironment env)
+        public async Task<IActionResult> DeleteEntity(string key, [FromBody] DynamicListViewModel list)
         {
             try
             {
-                _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
+                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
                 await _maintenanceManager.SaveEntityChanges(list, DynamicListActions.Delete);
 
                 return Ok();
             }
-            catch (Exception exception)
+            catch (Exception ex)
             {
-                _appLoggerService.LogError(LoggerHelper.GetLogMessage(DebugLogType.Exception), exception);
-                return new BadRequestObjectResult(exception.Get(env.IsDevelopment()));
+                _logger.LogError(ex, LoggerHelper.GetLogMessage(DebugLogType.Exception), ex);
+                return new BadRequestObjectResult(ex.Get(_environment.IsDevelopment()));
             }
             finally
             {
-                _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
+                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
             }
         }
 
@@ -176,23 +178,23 @@ namespace Avalanche.Api.Controllers.V1
         /// <param name="env"></param>
         /// <returns></returns>
         [HttpGet("categories/{key}")]
-        public async Task<IActionResult> GetCategoryByKey(string key, [FromServices]IWebHostEnvironment env)
+        public async Task<IActionResult> GetCategoryByKey(string key)
         {
             try
             {
-                _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
+                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
                 var result = await _maintenanceManager.GetCategoryByKey(key);
 
                 return Ok(result);
             }
-            catch (Exception exception)
+            catch (Exception ex)
             {
-                _appLoggerService.LogError(LoggerHelper.GetLogMessage(DebugLogType.Exception), exception);
-                return new BadRequestObjectResult(exception.Get(env.IsDevelopment()));
+                _logger.LogError(ex, LoggerHelper.GetLogMessage(DebugLogType.Exception), ex);
+                return new BadRequestObjectResult(ex.Get(_environment.IsDevelopment()));
             }
             finally
             {
-                _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
+                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
             }
         }
 
@@ -203,23 +205,23 @@ namespace Avalanche.Api.Controllers.V1
         /// <param name="env"></param>
         /// <returns></returns>
         [HttpGet("categories/lists/{key}")]
-        public async Task<IActionResult> GetCategoryListByKey(string key, [FromServices] IWebHostEnvironment env)
+        public async Task<IActionResult> GetCategoryListByKey(string key)
         {
             try
             {
-                _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
+                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
                 var result = await _maintenanceManager.GetCategoryListByKey(key);
 
                 return Ok(result);
             }
-            catch (Exception exception)
+            catch (Exception ex)
             {
-                _appLoggerService.LogError(LoggerHelper.GetLogMessage(DebugLogType.Exception), exception);
-                return new BadRequestObjectResult(exception.Get(env.IsDevelopment()));
+                _logger.LogError(ex, LoggerHelper.GetLogMessage(DebugLogType.Exception), ex);
+                return new BadRequestObjectResult(ex.Get(_environment.IsDevelopment()));
             }
             finally
             {
-                _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
+                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
             }
         }
     }

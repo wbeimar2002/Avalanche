@@ -25,12 +25,14 @@ namespace Avalanche.Api.Controllers.V1
     [Authorize]
     public class DataController : ControllerBase
     {
-        readonly ILogger _appLoggerService;
+        readonly ILogger _logger;
         readonly IDataManager _metadataManager;
+        readonly IWebHostEnvironment _environment;
 
-        public DataController(ILogger<DataController> appLoggerService, IDataManager metadataManager)
+        public DataController(ILogger<DataController> logger, IDataManager metadataManager, IWebHostEnvironment environment)
         {
-            _appLoggerService = ThrowIfNullOrReturn(nameof(appLoggerService), appLoggerService);
+            _environment = environment;
+            _logger = ThrowIfNullOrReturn(nameof(logger), logger);
             _metadataManager = ThrowIfNullOrReturn(nameof(metadataManager), metadataManager);
         }
 
@@ -45,19 +47,19 @@ namespace Avalanche.Api.Controllers.V1
         {
             try
             {
-                _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
+                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
 
                 var result = await _metadataManager.GetSource(DataTypes.SearchColumns);
                 return Ok(result);
             }
-            catch (Exception exception)
+            catch (Exception ex)
             {
-                _appLoggerService.LogError(LoggerHelper.GetLogMessage(DebugLogType.Exception), exception);
-                return new BadRequestObjectResult(exception.Get(env.IsDevelopment()));
+                _logger.LogError(ex, LoggerHelper.GetLogMessage(DebugLogType.Exception), ex);
+                return new BadRequestObjectResult(ex.Get(_environment.IsDevelopment()));
             }
             finally
             {
-                _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
+                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
             }
         }
 
@@ -72,19 +74,19 @@ namespace Avalanche.Api.Controllers.V1
         {
             try
             {
-                _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
+                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
 
                 var result = await _metadataManager.GetData(DataTypes.Sex);
                 return Ok(result);
             }
-            catch (Exception exception)
+            catch (Exception ex)
             {
-                _appLoggerService.LogError(LoggerHelper.GetLogMessage(DebugLogType.Exception), exception);
-                return new BadRequestObjectResult(exception.Get(env.IsDevelopment()));
+                _logger.LogError(ex, LoggerHelper.GetLogMessage(DebugLogType.Exception), ex);
+                return new BadRequestObjectResult(ex.Get(_environment.IsDevelopment()));
             }
             finally
             {
-                _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
+                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
             }
         }
 
@@ -99,19 +101,19 @@ namespace Avalanche.Api.Controllers.V1
         {
             try
             {
-                _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
+                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
 
                 var result = await _metadataManager.GetAllDepartments();
                 return Ok(result);
             }
-            catch (Exception exception)
+            catch (Exception ex)
             {
-                _appLoggerService.LogError(LoggerHelper.GetLogMessage(DebugLogType.Exception), exception);
-                return new BadRequestObjectResult(exception.Get(env.IsDevelopment()));
+                _logger.LogError(ex, LoggerHelper.GetLogMessage(DebugLogType.Exception), ex);
+                return new BadRequestObjectResult(ex.Get(_environment.IsDevelopment()));
             }
             finally
             {
-                _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
+                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
             }
         }
 
@@ -123,23 +125,23 @@ namespace Avalanche.Api.Controllers.V1
         /// <returns></returns>
         [HttpPost("departments")]
         [Produces(typeof(DepartmentModel))]
-        public async Task<IActionResult> AddDepartment(DepartmentModel department, [FromServices] IWebHostEnvironment env)
+        public async Task<IActionResult> AddDepartment(DepartmentModel department)
         {
             try
             {
-                _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
+                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
 
                 var result = await _metadataManager.AddDepartment(department);
                 return Ok(result);
             }
-            catch (Exception exception)
+            catch (Exception ex)
             {
-                _appLoggerService.LogError(LoggerHelper.GetLogMessage(DebugLogType.Exception), exception);
-                return new BadRequestObjectResult(exception.Get(env.IsDevelopment()));
+                _logger.LogError(ex, LoggerHelper.GetLogMessage(DebugLogType.Exception), ex);
+                return new BadRequestObjectResult(ex.Get(_environment.IsDevelopment()));
             }
             finally
             {
-                _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
+                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
             }
         }
 
@@ -150,23 +152,23 @@ namespace Avalanche.Api.Controllers.V1
         /// <param name="env"></param>
         /// <returns></returns>
         [HttpDelete("departments/{departmentId}")]
-        public async Task<IActionResult> DeleteDepartment(int departmentId, [FromServices] IWebHostEnvironment env)
+        public async Task<IActionResult> DeleteDepartment(int departmentId)
         {
             try
             {
-                _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
+                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
 
                 await _metadataManager.DeleteDepartment(departmentId);
                 return Ok();
             }
-            catch (Exception exception)
+            catch (Exception ex)
             {
-                _appLoggerService.LogError(LoggerHelper.GetLogMessage(DebugLogType.Exception), exception);
-                return new BadRequestObjectResult(exception.Get(env.IsDevelopment()));
+                _logger.LogError(ex, LoggerHelper.GetLogMessage(DebugLogType.Exception), ex);
+                return new BadRequestObjectResult(ex.Get(_environment.IsDevelopment()));
             }
             finally
             {
-                _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
+                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
             }
         }
 
@@ -178,23 +180,23 @@ namespace Avalanche.Api.Controllers.V1
         /// <returns></returns>
         [HttpGet("departments/{departmentId}/procedureTypes")]
         [Produces(typeof(List<ProcedureTypeModel>))]
-        public async Task<IActionResult> GetProcedureTypesByDepartment(int departmentId, [FromServices] IWebHostEnvironment env)
+        public async Task<IActionResult> GetProcedureTypesByDepartment(int departmentId)
         {
             try
             {
-                _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
+                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
 
                 var result = await _metadataManager.GetProcedureTypesByDepartment(departmentId);
                 return Ok(result);
             }
-            catch (Exception exception)
+            catch (Exception ex)
             {
-                _appLoggerService.LogError(LoggerHelper.GetLogMessage(DebugLogType.Exception), exception);
-                return new BadRequestObjectResult(exception.Get(env.IsDevelopment()));
+                _logger.LogError(ex, LoggerHelper.GetLogMessage(DebugLogType.Exception), ex);
+                return new BadRequestObjectResult(ex.Get(_environment.IsDevelopment()));
             }
             finally
             {
-                _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
+                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
             }
         }
 
@@ -209,19 +211,19 @@ namespace Avalanche.Api.Controllers.V1
         {
             try
             {
-                _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
+                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
 
                 var result = await _metadataManager.GetProcedureTypesByDepartment(null);
                 return Ok(result);
             }
-            catch (Exception exception)
+            catch (Exception ex)
             {
-                _appLoggerService.LogError(LoggerHelper.GetLogMessage(DebugLogType.Exception), exception);
-                return new BadRequestObjectResult(exception.Get(env.IsDevelopment()));
+                _logger.LogError(ex, LoggerHelper.GetLogMessage(DebugLogType.Exception), ex);
+                return new BadRequestObjectResult(ex.Get(_environment.IsDevelopment()));
             }
             finally
             {
-                _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
+                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
             }
         }
 
@@ -233,23 +235,23 @@ namespace Avalanche.Api.Controllers.V1
         /// <returns></returns>
         [HttpPost("procedureTypes")]
         [Produces(typeof(ProcedureTypeModel))]
-        public async Task<IActionResult> AddProcedureType(ProcedureTypeModel procedureType, [FromServices] IWebHostEnvironment env)
+        public async Task<IActionResult> AddProcedureType(ProcedureTypeModel procedureType)
         {
             try
             {
-                _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
+                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
 
                 var result = await _metadataManager.AddProcedureType(procedureType);
                 return Ok(result);
             }
-            catch (Exception exception)
+            catch (Exception ex)
             {
-                _appLoggerService.LogError(LoggerHelper.GetLogMessage(DebugLogType.Exception), exception);
-                return new BadRequestObjectResult(exception.Get(env.IsDevelopment()));
+                _logger.LogError(ex, LoggerHelper.GetLogMessage(DebugLogType.Exception), ex);
+                return new BadRequestObjectResult(ex.Get(_environment.IsDevelopment()));
             }
             finally
             {
-                _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
+                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
             }
         }
 
@@ -260,11 +262,11 @@ namespace Avalanche.Api.Controllers.V1
         /// <param name="env"></param>
         /// <returns></returns>
         [HttpDelete("procedureTypes/{procedureTypeId}")]
-        public async Task<IActionResult> DeleteProcedureType(string procedureTypeName, [FromServices] IWebHostEnvironment env)
+        public async Task<IActionResult> DeleteProcedureType(string procedureTypeName)
         {
             try
             {
-                _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
+                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
 
                 await _metadataManager.DeleteProcedureType(new ProcedureTypeModel()
                 {
@@ -273,14 +275,14 @@ namespace Avalanche.Api.Controllers.V1
 
                 return Ok();
             }
-            catch (Exception exception)
+            catch (Exception ex)
             {
-                _appLoggerService.LogError(LoggerHelper.GetLogMessage(DebugLogType.Exception), exception);
-                return new BadRequestObjectResult(exception.Get(env.IsDevelopment()));
+                _logger.LogError(ex, LoggerHelper.GetLogMessage(DebugLogType.Exception), ex);
+                return new BadRequestObjectResult(ex.Get(_environment.IsDevelopment()));
             }
             finally
             {
-                _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
+                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
             }
         }
 
@@ -292,11 +294,11 @@ namespace Avalanche.Api.Controllers.V1
         /// <param name="env"></param>
         /// <returns></returns>
         [HttpDelete("departments/{departmentId}/procedureTypes/{procedureTypeId}")]
-        public async Task<IActionResult> DeleteProcedureType(int departmentId, int procedureTypeId, [FromServices] IWebHostEnvironment env)
+        public async Task<IActionResult> DeleteProcedureType(int departmentId, int procedureTypeId)
         {
             try
             {
-                _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
+                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
 
                 await _metadataManager.DeleteProcedureType(new ProcedureTypeModel()
                 {
@@ -306,14 +308,14 @@ namespace Avalanche.Api.Controllers.V1
 
                 return Ok();
             }
-            catch (Exception exception)
+            catch (Exception ex)
             {
-                _appLoggerService.LogError(LoggerHelper.GetLogMessage(DebugLogType.Exception), exception);
-                return new BadRequestObjectResult(exception.Get(env.IsDevelopment()));
+                _logger.LogError(ex, LoggerHelper.GetLogMessage(DebugLogType.Exception), ex);
+                return new BadRequestObjectResult(ex.Get(_environment.IsDevelopment()));
             }
             finally
             {
-                _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
+                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
             }
         }
     }

@@ -15,11 +15,13 @@ namespace Avalanche.Api.Controllers.V1
     [ApiController]
     public class HealthController : ControllerBase
     {
-        readonly ILogger _appLoggerService;
+        readonly ILogger _logger;
+        readonly IWebHostEnvironment _environment;
 
-        public HealthController(ILogger<HealthController> logger)
+        public HealthController(ILogger<HealthController> logger, IWebHostEnvironment environment)
         {
-            _appLoggerService = logger;
+            _environment = environment;
+            _logger = logger;
         }
 
         /// <summary>
@@ -33,9 +35,9 @@ namespace Avalanche.Api.Controllers.V1
         {
             try
             {
-                _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
+                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
                 
-                _appLoggerService.LogInformation("Avalanche Api is healthy.");
+                _logger.LogInformation("Avalanche Api is healthy.");
                 
                 return new OkObjectResult(new
                 {
@@ -43,14 +45,14 @@ namespace Avalanche.Api.Controllers.V1
                     LocalDateTime = DateTime.UtcNow.ToLocalTime()
                 });
             }
-            catch (Exception exception)
+            catch (Exception ex)
             {
-                _appLoggerService.LogError(LoggerHelper.GetLogMessage(DebugLogType.Exception), exception);
-                return new BadRequestObjectResult(exception.Get(env.IsDevelopment()));
+                _logger.LogError(ex, LoggerHelper.GetLogMessage(DebugLogType.Exception), ex);
+                return new BadRequestObjectResult(ex.Get(_environment.IsDevelopment()));
             }
             finally
             {
-                _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
+                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
             }
         }
 
@@ -66,9 +68,9 @@ namespace Avalanche.Api.Controllers.V1
         {
             try
             {
-                _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
+                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
 
-                _appLoggerService.LogInformation("Avalanche Api is healthy.");
+                _logger.LogInformation("Avalanche Api is healthy.");
 
                 return new OkObjectResult(new
                 {
@@ -76,14 +78,14 @@ namespace Avalanche.Api.Controllers.V1
                     LocalDateTime = DateTime.UtcNow.ToLocalTime()
                 });
             }
-            catch (Exception exception)
+            catch (Exception ex)
             {
-                _appLoggerService.LogError(LoggerHelper.GetLogMessage(DebugLogType.Exception), exception);
-                return new BadRequestObjectResult(exception.Get(env.IsDevelopment()));
+                _logger.LogError(ex, LoggerHelper.GetLogMessage(DebugLogType.Exception), ex);
+                return new BadRequestObjectResult(ex.Get(_environment.IsDevelopment()));
             }
             finally
             {
-                _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
+                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
             }
         }
     }

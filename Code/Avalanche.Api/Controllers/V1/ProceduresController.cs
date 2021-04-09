@@ -25,12 +25,14 @@ namespace Avalanche.Api.Controllers.V1
     [Authorize]
     public class ProceduresController : ControllerBase
     {
-        readonly ILogger _appLoggerService;
+        readonly ILogger _logger;
         private readonly IProceduresManager _proceduresManager;
+        readonly IWebHostEnvironment _environment;
 
-        public ProceduresController(ILogger<ProceduresController> appLoggerService, IProceduresManager proceduresManager)
+        public ProceduresController(ILogger<ProceduresController> logger, IProceduresManager proceduresManager, IWebHostEnvironment environment)
         {
-            _appLoggerService = appLoggerService;
+            _environment = environment;
+            _logger = logger;
             _proceduresManager = proceduresManager;
         }
 
@@ -42,22 +44,22 @@ namespace Avalanche.Api.Controllers.V1
         /// <returns></returns>
         [HttpPost("")]
         [Produces(typeof(List<ProcedureModel>))]
-        public async Task<IActionResult> Search(ProcedureSearchFilterViewModel filter, [FromServices]IWebHostEnvironment env)
+        public async Task<IActionResult> Search(ProcedureSearchFilterViewModel filter)
         {
             try
             {
-                _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
+                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
                 await Task.CompletedTask;
                 return Ok();
             }
-            catch (Exception exception)
+            catch (Exception ex)
             {
-                _appLoggerService.LogError(exception, LoggerHelper.GetLogMessage(DebugLogType.Exception));
-                return new BadRequestObjectResult(exception.Get(env.IsDevelopment()));
+                _logger.LogError(ex, LoggerHelper.GetLogMessage(DebugLogType.Exception));
+                return new BadRequestObjectResult(ex.Get(_environment.IsDevelopment()));
             }
             finally
             {
-                _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
+                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
             }
         }
 
@@ -72,18 +74,18 @@ namespace Avalanche.Api.Controllers.V1
         {
             try
             {
-                _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
+                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
                 await Task.CompletedTask;
                 return Ok();
             }
-            catch (Exception exception)
+            catch (Exception ex)
             {
-                _appLoggerService.LogError(exception, LoggerHelper.GetLogMessage(DebugLogType.Exception));
-                return new BadRequestObjectResult(exception.Get(env.IsDevelopment()));
+                _logger.LogError(ex, LoggerHelper.GetLogMessage(DebugLogType.Exception));
+                return new BadRequestObjectResult(ex.Get(_environment.IsDevelopment()));
             }
             finally
             {
-                _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
+                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
             }
         }
 
@@ -98,19 +100,19 @@ namespace Avalanche.Api.Controllers.V1
         {
             try
             {
-                _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
+                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
 
                 var result = await _proceduresManager.GetActiveProcedure();
                 return Ok(result);
             }
-            catch (Exception exception)
+            catch (Exception ex)
             {
-                _appLoggerService.LogError(exception, LoggerHelper.GetLogMessage(DebugLogType.Exception));
-                return new BadRequestObjectResult(exception.Get(env.IsDevelopment()));
+                _logger.LogError(ex, LoggerHelper.GetLogMessage(DebugLogType.Exception));
+                return new BadRequestObjectResult(ex.Get(_environment.IsDevelopment()));
             }
             finally
             {
-                _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
+                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
             }
         }
 
@@ -125,19 +127,19 @@ namespace Avalanche.Api.Controllers.V1
         {
             try
             {
-                _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
+                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
 
                 await _proceduresManager.DiscardActiveProcedure();
                 return Ok();
             }
-            catch (Exception exception)
+            catch (Exception ex)
             {
-                _appLoggerService.LogError(exception, LoggerHelper.GetLogMessage(DebugLogType.Exception));
-                return new BadRequestObjectResult(exception.Get(env.IsDevelopment()));
+                _logger.LogError(ex, LoggerHelper.GetLogMessage(DebugLogType.Exception));
+                return new BadRequestObjectResult(ex.Get(_environment.IsDevelopment()));
             }
             finally
             {
-                _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
+                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
             }
         }
 
@@ -152,19 +154,19 @@ namespace Avalanche.Api.Controllers.V1
         {
             try
             {
-                _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
+                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
 
                 await _proceduresManager.FinishActiveProcedure();
                 return Ok();
             }
-            catch (Exception exception)
+            catch (Exception ex)
             {
-                _appLoggerService.LogError(exception, LoggerHelper.GetLogMessage(DebugLogType.Exception));
-                return new BadRequestObjectResult(exception.Get(env.IsDevelopment()));
+                _logger.LogError(ex, LoggerHelper.GetLogMessage(DebugLogType.Exception));
+                return new BadRequestObjectResult(ex.Get(_environment.IsDevelopment()));
             }
             finally
             {
-                _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
+                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
             }
         }
 
@@ -178,19 +180,19 @@ namespace Avalanche.Api.Controllers.V1
         {
             try
             {
-                _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
+                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
 
                 await _proceduresManager.ConfirmActiveProcedure();
                 return Ok();
             }
-            catch (Exception exception)
+            catch (Exception ex)
             {
-                _appLoggerService.LogError(exception, LoggerHelper.GetLogMessage(DebugLogType.Exception));
-                return new BadRequestObjectResult(exception.Get(env.IsDevelopment()));
+                _logger.LogError(ex, LoggerHelper.GetLogMessage(DebugLogType.Exception));
+                return new BadRequestObjectResult(ex.Get(_environment.IsDevelopment()));
             }
             finally
             {
-                _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
+                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
             }
         }
 

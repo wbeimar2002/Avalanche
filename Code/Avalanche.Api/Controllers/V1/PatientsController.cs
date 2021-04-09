@@ -22,12 +22,14 @@ namespace Avalanche.Api.Controllers.V1
     [Authorize]
     public class PatientsController : ControllerBase
     {
-        readonly ILogger _appLoggerService;
+        readonly ILogger _logger;
         readonly IPatientsManager _patientsManager;
+        readonly IWebHostEnvironment _environment;
 
-        public PatientsController(ILogger<PatientsController> appLoggerService, IPatientsManager patientsManager)
+        public PatientsController(ILogger<PatientsController> logger, IPatientsManager patientsManager, IWebHostEnvironment environment)
         {
-            _appLoggerService = appLoggerService;
+            _environment = environment;
+            _logger = logger;
             _patientsManager = patientsManager;
         }
 
@@ -39,24 +41,24 @@ namespace Avalanche.Api.Controllers.V1
         /// <returns></returns>
         [HttpPost("")]
         [Produces(typeof(PatientViewModel))]
-        public async Task<IActionResult> ManualPatientRegistration(PatientViewModel newPatient, [FromServices]IWebHostEnvironment env)
+        public async Task<IActionResult> ManualPatientRegistration(PatientViewModel newPatient)
         {
             try
             {
-                _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
+                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
 
                 var patientRegistered = await _patientsManager.RegisterPatient(newPatient);
                 
                 return new ObjectResult(patientRegistered) { StatusCode = StatusCodes.Status201Created };
             }
-            catch (Exception exception)
+            catch (Exception ex)
             {
-                _appLoggerService.LogError(exception, LoggerHelper.GetLogMessage(DebugLogType.Exception));
-                return new BadRequestObjectResult(exception.Get(env.IsDevelopment()));
+                _logger.LogError(ex, LoggerHelper.GetLogMessage(DebugLogType.Exception));
+                return new BadRequestObjectResult(ex.Get(_environment.IsDevelopment()));
             }
             finally
             {
-                _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
+                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
             }
         }
 
@@ -68,23 +70,23 @@ namespace Avalanche.Api.Controllers.V1
         /// <returns></returns>
         [HttpPut("{id}")]
         [Produces(typeof(PatientViewModel))]
-        public async Task<IActionResult> UpdatePatient(PatientViewModel existing, [FromServices] IWebHostEnvironment env)
+        public async Task<IActionResult> UpdatePatient(PatientViewModel existing)
         {
             try
             {
-                _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
+                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
                 await _patientsManager.UpdatePatient(existing);
 
                 return Ok();
             }
-            catch (Exception exception)
+            catch (Exception ex)
             {
-                _appLoggerService.LogError(exception, LoggerHelper.GetLogMessage(DebugLogType.Exception));
-                return new BadRequestObjectResult(exception.Get(env.IsDevelopment()));
+                _logger.LogError(ex, LoggerHelper.GetLogMessage(DebugLogType.Exception));
+                return new BadRequestObjectResult(ex.Get(_environment.IsDevelopment()));
             }
             finally
             {
-                _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
+                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
             }
         }
 
@@ -96,23 +98,23 @@ namespace Avalanche.Api.Controllers.V1
         /// <returns></returns>
         [HttpDelete("{id}")]
         [Produces(typeof(PatientViewModel))]
-        public async Task<IActionResult> DeletePatient(ulong id, [FromServices] IWebHostEnvironment env)
+        public async Task<IActionResult> DeletePatient(ulong id)
         {
             try
             {
-                _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
+                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
                 await _patientsManager.DeletePatient(id);
 
                 return Ok();
             }
-            catch (Exception exception)
+            catch (Exception ex)
             {
-                _appLoggerService.LogError(exception, LoggerHelper.GetLogMessage(DebugLogType.Exception));
-                return new BadRequestObjectResult(exception.Get(env.IsDevelopment()));
+                _logger.LogError(ex, LoggerHelper.GetLogMessage(DebugLogType.Exception));
+                return new BadRequestObjectResult(ex.Get(_environment.IsDevelopment()));
             }
             finally
             {
-                _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
+                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
             }
         }
 
@@ -127,20 +129,20 @@ namespace Avalanche.Api.Controllers.V1
         {
             try
             {
-                _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
+                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
 
                 var newPatient = await _patientsManager.QuickPatientRegistration();
 
                 return new ObjectResult(newPatient) { StatusCode = StatusCodes.Status201Created };
             }
-            catch (Exception exception)
+            catch (Exception ex)
             {
-                _appLoggerService.LogError(exception, LoggerHelper.GetLogMessage(DebugLogType.Exception));
-                return new BadRequestObjectResult(exception.Get(env.IsDevelopment()));
+                _logger.LogError(ex, LoggerHelper.GetLogMessage(DebugLogType.Exception));
+                return new BadRequestObjectResult(ex.Get(_environment.IsDevelopment()));
             }
             finally
             {
-                _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
+                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
             }
         }
 
@@ -152,11 +154,11 @@ namespace Avalanche.Api.Controllers.V1
         /// <returns></returns>
         [HttpPost("filtered")]
         [Produces(typeof(PagedCollectionViewModel<PatientViewModel>))]
-        public async Task<IActionResult> Search([FromBody]PatientKeywordSearchFilterViewModel filter, [FromServices]IWebHostEnvironment env)
+        public async Task<IActionResult> Search([FromBody]PatientKeywordSearchFilterViewModel filter)
         {
             try
             {
-                _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
+                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
                 
                 var result = new PagedCollectionViewModel<PatientViewModel>();
                 result.Items = await _patientsManager.Search(filter);
@@ -164,14 +166,14 @@ namespace Avalanche.Api.Controllers.V1
                 PagingHelper.AppendPagingContext(this.Url, this.Request, filter, result);
                 return Ok(result);
             }
-            catch (Exception exception)
+            catch (Exception ex)
             {
-                _appLoggerService.LogError(exception, LoggerHelper.GetLogMessage(DebugLogType.Exception));
-                return new BadRequestObjectResult(exception.Get(env.IsDevelopment()));
+                _logger.LogError(ex, LoggerHelper.GetLogMessage(DebugLogType.Exception));
+                return new BadRequestObjectResult(ex.Get(_environment.IsDevelopment()));
             }
             finally
             {
-                _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
+                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
             }
         }
 
@@ -183,11 +185,11 @@ namespace Avalanche.Api.Controllers.V1
         /// <returns></returns>
         [HttpPost("filteredDetailed")]
         [Produces(typeof(PagedCollectionViewModel<PatientViewModel>))]
-        public async Task<IActionResult> SearchDetailed([FromBody]PatientDetailsSearchFilterViewModel filter, [FromServices]IWebHostEnvironment env)
+        public async Task<IActionResult> SearchDetailed([FromBody]PatientDetailsSearchFilterViewModel filter)
         {
             try
             {
-                _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
+                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
 
                 var result = new PagedCollectionViewModel<PatientViewModel>();
                 result.Items = await _patientsManager.Search(filter);
@@ -195,14 +197,14 @@ namespace Avalanche.Api.Controllers.V1
                 PagingHelper.AppendPagingContext(this.Url, this.Request, filter, result);
                 return Ok(result);
             }
-            catch (Exception exception)
+            catch (Exception ex)
             {
-                _appLoggerService.LogError(exception, LoggerHelper.GetLogMessage(DebugLogType.Exception));
-                return new BadRequestObjectResult(exception.Get(env.IsDevelopment()));
+                _logger.LogError(ex, LoggerHelper.GetLogMessage(DebugLogType.Exception));
+                return new BadRequestObjectResult(ex.Get(_environment.IsDevelopment()));
             }
             finally
             {
-                _appLoggerService.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
+                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
             }
         }
     }
