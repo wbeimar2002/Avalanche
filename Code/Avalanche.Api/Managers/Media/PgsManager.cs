@@ -29,7 +29,7 @@ namespace Avalanche.Api.Managers.Media
     /// controlling the pgs timeout player
     /// setting the enabled state for pgs displays
     /// </summary>
-    public class PgsTimeoutManager : IPgsTimeoutManager, IDisposable
+    public class PgsManager : IPgsManager, IDisposable
     {
         // used to get pgs configuration
         private readonly IStorageService _storageService;
@@ -77,7 +77,7 @@ namespace Avalanche.Api.Managers.Media
         /// </summary>
         private readonly SemaphoreSlim _startStopLock = new SemaphoreSlim(1, 1);
 
-        public PgsTimeoutManager(
+        public PgsManager(
             IStorageService storageService,
             IRoutingService routingService,
             IStateClient stateClient,
@@ -101,40 +101,6 @@ namespace Avalanche.Api.Managers.Media
             else
                 await StopPgs();
         }
-
-        #region Pending of Implementation
-
-        public Task<List<VideoDeviceModel>> GetTimeoutSinks()
-        {
-            return Task.FromResult(new List<VideoDeviceModel>());
-        }
-
-        public async Task StartTimeout()
-        {
-            await _startStopLock.WaitAsync(_cts.Token);
-            try
-            {
-
-            }
-            finally
-            {
-                _startStopLock.Release();
-            }
-        }
-
-        public async Task StopTimeout()
-        {
-            await _startStopLock.WaitAsync(_cts.Token);
-            try
-            {
-
-            }
-            finally
-            {
-                _startStopLock.Release();
-            }
-        }
-        #endregion
 
         #region Routing and State Orchestation
 
@@ -318,43 +284,6 @@ namespace Avalanche.Api.Managers.Media
         }
         #endregion
 
-        #region Timeout
-        public async Task SetTimeoutPage(StateViewModel requestViewModel)
-        {
-            var request = _mapper.Map<StateViewModel, SetTimeoutPageRequest>(requestViewModel);
-            await _pgsTimeoutService.SetTimeoutPage(request);
-        }
-
-        public async Task<StateViewModel> GetTimeoutPage()
-        {
-            var result = await _pgsTimeoutService.GetTimeoutPage();
-            return _mapper.Map<GetTimeoutPageResponse, StateViewModel>(result);
-        }
-
-        public async Task<StateViewModel> GetTimeoutPageCount()
-        {
-            var result = await _pgsTimeoutService.GetTimeoutPageCount();
-            return _mapper.Map<GetTimeoutPageCountResponse, StateViewModel>(result);
-        }
-
-        public async Task<StateViewModel> GetTimeoutPdfPath()
-        {
-            var result = await _pgsTimeoutService.GetTimeoutPdfPath();
-            return _mapper.Map<GetTimeoutPdfPathResponse, StateViewModel>(result);
-        }
-
-        public async Task NextPage()
-        {
-            await _pgsTimeoutService.NextPage();
-        }
-
-        public async Task PreviousPage()
-        {
-            await _pgsTimeoutService.PreviousPage();
-        }
-
-        #endregion
-
         #region Private Methods
 
         private async Task StartPgs()
@@ -468,7 +397,7 @@ namespace Avalanche.Api.Managers.Media
             }
         }
 
-        ~PgsTimeoutManager()
+        ~PgsManager()
         {
             Dispose(false);
         }
