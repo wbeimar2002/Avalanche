@@ -3,6 +3,7 @@
 using Avalanche.Api.Services.Maintenance;
 using Avalanche.Api.Services.Media;
 using Avalanche.Api.ViewModels;
+using Avalanche.Shared.Domain.Enumerations;
 using Avalanche.Shared.Domain.Models.Media;
 using Avalanche.Shared.Infrastructure.Models.Configuration;
 
@@ -54,6 +55,11 @@ namespace Avalanche.Api.Managers.Media
         /// </summary>
         private readonly SemaphoreSlim _startStopLock = new SemaphoreSlim(1, 1);
 
+        /// <summary>
+        /// 
+        /// </summary>
+        private PgsTimeoutModes _currentPgsTimeoutState = PgsTimeoutModes.Idle;
+
         public TimeoutManager(
             IStorageService storageService,
             IRoutingService routingService,
@@ -94,6 +100,12 @@ namespace Avalanche.Api.Managers.Media
             await _startStopLock.WaitAsync(_cts.Token);
             try
             {
+                if (_currentPgsTimeoutState == PgsTimeoutModes.Timeout)
+                {
+                    // Timeout already started
+                    return;
+                }
+
                 // TODO if PGS is active stop it
                 if ((await _pgsTimeoutService.GetPgsPlaybackState()).IsPlaying)
                 {
@@ -102,10 +114,12 @@ namespace Avalanche.Api.Managers.Media
 
                 // Ask PGS player to set timeout mode
                 await _pgsTimeoutService.SetPgsTimeoutMode(new SetPgsTimeoutModeRequest { Mode = PgsTimeoutModeEnum.PgsTimeoutModeTimeout });
-                                
+
                 // TODO
                 // Save old routes
                 // Route timeout
+
+                _currentPgsTimeoutState = PgsTimeoutModes.Timeout;
             }
             finally
             {
@@ -121,9 +135,14 @@ namespace Avalanche.Api.Managers.Media
                 // Ask PGS player to stop timeout mode
                 await _pgsTimeoutService.SetPgsTimeoutMode(new SetPgsTimeoutModeRequest { Mode = PgsTimeoutModeEnum.PgsTimeoutModeIdle });
 
-                // TODO 
-                // Unroute timeout
-                // Restore old routes
+                if (_currentPgsTimeoutState == PgsTimeoutModes.Timeout)
+                {
+                    // TODO 
+                    // Unroute timeout
+                    // Restore old routes PGS or prior PGS
+                }
+
+                _currentPgsTimeoutState = PgsTimeoutModes.Idle;
             }
             finally
             {
