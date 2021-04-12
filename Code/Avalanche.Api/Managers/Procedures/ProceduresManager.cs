@@ -36,6 +36,7 @@ namespace Avalanche.Api.Managers.Procedures
         {
             var activeProcedure = await _stateClient.GetData<ActiveProcedureState>();
             return _mapper.Map<ActiveProcedureViewModel>(activeProcedure);
+            //TODO: Get the recorder state
         }
 
         /// <summary>

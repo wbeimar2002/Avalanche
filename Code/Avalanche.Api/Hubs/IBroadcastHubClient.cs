@@ -4,6 +4,7 @@ using Ism.SystemState.Models.PgsTimeout;
 using System.Threading.Tasks;
 using Ism.SystemState.Models.Library;
 using Ism.SystemState.Models.Exceptions;
+using Ism.SystemState.Models.Recorder;
 
 namespace Avalanche.Api.Hubs
 {
@@ -26,5 +27,7 @@ namespace Avalanche.Api.Hubs
         Task OnDiskSpaceStateChanged(DiskSpaceEvent diskSpaceEvent);
 
         Task OnSystemErrorRaised(SystemErrorRaisedEvent evt);
+
+        Task OnRecorderStateChanged(RecorderStateEvent evt);
     }
 }

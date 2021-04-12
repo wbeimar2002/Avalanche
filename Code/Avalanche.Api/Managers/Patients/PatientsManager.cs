@@ -284,6 +284,12 @@ namespace Avalanche.Api.Managers.Patients
                     libraryId: allocatedProcedure.ProcedureId.Id,
                     repositoryId: allocatedProcedure.ProcedureId.RepositoryName,
 
+                    externalProcedureId: null,
+                    isClinical: true,
+                    notes: new Dictionary<string, string>(),
+                    accession: null,
+                    scheduleId: null,
+
                     procedureRelativePath: allocatedProcedure.RelativePath,
 
                     department: _mapper.Map<Ism.SystemState.Models.Procedure.Department>(patient.Department),
