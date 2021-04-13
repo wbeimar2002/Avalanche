@@ -295,7 +295,12 @@ namespace Avalanche.Api.Managers.Patients
                     procedureStartTimeUtc: DateTimeOffset.UtcNow,
 
                     // TODO:
-                    procedureTimezoneId: TimeZoneInfo.Local.Id));
+                    procedureTimezoneId: TimeZoneInfo.Local.Id,
+                    isClinical: true,
+                    accession: null,
+                    notes: new Dictionary<string, string>(),
+                    externalProcedureId: null,
+                    scheduleId: null));
             }
             else
             {

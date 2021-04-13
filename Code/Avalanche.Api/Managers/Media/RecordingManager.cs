@@ -39,13 +39,21 @@ namespace Avalanche.Api.Managers.Media
             await _recorderService.CaptureImage(message);
         }
 
-#warning TODO: This is entirely wrong and intended only for a workflow demo. Remove.
-        // Need to define and implement correct image retrieval patterns. Not in scope of current work, but the following is not at all correct.
+#warning TODO: This is wrong and intended only for a workflow demo. Remove.
+        // Need to define and implement correct image retrieval patterns. Not in scope of current work, but it is probably not correct to just accept any path string.
         public string GetCapturePreview(string path)
         {
             var libraryRoot = Environment.GetEnvironmentVariable("LibraryDataRoot");
             var translated = path.Replace('\\', '/').TrimStart('/');
             return System.IO.Path.Combine(libraryRoot, translated);           
+        }
+        
+        // TODO: same as above. Need to define file retrieval patterns.
+        public string GetCaptureVideo(string path)
+        {
+            var libraryRoot = Environment.GetEnvironmentVariable("LibraryDataRoot");
+            var translated = path.Replace('\\', '/').TrimStart('/');
+            return System.IO.Path.Combine(libraryRoot, translated);
         }
 
         public async Task StartRecording()

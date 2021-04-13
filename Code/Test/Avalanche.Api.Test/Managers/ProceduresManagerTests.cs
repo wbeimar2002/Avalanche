@@ -52,7 +52,12 @@ namespace Avalanche.Api.Test.Managers
                     null,
                     false,
                     DateTimeOffset.UtcNow,
-                    TimeZoneInfo.Local.Id));
+                    TimeZoneInfo.Local.Id,
+                    false,
+                    new Dictionary<string, string>(),
+                    null, 
+                    null, 
+                    null));
 
             var manager = new ProceduresManager(stateClient.Object, _libraryService.Object, _accessInfoFactory.Object, _mapper);
 
