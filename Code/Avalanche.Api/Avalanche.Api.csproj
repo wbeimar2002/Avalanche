@@ -43,7 +43,7 @@
     <PackageReference Include="Ism.Broadcaster.Standard" Version="1.0.0-prerelease0002" />
     <PackageReference Include="Ism.Common.Core" Version="1.0.0-prerelease040" />
     <PackageReference Include="Ism.Common.Core.Hosting" Version="1.0.0-prerelease032" />
-    <PackageReference Include="Ism.Library.Client" Version="1.0.0-prerelease02" />
+    <PackageReference Include="Ism.Library.Client" Version="1.0.0-prerelease0008" />
     <PackageReference Include="Ism.PatientInfoEngine.Client" Version="1.0.0-prerelease0017" />
     <PackageReference Include="Ism.PgsTimeout.Client" Version="1.0.0-prerelease0007" />
     <PackageReference Include="Ism.Recorder.Client" Version="1.0.0-prerelease0018" />

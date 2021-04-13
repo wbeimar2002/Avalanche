@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Avalanche.Api.Managers.Media
 {
-    public interface IPgsTimeoutManager
+    public interface IPgsManager
     {
         Task<StateViewModel> GetPgsTimeoutMode();
         Task SetPgsTimeoutMode(StateViewModel requestViewModel);
@@ -25,14 +25,6 @@ namespace Avalanche.Api.Managers.Media
         Task SetPgsVideoFile(GreetingVideoModel video);
 
         Task SetPgsVideoPosition(StateViewModel requestViewModel);
-
-        Task<StateViewModel> GetTimeoutPdfPath();
-        Task<StateViewModel> GetTimeoutPageCount();
-        Task<StateViewModel> GetTimeoutPage();
-        Task SetTimeoutPage(StateViewModel requestViewModel);
-        Task NextPage();
-        Task PreviousPage();
-
 
         Task<StateViewModel> GetPgsStateForSink(SinkModel sink);
         Task SetPgsStateForSink(SinkStateViewModel sinkState);

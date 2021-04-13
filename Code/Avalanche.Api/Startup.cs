@@ -98,7 +98,8 @@ namespace Avalanche.Api
             services.AddTransient<ISecurityManager, SecurityManager>();
 
             // Singleton
-            services.AddSingleton<IPgsTimeoutManager, PgsTimeoutManager>();
+            services.AddSingleton<ITimeoutManager, TimeoutManager>();
+            services.AddSingleton<IPgsManager, PgsManager>();
             services.AddSingleton<IWebRTCService, WebRtcService>();
             services.AddSingleton<IRecorderService, RecorderService>();
             services.AddSingleton<IAvidisService, AvidisService>();

@@ -113,5 +113,27 @@ namespace Avalanche.Api.Controllers.V1
                 _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
             }
         }
+
+        [ResponseCache(Location = ResponseCacheLocation.Client, Duration = 60 * 60 * 24)]
+        [HttpGet("captures/video")]
+        public IActionResult GetCapturesVideo([FromQuery] string path)
+        {
+            try
+            {
+                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
+                var fullPath = _recordingManager.GetCaptureVideo(path);
+                // for video, add range headers to support chunking / seek (and allow safari to work at all)
+                return PhysicalFile(fullPath, "video/mp4", true);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(LoggerHelper.GetLogMessage(DebugLogType.Exception), ex);
+                return BadRequest();
+            }
+            finally
+            {
+                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
+            }
+        }
     }
 }

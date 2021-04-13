@@ -4,6 +4,7 @@ using Avalanche.Shared.Domain.Models.Media;
 using Avalanche.Shared.Infrastructure.Enumerations;
 using Avalanche.Shared.Infrastructure.Extensions;
 using Avalanche.Shared.Infrastructure.Helpers;
+using Ism.PgsTimeout.V1.Protos;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -24,14 +25,43 @@ namespace Avalanche.Api.Controllers.V1
     public class MediaController : ControllerBase
     {
         readonly ILogger<MediaController> _logger;
-        readonly IPgsTimeoutManager _pgsTimeoutManager;
+        readonly IPgsManager _pgsManager;
+        readonly ITimeoutManager _timeoutManager;
         readonly IWebHostEnvironment _environment;
 
-        public MediaController(ILogger<MediaController> logger, IPgsTimeoutManager pgsTimeoutManager, IWebHostEnvironment environment)
+        public MediaController(ILogger<MediaController> logger, IPgsManager pgsManager, ITimeoutManager timeoutManager, IWebHostEnvironment environment)
         {
             _environment = environment;
             _logger = ThrowIfNullOrReturn(nameof(logger), logger);
-            _pgsTimeoutManager = ThrowIfNullOrReturn(nameof(pgsTimeoutManager), pgsTimeoutManager);
+            _pgsManager = ThrowIfNullOrReturn(nameof(pgsManager), pgsManager);
+            _timeoutManager = ThrowIfNullOrReturn(nameof(timeoutManager), timeoutManager);
+        }
+
+
+        /// <summary>
+        /// Sets mode for PGS Timeout Player
+        /// </summary>
+        /// <param name="mode"></param>
+        /// <param name="env"></param>
+        /// <returns></returns>
+        [HttpPut("mode/{mode}")]
+        public async Task<IActionResult> SetMode(PgsTimeoutModeEnum mode, [FromServices] IWebHostEnvironment env)
+        {
+            try
+            {
+                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
+                await _pgsManager.SetPgsTimeoutMode(new StateViewModel() { Value = mode.ToString() });
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, LoggerHelper.GetLogMessage(DebugLogType.Exception), ex);
+                return new BadRequestObjectResult(ex.Get(env.IsDevelopment()));
+            }
+            finally
+            {
+                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
+            }
         }
 
         #region Routing
@@ -48,7 +78,7 @@ namespace Avalanche.Api.Controllers.V1
             try
             {
                 _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
-                var result = await _pgsTimeoutManager.GetPgsSinks();
+                var result = await _pgsManager.GetPgsSinks();
                 return Ok(result);
             }
             catch (Exception ex)
@@ -74,7 +104,7 @@ namespace Avalanche.Api.Controllers.V1
             try
             {
                 _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
-                await _pgsTimeoutManager.SetPgsStateForSink(sinkState);
+                await _pgsManager.SetPgsStateForSink(sinkState);
                 return Ok();
             }
             catch (Exception ex)
@@ -102,7 +132,7 @@ namespace Avalanche.Api.Controllers.V1
             try
             {
                 _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
-                var result = await _pgsTimeoutManager.GetPgsStateForSink(new SinkModel()
+                var result = await _pgsManager.GetPgsStateForSink(new SinkModel()
                 {
                     Alias = alias,
                     Index = index
@@ -137,7 +167,7 @@ namespace Avalanche.Api.Controllers.V1
             try
             {
                 _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
-                await _pgsTimeoutManager.SetPgsVolume(new StateViewModel() { Value = level.ToString() });
+                await _pgsManager.SetPgsVolume(new StateViewModel() { Value = level.ToString() });
                 return Ok();
             }
             catch (Exception ex)
@@ -163,7 +193,7 @@ namespace Avalanche.Api.Controllers.V1
             try
             {
                 _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
-                var result = await _pgsTimeoutManager.GetPgsVolume();
+                var result = await _pgsManager.GetPgsVolume();
                 return Ok(result);
             }
             catch (Exception ex)
@@ -188,7 +218,7 @@ namespace Avalanche.Api.Controllers.V1
             try
             {
                 _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
-                await _pgsTimeoutManager.SetPgsMute(new StateViewModel() { Value = muteState.ToString() });
+                await _pgsManager.SetPgsMute(new StateViewModel() { Value = muteState.ToString() });
                 return Ok();
             }
             catch (Exception ex)
@@ -214,7 +244,7 @@ namespace Avalanche.Api.Controllers.V1
             try
             {
                 _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
-                var result = await _pgsTimeoutManager.GetPgsMute();
+                var result = await _pgsManager.GetPgsMute();
                 return Ok(result);
             }
             catch (Exception ex)
@@ -240,7 +270,7 @@ namespace Avalanche.Api.Controllers.V1
             try
             {
                 _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
-                await _pgsTimeoutManager.SetPgsVideoFile(greetingVideo);
+                await _pgsManager.SetPgsVideoFile(greetingVideo);
                 return Ok();
             }
             catch (Exception ex)
@@ -266,7 +296,7 @@ namespace Avalanche.Api.Controllers.V1
             try
             {
                 _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
-                var result = await _pgsTimeoutManager.GetPgsVideoFileList();
+                var result = await _pgsManager.GetPgsVideoFileList();
                 return Ok(result);
             }
             catch (Exception ex)
@@ -293,7 +323,7 @@ namespace Avalanche.Api.Controllers.V1
             try
             {
                 _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
-                await _pgsTimeoutManager.SetPgsVideoPosition(new StateViewModel() { Value = position.ToString() });
+                await _pgsManager.SetPgsVideoPosition(new StateViewModel() { Value = position.ToString() });
                 return Ok();
             }
             catch (Exception ex)
@@ -319,7 +349,7 @@ namespace Avalanche.Api.Controllers.V1
             try
             {
                 _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
-                await _pgsTimeoutManager.SetPgsState(new StateViewModel() { Value = state.ToString() });
+                await _pgsManager.SetPgsState(new StateViewModel() { Value = state.ToString() });
                 return Ok();
             }
             catch (Exception ex)
@@ -347,7 +377,7 @@ namespace Avalanche.Api.Controllers.V1
             try
             {
                 _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
-                await _pgsTimeoutManager.NextPage();
+                await _timeoutManager.NextPage();
                 return Ok();
             }
             catch (Exception ex)
@@ -372,7 +402,7 @@ namespace Avalanche.Api.Controllers.V1
             try
             {
                 _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
-                await _pgsTimeoutManager.PreviousPage();
+                await _timeoutManager.PreviousPage();
                 return Ok();
             }
             catch (Exception ex)
@@ -398,7 +428,7 @@ namespace Avalanche.Api.Controllers.V1
             try
             {
                 _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
-                await _pgsTimeoutManager.SetTimeoutPage(new StateViewModel() { Value = pageNumber.ToString() });
+                await _timeoutManager.SetTimeoutPage(new StateViewModel() { Value = pageNumber.ToString() });
                 return Ok();
             }
             catch (Exception ex)
@@ -424,7 +454,7 @@ namespace Avalanche.Api.Controllers.V1
             try
             {
                 _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
-                var result = await _pgsTimeoutManager.GetTimeoutPage();
+                var result = await _timeoutManager.GetTimeoutPage();
                 return Ok(result);
             }
             catch (Exception ex)
@@ -450,7 +480,7 @@ namespace Avalanche.Api.Controllers.V1
             try
             {
                 _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
-                var result = await _pgsTimeoutManager.GetTimeoutPageCount();
+                var result = await _timeoutManager.GetTimeoutPageCount();
                 return Ok(result);
             }
             catch (Exception ex)
@@ -476,13 +506,39 @@ namespace Avalanche.Api.Controllers.V1
             try
             {
                 _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
-                var result = await _pgsTimeoutManager.GetTimeoutPdfPath();
+                var result = await _timeoutManager.GetTimeoutPdfPath();
                 return Ok(result);
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, LoggerHelper.GetLogMessage(DebugLogType.Exception), ex);
                 return new BadRequestObjectResult(ex.Get(_environment.IsDevelopment()));
+            }
+            finally
+            {
+                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
+            }
+        }
+
+        /// <summary>
+        /// Starts or stops Timeout mode
+        /// </summary>
+        /// <param name="state"></param>
+        /// <param name="env"></param>
+        /// <returns></returns>
+        [HttpPut("timeout/state/{state}")]
+        public async Task<IActionResult> SetTimeoutState(bool state, [FromServices] IWebHostEnvironment env)
+        {
+            try
+            {
+                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
+                await _timeoutManager.SetTimeoutState(new StateViewModel() { Value = state.ToString() });
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, LoggerHelper.GetLogMessage(DebugLogType.Exception), ex);
+                return new BadRequestObjectResult(ex.Get(env.IsDevelopment()));
             }
             finally
             {
