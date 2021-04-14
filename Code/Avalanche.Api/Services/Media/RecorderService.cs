@@ -18,14 +18,7 @@ namespace Avalanche.Api.Services.Media
 
         public async Task StartRecording(RecordMessage recordMessage) => await _client.StartRecording(recordMessage);
 
-        public async Task<RecorderState> GetRecorderState()
-        { 
-            await _client.GetRecorderState();
-            return new RecorderState()
-            {
-                State = 1,
-            };
-        }
+        public async Task<RecorderState> GetRecorderState() => await _client.GetRecorderState();
 
         public async Task StopRecording() => await _client.StopRecording();
 

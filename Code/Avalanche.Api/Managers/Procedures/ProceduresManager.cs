@@ -89,7 +89,6 @@ namespace Avalanche.Api.Managers.Procedures
                 Clinical = true
             });
 
-
             return _mapper.Map<ProcedureAllocationViewModel>(response);
         }
     }
