@@ -53,7 +53,7 @@
     <PackageReference Include="Ism.Storage.DataManagement.Client" Version="1.0.0-prerelease0015" />
     <PackageReference Include="Ism.Storage.PatientList.Client" Version="1.0.0-prerelease0013" />
     <PackageReference Include="Ism.Streaming.Client" Version="1.0.0-prerelease0011" />
-    <PackageReference Include="Ism.SystemState.Client" Version="1.0.0-prerelease0034" />
+    <PackageReference Include="Ism.SystemState.Client" Version="1.0.0-prerelease0035" />
     <!--<PackageReference Include="Ism.PatientInfoEngine.Client.Core" Version="1.0.0-prerelease3" />-->
     <!--<PackageReference Include="Ism.Utility.Core" Version="1.0.1-prerelease9" />-->
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="3.1.12" />
