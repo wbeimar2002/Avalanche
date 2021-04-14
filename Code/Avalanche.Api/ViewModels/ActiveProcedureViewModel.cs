@@ -6,6 +6,7 @@ namespace Avalanche.Api.ViewModels
     public class ActiveProcedureViewModel : ProcedureDetailsViewModel
     {
         public bool RequiresUserConfirmation { get; set; }
+        public int? RecorderState { get; internal set; }
 
         public ActiveProcedureViewModel()
         { }

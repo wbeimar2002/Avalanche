@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 
 using Avalanche.Api.Services.Health;
+using Avalanche.Api.Services.Media;
 using Avalanche.Api.Utilities;
 using Avalanche.Api.ViewModels;
 
@@ -18,8 +19,9 @@ namespace Avalanche.Api.Managers.Procedures
         private readonly ILibraryService _libraryService;
         private readonly IMapper _mapper;
         private readonly IAccessInfoFactory _accessInfoFactory;
+        private readonly IRecorderService _recorderService;
 
-        public ProceduresManager(IStateClient stateClient, ILibraryService libraryService, IAccessInfoFactory accessInfoFactory, IMapper mapper)
+        public ProceduresManager(IStateClient stateClient, ILibraryService libraryService, IAccessInfoFactory accessInfoFactory, IMapper mapper, IRecorderService recorderService)
         {
             _stateClient = stateClient;
             _libraryService = libraryService;
@@ -27,6 +29,7 @@ namespace Avalanche.Api.Managers.Procedures
             _mapper = mapper;
             _libraryService = libraryService;
             _accessInfoFactory = accessInfoFactory;
+            _recorderService = recorderService;
         }
 
         /// <summary>
@@ -35,8 +38,12 @@ namespace Avalanche.Api.Managers.Procedures
         public async Task<ActiveProcedureViewModel> GetActiveProcedure()
         {
             var activeProcedure = await _stateClient.GetData<ActiveProcedureState>();
-            return _mapper.Map<ActiveProcedureViewModel>(activeProcedure);
-            //TODO: Get the recorder state
+            var result = _mapper.Map<ActiveProcedureViewModel>(activeProcedure);
+
+            if (result != null)
+                result.RecorderState = (await _recorderService.GetRecorderState()).State;
+
+            return result;
         }
 
         /// <summary>
