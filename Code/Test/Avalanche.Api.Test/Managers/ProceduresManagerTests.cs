@@ -65,6 +65,8 @@ namespace Avalanche.Api.Test.Managers
 
             var manager = new ProceduresManager(stateClient.Object, _libraryService.Object, _accessInfoFactory.Object, _mapper, _recorderService.Object);
 
+            _recorderService.Setup(mock => mock.GetRecorderState()).ReturnsAsync(new Ism.Recorder.Core.V1.Protos.RecorderState() { State = 0 });
+
             var result = await manager.GetActiveProcedure();
 
             Assert.NotNull(result);
