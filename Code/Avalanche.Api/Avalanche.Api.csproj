@@ -42,18 +42,18 @@
     </PackageReference>
     <PackageReference Include="Ism.Broadcaster.Standard" Version="1.0.0-prerelease0002" />
     <PackageReference Include="Ism.Common.Core" Version="1.0.0-prerelease040" />
-    <PackageReference Include="Ism.Common.Core.Hosting" Version="1.0.0-prerelease032" />
+    <PackageReference Include="Ism.Common.Core.Hosting" Version="1.0.0-prerelease034" />
     <PackageReference Include="Ism.Library.Client" Version="1.0.0-prerelease0008" />
-    <PackageReference Include="Ism.PatientInfoEngine.Client" Version="1.0.0-prerelease0017" />
+    <PackageReference Include="Ism.PatientInfoEngine.Client" Version="1.0.0-prerelease0018" />
     <PackageReference Include="Ism.PgsTimeout.Client" Version="1.0.0-prerelease0007" />
-    <PackageReference Include="Ism.Recorder.Client" Version="1.0.0-prerelease0018" />
+    <PackageReference Include="Ism.Recorder.Client" Version="1.0.0-prerelease0020" />
     <PackageReference Include="Ism.Routing.Client" Version="1.0.0-prerelease0011" />
     <PackageReference Include="Ism.Security.Grpc.Standard" Version="1.0.0-prerelease021" />
     <PackageReference Include="Ism.Storage.Configuration.Client" Version="1.0.0-prerelease0016" />
-    <PackageReference Include="Ism.Storage.DataManagement.Client" Version="1.0.0-prerelease0012" />
+    <PackageReference Include="Ism.Storage.DataManagement.Client" Version="1.0.0-prerelease0015" />
     <PackageReference Include="Ism.Storage.PatientList.Client" Version="1.0.0-prerelease0013" />
     <PackageReference Include="Ism.Streaming.Client" Version="1.0.0-prerelease0011" />
-    <PackageReference Include="Ism.SystemState.Client" Version="1.0.0-prerelease0034" />
+    <PackageReference Include="Ism.SystemState.Client" Version="1.0.0-prerelease0035" />
     <!--<PackageReference Include="Ism.PatientInfoEngine.Client.Core" Version="1.0.0-prerelease3" />-->
     <!--<PackageReference Include="Ism.Utility.Core" Version="1.0.1-prerelease9" />-->
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="3.1.12" />
