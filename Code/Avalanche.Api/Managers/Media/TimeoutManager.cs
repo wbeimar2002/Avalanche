@@ -13,6 +13,7 @@ using Ism.SystemState.Client;
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -24,7 +25,7 @@ namespace Avalanche.Api.Managers.Media
     /// Handles routing timeout
     /// saving and restoring the current routes
     /// controlling the pgs timeout player
-    /// setting the enabled state for pgs displays
+    /// setting the enabled state for timeout displays
     /// </summary>
     public class TimeoutManager : ITimeoutManager, IDisposable
     {
@@ -34,7 +35,7 @@ namespace Avalanche.Api.Managers.Media
         // used internally to route video and store current routes
         private readonly IRoutingService _routingService;
 
-        // used for persisting and publishing the checkbox state for the pgs displays
+        // used for persisting and publishing the checkbox state for the timeout displays
         private readonly IStateClient _stateClient;
 
         // gRPC client for the pgs timeout application
@@ -88,11 +89,39 @@ namespace Avalanche.Api.Managers.Media
         }
 
 
-        #region Pending of Implementation
+        #region Routing and State Orchestation
 
-        public Task<List<VideoDeviceModel>> GetTimeoutSinks()
+        public async Task<IList<VideoSinkModel>> GetTimeoutSinks()
         {
-            return Task.FromResult(new List<VideoDeviceModel>());
+            // this needs to return the same data that routing does
+            var config = await GetConfig();
+
+            var routingSinks = await _routingService.GetVideoSinks();
+            var routes = await _routingService.GetCurrentRoutes();
+
+            // Timeout sinks are typically a subset of routing sinks
+            // get the routing sinks that are also called out in the timeout sink collection
+
+            var timeoutSinks = routingSinks.VideoSinks.Where(routingSink =>
+                config.TimeoutSinks.Any(timeoutSink => string.Equals(timeoutSink.Alias, routingSink.Sink.Alias, StringComparison.OrdinalIgnoreCase)
+                && timeoutSink.Index == routingSink.Sink.Index));
+
+            var apiSinks = _mapper.Map<IList<Ism.Routing.V1.Protos.VideoSinkMessage>, IList<VideoSinkModel>>(timeoutSinks.ToList());
+
+            foreach (var sink in apiSinks)
+            {
+                var route = routes.Routes.SingleOrDefault(x => string.Equals(x.Sink.Alias, sink.Sink.Alias, StringComparison.OrdinalIgnoreCase)
+                && x.Sink.Index == sink.Sink.Index);
+
+                // get the current source
+                sink.Source = new SinkModel()
+                {
+                    Alias = route.Source.Alias,
+                    Index = route.Source.Index
+                };
+            }
+
+            return apiSinks;
         }
 
         public async Task StartTimeout()
@@ -112,12 +141,25 @@ namespace Avalanche.Api.Managers.Media
                     await _pgsManager.SetPgsState(new StateViewModel { Value = false.ToString() });
                 }
 
+                // TODO
+                // Save old routes 
+
+
                 // Ask PGS player to set timeout mode
                 await _pgsTimeoutService.SetPgsTimeoutMode(new SetPgsTimeoutModeRequest { Mode = PgsTimeoutModeEnum.PgsTimeoutModeTimeout });
 
-                // TODO
-                // Save old routes
+
                 // Route timeout
+                var config = await GetConfig();
+                var sinks = await GetTimeoutSinks();
+                foreach (var sink in sinks)
+                {
+                    await _routingService.RouteVideo(new Ism.Routing.V1.Protos.RouteVideoRequest
+                    {
+                        Source = _mapper.Map<SinkModel, Ism.Routing.V1.Protos.AliasIndexMessage>(config.TimeoutSource),
+                        Sink = _mapper.Map<VideoDeviceModel, Ism.Routing.V1.Protos.AliasIndexMessage>(sink)
+                    });
+                }
 
                 _currentPgsTimeoutState = PgsTimeoutModes.Timeout;
             }
