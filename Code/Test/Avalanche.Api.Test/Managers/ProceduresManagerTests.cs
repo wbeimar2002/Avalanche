@@ -1,7 +1,9 @@
 ﻿using AutoMapper;
+using Avalanche.Api.Managers.Media;
 using Avalanche.Api.Managers.Procedures;
 using Avalanche.Api.MappingConfigurations;
 using Avalanche.Api.Services.Health;
+using Avalanche.Api.Services.Media;
 using Avalanche.Api.Utilities;
 using Ism.SystemState.Client;
 using Ism.SystemState.Models.Procedure;
@@ -20,6 +22,7 @@ namespace Avalanche.Api.Test.Managers
         IMapper _mapper;
         Mock<IAccessInfoFactory> _accessInfoFactory;
         Mock<ILibraryService> _libraryService;
+        Mock<IRecorderService> _recorderService;
 
         [SetUp]
         public void Setup()
@@ -32,6 +35,7 @@ namespace Avalanche.Api.Test.Managers
             _mapper = config.CreateMapper();
             _accessInfoFactory = new Mock<IAccessInfoFactory>();
             _libraryService = new Mock<ILibraryService>();
+            _recorderService = new Mock<IRecorderService>();
         }
 
         [Test]
@@ -59,7 +63,7 @@ namespace Avalanche.Api.Test.Managers
                     null, 
                     null));
 
-            var manager = new ProceduresManager(stateClient.Object, _libraryService.Object, _accessInfoFactory.Object, _mapper);
+            var manager = new ProceduresManager(stateClient.Object, _libraryService.Object, _accessInfoFactory.Object, _mapper, _recorderService.Object);
 
             var result = await manager.GetActiveProcedure();
 
