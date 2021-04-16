@@ -282,6 +282,12 @@ namespace Avalanche.Api.Managers.Media
             var request = _mapper.Map<StateViewModel, SetPgsVolumeRequest>(requestViewModel);
             await _pgsTimeoutService.SetPgsVolume(request);
         }
+
+        public async Task<Ism.Routing.V1.Protos.GetCurrentRoutesResponse> GetPrePgsRoutes()
+        {
+            return await Task.FromResult(_currentRoutes);
+        }
+
         #endregion
 
         #region Private Methods

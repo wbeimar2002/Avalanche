@@ -9,6 +9,7 @@ using Avalanche.Shared.Infrastructure.Models.Configuration;
 
 using Ism.Common.Core.Configuration.Models;
 using Ism.PgsTimeout.V1.Protos;
+using Ism.Routing.V1.Protos;
 using Ism.SystemState.Client;
 
 using System;
@@ -61,6 +62,12 @@ namespace Avalanche.Api.Managers.Media
         /// </summary>
         private PgsTimeoutModes _currentPgsTimeoutState = PgsTimeoutModes.Idle;
 
+        private PgsTimeoutModes _lastPgsTimeoutState = PgsTimeoutModes.Idle;
+
+        private GetCurrentRoutesResponse _prePgsRoutes = new GetCurrentRoutesResponse();
+        private GetCurrentRoutesResponse _currentRoutes = new GetCurrentRoutesResponse();
+
+
         public TimeoutManager(
             IStorageService storageService,
             IRoutingService routingService,
@@ -77,21 +84,9 @@ namespace Avalanche.Api.Managers.Media
             _mapper = ThrowIfNullOrReturn(nameof(mapper), mapper);
         }
 
-        public async Task SetTimeoutState(StateViewModel requestViewModel)
-        {
-            // start or stop timeout based on the requested state
-            // the timeoutManager deals with pgs-timeout interaction
-            // it also deals with something like 2 UIs starting pgs at the same time
-            if (Convert.ToBoolean(requestViewModel.Value))
-                await StartTimeout();
-            else
-                await StopTimeout();
-        }
-
-
         #region Routing and State Orchestation
 
-        public async Task<IList<VideoSinkModel>> GetTimeoutSinks()
+        private async Task<IList<VideoSinkModel>> GetTimeoutSinks()
         {
             // this needs to return the same data that routing does
             var config = await GetConfig();
@@ -124,7 +119,7 @@ namespace Avalanche.Api.Managers.Media
             return apiSinks;
         }
 
-        public async Task StartTimeout()
+        private async Task StartTimeout()
         {
             await _startStopLock.WaitAsync(_cts.Token);
             try
@@ -135,19 +130,22 @@ namespace Avalanche.Api.Managers.Media
                     return;
                 }
 
-                // TODO if PGS is active stop it
+                // If PGS is actively playing save the last state as pgs
                 if ((await _pgsTimeoutService.GetPgsPlaybackState()).IsPlaying)
                 {
-                    await _pgsManager.SetPgsState(new StateViewModel { Value = false.ToString() });
+                    _lastPgsTimeoutState = PgsTimeoutModes.Pgs;
                 }
 
-                // TODO
-                // Save old routes 
+                // Save previous routes
+                if(_lastPgsTimeoutState == PgsTimeoutModes.Pgs)
+                {
+                    await SavePrePgsRoutes();
+                }
+                await SaveCurrentRoutes();
 
 
                 // Ask PGS player to set timeout mode
                 await _pgsTimeoutService.SetPgsTimeoutMode(new SetPgsTimeoutModeRequest { Mode = PgsTimeoutModeEnum.PgsTimeoutModeTimeout });
-
 
                 // Route timeout
                 var config = await GetConfig();
@@ -161,6 +159,8 @@ namespace Avalanche.Api.Managers.Media
                     });
                 }
 
+                // TODO Audio
+
                 _currentPgsTimeoutState = PgsTimeoutModes.Timeout;
             }
             finally
@@ -169,19 +169,28 @@ namespace Avalanche.Api.Managers.Media
             }
         }
 
-        public async Task StopTimeout()
+        private async Task StopTimeout(bool restoreLastRoutes)
         {
             await _startStopLock.WaitAsync(_cts.Token);
             try
-            {
-                // Ask PGS player to stop timeout mode
-                await _pgsTimeoutService.SetPgsTimeoutMode(new SetPgsTimeoutModeRequest { Mode = PgsTimeoutModeEnum.PgsTimeoutModeIdle });
-
+            {                
                 if (_currentPgsTimeoutState == PgsTimeoutModes.Timeout)
                 {
-                    // TODO 
-                    // Unroute timeout
-                    // Restore old routes PGS or prior PGS
+                    var playerMode = new SetPgsTimeoutModeRequest { Mode = PgsTimeoutModeEnum.PgsTimeoutModeIdle};
+                    if(restoreLastRoutes && _lastPgsTimeoutState == PgsTimeoutModes.Pgs)
+                    {
+                        playerMode.Mode = PgsTimeoutModeEnum.PgsTimeoutModePgs;
+                    }
+
+                    // Ask PGS player to stop timeout mode
+                    await _pgsTimeoutService.SetPgsTimeoutMode(playerMode);
+
+                    if(restoreLastRoutes) // Restore last saved routes
+                    {
+                        await LoadCurrentSavedRoutes();
+                    }
+
+                    // TODO: audio?
                 }
 
                 _currentPgsTimeoutState = PgsTimeoutModes.Idle;
@@ -191,6 +200,55 @@ namespace Avalanche.Api.Managers.Media
                 _startStopLock.Release();
             }
         }
+
+        private async Task LoadPrePgsRoutes()
+        {
+            if (_currentPgsTimeoutState == PgsTimeoutModes.Idle)
+                return;
+
+            foreach (var route in _prePgsRoutes.Routes)
+            {
+                await _routingService.RouteVideo(new RouteVideoRequest
+                {
+                    Sink = route.Sink,
+                    Source = route.Source
+                });
+            }
+        }
+
+        private async Task LoadCurrentSavedRoutes()
+        {
+            if (_currentPgsTimeoutState == PgsTimeoutModes.Idle)
+                return;
+
+            foreach (var route in _currentRoutes.Routes)
+            {
+                await _routingService.RouteVideo(new RouteVideoRequest
+                {
+                    Sink = route.Sink,
+                    Source = route.Source
+                });
+            }
+        }
+
+        private async Task SaveCurrentRoutes()
+        {
+            // TODO: determine if previous routes have to survive a reboot
+            // for now, they don't
+            // TODO: 4ko tile routes are not supported currently
+            // don't need to worry about those until RX4
+            if (_currentPgsTimeoutState != PgsTimeoutModes.Idle)
+                return;
+
+            _currentRoutes = await _routingService.GetCurrentRoutes();
+        }
+
+        private async Task SavePrePgsRoutes()
+        {
+            _prePgsRoutes = await _pgsManager.GetPrePgsRoutes();
+        }
+
+
         #endregion
 
         #region Timeout
@@ -227,6 +285,36 @@ namespace Avalanche.Api.Managers.Media
         public async Task PreviousPage()
         {
             await _pgsTimeoutService.PreviousPage();
+        }
+
+        public async Task SetTimeoutState(StateViewModel requestViewModel)
+        {
+            // start or stop timeout based on the requested state
+            // the timeoutManager deals with pgs-timeout interaction
+            // it also deals with something like 2 UIs starting timeout at the same time
+            if (Convert.ToBoolean(requestViewModel.Value))
+                await StartTimeout();
+            else
+                await StopTimeout(true); 
+        }
+
+        public async Task DeActivateTimeout()
+        {
+            // If we are currently in timeout state then timeout is not stopped
+            // Stop timeout and restore pre pgs routes
+            if (_currentPgsTimeoutState == PgsTimeoutModes.Timeout)
+            {
+                await StopTimeout(false);
+
+                if(_lastPgsTimeoutState == PgsTimeoutModes.Pgs)
+                {
+                    await LoadPrePgsRoutes();
+                }
+                else
+                {
+                    await LoadCurrentSavedRoutes ();
+                }
+            }
         }
 
         #endregion

@@ -545,6 +545,31 @@ namespace Avalanche.Api.Controllers.V1
                 _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
             }
         }
+
+        /// <summary>
+        /// Deactivates timeout when user moves out of timeout page
+        /// </summary>
+        /// <param name="env"></param>
+        /// <returns></returns>
+        [HttpPut("timeout/deactivate")]
+        public async Task<IActionResult> DeActivateTimeout([FromServices] IWebHostEnvironment env)
+        {
+            try
+            {
+                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
+                await _timeoutManager.DeActivateTimeout();
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, LoggerHelper.GetLogMessage(DebugLogType.Exception), ex);
+                return new BadRequestObjectResult(ex.Get(env.IsDevelopment()));
+            }
+            finally
+            {
+                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
+            }
+        }
         #endregion
     }
 }

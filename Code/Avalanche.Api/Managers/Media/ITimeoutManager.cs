@@ -12,5 +12,6 @@ namespace Avalanche.Api.Managers.Media
         Task NextPage();
         Task PreviousPage();
         Task SetTimeoutState(StateViewModel requestViewModel);
+        Task DeActivateTimeout();
     }
 }
