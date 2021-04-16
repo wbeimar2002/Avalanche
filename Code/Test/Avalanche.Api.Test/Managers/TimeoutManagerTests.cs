@@ -57,8 +57,8 @@ namespace Avalanche.Api.Test.Managers
             var pdfPath = await _timeoutManager.GetTimeoutPdfPath();
 
             Assert.NotNull(pdfPath);
-            Assert.IsNotEmpty(pdfPath.Value);
-            Assert.AreEqual(testPdfPath, pdfPath.Value);
+            Assert.IsNotEmpty(pdfPath);
+            Assert.AreEqual(testPdfPath, pdfPath);
         }
 
         [Test]
@@ -82,7 +82,7 @@ namespace Avalanche.Api.Test.Managers
         public async Task SetTimeoutPage_Called()
         {
             _pgsTimeoutService.Setup(x => x.SetTimeoutPage(It.IsAny<SetTimeoutPageRequest>()));
-            await _timeoutManager.SetTimeoutPage(new StateViewModel() { Value = "0" });
+            await _timeoutManager.SetTimeoutPage(0);
 
             _pgsTimeoutService.Verify(mock => mock.SetTimeoutPage(It.IsAny<SetTimeoutPageRequest>()), Times.Once);
         }
@@ -132,7 +132,7 @@ namespace Avalanche.Api.Test.Managers
             _routingService.Setup(x => x.GetVideoSinks())
                 .Returns(Task.FromResult(new GetVideoSinksResponse()));
 
-            await _timeoutManager.SetTimeoutState(new StateViewModel { Value = value.ToString()});
+            await _timeoutManager.SetTimeoutState(value);
         }
     }
 }

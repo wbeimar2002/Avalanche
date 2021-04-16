@@ -1,5 +1,6 @@
 ﻿using Avalanche.Api.Managers.Media;
 using Avalanche.Api.ViewModels;
+using Avalanche.Shared.Domain.Enumerations;
 using Avalanche.Shared.Domain.Models.Media;
 using Avalanche.Shared.Infrastructure.Enumerations;
 using Avalanche.Shared.Infrastructure.Extensions;
@@ -45,18 +46,18 @@ namespace Avalanche.Api.Controllers.V1
         /// <param name="env"></param>
         /// <returns></returns>
         [HttpPut("mode/{mode}")]
-        public async Task<IActionResult> SetMode(PgsTimeoutModeEnum mode, [FromServices] IWebHostEnvironment env)
+        public async Task<IActionResult> SetMode(PgsTimeoutModes mode)
         {
             try
             {
                 _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
-                await _pgsManager.SetPgsTimeoutMode(new StateViewModel() { Value = mode.ToString() });
+                await _pgsManager.SetPgsTimeoutMode(mode);
                 return Ok();
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, LoggerHelper.GetLogMessage(DebugLogType.Exception), ex);
-                return new BadRequestObjectResult(ex.Get(env.IsDevelopment()));
+                return new BadRequestObjectResult(ex.Get(_environment.IsDevelopment()));
             }
             finally
             {
@@ -73,7 +74,7 @@ namespace Avalanche.Api.Controllers.V1
         /// <returns></returns>
         [HttpGet("pgs/sinks")]
         [Produces(typeof(List<VideoSinkModel>))]
-        public async Task<IActionResult> GetPgsSinks([FromServices] IWebHostEnvironment env)
+        public async Task<IActionResult> GetPgsSinks()
         {
             try
             {
@@ -126,7 +127,6 @@ namespace Avalanche.Api.Controllers.V1
         /// <param name="env"></param>
         /// <returns></returns>
         [HttpGet("pgs/sinks/state")]
-        [Produces(typeof(StateViewModel))]
         public async Task<IActionResult> GetPgsStateForSink([FromQuery] string alias, [FromQuery] string index)
         {
             try
@@ -138,7 +138,7 @@ namespace Avalanche.Api.Controllers.V1
                     Index = index
                 });
 
-                return Ok(result);
+                return Ok(new { Value =  result });
             }
             catch (Exception ex)
             {
@@ -167,7 +167,7 @@ namespace Avalanche.Api.Controllers.V1
             try
             {
                 _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
-                await _pgsManager.SetPgsVolume(new StateViewModel() { Value = level.ToString() });
+                await _pgsManager.SetPgsVolume(level);
                 return Ok();
             }
             catch (Exception ex)
@@ -187,14 +187,13 @@ namespace Avalanche.Api.Controllers.V1
         /// <param name="env"></param>
         /// <returns></returns>
         [HttpGet("pgs/volume/level")]
-        [Produces(typeof(StateViewModel))]
-        public async Task<IActionResult> GetPgsVolume([FromServices] IWebHostEnvironment env)
+        public async Task<IActionResult> GetPgsVolume()
         {
             try
             {
                 _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
                 var result = await _pgsManager.GetPgsVolume();
-                return Ok(result);
+                return Ok(new { Value = result });
             }
             catch (Exception ex)
             {
@@ -218,7 +217,7 @@ namespace Avalanche.Api.Controllers.V1
             try
             {
                 _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
-                await _pgsManager.SetPgsMute(new StateViewModel() { Value = muteState.ToString() });
+                await _pgsManager.SetPgsMute(muteState);
                 return Ok();
             }
             catch (Exception ex)
@@ -238,14 +237,13 @@ namespace Avalanche.Api.Controllers.V1
         /// <param name="env"></param>
         /// <returns></returns>
         [HttpGet("pgs/volume")]
-        [Produces(typeof(StateViewModel))]
-        public async Task<IActionResult> GetPgsMute([FromServices] IWebHostEnvironment env)
+        public async Task<IActionResult> GetPgsMute()
         {
             try
             {
                 _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
                 var result = await _pgsManager.GetPgsMute();
-                return Ok(result);
+                return Ok(new { Value = result });
             }
             catch (Exception ex)
             {
@@ -291,7 +289,7 @@ namespace Avalanche.Api.Controllers.V1
         /// <returns></returns>
         [HttpGet("pgs/files/videos")]
         [Produces(typeof(List<GreetingVideoModel>))]
-        public async Task<IActionResult> GetPgsVideoFiles([FromServices] IWebHostEnvironment env)
+        public async Task<IActionResult> GetPgsVideoFiles()
         {
             try
             {
@@ -323,7 +321,7 @@ namespace Avalanche.Api.Controllers.V1
             try
             {
                 _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
-                await _pgsManager.SetPgsVideoPosition(new StateViewModel() { Value = position.ToString() });
+                await _pgsManager.SetPgsVideoPosition(position);
                 return Ok();
             }
             catch (Exception ex)
@@ -349,7 +347,7 @@ namespace Avalanche.Api.Controllers.V1
             try
             {
                 _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
-                await _pgsManager.SetPgsState(new StateViewModel() { Value = state.ToString() });
+                await _pgsManager.SetPgsState(state);
                 return Ok();
             }
             catch (Exception ex)
@@ -372,7 +370,7 @@ namespace Avalanche.Api.Controllers.V1
         /// <param name="env"></param>
         /// <returns></returns>
         [HttpPut("timeout/pages/next")]
-        public async Task<IActionResult> NextPage([FromServices] IWebHostEnvironment env)
+        public async Task<IActionResult> NextPage()
         {
             try
             {
@@ -397,7 +395,7 @@ namespace Avalanche.Api.Controllers.V1
         /// <param name="env"></param>
         /// <returns></returns>
         [HttpPut("timeout/pages/previous")]
-        public async Task<IActionResult> PreviousPage([FromServices] IWebHostEnvironment env)
+        public async Task<IActionResult> PreviousPage()
         {
             try
             {
@@ -423,12 +421,12 @@ namespace Avalanche.Api.Controllers.V1
         /// <param name="env"></param>
         /// <returns></returns>
         [HttpPut("timeout/pages/{pageNumber}")]
-        public async Task<IActionResult> SetPage(string pageNumber)
+        public async Task<IActionResult> SetPage(int pageNumber)
         {
             try
             {
                 _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
-                await _timeoutManager.SetTimeoutPage(new StateViewModel() { Value = pageNumber.ToString() });
+                await _timeoutManager.SetTimeoutPage(pageNumber);
                 return Ok();
             }
             catch (Exception ex)
@@ -448,14 +446,13 @@ namespace Avalanche.Api.Controllers.V1
         /// <param name="env"></param>
         /// <returns></returns>
         [HttpGet("timeout/pages/current")]
-        [Produces(typeof(StateViewModel))]
-        public async Task<IActionResult> GetCurrentPage([FromServices] IWebHostEnvironment env)
+        public async Task<IActionResult> GetCurrentPage()
         {
             try
             {
                 _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
                 var result = await _timeoutManager.GetTimeoutPage();
-                return Ok(result);
+                return Ok(new { Value = result });
             }
             catch (Exception ex)
             {
@@ -474,14 +471,13 @@ namespace Avalanche.Api.Controllers.V1
         /// <param name="env"></param>
         /// <returns></returns>
         [HttpGet("timeout/pages/count")]
-        [Produces(typeof(StateViewModel))]
-        public async Task<IActionResult> GetPagesCount([FromServices] IWebHostEnvironment env)
+        public async Task<IActionResult> GetPagesCount()
         {
             try
             {
                 _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
                 var result = await _timeoutManager.GetTimeoutPageCount();
-                return Ok(result);
+                return Ok(new { Value = result });
             }
             catch (Exception ex)
             {
@@ -500,14 +496,13 @@ namespace Avalanche.Api.Controllers.V1
         /// <param name="env"></param>
         /// <returns></returns>
         [HttpGet("timeout/file/path")]
-        [Produces(typeof(StateViewModel))]
-        public async Task<IActionResult> GetFilePath([FromServices] IWebHostEnvironment env)
+        public async Task<IActionResult> GetFilePath()
         {
             try
             {
                 _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
                 var result = await _timeoutManager.GetTimeoutPdfPath();
-                return Ok(result);
+                return Ok(new { Value = result });
             }
             catch (Exception ex)
             {
@@ -527,18 +522,18 @@ namespace Avalanche.Api.Controllers.V1
         /// <param name="env"></param>
         /// <returns></returns>
         [HttpPut("timeout/state/{state}")]
-        public async Task<IActionResult> SetTimeoutState(bool state, [FromServices] IWebHostEnvironment env)
+        public async Task<IActionResult> SetTimeoutState(bool state)
         {
             try
             {
                 _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
-                await _timeoutManager.SetTimeoutState(new StateViewModel() { Value = state.ToString() });
+                await _timeoutManager.SetTimeoutState(state);
                 return Ok();
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, LoggerHelper.GetLogMessage(DebugLogType.Exception), ex);
-                return new BadRequestObjectResult(ex.Get(env.IsDevelopment()));
+                return new BadRequestObjectResult(ex.Get(_environment.IsDevelopment()));
             }
             finally
             {
@@ -552,7 +547,7 @@ namespace Avalanche.Api.Controllers.V1
         /// <param name="env"></param>
         /// <returns></returns>
         [HttpPut("timeout/deactivate")]
-        public async Task<IActionResult> DeActivateTimeout([FromServices] IWebHostEnvironment env)
+        public async Task<IActionResult> DeActivateTimeout()
         {
             try
             {
@@ -563,7 +558,7 @@ namespace Avalanche.Api.Controllers.V1
             catch (Exception ex)
             {
                 _logger.LogError(ex, LoggerHelper.GetLogMessage(DebugLogType.Exception), ex);
-                return new BadRequestObjectResult(ex.Get(env.IsDevelopment()));
+                return new BadRequestObjectResult(ex.Get(_environment.IsDevelopment()));
             }
             finally
             {

@@ -253,28 +253,30 @@ namespace Avalanche.Api.Managers.Media
 
         #region Timeout
 
-        public async Task SetTimeoutPage(StateViewModel requestViewModel)
+        public async Task SetTimeoutPage(int pageNumber)
         {
-            var request = _mapper.Map<StateViewModel, SetTimeoutPageRequest>(requestViewModel);
-            await _pgsTimeoutService.SetTimeoutPage(request);
+            await _pgsTimeoutService.SetTimeoutPage(new SetTimeoutPageRequest()
+            {
+                PageNumber = pageNumber
+            });
         }
 
-        public async Task<StateViewModel> GetTimeoutPage()
+        public async Task<int> GetTimeoutPage()
         {
             var result = await _pgsTimeoutService.GetTimeoutPage();
-            return _mapper.Map<GetTimeoutPageResponse, StateViewModel>(result);
+            return result.PageNumber;
         }
 
-        public async Task<StateViewModel> GetTimeoutPageCount()
+        public async Task<int> GetTimeoutPageCount()
         {
             var result = await _pgsTimeoutService.GetTimeoutPageCount();
-            return _mapper.Map<GetTimeoutPageCountResponse, StateViewModel>(result);
+            return result.PageCount;
         }
 
-        public async Task<StateViewModel> GetTimeoutPdfPath()
+        public async Task<string> GetTimeoutPdfPath()
         {
             var result = await _pgsTimeoutService.GetTimeoutPdfPath();
-            return _mapper.Map<GetTimeoutPdfPathResponse, StateViewModel>(result);
+            return result.PdfPath;
         }
 
         public async Task NextPage()
@@ -287,12 +289,12 @@ namespace Avalanche.Api.Managers.Media
             await _pgsTimeoutService.PreviousPage();
         }
 
-        public async Task SetTimeoutState(StateViewModel requestViewModel)
+        public async Task SetTimeoutState(bool state)
         {
             // start or stop timeout based on the requested state
             // the timeoutManager deals with pgs-timeout interaction
             // it also deals with something like 2 UIs starting timeout at the same time
-            if (Convert.ToBoolean(requestViewModel.Value))
+            if (state)
                 await StartTimeout();
             else
                 await StopTimeout(true); 

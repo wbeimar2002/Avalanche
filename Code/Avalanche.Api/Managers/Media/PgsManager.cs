@@ -91,12 +91,12 @@ namespace Avalanche.Api.Managers.Media
             _mapper = ThrowIfNullOrReturn(nameof(mapper), mapper);
         }
 
-        public async Task SetPgsState(StateViewModel requestViewModel)
+        public async Task SetPgsState(bool state)
         {
             // start or stop pgs based on the requested state
             // the pgsTimeoutManager deals with pgs-timeout interaction
             // it also deals with something like 2 UIs starting pgs at the same time
-            if (Convert.ToBoolean(requestViewModel.Value))
+            if (state)
                 await StartPgs();
             else
                 await StopPgs();
@@ -104,7 +104,7 @@ namespace Avalanche.Api.Managers.Media
 
         #region Routing and State Orchestation
 
-        public async Task<StateViewModel> GetPgsStateForSink(SinkModel sink)
+        public async Task<bool> GetPgsStateForSink(SinkModel sink)
         {
             // pgs checkbox state must persist reboots
             // state client should handle this
@@ -112,9 +112,9 @@ namespace Avalanche.Api.Managers.Media
 
             var state = pgsData?.DisplayStates.SingleOrDefault(x =>
                 string.Equals(x.AliasIndex.Alias, sink.Alias, StringComparison.OrdinalIgnoreCase) 
-                && x.AliasIndex.Index == sink.Index); 
+                && x.AliasIndex.Index == sink.Index);
 
-            return new StateViewModel() { Value = (state?.Enabled ?? true).ToString() };
+            return (state?.Enabled ?? true);
         }
 
 
@@ -217,28 +217,30 @@ namespace Avalanche.Api.Managers.Media
 
         #region PGS Basic Actions
 
-        public async Task<StateViewModel> GetPgsTimeoutMode()
+        public async Task<TimeoutModes> GetPgsTimeoutMode()
         {
             var result = await _pgsTimeoutService.GetPgsTimeoutMode();
-            return _mapper.Map<GetPgsTimeoutModeResponse, StateViewModel>(result);
+            return (TimeoutModes)((int)result.Mode);
         }
 
-        public async Task SetPgsTimeoutMode(StateViewModel requestViewModel)
+        public async Task SetPgsTimeoutMode(PgsTimeoutModes mode)
         {
-            var request = _mapper.Map<StateViewModel, SetPgsTimeoutModeRequest>(requestViewModel);
-            await _pgsTimeoutService.SetPgsTimeoutMode(request);
+            await _pgsTimeoutService.SetPgsTimeoutMode(new SetPgsTimeoutModeRequest()
+            {
+                Mode = (PgsTimeoutModeEnum)((int)mode)
+            });
         }
 
-        public async Task<StateViewModel> GetPgsMute()
+        public async Task<bool> GetPgsMute()
         {
             var result = await _pgsTimeoutService.GetPgsMute();
-            return _mapper.Map<GetPgsMuteResponse, StateViewModel>(result);
+            return result.IsMuted;
         }
 
-        public async Task<StateViewModel> GetPgsPlaybackState()
+        public async Task<bool> GetPgsPlaybackState()
         {
             var result = await _pgsTimeoutService.GetPgsPlaybackState();
-            return _mapper.Map<GetPgsPlaybackStateResponse, StateViewModel>(result);
+            return result.IsPlaying;
         }
 
         public async Task SetPgsVideoFile(GreetingVideoModel video)
@@ -259,28 +261,34 @@ namespace Avalanche.Api.Managers.Media
             return _mapper.Map<IList<PgsVideoFileMessage>, IList<GreetingVideoModel>>(result.VideoFiles).ToList();
         }
 
-        public async Task<StateViewModel> GetPgsVolume()
+        public async Task<double> GetPgsVolume()
         {
             var result = await _pgsTimeoutService.GetPgsVolume();
-            return _mapper.Map<GetPgsVolumeResponse, StateViewModel>(result);
+            return result.Volume;
         }
 
-        public async Task SetPgsMute(StateViewModel requestViewModel)
+        public async Task SetPgsMute(bool isMuted)
         {
-            var request = _mapper.Map<StateViewModel, SetPgsMuteRequest>(requestViewModel);
-            await _pgsTimeoutService.SetPgsMute(request);
+            await _pgsTimeoutService.SetPgsMute(new SetPgsMuteRequest()
+            {
+                IsMuted = isMuted
+            });
         }
 
-        public async Task SetPgsVideoPosition(StateViewModel requestViewModel)
+        public async Task SetPgsVideoPosition(double position)
         {
-            var request = _mapper.Map<StateViewModel, SetPgsVideoPositionRequest>(requestViewModel);
-            await _pgsTimeoutService.SetPgsVideoPosition(request);
+            await _pgsTimeoutService.SetPgsVideoPosition(new SetPgsVideoPositionRequest()
+            {
+                Position = position
+            });
         }
 
-        public async Task SetPgsVolume(StateViewModel requestViewModel)
+        public async Task SetPgsVolume(double volume)
         {
-            var request = _mapper.Map<StateViewModel, SetPgsVolumeRequest>(requestViewModel);
-            await _pgsTimeoutService.SetPgsVolume(request);
+            await _pgsTimeoutService.SetPgsVolume(new SetPgsVolumeRequest()
+            {
+                Volume = volume
+            });
         }
 
         public async Task<Ism.Routing.V1.Protos.GetCurrentRoutesResponse> GetPrePgsRoutes()
@@ -305,8 +313,7 @@ namespace Avalanche.Api.Managers.Media
                 foreach (var sink in sinks)
                 {
                     // display is unchecked, skip this one
-                    var result = await GetPgsStateForSink(sink.Sink);
-                    bool enabled = Convert.ToBoolean(result.Value);
+                    var enabled = await GetPgsStateForSink(sink.Sink);
                     if (!enabled)
                         continue;
 
