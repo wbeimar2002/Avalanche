@@ -51,7 +51,7 @@ namespace Avalanche.Api.Managers.Maintenance
 
             SettingsHelper.CleanSettings(category);
 
-            await _storageService.SaveJson(category.JsonKey, JsonConvert.SerializeObject(category), 1, configurationContext);
+            await _storageService.SaveJson(category.JsonKey + "Data", JsonConvert.SerializeObject(category), 1, configurationContext);
         }
 
         public async Task SaveCategory(DynamicSectionViewModel category)
@@ -308,7 +308,7 @@ namespace Avalanche.Api.Managers.Maintenance
 
             if (await SchemaIsValid(category.Schema, result, configurationContext))
             {
-                await _storageService.SaveJson(category.JsonKey, result, 1, configurationContext);
+                await _storageService.SaveJson(category.JsonKey + "Metadata", result, 1, configurationContext);
             }
             else
             {   //TODO: Pending Exceptions strategy
