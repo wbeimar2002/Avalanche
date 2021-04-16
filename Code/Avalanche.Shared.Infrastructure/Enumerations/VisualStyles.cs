@@ -13,6 +13,7 @@ namespace Avalanche.Shared.Infrastructure.Enumerations
         Switch,
         GenericList,
         VerticalToogle,
-        CustomList
+        CustomList,
+        ActionButton
     }
 }
