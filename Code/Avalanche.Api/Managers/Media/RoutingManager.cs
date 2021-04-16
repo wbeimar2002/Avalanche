@@ -41,13 +41,13 @@ namespace Avalanche.Api.Managers.Media
             _mapper = mapper;
 
             user = HttpContextUtilities.GetUser(_httpContextAccessor.HttpContext);
-            configurationContext = _mapper.Map<Shared.Domain.Models.UserModel, ConfigurationContext>(user);
+            configurationContext = _mapper.Map<UserModel, ConfigurationContext>(user);
             configurationContext.IdnId = Guid.NewGuid().ToString();
         }
 
         public async Task EnterFullScreen(RoutingActionViewModel routingActionViewModel)
         {
-            await _routingService.EnterFullScreen(new Ism.Routing.V1.Protos.EnterFullScreenRequest()
+            await _routingService.EnterFullScreen(new EnterFullScreenRequest()
             {
                 Source = _mapper.Map<SinkModel, Ism.Routing.V1.Protos.AliasIndexMessage>(routingActionViewModel.Sink),
                 UserInterfaceId = routingActionViewModel.UserInterfaceId
@@ -56,7 +56,7 @@ namespace Avalanche.Api.Managers.Media
 
         public async Task ExitFullScreen(RoutingActionViewModel routingActionViewModel)
         {
-            await _routingService.ExitFullScreen(new Ism.Routing.V1.Protos.ExitFullScreenRequest()
+            await _routingService.ExitFullScreen(new ExitFullScreenRequest()
             {
                 UserInterfaceId = Convert.ToInt32(routingActionViewModel.UserInterfaceId)
             });
@@ -76,7 +76,7 @@ namespace Avalanche.Api.Managers.Media
             var surgerySettings = await _storageService.GetJsonDynamic("SurgerySettingsData", 1, configurationContext);
 
             if (surgerySettings.Mode == RoutingModes.Hardware)
-                await _avidisService.ShowPreview(_mapper.Map<RegionModel, AvidisDeviceInterface.V1.Protos.ShowPreviewRequest>(routingPreviewViewModel.Region));
+                await _avidisService.ShowPreview(_mapper.Map<RegionModel, ShowPreviewRequest>(routingPreviewViewModel.Region));
 
             //TODO: Map this
             await _avidisService.ShowPreview(new ShowPreviewRequest()
@@ -106,7 +106,7 @@ namespace Avalanche.Api.Managers.Media
             {
                 foreach (var source in routesViewModel.Sources)
                 {
-                    await _routingService.RouteVideo(new Ism.Routing.V1.Protos.RouteVideoRequest()
+                    await _routingService.RouteVideo(new RouteVideoRequest()
                     {
                         Sink = _mapper.Map<VideoDeviceModel, Ism.Routing.V1.Protos.AliasIndexMessage>(destination),
                         Source = _mapper.Map<VideoDeviceModel, Ism.Routing.V1.Protos.AliasIndexMessage>(source),
@@ -121,7 +121,7 @@ namespace Avalanche.Api.Managers.Media
             {
                 foreach (var source in routesViewModel.Sources)
                 {
-                    await _routingService.RouteVideo(new Ism.Routing.V1.Protos.RouteVideoRequest()
+                    await _routingService.RouteVideo(new RouteVideoRequest()
                     {
                         Sink = _mapper.Map<VideoDeviceModel, Ism.Routing.V1.Protos.AliasIndexMessage>(destination),
                         Source = new Ism.Routing.V1.Protos.AliasIndexMessage()
@@ -137,7 +137,7 @@ namespace Avalanche.Api.Managers.Media
             var sources = await _routingService.GetVideoSources();
             var states = await _routingService.GetVideoStateForAllSources();
 
-            var listResult = _mapper.Map<IList<Ism.Routing.V1.Protos.VideoSourceMessage>, IList<VideoSourceModel>>(sources.VideoSources);
+            var listResult = _mapper.Map<IList<VideoSourceMessage>, IList<VideoSourceModel>>(sources.VideoSources);
 
             foreach (var source in listResult)
             {
@@ -155,7 +155,7 @@ namespace Avalanche.Api.Managers.Media
         public async Task<VideoSourceModel> GetAlternativeSource(SinkModel sinkModel)
         {
             var source = await _routingService.GetAlternativeVideoSource(
-                new Ism.Routing.V1.Protos.GetAlternativeVideoSourceRequest
+                new GetAlternativeVideoSourceRequest
                 {
                     Source = new Ism.Routing.V1.Protos.AliasIndexMessage
                     {
@@ -165,7 +165,7 @@ namespace Avalanche.Api.Managers.Media
                 });
 
             var hasVideo = await _routingService.GetVideoStateForSource(
-                new Ism.Routing.V1.Protos.GetVideoStateForSourceRequest
+                new GetVideoStateForSourceRequest
                 {
                     Source = new Ism.Routing.V1.Protos.AliasIndexMessage
                     {
@@ -174,7 +174,7 @@ namespace Avalanche.Api.Managers.Media
                     }
                 });
 
-            var mappedSource = _mapper.Map<Ism.Routing.V1.Protos.VideoSourceMessage, VideoSourceModel>(source.Source);
+            var mappedSource = _mapper.Map<VideoSourceMessage, VideoSourceModel>(source.Source);
 
             mappedSource.Sink = sinkModel;
 
@@ -189,7 +189,7 @@ namespace Avalanche.Api.Managers.Media
             var sinks = await _routingService.GetVideoSinks();
             var routes = await _routingService.GetCurrentRoutes();
 
-            var listResult = _mapper.Map<IList<Ism.Routing.V1.Protos.VideoSinkMessage>, IList<VideoSinkModel>>(sinks.VideoSinks);
+            var listResult = _mapper.Map<IList<VideoSinkMessage>, IList<VideoSinkModel>>(sinks.VideoSinks);
             foreach (var sink in listResult)
             {
                 var route = routes.Routes.SingleOrDefault(x => string.Equals(x.Sink.Alias, sink.Sink.Alias, StringComparison.OrdinalIgnoreCase)
