@@ -71,8 +71,7 @@ namespace Avalanche.Api.Test.Managers
         [Test]
         public async Task GetTimeoutPdfPath_Called()
         {
-            var testPdfPath = "TestPdf";
-            _pgsTimeoutService.Setup(x => x.GetTimeoutPdfPath()).Returns(Task.FromResult<GetTimeoutPdfPathResponse>(new GetTimeoutPdfPathResponse { PdfPath = testPdfPath }));
+            _pgsTimeoutService.Setup(mock => mock.GetTimeoutPdfPath()).ReturnsAsync(new GetTimeoutPdfPathResponse() { PdfPath = "Sample" });
             var pdfPath = await _timeoutManager.GetTimeoutPdfPath();
 
             _pgsTimeoutService.Verify(mock => mock.GetTimeoutPdfPath(), Times.Once);
