@@ -20,9 +20,9 @@ namespace Avalanche.Api.Controllers.V1
     [Authorize]
     public class LicensesController : ControllerBase
     {
-        readonly ILogger _logger;
-        readonly ILicensingManager _licensingManager;
-        readonly IWebHostEnvironment _environment;
+        private readonly ILogger _logger;
+        private readonly ILicensingManager _licensingManager;
+        private readonly IWebHostEnvironment _environment;
 
         public LicensesController(ILogger<LicensesController> logger, ILicensingManager licensingManager, IWebHostEnvironment environment)
         {

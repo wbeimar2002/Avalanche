@@ -25,9 +25,9 @@ namespace Avalanche.Api.Controllers.V1
     [Authorize]
     public class DevicesController : ControllerBase
     {
-        readonly ILogger _logger;
-        readonly IRoutingManager _routingManager;
-        readonly IWebHostEnvironment _environment;
+        private readonly ILogger _logger;
+        private readonly IRoutingManager _routingManager;
+        private readonly IWebHostEnvironment _environment;
 
         public DevicesController(ILogger<DevicesController> logger, IRoutingManager routingManager, IWebHostEnvironment environment)
         {

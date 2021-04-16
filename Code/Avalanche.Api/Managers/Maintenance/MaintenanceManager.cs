@@ -22,13 +22,13 @@ namespace Avalanche.Api.Managers.Maintenance
 {
     public class MaintenanceManager : IMaintenanceManager
     {
-        readonly IStorageService _storageService;
-        readonly IDataManager _metadataManager;
-        readonly IMapper _mapper;
-        readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly IStorageService _storageService;
+        private readonly IDataManager _metadataManager;
+        private readonly IMapper _mapper;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        readonly UserModel user;
-        readonly ConfigurationContext configurationContext;
+        private readonly UserModel user;
+        private readonly ConfigurationContext configurationContext;
 
         public MaintenanceManager(IStorageService storageService, 
             IDataManager metadataManager, 

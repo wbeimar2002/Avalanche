@@ -24,9 +24,9 @@ namespace Avalanche.Api.Controllers.V1
     [Authorize]
     public class PhysiciansController : ControllerBase
     {
-        readonly ILogger _logger;
-        readonly IDataManager _metadataManager;
-        readonly IWebHostEnvironment _environment;
+        private readonly ILogger _logger;
+        private readonly IDataManager _metadataManager;
+        private readonly IWebHostEnvironment _environment;
 
         public PhysiciansController(ILogger<PhysiciansController> logger, IDataManager metadataManager, IWebHostEnvironment environment)
         {

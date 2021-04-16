@@ -19,14 +19,14 @@ namespace Avalanche.Api.Managers.Media
 {
     public class RoutingManager : IRoutingManager
     {
-        readonly IRoutingService _routingService;
-        readonly IAvidisService _avidisService;
-        readonly IStorageService _storageService;
-        readonly IMapper _mapper;
-        readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly IRoutingService _routingService;
+        private readonly IAvidisService _avidisService;
+        private readonly IStorageService _storageService;
+        private readonly IMapper _mapper;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        readonly UserModel user;
-        readonly ConfigurationContext configurationContext;
+        private readonly UserModel user;
+        private readonly ConfigurationContext configurationContext;
 
         public RoutingManager(IRoutingService routingService,
             IAvidisService avidisService,

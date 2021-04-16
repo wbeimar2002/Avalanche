@@ -20,9 +20,9 @@ namespace Avalanche.Api.Controllers.V1
     [Authorize]
     public class RecordingController : ControllerBase
     {
-        readonly ILogger _logger;
-        readonly IRecordingManager _recordingManager;
-        readonly IWebHostEnvironment _environment;
+        private readonly ILogger _logger;
+        private readonly IRecordingManager _recordingManager;
+        private readonly IWebHostEnvironment _environment;
 
         public RecordingController(ILogger<LicensesController> logger, IRecordingManager recordingManager, IWebHostEnvironment environment)
         {
