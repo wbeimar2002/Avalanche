@@ -95,6 +95,7 @@ namespace Avalanche.Api.MappingConfigurations
                 .ForMember(dest => dest.ProcedureStartTimeUtc, opt => opt.MapFrom(src => src.ProcedureStartTimeUtc))
                 .ForMember(dest => dest.ProcedureTimezoneId, opt => opt.MapFrom(src => src.ProcedureTimezoneId))
                 .ForMember(dest => dest.RequiresUserConfirmation, opt => opt.MapFrom(src => src.RequiresUserConfirmation))
+                .ForMember(dest => dest.RecorderState, opt => opt.Ignore())
                 .ForMember(dest => dest.Images, opt => opt.MapFrom(src => src.Images))
                 .ForMember(dest => dest.Videos, opt => opt.MapFrom(src => src.Videos));
 
