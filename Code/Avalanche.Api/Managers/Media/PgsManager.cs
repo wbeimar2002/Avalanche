@@ -91,17 +91,6 @@ namespace Avalanche.Api.Managers.Media
             _mapper = ThrowIfNullOrReturn(nameof(mapper), mapper);
         }
 
-        public async Task SetPgsState(bool state)
-        {
-            // start or stop pgs based on the requested state
-            // the pgsTimeoutManager deals with pgs-timeout interaction
-            // it also deals with something like 2 UIs starting pgs at the same time
-            if (state)
-                await StartPgs();
-            else
-                await StopPgs();
-        }
-
         #region Routing and State Orchestation
 
         public async Task<bool> GetPgsStateForSink(SinkModel sink)
@@ -296,11 +285,7 @@ namespace Avalanche.Api.Managers.Media
             return await Task.FromResult(_currentRoutes);
         }
 
-        #endregion
-
-        #region Private Methods
-
-        private async Task StartPgs()
+        public async Task StartPgs()
         {
             await _startStopLock.WaitAsync(_cts.Token);
             try
@@ -337,7 +322,7 @@ namespace Avalanche.Api.Managers.Media
             }
         }
 
-        private async Task StopPgs()
+        public async Task StopPgs()
         {
             await _startStopLock.WaitAsync(_cts.Token);
             try
@@ -361,6 +346,10 @@ namespace Avalanche.Api.Managers.Media
                 _startStopLock.Release();
             }
         }
+
+        #endregion
+
+        #region Private Methods
 
         private async Task<PgsTimeoutConfig> GetConfig()
         {

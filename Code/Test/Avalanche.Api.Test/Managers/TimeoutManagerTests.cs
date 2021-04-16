@@ -126,13 +126,25 @@ namespace Avalanche.Api.Test.Managers
         [Test]
         [TestCase(true)]
         [TestCase(false)]
-        public async Task TimeoutState_SetTimeoutState_DoesNotThrow(bool value)
+        public async Task TimeoutState_StartTimeout_DoesNotThrow(bool value)
         {
             _pgsTimeoutService.Setup(x => x.GetPgsPlaybackState()).Returns(Task.FromResult(new GetPgsPlaybackStateResponse { IsPlaying = true}));
             _routingService.Setup(x => x.GetVideoSinks())
                 .Returns(Task.FromResult(new GetVideoSinksResponse()));
 
-            await _timeoutManager.SetTimeoutState(value);
+            await _timeoutManager.StartTimeout();
+        }
+
+        [Test]
+        [TestCase(true)]
+        [TestCase(false)]
+        public async Task TimeoutState_StopTimeout_DoesNotThrow(bool value)
+        {
+            _pgsTimeoutService.Setup(x => x.GetPgsPlaybackState()).Returns(Task.FromResult(new GetPgsPlaybackStateResponse { IsPlaying = true }));
+            _routingService.Setup(x => x.GetVideoSinks())
+                .Returns(Task.FromResult(new GetVideoSinksResponse()));
+
+            await _timeoutManager.StopTimeout(true);
         }
     }
 }

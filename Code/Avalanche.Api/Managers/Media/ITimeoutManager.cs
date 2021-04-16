@@ -11,7 +11,8 @@ namespace Avalanche.Api.Managers.Media
         Task SetTimeoutPage(int pageNumber);
         Task NextPage();
         Task PreviousPage();
-        Task SetTimeoutState(bool state);
+        Task StartTimeout();
+        Task StopTimeout(bool restoreLastRoutes);
         Task DeActivateTimeout();
     }
 }

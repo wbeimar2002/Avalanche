@@ -43,7 +43,6 @@ namespace Avalanche.Api.Controllers.V1
         /// Sets mode for PGS Timeout Player
         /// </summary>
         /// <param name="mode"></param>
-
         /// <returns></returns>
         [HttpPut("mode/{mode}")]
         public async Task<IActionResult> SetMode(PgsTimeoutModes mode)
@@ -70,7 +69,6 @@ namespace Avalanche.Api.Controllers.V1
         /// <summary>
         /// Gets the list of pgs sinks and their current checked state
         /// </summary>
-
         /// <returns></returns>
         [HttpGet("pgs/sinks")]
         [Produces(typeof(List<VideoSinkModel>))]
@@ -97,7 +95,6 @@ namespace Avalanche.Api.Controllers.V1
         /// Sets the checked state of a pgs sink and internally it gets broadcast
         /// </summary>
         /// <param name="sinkState"></param>
-
         /// <returns></returns>
         [HttpPut("pgs/sinks/state")]
         public async Task<IActionResult> SetPgsStateForSink([FromBody]SinkStateViewModel sinkState)
@@ -124,7 +121,6 @@ namespace Avalanche.Api.Controllers.V1
         /// </summary>
         /// <param name="alias"></param>
         /// <param name="index"></param>
-
         /// <returns></returns>
         [HttpGet("pgs/sinks/state")]
         public async Task<IActionResult> GetPgsStateForSink([FromQuery] string alias, [FromQuery] string index)
@@ -159,7 +155,6 @@ namespace Avalanche.Api.Controllers.V1
         /// 0.0 means mute, 1.0 means loudest. Note that 0.0 is different than muting
         /// </summary>
         /// <param name="level"></param>
-
         /// <returns></returns>
         [HttpPut("pgs/volume/level/{level}")]
         public async Task<IActionResult> SetPgsVolume(double level)
@@ -184,7 +179,6 @@ namespace Avalanche.Api.Controllers.V1
         /// <summary>
         /// Gets the current pgs audio volume. Range is from 0-1
         /// </summary>
-
         /// <returns></returns>
         [HttpGet("pgs/volume/level")]
         public async Task<IActionResult> GetPgsVolume()
@@ -209,7 +203,6 @@ namespace Avalanche.Api.Controllers.V1
         /// <summary>
         /// Sets the PGS player audio mute
         /// </summary>
-
         /// <returns></returns>
         [HttpPut("pgs/volume/mute/{muteState}")]
         public async Task<IActionResult> SetPgsMute(bool muteState)
@@ -234,7 +227,6 @@ namespace Avalanche.Api.Controllers.V1
         /// <summary>
         /// Gets if the pgs player audio is muted
         /// </summary>
-
         /// <returns></returns>
         [HttpGet("pgs/volume")]
         public async Task<IActionResult> GetPgsMute()
@@ -260,7 +252,6 @@ namespace Avalanche.Api.Controllers.V1
         /// Sets the current video file of the player
         /// </summary>
         /// <param name="greetingVideo"></param>
-
         /// <returns></returns>
         [HttpPut("pgs/files/videos")]
         public async Task<IActionResult> SetCurrentGreetingVideo([FromBody]GreetingVideoModel greetingVideo)
@@ -285,7 +276,6 @@ namespace Avalanche.Api.Controllers.V1
         /// <summary>
         /// Gets a collection of video files from the player
         /// </summary>
-
         /// <returns></returns>
         [HttpGet("pgs/files/videos")]
         [Produces(typeof(List<GreetingVideoModel>))]
@@ -313,7 +303,6 @@ namespace Avalanche.Api.Controllers.V1
         /// 0.0 means start of file, 1.0 means end of file
         /// </summary>
         /// <param name="position"></param>
-
         /// <returns></returns>
         [HttpPut("pgs/currentvideo/position/{position}")]
         public async Task<IActionResult> SetPgsVideoPosition(double position)
@@ -339,15 +328,69 @@ namespace Avalanche.Api.Controllers.V1
         /// Starts or stops PGS mode
         /// </summary>
         /// <param name="state"></param>
-
         /// <returns></returns>
         [HttpPut("pgs/state/{state}")]
-        public async Task<IActionResult> SetPgsState(bool state)
+        public async Task<IActionResult> SetPgsState(bool state) //TODO: Pending delete this when UI changes
         {
             try
             {
                 _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
-                await _pgsManager.SetPgsState(state);
+                // start or stop pgs based on the requested state
+                // the pgsTimeoutManager deals with pgs-timeout interaction
+                // it also deals with something like 2 UIs starting pgs at the same time
+                if (state)
+                    await _pgsManager.StartPgs();
+                else
+                    await _pgsManager.StopPgs();
+
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, LoggerHelper.GetLogMessage(DebugLogType.Exception), ex);
+                return new BadRequestObjectResult(ex.Get(_environment.IsDevelopment()));
+            }
+            finally
+            {
+                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
+            }
+        }
+
+        /// <summary>
+        /// Staet PGS
+        /// </summary>
+        /// <returns></returns>
+        [HttpPost("pgs")]
+        public async Task<IActionResult> StartPgs()
+        {
+            try
+            {
+                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
+                await _pgsManager.StartPgs();
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, LoggerHelper.GetLogMessage(DebugLogType.Exception), ex);
+                return new BadRequestObjectResult(ex.Get(_environment.IsDevelopment()));
+            }
+            finally
+            {
+                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
+            }
+        }
+
+        /// <summary>
+        /// Stop PGS
+        /// </summary>
+        /// <returns></returns>
+        [HttpDelete("pgs")]
+        public async Task<IActionResult> StopPgs()
+        {
+            try
+            {
+                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
+                await _pgsManager.StopPgs();
                 return Ok();
             }
             catch (Exception ex)
@@ -392,7 +435,6 @@ namespace Avalanche.Api.Controllers.V1
         /// <summary>
         /// Request Previous Page for Timeout
         /// </summary>
-
         /// <returns></returns>
         [HttpPut("timeout/pages/previous")]
         public async Task<IActionResult> PreviousPage()
@@ -418,7 +460,6 @@ namespace Avalanche.Api.Controllers.V1
         /// Set current page number for timeout
         /// </summary>
         /// <param name="pageNumber"></param>
-
         /// <returns></returns>
         [HttpPut("timeout/pages/{pageNumber}")]
         public async Task<IActionResult> SetPage(int pageNumber)
@@ -443,7 +484,6 @@ namespace Avalanche.Api.Controllers.V1
         /// <summary>
         /// Get current page in timeout file
         /// </summary>
-
         /// <returns></returns>
         [HttpGet("timeout/pages/current")]
         public async Task<IActionResult> GetCurrentPage()
@@ -468,7 +508,6 @@ namespace Avalanche.Api.Controllers.V1
         /// <summary>
         /// Get pages count from timeout file 
         /// </summary>
-
         /// <returns></returns>
         [HttpGet("timeout/pages/count")]
         public async Task<IActionResult> GetPagesCount()
@@ -493,7 +532,6 @@ namespace Avalanche.Api.Controllers.V1
         /// <summary>
         /// Get timeout's file path
         /// </summary>
-
         /// <returns></returns>
         [HttpGet("timeout/file/path")]
         public async Task<IActionResult> GetFilePath()
@@ -516,18 +554,40 @@ namespace Avalanche.Api.Controllers.V1
         }
 
         /// <summary>
-        /// Starts or stops Timeout mode
+        /// Starts Timeout mode
         /// </summary>
-        /// <param name="state"></param>
-
         /// <returns></returns>
-        [HttpPut("timeout/state/{state}")]
-        public async Task<IActionResult> SetTimeoutState(bool state)
+        [HttpPost("timeout")]
+        public async Task<IActionResult> StartTimeout()
         {
             try
             {
                 _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
-                await _timeoutManager.SetTimeoutState(state);
+                await _timeoutManager.StartTimeout();
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, LoggerHelper.GetLogMessage(DebugLogType.Exception), ex);
+                return new BadRequestObjectResult(ex.Get(_environment.IsDevelopment()));
+            }
+            finally
+            {
+                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
+            }
+        }
+
+        /// <summary>
+        /// Stop Timeout mode
+        /// </summary>
+        /// <returns></returns>
+        [HttpDelete("timeout")]
+        public async Task<IActionResult> StopTimeout()
+        {
+            try
+            {
+                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
+                await _timeoutManager.StopTimeout(true);
                 return Ok();
             }
             catch (Exception ex)
@@ -544,9 +604,8 @@ namespace Avalanche.Api.Controllers.V1
         /// <summary>
         /// Deactivates timeout when user moves out of timeout page
         /// </summary>
-
         /// <returns></returns>
-        [HttpPut("timeout/deactivate")]
+        [HttpDelete("timeout/state")]
         public async Task<IActionResult> DeActivateTimeout()
         {
             try

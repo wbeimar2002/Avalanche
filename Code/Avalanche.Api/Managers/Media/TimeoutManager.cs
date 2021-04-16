@@ -119,7 +119,7 @@ namespace Avalanche.Api.Managers.Media
             return apiSinks;
         }
 
-        private async Task StartTimeout()
+        public async Task StartTimeout()
         {
             await _startStopLock.WaitAsync(_cts.Token);
             try
@@ -169,7 +169,7 @@ namespace Avalanche.Api.Managers.Media
             }
         }
 
-        private async Task StopTimeout(bool restoreLastRoutes)
+        public async Task StopTimeout(bool restoreLastRoutes)
         {
             await _startStopLock.WaitAsync(_cts.Token);
             try
@@ -287,17 +287,6 @@ namespace Avalanche.Api.Managers.Media
         public async Task PreviousPage()
         {
             await _pgsTimeoutService.PreviousPage();
-        }
-
-        public async Task SetTimeoutState(bool state)
-        {
-            // start or stop timeout based on the requested state
-            // the timeoutManager deals with pgs-timeout interaction
-            // it also deals with something like 2 UIs starting timeout at the same time
-            if (state)
-                await StartTimeout();
-            else
-                await StopTimeout(true); 
         }
 
         public async Task DeActivateTimeout()
