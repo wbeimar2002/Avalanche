@@ -174,19 +174,19 @@ namespace Avalanche.Api.Managers.Media
         public async Task<int> GetTimeoutPage()
         {
             var result = await _pgsTimeoutService.GetTimeoutPage();
-            return result.PageNumber;
+            return result == null ? -1 : result.PageNumber;
         }
 
         public async Task<int> GetTimeoutPageCount()
         {
             var result = await _pgsTimeoutService.GetTimeoutPageCount();
-            return result.PageCount;
+            return result == null ? -1 : result.PageCount;
         }
 
         public async Task<string> GetTimeoutPdfPath()
         {
             var result = await _pgsTimeoutService.GetTimeoutPdfPath();
-            return result.PdfPath;
+            return result?.PdfPath;
         }
 
         public async Task NextPage()
