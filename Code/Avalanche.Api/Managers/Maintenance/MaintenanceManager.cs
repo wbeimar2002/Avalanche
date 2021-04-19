@@ -1,12 +1,14 @@
 ﻿using AutoMapper;
 using Avalanche.Api.Helpers;
 using Avalanche.Api.Managers.Data;
+using Avalanche.Api.Services.Health;
 using Avalanche.Api.Services.Maintenance;
 using Avalanche.Api.Utilities;
 using Avalanche.Api.ViewModels;
 using Avalanche.Shared.Domain.Models;
 using Avalanche.Shared.Infrastructure.Enumerations;
 using Ism.Common.Core.Configuration.Models;
+using Ism.Utility.Core;
 using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -26,6 +28,7 @@ namespace Avalanche.Api.Managers.Maintenance
         readonly IDataManager _metadataManager;
         readonly IMapper _mapper;
         readonly IHttpContextAccessor _httpContextAccessor;
+        readonly ILibraryService _libraryService;
 
         readonly UserModel user;
         readonly ConfigurationContext configurationContext;
@@ -33,12 +36,14 @@ namespace Avalanche.Api.Managers.Maintenance
         public MaintenanceManager(IStorageService storageService, 
             IDataManager metadataManager, 
             IMapper mapper, 
-            IHttpContextAccessor httpContextAccessor)
+            IHttpContextAccessor httpContextAccessor,
+            ILibraryService libraryService)
         {
             _storageService = storageService;
             _metadataManager = metadataManager;
             _httpContextAccessor = httpContextAccessor;
             _mapper = mapper;
+            _libraryService = libraryService;
 
             user = HttpContextUtilities.GetUser(_httpContextAccessor.HttpContext);
             configurationContext = _mapper.Map<Shared.Domain.Models.UserModel, ConfigurationContext>(user);
@@ -166,6 +171,15 @@ namespace Avalanche.Api.Managers.Maintenance
             }
 
             return category;
+        }
+
+        public async Task<ReindexStatusViewModel> ReindexRepository(ReindexRepositoryRequestViewModel reindexRequest)
+        {
+            Preconditions.ThrowIfNull(nameof(reindexRequest), reindexRequest);
+            Preconditions.ThrowIfNullOrEmpty(nameof(reindexRequest.RepositoryName), reindexRequest.RepositoryName);
+
+            var response = await _libraryService.ReindexRepository(reindexRequest.RepositoryName);
+            return _mapper.Map<ReindexStatusViewModel>(response);
         }
 
         private async Task SetIsRequired(ConfigurationContext configurationContext, string key, DynamicPropertyViewModel item)
