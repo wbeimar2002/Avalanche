@@ -43,7 +43,6 @@ namespace Avalanche.Api.Test.Managers
 
             _timeoutManager = new TimeoutManager(_storageService.Object,
                                                     _routingService.Object,
-                                                    _stateClient.Object,
                                                     _pgsTimeoutService.Object,
                                                     _pgsManager.Object,
                                                     _mapper);
