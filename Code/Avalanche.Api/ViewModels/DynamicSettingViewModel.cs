@@ -30,5 +30,8 @@ namespace Avalanche.Api.ViewModels
         public IList<KeyValuePairViewModel> PoliciesValues { get; set; }
         public IList<DynamicDependencySettingViewModel> Dependencies { get; set; }
         public string Value { get; set; }
+        public string ActionEndPoint { get; set; }
+        public string ActionMethod { get; set; }
+        public string ActionTranslationKey { get; set; }
     }
 }

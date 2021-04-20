@@ -65,7 +65,10 @@ namespace Avalanche.Api.Managers.Procedures
             var request = _mapper.Map<ActiveProcedureState, DiscardActiveProcedureRequest>(activeProcedure);
 
             request.AccessInfo = _mapper.Map<AccessInfoMessage>(accessInfo);
-            await _recorderService.StopRecording();
+
+            if (await _recorderService.IsRecording())
+                await _recorderService.StopRecording();
+
             await _libraryService.DiscardActiveProcedure(request);
         }
 
@@ -77,7 +80,9 @@ namespace Avalanche.Api.Managers.Procedures
             var accessInfo = _accessInfoFactory.GenerateAccessInfo();
             request.AccessInfo = _mapper.Map<AccessInfoMessage>(accessInfo);
 
-            await _recorderService.StopRecording();
+            if (await _recorderService.IsRecording())
+                await _recorderService.StopRecording();
+
             await _libraryService.CommitActiveProcedure(request);
         }
 

@@ -11,6 +11,21 @@ namespace Avalanche.Api.Services.Media
     {
         private readonly RecorderSecureClient _client;
 
+        public async Task<bool> IsRecording()
+        {
+            var recorderState = (Avalanche.Shared.Domain.Enumerations.RecorderState)(await _client.GetRecorderState()).State;
+            switch (recorderState)
+            {
+                case Avalanche.Shared.Domain.Enumerations.RecorderState.proc_recording_mov:
+                case Avalanche.Shared.Domain.Enumerations.RecorderState.proc_recording_mov_and_pm:
+                case Avalanche.Shared.Domain.Enumerations.RecorderState.proc_recording_pm:
+                case Avalanche.Shared.Domain.Enumerations.RecorderState.proc_saving:
+                    return true;
+                default:
+                    return false;
+            }
+        }
+
         public RecorderService(RecorderSecureClient client)
         {
             _client = client;

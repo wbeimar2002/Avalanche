@@ -9,26 +9,36 @@ namespace Avalanche.Api.Services.Health
     [ExcludeFromCodeCoverage]
     public class LibraryService : ILibraryService
     {
-        private readonly LibraryActiveProcedureServiceSecureClient _client;
+        private readonly LibraryActiveProcedureServiceSecureClient _activeClient;
+        private readonly LibraryServiceSecureClient _serviceClient;
 
-        public LibraryService(LibraryActiveProcedureServiceSecureClient client)
+        public LibraryService(LibraryActiveProcedureServiceSecureClient activeClient, LibraryServiceSecureClient serviceClient)
         {
-            _client = client;
+            _activeClient = activeClient;
+            _serviceClient = serviceClient;
         }
 
         public async Task DiscardActiveProcedure(DiscardActiveProcedureRequest discardActiveProcedureRequest)
         {
-            await _client.DiscardActiveProcedure(discardActiveProcedureRequest);
+            await _activeClient.DiscardActiveProcedure(discardActiveProcedureRequest);
         }
 
         public async Task CommitActiveProcedure(CommitActiveProcedureRequest commitActiveProcedureRequest)
         {
-            await _client.CommitActiveProcedure(commitActiveProcedureRequest);
+            await _activeClient.CommitActiveProcedure(commitActiveProcedureRequest);
         }
 
         public async Task<AllocateNewProcedureResponse> AllocateNewProcedure(AllocateNewProcedureRequest allocateNewProcedureRequest)
         {
-            return await _client.AllocateNewProcedure(allocateNewProcedureRequest);
+            return await _activeClient.AllocateNewProcedure(allocateNewProcedureRequest);
+        }
+
+        public async Task<ReindexRepositoryResponse> ReindexRepository(string repositoryName)
+        {
+            return await _serviceClient.ReindexRepository(new ReindexRepositoryRequest()
+            {
+                RepositoryName = repositoryName
+            });
         }
     }
 }

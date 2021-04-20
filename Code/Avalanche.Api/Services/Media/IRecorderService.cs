@@ -5,6 +5,7 @@ namespace Avalanche.Api.Services.Media
 {
     public interface IRecorderService
     {
+        Task<bool> IsRecording();
         Task StartRecording(RecordMessage recordMessage);
         Task StopRecording();
         Task<RecorderState> GetRecorderState();
