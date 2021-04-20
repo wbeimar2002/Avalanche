@@ -32,6 +32,6 @@ namespace Avalanche.Api.Managers.Media
         Task SetPgsStateForSink(SinkStateViewModel sinkState);
         Task<IList<VideoSinkModel>> GetPgsSinks();
 
-        Task<Ism.Routing.V1.Protos.GetCurrentRoutesResponse> GetPrePgsRoutes();
+        Task<RoutesViewModel> GetPrePgsRoutes();
     }
 }

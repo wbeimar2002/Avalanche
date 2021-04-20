@@ -280,10 +280,11 @@ namespace Avalanche.Api.Managers.Media
             });
         }
 
-        public async Task<Ism.Routing.V1.Protos.GetCurrentRoutesResponse> GetPrePgsRoutes()
+        public async Task<RoutesViewModel> GetPrePgsRoutes()
         {
-            return await Task.FromResult(_currentRoutes);
+            return await Task.FromResult(_mapper.Map<Ism.Routing.V1.Protos.GetCurrentRoutesResponse, RoutesViewModel>(_currentRoutes));
         }
+            
 
         public async Task StartPgs()
         {

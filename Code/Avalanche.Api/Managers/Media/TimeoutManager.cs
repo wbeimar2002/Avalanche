@@ -59,7 +59,7 @@ namespace Avalanche.Api.Managers.Media
 
         private PgsTimeoutModes _lastPgsTimeoutState = PgsTimeoutModes.Idle;
 
-        private GetCurrentRoutesResponse _prePgsRoutes = new GetCurrentRoutesResponse();
+        private ViewModels.RoutesViewModel _prePgsRoutes;
         private GetCurrentRoutesResponse _currentRoutes = new GetCurrentRoutesResponse();
 
 
@@ -282,13 +282,16 @@ namespace Avalanche.Api.Managers.Media
             if (_currentPgsTimeoutState == PgsTimeoutModes.Idle)
                 return;
 
-            foreach (var route in _prePgsRoutes.Routes)
+            foreach (var destination in _prePgsRoutes.Destinations)
             {
-                await _routingService.RouteVideo(new RouteVideoRequest
+                foreach (var source in _prePgsRoutes.Sources)
                 {
-                    Sink = route.Sink,
-                    Source = route.Source
-                });
+                    await _routingService.RouteVideo(new RouteVideoRequest()
+                    {
+                        Sink = _mapper.Map<VideoDeviceModel, AliasIndexMessage>(destination),
+                        Source = _mapper.Map<VideoDeviceModel, AliasIndexMessage>(source),
+                    });
+                }
             }
         }
 
