@@ -263,10 +263,7 @@ namespace Avalanche.Api.Managers.Media
         }
 
         private async Task LoadCurrentSavedRoutes()
-        {
-            if (_currentPgsTimeoutState == PgsTimeoutModes.Idle)
-                return;
-
+        {            
             foreach (var route in _currentRoutes.Routes)
             {
                 await _routingService.RouteVideo(new RouteVideoRequest
@@ -279,9 +276,6 @@ namespace Avalanche.Api.Managers.Media
 
         private async Task LoadPrePgsRoutes()
         {
-            if (_currentPgsTimeoutState == PgsTimeoutModes.Idle)
-                return;
-
             foreach (var destination in _prePgsRoutes.Destinations)
             {
                 foreach (var source in _prePgsRoutes.Sources)

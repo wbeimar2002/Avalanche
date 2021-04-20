@@ -282,7 +282,21 @@ namespace Avalanche.Api.Managers.Media
 
         public async Task<RoutesViewModel> GetPrePgsRoutes()
         {
-            return await Task.FromResult(_mapper.Map<Ism.Routing.V1.Protos.GetCurrentRoutesResponse, RoutesViewModel>(_currentRoutes));
+            var sources = new List<VideoDeviceModel>();
+            var destinations = new List<VideoDeviceModel>();
+            foreach (var route in _currentRoutes.Routes)
+            {
+                sources.Add(_mapper.Map<Ism.Routing.V1.Protos.AliasIndexMessage, VideoDeviceModel>(route.Source));
+                destinations.Add(_mapper.Map<Ism.Routing.V1.Protos.AliasIndexMessage, VideoDeviceModel>(route.Sink));
+            }
+
+            var model = new RoutesViewModel()
+            {
+                Sources = sources,
+                Destinations = destinations
+            };
+            
+            return await Task.FromResult(model);
         }
             
 
