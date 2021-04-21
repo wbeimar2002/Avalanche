@@ -84,7 +84,7 @@ namespace Avalanche.Api.Tests.Controllers
 
             _licensingManager.Setup(mock => mock.GetAllActive()).ReturnsAsync(list);
 
-            var okResult = _controller.GetAllActive(_environment.Object);
+            var okResult = _controller.GetAllActive();
 
             if (_checkLogger)
             {
@@ -101,7 +101,7 @@ namespace Avalanche.Api.Tests.Controllers
         {
             _licensingManager.Setup(mock => mock.GetAllActive()).Throws(It.IsAny<Exception>());
 
-            var badResult = _controller.GetAllActive(_environment.Object);
+            var badResult = _controller.GetAllActive();
 
             if (_checkLogger)
             {

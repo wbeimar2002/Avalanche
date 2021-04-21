@@ -199,7 +199,7 @@ namespace Avalanche.Api.Controllers.V1
         /// <returns></returns>
         [HttpGet("operating/sources")]
         [Produces(typeof(IList<VideoSourceModel>))]
-        public async Task<IActionResult> GetRoutingSources([FromServices] IWebHostEnvironment env)
+        public async Task<IActionResult> GetRoutingSources()
         {
             try
             {
@@ -225,7 +225,7 @@ namespace Avalanche.Api.Controllers.V1
         /// <returns></returns>
         [HttpGet("operating/outputs")]
         [Produces(typeof(IList<VideoSinkModel>))]
-        public async Task<IActionResult> GetRoutingSinks([FromServices] IWebHostEnvironment env)
+        public async Task<IActionResult> GetRoutingSinks()
         {
             try
             {

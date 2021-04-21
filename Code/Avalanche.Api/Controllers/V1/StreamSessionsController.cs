@@ -38,7 +38,7 @@ namespace Avalanche.Api.Controllers.V1
         /// <returns></returns>
         [HttpGet("sources")]
         [Produces(typeof(IList<VideoDeviceModel>))]
-        public async Task<IActionResult> GetSourceStreams([FromServices] IWebHostEnvironment env)
+        public async Task<IActionResult> GetSourceStreams()
         {
             try
             {

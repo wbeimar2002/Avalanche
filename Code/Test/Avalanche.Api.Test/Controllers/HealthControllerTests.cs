@@ -39,7 +39,7 @@ namespace Avalanche.Api.Tests.Controllers
         [Test]
         public void HealthCheckShouldReturnOkResult()
         {
-            var okResult = _controller.HealthCheck(_environment.Object);
+            var okResult = _controller.HealthCheck();
 
             if (_checkLogger)
             {
@@ -59,7 +59,7 @@ namespace Avalanche.Api.Tests.Controllers
             {
                 _logger.Setup(LogLevel.Debug, "Requested HealthController.HealthCheck").Throws(It.IsAny<Exception>());
             
-                var badResult = _controller.HealthCheck(_environment.Object);
+                var badResult = _controller.HealthCheck();
 
                 _logger.Verify(LogLevel.Error, $"Exception {_controller.GetType().Name}.HealthCheck", Times.Once());
                 _logger.Verify(LogLevel.Information, "Avalanche Api is healthy.", Times.Never());
@@ -73,7 +73,7 @@ namespace Avalanche.Api.Tests.Controllers
         [Test]
         public void HealthCheckSecureShouldReturnOkResult()
         {
-            var okResult = _controller.HealthCheckSecure(_environment.Object);
+            var okResult = _controller.HealthCheckSecure();
 
             if (_checkLogger)
             {
@@ -93,7 +93,7 @@ namespace Avalanche.Api.Tests.Controllers
             {
                 _logger.Setup(LogLevel.Debug, "Requested HealthController.HealthCheckSecure").Throws(It.IsAny<Exception>());
 
-                var badResult = _controller.HealthCheckSecure(_environment.Object);
+                var badResult = _controller.HealthCheckSecure();
 
 
                 _logger.Verify(LogLevel.Error, $"Exception {_controller.GetType().Name}.HealthCheckSecure", Times.Once());

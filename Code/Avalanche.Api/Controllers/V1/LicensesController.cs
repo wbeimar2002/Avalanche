@@ -64,7 +64,7 @@ namespace Avalanche.Api.Controllers.V1
         /// <returns></returns>
         [HttpGet("")]
         [Produces(typeof(List<LicenseModel>))]
-        public async Task<IActionResult> GetAllActive([FromServices]IWebHostEnvironment env)
+        public async Task<IActionResult> GetAllActive()
         {
             try
             {
