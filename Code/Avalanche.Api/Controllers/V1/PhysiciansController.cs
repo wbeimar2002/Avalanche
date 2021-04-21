@@ -41,7 +41,7 @@ namespace Avalanche.Api.Controllers.V1
         /// <param name="env"></param>
         /// <returns></returns>
         [HttpGet("")]
-        public async Task<IActionResult> GetAllPhysicians([FromServices]IWebHostEnvironment env)
+        public async Task<IActionResult> GetAllPhysicians()
         {
             try
             {

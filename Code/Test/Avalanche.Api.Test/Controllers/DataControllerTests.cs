@@ -41,7 +41,7 @@ namespace Avalanche.Api.Tests.Controllers
         [Test]
         public void GetSexesShouldReturnOkResult()
         {
-            var okResult = _controller.GetSexes(_environment.Object);
+            var okResult = _controller.GetSexes();
 
             if (_checkLogger)
             {
@@ -58,7 +58,7 @@ namespace Avalanche.Api.Tests.Controllers
         {
             _metadataManager.Setup(mock => mock.GetData(DataTypes.Sex)).Throws(It.IsAny<Exception>());
 
-            var badResult = _controller.GetSexes(_environment.Object);
+            var badResult = _controller.GetSexes();
 
             if (_checkLogger)
             {
@@ -73,7 +73,7 @@ namespace Avalanche.Api.Tests.Controllers
         [Test]
         public void GetDepartmentsShouldReturnOkResult()
         {
-            var okResult = _controller.GetDepartments(_environment.Object);
+            var okResult = _controller.GetDepartments();
 
             if (_checkLogger)
             {
@@ -90,7 +90,7 @@ namespace Avalanche.Api.Tests.Controllers
         {
             _metadataManager.Setup(mock => mock.GetAllDepartments()).Throws(It.IsAny<Exception>());
 
-            var badResult = _controller.GetDepartments(_environment.Object);
+            var badResult = _controller.GetDepartments();
 
             if (_checkLogger)
             {
@@ -105,7 +105,7 @@ namespace Avalanche.Api.Tests.Controllers
         [Test]
         public void GetProcedureTypesShouldReturnOkResult()
         {
-            var okResult = _controller.GetProcedureTypes(_environment.Object);
+            var okResult = _controller.GetProcedureTypes();
 
             if (_checkLogger)
             {
@@ -122,7 +122,7 @@ namespace Avalanche.Api.Tests.Controllers
         {
             _metadataManager.Setup(mock => mock.GetProcedureTypesByDepartment(null)).Throws(It.IsAny<Exception>());
 
-            var badResult = _controller.GetProcedureTypes(_environment.Object);
+            var badResult = _controller.GetProcedureTypes();
 
             if (_checkLogger)
             {

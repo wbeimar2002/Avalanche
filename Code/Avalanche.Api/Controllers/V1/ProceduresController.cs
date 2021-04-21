@@ -70,7 +70,7 @@ namespace Avalanche.Api.Controllers.V1
         /// <returns></returns>
         [HttpGet("{id}")]
         [Produces(typeof(ProcedureDetailsViewModel))]
-        public async Task<IActionResult> Get([FromServices]IWebHostEnvironment env)
+        public async Task<IActionResult> Get()
         {
             try
             {
@@ -96,7 +96,7 @@ namespace Avalanche.Api.Controllers.V1
         /// <returns>Active Procedure model or null</returns>
         [HttpGet("active")]
         [Produces(typeof(ProcedureDetailsViewModel))]
-        public async Task<IActionResult> GetActive([FromServices]IWebHostEnvironment env)
+        public async Task<IActionResult> GetActive()
         {
             try
             {
@@ -123,7 +123,7 @@ namespace Avalanche.Api.Controllers.V1
         /// <returns></returns>
         [HttpDelete("active")]
         [Produces(typeof(ProcedureDetailsViewModel))]
-        public async Task<IActionResult> DiscardActiveProcedure([FromServices] IWebHostEnvironment env)
+        public async Task<IActionResult> DiscardActiveProcedure()
         {
             try
             {
@@ -150,7 +150,7 @@ namespace Avalanche.Api.Controllers.V1
         /// <returns></returns>
         [HttpPut("active")]
         [Produces(typeof(ProcedureDetailsViewModel))]
-        public async Task<IActionResult> FinishActiveProcedure([FromServices] IWebHostEnvironment env)
+        public async Task<IActionResult> FinishActiveProcedure()
         {
             try
             {
@@ -176,7 +176,7 @@ namespace Avalanche.Api.Controllers.V1
         /// <param name="env"></param>
         /// <returns></returns>
         [HttpDelete("active/confirmation")]
-        public async Task<IActionResult> ConfirmActiveProcedure([FromServices]IWebHostEnvironment env)
+        public async Task<IActionResult> ConfirmActiveProcedure()
         {
             try
             {

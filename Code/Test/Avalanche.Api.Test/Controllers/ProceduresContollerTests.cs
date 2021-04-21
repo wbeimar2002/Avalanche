@@ -64,7 +64,7 @@ namespace Avalanche.Api.Test.Controllers
 
             _proceduresManager.Setup(mock => mock.GetActiveProcedure()).ReturnsAsync(result);
 
-            var okResult = _controller.GetActive(_environment.Object);
+            var okResult = _controller.GetActive();
 
             if (_checkLogger)
             {

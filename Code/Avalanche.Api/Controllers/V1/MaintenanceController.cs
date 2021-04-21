@@ -67,7 +67,7 @@ namespace Avalanche.Api.Controllers.V1
         /// <param name="env"></param>
         /// <returns></returns>
         [HttpPut("categories/{key}")]
-        public async Task<IActionResult> SaveCategory(string key, [FromBody]DynamicSectionViewModel section,[FromServices]IWebHostEnvironment env)
+        public async Task<IActionResult> SaveCategory(string key, [FromBody]DynamicSectionViewModel section)
         {
             try
             {

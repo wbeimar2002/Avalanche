@@ -125,7 +125,7 @@ namespace Avalanche.Api.Controllers.V1
         /// <returns></returns>
         [HttpPost("quick")]
         [Produces(typeof(PatientViewModel))]
-        public async Task<IActionResult> QuickPatientRegistration([FromServices]IWebHostEnvironment env)
+        public async Task<IActionResult> QuickPatientRegistration()
         {
             try
             {

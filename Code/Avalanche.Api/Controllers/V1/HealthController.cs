@@ -31,7 +31,7 @@ namespace Avalanche.Api.Controllers.V1
         /// <returns></returns>
         [Route("check")]
         [HttpGet]
-        public IActionResult HealthCheck([FromServices]IWebHostEnvironment env)
+        public IActionResult HealthCheck()
         {
             try
             {
@@ -64,7 +64,7 @@ namespace Avalanche.Api.Controllers.V1
         [Authorize]
         [Route("check/secure")]
         [HttpGet]
-        public IActionResult HealthCheckSecure([FromServices]IWebHostEnvironment env)
+        public IActionResult HealthCheckSecure()
         {
             try
             {

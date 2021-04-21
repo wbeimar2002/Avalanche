@@ -238,7 +238,7 @@ namespace Avalanche.Api.Tests.Controllers
         {
             _patientsManager.Setup(mock => mock.QuickPatientRegistration()).ReturnsAsync(new PatientViewModel());
 
-            var okResult = _controller.QuickPatientRegistration(_environment.Object);
+            var okResult = _controller.QuickPatientRegistration();
 
             if (_checkLogger)
             {
@@ -255,7 +255,7 @@ namespace Avalanche.Api.Tests.Controllers
         {
             _patientsManager.Setup(mock => mock.QuickPatientRegistration()).Throws(It.IsAny<Exception>());
 
-            var badResult = _controller.QuickPatientRegistration(_environment.Object);
+            var badResult = _controller.QuickPatientRegistration();
 
             if (_checkLogger)
             {

@@ -43,7 +43,7 @@ namespace Avalanche.Api.Controllers.V1
         /// <returns></returns>
         [HttpGet("searchColumns")]
         [Produces(typeof(List<DynamicSourceKeyValuePairViewModel>))]
-        public async Task<IActionResult> GetSearchColumns([FromServices]IWebHostEnvironment env)
+        public async Task<IActionResult> GetSearchColumns()
         {
             try
             {
@@ -70,7 +70,7 @@ namespace Avalanche.Api.Controllers.V1
         /// <returns></returns>
         [HttpGet("sexes")]
         [Produces(typeof(List<KeyValuePairViewModel>))]
-        public async Task<IActionResult> GetSexes([FromServices]IWebHostEnvironment env)
+        public async Task<IActionResult> GetSexes()
         {
             try
             {
@@ -97,7 +97,7 @@ namespace Avalanche.Api.Controllers.V1
         /// <returns></returns>
         [HttpGet("departments")]
         [Produces(typeof(List<DepartmentModel>))]
-        public async Task<IActionResult> GetDepartments([FromServices] IWebHostEnvironment env)
+        public async Task<IActionResult> GetDepartments()
         {
             try
             {
@@ -207,7 +207,7 @@ namespace Avalanche.Api.Controllers.V1
         /// <returns></returns>
         [HttpGet("procedureTypes")]
         [Produces(typeof(List<ProcedureTypeModel>))]
-        public async Task<IActionResult> GetProcedureTypes([FromServices] IWebHostEnvironment env)
+        public async Task<IActionResult> GetProcedureTypes()
         {
             try
             {
