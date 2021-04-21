@@ -15,10 +15,10 @@ namespace Avalanche.Api.Managers.Media
 {
     public class WebRTCManager : IWebRTCManager
     {
-        readonly IWebRTCService _webRTCService;
-        readonly IMapper _mapper;
-        readonly IAccessInfoFactory _accessInfoFactory;
-        readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly IWebRTCService _webRTCService;
+        private readonly IMapper _mapper;
+        private readonly IAccessInfoFactory _accessInfoFactory;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
         public WebRTCManager(IWebRTCService webRTCService,
             IAccessInfoFactory accessInfoFactory,

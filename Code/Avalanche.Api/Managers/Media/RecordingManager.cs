@@ -12,7 +12,7 @@ namespace Avalanche.Api.Managers.Media
     public class RecordingManager : IRecordingManager
     {
         private readonly IStateClient _stateClient;
-        readonly IRecorderService _recorderService;
+        private readonly IRecorderService _recorderService;
 
         public RecordingManager(IRecorderService recorderService, IStateClient stateClient)
         {

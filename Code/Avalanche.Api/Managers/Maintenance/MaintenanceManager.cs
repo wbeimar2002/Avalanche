@@ -30,8 +30,8 @@ namespace Avalanche.Api.Managers.Maintenance
         readonly IHttpContextAccessor _httpContextAccessor;
         readonly ILibraryService _libraryService;
 
-        readonly UserModel user;
-        readonly ConfigurationContext configurationContext;
+        private readonly UserModel user;
+        private readonly ConfigurationContext configurationContext;
 
         public MaintenanceManager(IStorageService storageService, 
             IDataManager metadataManager, 

@@ -25,9 +25,9 @@ namespace Avalanche.Api.Controllers.V1
     [Authorize]
     public class ProceduresController : ControllerBase
     {
-        readonly ILogger _logger;
+        private readonly ILogger _logger;
         private readonly IProceduresManager _proceduresManager;
-        readonly IWebHostEnvironment _environment;
+        private readonly IWebHostEnvironment _environment;
 
         public ProceduresController(ILogger<ProceduresController> logger, IProceduresManager proceduresManager, IWebHostEnvironment environment)
         {

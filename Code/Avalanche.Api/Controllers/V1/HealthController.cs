@@ -15,8 +15,8 @@ namespace Avalanche.Api.Controllers.V1
     [ApiController]
     public class HealthController : ControllerBase
     {
-        readonly ILogger _logger;
-        readonly IWebHostEnvironment _environment;
+        private readonly ILogger _logger;
+        private readonly IWebHostEnvironment _environment;
 
         public HealthController(ILogger<HealthController> logger, IWebHostEnvironment environment)
         {

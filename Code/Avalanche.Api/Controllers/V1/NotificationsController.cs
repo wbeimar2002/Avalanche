@@ -16,9 +16,9 @@ namespace Avalanche.Api.Controllers.V1
     //[Authorize]
     public class NotificationsController : ControllerBase
     {
-        readonly ILogger _logger;
-        readonly INotificationsManager _notificationsManager;
-        readonly IWebHostEnvironment _environment;
+        private readonly ILogger _logger;
+        private readonly INotificationsManager _notificationsManager;
+        private readonly IWebHostEnvironment _environment;
 
         public NotificationsController(
             ILogger<NotificationsController> logger,

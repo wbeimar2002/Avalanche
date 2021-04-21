@@ -24,10 +24,10 @@ namespace Avalanche.Api.Controllers.V1
     [ExcludeFromCodeCoverage]
     public class FilesController : ControllerBase
     {
-        readonly ILogger _logger;
-        readonly ISecurityManager _securityManager;
-        readonly IRecordingManager _recordingManager;
-        readonly IWebHostEnvironment _environment;
+        private readonly ILogger _logger;
+        private readonly ISecurityManager _securityManager;
+        private readonly IRecordingManager _recordingManager;
+        private readonly IWebHostEnvironment _environment;
 
         public FilesController(ILogger<FilesController> logger, 
             ISecurityManager securityManager, 

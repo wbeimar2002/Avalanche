@@ -1,4 +1,5 @@
 ﻿using Avalanche.Api.ViewModels;
+using Avalanche.Shared.Domain.Enumerations;
 using Avalanche.Shared.Domain.Models.Media;
 
 using System.Collections.Generic;
@@ -8,26 +9,29 @@ namespace Avalanche.Api.Managers.Media
 {
     public interface IPgsManager
     {
-        Task<StateViewModel> GetPgsTimeoutMode();
-        Task SetPgsTimeoutMode(StateViewModel requestViewModel);
+        Task<TimeoutModes> GetPgsTimeoutMode();
+        Task SetPgsTimeoutMode(PgsTimeoutModes mode);
 
-        Task<StateViewModel> GetPgsVolume();
-        Task SetPgsVolume(StateViewModel requestViewModel);
+        Task<double> GetPgsVolume();
+        Task SetPgsVolume(double volume);
 
-        Task<StateViewModel> GetPgsMute();
-        Task SetPgsMute(StateViewModel requestViewModel);
+        Task<bool> GetPgsMute();
+        Task SetPgsMute(bool isMuted);
 
-        Task<StateViewModel> GetPgsPlaybackState();
-        Task SetPgsState(StateViewModel requestViewModel);
+        Task<bool> GetPgsPlaybackState();
+        Task StartPgs();
+        Task StopPgs();
 
         Task<List<GreetingVideoModel>> GetPgsVideoFileList();
         Task<GreetingVideoModel> GetPgsVideoFile();
         Task SetPgsVideoFile(GreetingVideoModel video);
 
-        Task SetPgsVideoPosition(StateViewModel requestViewModel);
+        Task SetPgsVideoPosition(double position);
 
-        Task<StateViewModel> GetPgsStateForSink(SinkModel sink);
+        Task<bool> GetPgsStateForSink(SinkModel sink);
         Task SetPgsStateForSink(SinkStateViewModel sinkState);
         Task<IList<VideoSinkModel>> GetPgsSinks();
+
+        Task<RoutesViewModel> GetPrePgsRoutes();
     }
 }

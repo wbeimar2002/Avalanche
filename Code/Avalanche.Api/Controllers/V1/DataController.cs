@@ -25,9 +25,9 @@ namespace Avalanche.Api.Controllers.V1
     [Authorize]
     public class DataController : ControllerBase
     {
-        readonly ILogger _logger;
-        readonly IDataManager _metadataManager;
-        readonly IWebHostEnvironment _environment;
+        private readonly ILogger _logger;
+        private readonly IDataManager _metadataManager;
+        private readonly IWebHostEnvironment _environment;
 
         public DataController(ILogger<DataController> logger, IDataManager metadataManager, IWebHostEnvironment environment)
         {

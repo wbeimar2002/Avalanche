@@ -19,9 +19,9 @@ namespace Avalanche.Api.Controllers.V1
     [Authorize]
     public class SettingsController : ControllerBase
     {
-        readonly ILogger _logger;
-        readonly IMaintenanceManager _maintenanceManager;
-        readonly IWebHostEnvironment _environment;
+        private readonly ILogger _logger;
+        private readonly IMaintenanceManager _maintenanceManager;
+        private readonly IWebHostEnvironment _environment;
 
         public SettingsController(IMaintenanceManager maintenanceManager, ILogger<SettingsController> logger, IWebHostEnvironment environment)
         {

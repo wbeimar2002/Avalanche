@@ -25,10 +25,10 @@ namespace Avalanche.Api.Managers.Data
 {
     public class DataManager : IDataManager
     {
-        readonly IStorageService _storageService;
-        readonly IMapper _mapper;
-        readonly IDataManagementService _dataManagementService;
-        readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly IStorageService _storageService;
+        private readonly IMapper _mapper;
+        private readonly IDataManagementService _dataManagementService;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
         readonly UserModel user;
         readonly ConfigurationContext configurationContext;

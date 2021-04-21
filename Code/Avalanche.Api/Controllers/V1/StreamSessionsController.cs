@@ -20,9 +20,9 @@ namespace Avalanche.Api.Controllers.V1
     [Authorize]
     public class StreamSessionsController : ControllerBase
     {
-        readonly ILogger _logger;
-        readonly IWebRTCManager _webRTCManager;
-        readonly IWebHostEnvironment _environment;
+        private readonly ILogger _logger;
+        private readonly IWebRTCManager _webRTCManager;
+        private readonly IWebHostEnvironment _environment;
 
         public StreamSessionsController(ILogger<LicensesController> logger, IWebRTCManager webRTCManager, IWebHostEnvironment environment)
         {
