@@ -56,7 +56,7 @@ namespace Avalanche.Api.Tests.Managers
                 }
             };
 
-            _storageService.Setup(mock => mock.GetJsonDynamic("SetupSettingsData",1,  It.IsAny<ConfigurationContext>())).ReturnsAsync(settingsDepartmenSupported);
+            _storageService.Setup(mock => mock.GetJsonDynamic("SetupSettingsValues",1,  It.IsAny<ConfigurationContext>())).ReturnsAsync(settingsDepartmenSupported);
 
             var newProcedureType = new ProcedureTypeModel()
             {
@@ -81,7 +81,7 @@ namespace Avalanche.Api.Tests.Managers
                 }
             };
 
-            _storageService.Setup(mock => mock.GetJsonDynamic("SetupSettingsData", 1, It.IsAny<ConfigurationContext>())).ReturnsAsync(settingsDepartmenSupported);
+            _storageService.Setup(mock => mock.GetJsonDynamic("SetupSettingsValues", 1, It.IsAny<ConfigurationContext>())).ReturnsAsync(settingsDepartmenSupported);
 
             var newProcedureType = new ProcedureTypeModel()
             {
@@ -106,7 +106,7 @@ namespace Avalanche.Api.Tests.Managers
                 }
             };
 
-            _storageService.Setup(mock => mock.GetJsonDynamic("SetupSettingsData", 1, It.IsAny<ConfigurationContext>())).ReturnsAsync(settingsDepartmenSupported);
+            _storageService.Setup(mock => mock.GetJsonDynamic("SetupSettingsValues", 1, It.IsAny<ConfigurationContext>())).ReturnsAsync(settingsDepartmenSupported);
 
             var procedureType = new ProcedureTypeModel()
             {
@@ -131,7 +131,7 @@ namespace Avalanche.Api.Tests.Managers
                 }
             };
 
-            _storageService.Setup(mock => mock.GetJsonDynamic("SetupSettingsData", 1, It.IsAny<ConfigurationContext>())).ReturnsAsync(settingsDepartmenSupported);
+            _storageService.Setup(mock => mock.GetJsonDynamic("SetupSettingsValues", 1, It.IsAny<ConfigurationContext>())).ReturnsAsync(settingsDepartmenSupported);
 
             var procedureType = new ProcedureTypeModel()
             {
@@ -156,7 +156,7 @@ namespace Avalanche.Api.Tests.Managers
                 }
             };
 
-            _storageService.Setup(mock => mock.GetJsonDynamic("SetupSettingsData", 1, It.IsAny<ConfigurationContext>())).ReturnsAsync(settingsDepartmenSupported);
+            _storageService.Setup(mock => mock.GetJsonDynamic("SetupSettingsValues", 1, It.IsAny<ConfigurationContext>())).ReturnsAsync(settingsDepartmenSupported);
 
             Task Act() => _manager.GetProcedureTypesByDepartment(1);
 
@@ -174,7 +174,7 @@ namespace Avalanche.Api.Tests.Managers
                 }
             };
 
-            _storageService.Setup(mock => mock.GetJsonDynamic("SetupSettingsData", 1, It.IsAny<ConfigurationContext>())).ReturnsAsync(settingsDepartmenSupported);
+            _storageService.Setup(mock => mock.GetJsonDynamic("SetupSettingsValues", 1, It.IsAny<ConfigurationContext>())).ReturnsAsync(settingsDepartmenSupported);
 
             Task Act() => _manager.GetProcedureTypesByDepartment(null);
 
@@ -192,7 +192,7 @@ namespace Avalanche.Api.Tests.Managers
                 }
             };
 
-            _storageService.Setup(mock => mock.GetJsonDynamic("SetupSettingsData", 1, It.IsAny<ConfigurationContext>())).ReturnsAsync(settingsDepartmenSupported);
+            _storageService.Setup(mock => mock.GetJsonDynamic("SetupSettingsValues", 1, It.IsAny<ConfigurationContext>())).ReturnsAsync(settingsDepartmenSupported);
 
             Task Act() => _manager.AddDepartment(It.IsAny<DepartmentModel>());
 
@@ -210,7 +210,7 @@ namespace Avalanche.Api.Tests.Managers
                 }
             };
 
-            _storageService.Setup(mock => mock.GetJsonDynamic("SetupSettingsData", 1, It.IsAny<ConfigurationContext>())).ReturnsAsync(settingsDepartmenSupported);
+            _storageService.Setup(mock => mock.GetJsonDynamic("SetupSettingsValues", 1, It.IsAny<ConfigurationContext>())).ReturnsAsync(settingsDepartmenSupported);
 
             Task Act() => _manager.DeleteDepartment(1);
 

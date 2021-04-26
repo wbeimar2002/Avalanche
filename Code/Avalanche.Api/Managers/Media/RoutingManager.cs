@@ -73,7 +73,7 @@ namespace Avalanche.Api.Managers.Media
         public async Task ShowPreview(RoutingPreviewViewModel routingPreviewViewModel)
         {
             //TODO: This rules is not in any PBI yet.
-            var surgerySettings = await _storageService.GetJsonDynamic("SurgerySettingsData", 1, configurationContext);
+            var surgerySettings = await _storageService.GetJsonDynamic("SurgerySettingsValues", 1, configurationContext);
 
             if (surgerySettings.Mode == RoutingModes.Hardware)
                 await _avidisService.ShowPreview(_mapper.Map<RegionModel, ShowPreviewRequest>(routingPreviewViewModel.Region));

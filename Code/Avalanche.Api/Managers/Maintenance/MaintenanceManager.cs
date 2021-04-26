@@ -195,7 +195,7 @@ namespace Avalanche.Api.Managers.Maintenance
                     switch (item.JsonKey)
                     {
                         case "DepartmentId":
-                            dynamic setupSettings = await _storageService.GetJsonDynamic("SetupSettingsData", 1, configurationContext);
+                            dynamic setupSettings = await _storageService.GetJsonDynamic("SetupSettingsValues", 1, configurationContext);
                             bool departmentsSupported = setupSettings.General.DepartmentsSupported;                           
                             
                             item.Required = departmentsSupported;

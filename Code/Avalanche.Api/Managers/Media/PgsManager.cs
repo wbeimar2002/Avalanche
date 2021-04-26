@@ -2,10 +2,12 @@
 
 using Avalanche.Api.Services.Maintenance;
 using Avalanche.Api.Services.Media;
+using Avalanche.Api.Utilities;
 using Avalanche.Api.ViewModels;
 using Avalanche.Shared.Domain.Enumerations;
+using Avalanche.Shared.Domain.Models;
 using Avalanche.Shared.Domain.Models.Media;
-using Avalanche.Shared.Infrastructure.Models.Configuration;
+using Avalanche.Shared.Infrastructure.Configuration;
 
 using Ism.Common.Core.Configuration.Models;
 using Ism.PgsTimeout.V1.Protos;
@@ -110,7 +112,7 @@ namespace Avalanche.Api.Managers.Media
         public async Task<IList<VideoSinkModel>> GetPgsSinks()
         {
             // this needs to return the same data that routing does
-            var config = await GetConfig();
+            var pgsSinksData = await _storageService.GetJsonObject<SinksData>("PgsSinksData", 1, ConfigurationContext.FromEnvironment());
 
             var routingSinks = await _routingService.GetVideoSinks();
             var routes = await _routingService.GetCurrentRoutes();
@@ -121,7 +123,7 @@ namespace Avalanche.Api.Managers.Media
             // get the routing sinks that are also called out in the pgs sink collection
 
             var pgsSinks = routingSinks.VideoSinks.Where(routingSink =>
-                config.PgsSinks.Any(pgsSink => string.Equals(routingSink.Sink.Alias, routingSink.Sink.Alias, StringComparison.OrdinalIgnoreCase)
+                pgsSinksData.Items.Any(pgsSink => string.Equals(routingSink.Sink.Alias, routingSink.Sink.Alias, StringComparison.OrdinalIgnoreCase)
                 && pgsSink.Index == routingSink.Sink.Index));
 
             var apiSinks = _mapper.Map<IList<Ism.Routing.V1.Protos.VideoSinkMessage>, IList<VideoSinkModel>>(pgsSinks.ToList());
@@ -145,7 +147,8 @@ namespace Avalanche.Api.Managers.Media
         public async Task SetPgsStateForSink(SinkStateViewModel sinkStateViewModel)
         {
             bool enabled = Convert.ToBoolean(sinkStateViewModel.Value);
-            var config = await GetConfig();
+            
+            var config = await _storageService.GetJsonObject<PgsSettingsValues>("PgsSettingsValues", 1, ConfigurationContext.FromEnvironment());
             // pgs checkbox state must persist reboots
             // state client should handle this
             // if pgs is activated, video route for that display needs to be restored
@@ -164,7 +167,7 @@ namespace Avalanche.Api.Managers.Media
                     // send pgs back to this display
                     await _routingService.RouteVideo(new Ism.Routing.V1.Protos.RouteVideoRequest
                     {
-                        Source = _mapper.Map<SinkModel, Ism.Routing.V1.Protos.AliasIndexMessage>(config.PgsSource),
+                        Source = _mapper.Map<SinkModel, Ism.Routing.V1.Protos.AliasIndexMessage>(config.Configuration.Source),
                         Sink = _mapper.Map<SinkModel, Ism.Routing.V1.Protos.AliasIndexMessage>(sinkStateViewModel.Sink)
                     });
                 }
@@ -305,7 +308,7 @@ namespace Avalanche.Api.Managers.Media
             await _startStopLock.WaitAsync(_cts.Token);
             try
             {
-                var config = await GetConfig();
+                var config = await _storageService.GetJsonObject<PgsSettingsValues>("PgsSettingsValues", 1, ConfigurationContext.FromEnvironment());
 
                 await SaveCurrentRoutes();
 
@@ -319,7 +322,7 @@ namespace Avalanche.Api.Managers.Media
 
                     await _routingService.RouteVideo(new Ism.Routing.V1.Protos.RouteVideoRequest
                     {
-                        Source = _mapper.Map<SinkModel, Ism.Routing.V1.Protos.AliasIndexMessage>(config.PgsSource),
+                        Source = _mapper.Map<SinkModel, Ism.Routing.V1.Protos.AliasIndexMessage>(config.Configuration.Source),
                         Sink = _mapper.Map<VideoDeviceModel, Ism.Routing.V1.Protos.AliasIndexMessage>(sink)
                     });
                 }
@@ -365,11 +368,6 @@ namespace Avalanche.Api.Managers.Media
         #endregion
 
         #region Private Methods
-
-        private async Task<PgsTimeoutConfig> GetConfig()
-        {
-            return await _storageService.GetJsonObject<PgsTimeoutConfig>(nameof(PgsTimeoutConfig), 1, ConfigurationContext.FromEnvironment());
-        }
 
         private async Task SaveCurrentRoutes()
         {

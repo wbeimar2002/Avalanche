@@ -4,7 +4,7 @@ using Avalanche.Api.Services.Maintenance;
 using Avalanche.Api.Services.Media;
 using Avalanche.Shared.Domain.Enumerations;
 using Avalanche.Shared.Domain.Models.Media;
-using Avalanche.Shared.Infrastructure.Models.Configuration;
+using Avalanche.Shared.Infrastructure.Configuration;
 
 using Ism.Common.Core.Configuration.Models;
 using Ism.PgsTimeout.V1.Protos;
@@ -107,13 +107,13 @@ namespace Avalanche.Api.Managers.Media
                 await _pgsTimeoutService.SetPgsTimeoutMode(new SetPgsTimeoutModeRequest { Mode = PgsTimeoutModeEnum.PgsTimeoutModeTimeout });
 
                 // Route timeout
-                var config = await GetConfig();
+                var config = await _storageService.GetJsonObject<TimeoutSettingsValues>("TimeoutSettingsValues", 1, ConfigurationContext.FromEnvironment());
                 var sinks = await GetTimeoutSinks();
                 foreach (var sink in sinks)
                 {
                     await _routingService.RouteVideo(new RouteVideoRequest
                     {
-                        Source = _mapper.Map<SinkModel, AliasIndexMessage>(config.TimeoutSource),
+                        Source = _mapper.Map<SinkModel, AliasIndexMessage>(config.Configuration.Source),
                         Sink = _mapper.Map<VideoDeviceModel, AliasIndexMessage>(sink)
                     });
                 }
@@ -222,15 +222,10 @@ namespace Avalanche.Api.Managers.Media
 
         #region Private Methods
 
-        private async Task<PgsTimeoutConfig> GetConfig()
-        {
-            return await _storageService.GetJsonObject<PgsTimeoutConfig>(nameof(PgsTimeoutConfig), 1, ConfigurationContext.FromEnvironment());
-        }
-
         private async Task<IList<VideoSinkModel>> GetTimeoutSinks()
         {
             // This needs to return the same data that routing does
-            var config = await GetConfig();
+            var pgsSinksData = await _storageService.GetJsonObject<SinksData>("TimeoutSinksData", 1, ConfigurationContext.FromEnvironment());
 
             var routingSinks = await _routingService.GetVideoSinks();
             var routes = await _routingService.GetCurrentRoutes();
@@ -239,7 +234,7 @@ namespace Avalanche.Api.Managers.Media
             // Get the routing sinks that are also called out in the Timeout sink collection
             var timeoutSinks = routingSinks.VideoSinks
                 .Where(routingSink =>
-                    config.TimeoutSinks
+                    pgsSinksData.Items
                     .Any(timeoutSink =>
                         string.Equals(timeoutSink.Alias, routingSink.Sink.Alias, StringComparison.OrdinalIgnoreCase)
                     && timeoutSink.Index == routingSink.Sink.Index));
