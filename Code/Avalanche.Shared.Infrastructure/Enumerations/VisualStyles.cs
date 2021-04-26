@@ -14,6 +14,8 @@ namespace Avalanche.Shared.Infrastructure.Enumerations
         GenericList,
         VerticalToogle,
         CustomList,
-        ActionButton
+        ActionButton,
+        FilePicker,
+        FolderPicker
     }
 }

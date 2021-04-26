@@ -33,5 +33,7 @@ namespace Avalanche.Api.ViewModels
         public string ActionEndPoint { get; set; }
         public string ActionMethod { get; set; }
         public string ActionTranslationKey { get; set; }
+        public string Folder { get; set; }
+        public string Filter { get; set; }
     }
 }
