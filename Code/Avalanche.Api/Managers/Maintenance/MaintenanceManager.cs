@@ -222,9 +222,9 @@ namespace Avalanche.Api.Managers.Maintenance
                             Value = ((dynamic)d).Name,
                             RelatedObject = d
                         }).ToList();
-                    case "VideoFiles":
+                    case "VideoFilesData":
 
-                        var videoFiles = _filesService.GetFiles("media", "*.mp4");
+                        var videoFiles = _filesService.GetFiles("pgsmedia", "*.mp4");
 
                         var dynamicVideoFiles = videoFiles
                             .Select(item =>
@@ -251,6 +251,16 @@ namespace Avalanche.Api.Managers.Maintenance
                             Value = $"{((dynamic)s).Alias} ({((dynamic)s).Index})",
                             RelatedObject = s
                         }).ToList();
+
+                    case "VideoSinksData":
+                        var videoSinks = (await _storageService.GetJsonObject<DynamicListContainerViewModel>("VideoSinksData", 1, configurationContext)).Items;
+                        return videoSinks.Select(s => new KeyValuePairObjectViewModel()
+                        {
+                            Id = Guid.NewGuid().ToString(),
+                            Value = $"{((dynamic)s).Alias} ({((dynamic)s).Index})",
+                            RelatedObject = s
+                        }).ToList();
+
                     default:
                         return new List<KeyValuePairObjectViewModel>();
                 }
