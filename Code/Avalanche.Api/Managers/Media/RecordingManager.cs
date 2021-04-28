@@ -56,6 +56,11 @@ namespace Avalanche.Api.Managers.Media
             return System.IO.Path.Combine(libraryRoot, translated);
         }
 
+        public async Task<IEnumerable<string>> GetRecordingChannels()
+        {
+            return await _recorderService.GetRecordingChannels();
+        }
+
         public async Task StartRecording()
         {
             var activeProcedure = await _stateClient.GetData<ActiveProcedureState>();

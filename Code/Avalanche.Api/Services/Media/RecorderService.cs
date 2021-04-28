@@ -1,7 +1,8 @@
 ﻿using Ism.Recorder.Client.V1;
 using Ism.Recorder.Core.V1.Protos;
-
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Avalanche.Api.Services.Media
@@ -38,5 +39,11 @@ namespace Avalanche.Api.Services.Media
         public async Task StopRecording() => await _client.StopRecording();
 
         public async Task CaptureImage(CaptureImageRequest captureRequest) => await _client.CaptureImage(captureRequest);
+
+        public async Task<IEnumerable<string>> GetRecordingChannels()
+        {
+            var response = await _client.GetRecordingChannels();
+            return response.RecordingChannels.Select(x => x.ChannelName);
+        }
     }
 }

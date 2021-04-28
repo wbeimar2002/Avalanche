@@ -16,5 +16,7 @@ namespace Avalanche.Api.Managers.Media
 
         string GetCapturePreview(string path);
         string GetCaptureVideo(string path);
+
+        Task<IEnumerable<string>> GetRecordingChannels();
     }
 }
