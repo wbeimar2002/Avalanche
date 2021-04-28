@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Ism.SystemState.Models.Library;
 using Ism.SystemState.Models.Exceptions;
 using Ism.SystemState.Models.Recorder;
+using Ism.SystemState.Models.Notifications;
 
 namespace Avalanche.Api.Hubs
 {
@@ -27,6 +28,7 @@ namespace Avalanche.Api.Hubs
         Task OnDiskSpaceStateChanged(DiskSpaceEvent diskSpaceEvent);
 
         Task OnSystemErrorRaised(SystemErrorRaisedEvent evt);
+        Task OnSystemSystemPersistantNotificationRaised(SystemPersistantNotificationRaisedEvent evt);
 
         Task OnRecorderStateChanged(RecorderStateEvent evt);
     }
