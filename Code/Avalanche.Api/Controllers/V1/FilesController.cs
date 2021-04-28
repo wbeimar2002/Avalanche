@@ -95,12 +95,12 @@ namespace Avalanche.Api.Controllers.V1
         // NOTE: A separate endpoint is probably best for video files as well, since those need to support range headers / chunking
         [ResponseCache(Location = ResponseCacheLocation.Client, Duration = 60 * 60 * 24)]
         [HttpGet("captures/preview")]
-        public IActionResult GetCapturesPreview([FromQuery]string path)
+        public IActionResult GetCapturesPreview([FromQuery]string path, [FromQuery] string procedureId, [FromQuery] string repository)
         {
             try
             {
                 _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
-                var fullPath = _recordingManager.GetCapturePreview(path);
+                var fullPath = _recordingManager.GetCapturePreview(path, procedureId, repository);
                 return PhysicalFile(fullPath, "image/jpeg");
             }
             catch (Exception ex)
@@ -116,12 +116,12 @@ namespace Avalanche.Api.Controllers.V1
 
         [ResponseCache(Location = ResponseCacheLocation.Client, Duration = 60 * 60 * 24)]
         [HttpGet("captures/video")]
-        public IActionResult GetCapturesVideo([FromQuery] string path)
+        public IActionResult GetCapturesVideo([FromQuery] string path, [FromQuery] string procedureId, [FromQuery] string repository)
         {
             try
             {
                 _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
-                var fullPath = _recordingManager.GetCaptureVideo(path);
+                var fullPath = _recordingManager.GetCaptureVideo(path, procedureId, repository);
                 // for video, add range headers to support chunking / seek (and allow safari to work at all)
                 return PhysicalFile(fullPath, "video/mp4", true);
             }

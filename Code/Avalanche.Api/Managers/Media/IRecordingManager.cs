@@ -14,7 +14,7 @@ namespace Avalanche.Api.Managers.Media
 
         Task CaptureImage();
 
-        string GetCapturePreview(string path);
-        string GetCaptureVideo(string path);
+        string GetCapturePreview(string path, string procedureId, string repository);
+        string GetCaptureVideo(string path, string procedureId, string repository);
     }
 }
