@@ -43,6 +43,10 @@ namespace Avalanche.Api.Managers.Media
 
         public string GetCapturePreview(string path, string procedureId, string repository)
         {
+            Preconditions.ThrowIfNullOrEmpty(nameof(path), path);
+            Preconditions.ThrowIfNullOrEmpty(nameof(procedureId), procedureId);
+            Preconditions.ThrowIfNullOrEmpty(nameof(repository), repository);
+
             var libraryRoot = Environment.GetEnvironmentVariable("LibraryDataRoot");
             var relative = GetRepositoryRelativePathFromProcedureId(procedureId);
             relative = Path.Combine(repository, relative, path);
@@ -54,6 +58,10 @@ namespace Avalanche.Api.Managers.Media
 
         public string GetCaptureVideo(string path, string procedureId, string repository)
         {
+            Preconditions.ThrowIfNullOrEmpty(nameof(path), path);
+            Preconditions.ThrowIfNullOrEmpty(nameof(procedureId), procedureId);
+            Preconditions.ThrowIfNullOrEmpty(nameof(repository), repository);
+
             var libraryRoot = Environment.GetEnvironmentVariable("LibraryDataRoot");
             var relative = GetRepositoryRelativePathFromProcedureId(procedureId);
             relative = Path.Combine(repository, relative, path);
@@ -87,8 +95,6 @@ namespace Avalanche.Api.Managers.Media
 
         private string GetRepositoryRelativePathFromProcedureId(string procedureId)
         {
-            Preconditions.ThrowIfNullOrEmpty(nameof(procedureId), procedureId);
-
             var strYear = procedureId.Substring(0, 4);
             var strMonth = procedureId.Substring(5, 2);
             return Path.Combine(strYear, strMonth, procedureId);
