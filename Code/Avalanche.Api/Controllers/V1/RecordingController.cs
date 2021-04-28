@@ -104,7 +104,7 @@ namespace Avalanche.Api.Controllers.V1
         }
 
         /// <summary>
-        /// Add a capture
+        /// Gets channels configured for recording
         /// </summary>
         /// <returns></returns>
         [HttpPost("recordChannels")]
