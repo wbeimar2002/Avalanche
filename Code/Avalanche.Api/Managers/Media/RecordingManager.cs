@@ -1,4 +1,6 @@
-﻿using Avalanche.Api.Services.Media;
+﻿using AutoMapper;
+using Avalanche.Api.Services.Media;
+using Avalanche.Shared.Domain.Models.Media;
 using Ism.Recorder.Core.V1.Protos;
 using Ism.SystemState.Client;
 using Ism.SystemState.Models.Procedure;
@@ -15,11 +17,13 @@ namespace Avalanche.Api.Managers.Media
     {
         private readonly IStateClient _stateClient;
         private readonly IRecorderService _recorderService;
+        private readonly IMapper _mapper;
 
-        public RecordingManager(IRecorderService recorderService, IStateClient stateClient)
+        public RecordingManager(IRecorderService recorderService, IStateClient stateClient, IMapper mapper)
         {
             _recorderService = recorderService;
             _stateClient = stateClient;
+            _mapper = mapper;
         }
 
         public async Task CaptureImage()
@@ -69,6 +73,12 @@ namespace Avalanche.Api.Managers.Media
             var translated = relative.Replace('\\', '/').TrimStart('/');
 
             return System.IO.Path.Combine(libraryRoot, translated);
+        }
+
+        public async Task<IEnumerable<RecordingChannelModel>> GetRecordingChannels()
+        {
+            var channels = await _recorderService.GetRecordingChannels();
+            return _mapper.Map<IEnumerable<RecordChannelMessage>, IEnumerable<RecordingChannelModel>>(channels).ToList();
         }
 
         public async Task StartRecording()
