@@ -4,8 +4,10 @@ using Avalanche.Shared.Domain.Models.Media;
 using Ism.Recorder.Core.V1.Protos;
 using Ism.SystemState.Client;
 using Ism.SystemState.Models.Procedure;
+using Ism.Utility.Core;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -43,20 +45,33 @@ namespace Avalanche.Api.Managers.Media
             await _recorderService.CaptureImage(message);
         }
 
-#warning TODO: This is wrong and intended only for a workflow demo. Remove.
-        // Need to define and implement correct image retrieval patterns. Not in scope of current work, but it is probably not correct to just accept any path string.
-        public string GetCapturePreview(string path)
+        public string GetCapturePreview(string path, string procedureId, string repository)
         {
+            Preconditions.ThrowIfNullOrEmpty(nameof(path), path);
+            Preconditions.ThrowIfNullOrEmpty(nameof(procedureId), procedureId);
+            Preconditions.ThrowIfNullOrEmpty(nameof(repository), repository);
+
             var libraryRoot = Environment.GetEnvironmentVariable("LibraryDataRoot");
-            var translated = path.Replace('\\', '/').TrimStart('/');
-            return System.IO.Path.Combine(libraryRoot, translated);           
+            var relative = GetRepositoryRelativePathFromProcedureId(procedureId);
+            relative = Path.Combine(repository, relative, path);
+
+            var translated = relative.Replace('\\', '/').TrimStart('/');
+
+            return System.IO.Path.Combine(libraryRoot, translated);
         }
-        
-        // TODO: same as above. Need to define file retrieval patterns.
-        public string GetCaptureVideo(string path)
+
+        public string GetCaptureVideo(string path, string procedureId, string repository)
         {
+            Preconditions.ThrowIfNullOrEmpty(nameof(path), path);
+            Preconditions.ThrowIfNullOrEmpty(nameof(procedureId), procedureId);
+            Preconditions.ThrowIfNullOrEmpty(nameof(repository), repository);
+
             var libraryRoot = Environment.GetEnvironmentVariable("LibraryDataRoot");
-            var translated = path.Replace('\\', '/').TrimStart('/');
+            var relative = GetRepositoryRelativePathFromProcedureId(procedureId);
+            relative = Path.Combine(repository, relative, path);
+            
+            var translated = relative.Replace('\\', '/').TrimStart('/');
+
             return System.IO.Path.Combine(libraryRoot, translated);
         }
 
@@ -86,6 +101,13 @@ namespace Avalanche.Api.Managers.Media
         public async Task StopRecording()
         {
             await _recorderService.StopRecording();
+        }
+
+        private string GetRepositoryRelativePathFromProcedureId(string procedureId)
+        {
+            var strYear = procedureId.Substring(0, 4);
+            var strMonth = procedureId.Substring(5, 2);
+            return Path.Combine(strYear, strMonth, procedureId);
         }
     }
 }
