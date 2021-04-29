@@ -40,10 +40,10 @@ namespace Avalanche.Api.Services.Media
 
         public async Task CaptureImage(CaptureImageRequest captureRequest) => await _client.CaptureImage(captureRequest);
 
-        public async Task<IEnumerable<string>> GetRecordingChannels()
+        public async Task<IEnumerable<RecordChannelMessage>> GetRecordingChannels()
         {
             var response = await _client.GetRecordingChannels();
-            return response.RecordingChannels.Select(x => x.ChannelName);
+            return response.RecordingChannels.ToList();
         }
     }
 }

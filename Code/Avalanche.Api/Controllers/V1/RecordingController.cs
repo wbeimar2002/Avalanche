@@ -1,4 +1,5 @@
 ﻿using Avalanche.Api.Managers.Media;
+using Avalanche.Shared.Domain.Models.Media;
 using Avalanche.Shared.Infrastructure.Enumerations;
 using Avalanche.Shared.Infrastructure.Extensions;
 using Avalanche.Shared.Infrastructure.Helpers;
@@ -107,8 +108,8 @@ namespace Avalanche.Api.Controllers.V1
         /// Gets channels configured for recording
         /// </summary>
         /// <returns></returns>
-        [HttpPost("recordChannels")]
-        [Produces(typeof(List<string>))]
+        [HttpGet("recordChannels")]
+        [Produces(typeof(List<RecordingChannelModel>))]
         public async Task<IActionResult> GetRecordingChannels()
         {
             try

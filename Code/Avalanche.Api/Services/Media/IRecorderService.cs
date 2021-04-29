@@ -11,6 +11,6 @@ namespace Avalanche.Api.Services.Media
         Task StopRecording();
         Task<RecorderState> GetRecorderState();
         Task CaptureImage(CaptureImageRequest captureRequest);
-        Task<IEnumerable<string>> GetRecordingChannels();
+        Task<IEnumerable<RecordChannelMessage>> GetRecordingChannels();
     }
 }
