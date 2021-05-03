@@ -19,6 +19,7 @@ namespace Avalanche.Api.Managers.Media
         Task SetPgsMute(bool isMuted);
 
         Task<bool> GetPgsPlaybackState();
+        Task SetPgsPlaybackState(bool isPlaying);
         Task StartPgs();
         Task StopPgs();
 
