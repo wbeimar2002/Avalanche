@@ -226,6 +226,14 @@ namespace Avalanche.Api.Managers.Media
             return result.IsMuted;
         }
 
+        public async Task SetPgsPlaybackState(bool isPlaying)
+        {
+            await _pgsTimeoutService.SetPgsPlaybackState(new SetPgsPlaybackStateRequest()
+            {
+                IsPlaying = isPlaying
+            });
+        }
+
         public async Task<bool> GetPgsPlaybackState()
         {
             var result = await _pgsTimeoutService.GetPgsPlaybackState();
