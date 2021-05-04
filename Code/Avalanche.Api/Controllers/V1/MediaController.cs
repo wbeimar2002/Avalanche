@@ -327,6 +327,31 @@ namespace Avalanche.Api.Controllers.V1
         /// <summary>
         /// Starts or stops PGS mode
         /// </summary>
+        /// <param name="isPlaying"></param>
+        /// <returns></returns>
+        [HttpPut("pgs/playbackstate/{isPlaying}")]
+        public async Task<IActionResult> SetPgsPlaybackState(bool isPlaying)
+        {
+            try
+            {
+                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
+                await _pgsManager.SetPgsPlaybackState(isPlaying);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, LoggerHelper.GetLogMessage(DebugLogType.Exception), ex);
+                return new BadRequestObjectResult(ex.Get(_environment.IsDevelopment()));
+            }
+            finally
+            {
+                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
+            }
+        }
+
+        /// <summary>
+        /// Starts or stops PGS mode
+        /// </summary>
         /// <param name="state"></param>
         /// <returns></returns>
         [HttpPut("pgs/state/{state}")]

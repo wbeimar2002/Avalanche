@@ -1,4 +1,5 @@
 ﻿using Ism.Recorder.Core.V1.Protos;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Avalanche.Api.Services.Media
@@ -10,5 +11,6 @@ namespace Avalanche.Api.Services.Media
         Task StopRecording();
         Task<RecorderState> GetRecorderState();
         Task CaptureImage(CaptureImageRequest captureRequest);
+        Task<IEnumerable<RecordChannelMessage>> GetRecordingChannels();
     }
 }

@@ -17,6 +17,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Ism.SystemState.Models.Library;
 using Ism.SystemState.Models.Recorder;
+using Ism.SystemState.Models.Notifications;
 
 namespace Avalanche.Api.Services.Notifications
 {
@@ -60,6 +61,7 @@ namespace Avalanche.Api.Services.Notifications
 
             AddSubscription<RecorderStateEvent>(evt => _hubContext.Clients.All.OnRecorderStateChanged(evt));
             AddSubscription<SystemErrorRaisedEvent>(evt => _hubContext.Clients.All.OnSystemErrorRaised(evt));
+            AddSubscription<SystemPersistantNotificationRaisedEvent>(evt => _hubContext.Clients.All.OnSystemSystemPersistantNotificationRaised(evt));
 
             return Task.CompletedTask;
         }

@@ -3,7 +3,6 @@ using Avalanche.Shared.Domain.Models.Media;
 using Avalanche.Shared.Infrastructure.Enumerations;
 using Avalanche.Shared.Infrastructure.Extensions;
 using Avalanche.Shared.Infrastructure.Helpers;
-using Ism.Recorder.Core.V1.Protos;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -11,6 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Avalanche.Api.Controllers.V1
@@ -34,7 +34,6 @@ namespace Avalanche.Api.Controllers.V1
         /// <summary>
         /// Start recording
         /// </summary>
-        /// <param name="env"></param>
         /// <returns></returns>
         [HttpPost("")]
         public async Task<IActionResult> StartRecording()
@@ -60,7 +59,6 @@ namespace Avalanche.Api.Controllers.V1
         /// <summary>
         /// Stop recording
         /// </summary>
-        /// <param name="env"></param>
         /// <returns></returns>
         [HttpDelete("")]
         public async Task<IActionResult> StopRecording()
@@ -85,7 +83,6 @@ namespace Avalanche.Api.Controllers.V1
         /// <summary>
         /// Add a capture
         /// </summary>
-        /// <param name="env"></param>
         /// <returns></returns>
         [HttpPost("captures")]
         public async Task<IActionResult> CaptureImages()
@@ -95,6 +92,32 @@ namespace Avalanche.Api.Controllers.V1
                 _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
                 await _recordingManager.CaptureImage();
                 return Ok();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, LoggerHelper.GetLogMessage(DebugLogType.Exception), ex);
+                return new BadRequestObjectResult(ex.Get(_environment.IsDevelopment()));
+            }
+            finally
+            {
+                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
+            }
+        }
+
+        /// <summary>
+        /// Gets channels configured for recording
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("recordChannels")]
+        [Produces(typeof(List<RecordingChannelModel>))]
+        public async Task<IActionResult> GetRecordingChannels()
+        {
+            try
+            {
+                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
+
+                var channels = await _recordingManager.GetRecordingChannels();
+                return Ok(channels);
             }
             catch (Exception ex)
             {
