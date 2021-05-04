@@ -62,5 +62,10 @@ namespace Avalanche.Api.Services.Media
         {
             await _client.RouteVideo(routeVideoRequest);
         }
+
+        public async Task RouteVideoBatch(Ism.Routing.V1.Protos.RouteVideoBatchRequest routeVideoBatchRequest)
+        {
+            await _client.RouteVideoBatch(routeVideoBatchRequest);
+        }
     }
 }

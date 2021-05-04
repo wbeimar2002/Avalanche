@@ -7,7 +7,7 @@ namespace Avalanche.Shared.Domain.Models.Media
 {
     public class WebRTCSessionModel : WebRTCMessaggeModel
     { 
-        public SinkModel Sink { get; set; }
+        public AliasIndexModel Sink { get; set; }
 
     }
 }

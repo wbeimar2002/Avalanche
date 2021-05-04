@@ -1,4 +1,5 @@
-﻿using Avalanche.Api.Managers.Media;
+﻿using AutoMapper;
+using Avalanche.Api.Managers.Media;
 using Avalanche.Api.ViewModels;
 using Avalanche.Shared.Domain.Models.Media;
 using Avalanche.Shared.Infrastructure.Enumerations;
@@ -28,22 +29,23 @@ namespace Avalanche.Api.Controllers.V1
         private readonly ILogger _logger;
         private readonly IRoutingManager _routingManager;
         private readonly IWebHostEnvironment _environment;
+        private readonly IMapper _mapper;
 
-        public DevicesController(ILogger<DevicesController> logger, IRoutingManager routingManager, IWebHostEnvironment environment)
+        public DevicesController(ILogger<DevicesController> logger, IRoutingManager routingManager, IMapper mapper, IWebHostEnvironment environment)
         {
             _environment = environment;
             _logger = ThrowIfNullOrReturn(nameof(logger), logger);
-            _routingManager = ThrowIfNullOrReturn(nameof(routingManager), routingManager); ;
+            _mapper = ThrowIfNullOrReturn(nameof(mapper), mapper);
+            _routingManager = ThrowIfNullOrReturn(nameof(routingManager), routingManager);
         }
 
         /// <summary>
         /// Enter full screen mode 
         /// </summary>
         /// <param name="routingActionViewModel"></param>
-        /// <param name="env"></param>
         /// <returns></returns>
         [HttpPost("fullscreen")]
-        public async Task<IActionResult> EnterFullScreen(RoutingActionViewModel routingActionViewModel)
+        public async Task<IActionResult> EnterFullScreen(FullScreenRequestViewModel routingActionViewModel)
         {
             try
             {
@@ -69,7 +71,7 @@ namespace Avalanche.Api.Controllers.V1
         /// <param name="env"></param>
         /// <returns></returns>
         [HttpDelete("fullscreen")]
-        public async Task<IActionResult> ExitFullScreen(RoutingActionViewModel routingActionViewModel)
+        public async Task<IActionResult> ExitFullScreen(FullScreenRequestViewModel routingActionViewModel)
         {
             try
             {
@@ -144,15 +146,14 @@ namespace Avalanche.Api.Controllers.V1
         /// Add a new route
         /// </summary>
         /// <param name="routesViewModel"></param>
-        /// <param name="env"></param>
         /// <returns></returns>
         [HttpPut("routes")]
-        public async Task<IActionResult> RouteVideoSource(RoutesViewModel routesViewModel)
+        public async Task<IActionResult> RouteVideoSource(RouteViewModel routesViewModel)
         {
             try
             {
                 _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
-                await _routingManager.RouteVideoSource(routesViewModel);
+                await _routingManager.RouteVideoSource(_mapper.Map<RouteViewModel, RouteModel>(routesViewModel));
                 return Ok();
             }
             catch (Exception ex)
@@ -169,16 +170,16 @@ namespace Avalanche.Api.Controllers.V1
         /// <summary>
         /// Delete a route
         /// </summary>
-        /// <param name="routesViewModel"></param>
-        /// <param name="env"></param>
+        /// <param name="sink"></param>
         /// <returns></returns>
         [HttpDelete("routes")]
-        public async Task<IActionResult> UnrouteVideoSource(RoutesViewModel routesViewModel)
+        public async Task<IActionResult> UnrouteVideo(AliasIndexViewModel sink)
         {
             try
             {
                 _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
-                await _routingManager.UnrouteVideoSource(routesViewModel);
+                
+                await _routingManager.UnrouteVideoSource(_mapper.Map<AliasIndexViewModel, AliasIndexModel>(sink));
                 return Ok();
             }
             catch (Exception ex)
@@ -258,7 +259,7 @@ namespace Avalanche.Api.Controllers.V1
             try
             {
                 _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
-                var result = await _routingManager.GetAlternativeSource(new SinkModel()
+                var result = await _routingManager.GetAlternativeSource(new AliasIndexModel()
                 {
                     Alias = alias,
                     Index = index

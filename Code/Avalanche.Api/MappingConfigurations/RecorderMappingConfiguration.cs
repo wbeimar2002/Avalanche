@@ -8,7 +8,7 @@ namespace Avalanche.Api.MappingConfigurations
     {
         public RecorderMappingConfiguration()
         {
-            CreateMap<SinkModel, AliasIndexMessage>()
+            CreateMap<AliasIndexModel, AliasIndexMessage>()
               .ForMember(dest =>
                   dest.Alias,
                   opt => opt.MapFrom(src => src.Alias))

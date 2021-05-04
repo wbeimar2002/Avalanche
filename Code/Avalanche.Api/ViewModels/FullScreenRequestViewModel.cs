@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace Avalanche.Api.ViewModels
 {
-    public class RoutesViewModel
+    public class FullScreenRequestViewModel
     {
-        public List<VideoDeviceModel> Sources { get; set; }
-        public List<VideoDeviceModel> Destinations { get; set; }
+        public int UserInterfaceId { get; set; }
+        public AliasIndexViewModel Source { get; set; }
     }
 }

@@ -8,7 +8,7 @@ namespace Avalanche.Api.ViewModels
 {
     public class SinkStateViewModel 
     {
-        public SinkModel Sink { get; set; }
+        public AliasIndexViewModel Sink { get; set; }
         public string Value { get; set; }
     }
 }
