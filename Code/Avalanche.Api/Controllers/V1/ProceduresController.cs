@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Avalanche.Api.Managers.Procedures;
 using Avalanche.Api.ViewModels;
+using Avalanche.Shared.Domain.Enumerations;
 using Avalanche.Shared.Domain.Models;
 using Avalanche.Shared.Infrastructure.Enumerations;
 using Avalanche.Shared.Infrastructure.Extensions;
@@ -115,6 +116,32 @@ namespace Avalanche.Api.Controllers.V1
                 _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
             }
         }
+
+        /// <summary>
+        /// Delete a content item (image/video) from the active procedure
+        /// </summary>
+        /// <returns></returns>
+        [HttpDelete("active/{contentType}/{contentId}")]
+        public async Task<IActionResult> DeleteActiveProcedureContent(ProcedureContentType contentType, Guid contentId)
+        {
+            try
+            {
+                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
+
+                await _proceduresManager.DeleteActiveProcedureMedia(contentType, contentId);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, LoggerHelper.GetLogMessage(DebugLogType.Exception));
+                return new BadRequestObjectResult(ex.Get(_environment.IsDevelopment()));
+            }
+            finally
+            {
+                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
+            }
+        }
+
 
         /// <summary>
         /// Discard Active Procedure

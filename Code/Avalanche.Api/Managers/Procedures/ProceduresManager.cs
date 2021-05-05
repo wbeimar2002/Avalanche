@@ -4,11 +4,12 @@ using Avalanche.Api.Services.Health;
 using Avalanche.Api.Services.Media;
 using Avalanche.Api.Utilities;
 using Avalanche.Api.ViewModels;
-
+using Avalanche.Shared.Domain.Enumerations;
 using Ism.Library.V1.Protos;
 using Ism.SystemState.Client;
 using Ism.SystemState.Models.Procedure;
-
+using System;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Avalanche.Api.Managers.Procedures
@@ -55,6 +56,31 @@ namespace Avalanche.Api.Managers.Procedures
 
             activeProcedure.RequiresUserConfirmation = false;
             await _stateClient.PersistData(activeProcedure);
+        }
+
+        public async Task DeleteActiveProcedureMedia(ProcedureContentType procedureContentType, Guid contentId)
+        {
+            var accessInfo = _accessInfoFactory.GenerateAccessInfo();
+            var activeProcedure = await _stateClient.GetData<ActiveProcedureState>();
+
+            if (procedureContentType == ProcedureContentType.Video)
+            {
+                var video = activeProcedure.Videos.Single(v => v.VideoId == contentId);
+                if (!video.VideoStopTimeUtc.HasValue)
+                {
+                    throw new InvalidOperationException("Can not delete video that is currently recording");
+                }
+            }
+
+            var request = new DeleteActiveProcedureMediaRequest()
+            {
+                ContentId = contentId.ToString(),
+                ContentType = _mapper.Map<ContentType>(procedureContentType),
+                ProcedureId = _mapper.Map<ProcedureIdMessage>(activeProcedure),
+                AccessInfo = _mapper.Map<AccessInfoMessage>(accessInfo)
+            };
+
+            await _libraryService.DeleteActiveProcedureMedia(request);
         }
 
         public async Task DiscardActiveProcedure()

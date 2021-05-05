@@ -6,6 +6,7 @@ namespace Avalanche.Api.Services.Health
 {
     public interface ILibraryService
     {
+        Task DeleteActiveProcedureMedia(DeleteActiveProcedureMediaRequest deleteActiveProcedureMediaRequest);
         Task DiscardActiveProcedure(DiscardActiveProcedureRequest discardActiveProcedureRequest);
         Task CommitActiveProcedure(CommitActiveProcedureRequest commitActiveProcedureRequest);
         Task<AllocateNewProcedureResponse> AllocateNewProcedure(AllocateNewProcedureRequest allocateNewProcedureRequest);
