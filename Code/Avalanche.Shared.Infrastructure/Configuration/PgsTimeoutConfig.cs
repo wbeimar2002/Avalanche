@@ -3,7 +3,7 @@ using Avalanche.Shared.Domain.Models.Media;
 
 using System.Collections.Generic;
 
-namespace Avalanche.Shared.Infrastructure.Models.Configuration
+namespace Avalanche.Shared.Infrastructure.Models
 {
     public class PgsTimeoutConfig
     {
