@@ -204,5 +204,35 @@ namespace Avalanche.Api.Managers.Media
             }
             return listResult;
         }
+
+        public async Task SetDisplayRecordingEnabled(DisplayRecordingViewModel displayRecordingViewModel)
+        {
+            if (displayRecordingViewModel.Enabled)
+            {
+                // find the source routed to the display, and route it to the indicated record channel
+                var displayRoute = await _routingService.GetRouteForSink(
+                    new GetRouteForSinkRequest
+                    {
+                        Sink = _mapper.Map<SinkModel, Ism.Routing.V1.Protos.AliasIndexMessage>(displayRecordingViewModel.Display)
+                    });
+
+                var source = displayRoute?.Route?.Source ?? new Ism.Routing.V1.Protos.AliasIndexMessage(); // none/empty => route nothing. This is ok.
+
+                await _routingService.RouteVideo(new RouteVideoRequest()
+                {
+                    Sink = _mapper.Map<SinkModel, Ism.Routing.V1.Protos.AliasIndexMessage>(displayRecordingViewModel.RecordChannel.VideoSink),
+                    Source = source,
+                });
+            }
+            else
+            {
+                // clear the route from to the record channel
+                await _routingService.RouteVideo(new RouteVideoRequest()
+                {
+                    Sink = _mapper.Map<SinkModel, Ism.Routing.V1.Protos.AliasIndexMessage>(displayRecordingViewModel.RecordChannel.VideoSink),
+                    Source = new Ism.Routing.V1.Protos.AliasIndexMessage(), // empty => clear route
+                });
+            }
+        }
     }
 }
