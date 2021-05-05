@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Avalanche.Shared.Domain.Models.Media
+﻿namespace Avalanche.Shared.Domain.Models.Media
 {
     public class VideoSourceModel : VideoDeviceModel
     {
