@@ -12,7 +12,6 @@ using Ism.PgsTimeout.V1.Protos;
 using Ism.Routing.V1.Protos;
 using Ism.SystemState.Client;
 using Ism.SystemState.Models.PgsTimeout;
-//using Ism.SystemState.Models.VideoRouting;
 
 using System;
 using System.Collections.Generic;
@@ -47,6 +46,9 @@ namespace Avalanche.Api.Managers.Media
         // mapper for various gRPC types to api types
         private readonly IMapper _mapper;
 
+        /// <summary>
+        /// Video routes from befoe PGS or timeout started
+        /// </summary>
         private GetCurrentRoutesResponse _currentRoutes = new GetCurrentRoutesResponse();
 
         /// <summary>
@@ -70,7 +72,7 @@ namespace Avalanche.Api.Managers.Media
         private PgsTimeoutModes _previousPgsTimeoutState = PgsTimeoutModes.Idle;
 
 
-        //cancellation token for the sarat/stop lock
+        // cancellation token for the start/stop lock
         private readonly CancellationTokenSource _cts = new CancellationTokenSource();
 
         /// <summary>
@@ -94,10 +96,15 @@ namespace Avalanche.Api.Managers.Media
 
         #region Routing and State Orchestation
 
-        public async Task<bool> GetPgsStateForSink(Shared.Domain.Models.Media.AliasIndexModel sink)
+        public async Task<bool> GetPgsStateForSink(AliasIndexModel sink)
         {
             // pgs checkbox state must persist reboots
-            // state client should handle this
+            // state client handles this
+
+            // TODO: make this a batch operation
+            // front end calls this when the page is loaded
+            // should resemble a dictionary<AliasIndex, bool>
+
             var pgsData = await _stateClient.GetData<PgsDisplayStateData>();
 
             var state = pgsData?.DisplayStates.SingleOrDefault(x =>
@@ -133,7 +140,8 @@ namespace Avalanche.Api.Managers.Media
                 && x.Sink.Index == sink.Sink.Index);
 
                 // get the current source
-                sink.Source = new Shared.Domain.Models.Media.AliasIndexModel()
+                // this should give the UI enough info to show the icon on the display
+                sink.Source = new AliasIndexModel()
                 {
                     Alias = route.Source.Alias,
                     Index = route.Source.Index
@@ -143,9 +151,9 @@ namespace Avalanche.Api.Managers.Media
             return apiSinks;
         }
 
-        public async Task SetPgsStateForSink(SinkStateViewModel sinkStateViewModel)
+        public async Task SetPgsStateForSink(PgsSinkStateViewModel sinkState)
         {
-            bool enabled = Convert.ToBoolean(sinkStateViewModel.Value);
+            var enabled = sinkState.Enabled;
             var config = await GetConfig();
             // pgs checkbox state must persist reboots
             // state client should handle this
@@ -154,47 +162,34 @@ namespace Avalanche.Api.Managers.Media
 
             // pgs is active, restore save/restore pgs for this display
             if (_currentPgsTimeoutState == PgsTimeoutModes.Pgs)
-            {
-                // get the existing route
-                var route = _currentRoutes.Routes.SingleOrDefault(x =>
-                        string.Equals(x.Sink.Alias, sinkStateViewModel.Sink.Alias, StringComparison.OrdinalIgnoreCase) &&
-                        x.Sink.Index == sinkStateViewModel.Sink.Index);
-
-                if (enabled)
-                {
-                    // send pgs back to this display
-                    await _routingService.RouteVideo(new RouteVideoRequest
-                    {
-                        Source = _mapper.Map<AliasIndexModel, AliasIndexMessage>(config.PgsSource),
-                        Sink = _mapper.Map<AliasIndexViewModel, AliasIndexMessage>(sinkStateViewModel.Sink)
-                    });
-                }
-                else
-                {
-                    // restore whatever was routed to this display
-                    if (route != null)
-                    {
-                        await _routingService.RouteVideo(new RouteVideoRequest
-                        {
-                            Source = route.Source,
-                            Sink = _mapper.Map<AliasIndexViewModel, AliasIndexMessage>(sinkStateViewModel.Sink)
-                        });
-                    }
-                }
-            }
+                await UpdatePgsOnOneSink(sinkState.Sink, enabled, config.PgsSource);
 
 
             var currentData = await _stateClient.GetData<PgsDisplayStateData>();
-            var displayIndex = currentData.DisplayStates.FindIndex(x =>
-                string.Equals(x.AliasIndex.Alias, sinkStateViewModel.Sink.Alias, StringComparison.OrdinalIgnoreCase) &&
-                x.AliasIndex.Index == sinkStateViewModel.Sink.Index);
+            var displayIndex = currentData?.DisplayStates.FindIndex(x =>
+                string.Equals(x.AliasIndex.Alias, sinkState.Sink.Alias, StringComparison.OrdinalIgnoreCase) &&
+                string.Equals(x.AliasIndex.Index, sinkState.Sink.Index, StringComparison.OrdinalIgnoreCase)) ?? -1;
+
+            // need to prepare the initial state
+            var newPgsData = new PgsDisplayStateData
+            {
+                DisplayStates = new List<PgsDisplayState>
+                {
+                    new PgsDisplayState
+                    {
+                        AliasIndex = new Ism.SystemState.Models.VideoRouting.AliasIndexModel(sinkState.Sink.Alias, sinkState.Sink.Index),
+                        Enabled = sinkState.Enabled
+                    }
+                }
+            };
+
             // update the state data
-            await _stateClient.UpdateData<PgsDisplayStateData>(x =>
+            await _stateClient.AddOrUpdateData(newPgsData, x =>
             {
                 // default state won't have an entry for a display
                 if (displayIndex < 0)
                 {
-                    x.Add(data => data.DisplayStates, new PgsDisplayState { AliasIndex = new Ism.SystemState.Models.VideoRouting.AliasIndexModel(sinkStateViewModel.Sink.Alias, sinkStateViewModel.Sink.Index), Enabled = enabled });
+                    x.Add(data => data.DisplayStates, new PgsDisplayState { AliasIndex = new Ism.SystemState.Models.VideoRouting.AliasIndexModel(sinkState.Sink.Alias, sinkState.Sink.Index), Enabled = enabled });
                 }
                 else
                 {
@@ -203,7 +198,7 @@ namespace Avalanche.Api.Managers.Media
             });
         }
 
-        #endregion 
+        #endregion
 
         #region PGS Basic Actions
 
@@ -401,6 +396,43 @@ namespace Avalanche.Api.Managers.Media
             var request = new RouteVideoBatchRequest();
             request.Routes.AddRange(_currentRoutes.Routes.Select(x => new RouteVideoRequest { Sink = x.Sink, Source = x.Source }));
             await _routingService.RouteVideoBatch(request);
+        }
+
+        /// <summary>
+        /// Invoked when checking/unchecking a pgs checkbox whilc pgs mode is active
+        /// </summary>
+        /// <param name="sink"></param>
+        /// <param name="pgsEnabled"></param>
+        /// <param name="pgsSource"></param>
+        /// <returns></returns>
+        private async Task UpdatePgsOnOneSink(AliasIndexViewModel sink, bool pgsEnabled, AliasIndexModel pgsSource)
+        {
+            // get the saved route for this display
+            var route = _currentRoutes.Routes.SingleOrDefault(x =>
+                    string.Equals(x.Sink.Alias, sink.Alias, StringComparison.OrdinalIgnoreCase) &&
+                    string.Equals(x.Sink.Index, sink.Index, StringComparison.OrdinalIgnoreCase));
+
+            if (pgsEnabled)
+            {
+                // send pgs back to this display
+                await _routingService.RouteVideo(new RouteVideoRequest
+                {
+                    Source = _mapper.Map<AliasIndexModel, AliasIndexMessage>(pgsSource),
+                    Sink = _mapper.Map<AliasIndexViewModel, AliasIndexMessage>(sink)
+                });
+            }
+            else
+            {
+                // restore whatever was routed to this display
+                if (route != null)
+                {
+                    await _routingService.RouteVideo(new RouteVideoRequest
+                    {
+                        Source = route.Source,
+                        Sink = _mapper.Map<AliasIndexViewModel, AliasIndexMessage>(sink)
+                    });
+                }
+            }
         }
 
         #endregion

@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace Avalanche.Api.ViewModels
 {
-    public class SinkStateViewModel 
+    public class PgsSinkStateViewModel 
     {
         public AliasIndexViewModel Sink { get; set; }
-        public string Value { get; set; }
+        public bool Enabled { get; set; }
     }
 }

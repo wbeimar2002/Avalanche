@@ -30,7 +30,7 @@ namespace Avalanche.Api.Managers.Media
         Task SetPgsVideoPosition(double position);
 
         Task<bool> GetPgsStateForSink(AliasIndexModel sink);
-        Task SetPgsStateForSink(SinkStateViewModel sinkState);
+        Task SetPgsStateForSink(PgsSinkStateViewModel sinkState);
         Task<IList<VideoSinkModel>> GetPgsSinks();
         Task<IList<RouteModel>> GetPrePgsRoutes();
     }
