@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 
 using Avalanche.Api.ViewModels;
-
+using Avalanche.Shared.Domain.Enumerations;
 using Ism.Library.V1.Protos;
 using Ism.SystemState.Models.Procedure;
 
@@ -15,6 +15,7 @@ namespace Avalanche.Api.MappingConfigurations
         {
             CreateMap<ProcedureImage, ProcedureImageViewModel>();
             CreateMap<ProcedureVideo, ProcedureVideoViewModel>();
+            CreateMap<ProcedureContentType, ContentType>();
 
             CreateMap<ActiveProcedureState, DiscardActiveProcedureRequest>()
                 .ForPath(dest => dest.ProcedureId.Id, opt => opt.MapFrom(src => src.LibraryId))
@@ -25,6 +26,10 @@ namespace Avalanche.Api.MappingConfigurations
                 .ForPath(dest => dest.ProcedureId.Id, opt => opt.MapFrom(src => src.LibraryId))
                 .ForPath(dest => dest.ProcedureId.RepositoryName, opt => opt.MapFrom(src => src.RepositoryId))
                 .ForMember(dest => dest.AccessInfo, opt => opt.Ignore());
+
+            CreateMap<ActiveProcedureState, ProcedureIdMessage>()
+                .ForPath(dest => dest.Id, opt => opt.MapFrom(src => src.LibraryId))
+                .ForPath(dest => dest.RepositoryName, opt => opt.MapFrom(src => src.RepositoryId));
 
             CreateMap<Ism.IsmLogCommon.Core.AccessInfo, AccessInfoMessage>()
                 .ForPath(dest =>

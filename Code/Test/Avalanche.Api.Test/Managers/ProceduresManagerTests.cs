@@ -73,5 +73,68 @@ namespace Avalanche.Api.Test.Managers
             Assert.AreEqual("name", result.Patient?.LastName);
         }
 
+        [Test]
+        public async Task TestDeleteActiveProcedureMediaSucceedsIfValid()
+        {
+            var stateClient = new Mock<IStateClient>();
+
+            var id = Guid.NewGuid();
+            stateClient.Setup(s => s.GetData<ActiveProcedureState>()).ReturnsAsync(
+                new ActiveProcedureState(
+                    new Patient() { LastName = "name" },
+                    new List<ProcedureImage>() { new ProcedureImage(id, "source", "channel", false, "path", "path", null, DateTimeOffset.UtcNow) },
+                    new List<ProcedureVideo>(),
+                    "libId",
+                    "repId",
+                    "path",
+                    null,
+                    null,
+                    null,
+                    false,
+                    DateTimeOffset.UtcNow,
+                    TimeZoneInfo.Local.Id,
+                    false,
+                    new Dictionary<string, string>(),
+                    null,
+                    null,
+                    null));
+
+            var manager = new ProceduresManager(stateClient.Object, _libraryService.Object, _accessInfoFactory.Object, _mapper, _recorderService.Object);
+
+            await manager.DeleteActiveProcedureMedia(Shared.Domain.Enumerations.ProcedureContentType.Image, id);
+        }
+
+        [Test]
+        public void TestDeleteActiveProcedureMediaFailsIfVideoIsRecording()
+        {
+            var stateClient = new Mock<IStateClient>();
+
+            var id = Guid.NewGuid();
+            stateClient.Setup(s => s.GetData<ActiveProcedureState>()).ReturnsAsync(
+                new ActiveProcedureState(
+                    new Patient() { LastName = "name" },
+                    new List<ProcedureImage>(),
+                    new List<ProcedureVideo>() { new ProcedureVideo(id, "source", "channel", "path", "path", DateTimeOffset.UtcNow, null, TimeSpan.FromSeconds(1)) },
+                    "libId",
+                    "repId",
+                    "path",
+                    null,
+                    null,
+                    null,
+                    false,
+                    DateTimeOffset.UtcNow,
+                    TimeZoneInfo.Local.Id,
+                    false,
+                    new Dictionary<string, string>(),
+                    null,
+                    null,
+                    null));
+
+            var manager = new ProceduresManager(stateClient.Object, _libraryService.Object, _accessInfoFactory.Object, _mapper, _recorderService.Object);
+
+            var ex = Assert.ThrowsAsync<InvalidOperationException>(() => manager.DeleteActiveProcedureMedia(Shared.Domain.Enumerations.ProcedureContentType.Video, id));
+            Assert.True(ex.Message.Contains("Can not delete video that is currently recording"));
+        }
+
     }
 }
