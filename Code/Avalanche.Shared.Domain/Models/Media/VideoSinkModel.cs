@@ -1,15 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Avalanche.Shared.Domain.Models.Media
+﻿namespace Avalanche.Shared.Domain.Models.Media
 {
     public class VideoSinkModel : VideoDeviceModel
     {
         /// <summary>
         /// Video source routed to this display. No video means an empty alias
         /// </summary>
-        public SinkModel Source { get; set; } = new SinkModel();
+        public AliasIndexModel Source { get; set; } = new AliasIndexModel();
 
         /// <summary>
         /// Does this display support tiling?

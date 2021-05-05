@@ -97,7 +97,7 @@ namespace Avalanche.Api.Controllers.V1
         /// <param name="sinkState"></param>
         /// <returns></returns>
         [HttpPut("pgs/sinks/state")]
-        public async Task<IActionResult> SetPgsStateForSink([FromBody]SinkStateViewModel sinkState)
+        public async Task<IActionResult> SetPgsStateForSink([FromBody]PgsSinkStateViewModel sinkState)
         {
             try
             {
@@ -128,7 +128,7 @@ namespace Avalanche.Api.Controllers.V1
             try
             {
                 _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
-                var result = await _pgsManager.GetPgsStateForSink(new SinkModel()
+                var result = await _pgsManager.GetPgsStateForSink(new AliasIndexModel()
                 {
                     Alias = alias,
                     Index = index

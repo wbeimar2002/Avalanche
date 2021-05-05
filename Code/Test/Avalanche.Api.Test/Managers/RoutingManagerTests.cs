@@ -58,8 +58,8 @@ namespace Avalanche.Api.Test.Managers
 
             await manager.SetDisplayRecordingEnabled(new ViewModels.DisplayRecordingViewModel
             {
-                Display = new SinkModel { Alias = "one", Index = "two" },
-                RecordChannel = new RecordingChannelModel { ChannelName = "channel", VideoSink = new SinkModel { Alias = "three", Index = "four" } },
+                Display = new AliasIndexModel { Alias = "one", Index = "two" },
+                RecordChannel = new RecordingChannelModel { ChannelName = "channel", VideoSink = new AliasIndexModel { Alias = "three", Index = "four" } },
                 Enabled = true
             });
 
@@ -81,8 +81,8 @@ namespace Avalanche.Api.Test.Managers
 
             await manager.SetDisplayRecordingEnabled(new ViewModels.DisplayRecordingViewModel
             {
-                Display = new SinkModel { Alias = "one", Index = "two" },
-                RecordChannel = new RecordingChannelModel { ChannelName = "channel", VideoSink = new SinkModel { Alias = "three", Index = "four" } },
+                Display = new AliasIndexModel { Alias = "one", Index = "two" },
+                RecordChannel = new RecordingChannelModel { ChannelName = "channel", VideoSink = new AliasIndexModel { Alias = "three", Index = "four" } },
                 Enabled = false
             });
 
@@ -107,8 +107,8 @@ namespace Avalanche.Api.Test.Managers
 
             await manager.SetDisplayRecordingEnabled(new ViewModels.DisplayRecordingViewModel
             {
-                Display = new SinkModel { Alias = "one", Index = "two" },
-                RecordChannel = new RecordingChannelModel { ChannelName = "channel", VideoSink = new SinkModel { Alias = "three", Index = "four" } },
+                Display = new AliasIndexModel { Alias = "one", Index = "two" },
+                RecordChannel = new RecordingChannelModel { ChannelName = "channel", VideoSink = new AliasIndexModel { Alias = "three", Index = "four" } },
                 Enabled = true
             }); ;
 

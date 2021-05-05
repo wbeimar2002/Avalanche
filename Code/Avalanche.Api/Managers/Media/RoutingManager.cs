@@ -45,16 +45,16 @@ namespace Avalanche.Api.Managers.Media
             configurationContext.IdnId = Guid.NewGuid().ToString();
         }
 
-        public async Task EnterFullScreen(RoutingActionViewModel routingActionViewModel)
+        public async Task EnterFullScreen(FullScreenRequestViewModel routingActionViewModel)
         {
             await _routingService.EnterFullScreen(new EnterFullScreenRequest()
             {
-                Source = _mapper.Map<SinkModel, Ism.Routing.V1.Protos.AliasIndexMessage>(routingActionViewModel.Sink),
+                Source = _mapper.Map<AliasIndexViewModel, Ism.Routing.V1.Protos.AliasIndexMessage>(routingActionViewModel.Source),
                 UserInterfaceId = routingActionViewModel.UserInterfaceId
             });
         }
 
-        public async Task ExitFullScreen(RoutingActionViewModel routingActionViewModel)
+        public async Task ExitFullScreen(FullScreenRequestViewModel routingActionViewModel)
         {
             await _routingService.ExitFullScreen(new ExitFullScreenRequest()
             {
@@ -96,38 +96,26 @@ namespace Avalanche.Api.Managers.Media
             await _avidisService.RoutePreview(new RoutePreviewRequest()
             {
                 PreviewIndex = routingPreviewViewModel.Index,
-                Source = _mapper.Map<SinkModel, AvidisDeviceInterface.V1.Protos.AliasIndexMessage>(routingPreviewViewModel.Sink),
+                Source = _mapper.Map<AliasIndexViewModel, AvidisDeviceInterface.V1.Protos.AliasIndexMessage>(routingPreviewViewModel.Source),
             });
         }
 
-        public async Task RouteVideoSource(RoutesViewModel routesViewModel)
+        public async Task RouteVideoSource(RouteModel route)
         {
-            foreach (var destination in routesViewModel.Destinations)
+            await _routingService.RouteVideo(new RouteVideoRequest()
             {
-                foreach (var source in routesViewModel.Sources)
-                {
-                    await _routingService.RouteVideo(new RouteVideoRequest()
-                    {
-                        Sink = _mapper.Map<VideoDeviceModel, Ism.Routing.V1.Protos.AliasIndexMessage>(destination),
-                        Source = _mapper.Map<VideoDeviceModel, Ism.Routing.V1.Protos.AliasIndexMessage>(source),
-                    });
-                }
-            }
+                Sink = _mapper.Map<AliasIndexModel, Ism.Routing.V1.Protos.AliasIndexMessage>(route.Sink),
+                Source = _mapper.Map<AliasIndexModel, Ism.Routing.V1.Protos.AliasIndexMessage>(route.Source),
+            });
         }
 
-        public async Task UnrouteVideoSource(RoutesViewModel routesViewModel)
+        public async Task UnrouteVideoSource(AliasIndexModel sink)
         {
-            foreach (var destination in routesViewModel.Destinations)
+            await _routingService.RouteVideo(new RouteVideoRequest()
             {
-                foreach (var source in routesViewModel.Sources)
-                {
-                    await _routingService.RouteVideo(new RouteVideoRequest()
-                    {
-                        Sink = _mapper.Map<VideoDeviceModel, Ism.Routing.V1.Protos.AliasIndexMessage>(destination),
-                        Source = new Ism.Routing.V1.Protos.AliasIndexMessage()
-                    });
-                }
-            }
+                Sink = _mapper.Map<AliasIndexModel, Ism.Routing.V1.Protos.AliasIndexMessage>(sink),
+                Source = new Ism.Routing.V1.Protos.AliasIndexMessage { Alias = string.Empty, Index = string.Empty }
+            });
         }
 
         public async Task<IList<VideoSourceModel>> GetRoutingSources()
@@ -142,7 +130,7 @@ namespace Avalanche.Api.Managers.Media
             foreach (var source in listResult)
             {
                 // need to merge the HasVideo and VideoSource collections
-                var state = states.SourceStates.SingleOrDefault(x => 
+                var state = states.SourceStates.SingleOrDefault(x =>
                 string.Equals(x.Source.Alias, source.Sink.Alias, StringComparison.OrdinalIgnoreCase) &&
                 string.Equals(x.Source.Index, source.Sink.Index, StringComparison.OrdinalIgnoreCase));
 
@@ -152,7 +140,7 @@ namespace Avalanche.Api.Managers.Media
             return listResult;
         }
 
-        public async Task<VideoSourceModel> GetAlternativeSource(SinkModel sinkModel)
+        public async Task<VideoSourceModel> GetAlternativeSource(AliasIndexModel sinkModel)
         {
             var source = await _routingService.GetAlternativeVideoSource(
                 new GetAlternativeVideoSourceRequest
@@ -196,7 +184,7 @@ namespace Avalanche.Api.Managers.Media
                     && x.Sink.Index == sink.Sink.Index);
 
                 //get the current source
-                sink.Source = new SinkModel()
+                sink.Source = new AliasIndexModel()
                 {
                     Alias = route.Source.Alias,
                     Index = route.Source.Index
@@ -213,14 +201,14 @@ namespace Avalanche.Api.Managers.Media
                 var displayRoute = await _routingService.GetRouteForSink(
                     new GetRouteForSinkRequest
                     {
-                        Sink = _mapper.Map<SinkModel, Ism.Routing.V1.Protos.AliasIndexMessage>(displayRecordingViewModel.Display)
+                        Sink = _mapper.Map<AliasIndexModel, Ism.Routing.V1.Protos.AliasIndexMessage>(displayRecordingViewModel.Display)
                     });
 
                 var source = displayRoute?.Route?.Source ?? new Ism.Routing.V1.Protos.AliasIndexMessage(); // none/empty => route nothing. This is ok.
 
                 await _routingService.RouteVideo(new RouteVideoRequest()
                 {
-                    Sink = _mapper.Map<SinkModel, Ism.Routing.V1.Protos.AliasIndexMessage>(displayRecordingViewModel.RecordChannel.VideoSink),
+                    Sink = _mapper.Map<AliasIndexModel, Ism.Routing.V1.Protos.AliasIndexMessage>(displayRecordingViewModel.RecordChannel.VideoSink),
                     Source = source,
                 });
             }
@@ -229,7 +217,7 @@ namespace Avalanche.Api.Managers.Media
                 // clear the route from to the record channel
                 await _routingService.RouteVideo(new RouteVideoRequest()
                 {
-                    Sink = _mapper.Map<SinkModel, Ism.Routing.V1.Protos.AliasIndexMessage>(displayRecordingViewModel.RecordChannel.VideoSink),
+                    Sink = _mapper.Map<AliasIndexModel, Ism.Routing.V1.Protos.AliasIndexMessage>(displayRecordingViewModel.RecordChannel.VideoSink),
                     Source = new Ism.Routing.V1.Protos.AliasIndexMessage(), // empty => clear route
                 });
             }
