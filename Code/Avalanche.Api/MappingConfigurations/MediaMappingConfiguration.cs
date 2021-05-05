@@ -1,10 +1,6 @@
 ﻿using AutoMapper;
 using Avalanche.Api.ViewModels;
 using Avalanche.Shared.Domain.Models.Media;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Avalanche.Api.MappingConfigurations
 {
@@ -29,8 +25,6 @@ namespace Avalanche.Api.MappingConfigurations
                     dest.Index,
                     opt => opt.MapFrom(src => src.Index))
                 .ReverseMap();
-
-            // TODO: do I need a mapper from viewmodel to message?
 
             CreateMap<RouteViewModel, RouteModel>()
                 .ForMember(dest =>
