@@ -89,6 +89,7 @@ namespace Avalanche.Api.MappingConfigurations
                    opt => opt.MapFrom(src => src.FilePath))
                .ReverseMap();
 
+            // TODO: webrtc models should not have anything in common with routing models
             CreateMap<Ism.Streaming.V1.Protos.WebRtcSourceMessage, VideoDeviceModel>()
                 .ForPath(dest =>
                     dest.Sink.Index,
@@ -110,7 +111,7 @@ namespace Avalanche.Api.MappingConfigurations
                     opt => opt.MapFrom(src => src.StreamType))
                 .ForMember(dest =>
                     dest.Source,
-                    opt => opt.Ignore()) //TODO: Gabe should validate this
+                    opt => opt.Ignore()) 
                 .ReverseMap();
 
             CreateMap<WebRTCMessaggeModel, Ism.Streaming.V1.Protos.HandleMessageRequest>()
