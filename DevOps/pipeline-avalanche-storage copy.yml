@@ -8,7 +8,7 @@ resources:
   - repository: devops
     type: git
     name: devops
-    ref: dev
+    ref: pipeline-docker-update
 
 #pool:
   #vmImage: $(PoolVmImage)
@@ -17,7 +17,7 @@ pool: $(pool)
 
 variables:
   
-  - group: 'vg-dev-avalanche-security-server'
+  - group: 'vg-dev-avalanche-storage'
   
   #- name: System.Debug
     #value: true
