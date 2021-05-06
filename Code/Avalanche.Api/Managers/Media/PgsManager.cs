@@ -365,7 +365,7 @@ namespace Avalanche.Api.Managers.Media
                 // TODO: might need to revisit state tracking when we need to implement timeout
                 _currentPgsTimeoutState = PgsTimeoutModes.Idle;
 
-                // TODO: audio?
+                await this.SetPgsMute(true);
             }
             finally
             {

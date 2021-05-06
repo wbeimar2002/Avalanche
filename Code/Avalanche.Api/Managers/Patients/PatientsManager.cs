@@ -101,6 +101,7 @@ namespace Avalanche.Api.Managers.Patients
 
             var patientRequest = _mapper.Map<PatientViewModel, Ism.Storage.PatientList.Client.V1.Protos.AddPatientRecordRequest>(newPatient);
             var result = await _pieService.RegisterPatient(patientRequest);
+
             PublishActiveProcedure(newPatient, allocatedProcedure);
 
             var response = _mapper.Map<Ism.Storage.PatientList.Client.V1.Protos.AddPatientRecordResponse, PatientViewModel>(result);

@@ -12,6 +12,7 @@ using Ism.Routing.V1.Protos;
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -121,6 +122,9 @@ namespace Avalanche.Api.Managers.Media
                 // TODO Audio
 
                 _currentPgsTimeoutState = PgsTimeoutModes.Timeout;
+
+
+                
             }
             finally
             {
@@ -149,7 +153,10 @@ namespace Avalanche.Api.Managers.Media
                         await LoadCurrentSavedRoutes();
                     }
 
-                    // TODO: Audio
+                    await _pgsTimeoutService.SetPgsMute(new SetPgsMuteRequest()
+                    {
+                        IsMuted = true
+                    });
                 }
 
                 _currentPgsTimeoutState = PgsTimeoutModes.Idle;
@@ -186,7 +193,14 @@ namespace Avalanche.Api.Managers.Media
         public async Task<string> GetTimeoutPdfPath()
         {
             var result = await _pgsTimeoutService.GetTimeoutPdfPath();
-            return result?.PdfPath;
+            var fileName = result?.PdfPath;
+
+            var timeoutRoot = Environment.GetEnvironmentVariable("TimeoutDataRoot");
+            var relative = Path.Combine(timeoutRoot, fileName);
+
+            var translated = relative.Replace('\\', '/').TrimStart('/');
+
+            return "/" + translated;            
         }
 
         public async Task NextPage()
