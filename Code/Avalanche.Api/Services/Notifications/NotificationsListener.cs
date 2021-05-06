@@ -18,6 +18,8 @@ using System.Threading.Tasks;
 using Ism.SystemState.Models.Library;
 using Ism.SystemState.Models.Recorder;
 using Ism.SystemState.Models.Notifications;
+using Avalanche.Api.Managers.Media;
+using Avalanche.Shared.Domain.Models.Media;
 
 namespace Avalanche.Api.Services.Notifications
 {
@@ -29,6 +31,7 @@ namespace Avalanche.Api.Services.Notifications
         private readonly ILogger _logger;
         private readonly IStateClient _stateClient;
         private readonly IMapper _mapper;
+        private readonly IRoutingManager _routingManager;
 
         private List<Guid> _subscriptions = new List<Guid>();
 
@@ -37,13 +40,15 @@ namespace Avalanche.Api.Services.Notifications
             IHubContext<BroadcastHub, IBroadcastHubClient> hubContext,
             IStateClient stateClient,
             ILogger<NotificationsListener> logger,
-            IMapper mapper)
+            IMapper mapper,
+            IRoutingManager routingManager)
         {
             _broadcastService = broadcastService;
             _hubContext = hubContext;
             _stateClient = stateClient;
             _logger = logger;
             _mapper = mapper;
+            _routingManager = routingManager;
         }
 
         public Task StartAsync(CancellationToken cancellationToken)
@@ -52,12 +57,17 @@ namespace Avalanche.Api.Services.Notifications
 
             AddSubscription<VideoSourceStateChangedEvent>(evt => _hubContext.Clients.All.OnVideoSourceStateChanged(evt));
             AddSubscription<VideoSourceIdentityChangedEvent>(evt => _hubContext.Clients.All.OnVideoSourceIdentityChanged(evt));
-            AddSubscription<VideoSinkSourceChangedEvent>(evt => _hubContext.Clients.All.OnVideoSinkSourceChanged(evt));
+            AddSubscription<VideoSinkSourceChangedEvent>(evt =>
+            {
+                _hubContext.Clients.All.OnVideoSinkSourceChanged(evt);
+                _routingManager.HandleSinkSourceChanged(_mapper.Map<Shared.Domain.Models.Media.AliasIndexModel>(evt.Sink), _mapper.Map<Shared.Domain.Models.Media.AliasIndexModel>(evt.Source));
+            });
             AddSubscription<DiskSpaceEvent>(evt => _hubContext.Clients.All.OnDiskSpaceStateChanged(evt));
 
             AddDataSubscription<ActiveProcedureState>(data => _hubContext.Clients.All.OnActiveProcedureStateChanged(_mapper.Map<Avalanche.Api.ViewModels.ActiveProcedureViewModel>(data)));
             AddDataSubscription<PgsDisplayStateData>(data => _hubContext.Clients.All.OnPgsDisplayStateDataChanged(data));
             AddDataSubscription<PgsTimeoutPlayerData>(data => _hubContext.Clients.All.OnPgsTimeoutPlayerDataChanged(data));
+            AddDataSubscription<DisplayRecordStateData>(data => _hubContext.Clients.All.OnDisplayBasedRecordingStateDataChanged(data));
 
             AddSubscription<RecorderStateEvent>(evt => _hubContext.Clients.All.OnRecorderStateChanged(evt));
             AddSubscription<SystemErrorRaisedEvent>(evt => _hubContext.Clients.All.OnSystemErrorRaised(evt));
