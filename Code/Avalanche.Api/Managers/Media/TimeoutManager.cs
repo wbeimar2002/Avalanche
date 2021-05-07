@@ -4,6 +4,7 @@ using Avalanche.Api.Services.Maintenance;
 using Avalanche.Api.Services.Media;
 using Avalanche.Shared.Domain.Enumerations;
 using Avalanche.Shared.Domain.Models.Media;
+using Avalanche.Shared.Infrastructure.Configuration;
 using Avalanche.Shared.Infrastructure.Models;
 
 using Ism.Common.Core.Configuration.Models;
@@ -12,6 +13,7 @@ using Ism.Routing.V1.Protos;
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -107,12 +109,13 @@ namespace Avalanche.Api.Managers.Media
                 await _pgsTimeoutService.SetPgsTimeoutMode(new SetPgsTimeoutModeRequest { Mode = PgsTimeoutModeEnum.PgsTimeoutModeTimeout });
 
                 // Route timeout
-                var config = await GetConfig();
+                var config = await _storageService.GetJsonObject<TimeoutSettingsValues>("TimeoutSettingsValues", 1, ConfigurationContext.FromEnvironment());
+
                 var sinks = await GetTimeoutSinks();
 
                 var routes = sinks.Select(x => new RouteVideoRequest
                 {
-                    Source = _mapper.Map<AliasIndexModel, AliasIndexMessage>(config.TimeoutSource),
+                    Source = _mapper.Map<AliasIndexModel, AliasIndexMessage>(config.Configuration.Source),
                     Sink = _mapper.Map<VideoDeviceModel, AliasIndexMessage>(x)
                 });
 
@@ -123,6 +126,9 @@ namespace Avalanche.Api.Managers.Media
                 // TODO Audio
 
                 _currentPgsTimeoutState = PgsTimeoutModes.Timeout;
+
+
+                
             }
             finally
             {
@@ -151,7 +157,10 @@ namespace Avalanche.Api.Managers.Media
                         await LoadCurrentSavedRoutes();
                     }
 
-                    // TODO: Audio
+                    await _pgsTimeoutService.SetPgsMute(new SetPgsMuteRequest()
+                    {
+                        IsMuted = true
+                    });
                 }
 
                 _currentPgsTimeoutState = PgsTimeoutModes.Idle;
@@ -188,7 +197,14 @@ namespace Avalanche.Api.Managers.Media
         public async Task<string> GetTimeoutPdfPath()
         {
             var result = await _pgsTimeoutService.GetTimeoutPdfPath();
-            return result?.PdfPath;
+            var fileName = result?.PdfPath;
+
+            var timeoutRoot = Environment.GetEnvironmentVariable("TimeoutDataRoot");
+            var relative = Path.Combine(timeoutRoot, fileName);
+
+            var translated = relative.Replace('\\', '/').TrimStart('/');
+
+            return "/" + translated;            
         }
 
         public async Task NextPage()
@@ -224,15 +240,10 @@ namespace Avalanche.Api.Managers.Media
 
         #region Private Methods
 
-        private async Task<PgsTimeoutConfig> GetConfig()
-        {
-            return await _storageService.GetJsonObject<PgsTimeoutConfig>(nameof(PgsTimeoutConfig), 1, ConfigurationContext.FromEnvironment());
-        }
-
         private async Task<IList<VideoSinkModel>> GetTimeoutSinks()
         {
             // This needs to return the same data that routing does
-            var config = await GetConfig();
+            var pgsSinksData = await _storageService.GetJsonObject<SinksData>("TimeoutSinksData", 1, ConfigurationContext.FromEnvironment());
 
             var routingSinks = await _routingService.GetVideoSinks();
             var routes = await _routingService.GetCurrentRoutes();
@@ -241,7 +252,7 @@ namespace Avalanche.Api.Managers.Media
             // Get the routing sinks that are also called out in the Timeout sink collection
             var timeoutSinks = routingSinks.VideoSinks
                 .Where(routingSink =>
-                    config.TimeoutSinks
+                    pgsSinksData.Items
                     .Any(timeoutSink =>
                         string.Equals(timeoutSink.Alias, routingSink.Sink.Alias, StringComparison.OrdinalIgnoreCase)
                     && timeoutSink.Index == routingSink.Sink.Index));

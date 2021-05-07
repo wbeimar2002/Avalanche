@@ -14,6 +14,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using static Ism.Utility.Core.Preconditions;
@@ -350,38 +351,6 @@ namespace Avalanche.Api.Controllers.V1
         }
 
         /// <summary>
-        /// Starts or stops PGS mode
-        /// </summary>
-        /// <param name="state"></param>
-        /// <returns></returns>
-        [HttpPut("pgs/state/{state}")]
-        public async Task<IActionResult> SetPgsState(bool state) //TODO: Pending delete this when UI changes
-        {
-            try
-            {
-                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
-                // start or stop pgs based on the requested state
-                // the pgsTimeoutManager deals with pgs-timeout interaction
-                // it also deals with something like 2 UIs starting pgs at the same time
-                if (state)
-                    await _pgsManager.StartPgs();
-                else
-                    await _pgsManager.StopPgs();
-
-                return Ok();
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, LoggerHelper.GetLogMessage(DebugLogType.Exception), ex);
-                return new BadRequestObjectResult(ex.Get(_environment.IsDevelopment()));
-            }
-            finally
-            {
-                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
-            }
-        }
-
-        /// <summary>
         /// Staet PGS
         /// </summary>
         /// <returns></returns>
@@ -487,7 +456,7 @@ namespace Avalanche.Api.Controllers.V1
         /// <param name="pageNumber"></param>
         /// <returns></returns>
         [HttpPut("timeout/pages/{pageNumber}")]
-        public async Task<IActionResult> SetPage(int pageNumber)
+        public async Task<IActionResult> setCurrentPage(int pageNumber)
         {
             try
             {
@@ -558,14 +527,16 @@ namespace Avalanche.Api.Controllers.V1
         /// Get timeout's file path
         /// </summary>
         /// <returns></returns>
-        [HttpGet("timeout/file/path")]
-        public async Task<IActionResult> GetFilePath()
+        [ResponseCache(Location = ResponseCacheLocation.Client, Duration = 60 * 60 * 24)]
+        [HttpGet("timeout/files/pdf")]
+        public async Task<IActionResult> GetTimeoutPdf()
         {
             try
             {
                 _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
-                var result = await _timeoutManager.GetTimeoutPdfPath();
-                return Ok(new { Value = result });
+                var fullPath = await _timeoutManager.GetTimeoutPdfPath();
+
+                return PhysicalFile(fullPath, "application/pdf");
             }
             catch (Exception ex)
             {

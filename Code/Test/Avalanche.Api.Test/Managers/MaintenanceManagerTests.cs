@@ -4,6 +4,7 @@ using Avalanche.Api.Managers.Maintenance;
 using Avalanche.Api.MappingConfigurations;
 using Avalanche.Api.Services.Health;
 using Avalanche.Api.Services.Maintenance;
+using Avalanche.Api.Services.Media;
 using Microsoft.AspNetCore.Http;
 using Moq;
 using NUnit.Framework;
@@ -23,7 +24,7 @@ namespace Avalanche.Api.Test.Managers
         Mock<IStorageService> _storageService;
         Mock<IDataManager> _dataManager;
         Mock<IHttpContextAccessor> _httpContextAccessor;
-
+        Mock<IFilesService> _filesService;
 
         [SetUp]
         public void Setup()
@@ -39,6 +40,7 @@ namespace Avalanche.Api.Test.Managers
             _storageService = new Mock<IStorageService>();
             _dataManager = new Mock<IDataManager>();
             _httpContextAccessor = new Mock<IHttpContextAccessor>();
+            _filesService = new Mock<IFilesService>();
         }
 
         [Test]
@@ -46,7 +48,7 @@ namespace Avalanche.Api.Test.Managers
         {
             var expected = new Ism.Library.V1.Protos.ReindexRepositoryResponse { ErrorCount = 2, SuccessCount = 4, TotalCount = 6 };
             _libraryService.Setup(m => m.ReindexRepository(It.IsAny<string>())).ReturnsAsync(expected);
-            var manager = new MaintenanceManager(_storageService.Object, _dataManager.Object, _mapper, _httpContextAccessor.Object, _libraryService.Object);
+            var manager = new MaintenanceManager(_storageService.Object, _dataManager.Object, _mapper, _httpContextAccessor.Object, _libraryService.Object, _filesService.Object);
 
             var response = await manager.ReindexRepository(new ViewModels.ReindexRepositoryRequestViewModel("repo"));
 

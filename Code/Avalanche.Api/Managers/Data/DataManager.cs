@@ -151,7 +151,7 @@ namespace Avalanche.Api.Managers.Data
 
         public async Task ValidateDepartmentsSupport()
         {
-            dynamic setupSettings = await _storageService.GetJsonDynamic("SetupSettingsData", 1, configurationContext);
+            dynamic setupSettings = await _storageService.GetJsonDynamic("SetupSettingsValues", 1, configurationContext);
 
             bool departmentSupported = setupSettings.General.DepartmentsSupported;
             if (!departmentSupported)
@@ -162,7 +162,7 @@ namespace Avalanche.Api.Managers.Data
 
         public async Task ValidateDepartmentsSupport(int? departmentId)
         {
-            var setupSettings = await _storageService.GetJsonDynamic("SetupSettingsData", 1, configurationContext);
+            var setupSettings = await _storageService.GetJsonDynamic("SetupSettingsValues", 1, configurationContext);
 
             bool departmentSupported = setupSettings.General.DepartmentsSupported;
 #warning TODO: Check the strategy to throw business logic exceptions. Same exceptions in Patients Manager

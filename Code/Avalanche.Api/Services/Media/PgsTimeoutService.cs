@@ -19,6 +19,7 @@ namespace Avalanche.Api.Services.Media
         public async Task<GetPgsPlaybackStateResponse> GetPgsPlaybackState() => await _client.GetPgsPlaybackState();
 
         public async Task<GetPgsTimeoutModeResponse> GetPgsTimeoutMode() => await _client.GetPgsTimeoutMode();
+
         public async Task<GetPgsVideoFileResponse> GetPgsVideoFile() => await _client.GetPgsVideoFile();
 
         public async Task<GetPgsVideoListResponse> GetPgsVideoFileList() => await _client.GetPgsVideoFileList();
@@ -40,11 +41,13 @@ namespace Avalanche.Api.Services.Media
         public async Task SetPgsPlaybackState(SetPgsPlaybackStateRequest request) => await _client.SetPgsPlaybackState(request);
 
         public async Task SetPgsTimeoutMode(SetPgsTimeoutModeRequest request) => await _client.SetPgsTimeoutMode(request);
+
         public async Task SetPgsVideoFile(SetPgsVideoFileRequest request) => await _client.SetPgsVideoFile(request);
 
         public async Task SetPgsVideoPosition(SetPgsVideoPositionRequest request) => await _client.SetPgsVideoPosition(request);
 
         public async Task SetPgsVolume(SetPgsVolumeRequest request) => await _client.SetPgsVolume(request);
+
         public async Task SetTimeoutPage(SetTimeoutPageRequest request) => await _client.SetTimeoutPage(request);
     }
 }

@@ -26,17 +26,17 @@ namespace Avalanche.Api.Managers.Patients
 {
     public class PatientsManager : IPatientsManager
     {
-        readonly IPieService _pieService;
-        readonly IAccessInfoFactory _accessInfoFactory;
-        readonly IStorageService _storageService;
-        readonly IMapper _mapper;
-        readonly IDataManagementService _dataManagementService;
-        readonly IStateClient _stateClient;
-        readonly IHttpContextAccessor _httpContextAccessor;
-        readonly IProceduresManager _proceduresManager;
+        private readonly IPieService _pieService;
+        private readonly IAccessInfoFactory _accessInfoFactory;
+        private readonly IStorageService _storageService;
+        private readonly IMapper _mapper;
+        private readonly IDataManagementService _dataManagementService;
+        private readonly IStateClient _stateClient;
+        private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly IProceduresManager _proceduresManager;
 
-        readonly UserModel user;
-        readonly ConfigurationContext configurationContext;
+        private readonly UserModel user;
+        private readonly ConfigurationContext configurationContext;
 
         public PatientsManager(IPieService pieService, 
             IAccessInfoFactory accessInfoFactory,
@@ -75,7 +75,7 @@ namespace Avalanche.Api.Managers.Patients
             var accessInfo = _accessInfoFactory.GenerateAccessInfo();
             newPatient.AccessInformation = _mapper.Map<AccessInfoModel>(accessInfo);
 
-            var setupSettings = await _storageService.GetJsonDynamic("SetupSettingsData", 1, configurationContext);
+            var setupSettings = await _storageService.GetJsonDynamic("SetupSettingsValues", 1, configurationContext);
 
             //TODO: Pending facility
             if (newPatient.Physician == null)
@@ -101,6 +101,7 @@ namespace Avalanche.Api.Managers.Patients
 
             var patientRequest = _mapper.Map<PatientViewModel, Ism.Storage.PatientList.Client.V1.Protos.AddPatientRecordRequest>(newPatient);
             var result = await _pieService.RegisterPatient(patientRequest);
+
             PublishActiveProcedure(newPatient, allocatedProcedure);
 
             var response = _mapper.Map<Ism.Storage.PatientList.Client.V1.Protos.AddPatientRecordResponse, PatientViewModel>(result);
@@ -109,7 +110,7 @@ namespace Avalanche.Api.Managers.Patients
 
         public async Task<PatientViewModel> QuickPatientRegistration()
         {
-            var setupSettings = await _storageService.GetJsonDynamic("SetupSettingsData", 1, configurationContext);
+            var setupSettings = await _storageService.GetJsonDynamic("SetupSettingsValues", 1, configurationContext);
             string quickRegistrationDateFormat = setupSettings.Registration.Quick.DateFormat;
             string formattedDate = DateTime.UtcNow.ToLocalTime().ToString(quickRegistrationDateFormat);
 
@@ -169,7 +170,7 @@ namespace Avalanche.Api.Managers.Patients
             Preconditions.ThrowIfNull(nameof(existingPatient.Sex.Id), existingPatient.Sex.Id);
             Preconditions.ThrowIfNull(nameof(existingPatient.ProcedureType.Name), existingPatient.ProcedureType.Name);
 
-            var setupSettings = await _storageService.GetJsonDynamic("SetupSettingsData", 1, configurationContext);
+            var setupSettings = await _storageService.GetJsonDynamic("SetupSettingsValues", 1, configurationContext);
 
             var accessInfo = _accessInfoFactory.GenerateAccessInfo();
             existingPatient.AccessInformation = _mapper.Map<AccessInfoModel>(accessInfo);
