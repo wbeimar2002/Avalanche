@@ -17,6 +17,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Avalanche.Shared.Infrastructure.Configuration;
 
 namespace Avalanche.Api.Managers.Media
 {
@@ -184,11 +185,15 @@ namespace Avalanche.Api.Managers.Media
             var sinks = await _routingService.GetVideoSinks();
             var routes = await _routingService.GetCurrentRoutes();
 
+            // any display not in the will not have the record buttons next to it
+            var dbrSinks = await _storageService.GetJsonObject<SinksData>("DisplayBasedRecordingSinksData", 1, ConfigurationContext.FromEnvironment());
+
             var listResult = _mapper.Map<IList<VideoSinkMessage>, IList<VideoSinkModel>>(sinks.VideoSinks);
             foreach (var sink in listResult)
             {
-                var route = routes.Routes.SingleOrDefault(x => string.Equals(x.Sink.Alias, sink.Sink.Alias, StringComparison.OrdinalIgnoreCase)
-                    && x.Sink.Index == sink.Sink.Index);
+                var route = routes.Routes.SingleOrDefault(x =>
+                    string.Equals(x.Sink.Alias, sink.Sink.Alias, StringComparison.OrdinalIgnoreCase) &&
+                    string.Equals(x.Sink.Index, sink.Sink.Index, StringComparison.OrdinalIgnoreCase));
 
                 //get the current source
                 sink.Source = new AliasIndexModel()
@@ -196,6 +201,11 @@ namespace Avalanche.Api.Managers.Media
                     Alias = route.Source.Alias,
                     Index = route.Source.Index
                 };
+
+                // if this sink is in the dbr sink list, enable it for recording
+                sink.RecordEnabled = dbrSinks.Items.Any(x =>
+                    string.Equals(x.Alias, sink.Sink.Alias, StringComparison.OrdinalIgnoreCase) &&
+                    string.Equals(x.Index, sink.Sink.Index, StringComparison.OrdinalIgnoreCase));
             }
             return listResult;
         }
@@ -238,7 +248,7 @@ namespace Avalanche.Api.Managers.Media
             {
                 // check if we have display-based-recording status for this sink (display)
                 var displayRecordState = await _stateClient.GetData<VideoRoutingModels.DisplayRecordStateData>();
-                
+
                 var display = displayRecordState?.DisplayState?.FirstOrDefault(d =>
                     string.Equals(d.DisplayAliasIndex?.Alias, sink.Alias, StringComparison.OrdinalIgnoreCase)
                     && string.Equals(d.DisplayAliasIndex?.Index, sink.Index, StringComparison.OrdinalIgnoreCase));
@@ -272,8 +282,8 @@ namespace Avalanche.Api.Managers.Media
                 x.DisplayAliasIndex.Index == displayRecordingViewModel.Display.Index) ?? -1;
 
             var displayAliasIndex = new VideoRoutingModels.AliasIndexModel(displayRecordingViewModel.Display.Alias, displayRecordingViewModel.Display.Index);
-            
-            var recordAliasIndex = displayRecordingViewModel.Enabled 
+
+            var recordAliasIndex = displayRecordingViewModel.Enabled
                 ? new VideoRoutingModels.AliasIndexModel(displayRecordingViewModel.RecordChannel.VideoSink.Alias, displayRecordingViewModel.RecordChannel.VideoSink.Index)
                 : new VideoRoutingModels.AliasIndexModel();
 
