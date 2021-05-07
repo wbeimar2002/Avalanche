@@ -39,6 +39,29 @@ namespace Avalanche.Api.Controllers.V1
             _timeoutManager = ThrowIfNullOrReturn(nameof(timeoutManager), timeoutManager);
         }
 
+        /// <summary>
+        /// Gets mode for PGS Timeout Player
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("mode")]
+        public async Task<IActionResult> GetMode(PgsTimeoutModes mode)
+        {
+            try
+            {
+                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
+                var result = await _pgsManager.GetPgsTimeoutMode(); 
+                return Ok(new { Value = (int)result });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, LoggerHelper.GetLogMessage(DebugLogType.Exception), ex);
+                return new BadRequestObjectResult(ex.Get(_environment.IsDevelopment()));
+            }
+            finally
+            {
+                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
+            }
+        }
 
         /// <summary>
         /// Sets mode for PGS Timeout Player
