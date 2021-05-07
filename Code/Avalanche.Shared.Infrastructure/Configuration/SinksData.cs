@@ -7,6 +7,6 @@ namespace Avalanche.Shared.Infrastructure.Configuration
 {
     public class SinksData
     {
-        public List<SinkModel> Items { get; set; }
+        public List<AliasIndexModel> Items { get; set; }
     }
 }

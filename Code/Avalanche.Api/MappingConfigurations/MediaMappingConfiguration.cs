@@ -1,10 +1,6 @@
 ﻿using AutoMapper;
 using Avalanche.Api.ViewModels;
 using Avalanche.Shared.Domain.Models.Media;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Avalanche.Api.MappingConfigurations
 {
@@ -12,7 +8,7 @@ namespace Avalanche.Api.MappingConfigurations
     {
         public MediaMappingConfiguration()
         {
-            CreateMap<SinkModel, AvidisDeviceInterface.V1.Protos.AliasIndexMessage>()
+            CreateMap<AliasIndexModel, AvidisDeviceInterface.V1.Protos.AliasIndexMessage>()
                .ForMember(dest =>
                    dest.Alias,
                    opt => opt.MapFrom(src => src.Alias))
@@ -21,7 +17,25 @@ namespace Avalanche.Api.MappingConfigurations
                    opt => opt.MapFrom(src => src.Index))
                .ReverseMap();
 
-            CreateMap<SinkModel, Ism.Routing.V1.Protos.AliasIndexMessage>()
+            CreateMap<AliasIndexViewModel, AliasIndexModel>()
+                .ForMember(dest =>
+                    dest.Alias,
+                    opt => opt.MapFrom(src => src.Alias))
+                .ForMember(dest =>
+                    dest.Index,
+                    opt => opt.MapFrom(src => src.Index))
+                .ReverseMap();
+
+            CreateMap<RouteViewModel, RouteModel>()
+                .ForMember(dest =>
+                    dest.Source,
+                    opt => opt.MapFrom(src => src.Source))
+                .ForMember(dest =>
+                    dest.Sink,
+                    opt => opt.MapFrom(src => src.Sink))
+                .ReverseMap();
+
+            CreateMap<AliasIndexModel, Ism.Routing.V1.Protos.AliasIndexMessage>()
                .ForMember(dest =>
                    dest.Alias,
                    opt => opt.MapFrom(src => src.Alias))
@@ -75,6 +89,7 @@ namespace Avalanche.Api.MappingConfigurations
                    opt => opt.MapFrom(src => src.FilePath))
                .ReverseMap();
 
+            // TODO: webrtc models should not have anything in common with routing models
             CreateMap<Ism.Streaming.V1.Protos.WebRtcSourceMessage, VideoDeviceModel>()
                 .ForPath(dest =>
                     dest.Sink.Index,
@@ -96,7 +111,7 @@ namespace Avalanche.Api.MappingConfigurations
                     opt => opt.MapFrom(src => src.StreamType))
                 .ForMember(dest =>
                     dest.Source,
-                    opt => opt.Ignore()) //TODO: Gabe should validate this
+                    opt => opt.Ignore()) 
                 .ReverseMap();
 
             CreateMap<WebRTCMessaggeModel, Ism.Streaming.V1.Protos.HandleMessageRequest>()

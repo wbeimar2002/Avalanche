@@ -28,6 +28,6 @@ namespace Avalanche.Shared.Infrastructure.Configuration
     {
         public TimeoutSettingsValuesMode Mode { get; set; }
         public TimeoutSettingsValuesSlideShowDuration SlideShowDuration { get; set; }
-        public SinkModel Source { get; set; }
+        public AliasIndexModel Source { get; set; }
     }
 }

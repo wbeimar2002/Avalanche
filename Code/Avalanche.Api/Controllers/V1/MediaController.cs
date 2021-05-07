@@ -98,7 +98,7 @@ namespace Avalanche.Api.Controllers.V1
         /// <param name="sinkState"></param>
         /// <returns></returns>
         [HttpPut("pgs/sinks/state")]
-        public async Task<IActionResult> SetPgsStateForSink([FromBody]SinkStateViewModel sinkState)
+        public async Task<IActionResult> SetPgsStateForSink([FromBody]PgsSinkStateViewModel sinkState)
         {
             try
             {
@@ -129,7 +129,7 @@ namespace Avalanche.Api.Controllers.V1
             try
             {
                 _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
-                var result = await _pgsManager.GetPgsStateForSink(new SinkModel()
+                var result = await _pgsManager.GetPgsStateForSink(new AliasIndexModel()
                 {
                     Alias = alias,
                     Index = index
@@ -528,7 +528,7 @@ namespace Avalanche.Api.Controllers.V1
         /// </summary>
         /// <returns></returns>
         [ResponseCache(Location = ResponseCacheLocation.Client, Duration = 60 * 60 * 24)]
-        [HttpGet("timeout/pdf")]
+        [HttpGet("timeout/files/pdf")]
         public async Task<IActionResult> GetTimeoutPdf()
         {
             try

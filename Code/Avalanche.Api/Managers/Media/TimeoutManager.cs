@@ -5,6 +5,7 @@ using Avalanche.Api.Services.Media;
 using Avalanche.Shared.Domain.Enumerations;
 using Avalanche.Shared.Domain.Models.Media;
 using Avalanche.Shared.Infrastructure.Configuration;
+using Avalanche.Shared.Infrastructure.Models;
 
 using Ism.Common.Core.Configuration.Models;
 using Ism.PgsTimeout.V1.Protos;
@@ -45,7 +46,7 @@ namespace Avalanche.Api.Managers.Media
         private readonly IPgsManager _pgsManager;
 
 
-        //cancellation token for the sarat/stop lock
+        // cancellation token for the start/stop lock
         private readonly CancellationTokenSource _cts = new CancellationTokenSource();
 
         /// <summary>
@@ -60,7 +61,7 @@ namespace Avalanche.Api.Managers.Media
 
         private PgsTimeoutModes _lastPgsTimeoutState = PgsTimeoutModes.Idle;
 
-        private ViewModels.RoutesViewModel _prePgsRoutes;
+        private IList<RouteModel> _prePgsRoutes;
         private GetCurrentRoutesResponse _currentRoutes = new GetCurrentRoutesResponse();
 
 
@@ -97,7 +98,7 @@ namespace Avalanche.Api.Managers.Media
                 }
 
                 // Save previous routes
-                if(_lastPgsTimeoutState == PgsTimeoutModes.Pgs)
+                if (_lastPgsTimeoutState == PgsTimeoutModes.Pgs)
                 {
                     await SavePrePgsRoutes();
                 }
@@ -109,15 +110,18 @@ namespace Avalanche.Api.Managers.Media
 
                 // Route timeout
                 var config = await _storageService.GetJsonObject<TimeoutSettingsValues>("TimeoutSettingsValues", 1, ConfigurationContext.FromEnvironment());
+
                 var sinks = await GetTimeoutSinks();
-                foreach (var sink in sinks)
+
+                var routes = sinks.Select(x => new RouteVideoRequest
                 {
-                    await _routingService.RouteVideo(new RouteVideoRequest
-                    {
-                        Source = _mapper.Map<SinkModel, AliasIndexMessage>(config.Configuration.Source),
-                        Sink = _mapper.Map<VideoDeviceModel, AliasIndexMessage>(sink)
-                    });
-                }
+                    Source = _mapper.Map<AliasIndexModel, AliasIndexMessage>(config.Configuration.Source),
+                    Sink = _mapper.Map<VideoDeviceModel, AliasIndexMessage>(x)
+                });
+
+                var request = new RouteVideoBatchRequest();
+                request.Routes.AddRange(routes);
+                await _routingService.RouteVideoBatch(request);
 
                 // TODO Audio
 
@@ -136,11 +140,11 @@ namespace Avalanche.Api.Managers.Media
         {
             await _startStopLock.WaitAsync(_cts.Token);
             try
-            {                
+            {
                 if (_currentPgsTimeoutState == PgsTimeoutModes.Timeout)
                 {
-                    var playerMode = new SetPgsTimeoutModeRequest { Mode = PgsTimeoutModeEnum.PgsTimeoutModeIdle};
-                    if(restoreLastRoutes && _lastPgsTimeoutState == PgsTimeoutModes.Pgs)
+                    var playerMode = new SetPgsTimeoutModeRequest { Mode = PgsTimeoutModeEnum.PgsTimeoutModeIdle };
+                    if (restoreLastRoutes && _lastPgsTimeoutState == PgsTimeoutModes.Pgs)
                     {
                         playerMode.Mode = PgsTimeoutModeEnum.PgsTimeoutModePgs;
                     }
@@ -221,13 +225,13 @@ namespace Avalanche.Api.Managers.Media
             {
                 await StopTimeout(false);
 
-                if(_lastPgsTimeoutState == PgsTimeoutModes.Pgs)
+                if (_lastPgsTimeoutState == PgsTimeoutModes.Pgs)
                 {
                     await LoadPrePgsRoutes();
                 }
                 else
                 {
-                    await LoadCurrentSavedRoutes ();
+                    await LoadCurrentSavedRoutes();
                 }
             }
         }
@@ -262,7 +266,7 @@ namespace Avalanche.Api.Managers.Media
                     && x.Sink.Index == sink.Sink.Index);
 
                 // get the current source
-                sink.Source = new SinkModel()
+                sink.Source = new AliasIndexModel()
                 {
                     Alias = route.Source.Alias,
                     Index = route.Source.Index
@@ -272,30 +276,23 @@ namespace Avalanche.Api.Managers.Media
         }
 
         private async Task LoadCurrentSavedRoutes()
-        {            
-            foreach (var route in _currentRoutes.Routes)
-            {
-                await _routingService.RouteVideo(new RouteVideoRequest
-                {
-                    Sink = route.Sink,
-                    Source = route.Source
-                });
-            }
+        {
+            var request = new RouteVideoBatchRequest();
+            request.Routes.AddRange(_currentRoutes.Routes.Select(x => new RouteVideoRequest { Sink = x.Sink, Source = x.Source }));
+            await _routingService.RouteVideoBatch(request);
         }
 
         private async Task LoadPrePgsRoutes()
         {
-            foreach (var destination in _prePgsRoutes.Destinations)
+            var request = new RouteVideoBatchRequest();
+            request.Routes.AddRange(_prePgsRoutes.Select(x => new RouteVideoRequest
             {
-                foreach (var source in _prePgsRoutes.Sources)
-                {
-                    await _routingService.RouteVideo(new RouteVideoRequest()
-                    {
-                        Sink = _mapper.Map<VideoDeviceModel, AliasIndexMessage>(destination),
-                        Source = _mapper.Map<VideoDeviceModel, AliasIndexMessage>(source),
-                    });
-                }
-            }
+                Source = _mapper.Map<AliasIndexModel, AliasIndexMessage>(x.Source),
+                Sink = _mapper.Map<AliasIndexModel, AliasIndexMessage>(x.Sink)
+            }));
+
+            if (request.Routes.Any())
+                await _routingService.RouteVideoBatch(request);
         }
 
         private async Task SaveCurrentRoutes()

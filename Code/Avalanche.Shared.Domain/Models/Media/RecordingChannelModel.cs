@@ -3,6 +3,6 @@
     public class RecordingChannelModel
     {
         public string? ChannelName { get; set; }
-        public SinkModel? VideoSink { get; set; }
+        public AliasIndexModel? VideoSink { get; set; }
     }
 }

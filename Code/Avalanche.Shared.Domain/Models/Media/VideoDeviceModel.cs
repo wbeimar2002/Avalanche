@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Avalanche.Shared.Domain.Models.Media
+﻿namespace Avalanche.Shared.Domain.Models.Media
 {
     /// <summary>
     /// Represents common properties shared between sources and sinks
@@ -12,7 +8,7 @@ namespace Avalanche.Shared.Domain.Models.Media
         /// <summary>
         /// Used to identify this source/sink
         /// </summary>
-        public SinkModel? Sink { get; set; }
+        public AliasIndexModel? Sink { get; set; }
 
         /// <summary>
         /// Friendly (display) name
@@ -34,6 +30,6 @@ namespace Avalanche.Shared.Domain.Models.Media
         /// UI type, which icon to use for sources and which button graphic to use for displays
         /// </summary>
         public string? Type { get; set; }
-        public SinkModel Source { get; set; }
+        public AliasIndexModel Source { get; set; }
     }
 }

@@ -11,6 +11,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Remove="Configuration\PgsTimeoutConfig.cs" />
     <Compile Remove="Models\AdministratorSettings.cs" />
     <Compile Remove="Models\ApiSettings.cs" />
     <Compile Remove="Models\ConfigSettings.cs" />

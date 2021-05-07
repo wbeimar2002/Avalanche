@@ -21,6 +21,6 @@ namespace Avalanche.Shared.Infrastructure.Configuration
     public class PgsSettingsValuesConfiguration
     {
         public PgsSettingsValuesPlayer Player { get; set; }
-        public SinkModel Source { get; set; }
+        public AliasIndexModel Source { get; set; }
     }
 }
