@@ -12,5 +12,10 @@
         /// Should always be false for now, will need this for RX
         /// </summary>
         public bool TilingEnabled { get; set; } = false;
+
+        /// <summary>
+        /// Is this display enabled for display based recording?
+        /// </summary>
+        public bool RecordEnabled { get; set; }
     }
 }
