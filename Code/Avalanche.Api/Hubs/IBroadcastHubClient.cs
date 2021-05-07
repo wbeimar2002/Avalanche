@@ -25,6 +25,8 @@ namespace Avalanche.Api.Hubs
 
         Task OnPgsTimeoutPlayerDataChanged(PgsTimeoutPlayerData pgsTimeoutPlayerData);
 
+        Task OnDisplayBasedRecordingStateDataChanged(DisplayRecordStateData displayRecordStateData);
+
         Task OnDiskSpaceStateChanged(DiskSpaceEvent diskSpaceEvent);
 
         Task OnSystemErrorRaised(SystemErrorRaisedEvent evt);

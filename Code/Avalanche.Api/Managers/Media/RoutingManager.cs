@@ -9,6 +9,9 @@ using Avalanche.Shared.Domain.Models.Media;
 using AvidisDeviceInterface.V1.Protos;
 using Ism.Common.Core.Configuration.Models;
 using Ism.Routing.V1.Protos;
+using Ism.SystemState.Client;
+using Ism.SystemState.Models;
+using VideoRoutingModels = Ism.SystemState.Models.VideoRouting;
 using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
@@ -28,17 +31,21 @@ namespace Avalanche.Api.Managers.Media
         private readonly UserModel user;
         private readonly ConfigurationContext configurationContext;
 
+        private readonly IStateClient _stateClient;
+
         public RoutingManager(IRoutingService routingService,
             IAvidisService avidisService,
             IStorageService storageService,
             IMapper mapper,
-            IHttpContextAccessor httpContextAccessor)
+            IHttpContextAccessor httpContextAccessor,
+            IStateClient stateClient)
         {
             _routingService = routingService;
             _avidisService = avidisService;
             _storageService = storageService;
             _httpContextAccessor = httpContextAccessor;
             _mapper = mapper;
+            _stateClient = stateClient;
 
             user = HttpContextUtilities.GetUser(_httpContextAccessor.HttpContext);
             configurationContext = _mapper.Map<UserModel, ConfigurationContext>(user);
@@ -221,6 +228,73 @@ namespace Avalanche.Api.Managers.Media
                     Source = new Ism.Routing.V1.Protos.AliasIndexMessage(), // empty => clear route
                 });
             }
+
+            await UpdateDisplayRecordingState(displayRecordingViewModel);
+        }
+
+        public async Task HandleSinkSourceChanged(AliasIndexModel sink, AliasIndexModel source)
+        {
+            if (!string.IsNullOrEmpty(sink?.Alias) && !string.IsNullOrEmpty(sink?.Index))
+            {
+                // check if we have display-based-recording status for this sink (display)
+                var displayRecordState = await _stateClient.GetData<VideoRoutingModels.DisplayRecordStateData>();
+                
+                var display = displayRecordState?.DisplayState?.FirstOrDefault(d =>
+                    string.Equals(d.DisplayAliasIndex?.Alias, sink.Alias, StringComparison.OrdinalIgnoreCase)
+                    && string.Equals(d.DisplayAliasIndex?.Index, sink.Index, StringComparison.OrdinalIgnoreCase));
+
+                // if yes - route the updated source to the display's bound record sink
+                if (!string.IsNullOrEmpty(display?.RecordChannelAliasIndex?.Alias) && !string.IsNullOrEmpty(display?.RecordChannelAliasIndex?.Index))
+                {
+                    var sinkModel = _mapper.Map<VideoRoutingModels.AliasIndexModel, AliasIndexModel>(display.RecordChannelAliasIndex);
+                    // note: source can be null/empty - clearing the route
+                    var sourceModel = new Ism.Routing.V1.Protos.AliasIndexMessage();
+                    if (null != source)
+                    {
+                        sourceModel = _mapper.Map<Ism.Routing.V1.Protos.AliasIndexMessage>(source);
+                    }
+
+                    await _routingService.RouteVideo(new RouteVideoRequest()
+                    {
+                        Sink = _mapper.Map<AliasIndexModel, Ism.Routing.V1.Protos.AliasIndexMessage>(sinkModel),
+                        Source = sourceModel
+                    });
+                }
+            }
+        }
+
+        private async Task UpdateDisplayRecordingState(DisplayRecordingViewModel displayRecordingViewModel)
+        {
+            var currentData = await _stateClient.GetData<VideoRoutingModels.DisplayRecordStateData>();
+
+            var displayIndex = currentData?.DisplayState?.FindIndex(x =>
+                string.Equals(x.DisplayAliasIndex.Alias, displayRecordingViewModel.Display.Alias, StringComparison.OrdinalIgnoreCase) &&
+                x.DisplayAliasIndex.Index == displayRecordingViewModel.Display.Index) ?? -1;
+
+            var displayAliasIndex = new VideoRoutingModels.AliasIndexModel(displayRecordingViewModel.Display.Alias, displayRecordingViewModel.Display.Index);
+            
+            var recordAliasIndex = displayRecordingViewModel.Enabled 
+                ? new VideoRoutingModels.AliasIndexModel(displayRecordingViewModel.RecordChannel.VideoSink.Alias, displayRecordingViewModel.RecordChannel.VideoSink.Index)
+                : new VideoRoutingModels.AliasIndexModel();
+
+            await _stateClient.AddOrUpdateData(
+                new VideoRoutingModels.DisplayRecordStateData()
+                {
+                    DisplayState = new List<VideoRoutingModels.DisplayRecordState> { new VideoRoutingModels.DisplayRecordState() { DisplayAliasIndex = displayAliasIndex, RecordChannelAliasIndex = recordAliasIndex } }
+                },
+                x =>
+                {
+                    // default state won't have an entry for a display
+                    if (displayIndex < 0)
+                    {
+                        x.Add(data => data.DisplayState, new VideoRoutingModels.DisplayRecordState { DisplayAliasIndex = displayAliasIndex, RecordChannelAliasIndex = recordAliasIndex });
+                    }
+                    else
+                    {
+                        x.Replace(data => data.DisplayState[displayIndex].RecordChannelAliasIndex, recordAliasIndex);
+                    }
+                });
+
         }
     }
 }
