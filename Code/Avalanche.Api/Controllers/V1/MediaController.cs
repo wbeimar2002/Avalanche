@@ -374,6 +374,30 @@ namespace Avalanche.Api.Controllers.V1
         }
 
         /// <summary>
+        /// Gets PGS Playback State
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("pgs/playbackstate")]
+        public async Task<IActionResult> GetPgsPlaybackState()
+        {
+            try
+            {
+                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
+                var result = await _pgsManager.GetPgsPlaybackState();
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, LoggerHelper.GetLogMessage(DebugLogType.Exception), ex);
+                return new BadRequestObjectResult(ex.Get(_environment.IsDevelopment()));
+            }
+            finally
+            {
+                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
+            }
+        }
+
+        /// <summary>
         /// Staet PGS
         /// </summary>
         /// <returns></returns>
