@@ -19,7 +19,6 @@ using Ism.SystemState.Models.Library;
 using Ism.SystemState.Models.Recorder;
 using Ism.SystemState.Models.Notifications;
 using Avalanche.Api.Managers.Media;
-using Avalanche.Shared.Domain.Models.Media;
 
 namespace Avalanche.Api.Services.Notifications
 {
@@ -60,7 +59,9 @@ namespace Avalanche.Api.Services.Notifications
             AddSubscription<VideoSinkSourceChangedEvent>(evt =>
             {
                 _hubContext.Clients.All.OnVideoSinkSourceChanged(evt);
-                _routingManager.HandleSinkSourceChanged(_mapper.Map<Shared.Domain.Models.Media.AliasIndexModel>(evt.Sink), _mapper.Map<Shared.Domain.Models.Media.AliasIndexModel>(evt.Source));
+                _routingManager.HandleSinkSourceChanged(
+                    _mapper.Map<AliasIndexModel, Shared.Domain.Models.Media.AliasIndexModel>(evt.Sink),
+                    _mapper.Map<AliasIndexModel, Shared.Domain.Models.Media.AliasIndexModel>(evt.Source));
             });
             AddSubscription<DiskSpaceEvent>(evt => _hubContext.Clients.All.OnDiskSpaceStateChanged(evt));
 
@@ -77,14 +78,14 @@ namespace Avalanche.Api.Services.Notifications
         }
 
         private void AddSubscription<TEvent>(Action<TEvent> handler)
-            where TEvent: StateEvent
+            where TEvent : StateEvent
         {
             var id = _stateClient.SubscribeEvent<TEvent>(handler);
             _subscriptions.Add(id);
         }
 
         private void AddDataSubscription<TData>(Action<TData> handler)
-            where TData: StateData
+            where TData : StateData
         {
             var id = _stateClient.SubscribeData<TData>(handler);
             _subscriptions.Add(id);
