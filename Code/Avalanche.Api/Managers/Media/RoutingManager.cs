@@ -10,7 +10,6 @@ using AvidisDeviceInterface.V1.Protos;
 using Ism.Common.Core.Configuration.Models;
 using Ism.Routing.V1.Protos;
 using Ism.SystemState.Client;
-using Ism.SystemState.Models;
 using VideoRoutingModels = Ism.SystemState.Models.VideoRouting;
 using Microsoft.AspNetCore.Http;
 using System;
@@ -24,6 +23,7 @@ namespace Avalanche.Api.Managers.Media
     public class RoutingManager : IRoutingManager
     {
         private readonly IRoutingService _routingService;
+        private readonly IRecorderService _recorderService;
         private readonly IAvidisService _avidisService;
         private readonly IStorageService _storageService;
         private readonly IMapper _mapper;
@@ -34,7 +34,9 @@ namespace Avalanche.Api.Managers.Media
 
         private readonly IStateClient _stateClient;
 
-        public RoutingManager(IRoutingService routingService,
+        public RoutingManager(
+            IRoutingService routingService,
+            IRecorderService recorderService,
             IAvidisService avidisService,
             IStorageService storageService,
             IMapper mapper,
@@ -42,6 +44,7 @@ namespace Avalanche.Api.Managers.Media
             IStateClient stateClient)
         {
             _routingService = routingService;
+            _recorderService = recorderService;
             _avidisService = avidisService;
             _storageService = storageService;
             _httpContextAccessor = httpContextAccessor;
@@ -290,7 +293,14 @@ namespace Avalanche.Api.Managers.Media
             await _stateClient.AddOrUpdateData(
                 new VideoRoutingModels.DisplayRecordStateData()
                 {
-                    DisplayState = new List<VideoRoutingModels.DisplayRecordState> { new VideoRoutingModels.DisplayRecordState() { DisplayAliasIndex = displayAliasIndex, RecordChannelAliasIndex = recordAliasIndex } }
+                    DisplayState = new List<VideoRoutingModels.DisplayRecordState> 
+                    { 
+                        new VideoRoutingModels.DisplayRecordState() 
+                        { 
+                            DisplayAliasIndex = displayAliasIndex, 
+                            RecordChannelAliasIndex = recordAliasIndex 
+                        } 
+                    }
                 },
                 x =>
                 {
@@ -305,6 +315,28 @@ namespace Avalanche.Api.Managers.Media
                     }
                 });
 
+        }
+
+        /// <summary>
+        /// Publishes the default display based recording state
+        /// The state is simply the first X displays mapped to the first Y record channels
+        /// </summary>
+        /// <returns></returns>
+        public async Task PublishDefaultDisplayRecordingState()
+        {
+            // TODO: make this a private event handler for when a patient is registered
+
+            // get displays and record channels and convert them to system state model aliasIndexes
+            var displays = (await _routingService.GetVideoSinks()).VideoSinks.Select(x => new VideoRoutingModels.AliasIndexModel(x.Sink.Alias, x.Sink.Index));
+            var recordChannels = (await _recorderService.GetRecordingChannels()).Select(x => new VideoRoutingModels.AliasIndexModel(x.VideoSink.Alias, x.VideoSink.Index));
+
+            // map the first X displays to the first Y record channels
+            // Zip starts at the beginning of each collection and stop when it hits the end of either colleciton
+            // {a, b, c, d}.Zip({Rec1, Rec2}) turns into {(a, Rec1), (b, Rec2)}
+            var dbrStates = displays.Zip(recordChannels, (display, recordChannel) => new VideoRoutingModels.DisplayRecordState(display, recordChannel)).ToList();
+
+            // publish the new DBR state data
+            await _stateClient.PersistData(new VideoRoutingModels.DisplayRecordStateData(dbrStates));
         }
     }
 }
