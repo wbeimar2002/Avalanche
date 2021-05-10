@@ -8,6 +8,7 @@ namespace Avalanche.Api.MappingConfigurations
     {
         public MediaMappingConfiguration()
         {
+            // domain model to avidis proto model
             CreateMap<AliasIndexModel, AvidisDeviceInterface.V1.Protos.AliasIndexMessage>()
                .ForMember(dest =>
                    dest.Alias,
@@ -17,7 +18,18 @@ namespace Avalanche.Api.MappingConfigurations
                    opt => opt.MapFrom(src => src.Index))
                .ReverseMap();
 
+            // viewmodel to domain model
             CreateMap<AliasIndexViewModel, AliasIndexModel>()
+                .ForMember(dest =>
+                    dest.Alias,
+                    opt => opt.MapFrom(src => src.Alias))
+                .ForMember(dest =>
+                    dest.Index,
+                    opt => opt.MapFrom(src => src.Index))
+                .ReverseMap();
+
+            // system state model to domain model
+            CreateMap<Ism.SystemState.Models.VideoRouting.AliasIndexModel, AliasIndexModel>()
                 .ForMember(dest =>
                     dest.Alias,
                     opt => opt.MapFrom(src => src.Alias))
@@ -35,6 +47,7 @@ namespace Avalanche.Api.MappingConfigurations
                     opt => opt.MapFrom(src => src.Sink))
                 .ReverseMap();
 
+            // domain model to routing proto model
             CreateMap<AliasIndexModel, Ism.Routing.V1.Protos.AliasIndexMessage>()
                .ForMember(dest =>
                    dest.Alias,
