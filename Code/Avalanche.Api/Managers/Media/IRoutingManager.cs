@@ -21,5 +21,7 @@ namespace Avalanche.Api.Managers.Media
 
         Task SetDisplayRecordingEnabled(DisplayRecordingViewModel displayRecordingViewModel);
         Task HandleSinkSourceChanged(AliasIndexModel sink, AliasIndexModel source);
+
+        Task PublishDefaultDisplayRecordingState();
     }
 }
