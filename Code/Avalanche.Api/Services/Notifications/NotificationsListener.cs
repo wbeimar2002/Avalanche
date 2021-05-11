@@ -63,6 +63,7 @@ namespace Avalanche.Api.Services.Notifications
                     _mapper.Map<AliasIndexModel, Shared.Domain.Models.Media.AliasIndexModel>(evt.Sink),
                     _mapper.Map<AliasIndexModel, Shared.Domain.Models.Media.AliasIndexModel>(evt.Source));
             });
+
             AddSubscription<DiskSpaceEvent>(evt => _hubContext.Clients.All.OnDiskSpaceStateChanged(evt));
 
             AddDataSubscription<ActiveProcedureState>(data => _hubContext.Clients.All.OnActiveProcedureStateChanged(_mapper.Map<Avalanche.Api.ViewModels.ActiveProcedureViewModel>(data)));
@@ -71,6 +72,7 @@ namespace Avalanche.Api.Services.Notifications
             AddDataSubscription<DisplayRecordStateData>(data => _hubContext.Clients.All.OnDisplayBasedRecordingStateDataChanged(data));
 
             AddSubscription<RecorderStateEvent>(evt => _hubContext.Clients.All.OnRecorderStateChanged(evt));
+            AddSubscription<TimeoutStateData>(evt => _hubContext.Clients.All.OnTimeoutStateDataChanged(evt));
             AddSubscription<SystemErrorRaisedEvent>(evt => _hubContext.Clients.All.OnSystemErrorRaised(evt));
             AddSubscription<SystemPersistantNotificationRaisedEvent>(evt => _hubContext.Clients.All.OnSystemSystemPersistantNotificationRaised(evt));
 

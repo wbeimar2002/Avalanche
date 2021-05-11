@@ -10,7 +10,8 @@ using Avalanche.Shared.Infrastructure.Models;
 using Ism.Common.Core.Configuration.Models;
 using Ism.PgsTimeout.V1.Protos;
 using Ism.Routing.V1.Protos;
-
+using Ism.SystemState.Client;
+using Ism.SystemState.Models.PgsTimeout;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -62,6 +63,7 @@ namespace Avalanche.Api.Managers.Media
         private PgsTimeoutModes _lastPgsTimeoutState = PgsTimeoutModes.Idle;
 
         private IList<RouteModel> _prePgsRoutes;
+
         private GetCurrentRoutesResponse _currentRoutes = new GetCurrentRoutesResponse();
 
 
@@ -102,8 +104,8 @@ namespace Avalanche.Api.Managers.Media
                 {
                     await SavePrePgsRoutes();
                 }
-                await SaveCurrentRoutes();
 
+                await SaveCurrentRoutes();
 
                 // Ask PGS player to set timeout mode
                 await _pgsTimeoutService.SetPgsTimeoutMode(new SetPgsTimeoutModeRequest { Mode = PgsTimeoutModeEnum.PgsTimeoutModeTimeout });
@@ -126,9 +128,6 @@ namespace Avalanche.Api.Managers.Media
                 // TODO Audio
 
                 _currentPgsTimeoutState = PgsTimeoutModes.Timeout;
-
-
-                
             }
             finally
             {

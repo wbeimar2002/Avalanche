@@ -30,8 +30,11 @@ namespace Avalanche.Api.Hubs
         Task OnDiskSpaceStateChanged(DiskSpaceEvent diskSpaceEvent);
 
         Task OnSystemErrorRaised(SystemErrorRaisedEvent evt);
+
         Task OnSystemSystemPersistantNotificationRaised(SystemPersistantNotificationRaisedEvent evt);
 
         Task OnRecorderStateChanged(RecorderStateEvent evt);
+
+        Task OnTimeoutStateDataChanged(TimeoutStateData evt);        
     }
 }
