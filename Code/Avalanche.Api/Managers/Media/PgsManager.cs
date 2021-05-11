@@ -159,7 +159,8 @@ namespace Avalanche.Api.Managers.Media
             bool enabled = sinkState.Enabled;
             // var config = await _storageService.GetJsonObject<PgsConfiguration>(nameof(PgsConfiguration), 1, ConfigurationContext.FromEnvironment());
             // TODO - Don't hardcore, 1am demo night
-            var config = new AliasIndexModel() { Alias = "4kiDp0", Index = "0" };
+            //var config = new AliasIndexModel() { Alias = "4kiDp0", Index = "0" };
+            var config = new AliasIndexModel() { Alias = "BX4Comp", Index = "dp1" };
 
             // pgs checkbox state must persist reboots
             // state client should handle this
