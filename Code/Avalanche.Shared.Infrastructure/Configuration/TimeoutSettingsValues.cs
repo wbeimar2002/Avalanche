@@ -7,27 +7,8 @@ namespace Avalanche.Shared.Infrastructure.Configuration
 {
     public class TimeoutSettingsValues
     {
-        public TimeoutSettingsValuesConfiguration Configuration { get; set; }
-    }
-
-    public class TimeoutSettingsValuesMode
-    {
-        public int TimeoutMode { get; set; }
         public string FileName { get; set; }
-        public string ImageFolder { get; set; }
-    }
-
-    public class TimeoutSettingsValuesSlideShowDuration
-    {
-        public int Hours { get; set; }
-        public int Minutes { get; set; }
-        public int Seconds { get; set; }
-    }
-
-    public class TimeoutSettingsValuesConfiguration
-    {
-        public TimeoutSettingsValuesMode Mode { get; set; }
-        public TimeoutSettingsValuesSlideShowDuration SlideShowDuration { get; set; }
-        public AliasIndexModel Source { get; set; }
+        public string TimeoutPath { get; set; }
+        public Shared.Domain.Models.Media.AliasIndexModel Source { get; set; }
     }
 }

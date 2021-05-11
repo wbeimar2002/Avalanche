@@ -165,7 +165,7 @@ namespace Avalanche.Api.Managers.Media
 
             // pgs is active, restore save/restore pgs for this display
             if (_currentPgsTimeoutState == PgsTimeoutModes.Pgs)
-                await UpdatePgsOnOneSink(sinkState.Sink, enabled, config.Configuration.Source);
+                await UpdatePgsOnOneSink(sinkState.Sink, enabled, config.Source);
 
             var currentData = await _stateClient.GetData<PgsDisplayStateData>();
             var displayIndex = currentData?.DisplayStates.FindIndex(x =>
@@ -319,7 +319,7 @@ namespace Avalanche.Api.Managers.Media
 
                     request.Routes.Add(new RouteVideoRequest
                     {
-                        Source = _mapper.Map<Shared.Domain.Models.Media.AliasIndexModel, AliasIndexMessage>(config.Configuration.Source),
+                        Source = _mapper.Map<Shared.Domain.Models.Media.AliasIndexModel, AliasIndexMessage>(config.Source),
                         Sink = _mapper.Map<VideoDeviceModel, AliasIndexMessage>(sink)
                     });
                 }

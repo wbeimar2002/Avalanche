@@ -7,20 +7,16 @@ namespace Avalanche.Shared.Infrastructure.Configuration
 {
     public class PgsSettingsValues
     {
-        public PgsSettingsValuesConfiguration Configuration { get; set; }
+        public string MediaPath { get; set; }
+        public PgsSettingsValuesPlayer Player { get; set; }
+        public Shared.Domain.Models.Media.AliasIndexModel Source { get; set; }
     }
 
     public class PgsSettingsValuesPlayer
     {
-        public string X { get; set; }
-        public string Y { get; set; }
-        public string Width { get; set; }
-        public string Height { get; set; }
-    }
-
-    public class PgsSettingsValuesConfiguration
-    {
-        public PgsSettingsValuesPlayer Player { get; set; }
-        public AliasIndexModel Source { get; set; }
+        public int X { get; set; }
+        public int Y { get; set; }
+        public int Width { get; set; }
+        public int Height { get; set; }
     }
 }
