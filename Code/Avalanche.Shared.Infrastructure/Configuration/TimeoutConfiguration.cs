@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Avalanche.Shared.Infrastructure.Configuration
 {
-    public class TimeoutSettingsValues
+    public class TimeoutConfiguration
     {
         public string FileName { get; set; }
         public string TimeoutPath { get; set; }

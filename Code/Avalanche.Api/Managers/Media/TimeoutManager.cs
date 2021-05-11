@@ -111,7 +111,7 @@ namespace Avalanche.Api.Managers.Media
                 await _pgsTimeoutService.SetPgsTimeoutMode(new SetPgsTimeoutModeRequest { Mode = PgsTimeoutModeEnum.PgsTimeoutModeTimeout });
 
                 // Route timeout
-                var config = await _storageService.GetJsonObject<TimeoutSettingsValues>("TimeoutSettingsValues", 1, ConfigurationContext.FromEnvironment());
+                var config = await _storageService.GetJsonObject<TimeoutConfiguration>(nameof(TimeoutConfiguration), 1, ConfigurationContext.FromEnvironment());
 
                 var sinks = await GetTimeoutSinks();
 
@@ -160,9 +160,9 @@ namespace Avalanche.Api.Managers.Media
                     {
                         IsMuted = true
                     });
-                }
 
-                _currentPgsTimeoutState = PgsTimeoutModes.Idle;
+                    _currentPgsTimeoutState = PgsTimeoutModes.Idle;
+                }
             }
             finally
             {

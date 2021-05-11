@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Avalanche.Shared.Infrastructure.Configuration
 {
-    public class PgsSettingsValues
+    public class PgsConfiguration
     {
         public string MediaPath { get; set; }
         public PgsSettingsValuesPlayer Player { get; set; }
