@@ -108,7 +108,8 @@ namespace Avalanche.Api.Managers.Media
                 //var config = await _storageService.GetJsonObject<TimeoutConfiguration>(nameof(TimeoutConfiguration), 1, ConfigurationContext.FromEnvironment());
                 //var config = await _storageService.GetJsonDynamic(nameof(TimeoutConfiguration), 1, ConfigurationContext.FromEnvironment());
                 // TODO - Don't hardcore, 1am demo night
-                var config = new AliasIndexModel() { Alias = "4kiDp0", Index = "0" };
+                //var config = new AliasIndexModel() { Alias = "4kiDp0", Index = "0" };
+                var config = new AliasIndexModel() { Alias = "BX4Comp", Index = "dp1" };
 
                 var sinks = await GetTimeoutSinks();
 
