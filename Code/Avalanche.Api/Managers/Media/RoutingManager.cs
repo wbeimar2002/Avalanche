@@ -10,19 +10,20 @@ using AvidisDeviceInterface.V1.Protos;
 using Ism.Common.Core.Configuration.Models;
 using Ism.Routing.V1.Protos;
 using Ism.SystemState.Client;
-using Ism.SystemState.Models;
 using VideoRoutingModels = Ism.SystemState.Models.VideoRouting;
 using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Avalanche.Shared.Infrastructure.Configuration;
 
 namespace Avalanche.Api.Managers.Media
 {
     public class RoutingManager : IRoutingManager
     {
         private readonly IRoutingService _routingService;
+        private readonly IRecorderService _recorderService;
         private readonly IAvidisService _avidisService;
         private readonly IStorageService _storageService;
         private readonly IMapper _mapper;
@@ -33,7 +34,9 @@ namespace Avalanche.Api.Managers.Media
 
         private readonly IStateClient _stateClient;
 
-        public RoutingManager(IRoutingService routingService,
+        public RoutingManager(
+            IRoutingService routingService,
+            IRecorderService recorderService,
             IAvidisService avidisService,
             IStorageService storageService,
             IMapper mapper,
@@ -41,6 +44,7 @@ namespace Avalanche.Api.Managers.Media
             IStateClient stateClient)
         {
             _routingService = routingService;
+            _recorderService = recorderService;
             _avidisService = avidisService;
             _storageService = storageService;
             _httpContextAccessor = httpContextAccessor;
@@ -184,11 +188,15 @@ namespace Avalanche.Api.Managers.Media
             var sinks = await _routingService.GetVideoSinks();
             var routes = await _routingService.GetCurrentRoutes();
 
+            // any display not in the will not have the record buttons next to it
+            var dbrSinks = await _storageService.GetJsonObject<SinksData>("DisplayBasedRecordingSinksData", 1, ConfigurationContext.FromEnvironment());
+
             var listResult = _mapper.Map<IList<VideoSinkMessage>, IList<VideoSinkModel>>(sinks.VideoSinks);
             foreach (var sink in listResult)
             {
-                var route = routes.Routes.SingleOrDefault(x => string.Equals(x.Sink.Alias, sink.Sink.Alias, StringComparison.OrdinalIgnoreCase)
-                    && x.Sink.Index == sink.Sink.Index);
+                var route = routes.Routes.SingleOrDefault(x =>
+                    string.Equals(x.Sink.Alias, sink.Sink.Alias, StringComparison.OrdinalIgnoreCase) &&
+                    string.Equals(x.Sink.Index, sink.Sink.Index, StringComparison.OrdinalIgnoreCase));
 
                 //get the current source
                 sink.Source = new AliasIndexModel()
@@ -196,6 +204,11 @@ namespace Avalanche.Api.Managers.Media
                     Alias = route.Source.Alias,
                     Index = route.Source.Index
                 };
+
+                // if this sink is in the dbr sink list, enable it for recording
+                sink.RecordEnabled = dbrSinks.Items.Any(x =>
+                    string.Equals(x.Alias, sink.Sink.Alias, StringComparison.OrdinalIgnoreCase) &&
+                    string.Equals(x.Index, sink.Sink.Index, StringComparison.OrdinalIgnoreCase));
             }
             return listResult;
         }
@@ -238,7 +251,7 @@ namespace Avalanche.Api.Managers.Media
             {
                 // check if we have display-based-recording status for this sink (display)
                 var displayRecordState = await _stateClient.GetData<VideoRoutingModels.DisplayRecordStateData>();
-                
+
                 var display = displayRecordState?.DisplayState?.FirstOrDefault(d =>
                     string.Equals(d.DisplayAliasIndex?.Alias, sink.Alias, StringComparison.OrdinalIgnoreCase)
                     && string.Equals(d.DisplayAliasIndex?.Index, sink.Index, StringComparison.OrdinalIgnoreCase));
@@ -272,15 +285,22 @@ namespace Avalanche.Api.Managers.Media
                 x.DisplayAliasIndex.Index == displayRecordingViewModel.Display.Index) ?? -1;
 
             var displayAliasIndex = new VideoRoutingModels.AliasIndexModel(displayRecordingViewModel.Display.Alias, displayRecordingViewModel.Display.Index);
-            
-            var recordAliasIndex = displayRecordingViewModel.Enabled 
+
+            var recordAliasIndex = displayRecordingViewModel.Enabled
                 ? new VideoRoutingModels.AliasIndexModel(displayRecordingViewModel.RecordChannel.VideoSink.Alias, displayRecordingViewModel.RecordChannel.VideoSink.Index)
                 : new VideoRoutingModels.AliasIndexModel();
 
             await _stateClient.AddOrUpdateData(
                 new VideoRoutingModels.DisplayRecordStateData()
                 {
-                    DisplayState = new List<VideoRoutingModels.DisplayRecordState> { new VideoRoutingModels.DisplayRecordState() { DisplayAliasIndex = displayAliasIndex, RecordChannelAliasIndex = recordAliasIndex } }
+                    DisplayState = new List<VideoRoutingModels.DisplayRecordState> 
+                    { 
+                        new VideoRoutingModels.DisplayRecordState() 
+                        { 
+                            DisplayAliasIndex = displayAliasIndex, 
+                            RecordChannelAliasIndex = recordAliasIndex 
+                        } 
+                    }
                 },
                 x =>
                 {
@@ -295,6 +315,28 @@ namespace Avalanche.Api.Managers.Media
                     }
                 });
 
+        }
+
+        /// <summary>
+        /// Publishes the default display based recording state
+        /// The state is simply the first X displays mapped to the first Y record channels
+        /// </summary>
+        /// <returns></returns>
+        public async Task PublishDefaultDisplayRecordingState()
+        {
+            // TODO: make this a private event handler for when a patient is registered
+
+            // get displays and record channels and convert them to system state model aliasIndexes
+            var displays = (await _routingService.GetVideoSinks()).VideoSinks.Select(x => new VideoRoutingModels.AliasIndexModel(x.Sink.Alias, x.Sink.Index));
+            var recordChannels = (await _recorderService.GetRecordingChannels()).Select(x => new VideoRoutingModels.AliasIndexModel(x.VideoSink.Alias, x.VideoSink.Index));
+
+            // map the first X displays to the first Y record channels
+            // Zip starts at the beginning of each collection and stop when it hits the end of either colleciton
+            // {a, b, c, d}.Zip({Rec1, Rec2}) turns into {(a, Rec1), (b, Rec2)}
+            var dbrStates = displays.Zip(recordChannels, (display, recordChannel) => new VideoRoutingModels.DisplayRecordState(display, recordChannel)).ToList();
+
+            // publish the new DBR state data
+            await _stateClient.PersistData(new VideoRoutingModels.DisplayRecordStateData(dbrStates));
         }
     }
 }

@@ -242,7 +242,7 @@ namespace Avalanche.Api.Managers.Media
         private async Task<IList<VideoSinkModel>> GetTimeoutSinks()
         {
             // This needs to return the same data that routing does
-            var pgsSinksData = await _storageService.GetJsonObject<SinksData>("TimeoutSinksData", 1, ConfigurationContext.FromEnvironment());
+            var timeoutSinksData = await _storageService.GetJsonObject<SinksData>("TimeoutSinksData", 1, ConfigurationContext.FromEnvironment());
 
             var routingSinks = await _routingService.GetVideoSinks();
             var routes = await _routingService.GetCurrentRoutes();
@@ -251,7 +251,7 @@ namespace Avalanche.Api.Managers.Media
             // Get the routing sinks that are also called out in the Timeout sink collection
             var timeoutSinks = routingSinks.VideoSinks
                 .Where(routingSink =>
-                    pgsSinksData.Items
+                    timeoutSinksData.Items
                     .Any(timeoutSink =>
                         string.Equals(timeoutSink.Alias, routingSink.Sink.Alias, StringComparison.OrdinalIgnoreCase)
                     && timeoutSink.Index == routingSink.Sink.Index));

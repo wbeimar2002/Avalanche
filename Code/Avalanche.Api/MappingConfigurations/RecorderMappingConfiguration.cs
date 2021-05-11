@@ -9,16 +9,16 @@ namespace Avalanche.Api.MappingConfigurations
         public RecorderMappingConfiguration()
         {
             CreateMap<AliasIndexModel, AliasIndexMessage>()
-              .ForMember(dest =>
+               .ForMember(dest =>
                   dest.Alias,
                   opt => opt.MapFrom(src => src.Alias))
                .ForMember(dest =>
                   dest.Index,
                   opt => opt.MapFrom(src => src.Index))
-              .ReverseMap();
+               .ReverseMap();
 
             CreateMap<RecordingChannelModel, RecordChannelMessage>()
-               .ForPath(dest =>
+                .ForPath(dest =>
                    dest.ChannelName,
                    opt => opt.MapFrom(src => src.ChannelName))
                 .ForPath(dest =>
@@ -27,7 +27,10 @@ namespace Avalanche.Api.MappingConfigurations
                 .ForPath(dest =>
                    dest.VideoSink.Index,
                    opt => opt.MapFrom(src => src.VideoSink.Index))
-               .ReverseMap();
+                .ForPath(dest =>
+                    dest.Is4K,
+                    opt => opt.MapFrom(src => src.Is4k))
+                .ReverseMap();
         }
     }
 }

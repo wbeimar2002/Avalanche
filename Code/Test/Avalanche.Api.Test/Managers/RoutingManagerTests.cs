@@ -24,6 +24,7 @@ namespace Avalanche.Api.Test.Managers
         IMapper _mapper;
         Mock<IAccessInfoFactory> _accessInfoFactory;
         Mock<IRoutingService> _routingService;
+        Mock<IRecorderService> _recorderService;
         Mock<IAvidisService> _avidisService;
         Mock<IStorageService> _storageService;
         Mock<IHttpContextAccessor> _httpContextAccessor;
@@ -42,6 +43,7 @@ namespace Avalanche.Api.Test.Managers
             _mapper = config.CreateMapper();
             _accessInfoFactory = new Mock<IAccessInfoFactory>();
             _routingService = new Mock<IRoutingService>();
+            _recorderService = new Mock<IRecorderService>();
             _avidisService = new Mock<IAvidisService>();
             _storageService = new Mock<IStorageService>();
             _httpContextAccessor = new Mock<IHttpContextAccessor>();
@@ -58,7 +60,7 @@ namespace Avalanche.Api.Test.Managers
             _routingService.Setup(r => r.RouteVideo(It.IsAny<RouteVideoRequest>()))
                 .Verifiable();
 
-            var manager = new RoutingManager(_routingService.Object, _avidisService.Object, _storageService.Object, _mapper, _httpContextAccessor.Object, _stateClient.Object);
+            var manager = new RoutingManager(_routingService.Object, _recorderService.Object, _avidisService.Object, _storageService.Object, _mapper, _httpContextAccessor.Object, _stateClient.Object);
 
             await manager.SetDisplayRecordingEnabled(new ViewModels.DisplayRecordingViewModel
             {
@@ -79,7 +81,7 @@ namespace Avalanche.Api.Test.Managers
                 It.IsAny<Action<JsonPatchDocument<Ism.SystemState.Models.VideoRouting.DisplayRecordStateData>>>()))
                 .Verifiable();
 
-            var manager = new RoutingManager(_routingService.Object, _avidisService.Object, _storageService.Object, _mapper, _httpContextAccessor.Object, _stateClient.Object);
+            var manager = new RoutingManager(_routingService.Object, _recorderService.Object, _avidisService.Object, _storageService.Object, _mapper, _httpContextAccessor.Object, _stateClient.Object);
 
             await manager.SetDisplayRecordingEnabled(new ViewModels.DisplayRecordingViewModel
             {
@@ -103,7 +105,7 @@ namespace Avalanche.Api.Test.Managers
             _routingService.Setup(r => r.RouteVideo(It.IsAny<RouteVideoRequest>()))
                 .Verifiable();
 
-            var manager = new RoutingManager(_routingService.Object, _avidisService.Object, _storageService.Object, _mapper, _httpContextAccessor.Object, _stateClient.Object);
+            var manager = new RoutingManager(_routingService.Object, _recorderService.Object, _avidisService.Object, _storageService.Object, _mapper, _httpContextAccessor.Object, _stateClient.Object);
 
             await manager.SetDisplayRecordingEnabled(new ViewModels.DisplayRecordingViewModel
             {
@@ -129,7 +131,7 @@ namespace Avalanche.Api.Test.Managers
             _routingService.Setup(r => r.RouteVideo(It.IsAny<RouteVideoRequest>()))
                 .Verifiable();
 
-            var manager = new RoutingManager(_routingService.Object, _avidisService.Object, _storageService.Object, _mapper, _httpContextAccessor.Object, _stateClient.Object);
+            var manager = new RoutingManager(_routingService.Object, _recorderService.Object, _avidisService.Object, _storageService.Object, _mapper, _httpContextAccessor.Object, _stateClient.Object);
 
             await manager.SetDisplayRecordingEnabled(new ViewModels.DisplayRecordingViewModel
             {
