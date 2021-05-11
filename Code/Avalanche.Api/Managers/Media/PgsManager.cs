@@ -157,7 +157,10 @@ namespace Avalanche.Api.Managers.Media
         public async Task SetPgsStateForSink(PgsSinkStateViewModel sinkState)
         {
             bool enabled = sinkState.Enabled;
-            var config = await _storageService.GetJsonObject<PgsSettingsValues>("PgsSettingsValues", 1, ConfigurationContext.FromEnvironment());
+            // var config = await _storageService.GetJsonObject<PgsConfiguration>(nameof(PgsConfiguration), 1, ConfigurationContext.FromEnvironment());
+            // TODO - Don't hardcore, 1am demo night
+            var config = new AliasIndexModel() { Alias = "4kiDp0", Index = "0" };
+
             // pgs checkbox state must persist reboots
             // state client should handle this
             // if pgs is activated, video route for that display needs to be restored
@@ -165,7 +168,7 @@ namespace Avalanche.Api.Managers.Media
 
             // pgs is active, restore save/restore pgs for this display
             if (_currentPgsTimeoutState == PgsTimeoutModes.Pgs)
-                await UpdatePgsOnOneSink(sinkState.Sink, enabled, config.Configuration.Source);
+                await UpdatePgsOnOneSink(sinkState.Sink, enabled, config);
 
             var currentData = await _stateClient.GetData<PgsDisplayStateData>();
             var displayIndex = currentData?.DisplayStates.FindIndex(x =>
@@ -302,7 +305,9 @@ namespace Avalanche.Api.Managers.Media
             await _startStopLock.WaitAsync(_cts.Token);
             try
             {
-                var config = await _storageService.GetJsonObject<PgsSettingsValues>("PgsSettingsValues", 1, ConfigurationContext.FromEnvironment());
+                //var config = await _storageService.GetJsonObject<PgsConfiguration>(nameof(PgsConfiguration), 1, ConfigurationContext.FromEnvironment());
+                // TODO - Don't hardcore, 1am demo night
+                var config = new AliasIndexModel() { Alias = "4kiDp0", Index = "0" };
 
                 await SaveCurrentRoutes();
 
@@ -319,7 +324,7 @@ namespace Avalanche.Api.Managers.Media
 
                     request.Routes.Add(new RouteVideoRequest
                     {
-                        Source = _mapper.Map<Shared.Domain.Models.Media.AliasIndexModel, AliasIndexMessage>(config.Configuration.Source),
+                        Source = _mapper.Map<AliasIndexModel, AliasIndexMessage>(config),
                         Sink = _mapper.Map<VideoDeviceModel, AliasIndexMessage>(sink)
                     });
                 }

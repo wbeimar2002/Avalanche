@@ -5,13 +5,11 @@ using Avalanche.Api.Services.Media;
 using Avalanche.Shared.Domain.Enumerations;
 using Avalanche.Shared.Domain.Models.Media;
 using Avalanche.Shared.Infrastructure.Configuration;
-using Avalanche.Shared.Infrastructure.Models;
 
 using Ism.Common.Core.Configuration.Models;
 using Ism.PgsTimeout.V1.Protos;
 using Ism.Routing.V1.Protos;
-using Ism.SystemState.Client;
-using Ism.SystemState.Models.PgsTimeout;
+
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -55,12 +53,7 @@ namespace Avalanche.Api.Managers.Media
         /// </summary>
         private readonly SemaphoreSlim _startStopLock = new SemaphoreSlim(1, 1);
 
-        /// <summary>
-        /// 
-        /// </summary>
-        private PgsTimeoutModes _currentPgsTimeoutState = PgsTimeoutModes.Idle;
-
-        private PgsTimeoutModes _lastPgsTimeoutState = PgsTimeoutModes.Idle;
+        private PgsTimeoutModes _priorPgsTimeoutState = PgsTimeoutModes.Idle;
 
         private IList<RouteModel> _prePgsRoutes;
 
@@ -87,7 +80,8 @@ namespace Avalanche.Api.Managers.Media
             await _startStopLock.WaitAsync(_cts.Token);
             try
             {
-                if (_currentPgsTimeoutState == PgsTimeoutModes.Timeout)
+                var state = await GetPgsTimeoutPlayerState();
+                if (state == PgsTimeoutModes.Timeout)
                 {
                     // Timeout already started
                     return;
@@ -96,11 +90,11 @@ namespace Avalanche.Api.Managers.Media
                 // If PGS is actively playing save the last state as pgs
                 if ((await _pgsTimeoutService.GetPgsPlaybackState()).IsPlaying)
                 {
-                    _lastPgsTimeoutState = PgsTimeoutModes.Pgs;
+                    _priorPgsTimeoutState = PgsTimeoutModes.Pgs;
                 }
 
                 // Save previous routes
-                if (_lastPgsTimeoutState == PgsTimeoutModes.Pgs)
+                if (_priorPgsTimeoutState == PgsTimeoutModes.Pgs)
                 {
                     await SavePrePgsRoutes();
                 }
@@ -111,23 +105,22 @@ namespace Avalanche.Api.Managers.Media
                 await _pgsTimeoutService.SetPgsTimeoutMode(new SetPgsTimeoutModeRequest { Mode = PgsTimeoutModeEnum.PgsTimeoutModeTimeout });
 
                 // Route timeout
-                var config = await _storageService.GetJsonObject<TimeoutSettingsValues>("TimeoutSettingsValues", 1, ConfigurationContext.FromEnvironment());
+                //var config = await _storageService.GetJsonObject<TimeoutConfiguration>(nameof(TimeoutConfiguration), 1, ConfigurationContext.FromEnvironment());
+                //var config = await _storageService.GetJsonDynamic(nameof(TimeoutConfiguration), 1, ConfigurationContext.FromEnvironment());
+                // TODO - Don't hardcore, 1am demo night
+                var config = new AliasIndexModel() { Alias = "4kiDp0", Index = "0" };
 
                 var sinks = await GetTimeoutSinks();
 
                 var routes = sinks.Select(x => new RouteVideoRequest
                 {
-                    Source = _mapper.Map<AliasIndexModel, AliasIndexMessage>(config.Configuration.Source),
+                    Source = _mapper.Map<AliasIndexModel, AliasIndexMessage>(config),
                     Sink = _mapper.Map<VideoDeviceModel, AliasIndexMessage>(x)
                 });
 
                 var request = new RouteVideoBatchRequest();
                 request.Routes.AddRange(routes);
                 await _routingService.RouteVideoBatch(request);
-
-                // TODO Audio
-
-                _currentPgsTimeoutState = PgsTimeoutModes.Timeout;
             }
             finally
             {
@@ -140,10 +133,11 @@ namespace Avalanche.Api.Managers.Media
             await _startStopLock.WaitAsync(_cts.Token);
             try
             {
-                if (_currentPgsTimeoutState == PgsTimeoutModes.Timeout)
+                PgsTimeoutModes state = await GetPgsTimeoutPlayerState();
+                if (state == PgsTimeoutModes.Timeout)
                 {
                     var playerMode = new SetPgsTimeoutModeRequest { Mode = PgsTimeoutModeEnum.PgsTimeoutModeIdle };
-                    if (restoreLastRoutes && _lastPgsTimeoutState == PgsTimeoutModes.Pgs)
+                    if (restoreLastRoutes && _priorPgsTimeoutState == PgsTimeoutModes.Pgs)
                     {
                         playerMode.Mode = PgsTimeoutModeEnum.PgsTimeoutModePgs;
                     }
@@ -161,13 +155,16 @@ namespace Avalanche.Api.Managers.Media
                         IsMuted = true
                     });
                 }
-
-                _currentPgsTimeoutState = PgsTimeoutModes.Idle;
             }
             finally
             {
                 _startStopLock.Release();
             }
+        }
+
+        private async Task<PgsTimeoutModes> GetPgsTimeoutPlayerState()
+        {
+            return (PgsTimeoutModes)(await _pgsTimeoutService.GetPgsTimeoutMode()).Mode;
         }
         #endregion
 
@@ -220,11 +217,12 @@ namespace Avalanche.Api.Managers.Media
         {
             // If we are currently in timeout state then timeout is not stopped
             // Stop timeout and restore pre pgs routes
-            if (_currentPgsTimeoutState == PgsTimeoutModes.Timeout)
+            var state = await GetPgsTimeoutPlayerState();
+            if (state == PgsTimeoutModes.Timeout)
             {
                 await StopTimeout(false);
 
-                if (_lastPgsTimeoutState == PgsTimeoutModes.Pgs)
+                if (_priorPgsTimeoutState == PgsTimeoutModes.Pgs)
                 {
                     await LoadPrePgsRoutes();
                 }
@@ -298,7 +296,8 @@ namespace Avalanche.Api.Managers.Media
         {
             // TODO: 4ko tile routes are not supported currently
             // don't need to worry about those until RX4
-            if (_currentPgsTimeoutState != PgsTimeoutModes.Idle)
+            var state = await GetPgsTimeoutPlayerState();
+            if (state != PgsTimeoutModes.Idle)
                 return;
 
             _currentRoutes = await _routingService.GetCurrentRoutes();
