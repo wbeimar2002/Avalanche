@@ -157,7 +157,7 @@ namespace Avalanche.Api.Managers.Media
         public async Task SetPgsStateForSink(PgsSinkStateViewModel sinkState)
         {
             bool enabled = sinkState.Enabled;
-            var config = await _storageService.GetJsonObject<PgsSettingsValues>("PgsSettingsValues", 1, ConfigurationContext.FromEnvironment());
+            var config = await _storageService.GetJsonObject<PgsConfiguration>(nameof(PgsConfiguration), 1, ConfigurationContext.FromEnvironment());
             // pgs checkbox state must persist reboots
             // state client should handle this
             // if pgs is activated, video route for that display needs to be restored
@@ -302,7 +302,7 @@ namespace Avalanche.Api.Managers.Media
             await _startStopLock.WaitAsync(_cts.Token);
             try
             {
-                var config = await _storageService.GetJsonObject<PgsSettingsValues>("PgsSettingsValues", 1, ConfigurationContext.FromEnvironment());
+                var config = await _storageService.GetJsonObject<PgsConfiguration>(nameof(PgsConfiguration), 1, ConfigurationContext.FromEnvironment());
 
                 await SaveCurrentRoutes();
 
