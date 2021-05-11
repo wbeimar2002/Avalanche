@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-
+using Avalanche.Api.Managers.Media;
 using Avalanche.Api.Managers.Procedures;
 using Avalanche.Api.Services.Health;
 using Avalanche.Api.Services.Maintenance;
@@ -34,6 +34,9 @@ namespace Avalanche.Api.Managers.Patients
         private readonly IStateClient _stateClient;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IProceduresManager _proceduresManager;
+        
+        // TODO: remove this when we figure out how to clean up dependencies
+        private readonly IRoutingManager _routingManager;
 
         private readonly UserModel user;
         private readonly ConfigurationContext configurationContext;
@@ -45,6 +48,7 @@ namespace Avalanche.Api.Managers.Patients
             IDataManagementService dataManagementService,
             IStateClient stateClient,
             IProceduresManager proceduresManager,
+            IRoutingManager routingManager,
             IHttpContextAccessor httpContextAccessor)
         {
             _pieService = pieService;
@@ -54,6 +58,7 @@ namespace Avalanche.Api.Managers.Patients
             _mapper = mapper;
             _stateClient = stateClient;
             _proceduresManager = proceduresManager;
+            _routingManager = routingManager;
             _httpContextAccessor = httpContextAccessor;
 
             user = HttpContextUtilities.GetUser(_httpContextAccessor.HttpContext);
@@ -102,7 +107,7 @@ namespace Avalanche.Api.Managers.Patients
             var patientRequest = _mapper.Map<PatientViewModel, Ism.Storage.PatientList.Client.V1.Protos.AddPatientRecordRequest>(newPatient);
             var result = await _pieService.RegisterPatient(patientRequest);
 
-            PublishActiveProcedure(newPatient, allocatedProcedure);
+            await PublishActiveProcedure(newPatient, allocatedProcedure);
 
             var response = _mapper.Map<Ism.Storage.PatientList.Client.V1.Protos.AddPatientRecordResponse, PatientViewModel>(result);
             return response;
@@ -153,7 +158,7 @@ namespace Avalanche.Api.Managers.Patients
 
             var patientRequest = _mapper.Map<PatientViewModel, Ism.Storage.PatientList.Client.V1.Protos.AddPatientRecordRequest>(newPatient);
             var result = await _pieService.RegisterPatient(patientRequest);
-            PublishActiveProcedure(newPatient, allocatedProcedure);
+            await PublishActiveProcedure(newPatient, allocatedProcedure);
 
             return _mapper.Map<Ism.Storage.PatientList.Client.V1.Protos.AddPatientRecordResponse, PatientViewModel>(result);
         }
@@ -274,11 +279,11 @@ namespace Avalanche.Api.Managers.Patients
             }
         }
 
-        private void PublishActiveProcedure(PatientViewModel patient, ProcedureAllocationViewModel allocatedProcedure)
+        private async Task PublishActiveProcedure(PatientViewModel patient, ProcedureAllocationViewModel allocatedProcedure)
         {
             if (null != patient)
             {
-                _stateClient.PersistData(new Ism.SystemState.Models.Procedure.ActiveProcedureState(
+                await _stateClient.PersistData(new Ism.SystemState.Models.Procedure.ActiveProcedureState(
                     patient: _mapper.Map<Ism.SystemState.Models.Procedure.Patient>(patient),
                     images: new List<Ism.SystemState.Models.Procedure.ProcedureImage>(),
                     videos: new List<Ism.SystemState.Models.Procedure.ProcedureVideo>(),
@@ -305,8 +310,13 @@ namespace Avalanche.Api.Managers.Patients
             }
             else
             {
-                _stateClient.PersistData<Ism.SystemState.Models.Procedure.ActiveProcedureState>(null); 
+                await _stateClient.PersistData<Ism.SystemState.Models.Procedure.ActiveProcedureState>(null); 
             }
+
+            // TODO: figure out how to do dependencies better
+            // maybe have a separate data/event for when a patient is registered
+            // routing manager subscribes to that event and we can have a cleaner dependency graph
+            await _routingManager?.PublishDefaultDisplayRecordingState();
         }
     }
 }

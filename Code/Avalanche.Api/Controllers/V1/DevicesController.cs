@@ -222,7 +222,6 @@ namespace Avalanche.Api.Controllers.V1
         /// <summary>
         /// Get operating outputs
         /// </summary>
-        /// <param name="env"></param>
         /// <returns></returns>
         [HttpGet("operating/outputs")]
         [Produces(typeof(IList<VideoSinkModel>))]
