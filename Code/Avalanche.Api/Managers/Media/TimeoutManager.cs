@@ -151,7 +151,7 @@ namespace Avalanche.Api.Managers.Media
                     {
                         IsMuted = true
                     });
-
+                }
             }
             finally
             {
