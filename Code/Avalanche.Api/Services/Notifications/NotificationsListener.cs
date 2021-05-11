@@ -71,6 +71,7 @@ namespace Avalanche.Api.Services.Notifications
             AddDataSubscription<PgsTimeoutPlayerData>(data => _hubContext.Clients.All.OnPgsTimeoutPlayerDataChanged(data));
             AddDataSubscription<DisplayRecordStateData>(data => _hubContext.Clients.All.OnDisplayBasedRecordingStateDataChanged(data));
 
+            AddSubscription<ActionExecutionEvent>(evt => _hubContext.Clients.All.OnActionExecutionEvent(evt));
             AddSubscription<RecorderStateEvent>(evt => _hubContext.Clients.All.OnRecorderStateChanged(evt));
             AddSubscription<TimeoutStateData>(evt => _hubContext.Clients.All.OnTimeoutStateDataChanged(evt));
             AddSubscription<SystemErrorRaisedEvent>(evt => _hubContext.Clients.All.OnSystemErrorRaised(evt));

@@ -5,11 +5,12 @@ using Avalanche.Api.Services.Media;
 using Avalanche.Shared.Domain.Enumerations;
 using Avalanche.Shared.Domain.Models.Media;
 using Avalanche.Shared.Infrastructure.Configuration;
-
+using Avalanche.Shared.Infrastructure.Enumerations;
 using Ism.Common.Core.Configuration.Models;
 using Ism.PgsTimeout.V1.Protos;
 using Ism.Routing.V1.Protos;
-
+using Ism.SystemState.Client;
+using Ism.SystemState.Models.Notifications;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -44,6 +45,7 @@ namespace Avalanche.Api.Managers.Media
         // pgs manager
         private readonly IPgsManager _pgsManager;
 
+        private readonly IStateClient _stateClient;
 
         // cancellation token for the start/stop lock
         private readonly CancellationTokenSource _cts = new CancellationTokenSource();
@@ -61,12 +63,14 @@ namespace Avalanche.Api.Managers.Media
 
 
         public TimeoutManager(
+            IStateClient stateClient,
             IStorageService storageService,
             IRoutingService routingService,
             IPgsTimeoutService pgsTimeoutService,
             IPgsManager pgsManager,
             IMapper mapper)
         {
+            _stateClient = ThrowIfNullOrReturn(nameof(stateClient), stateClient);
             _storageService = ThrowIfNullOrReturn(nameof(storageService), storageService);
             _routingService = ThrowIfNullOrReturn(nameof(routingService), routingService);
             _pgsTimeoutService = ThrowIfNullOrReturn(nameof(pgsTimeoutService), pgsTimeoutService);
@@ -80,6 +84,12 @@ namespace Avalanche.Api.Managers.Media
             await _startStopLock.WaitAsync(_cts.Token);
             try
             {
+                await _stateClient.PublishEvent<ActionExecutionEvent>(new ActionExecutionEvent()
+                {
+                    Action = (int)SystemActions.StartTimeout,
+                    IsRunning = true,
+                });
+
                 var state = await GetPgsTimeoutPlayerState();
                 if (state == PgsTimeoutModes.Timeout)
                 {
@@ -108,8 +118,7 @@ namespace Avalanche.Api.Managers.Media
                 //var config = await _storageService.GetJsonObject<TimeoutConfiguration>(nameof(TimeoutConfiguration), 1, ConfigurationContext.FromEnvironment());
                 //var config = await _storageService.GetJsonDynamic(nameof(TimeoutConfiguration), 1, ConfigurationContext.FromEnvironment());
                 // TODO - Don't hardcore, 1am demo night
-                //var config = new AliasIndexModel() { Alias = "4kiDp0", Index = "0" };
-                var config = new AliasIndexModel() { Alias = "BX4Comp", Index = "dp1" };
+                var config = new AliasIndexModel() { Alias = "4kiDp0", Index = "0" };
 
                 var sinks = await GetTimeoutSinks();
 
@@ -125,6 +134,12 @@ namespace Avalanche.Api.Managers.Media
             }
             finally
             {
+                await _stateClient.PublishEvent<ActionExecutionEvent>(new ActionExecutionEvent()
+                {
+                    Action = (int)SystemActions.StartTimeout,
+                    IsRunning = false,
+                });
+
                 _startStopLock.Release();
             }
         }
@@ -134,6 +149,12 @@ namespace Avalanche.Api.Managers.Media
             await _startStopLock.WaitAsync(_cts.Token);
             try
             {
+                await _stateClient.PublishEvent<ActionExecutionEvent>(new ActionExecutionEvent()
+                {
+                    Action = (int)SystemActions.StopTimeout,
+                    IsRunning = true,
+                });
+
                 PgsTimeoutModes state = await GetPgsTimeoutPlayerState();
                 if (state == PgsTimeoutModes.Timeout)
                 {
@@ -159,6 +180,12 @@ namespace Avalanche.Api.Managers.Media
             }
             finally
             {
+                await _stateClient.PublishEvent<ActionExecutionEvent>(new ActionExecutionEvent()
+                {
+                    Action = (int)SystemActions.StartTimeout,
+                    IsRunning = false,
+                });
+
                 _startStopLock.Release();
             }
         }

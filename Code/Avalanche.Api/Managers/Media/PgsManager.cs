@@ -8,12 +8,14 @@ using Avalanche.Shared.Domain.Enumerations;
 using Avalanche.Shared.Domain.Models;
 using Avalanche.Shared.Domain.Models.Media;
 using Avalanche.Shared.Infrastructure.Configuration;
+using Avalanche.Shared.Infrastructure.Enumerations;
 using Avalanche.Shared.Infrastructure.Models;
 
 using Ism.Common.Core.Configuration.Models;
 using Ism.PgsTimeout.V1.Protos;
 using Ism.Routing.V1.Protos;
 using Ism.SystemState.Client;
+using Ism.SystemState.Models.Notifications;
 using Ism.SystemState.Models.PgsTimeout;
 
 using System;
@@ -159,8 +161,7 @@ namespace Avalanche.Api.Managers.Media
             bool enabled = sinkState.Enabled;
             // var config = await _storageService.GetJsonObject<PgsConfiguration>(nameof(PgsConfiguration), 1, ConfigurationContext.FromEnvironment());
             // TODO - Don't hardcore, 1am demo night
-            //var config = new AliasIndexModel() { Alias = "4kiDp0", Index = "0" };
-            var config = new AliasIndexModel() { Alias = "BX4Comp", Index = "dp1" };
+            var config = new AliasIndexModel() { Alias = "4kiDp0", Index = "0" };
 
             // pgs checkbox state must persist reboots
             // state client should handle this
@@ -306,6 +307,12 @@ namespace Avalanche.Api.Managers.Media
             await _startStopLock.WaitAsync(_cts.Token);
             try
             {
+                await _stateClient.PublishEvent<ActionExecutionEvent>(new ActionExecutionEvent()
+                {
+                    Action = (int)SystemActions.StartPgs,
+                    IsRunning = true,
+                });
+
                 //var config = await _storageService.GetJsonObject<PgsConfiguration>(nameof(PgsConfiguration), 1, ConfigurationContext.FromEnvironment());
                 // TODO - Don't hardcore, 1am demo night
                 var config = new AliasIndexModel() { Alias = "4kiDp0", Index = "0" };
@@ -345,6 +352,12 @@ namespace Avalanche.Api.Managers.Media
             }
             finally
             {
+                await _stateClient.PublishEvent<ActionExecutionEvent>(new ActionExecutionEvent()
+                {
+                    Action = (int)SystemActions.StartPgs,
+                    IsRunning = false,
+                });
+
                 _startStopLock.Release();
             }
         }
@@ -354,6 +367,12 @@ namespace Avalanche.Api.Managers.Media
             await _startStopLock.WaitAsync(_cts.Token);
             try
             {
+                await _stateClient.PublishEvent<ActionExecutionEvent>(new ActionExecutionEvent()
+                {
+                    Action = (int)SystemActions.StopPgs,
+                    IsRunning = true,
+                });
+
                 // restore saved routes
                 await LoadSavedRoutes();
 
@@ -370,6 +389,12 @@ namespace Avalanche.Api.Managers.Media
             }
             finally
             {
+                await _stateClient.PublishEvent<ActionExecutionEvent>(new ActionExecutionEvent()
+                {
+                    Action = (int)SystemActions.StopPgs,
+                    IsRunning = false,
+                });
+
                 _startStopLock.Release();
             }
         }

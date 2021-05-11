@@ -41,11 +41,12 @@ namespace Avalanche.Api.Test.Managers
 
             _mapper = config.CreateMapper();
 
-            _timeoutManager = new TimeoutManager(_storageService.Object,
-                                                    _routingService.Object,
-                                                    _pgsTimeoutService.Object,
-                                                    _pgsManager.Object,
-                                                    _mapper);
+            _timeoutManager = new TimeoutManager(_stateClient.Object,
+                _storageService.Object,
+                _routingService.Object,
+                _pgsTimeoutService.Object,
+                _pgsManager.Object,
+                _mapper);
         }
 
         [Test]
