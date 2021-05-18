@@ -56,13 +56,13 @@ namespace Avalanche.Api.Managers.Data
             switch (type)
             {
                 case DataTypes.Sex:
-                    return (await _storageService.GetObject<ListContainerViewModel>("Sexes", 1, configurationContext)).Items;
+                    return (await _storageService.GetJsonObject<ListContainerViewModel>("Sexes", 1, configurationContext)).Items;
                 case DataTypes.SourceTypes:
-                    return (await _storageService.GetObject<ListContainerViewModel>("SourceTypes", 1, configurationContext)).Items;
+                    return (await _storageService.GetJsonObject<ListContainerViewModel>("SourceTypes", 1, configurationContext)).Items;
                 case DataTypes.SettingTypes:
-                    return (await _storageService.GetObject<ListContainerViewModel>("SettingTypes", 1, configurationContext)).Items;
+                    return (await _storageService.GetJsonObject<ListContainerViewModel>("SettingTypes", 1, configurationContext)).Items;
                 case DataTypes.PgsVideoFiles:
-                    return (await _storageService.GetObject<ListContainerViewModel>("PgsVideoFiles", 1, configurationContext)).Items;
+                    return (await _storageService.GetJsonObject<ListContainerViewModel>("PgsVideoFiles", 1, configurationContext)).Items;
                 default:
                     return new List<KeyValuePairViewModel>();
             }
@@ -73,9 +73,9 @@ namespace Avalanche.Api.Managers.Data
             switch (type)
             {
                 case DataTypes.SearchColumns:
-                    return (await _storageService.GetObject<SourceListContainerViewModel>("SearchColumns", 1, configurationContext)).Items;
+                    return (await _storageService.GetJsonObject<SourceListContainerViewModel>("SearchColumns", 1, configurationContext)).Items;
                 case DataTypes.PgsVideoFiles:
-                    return (await _storageService.GetObject<SourceListContainerViewModel>("PgsVideoFiles", 1, configurationContext)).Items;
+                    return (await _storageService.GetJsonObject<SourceListContainerViewModel>("PgsVideoFiles", 1, configurationContext)).Items;
                 default:
                     return new List<DynamicSourceKeyValuePairViewModel>();
             }
@@ -146,7 +146,7 @@ namespace Avalanche.Api.Managers.Data
 
         public async Task ValidateDepartmentsSupport()
         {
-            var setupSettings = await _storageService.GetObject<SetupConfiguration>(nameof(SetupConfiguration), 1, configurationContext);
+            var setupSettings = await _storageService.GetJsonObject<SetupConfiguration>(nameof(SetupConfiguration), 1, configurationContext);
 
             bool departmentSupported = setupSettings.General.DepartmentsSupported;
             if (!departmentSupported)
@@ -157,7 +157,7 @@ namespace Avalanche.Api.Managers.Data
 
         public async Task ValidateDepartmentsSupport(int? departmentId)
         {
-            var setupSettings = await _storageService.GetObject<SetupConfiguration>(nameof(SetupConfiguration), 1, configurationContext);
+            var setupSettings = await _storageService.GetJsonObject<SetupConfiguration>(nameof(SetupConfiguration), 1, configurationContext);
 
             bool departmentSupported = setupSettings.General.DepartmentsSupported;
 #warning TODO: Check the strategy to throw business logic exceptions. Same exceptions in Patients Manager

@@ -122,7 +122,7 @@ namespace Avalanche.Api.Managers.Media
         public async Task<IList<VideoSinkModel>> GetPgsSinks()
         {
             // this needs to return the same data that routing does
-            var pgsSinksData = await _storageService.GetObject<SinksData>("PgsSinks", 1, ConfigurationContext.FromEnvironment());
+            var pgsSinksData = await _storageService.GetJsonObject<SinksData>("PgsSinks", 1, ConfigurationContext.FromEnvironment());
 
             var routingSinks = await _routingService.GetVideoSinks();
             var routes = await _routingService.GetCurrentRoutes();

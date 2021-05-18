@@ -22,7 +22,7 @@ namespace Avalanche.Api.Services.Maintenance
             _client = client;
         }
 
-        public async Task<dynamic> GetDynamic(string configurationKey, int version, ConfigurationContext context)
+        public async Task<dynamic> GetJsonDynamic(string configurationKey, int version, ConfigurationContext context)
         {
             var json = await _client.GetConfiguration(configurationKey, Convert.ToUInt32(version), context);
 
@@ -32,7 +32,7 @@ namespace Avalanche.Api.Services.Maintenance
             return json == null ? null : child;
         }
 
-        public async Task<T> GetObject<T>(string configurationKey, int version, ConfigurationContext context)
+        public async Task<T> GetJsonObject<T>(string configurationKey, int version, ConfigurationContext context)
         {
             var json = await _client.GetConfiguration(configurationKey, Convert.ToUInt32(version), context);
 

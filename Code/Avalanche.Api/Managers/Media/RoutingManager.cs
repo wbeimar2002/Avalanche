@@ -84,7 +84,7 @@ namespace Avalanche.Api.Managers.Media
 
         public async Task ShowPreview(RoutingPreviewViewModel routingPreviewViewModel)
         {
-            var setupSettings = await _storageService.GetObject<SetupConfiguration>(nameof(SetupConfiguration), 1, configurationContext);
+            var setupSettings = await _storageService.GetJsonObject<SetupConfiguration>(nameof(SetupConfiguration), 1, configurationContext);
 
             if (setupSettings.SurgeryMode == RoutingModes.Hardware)
                 await _avidisService.ShowPreview(_mapper.Map<RegionModel, ShowPreviewRequest>(routingPreviewViewModel.Region));
@@ -189,7 +189,7 @@ namespace Avalanche.Api.Managers.Media
             var routes = await _routingService.GetCurrentRoutes();
 
             // any display not in the will not have the record buttons next to it
-            var dbrSinks = await _storageService.GetObject<SinksData>("DisplayBasedRecordingSinks", 1, ConfigurationContext.FromEnvironment());
+            var dbrSinks = await _storageService.GetJsonObject<SinksData>("DisplayBasedRecordingSinks", 1, ConfigurationContext.FromEnvironment());
 
             var listResult = _mapper.Map<IList<VideoSinkMessage>, IList<VideoSinkModel>>(sinks.VideoSinks);
             foreach (var sink in listResult)
