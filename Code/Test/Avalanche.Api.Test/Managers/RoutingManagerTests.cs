@@ -91,7 +91,7 @@ namespace Avalanche.Api.Test.Managers
             });
 
             _stateClient.Verify(
-                m => m.AddOrUpdateData(It.IsAny<Ism.SystemState.Models.VideoRouting.DisplayRecordStateData>(), It.IsAny<Action<JsonPatchDocument<Ism.SystemState.Models.VideoRouting.DisplayRecordStateData>>>()),
+                m => m.PersistData(It.IsAny<Ism.SystemState.Models.VideoRouting.DisplayRecordStateData>()),
                 Times.Once);
         }
 

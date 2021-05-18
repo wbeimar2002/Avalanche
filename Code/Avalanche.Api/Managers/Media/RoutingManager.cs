@@ -213,6 +213,24 @@ namespace Avalanche.Api.Managers.Media
             return listResult;
         }
 
+        public async Task<IList<DisplayRecordingViewModel>> GetDisplayRecordingState()
+        {
+            var currentData = await _stateClient.GetData<VideoRoutingModels.DisplayRecordStateData>();
+            var recordChannels = await _recorderService.GetRecordingChannels();
+
+            return currentData?.DisplayState?.Select(d =>
+            {
+                var recordChan = _mapper.Map<RecordingChannelModel>(recordChannels?.FirstOrDefault(r =>
+                        string.Equals(r.VideoSink.Alias, d.RecordChannelAliasIndex?.Alias, StringComparison.OrdinalIgnoreCase)
+                        && string.Equals(r.VideoSink.Index, d.RecordChannelAliasIndex?.Index, StringComparison.OrdinalIgnoreCase)));
+
+                return new DisplayRecordingViewModel(
+                    _mapper.Map<AliasIndexModel>(d.DisplayAliasIndex),
+                    recordChan,
+                    null != recordChan);
+            })?.ToList();
+        }
+
         public async Task SetDisplayRecordingEnabled(DisplayRecordingViewModel displayRecordingViewModel)
         {
             if (displayRecordingViewModel.Enabled)
@@ -278,43 +296,27 @@ namespace Avalanche.Api.Managers.Media
 
         private async Task UpdateDisplayRecordingState(DisplayRecordingViewModel displayRecordingViewModel)
         {
-            var currentData = await _stateClient.GetData<VideoRoutingModels.DisplayRecordStateData>();
-
-            var displayIndex = currentData?.DisplayState?.FindIndex(x =>
-                string.Equals(x.DisplayAliasIndex.Alias, displayRecordingViewModel.Display.Alias, StringComparison.OrdinalIgnoreCase) &&
-                x.DisplayAliasIndex.Index == displayRecordingViewModel.Display.Index) ?? -1;
+            var currentData = await _stateClient.GetData<VideoRoutingModels.DisplayRecordStateData>() ?? new VideoRoutingModels.DisplayRecordStateData();
+            if (null == currentData.DisplayState)
+            {
+                currentData.DisplayState = new List<VideoRoutingModels.DisplayRecordState>();
+            }
 
             var displayAliasIndex = new VideoRoutingModels.AliasIndexModel(displayRecordingViewModel.Display.Alias, displayRecordingViewModel.Display.Index);
-
             var recordAliasIndex = displayRecordingViewModel.Enabled
                 ? new VideoRoutingModels.AliasIndexModel(displayRecordingViewModel.RecordChannel.VideoSink.Alias, displayRecordingViewModel.RecordChannel.VideoSink.Index)
                 : new VideoRoutingModels.AliasIndexModel();
 
-            await _stateClient.AddOrUpdateData(
-                new VideoRoutingModels.DisplayRecordStateData()
-                {
-                    DisplayState = new List<VideoRoutingModels.DisplayRecordState> 
-                    { 
-                        new VideoRoutingModels.DisplayRecordState() 
-                        { 
-                            DisplayAliasIndex = displayAliasIndex, 
-                            RecordChannelAliasIndex = recordAliasIndex 
-                        } 
-                    }
-                },
-                x =>
-                {
-                    // default state won't have an entry for a display
-                    if (displayIndex < 0)
-                    {
-                        x.Add(data => data.DisplayState, new VideoRoutingModels.DisplayRecordState { DisplayAliasIndex = displayAliasIndex, RecordChannelAliasIndex = recordAliasIndex });
-                    }
-                    else
-                    {
-                        x.Replace(data => data.DisplayState[displayIndex].RecordChannelAliasIndex, recordAliasIndex);
-                    }
-                });
+            // find all set to the same record channel and clear them
+            currentData.DisplayState.RemoveAll(d => 
+                string.Equals(d.RecordChannelAliasIndex?.Alias, recordAliasIndex.Alias, StringComparison.OrdinalIgnoreCase)
+                && string.Equals(d.RecordChannelAliasIndex?.Index, recordAliasIndex.Index, StringComparison.OrdinalIgnoreCase));
 
+            // add the new
+            currentData.DisplayState.Add(new VideoRoutingModels.DisplayRecordState { DisplayAliasIndex = displayAliasIndex, RecordChannelAliasIndex = recordAliasIndex });
+
+            // replace existing state data (this is too complex for json patch)
+            await _stateClient.PersistData(currentData);
         }
 
         /// <summary>
