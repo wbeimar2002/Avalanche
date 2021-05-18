@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Avalanche.Shared.Infrastructure.Configuration
+namespace Avalanche.Shared.Infrastructure.Configuration.Lists
 {
     /// <summary>
     /// Contains a list of AliasIndex's which represent video sinks

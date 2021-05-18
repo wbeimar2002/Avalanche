@@ -17,6 +17,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Avalanche.Shared.Infrastructure.Configuration;
+using Avalanche.Shared.Infrastructure.Configuration.Lists;
 
 namespace Avalanche.Api.Managers.Media
 {
@@ -83,10 +84,9 @@ namespace Avalanche.Api.Managers.Media
 
         public async Task ShowPreview(RoutingPreviewViewModel routingPreviewViewModel)
         {
-            //TODO: This rules is not in any PBI yet.
-            var surgerySettings = await _storageService.GetJsonDynamic("SurgerySettingsValues", 1, configurationContext);
+            var setupSettings = await _storageService.GetObject<SetupConfiguration>(nameof(SetupConfiguration), 1, configurationContext);
 
-            if (surgerySettings.Mode == RoutingModes.Hardware)
+            if (setupSettings.SurgeryMode == RoutingModes.Hardware)
                 await _avidisService.ShowPreview(_mapper.Map<RegionModel, ShowPreviewRequest>(routingPreviewViewModel.Region));
 
             //TODO: Map this
@@ -189,7 +189,7 @@ namespace Avalanche.Api.Managers.Media
             var routes = await _routingService.GetCurrentRoutes();
 
             // any display not in the will not have the record buttons next to it
-            var dbrSinks = await _storageService.GetJsonObject<SinksData>("DisplayBasedRecordingSinksData", 1, ConfigurationContext.FromEnvironment());
+            var dbrSinks = await _storageService.GetObject<SinksData>("DisplayBasedRecordingSinks", 1, ConfigurationContext.FromEnvironment());
 
             var listResult = _mapper.Map<IList<VideoSinkMessage>, IList<VideoSinkModel>>(sinks.VideoSinks);
             foreach (var sink in listResult)

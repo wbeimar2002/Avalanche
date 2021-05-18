@@ -5,7 +5,7 @@ using Avalanche.Api.Services.Media;
 using Avalanche.Shared.Domain.Enumerations;
 using Avalanche.Shared.Domain.Models.Media;
 using Avalanche.Shared.Infrastructure.Configuration;
-
+using Avalanche.Shared.Infrastructure.Configuration.Lists;
 using Ism.Common.Core.Configuration.Models;
 using Ism.PgsTimeout.V1.Protos;
 using Ism.Routing.V1.Protos;
@@ -241,7 +241,7 @@ namespace Avalanche.Api.Managers.Media
         private async Task<IList<VideoSinkModel>> GetTimeoutSinks()
         {
             // This needs to return the same data that routing does
-            var timeoutSinksData = await _storageService.GetJsonObject<SinksData>("TimeoutSinksData", 1, ConfigurationContext.FromEnvironment());
+            var timeoutSinksData = await _storageService.GetObject<SinksData>("TimeoutSinks", 1, ConfigurationContext.FromEnvironment());
 
             var routingSinks = await _routingService.GetVideoSinks();
             var routes = await _routingService.GetCurrentRoutes();

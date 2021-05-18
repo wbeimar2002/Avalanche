@@ -6,6 +6,7 @@ using Avalanche.Api.Services.Maintenance;
 using Avalanche.Api.Utilities;
 using Avalanche.Api.ViewModels;
 using Avalanche.Shared.Domain.Models;
+using Avalanche.Shared.Infrastructure.Configuration;
 using Avalanche.Shared.Infrastructure.Helpers;
 
 using Google.Protobuf.WellKnownTypes;
@@ -80,7 +81,7 @@ namespace Avalanche.Api.Managers.Patients
             var accessInfo = _accessInfoFactory.GenerateAccessInfo();
             newPatient.AccessInformation = _mapper.Map<AccessInfoModel>(accessInfo);
 
-            var setupSettings = await _storageService.GetJsonDynamic("SetupSettingsValues", 1, configurationContext);
+            var setupSettings = await _storageService.GetObject<SetupConfiguration>(nameof(SetupConfiguration), 1, configurationContext);
 
             //TODO: Pending facility
             if (newPatient.Physician == null)
@@ -115,7 +116,7 @@ namespace Avalanche.Api.Managers.Patients
 
         public async Task<PatientViewModel> QuickPatientRegistration()
         {
-            var setupSettings = await _storageService.GetJsonDynamic("SetupSettingsValues", 1, configurationContext);
+            var setupSettings = await _storageService.GetObject<SetupConfiguration>(nameof(SetupConfiguration), 1, configurationContext);
             string quickRegistrationDateFormat = setupSettings.Registration.Quick.DateFormat;
             string formattedDate = DateTime.UtcNow.ToLocalTime().ToString(quickRegistrationDateFormat);
 
@@ -175,7 +176,7 @@ namespace Avalanche.Api.Managers.Patients
             Preconditions.ThrowIfNull(nameof(existingPatient.Sex.Id), existingPatient.Sex.Id);
             Preconditions.ThrowIfNull(nameof(existingPatient.ProcedureType.Name), existingPatient.ProcedureType.Name);
 
-            var setupSettings = await _storageService.GetJsonDynamic("SetupSettingsValues", 1, configurationContext);
+            var setupSettings = await _storageService.GetObject<SetupConfiguration>(nameof(SetupConfiguration), 1, configurationContext);
 
             var accessInfo = _accessInfoFactory.GenerateAccessInfo();
             existingPatient.AccessInformation = _mapper.Map<AccessInfoModel>(accessInfo);

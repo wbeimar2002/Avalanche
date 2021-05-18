@@ -19,7 +19,6 @@ namespace Avalanche.Api.Managers.Data
         Task<List<ProcedureTypeModel>> GetProcedureTypesByDepartment(int? departmentId);
         Task ValidateDepartmentsSupport();
         Task ValidateDepartmentsSupport(int? departmentId);
-        Task<ExpandoObject> GetDynamicSource(string key);
         Task<List<ProcedureTypeModel>> GetAllProcedureTypes();
     }
 }

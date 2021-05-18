@@ -5,6 +5,7 @@ using Avalanche.Api.Services.Maintenance;
 using Avalanche.Api.Utilities;
 using Avalanche.Api.ViewModels;
 using Avalanche.Shared.Domain.Models;
+using Avalanche.Shared.Infrastructure.Configuration;
 using Avalanche.Shared.Infrastructure.Enumerations;
 using Avalanche.Shared.Infrastructure.Helpers;
 
@@ -55,13 +56,13 @@ namespace Avalanche.Api.Managers.Data
             switch (type)
             {
                 case DataTypes.Sex:
-                    return (await _storageService.GetJsonObject<ListContainerViewModel>("SexTypesData", 1, configurationContext)).Items;
+                    return (await _storageService.GetObject<ListContainerViewModel>("Sexes", 1, configurationContext)).Items;
                 case DataTypes.SourceTypes:
-                    return (await _storageService.GetJsonObject<ListContainerViewModel>("SourceTypesData", 1, configurationContext)).Items;
+                    return (await _storageService.GetObject<ListContainerViewModel>("SourceTypes", 1, configurationContext)).Items;
                 case DataTypes.SettingTypes:
-                    return (await _storageService.GetJsonObject<ListContainerViewModel>("SettingTypesData", 1, configurationContext)).Items;
+                    return (await _storageService.GetObject<ListContainerViewModel>("SettingTypes", 1, configurationContext)).Items;
                 case DataTypes.PgsVideoFiles:
-                    return (await _storageService.GetJsonObject<ListContainerViewModel>("PgsVideoFilesData", 1, configurationContext)).Items;
+                    return (await _storageService.GetObject<ListContainerViewModel>("PgsVideoFiles", 1, configurationContext)).Items;
                 default:
                     return new List<KeyValuePairViewModel>();
             }
@@ -72,18 +73,12 @@ namespace Avalanche.Api.Managers.Data
             switch (type)
             {
                 case DataTypes.SearchColumns:
-                    return (await _storageService.GetJsonObject<SourceListContainerViewModel>("SearchColumnsData", 1, configurationContext)).Items;
+                    return (await _storageService.GetObject<SourceListContainerViewModel>("SearchColumns", 1, configurationContext)).Items;
                 case DataTypes.PgsVideoFiles:
-                    return (await _storageService.GetJsonObject<SourceListContainerViewModel>("PgsVideoFilesData", 1, configurationContext)).Items;
+                    return (await _storageService.GetObject<SourceListContainerViewModel>("PgsVideoFiles", 1, configurationContext)).Items;
                 default:
                     return new List<DynamicSourceKeyValuePairViewModel>();
             }
-        }
-
-        public async Task<ExpandoObject> GetDynamicSource(string key)
-        {
-            var dynamicObject = await _storageService.GetJsonDynamic(key, 1, configurationContext);
-            return JsonConvert.DeserializeObject<ExpandoObject>(JsonConvert.SerializeObject(dynamicObject));
         }
 
         public async Task<DepartmentModel> AddDepartment(DepartmentModel department)
@@ -151,7 +146,7 @@ namespace Avalanche.Api.Managers.Data
 
         public async Task ValidateDepartmentsSupport()
         {
-            dynamic setupSettings = await _storageService.GetJsonDynamic("SetupSettingsValues", 1, configurationContext);
+            var setupSettings = await _storageService.GetObject<SetupConfiguration>(nameof(SetupConfiguration), 1, configurationContext);
 
             bool departmentSupported = setupSettings.General.DepartmentsSupported;
             if (!departmentSupported)
@@ -162,7 +157,7 @@ namespace Avalanche.Api.Managers.Data
 
         public async Task ValidateDepartmentsSupport(int? departmentId)
         {
-            var setupSettings = await _storageService.GetJsonDynamic("SetupSettingsValues", 1, configurationContext);
+            var setupSettings = await _storageService.GetObject<SetupConfiguration>(nameof(SetupConfiguration), 1, configurationContext);
 
             bool departmentSupported = setupSettings.General.DepartmentsSupported;
 #warning TODO: Check the strategy to throw business logic exceptions. Same exceptions in Patients Manager
