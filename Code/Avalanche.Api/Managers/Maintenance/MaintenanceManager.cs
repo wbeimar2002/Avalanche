@@ -222,7 +222,7 @@ namespace Avalanche.Api.Managers.Maintenance
                             Value = ((dynamic)d).Name,
                             RelatedObject = d
                         }).ToList();
-                    case "VideoFiles":
+                    case "PgsVideoFiles":
 
                         var videoFiles = _filesService.GetFiles("pgsmedia", "*.mp4");
 
