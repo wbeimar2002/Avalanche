@@ -27,7 +27,6 @@ namespace Avalanche.Api.Controllers.V1
         /// <summary>
         ///  Health check without secure
         /// </summary>
-        /// <param name="env"></param>
         /// <returns></returns>
         [Route("check")]
         [HttpGet]
@@ -59,7 +58,6 @@ namespace Avalanche.Api.Controllers.V1
         /// <summary>
         /// Health check with secure
         /// </summary>
-        /// <param name="env"></param>
         /// <returns></returns>
         [Authorize]
         [Route("check/secure")]

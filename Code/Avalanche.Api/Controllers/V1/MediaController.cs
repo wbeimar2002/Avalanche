@@ -44,7 +44,7 @@ namespace Avalanche.Api.Controllers.V1
         /// </summary>
         /// <returns></returns>
         [HttpGet("mode")]
-        public async Task<IActionResult> GetMode(PgsTimeoutModes mode)
+        public async Task<IActionResult> GetMode()
         {
             try
             {
@@ -503,7 +503,7 @@ namespace Avalanche.Api.Controllers.V1
         /// <param name="pageNumber"></param>
         /// <returns></returns>
         [HttpPut("timeout/pages/{pageNumber}")]
-        public async Task<IActionResult> setCurrentPage(int pageNumber)
+        public async Task<IActionResult> SetCurrentPage(int pageNumber)
         {
             try
             {

@@ -41,7 +41,6 @@ namespace Avalanche.Api.Controllers.V1
         /// Search procedures
         /// </summary>
         /// <param name="filter"></param>
-        /// <param name="env"></param>
         /// <returns></returns>
         [HttpPost("")]
         [Produces(typeof(List<ProcedureModel>))]
@@ -67,7 +66,6 @@ namespace Avalanche.Api.Controllers.V1
         /// <summary>
         /// Get procedure
         /// </summary>
-        /// <param name="env"></param>
         /// <returns></returns>
         [HttpGet("{id}")]
         [Produces(typeof(ProcedureDetailsViewModel))]
@@ -173,7 +171,6 @@ namespace Avalanche.Api.Controllers.V1
         /// <summary>
         /// Finish Active Procedure
         /// </summary>
-        /// <param name="env"></param>
         /// <returns></returns>
         [HttpPut("active")]
         [Produces(typeof(ProcedureDetailsViewModel))]

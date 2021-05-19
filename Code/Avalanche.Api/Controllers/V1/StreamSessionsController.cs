@@ -34,7 +34,6 @@ namespace Avalanche.Api.Controllers.V1
         /// <summary>
         /// Get source strems for WebRTC
         /// </summary>
-        /// <param name="env"></param>
         /// <returns></returns>
         [HttpGet("sources")]
         [Produces(typeof(IList<VideoDeviceModel>))]
@@ -61,7 +60,6 @@ namespace Avalanche.Api.Controllers.V1
         /// Play video with WebRTC
         /// </summary>
         /// <param name="session"></param>
-        /// <param name="env"></param>
         /// <returns></returns>
         [HttpPost("")]
         [Produces(typeof(List<string>))]
@@ -88,7 +86,6 @@ namespace Avalanche.Api.Controllers.V1
         /// Handle WebRTC message
         /// </summary>
         /// <param name="message"></param>
-        /// <param name="env"></param>
         /// <returns></returns>
         [HttpPut("")]
         public async Task<IActionResult> HandleMessage(WebRTCMessaggeModel message)
