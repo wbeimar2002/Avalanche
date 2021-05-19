@@ -16,6 +16,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
+using Avalanche.Api.Managers.Maintenance;
 
 namespace Avalanche.Api.Controllers.V1
 {
@@ -25,14 +26,14 @@ namespace Avalanche.Api.Controllers.V1
     public class PhysiciansController : ControllerBase
     {
         private readonly ILogger _logger;
-        private readonly IDataManager _metadataManager;
+        private readonly IMaintenanceManager _maintenangeManager;
         private readonly IWebHostEnvironment _environment;
 
-        public PhysiciansController(ILogger<PhysiciansController> logger, IDataManager metadataManager, IWebHostEnvironment environment)
+        public PhysiciansController(ILogger<PhysiciansController> logger, IMaintenanceManager maintenanceManager, IWebHostEnvironment environment)
         {
             _environment = environment;
             _logger = logger;
-            _metadataManager = metadataManager;
+            _maintenangeManager = maintenanceManager;
         }
 
         /// <summary>
@@ -47,7 +48,7 @@ namespace Avalanche.Api.Controllers.V1
             {
                 _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
 
-                var result = await _metadataManager.GetDynamicSource("PhysiciansData");
+                var result = await _maintenangeManager.GetSettingValues("Physicians");
                 return Ok(result);
             }
             catch (Exception ex)

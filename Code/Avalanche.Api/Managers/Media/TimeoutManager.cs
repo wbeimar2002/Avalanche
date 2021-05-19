@@ -5,7 +5,7 @@ using Avalanche.Api.Services.Media;
 using Avalanche.Shared.Domain.Enumerations;
 using Avalanche.Shared.Domain.Models.Media;
 using Avalanche.Shared.Infrastructure.Configuration;
-
+using Avalanche.Shared.Infrastructure.Configuration.Lists;
 using Ism.Common.Core.Configuration.Models;
 using Ism.PgsTimeout.V1.Protos;
 using Ism.Routing.V1.Protos;
@@ -105,17 +105,12 @@ namespace Avalanche.Api.Managers.Media
                 await _pgsTimeoutService.SetPgsTimeoutMode(new SetPgsTimeoutModeRequest { Mode = PgsTimeoutModeEnum.PgsTimeoutModeTimeout });
 
                 // Route timeout
-                //var config = await _storageService.GetJsonObject<TimeoutConfiguration>(nameof(TimeoutConfiguration), 1, ConfigurationContext.FromEnvironment());
-                //var config = await _storageService.GetJsonDynamic(nameof(TimeoutConfiguration), 1, ConfigurationContext.FromEnvironment());
-                // TODO - Don't hardcore, 1am demo night
-                //var config = new AliasIndexModel() { Alias = "4kiDp0", Index = "0" };
-                var config = new AliasIndexModel() { Alias = "BX4Comp", Index = "dp1" };
-
+                var config = await _storageService.GetJsonObject<TimeoutConfiguration>(nameof(TimeoutConfiguration), 1, ConfigurationContext.FromEnvironment());
                 var sinks = await GetTimeoutSinks();
 
                 var routes = sinks.Select(x => new RouteVideoRequest
                 {
-                    Source = _mapper.Map<AliasIndexModel, AliasIndexMessage>(config),
+                    Source = _mapper.Map<AliasIndexModel, AliasIndexMessage>(config.Configuration.Source),
                     Sink = _mapper.Map<VideoDeviceModel, AliasIndexMessage>(x)
                 });
 
@@ -241,7 +236,7 @@ namespace Avalanche.Api.Managers.Media
         private async Task<IList<VideoSinkModel>> GetTimeoutSinks()
         {
             // This needs to return the same data that routing does
-            var timeoutSinksData = await _storageService.GetJsonObject<SinksData>("TimeoutSinksData", 1, ConfigurationContext.FromEnvironment());
+            var timeoutSinksData = await _storageService.GetJsonObject<SinksList>("TimeoutSinks", 1, ConfigurationContext.FromEnvironment());
 
             var routingSinks = await _routingService.GetVideoSinks();
             var routes = await _routingService.GetCurrentRoutes();

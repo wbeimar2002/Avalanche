@@ -10,7 +10,7 @@ using Avalanche.Api.Services.Maintenance;
 using Avalanche.Api.Utilities;
 using Avalanche.Api.ViewModels;
 using Avalanche.Shared.Domain.Models;
-
+using Avalanche.Shared.Infrastructure.Configuration;
 using Bogus;
 
 using Ism.Common.Core.Configuration.Models;
@@ -272,11 +272,11 @@ namespace Avalanche.Api.Tests.Managers
                 }
             };
 
-            var setupSettings = new 
+            var setupConfiguration = new SetupConfiguration
             {
-                Registration = new 
+                Registration = new RegistrationSetupConfiguration 
                 {
-                    Quick = new 
+                    Quick = new QuickSetupConfiguration 
                     {
                         DateFormat = "yyyyMMdd_T_mmss"
                     }
@@ -291,7 +291,7 @@ namespace Avalanche.Api.Tests.Managers
                     Name = null
                 });
 
-            _storageService.Setup(mock => mock.GetJsonDynamic("SetupSettingsValues", 1, It.IsAny<ConfigurationContext>())).ReturnsAsync(setupSettings);
+            _storageService.Setup(mock => mock.GetJsonObject<SetupConfiguration>(nameof(SetupConfiguration), 1, It.IsAny<ConfigurationContext>())).ReturnsAsync(setupConfiguration);
 
             _pieService.Setup(mock => mock.RegisterPatient(It.IsAny<Ism.Storage.PatientList.Client.V1.Protos.AddPatientRecordRequest>())).ReturnsAsync(response);
 
@@ -335,11 +335,11 @@ namespace Avalanche.Api.Tests.Managers
                 }
             };
 
-            var setupSettings = new 
+            var setupConfiguration = new SetupConfiguration
             {
-                Registration = new 
+                Registration = new RegistrationSetupConfiguration
                 {
-                    Quick = new 
+                    Quick = new QuickSetupConfiguration
                     {
                         DateFormat = "yyyyMMdd_T_mmss"
                     }
@@ -358,7 +358,7 @@ namespace Avalanche.Api.Tests.Managers
             _proceduresManager.Setup(m => m.AllocateNewProcedure())
                 .ReturnsAsync(new ProcedureAllocationViewModel(new ProcedureIdViewModel(Guid.NewGuid().ToString(), faker.Commerce.Department()), faker.System.FilePath()));
 
-            _storageService.Setup(mock => mock.GetJsonDynamic("SetupSettingsValues", 1, It.IsAny<ConfigurationContext>())).ReturnsAsync(setupSettings);
+            _storageService.Setup(mock => mock.GetJsonObject<SetupConfiguration>(nameof(SetupConfiguration), 1, It.IsAny<ConfigurationContext>())).ReturnsAsync(setupConfiguration);
 
             _pieService.Setup(mock => mock.RegisterPatient(It.IsAny<Ism.Storage.PatientList.Client.V1.Protos.AddPatientRecordRequest>())).ReturnsAsync(response);
 
@@ -372,11 +372,11 @@ namespace Avalanche.Api.Tests.Managers
         [Test]
         public async Task QuickPatientRegistrationWorks()
         {
-            var setupSettings = new 
+            var setupConfiguration = new SetupConfiguration
             {
-                Registration = new 
+                Registration = new RegistrationSetupConfiguration 
                 {
-                    Quick = new 
+                    Quick = new QuickSetupConfiguration 
                     {
                         DateFormat = "yyyyMMdd_T_mmss"
                     }
@@ -387,7 +387,7 @@ namespace Avalanche.Api.Tests.Managers
             _proceduresManager.Setup(m => m.AllocateNewProcedure())
                 .ReturnsAsync(new ProcedureAllocationViewModel(new ProcedureIdViewModel(Guid.NewGuid().ToString(), faker.Commerce.Department()), faker.System.FilePath()));
 
-            _storageService.Setup(mock => mock.GetJsonDynamic("SetupSettingsValues", 1, It.IsAny<ConfigurationContext>())).ReturnsAsync(setupSettings);
+            _storageService.Setup(mock => mock.GetJsonObject<SetupConfiguration>(nameof(SetupConfiguration), 1, It.IsAny<ConfigurationContext>())).ReturnsAsync(setupConfiguration);
 
             _pieService.Setup(mock => mock.RegisterPatient(It.IsAny<Ism.Storage.PatientList.Client.V1.Protos.AddPatientRecordRequest>()));
 
@@ -400,11 +400,11 @@ namespace Avalanche.Api.Tests.Managers
 
         public void UpdatePatientShouldFailIfNullOrIncompleteData(PatientViewModel patient)
         {
-            var setupSettings = new 
+            var setupConfiguration = new SetupConfiguration
             {
-                Registration = new 
+                Registration = new RegistrationSetupConfiguration 
                 {
-                    Quick = new 
+                    Quick = new QuickSetupConfiguration 
                     {
                         DateFormat = "yyyyMMdd_T_mmss"
                     }
@@ -412,7 +412,7 @@ namespace Avalanche.Api.Tests.Managers
             };
 
             _pieService.Setup(mock => mock.UpdatePatient(new Ism.Storage.PatientList.Client.V1.Protos.UpdatePatientRecordRequest()));
-            _storageService.Setup(mock => mock.GetJsonDynamic("SetupSettingsValues", 1, It.IsAny<ConfigurationContext>())).ReturnsAsync(setupSettings);
+            _storageService.Setup(mock => mock.GetJsonObject<SetupConfiguration>(nameof(SetupConfiguration), 1, It.IsAny<ConfigurationContext>())).ReturnsAsync(setupConfiguration);
 
             Task Act() => _manager.UpdatePatient(patient);
             Assert.That(Act, Throws.TypeOf<ArgumentNullException>());
@@ -447,11 +447,11 @@ namespace Avalanche.Api.Tests.Managers
                 ProcedureType = new ProcedureTypeModel() { Id = 1, Name = "SampleProcedureType" }
             };
 
-            var setupSettings = new 
+            var setupConfiguration = new SetupConfiguration
             {
-                Registration = new 
+                Registration = new RegistrationSetupConfiguration 
                 {
-                    Quick = new 
+                    Quick = new QuickSetupConfiguration  
                     {
                         DateFormat = "yyyyMMdd_T_mmss"
                     }
@@ -466,7 +466,7 @@ namespace Avalanche.Api.Tests.Managers
                     Name = null
                 });
 
-            _storageService.Setup(mock => mock.GetJsonDynamic("SetupSettingsValues", 1, It.IsAny<ConfigurationContext>())).ReturnsAsync(setupSettings);
+            _storageService.Setup(mock => mock.GetJsonObject<SetupConfiguration>(nameof(SetupConfiguration), 1, It.IsAny<ConfigurationContext>())).ReturnsAsync(setupConfiguration);
             _pieService.Setup(mock => mock.UpdatePatient(It.IsAny<Ism.Storage.PatientList.Client.V1.Protos.UpdatePatientRecordRequest>()));
 
             var result = _manager.UpdatePatient(existingPatient);
@@ -511,11 +511,11 @@ namespace Avalanche.Api.Tests.Managers
                 }
             };
 
-            var setupSettings = new 
+            var setupConfiguration = new SetupConfiguration
             {
-                Registration = new 
+                Registration = new RegistrationSetupConfiguration 
                 {
-                    Quick = new 
+                    Quick = new QuickSetupConfiguration 
                     {
                         DateFormat = "yyyyMMdd_T_mmss"
                     }
@@ -530,7 +530,7 @@ namespace Avalanche.Api.Tests.Managers
                     Name = "Existing"
                 });
 
-            _storageService.Setup(mock => mock.GetJsonDynamic("SetupSettingsValues", 1, It.IsAny<ConfigurationContext>())).ReturnsAsync(setupSettings);
+            _storageService.Setup(mock => mock.GetJsonObject<SetupConfiguration>(nameof(SetupConfiguration), 1, It.IsAny<ConfigurationContext>())).ReturnsAsync(setupConfiguration);
             _pieService.Setup(mock => mock.UpdatePatient(It.IsAny<UpdatePatientRecordRequest>()));
 
             var result = _manager.UpdatePatient(existingPatient);

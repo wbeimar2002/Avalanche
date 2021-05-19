@@ -8,6 +8,7 @@ using Avalanche.Shared.Domain.Enumerations;
 using Avalanche.Shared.Domain.Models;
 using Avalanche.Shared.Domain.Models.Media;
 using Avalanche.Shared.Infrastructure.Configuration;
+using Avalanche.Shared.Infrastructure.Configuration.Lists;
 using Avalanche.Shared.Infrastructure.Models;
 
 using Ism.Common.Core.Configuration.Models;
@@ -121,7 +122,7 @@ namespace Avalanche.Api.Managers.Media
         public async Task<IList<VideoSinkModel>> GetPgsSinks()
         {
             // this needs to return the same data that routing does
-            var pgsSinksData = await _storageService.GetJsonObject<SinksData>("PgsSinksData", 1, ConfigurationContext.FromEnvironment());
+            var pgsSinksData = await _storageService.GetJsonObject<SinksList>("PgsSinks", 1, ConfigurationContext.FromEnvironment());
 
             var routingSinks = await _routingService.GetVideoSinks();
             var routes = await _routingService.GetCurrentRoutes();
@@ -157,10 +158,7 @@ namespace Avalanche.Api.Managers.Media
         public async Task SetPgsStateForSink(PgsSinkStateViewModel sinkState)
         {
             bool enabled = sinkState.Enabled;
-            // var config = await _storageService.GetJsonObject<PgsConfiguration>(nameof(PgsConfiguration), 1, ConfigurationContext.FromEnvironment());
-            // TODO - Don't hardcore, 1am demo night
-            //var config = new AliasIndexModel() { Alias = "4kiDp0", Index = "0" };
-            var config = new AliasIndexModel() { Alias = "BX4Comp", Index = "dp1" };
+            var config = await _storageService.GetJsonObject<PgsConfiguration>(nameof(PgsConfiguration), 1, ConfigurationContext.FromEnvironment());
 
             // pgs checkbox state must persist reboots
             // state client should handle this
@@ -169,7 +167,7 @@ namespace Avalanche.Api.Managers.Media
 
             // pgs is active, restore save/restore pgs for this display
             if (_currentPgsTimeoutState == PgsTimeoutModes.Pgs)
-                await UpdatePgsOnOneSink(sinkState.Sink, enabled, config);
+                await UpdatePgsOnOneSink(sinkState.Sink, enabled, config.Configuration.Source);
 
             var currentData = await _stateClient.GetData<PgsDisplayStateData>();
             var displayIndex = currentData?.DisplayStates.FindIndex(x =>
@@ -306,9 +304,7 @@ namespace Avalanche.Api.Managers.Media
             await _startStopLock.WaitAsync(_cts.Token);
             try
             {
-                //var config = await _storageService.GetJsonObject<PgsConfiguration>(nameof(PgsConfiguration), 1, ConfigurationContext.FromEnvironment());
-                // TODO - Don't hardcore, 1am demo night
-                var config = new AliasIndexModel() { Alias = "4kiDp0", Index = "0" };
+                var config = await _storageService.GetJsonObject<PgsConfiguration>(nameof(PgsConfiguration), 1, ConfigurationContext.FromEnvironment());
 
                 await SaveCurrentRoutes();
 
@@ -325,7 +321,7 @@ namespace Avalanche.Api.Managers.Media
 
                     request.Routes.Add(new RouteVideoRequest
                     {
-                        Source = _mapper.Map<AliasIndexModel, AliasIndexMessage>(config),
+                        Source = _mapper.Map<AliasIndexModel, AliasIndexMessage>(config.Configuration.Source),
                         Sink = _mapper.Map<VideoDeviceModel, AliasIndexMessage>(sink)
                     });
                 }

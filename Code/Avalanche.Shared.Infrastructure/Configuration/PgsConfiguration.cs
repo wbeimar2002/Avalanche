@@ -1,11 +1,22 @@
 ﻿using Avalanche.Shared.Domain.Models.Media;
+using Ism.Common.Core.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
 namespace Avalanche.Shared.Infrastructure.Configuration
 {
-    public class PgsConfiguration
+    public class PgsConfiguration : IConfigurationPoco
+    {
+        public ConfigurationPgsConfiguration Configuration { get; set; }
+
+        public bool Validate()
+        {
+            return true;
+        }
+    }
+
+    public class ConfigurationPgsConfiguration
     {
         public string MediaPath { get; set; }
         public PgsSettingsValuesPlayer Player { get; set; }

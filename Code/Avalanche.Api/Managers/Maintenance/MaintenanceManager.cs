@@ -103,11 +103,11 @@ namespace Avalanche.Api.Managers.Maintenance
         public async Task<DynamicSectionViewModel> GetCategoryByKey(string key)
         {
             var configurationContext = _mapper.Map<UserModel, ConfigurationContext>(user);
-            var category = await _storageService.GetJsonObject<DynamicSectionViewModel>(key, 1, configurationContext);
-            var settingValues = await _storageService.GetJsonDynamic(category.JsonKey + "Values", 1, configurationContext);
+            var category = await _storageService.GetJsonFullObject<DynamicSectionViewModel>(key, 1, configurationContext);
+            var settingValues = await _storageService.GetJsonDynamic(category.JsonKey, 1, configurationContext);
 
             var types = await _metadataManager.GetData(DataTypes.SettingTypes);
-            var policiesTypes = (await _storageService.GetJsonObject<ListContainerViewModel>("SettingsPoliciesData", 1, configurationContext)).Items;           
+            var policiesTypes = (await _storageService.GetJsonObject<ListContainerViewModel>("SettingsPolicies", 1, configurationContext)).Items;           
 
             await SetSources(category, types);
 
@@ -123,7 +123,7 @@ namespace Avalanche.Api.Managers.Maintenance
 
         public async Task<DynamicListViewModel> GetCategoryListByKey(string key)
         {
-            var category = await _storageService.GetJsonObject<DynamicListViewModel>(key, 1, configurationContext);
+            var category = await _storageService.GetJsonFullObject<DynamicListViewModel>(key, 1, configurationContext);
             if (category.SaveAsFile)
             {
                 var values = await _storageService.GetJsonObject<DynamicListContainerViewModel>(category.SourceKey, 1, configurationContext);
@@ -222,7 +222,7 @@ namespace Avalanche.Api.Managers.Maintenance
                             Value = ((dynamic)d).Name,
                             RelatedObject = d
                         }).ToList();
-                    case "VideoFilesData":
+                    case "PgsVideoFiles":
 
                         var videoFiles = _filesService.GetFiles("pgsmedia", "*.mp4");
 
@@ -243,8 +243,8 @@ namespace Avalanche.Api.Managers.Maintenance
                             RelatedObject = d
                         }).ToList();
 
-                    case "SinksData":
-                        var sinks = (await _storageService.GetJsonObject<DynamicListContainerViewModel>("SinksData", 1, configurationContext)).Items;
+                    case "Sinks":
+                        var sinks = (await _storageService.GetJsonObject<DynamicListContainerViewModel>("Sinks", 1, configurationContext)).Items;
                         return sinks.Select(s => new KeyValuePairObjectViewModel()
                         {
                             Id = Guid.NewGuid().ToString(),
@@ -252,8 +252,8 @@ namespace Avalanche.Api.Managers.Maintenance
                             RelatedObject = s
                         }).ToList();
 
-                    case "VideoSinksData":
-                        var videoSinks = (await _storageService.GetJsonObject<DynamicListContainerViewModel>("VideoSinksData", 1, configurationContext)).Items;
+                    case "VideoSinks":
+                        var videoSinks = (await _storageService.GetJsonObject<DynamicListContainerViewModel>("VideoSinks", 1, configurationContext)).Items;
                         return videoSinks.Select(s => new KeyValuePairObjectViewModel()
                         {
                             Id = Guid.NewGuid().ToString(),
@@ -387,7 +387,7 @@ namespace Avalanche.Api.Managers.Maintenance
 
             if (await SchemaIsValid(category.Schema, result, configurationContext))
             {
-                await _storageService.SaveJson(category.JsonKey + "Values", result, 1, configurationContext);
+                await _storageService.SaveJson(category.JsonKey, result, 1, configurationContext);
             }
             else
             {   //TODO: Pending Exceptions strategy
