@@ -158,10 +158,7 @@ namespace Avalanche.Api.Managers.Media
         public async Task SetPgsStateForSink(PgsSinkStateViewModel sinkState)
         {
             bool enabled = sinkState.Enabled;
-            // var config = await _storageService.GetJsonObject<PgsConfiguration>(nameof(PgsConfiguration), 1, ConfigurationContext.FromEnvironment());
-            // TODO - Don't hardcore, 1am demo night
-            //var config = new AliasIndexModel() { Alias = "4kiDp0", Index = "0" };
-            var config = new AliasIndexModel() { Alias = "BX4Comp", Index = "dp1" };
+            var config = await _storageService.GetJsonObject<PgsConfiguration>(nameof(PgsConfiguration), 1, ConfigurationContext.FromEnvironment());
 
             // pgs checkbox state must persist reboots
             // state client should handle this
@@ -170,7 +167,7 @@ namespace Avalanche.Api.Managers.Media
 
             // pgs is active, restore save/restore pgs for this display
             if (_currentPgsTimeoutState == PgsTimeoutModes.Pgs)
-                await UpdatePgsOnOneSink(sinkState.Sink, enabled, config);
+                await UpdatePgsOnOneSink(sinkState.Sink, enabled, config.Configuration.Source);
 
             var currentData = await _stateClient.GetData<PgsDisplayStateData>();
             var displayIndex = currentData?.DisplayStates.FindIndex(x =>
@@ -307,9 +304,7 @@ namespace Avalanche.Api.Managers.Media
             await _startStopLock.WaitAsync(_cts.Token);
             try
             {
-                //var config = await _storageService.GetJsonObject<PgsConfiguration>(nameof(PgsConfiguration), 1, ConfigurationContext.FromEnvironment());
-                // TODO - Don't hardcore, 1am demo night
-                var config = new AliasIndexModel() { Alias = "4kiDp0", Index = "0" };
+                var config = await _storageService.GetJsonObject<PgsConfiguration>(nameof(PgsConfiguration), 1, ConfigurationContext.FromEnvironment());
 
                 await SaveCurrentRoutes();
 
@@ -326,7 +321,7 @@ namespace Avalanche.Api.Managers.Media
 
                     request.Routes.Add(new RouteVideoRequest
                     {
-                        Source = _mapper.Map<AliasIndexModel, AliasIndexMessage>(config),
+                        Source = _mapper.Map<AliasIndexModel, AliasIndexMessage>(config.Configuration.Source),
                         Sink = _mapper.Map<VideoDeviceModel, AliasIndexMessage>(sink)
                     });
                 }

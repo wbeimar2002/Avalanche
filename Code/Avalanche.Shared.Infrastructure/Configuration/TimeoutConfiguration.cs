@@ -8,13 +8,18 @@ namespace Avalanche.Shared.Infrastructure.Configuration
 {
     public class TimeoutConfiguration : IConfigurationPoco
     {
-        public string FileName { get; set; }
-        public string TimeoutPath { get; set; }
-        public Shared.Domain.Models.Media.AliasIndexModel Source { get; set; }
-
+        public ConfigurationTimeoutConfiguration Configuration { get; set; }
+        
         public bool Validate()
         {
             return true;
         }
+    }
+
+    public class ConfigurationTimeoutConfiguration
+    {
+        public string FileName { get; set; }
+        public string TimeoutPath { get; set; }
+        public Shared.Domain.Models.Media.AliasIndexModel Source { get; set; }
     }
 }

@@ -8,14 +8,19 @@ namespace Avalanche.Shared.Infrastructure.Configuration
 {
     public class PgsConfiguration : IConfigurationPoco
     {
-        public string MediaPath { get; set; }
-        public PgsSettingsValuesPlayer Player { get; set; }
-        public Shared.Domain.Models.Media.AliasIndexModel Source { get; set; }
+        public ConfigurationPgsConfiguration Configuration { get; set; }
 
         public bool Validate()
         {
             return true;
         }
+    }
+
+    public class ConfigurationPgsConfiguration
+    {
+        public string MediaPath { get; set; }
+        public PgsSettingsValuesPlayer Player { get; set; }
+        public Shared.Domain.Models.Media.AliasIndexModel Source { get; set; }
     }
 
     public class PgsSettingsValuesPlayer

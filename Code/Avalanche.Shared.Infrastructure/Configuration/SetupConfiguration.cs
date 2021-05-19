@@ -10,7 +10,7 @@ namespace Avalanche.Shared.Infrastructure.Configuration
     {
         public GeneralSetupConfiguration General { get; set; }
         public RegistrationSetupConfiguration Registration { get; set; }
-        public RoutingModes SurgeryMode { get; set; }
+        
 
         public bool Validate()
         {
@@ -21,7 +21,7 @@ namespace Avalanche.Shared.Infrastructure.Configuration
     public class GeneralSetupConfiguration
     {
         public int Mode { get; set; }
-        public int SurgeryMode { get; set; }
+        public RoutingModes SurgeryMode { get; set; }
         public int ScreenMode { get; set; }
         public bool DepartmentsSupported { get; set; }
     }

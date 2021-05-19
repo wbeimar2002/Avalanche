@@ -86,7 +86,7 @@ namespace Avalanche.Api.Managers.Media
         {
             var setupSettings = await _storageService.GetJsonObject<SetupConfiguration>(nameof(SetupConfiguration), 1, configurationContext);
 
-            if (setupSettings.SurgeryMode == RoutingModes.Hardware)
+            if (setupSettings.General.SurgeryMode == RoutingModes.Hardware)
                 await _avidisService.ShowPreview(_mapper.Map<RegionModel, ShowPreviewRequest>(routingPreviewViewModel.Region));
 
             //TODO: Map this
