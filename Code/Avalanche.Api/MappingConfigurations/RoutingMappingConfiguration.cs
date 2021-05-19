@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Avalanche.Api.ViewModels;
 using Avalanche.Shared.Domain.Models.Media;
 using System;
 using System.Collections.Generic;

@@ -19,6 +19,7 @@ namespace Avalanche.Api.Managers.Media
         Task<VideoSourceModel> GetAlternativeSource(AliasIndexModel sinkModel);
         Task<IList<VideoSinkModel>> GetRoutingSinks();
 
+        Task<IList<DisplayRecordingViewModel>> GetDisplayRecordingState();
         Task SetDisplayRecordingEnabled(DisplayRecordingViewModel displayRecordingViewModel);
         Task HandleSinkSourceChanged(AliasIndexModel sink, AliasIndexModel source);
 
