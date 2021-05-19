@@ -224,7 +224,6 @@ namespace Avalanche.Api.Controllers.V1
         /// Add a procedure type
         /// </summary>
         /// <param name="procedureType"></param>
-        /// <param name="env"></param>
         /// <returns></returns>
         [HttpPost("procedureTypes")]
         [Produces(typeof(ProcedureTypeModel))]

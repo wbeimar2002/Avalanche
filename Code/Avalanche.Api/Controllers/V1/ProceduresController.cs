@@ -91,7 +91,6 @@ namespace Avalanche.Api.Controllers.V1
         /// <summary>
         /// Load the active procedure (if exists)
         /// </summary>
-        /// <param name="env"></param>
         /// <returns>Active Procedure model or null</returns>
         [HttpGet("active")]
         [Produces(typeof(ProcedureDetailsViewModel))]
@@ -144,7 +143,6 @@ namespace Avalanche.Api.Controllers.V1
         /// <summary>
         /// Discard Active Procedure
         /// </summary>
-        /// <param name="env"></param>
         /// <returns></returns>
         [HttpDelete("active")]
         [Produces(typeof(ProcedureDetailsViewModel))]
@@ -197,7 +195,6 @@ namespace Avalanche.Api.Controllers.V1
         /// <summary>
         /// Set ActiveProcedure's "RequiresUserConfirmation" flag to false.
         /// </summary>
-        /// <param name="env"></param>
         /// <returns></returns>
         [HttpDelete("active/confirmation")]
         public async Task<IActionResult> ConfirmActiveProcedure()

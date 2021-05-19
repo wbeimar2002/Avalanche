@@ -193,7 +193,6 @@ namespace Avalanche.Api.Controllers.V1
         /// <summary>
         /// Get operating sources
         /// </summary>
-        /// <param name="env"></param>
         /// <returns></returns>
         [HttpGet("operating/sources")]
         [Produces(typeof(IList<VideoSourceModel>))]

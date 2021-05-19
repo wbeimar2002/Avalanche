@@ -118,7 +118,6 @@ namespace Avalanche.Api.Controllers.V1
         /// <summary>
         /// Quick patient registration
         /// </summary>
-        /// <param name="env"></param>
         /// <returns></returns>
         [HttpPost("quick")]
         [Produces(typeof(PatientViewModel))]
@@ -147,7 +146,6 @@ namespace Avalanche.Api.Controllers.V1
         /// Search patient using keyword and paging
         /// </summary>
         /// <param name="filter"></param>
-        /// <param name="env"></param>
         /// <returns></returns>
         [HttpPost("filtered")]
         [Produces(typeof(PagedCollectionViewModel<PatientViewModel>))]
@@ -180,7 +178,6 @@ namespace Avalanche.Api.Controllers.V1
         /// Search patient using criterias and paging
         /// </summary>
         /// <param name="filter"></param>
-        /// <param name="env"></param>
         /// <returns></returns>
         [HttpPost("filteredDetailed")]
         [Produces(typeof(PagedCollectionViewModel<PatientViewModel>))]

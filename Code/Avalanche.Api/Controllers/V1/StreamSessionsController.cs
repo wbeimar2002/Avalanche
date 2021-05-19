@@ -111,7 +111,6 @@ namespace Avalanche.Api.Controllers.V1
         /// Stop WebRTC video reproduction
         /// </summary>
         /// <param name="message"></param>
-        /// <param name="env"></param>
         /// <returns></returns>
         [HttpDelete("")]
         public async Task<IActionResult> DeInitSession(WebRTCMessaggeModel message)
