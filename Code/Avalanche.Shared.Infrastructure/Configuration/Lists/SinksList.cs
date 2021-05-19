@@ -9,7 +9,7 @@ namespace Avalanche.Shared.Infrastructure.Configuration.Lists
     /// Contains a list of AliasIndex's which represent video sinks
     /// Common data type shared with PGS, timeout, and DBR for getting a list of displays enabled for feature X
     /// </summary>
-    public class SinksData
+    public class SinksList
     {
         public List<AliasIndexModel> Items { get; set; }
     }

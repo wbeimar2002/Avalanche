@@ -103,7 +103,7 @@ namespace Avalanche.Api.Managers.Maintenance
         public async Task<DynamicSectionViewModel> GetCategoryByKey(string key)
         {
             var configurationContext = _mapper.Map<UserModel, ConfigurationContext>(user);
-            var category = await _storageService.GetJsonObject<DynamicSectionViewModel>(key, 1, configurationContext);
+            var category = await _storageService.GetJsonFullObject<DynamicSectionViewModel>(key, 1, configurationContext);
             var settingValues = await _storageService.GetJsonDynamic(category.JsonKey, 1, configurationContext);
 
             var types = await _metadataManager.GetData(DataTypes.SettingTypes);
@@ -123,7 +123,7 @@ namespace Avalanche.Api.Managers.Maintenance
 
         public async Task<DynamicListViewModel> GetCategoryListByKey(string key)
         {
-            var category = await _storageService.GetJsonObject<DynamicListViewModel>(key, 1, configurationContext);
+            var category = await _storageService.GetJsonFullObject<DynamicListViewModel>(key, 1, configurationContext);
             if (category.SaveAsFile)
             {
                 var values = await _storageService.GetJsonObject<DynamicListContainerViewModel>(category.SourceKey, 1, configurationContext);

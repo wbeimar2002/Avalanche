@@ -26,10 +26,24 @@ namespace Avalanche.Api.Services.Maintenance
         {
             var json = await _client.GetConfiguration(configurationKey, Convert.ToUInt32(version), context);
 
-            var jObject = JObject.Parse(json);
-            JObject child = (JObject)jObject[configurationKey];
+            if (string.IsNullOrEmpty(json))
+                return null;
+            else
+            {
+                var jObject = JObject.Parse(json);
+                JObject child = null;
 
-            return json == null ? null : child;
+                if (jObject.ContainsKey(configurationKey))
+                    child = (JObject)jObject[configurationKey];
+
+                return child == null ? null : child;
+            }
+        }
+
+        public async Task<T> GetJsonFullObject<T>(string configurationKey, int version, ConfigurationContext context)
+        {
+            var json = await _client.GetConfiguration(configurationKey, Convert.ToUInt32(version), context);
+            return json.Get<T>();
         }
 
         public async Task<T> GetJsonObject<T>(string configurationKey, int version, ConfigurationContext context)
@@ -52,10 +66,9 @@ namespace Avalanche.Api.Services.Maintenance
             string jsonWrapper = @"{}";
             JObject jsonRoot = JObject.Parse(jsonWrapper);
 
-            var jObject = JObject.Parse(json);
-            jsonRoot.Add(new JProperty(configurationKey, jObject));
+            jsonRoot.Add(new JProperty(configurationKey, JObject.Parse(json)));
 
-            string finalJson = jObject.ToString(Newtonsoft.Json.Formatting.None);
+            string finalJson = jsonRoot.ToString(Newtonsoft.Json.Formatting.None);
             await _client.SaveConfiguration(configurationKey, Convert.ToUInt32(version), finalJson, "Site", kindId);
         }
     }
