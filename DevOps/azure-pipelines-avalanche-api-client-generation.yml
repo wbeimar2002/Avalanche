@@ -1,0 +1,50 @@
+name: $(BuildNumberPrefix)-push-docker-image-$(MajorVersion).$(MinorVersion).$(Patch).$(ReleaseStage)_$(MajorVersion).$(MinorVersion).$(Date:yyMM).$(Date:dd)$(Rev:rr)_$(Date:yyyyMMdd)T$(Date:hhmmss)
+
+trigger:
+  - dev
+  
+resources:
+  repositories:
+  - repository: devops
+    type: git
+    name: devops
+    ref: dev
+  - repository: avalanche-resources
+    type: git
+    name: avalanche-resources
+    ref: dev
+#pool:
+  #vmImage: $(PoolVmImage)
+
+pool: $(pool)
+
+variables:
+  
+  - group: 'vg-dev-avalanche-api'
+  
+  #- name: System.Debug
+    #value: true
+  
+stages:
+
+# stage for creating PR comments if nuget pkgs verssion are not up to date
+- template: pipeline\templates\nuget-version-check.yml@devops
+
+- stage: build
+
+  jobs:
+
+  - job: build_test_publish
+    steps:
+     
+     - checkout: self
+     - checkout: devops
+     - checkout: avalanche-resourcess
+
+     - task: PowerShell@2
+       displayName: List environmental variables
+       inputs:
+        targetType: 'inline'
+        script: 'Get-ChildItem -Path Env:\'
+ 
+     
