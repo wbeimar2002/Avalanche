@@ -60,7 +60,7 @@ namespace Avalanche.Api.Managers.Maintenance
 
             SettingsHelper.CleanSettings(category);
 
-            await _storageService.SaveJson(category.JsonKey + "Metadata", JsonConvert.SerializeObject(category), 1, configurationContext);
+            await _storageService.SaveJsonMetadata(category.JsonKey + "Metadata", JsonConvert.SerializeObject(category), 1, configurationContext);
         }
 
         public async Task SaveCategory(DynamicSectionViewModel category)
@@ -92,7 +92,7 @@ namespace Avalanche.Api.Managers.Maintenance
 
             if (await SchemaIsValid(category.Schema, result, configurationContext))
             {
-                await _storageService.SaveJson(category.SourceKey, result, 1, configurationContext);
+                await _storageService.SaveJsonObject(category.SourceKey, result, 1, configurationContext);
             }
             else
             {   //TODO: Pending Exceptions strategy
@@ -104,7 +104,7 @@ namespace Avalanche.Api.Managers.Maintenance
         {
             var configurationContext = _mapper.Map<UserModel, ConfigurationContext>(user);
             var category = await _storageService.GetJsonFullObject<DynamicSectionViewModel>(key, 1, configurationContext);
-            var settingValues = await _storageService.GetJsonDynamic(category.JsonKey, 1, configurationContext);
+            var settingValues = await _storageService.GetJson(category.JsonKey, 1, configurationContext);
 
             var types = await _metadataManager.GetData(DataTypes.SettingTypes);
             var policiesTypes = (await _storageService.GetJsonObject<ListContainerViewModel>("SettingsPolicies", 1, configurationContext)).Items;           
@@ -275,15 +275,13 @@ namespace Avalanche.Api.Managers.Maintenance
         {
             foreach (var section in rootSection.Sections)
             {
-                var sectionValues = settingValues == null ? null : settingValues[section.JsonKey];
-
                 await SetSources(section, types);
 
-                SettingsHelper.SetSettingValues(section, sectionValues, policiesTypes);
+                SettingsHelper.SetSettingValues(section, settingValues, policiesTypes);
 
                 if (section.Sections != null)
                 {
-                    await SetSettingsValues(section, sectionValues, types, policiesTypes);
+                    await SetSettingsValues(section, settingValues, types, policiesTypes);
                 }
             }
         }
@@ -373,7 +371,7 @@ namespace Avalanche.Api.Managers.Maintenance
                         }
                         else
                         {
-                            await _storageService.SaveJson(item.SourceKey, JsonConvert.SerializeObject(new { Items = item.SourceValues }), 1, configurationContext);
+                            await _storageService.SaveJsonObject(item.SourceKey, JsonConvert.SerializeObject(new { Items = item.SourceValues }), 1, configurationContext);
                             item.SourceValues = null;
                         }
                     }
@@ -387,7 +385,7 @@ namespace Avalanche.Api.Managers.Maintenance
 
             if (await SchemaIsValid(category.Schema, result, configurationContext))
             {
-                await _storageService.SaveJson(category.JsonKey, result, 1, configurationContext);
+                await _storageService.SaveJsonObject(category.JsonKey, result, 1, configurationContext);
             }
             else
             {   //TODO: Pending Exceptions strategy
@@ -401,7 +399,7 @@ namespace Avalanche.Api.Managers.Maintenance
                 return true;
             else
             {
-                dynamic dynamicSchema = await _storageService.GetJsonDynamic(schemaKey, 1, configurationContext);
+                dynamic dynamicSchema = await _storageService.GetJsonFullDynamic(schemaKey, 1, configurationContext);
 
                 if (dynamicSchema == null)
                     return true;

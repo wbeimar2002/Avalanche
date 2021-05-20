@@ -110,7 +110,7 @@ namespace Avalanche.Api.Managers.Media
 
                 var routes = sinks.Select(x => new RouteVideoRequest
                 {
-                    Source = _mapper.Map<AliasIndexModel, AliasIndexMessage>(config.Configuration.Source),
+                    Source = _mapper.Map<AliasIndexModel, AliasIndexMessage>(config.Source),
                     Sink = _mapper.Map<VideoDeviceModel, AliasIndexMessage>(x)
                 });
 
