@@ -331,6 +331,12 @@ namespace Avalanche.Api.Managers.Media
             var displays = (await _routingService.GetVideoSinks()).VideoSinks.Select(x => new VideoRoutingModels.AliasIndexModel(x.Sink.Alias, x.Sink.Index));
             var recordChannels = (await _recorderService.GetRecordingChannels()).Select(x => new VideoRoutingModels.AliasIndexModel(x.VideoSink.Alias, x.VideoSink.Index));
 
+            // filter down to the displays that actually have dbr enabled
+            var dbrSinks = await _storageService.GetJsonObject<SinksList>("DisplayBasedRecordingSinks", 1, ConfigurationContext.FromEnvironment());
+            displays = displays.Where(sink => dbrSinks.Items.Any(x =>
+                    string.Equals(x.Alias, sink.Alias, StringComparison.OrdinalIgnoreCase) &&
+                    string.Equals(x.Index, sink.Index, StringComparison.OrdinalIgnoreCase)));
+
             // map the first X displays to the first Y record channels
             // Zip starts at the beginning of each collection and stop when it hits the end of either colleciton
             // {a, b, c, d}.Zip({Rec1, Rec2}) turns into {(a, Rec1), (b, Rec2)}
