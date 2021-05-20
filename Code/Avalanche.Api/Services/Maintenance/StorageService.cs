@@ -9,6 +9,8 @@ using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using Avalanche.Api.Extensions;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Avalanche.Api.Services.Maintenance
 {
@@ -26,16 +28,48 @@ namespace Avalanche.Api.Services.Maintenance
         {
             var json = await _client.GetConfiguration(configurationKey, Convert.ToUInt32(version), context);
 
-            var jObject = JObject.Parse(json);
-            JObject child = (JObject)jObject[configurationKey];
+            if (json != null)
+            {
+                var jObject = JObject.Parse(json);
+                JObject child = (JObject)jObject[configurationKey];
 
-            return child.ToString();
+                return child.ToString();
+            }
+            else
+                return null;
         }
 
         public async Task<dynamic> GetJsonFullDynamic(string configurationKey, int version, ConfigurationContext context)
         {
             var json = await _client.GetConfiguration(configurationKey, Convert.ToUInt32(version), context);
             return json == null ? null : JObject.Parse(json);
+        }
+
+        public async Task<List<dynamic>> GetJsonDynamicList(string configurationKey, int version, ConfigurationContext context)
+        {
+            var json = await _client.GetConfiguration(configurationKey, Convert.ToUInt32(version), context);
+
+            if (string.IsNullOrEmpty(json))
+                return null;
+            else
+            {
+                var jObject = JObject.Parse(json);
+
+                JToken jToken = null;
+                jObject.TryGetValue(configurationKey, out jToken);
+
+                if (jToken != null)
+                {
+                    if (jToken is JArray)
+                    {
+                        JArray child = (JArray)jObject[configurationKey];
+                        return child == null ? null : child.Select(d => (dynamic)d).ToList();
+                    }
+                }
+
+                return null;
+
+            }
         }
 
         public async Task<dynamic> GetJsonDynamic(string configurationKey, int version, ConfigurationContext context)
@@ -47,19 +81,22 @@ namespace Avalanche.Api.Services.Maintenance
             else
             {
                 var jObject = JObject.Parse(json);
-                JObject child = null;
 
-                if (jObject.ContainsKey(configurationKey))
-                    child = (JObject)jObject[configurationKey];
+                JToken jToken = null;
+                jObject.TryGetValue(configurationKey, out jToken);
 
-                return child == null ? null : child;
+                if (jToken != null)
+                {
+                    if (jToken is JObject)
+                    {
+                        JObject child = (JObject)jObject[configurationKey];
+                        return child == null ? null : child;
+                    }
+                }
+
+                return null;
+                
             }
-        }
-
-        public async Task<T> GetJsonFullObject<T>(string configurationKey, int version, ConfigurationContext context)
-        {
-            var json = await _client.GetConfiguration(configurationKey, Convert.ToUInt32(version), context);
-            return json.Get<T>();
         }
 
         public async Task<T> GetJsonObject<T>(string configurationKey, int version, ConfigurationContext context)
@@ -67,9 +104,25 @@ namespace Avalanche.Api.Services.Maintenance
             var json = await _client.GetConfiguration(configurationKey, Convert.ToUInt32(version), context);
 
             var jObject = JObject.Parse(json);
-            JObject child = (JObject)jObject[configurationKey];
 
-            json = child.ToString();
+            JToken jToken = null;
+
+            jObject.TryGetValue(configurationKey, out jToken);
+
+            if (jToken != null)
+            {
+                if (jToken is JObject)
+                {
+                    JObject child = (JObject)jObject[configurationKey];
+                    json = child.ToString();
+                }
+
+                if (jToken is JArray)
+                {
+                    JArray child = (JArray)jObject[configurationKey];
+                    json = child.ToString();
+                }
+            }
 
             return json.Get<T>();
         }

@@ -56,7 +56,7 @@ namespace Avalanche.Api.Helpers
             return jsonRoot.ToString();
         }
 
-        public static void AddSettingValues(JObject rootSection, DynamicSectionViewModel section)
+        public static void AddSettingValues(JObject jsonRoot, DynamicSectionViewModel section)
         {
             if (section.Settings != null)
             {
@@ -64,26 +64,52 @@ namespace Avalanche.Api.Helpers
                 {
                     if (!string.IsNullOrEmpty(setting.JsonKey))
                     {
-                        var finalValue = Convert.ToInt32(setting.Policy) == (int)SettingsPolicies.UseDefaultValue ? setting.DefaultValue : setting.Value;
+                        var jObject = jsonRoot;
+                        var keys = setting.JsonKey.Split('.');
 
-                        switch (setting.SettingType)
+                        for (int i = 0; i < keys.Length; i++)
                         {
-                            case SettingTypes.Number:
-                                rootSection.Add(new JProperty(setting.JsonKey, Convert.ToInt32(finalValue)));
-                                break;
-                            case SettingTypes.Boolean:
-                                rootSection.Add(new JProperty(setting.JsonKey, Convert.ToBoolean(finalValue)));
-                                break;
-                            case SettingTypes.Date:
-                                rootSection.Add(new JProperty(setting.JsonKey, Convert.ToDateTime(finalValue)));
-                                break;
-                            case SettingTypes.Undefined:
-                            case SettingTypes.Text:
-                            default:
-                                rootSection.Add(new JProperty(setting.JsonKey, finalValue));
-                                break;
+                            if (i == keys.Length - 1)
+                            {
+                                var finalValue = Convert.ToInt32(setting.Policy) == (int)SettingsPolicies.UseDefaultValue ? setting.DefaultValue : setting.Value;
+
+                                switch (setting.SettingType)
+                                {
+                                    case SettingTypes.Number:
+                                        jObject.Add(new JProperty(keys[i], Convert.ToInt32(finalValue)));
+                                        break;
+                                    case SettingTypes.Boolean:
+                                        jObject.Add(new JProperty(keys[i], Convert.ToBoolean(finalValue)));
+                                        break;
+                                    case SettingTypes.Date:
+                                        jObject.Add(new JProperty(keys[i], Convert.ToDateTime(finalValue)));
+                                        break;
+                                    case SettingTypes.Undefined:
+                                    case SettingTypes.Text:
+                                    default:
+                                        jObject.Add(new JProperty(keys[i], finalValue));
+                                        break;
+                                }
+                            }
+                            else
+                            {
+                                JToken token = null;
+                                var exists = jObject.TryGetValue(keys[i], out token);
+
+                                if (exists)
+                                {
+                                    if (token is JObject)
+                                    {
+                                        jObject = (JObject)jObject[keys[i]];
+                                    }
+                                }
+                                else
+                                {
+                                    jObject.Add(new JProperty(keys[i], JObject.Parse("{}")));
+                                    jObject = (JObject)jObject[keys[i]];
+                                }
+                            }
                         }
-                        
                     }
                 }
             }
@@ -92,10 +118,7 @@ namespace Avalanche.Api.Helpers
             {
                 foreach (var item in section.Sections)
                 {
-                    rootSection.Add(new JProperty(item.JsonKey, JObject.Parse("{}")));
-                    JObject childSection = (JObject)rootSection[item.JsonKey];
-
-                    AddSettingValues(childSection, item);
+                    AddSettingValues(jsonRoot, item);
                 }
             }
         }
@@ -141,18 +164,18 @@ namespace Avalanche.Api.Helpers
                         else
                         {
                             var keys = setting.JsonKey.Split('.');
-                            var child = JObject.Parse(settingsValues);
+                            var jObject = JObject.Parse(settingsValues);
 
                             string value = null;
 
                             foreach (var key in keys)
                             {
-                                var jValue = child[key];
+                                var jValue = jObject[key];
 
                                 if (jValue is JValue finalValue)
                                     value = finalValue.ToString();
                                 else
-                                    child = (JObject)child[key];
+                                    jObject = (JObject)jObject[key];
                             }                            
 
                             setting.Value = setting.SettingType == SettingTypes.Boolean ? value.ToLower() : value;

@@ -8,7 +8,6 @@ using Avalanche.Shared.Domain.Enumerations;
 using Avalanche.Shared.Domain.Models;
 using Avalanche.Shared.Domain.Models.Media;
 using Avalanche.Shared.Infrastructure.Configuration;
-using Avalanche.Shared.Infrastructure.Configuration.Lists;
 using Avalanche.Shared.Infrastructure.Models;
 
 using Ism.Common.Core.Configuration.Models;
@@ -122,7 +121,7 @@ namespace Avalanche.Api.Managers.Media
         public async Task<IList<VideoSinkModel>> GetPgsSinks()
         {
             // this needs to return the same data that routing does
-            var pgsSinksData = await _storageService.GetJsonObject<SinksList>("PgsSinks", 1, ConfigurationContext.FromEnvironment());
+            var pgsSinksData = await _storageService.GetJsonObject<List<AliasIndexModel>>("PgsSinks", 1, ConfigurationContext.FromEnvironment());
 
             var routingSinks = await _routingService.GetVideoSinks();
             var routes = await _routingService.GetCurrentRoutes();
@@ -133,7 +132,7 @@ namespace Avalanche.Api.Managers.Media
             // get the routing sinks that are also called out in the pgs sink collection
 
             var pgsSinks = routingSinks.VideoSinks.Where(routingSink =>
-                pgsSinksData.Items.Any(pgsSink => string.Equals(routingSink.Sink.Alias, routingSink.Sink.Alias, StringComparison.OrdinalIgnoreCase)
+                pgsSinksData.Any(pgsSink => string.Equals(routingSink.Sink.Alias, routingSink.Sink.Alias, StringComparison.OrdinalIgnoreCase)
                 && pgsSink.Index == routingSink.Sink.Index));
 
             var apiSinks = _mapper.Map<IList<VideoSinkMessage>, IList<VideoSinkModel>>(pgsSinks.ToList());
