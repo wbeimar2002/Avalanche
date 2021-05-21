@@ -315,5 +315,23 @@ namespace Avalanche.Api.Test.Managers
             // pgs player is almost always in pgs mode
             _pgsTimeoutService.Verify(x => x.SetPgsTimeoutMode(new SetPgsTimeoutModeRequest { Mode = PgsTimeoutModeEnum.PgsTimeoutModePgs }));
         }
+
+        [Test]
+        public void Pgs_UnCheckInvalidDisplay_Throws()
+        {
+            // Arrange is done in Setup
+            // changes the checked state of a display that does not exist and ensures it throws
+
+            // Act
+            // Assert
+            Assert.ThrowsAsync<InvalidOperationException>(async () =>
+            {
+                await _pgsTimeoutManager.SetPgsStateForSink(new PgsSinkStateViewModel
+                {
+                    Enabled = false,
+                    Sink = new AliasIndexViewModel { Alias = "foobar", Index = "Does not exist" }
+                });
+            });
+        }
     }
 }
