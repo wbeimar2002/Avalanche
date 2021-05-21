@@ -180,16 +180,16 @@ stages:
        displayName: 'Docker image -Tag w/ latest'
        condition: and(succeeded(),  ne(variables['Build.Reason'], 'PullRequest'))
 
-     - task: Docker@2
-       inputs:
-        containerRegistry: acr-dev-avalanche-connection
-        repository: $(ImageName)
-        command: 'push'
-        tags: |
-          $(tag)
-          latest
-       displayName: 'Docker push'
-       condition: and(succeeded(),  ne(variables['Build.Reason'], 'PullRequest'))
+     #- task: Docker@2
+       #inputs:
+        #containerRegistry: acr-dev-avalanche-connection
+        #repository: $(ImageName)
+        #command: 'push'
+        #tags: |
+          #$(tag)
+          #latest
+       #displayName: 'Docker push'
+       #condition: and(succeeded(),  ne(variables['Build.Reason'], 'PullRequest'))
         
      - task: CopyFiles@2
        #condition: and(succeeded(),  eq(variables['Build.Reason'], 'PullRequest'))
