@@ -121,13 +121,13 @@ namespace Avalanche.Api.MappingConfigurations
             CreateMap < Avalanche.Shared.Domain.Models.UserModel, ConfigurationContext>()
                 .ForMember(dest =>
                     dest.IdnId,
-                    opt => opt.Ignore())
+                    opt => opt.MapFrom(src => src.IdnId))
                 .ForMember(dest =>
                     dest.SiteId,
-                    opt => opt.Ignore())
+                    opt => opt.MapFrom(src => src.SiteId))
                 .ForMember(dest =>
                     dest.SystemId,
-                    opt => opt.Ignore())
+                    opt => opt.MapFrom(src => src.SystemId))
                 .ForMember(dest =>
                     dest.UserId,
                     opt => opt.Ignore())

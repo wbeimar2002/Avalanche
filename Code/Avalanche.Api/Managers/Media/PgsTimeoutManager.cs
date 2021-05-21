@@ -8,6 +8,7 @@ using Avalanche.Shared.Domain.Enumerations;
 using Avalanche.Shared.Domain.Models;
 using Avalanche.Shared.Domain.Models.Media;
 using Avalanche.Shared.Infrastructure.Configuration;
+using Avalanche.Shared.Infrastructure.Configuration.Lists;
 using Avalanche.Shared.Infrastructure.Models;
 
 using Ism.Common.Core.Configuration.Models;

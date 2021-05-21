@@ -17,6 +17,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Avalanche.Shared.Infrastructure.Configuration;
+using Avalanche.Shared.Infrastructure.Configuration.Lists;
 
 namespace Avalanche.Api.Managers.Media
 {
@@ -83,10 +84,9 @@ namespace Avalanche.Api.Managers.Media
 
         public async Task ShowPreview(RoutingPreviewViewModel routingPreviewViewModel)
         {
-            //TODO: This rules is not in any PBI yet.
-            var surgerySettings = await _storageService.GetJsonDynamic("SurgerySettingsValues", 1, configurationContext);
+            var setupSettings = await _storageService.GetJsonObject<SetupConfiguration>(nameof(SetupConfiguration), 1, configurationContext);
 
-            if (surgerySettings.Mode == RoutingModes.Hardware)
+            if (setupSettings.General.SurgeryMode == RoutingModes.Hardware)
                 await _avidisService.ShowPreview(_mapper.Map<RegionModel, ShowPreviewRequest>(routingPreviewViewModel.Region));
 
             //TODO: Map this
@@ -189,7 +189,7 @@ namespace Avalanche.Api.Managers.Media
             var routes = await _routingService.GetCurrentRoutes();
 
             // any display not in the will not have the record buttons next to it
-            var dbrSinks = await _storageService.GetJsonObject<SinksData>("DisplayBasedRecordingSinksData", 1, ConfigurationContext.FromEnvironment());
+            var dbrSinks = await _storageService.GetJsonObject<SinksList>("DisplayBasedRecordingSinks", 1, ConfigurationContext.FromEnvironment());
 
             var listResult = _mapper.Map<IList<VideoSinkMessage>, IList<VideoSinkModel>>(sinks.VideoSinks);
             foreach (var sink in listResult)
@@ -211,6 +211,24 @@ namespace Avalanche.Api.Managers.Media
                     string.Equals(x.Index, sink.Sink.Index, StringComparison.OrdinalIgnoreCase));
             }
             return listResult;
+        }
+
+        public async Task<IList<DisplayRecordingViewModel>> GetDisplayRecordingState()
+        {
+            var currentData = await _stateClient.GetData<VideoRoutingModels.DisplayRecordStateData>();
+            var recordChannels = await _recorderService.GetRecordingChannels();
+
+            return currentData?.DisplayState?.Select(d =>
+            {
+                var recordChan = _mapper.Map<RecordingChannelModel>(recordChannels?.FirstOrDefault(r =>
+                        string.Equals(r.VideoSink.Alias, d.RecordChannelAliasIndex?.Alias, StringComparison.OrdinalIgnoreCase)
+                        && string.Equals(r.VideoSink.Index, d.RecordChannelAliasIndex?.Index, StringComparison.OrdinalIgnoreCase)));
+
+                return new DisplayRecordingViewModel(
+                    _mapper.Map<AliasIndexModel>(d.DisplayAliasIndex),
+                    recordChan,
+                    null != recordChan);
+            })?.ToList();
         }
 
         public async Task SetDisplayRecordingEnabled(DisplayRecordingViewModel displayRecordingViewModel)
@@ -278,43 +296,27 @@ namespace Avalanche.Api.Managers.Media
 
         private async Task UpdateDisplayRecordingState(DisplayRecordingViewModel displayRecordingViewModel)
         {
-            var currentData = await _stateClient.GetData<VideoRoutingModels.DisplayRecordStateData>();
-
-            var displayIndex = currentData?.DisplayState?.FindIndex(x =>
-                string.Equals(x.DisplayAliasIndex.Alias, displayRecordingViewModel.Display.Alias, StringComparison.OrdinalIgnoreCase) &&
-                x.DisplayAliasIndex.Index == displayRecordingViewModel.Display.Index) ?? -1;
+            var currentData = await _stateClient.GetData<VideoRoutingModels.DisplayRecordStateData>() ?? new VideoRoutingModels.DisplayRecordStateData();
+            if (null == currentData.DisplayState)
+            {
+                currentData.DisplayState = new List<VideoRoutingModels.DisplayRecordState>();
+            }
 
             var displayAliasIndex = new VideoRoutingModels.AliasIndexModel(displayRecordingViewModel.Display.Alias, displayRecordingViewModel.Display.Index);
-
             var recordAliasIndex = displayRecordingViewModel.Enabled
                 ? new VideoRoutingModels.AliasIndexModel(displayRecordingViewModel.RecordChannel.VideoSink.Alias, displayRecordingViewModel.RecordChannel.VideoSink.Index)
                 : new VideoRoutingModels.AliasIndexModel();
 
-            await _stateClient.AddOrUpdateData(
-                new VideoRoutingModels.DisplayRecordStateData()
-                {
-                    DisplayState = new List<VideoRoutingModels.DisplayRecordState> 
-                    { 
-                        new VideoRoutingModels.DisplayRecordState() 
-                        { 
-                            DisplayAliasIndex = displayAliasIndex, 
-                            RecordChannelAliasIndex = recordAliasIndex 
-                        } 
-                    }
-                },
-                x =>
-                {
-                    // default state won't have an entry for a display
-                    if (displayIndex < 0)
-                    {
-                        x.Add(data => data.DisplayState, new VideoRoutingModels.DisplayRecordState { DisplayAliasIndex = displayAliasIndex, RecordChannelAliasIndex = recordAliasIndex });
-                    }
-                    else
-                    {
-                        x.Replace(data => data.DisplayState[displayIndex].RecordChannelAliasIndex, recordAliasIndex);
-                    }
-                });
+            // find all set to the same record channel and clear them
+            currentData.DisplayState.RemoveAll(d => 
+                string.Equals(d.RecordChannelAliasIndex?.Alias, recordAliasIndex.Alias, StringComparison.OrdinalIgnoreCase)
+                && string.Equals(d.RecordChannelAliasIndex?.Index, recordAliasIndex.Index, StringComparison.OrdinalIgnoreCase));
 
+            // add the new
+            currentData.DisplayState.Add(new VideoRoutingModels.DisplayRecordState { DisplayAliasIndex = displayAliasIndex, RecordChannelAliasIndex = recordAliasIndex });
+
+            // replace existing state data (this is too complex for json patch)
+            await _stateClient.PersistData(currentData);
         }
 
         /// <summary>
@@ -329,6 +331,12 @@ namespace Avalanche.Api.Managers.Media
             // get displays and record channels and convert them to system state model aliasIndexes
             var displays = (await _routingService.GetVideoSinks()).VideoSinks.Select(x => new VideoRoutingModels.AliasIndexModel(x.Sink.Alias, x.Sink.Index));
             var recordChannels = (await _recorderService.GetRecordingChannels()).Select(x => new VideoRoutingModels.AliasIndexModel(x.VideoSink.Alias, x.VideoSink.Index));
+
+            // filter down to the displays that actually have dbr enabled
+            var dbrSinks = await _storageService.GetJsonObject<SinksList>("DisplayBasedRecordingSinks", 1, ConfigurationContext.FromEnvironment());
+            displays = displays.Where(sink => dbrSinks.Items.Any(x =>
+                    string.Equals(x.Alias, sink.Alias, StringComparison.OrdinalIgnoreCase) &&
+                    string.Equals(x.Index, sink.Index, StringComparison.OrdinalIgnoreCase)));
 
             // map the first X displays to the first Y record channels
             // Zip starts at the beginning of each collection and stop when it hits the end of either colleciton
