@@ -24,19 +24,37 @@ namespace Avalanche.Api.Services.Maintenance
             _client = client;
         }
 
-        public async Task<string> GetJson(string configurationKey, int version, ConfigurationContext context)
+        public async Task UpdateJsonProperty(string configurationKey, string jsonKey, string result, int version, ConfigurationContext context)
         {
             var json = await _client.GetConfiguration(configurationKey, Convert.ToUInt32(version), context);
 
-            if (json != null)
-            {
-                var jObject = JObject.Parse(json);
-                JObject child = (JObject)jObject[configurationKey];
+            var keys = jsonKey.Split('.');
+            var jObject = JObject.Parse(json);
 
-                return child.ToString();
+            for (int i = 0; i < keys.Length; i++)
+            {
+                if (i == keys.Length - 1)
+                {
+                    jObject.Add(new JProperty(keys[i], JObject.Parse(result)));
+                }
+                else
+                {
+                    jObject = (JObject)jObject[keys[i]];
+                }
             }
-            else
-                return null;
+        }
+
+        public async Task<T> GetJsonObject<T>(string configurationKey, int version, ConfigurationContext context)
+        {
+            var json = await _client.GetConfiguration(configurationKey, Convert.ToUInt32(version), context);
+            json = GetJson(configurationKey, json);
+            return json.Get<T>();
+        }
+
+        public async Task<string> GetJson(string configurationKey, int version, ConfigurationContext context)
+        {
+            var json = await _client.GetConfiguration(configurationKey, Convert.ToUInt32(version), context);
+            return GetJson(configurationKey, json);
         }
 
         public async Task<dynamic> GetJsonFullDynamic(string configurationKey, int version, ConfigurationContext context)
@@ -94,37 +112,8 @@ namespace Avalanche.Api.Services.Maintenance
                     }
                 }
 
-                return null;
-                
+                return null; 
             }
-        }
-
-        public async Task<T> GetJsonObject<T>(string configurationKey, int version, ConfigurationContext context)
-        {
-            var json = await _client.GetConfiguration(configurationKey, Convert.ToUInt32(version), context);
-
-            var jObject = JObject.Parse(json);
-
-            JToken jToken = null;
-
-            jObject.TryGetValue(configurationKey, out jToken);
-
-            if (jToken != null)
-            {
-                if (jToken is JObject)
-                {
-                    JObject child = (JObject)jObject[configurationKey];
-                    json = child.ToString();
-                }
-
-                if (jToken is JArray)
-                {
-                    JArray child = (JArray)jObject[configurationKey];
-                    json = child.ToString();
-                }
-            }
-
-            return json.Get<T>();
         }
 
         public async Task SaveJsonObject(string configurationKey, string json, int version, ConfigurationContext context)
@@ -146,6 +135,32 @@ namespace Avalanche.Api.Services.Maintenance
             var kind = await _client.GetConfigurationKinds();
             var kindId = context.SiteId;
             await _client.SaveConfiguration(configurationKey, Convert.ToUInt32(version), json, "Site", kindId);
+        }
+
+        private string GetJson(string configurationKey, string json)
+        {
+            var jObject = JObject.Parse(json);
+
+            JToken jToken = null;
+
+            jObject.TryGetValue(configurationKey, out jToken);
+
+            if (jToken != null)
+            {
+                if (jToken is JObject)
+                {
+                    JObject child = (JObject)jObject[configurationKey];
+                    json = child.ToString();
+                }
+
+                if (jToken is JArray)
+                {
+                    JArray child = (JArray)jObject[configurationKey];
+                    json = child.ToString();
+                }
+            }
+
+            return json;
         }
     }
 }

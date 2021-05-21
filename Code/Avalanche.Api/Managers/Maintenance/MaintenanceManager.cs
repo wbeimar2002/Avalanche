@@ -65,13 +65,13 @@ namespace Avalanche.Api.Managers.Maintenance
 
         public async Task SaveCategory(DynamicSectionViewModel category)
         {
-            await SaveSources(category);
+            await SaveSources(category, category.JsonKey);
 
             if (category.Sections != null)
             {
                 foreach (var section in category.Sections)
                 {
-                    await SaveSources(section);
+                    await SaveSources(section, category.JsonKey);
                 }
             }
 
@@ -86,18 +86,33 @@ namespace Avalanche.Api.Managers.Maintenance
                 await SaveCustomEntity(user, category, action);
         }
 
-        private async Task SaveCustomListFile(DynamicListViewModel category)
+        private async Task SaveEmbeddedList(string settingsKey, string jsonKey, DynamicListViewModel customList)
         {
-            var result = JsonConvert.SerializeObject(new { Items = category.Data });
+            var result = JsonConvert.SerializeObject(customList.Data);
 
-            if (await SchemaIsValid(category.Schema, result, configurationContext))
+            if (await SchemaIsValid(customList.Schema, result, configurationContext))
             {
-                await _storageService.SaveJsonObject(category.SourceKey, result, 1, configurationContext);
+                await _storageService.UpdateJsonProperty(settingsKey, jsonKey, result, 1, configurationContext);
+            }
+            else
+            {
+                //TODO: Pending Exceptions strategy
+                throw new ValidationException("Json Schema Invalid for " + customList.SourceKey);
+            }
+        }
+
+        private async Task SaveCustomListFile(DynamicListViewModel customList)
+        {
+            var result = JsonConvert.SerializeObject(customList.Data);
+
+            if (await SchemaIsValid(customList.Schema, result, configurationContext))
+            {
+                await _storageService.SaveJsonObject(customList.SourceKey, result, 1, configurationContext);
             }
             else
             {   
                 //TODO: Pending Exceptions strategy
-                throw new ValidationException("Json Schema Invalid for " + category.SourceKey);
+                throw new ValidationException("Json Schema Invalid for " + customList.SourceKey);
             }
         }
 
@@ -110,7 +125,7 @@ namespace Avalanche.Api.Managers.Maintenance
             var types = await _metadataManager.GetData(DataTypes.SettingTypes);
             var policiesTypes = (await _storageService.GetJsonObject<List<KeyValuePairViewModel>>("SettingsPolicies", 1, configurationContext));           
 
-            await SetSources(category, types);
+            await SetSources(category, types, settingValues);
 
             SettingsHelper.SetSettingValues(category, settingValues, policiesTypes);
 
@@ -130,11 +145,11 @@ namespace Avalanche.Api.Managers.Maintenance
             return await BuildCategoryList(category, values);
         }
 
-        public async Task<DynamicListViewModel> GetEmbeddedListByKey(string key)
+        public async Task<DynamicListViewModel> GetEmbeddedListByKey(string settingValues, string listKey)
         {
-            var category = await _storageService.GetJsonObject<DynamicListViewModel>(key, 1, configurationContext);
-            List<ExpandoObject> values = new List<ExpandoObject>();
-            //TODO: Get items from the embbeded list
+            var category = await _storageService.GetJsonObject<DynamicListViewModel>(listKey, 1, configurationContext);
+            var values = SettingsHelper.GetEmbeddedList(category.SourceKey, settingValues);
+
             return await BuildCategoryList(category, values);
         }
 
@@ -290,7 +305,7 @@ namespace Avalanche.Api.Managers.Maintenance
         {
             foreach (var section in rootSection.Sections)
             {
-                await SetSources(section, types);
+                await SetSources(section, types, settingValues);
 
                 SettingsHelper.SetSettingValues(section, settingValues, policiesTypes);
 
@@ -313,7 +328,7 @@ namespace Avalanche.Api.Managers.Maintenance
             return await _storageService.GetJsonDynamic(key, 1, configurationContext);
         }
 
-        private async Task SetSources(DynamicSectionViewModel category, IList<KeyValuePairViewModel> types)
+        private async Task SetSources(DynamicSectionViewModel category, IList<KeyValuePairViewModel> types, string settingValues)
         {
             if (category!= null && category.Settings != null)
             {
@@ -325,7 +340,7 @@ namespace Avalanche.Api.Managers.Maintenance
                             item.CustomList = await GetCategoryListByKey(item.SourceKey);
                             break;
                         case VisualStyles.EmbeddedList:
-                            item.CustomList = await GetEmbeddedListByKey(item.SourceKey);
+                            item.CustomList = await GetEmbeddedListByKey(settingValues, item.SourceKey);
                             break;
                         case VisualStyles.FilePicker:
 
@@ -375,7 +390,7 @@ namespace Avalanche.Api.Managers.Maintenance
             }
         }
 
-        private async Task SaveSources(DynamicSectionViewModel section)
+        private async Task SaveSources(DynamicSectionViewModel section, string settingsKey)
         {
             if (section.Settings != null)
             {
@@ -385,16 +400,17 @@ namespace Avalanche.Api.Managers.Maintenance
                     {
                         if (item.VisualStyle == VisualStyles.ExternalList)
                         {
-                            var category = item.CustomList;
+                            var customList = item.CustomList;
 
-                            if (category.SaveAsFile)
-                                await SaveCustomListFile(category);
+                            if (customList.SaveAsFile)
+                                await SaveCustomListFile(customList);
                             else
-                                await SaveCustomEntities(user, category);
+                                await SaveCustomEntities(user, customList);
                         }
                         else if (item.VisualStyle == VisualStyles.EmbeddedList)
                         {
-                            //TODO: Save the changes in the settings file
+                            var embeddedList = item.CustomList;
+                            await SaveEmbeddedList(settingsKey, item.JsonKey, embeddedList);
                         }
                         else
                         {
@@ -443,15 +459,15 @@ namespace Avalanche.Api.Managers.Maintenance
             }
         }
 
-        private async Task SaveCustomEntity(UserModel user, DynamicListViewModel category, DynamicListActions action)
+        private async Task SaveCustomEntity(UserModel user, DynamicListViewModel customList, DynamicListActions action)
         {
-            switch (category.SourceKey)
+            switch (customList.SourceKey)
             {
                 case "Departments":
-                    await SaveDepartments(action, category.Entity);
+                    await SaveDepartments(action, customList.Entity);
                     break;
                 case "ProcedureTypes":
-                    await SaveProcedureTypes(action, category.Entity);
+                    await SaveProcedureTypes(action, customList.Entity);
                     break;
                 default:
                     //TODO: Pending Exceptions strategy

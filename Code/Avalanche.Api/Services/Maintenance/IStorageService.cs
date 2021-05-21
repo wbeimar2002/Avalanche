@@ -7,7 +7,6 @@ namespace Avalanche.Api.Services.Maintenance
     public interface IStorageService
     {
         Task<string> GetJson(string configurationKey, int version, ConfigurationContext context);
-        
         Task<T> GetJsonObject<T>(string configurationKey, int version, ConfigurationContext context);
 
         Task<dynamic> GetJsonFullDynamic(string configurationKey, int version, ConfigurationContext context);
@@ -16,5 +15,7 @@ namespace Avalanche.Api.Services.Maintenance
 
         Task SaveJsonObject(string configurationKey, string json, int version, ConfigurationContext context);
         Task SaveJsonMetadata(string configurationKey, string json, int version, ConfigurationContext context);
+
+        Task UpdateJsonProperty(string settingsKey, string jsonKey, string result, int version, ConfigurationContext context);
     }
 }

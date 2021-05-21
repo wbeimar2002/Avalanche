@@ -1,6 +1,7 @@
 ﻿using Avalanche.Api.Extensions;
 using Avalanche.Api.ViewModels;
 using Avalanche.Shared.Infrastructure.Enumerations;
+using Avalanche.Shared.Infrastructure.Extensions;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
@@ -183,6 +184,37 @@ namespace Avalanche.Api.Helpers
                     }
                 }
             }
+        }
+
+        public static List<ExpandoObject> GetEmbeddedList(string jsonKey, string settingsValues)
+        {
+            var keys = jsonKey.Split('.');
+            var jObject = JObject.Parse(settingsValues);
+
+            for (int i = 0; i < keys.Length; i++)
+            {
+                if (i == keys.Length - 1)
+                {
+                    JToken jToken = null;
+                    jObject.TryGetValue(keys[i], out jToken);
+
+                    if (jToken != null)
+                    {
+                        if (jToken is JArray)
+                        {
+                            JArray child = (JArray)jObject[keys[i]];
+                            string json = child.ToString();
+                            return json.Get<List<ExpandoObject>>();
+                        }
+                    }
+                }
+                else
+                {
+                    jObject = (JObject)jObject[keys[i]];
+                }
+            }
+
+            return null;
         }
     }
 }

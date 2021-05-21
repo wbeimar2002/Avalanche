@@ -332,8 +332,8 @@ namespace Avalanche.Api.Managers.Media
             var recordChannels = (await _recorderService.GetRecordingChannels()).Select(x => new VideoRoutingModels.AliasIndexModel(x.VideoSink.Alias, x.VideoSink.Index));
 
             // filter down to the displays that actually have dbr enabled
-            var dbrSinks = await _storageService.GetJsonObject<SinksList>("DisplayBasedRecordingSinks", 1, ConfigurationContext.FromEnvironment());
-            displays = displays.Where(sink => dbrSinks.Items.Any(x =>
+            var dbrSinks = await _storageService.GetJsonObject<List<AliasIndexModel>>("DisplayBasedRecordingSinks", 1, ConfigurationContext.FromEnvironment());
+            displays = displays.Where(sink => dbrSinks.Any(x =>
                     string.Equals(x.Alias, sink.Alias, StringComparison.OrdinalIgnoreCase) &&
                     string.Equals(x.Index, sink.Index, StringComparison.OrdinalIgnoreCase)));
 
