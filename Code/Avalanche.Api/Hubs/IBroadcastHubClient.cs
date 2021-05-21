@@ -35,6 +35,8 @@ namespace Avalanche.Api.Hubs
 
         Task OnRecorderStateChanged(RecorderStateEvent evt);
 
-        Task OnTimeoutStateDataChanged(TimeoutStateData evt);        
+        Task OnTimeoutStateDataChanged(TimeoutStateData evt);
+
+        Task OnPgsTimeoutRoomStateChanged(PgsTimeoutRoomStateEvent evt);
     }
 }
