@@ -31,7 +31,7 @@ namespace Avalanche.Api.Services.Media
 
 
         
-        Task<GetTimeoutPdfPathResponse> GetTimeoutPdfPath();
+        Task<GetTimeoutPdfFileResponse> GetTimeoutPdfFileName();
         Task<GetTimeoutPageCountResponse> GetTimeoutPageCount();
         Task<GetTimeoutPageResponse> GetTimeoutPage();
         Task SetTimeoutPage(SetTimeoutPageRequest request);
