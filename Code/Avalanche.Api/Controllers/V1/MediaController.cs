@@ -23,8 +23,7 @@ namespace Avalanche.Api.Controllers.V1
 {
     [Route("[controller]")]
     [ApiController]
-#warning undo before PR
-    //[Authorize]
+    [Authorize]
     public class MediaController : ControllerBase
     {
         private readonly ILogger<MediaController> _logger;

@@ -1,29 +1,19 @@
 ﻿using AutoMapper;
-
-using Avalanche.Api.Services.Maintenance;
 using Avalanche.Api.Services.Media;
-using Avalanche.Api.Utilities;
 using Avalanche.Api.ViewModels;
 using Avalanche.Shared.Domain.Enumerations;
-using Avalanche.Shared.Domain.Models;
 using Avalanche.Shared.Domain.Models.Media;
 using Avalanche.Shared.Infrastructure.Configuration;
-using Avalanche.Shared.Infrastructure.Configuration.Lists;
-using Avalanche.Shared.Infrastructure.Models;
-
-using Ism.Common.Core.Configuration.Models;
 using Ism.PgsTimeout.V1.Protos;
 using Ism.Routing.V1.Protos;
 using Ism.SystemState.Client;
 using Ism.SystemState.Models.PgsTimeout;
-
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-
 using static Ism.Utility.Core.Preconditions;
 
 namespace Avalanche.Api.Managers.Media
@@ -59,20 +49,6 @@ namespace Avalanche.Api.Managers.Media
 
         /// <summary>
         /// The current room state. Note that this is different than the pgs player application state
-        /// 
-        /// Is the room in PGS, timeout or none
-        /// Used to determine if we need to save the current routes or not
-        /// 
-        /// For example, when pgs is started, we want to save the current routes
-        /// If you then go directly to timeout, we don't want to save the current routes because it would just be "PGS on all displays"
-        /// We only save routes when transitioning from idle to pgs/timeout
-        /// Also, saved routes are only restored when transisioning back to idle
-        /// 
-        /// Cases to test
-        /// idle->pgs->idle
-        /// idle->timeout->idle
-        /// idle->pgs->timeout->pgs (click finish timeout)
-        /// idle->pgs->timeout->idle (start timeout, then navigate to video routing tab)
         /// </summary>
         private PgsTimeoutRoomState _currentPgsTimeoutState = PgsTimeoutRoomState.Idle;
 
@@ -132,9 +108,7 @@ namespace Avalanche.Api.Managers.Media
                 {
                     Sink = x,
                     // if the state data has no entry for a display, it defaults to checked
-                    Enabled = pgsData?.DisplayStates.SingleOrDefault(y =>
-                        string.Equals(y.AliasIndex.Alias, x.Alias, StringComparison.OrdinalIgnoreCase) &&
-                        string.Equals(y.AliasIndex.Index, x.Index, StringComparison.OrdinalIgnoreCase))?.Enabled ?? true
+                    Enabled = pgsData?.DisplayStates.SingleOrDefault(y => AliasIndexEquals((y.AliasIndex.Alias, y.AliasIndex.Index), (x.Alias, x.Index)))?.Enabled ?? true
                 }).ToList();
 
             return displayStates;
@@ -152,16 +126,14 @@ namespace Avalanche.Api.Managers.Media
 
             // get the routing sinks that are also called out in the pgs sink collection
             var pgsSinks = routingSinks.VideoSinks.Where(routingSink =>
-                _pgsConfig.Sinks.Any(pgsSink =>
-                    string.Equals(pgsSink.Alias, routingSink.Sink.Alias, StringComparison.OrdinalIgnoreCase) &&
-                    string.Equals(pgsSink.Index, routingSink.Sink.Index, StringComparison.OrdinalIgnoreCase)));
+                _pgsConfig.Sinks.Any(
+                    pgsSink => AliasIndexEquals((pgsSink.Alias, pgsSink.Index), (routingSink.Sink.Alias, routingSink.Sink.Index))));
 
             var apiSinks = _mapper.Map<IList<VideoSinkMessage>, IList<VideoSinkModel>>(pgsSinks.ToList());
 
             foreach (var sink in apiSinks)
             {
-                var route = routes.Routes.SingleOrDefault(x => string.Equals(x.Sink.Alias, sink.Sink.Alias, StringComparison.OrdinalIgnoreCase)
-                && x.Sink.Index == sink.Sink.Index);
+                var route = routes.Routes.SingleOrDefault(x => AliasIndexEquals((x.Sink.Alias, x.Sink.Index), (sink.Sink.Alias, sink.Sink.Index)));
 
                 // get the current source
                 // this should give the UI enough info to show the icon on the display
@@ -184,9 +156,7 @@ namespace Avalanche.Api.Managers.Media
             // start pgs-> uncheck display A -> A gets its route restored
 
             // ensure this is a valid pgs sink
-            var sinkExists = _pgsConfig.Sinks.Any(x =>
-                string.Equals(x.Alias, sinkState.Sink.Alias, StringComparison.OrdinalIgnoreCase) &&
-                string.Equals(x.Index, sinkState.Sink.Index, StringComparison.OrdinalIgnoreCase));
+            var sinkExists = _pgsConfig.Sinks.Any(x => AliasIndexEquals((x.Alias, x.Index), (sinkState.Sink.Alias, sinkState.Sink.Index)));
 
             if (!sinkExists)
                 throw new InvalidOperationException($"No pgs sink exists for: {sinkState.Sink.Alias}:{sinkState.Sink.Index}");
@@ -196,9 +166,7 @@ namespace Avalanche.Api.Managers.Media
                 await UpdatePgsOnOneSink(sinkState.Sink, enabled, _pgsConfig.Source);
 
             var currentData = await _stateClient.GetData<PgsDisplayStateData>();
-            var displayIndex = currentData?.DisplayStates.FindIndex(x =>
-                string.Equals(x.AliasIndex.Alias, sinkState.Sink.Alias, StringComparison.OrdinalIgnoreCase) &&
-                string.Equals(x.AliasIndex.Index, sinkState.Sink.Index, StringComparison.OrdinalIgnoreCase)) ?? -1;
+            var displayIndex = currentData?.DisplayStates.FindIndex(x => AliasIndexEquals((x.AliasIndex.Alias, x.AliasIndex.Index), (sinkState.Sink.Alias, sinkState.Sink.Index))) ?? -1;
 
             // need to prepare the initial state
             var newPgsData = new PgsDisplayStateData
@@ -348,7 +316,7 @@ namespace Avalanche.Api.Managers.Media
         {
             // returns something like "timeout.pdf"
             var result = await _pgsTimeoutService.GetTimeoutPdfFileName();
-            
+
             // return a path to the mapped directory
             var timeoutRoot = Environment.GetEnvironmentVariable("TimeoutDataRoot");
             var relative = Path.Combine(timeoutRoot, result.FileName);
@@ -602,8 +570,12 @@ namespace Avalanche.Api.Managers.Media
             if (_currentPgsTimeoutState == PgsTimeoutRoomState.Idle)
                 return;
 
+            // only restore displays that are pgs or timeout displays
             var request = new RouteVideoBatchRequest();
-            request.Routes.AddRange(_currentRoutes.Routes.Select(x => new RouteVideoRequest { Sink = x.Sink, Source = x.Source }));
+            request.Routes.AddRange(_currentRoutes.Routes.Where(x =>
+                _pgsConfig.Sinks.Any(y => AliasIndexEquals((x.Sink.Alias, x.Sink.Index), (y.Alias, y.Index))) ||
+                _timeoutConfig.Sinks.Any(y => AliasIndexEquals((x.Sink.Alias, x.Sink.Index), (y.Alias, y.Index))))
+                .Select(x => new RouteVideoRequest { Sink = x.Sink, Source = x.Source }));
             await _routingService.RouteVideoBatch(request);
         }
 
@@ -617,9 +589,7 @@ namespace Avalanche.Api.Managers.Media
         private async Task UpdatePgsOnOneSink(AliasIndexViewModel sink, bool pgsEnabled, AliasIndexModel pgsSource)
         {
             // get the saved route for this display
-            var route = _currentRoutes.Routes.SingleOrDefault(x =>
-                    string.Equals(x.Sink.Alias, sink.Alias, StringComparison.OrdinalIgnoreCase) &&
-                    string.Equals(x.Sink.Index, sink.Index, StringComparison.OrdinalIgnoreCase));
+            var route = _currentRoutes.Routes.SingleOrDefault(x => AliasIndexEquals((x.Sink.Alias, x.Sink.Index), (sink.Alias, sink.Index)));
 
             if (pgsEnabled)
             {
@@ -661,8 +631,7 @@ namespace Avalanche.Api.Managers.Media
                 var routesToRestore = _currentRoutes.Routes.Where(x =>
                     !pgsSinkStates.Any(y =>
                         y.Enabled &&
-                        string.Equals(x.Sink.Alias, y.Sink.Alias, StringComparison.OrdinalIgnoreCase) &&
-                        string.Equals(x.Sink.Index, y.Sink.Index, StringComparison.OrdinalIgnoreCase)));
+                        AliasIndexEquals((x.Sink.Alias, x.Sink.Index), (y.Sink.Alias, y.Sink.Index))));
 
                 var request = new RouteVideoBatchRequest();
                 request.Routes.AddRange(routesToRestore.Select(x => new RouteVideoRequest { Source = x.Source, Sink = x.Sink }));
@@ -672,6 +641,18 @@ namespace Avalanche.Api.Managers.Media
             {
                 _startStopLock.Release();
             }
+        }
+
+        /// <summary>
+        /// Helper for all those aliasindex equals comparisons
+        /// </summary>
+        /// <param name="left"></param>
+        /// <param name="right"></param>
+        /// <returns></returns>
+        private bool AliasIndexEquals((string Alias, string Index) left, (string Alias, string Index) right)
+        {
+            return string.Equals(left.Alias, right.Alias, StringComparison.OrdinalIgnoreCase) &&
+                   string.Equals(left.Index, right.Index, StringComparison.OrdinalIgnoreCase);
         }
 
         #endregion

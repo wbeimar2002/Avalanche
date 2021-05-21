@@ -206,8 +206,7 @@ namespace Avalanche.Api
 
             app.UseCustomSwagger();
 
-#warning uncomment this before pr
-            //app.UseHttpsRedirection();
+            app.UseHttpsRedirection();
             app.UseRouting();
 
             app.UseAuthentication();
