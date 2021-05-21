@@ -112,6 +112,7 @@ namespace Avalanche.Api
             services.AddSingleton<ILibraryService, LibraryService>();
             services.AddSingleton<IAccessInfoFactory, AccessInfoFactory>();
             services.AddSingleton<IFilesService, FilesService>();
+            services.AddSingleton<IPresetManager, PresetManager>();
 
             // gRPC Infrastructure
             _ = services.AddConfigurationPoco<GrpcServiceRegistry>(_configuration, nameof(GrpcServiceRegistry));
