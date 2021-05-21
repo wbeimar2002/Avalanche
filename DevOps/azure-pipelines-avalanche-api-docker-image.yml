@@ -164,5 +164,88 @@ stages:
        displayName: "Set/Print Tag"
        condition: and(succeeded(),  ne(variables['Build.Reason'], 'PullRequest'))
 
+     - task: Docker@2
+       inputs:
+          command: 'tag'
+          arguments: '$(ImageNameLowercase) $(acrname).azurecr.io/$(ImageNameLowercase):$(tag)'
+          addPipelineData: false
+       displayName: 'Docker image -Tag w/ build number'
+       condition: and(succeeded(),  ne(variables['Build.Reason'], 'PullRequest'))
+
+     - task: Docker@2
+       inputs:
+          command: 'tag'
+          arguments: '$(ImageNameLowercase) $(acrname).azurecr.io/$(ImageNameLowercase):latest'
+          addPipelineData: false
+       displayName: 'Docker image -Tag w/ latest'
+       condition: and(succeeded(),  ne(variables['Build.Reason'], 'PullRequest'))
+
+     - task: Docker@2
+       inputs:
+        containerRegistry: acr-dev-avalanche-connection
+        repository: $(ImageName)
+        command: 'push'
+        tags: |
+          $(tag)
+          latest
+       displayName: 'Docker push'
+       condition: and(succeeded(),  ne(variables['Build.Reason'], 'PullRequest'))
+        
+     - task: CopyFiles@2
+       #condition: and(succeeded(),  eq(variables['Build.Reason'], 'PullRequest'))
+       inputs:
+        Contents: |
+          $(Repo)/$(BinFolder)/**
+        TargetFolder: '$(Build.ArtifactStagingDirectory)'
+       displayName: 'Copy Files to $(Build.ArtifactStagingDirectory)'
      
+     - publish: '$(Build.ArtifactStagingDirectory)/$(Repo)/$(BinFolder)'
+       #condition: and(succeeded(),  eq(variables['Build.Reason'], 'PullRequest'))
+       artifact: drop
+       
+     
+- stage: publish_te
+  dependsOn: build
+  condition: and(succeeded(), eq(variables['publish_te'], 'true'))
+  
+  jobs:
+  - job: publish
+
+    pool:
+      name: 'ism-build-pool-on-prem'
+      demands: 
+        - msbuild
+       
+    steps:
+    - checkout: devops
+    - task: DownloadPipelineArtifact@2
+      displayName: 'Download Pipeline Artifact'
+      inputs:
+        source: 'current'
+        artifactName: drop
+        targetPath: '$(System.DefaultWorkingDirectory)\drop'
+
+    - template: 'pipeline\templates\create-push-octopus-release1.yml@devops'
+      parameters: 
+        octopusBaseURL: '$(OctopusBaseURL)'
+        octopusAPIKey: '$(OctopusAPIKey)'
+        octopusSpaceName: '$(OctopusSpaceName)'
+        octopusEnvironmentName: '$(OctopusEnvironmentName)'
+        octopusChannelName: '$(OctopusChannelName)'
+        octopusProject: '$(OctopusProject)'
+        octopusPackageId: '$(OctopusPackageId)'
+        triggerBranch: 'dev'
+       
+    - template: 'pipeline\templates\copy-release-to-network-share.yml@devops'
+      parameters: 
+        adoProject: '$(AdoProject)'
+        vsProjectNamePrefix: '$(VsProjectNamePrefix)'
+        networkShare: '$(NetworkShare)'
+        networkSubPath: '$(NetworkSubPath)'
+        networkUser: '$(NetworkUser)'
+        networkPassword: '$(NetworkPassword)'
+        builidNumber: '$Env:BUILD_BUILDNUMBER'
+        copyTrue: '$(copy_to_network_share)'  
+        
+
      
