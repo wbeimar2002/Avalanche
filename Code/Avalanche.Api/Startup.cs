@@ -15,6 +15,7 @@ using Avalanche.Api.Services.Media;
 using Avalanche.Api.Services.Notifications;
 using Avalanche.Api.Services.Security;
 using Avalanche.Api.Utilities;
+using Avalanche.Shared.Infrastructure.Configuration;
 using Avalanche.Shared.Infrastructure.Models;
 using Avalanche.Shared.Infrastructure.Options;
 
@@ -98,8 +99,10 @@ namespace Avalanche.Api
             services.AddTransient<ISecurityManager, SecurityManager>();
 
             // Singleton
-            services.AddSingleton<ITimeoutManager, TimeoutManager>();
-            services.AddSingleton<IPgsManager, PgsManager>();
+            services.AddSingleton<IPgsTimeoutManager, PgsTimeoutManager>();
+            services.AddConfigurationPoco<PgsApiConfiguration>(_configuration, nameof(PgsApiConfiguration));
+            services.AddConfigurationPoco<TimeoutApiConfiguration>(_configuration, nameof(TimeoutApiConfiguration));
+
             services.AddSingleton<IWebRTCService, WebRtcService>();
             services.AddSingleton<IRecorderService, RecorderService>();
             services.AddSingleton<IAvidisService, AvidisService>();
@@ -202,8 +205,9 @@ namespace Avalanche.Api
             app.UseSerilogRequestLogging();
 
             app.UseCustomSwagger();
-            
-            app.UseHttpsRedirection();
+
+#warning uncomment this before pr
+            //app.UseHttpsRedirection();
             app.UseRouting();
 
             app.UseAuthentication();

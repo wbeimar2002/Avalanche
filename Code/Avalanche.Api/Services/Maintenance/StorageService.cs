@@ -34,13 +34,15 @@ namespace Avalanche.Api.Services.Maintenance
         {
             context.SiteId = _siteId;
             var actionResponse = await _client.GetConfiguration(configurationKey, Convert.ToUInt32(version), context);
-           return actionResponse.Get<T>();
+            if (actionResponse == null)
+                throw new InvalidOperationException($"No configuration found for key: {configurationKey}");
+            return actionResponse.Get<T>();
         }
 
         public async Task SaveJson(string configurationKey, string json, int version, ConfigurationContext context)
         {
             var kind = await _client.GetConfigurationKinds();
-            var kindId = _siteId; 
+            var kindId = _siteId;
             await _client.SaveConfiguration(configurationKey, Convert.ToUInt32(version), json, "Site", kindId);
         }
     }
