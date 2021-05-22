@@ -145,10 +145,10 @@ namespace Avalanche.Api.Managers.Maintenance
             return await BuildCategoryList(category, values);
         }
 
-        public async Task<DynamicListViewModel> GetEmbeddedListByKey(string settingValues, string listKey)
+        public async Task<DynamicListViewModel> GetEmbeddedListByKey(string settingValues, string metadataKey, string listKey)
         {
-            var category = await _storageService.GetJsonObject<DynamicListViewModel>(listKey, 1, configurationContext);
-            var values = SettingsHelper.GetEmbeddedList(category.SourceKey, settingValues);
+            var category = await _storageService.GetJsonObject<DynamicListViewModel>(metadataKey, 1, configurationContext);
+            var values = SettingsHelper.GetEmbeddedList(listKey, settingValues);
 
             return await BuildCategoryList(category, values);
         }
@@ -252,7 +252,7 @@ namespace Avalanche.Api.Managers.Maintenance
                             Value = ((dynamic)d).Name,
                             RelatedObject = d
                         }).ToList();
-                    case "PgsVideoFiles":
+                    case "VideoFiles":
 
                         var videoFiles = _filesService.GetFiles("pgsmedia", "*.mp4");
 
@@ -340,7 +340,7 @@ namespace Avalanche.Api.Managers.Maintenance
                             item.CustomList = await GetCategoryListByKey(item.SourceKey);
                             break;
                         case VisualStyles.EmbeddedList:
-                            item.CustomList = await GetEmbeddedListByKey(settingValues, item.SourceKey);
+                            item.CustomList = await GetEmbeddedListByKey(settingValues, item.SourceKey, item.JsonKey);
                             break;
                         case VisualStyles.FilePicker:
 

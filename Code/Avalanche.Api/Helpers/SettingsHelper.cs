@@ -2,6 +2,7 @@
 using Avalanche.Api.ViewModels;
 using Avalanche.Shared.Infrastructure.Enumerations;
 using Avalanche.Shared.Infrastructure.Extensions;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
@@ -153,33 +154,38 @@ namespace Avalanche.Api.Helpers
             {
                 foreach (var setting in section.Settings)
                 {
-                    setting.Policy = string.IsNullOrEmpty(setting.Policy) ? ((int)SettingsPolicies.AllowEdit).ToString() : setting.Policy;
-                    setting.PoliciesValues = policiesValues;
-
-                    if (settingsValues == null)
-                        setting.Value = setting.DefaultValue;
-                    else
+                    if (setting.VisualStyle != VisualStyles.EmbeddedList &&
+                        setting.VisualStyle != VisualStyles.GenericList &&
+                        setting.VisualStyle != VisualStyles.ExternalList)
                     {
-                        if (string.IsNullOrEmpty(setting.JsonKey))
-                            setting.Value = null;
+                        setting.Policy = string.IsNullOrEmpty(setting.Policy) ? ((int)SettingsPolicies.AllowEdit).ToString() : setting.Policy;
+                        setting.PoliciesValues = policiesValues;
+
+                        if (settingsValues == null)
+                            setting.Value = setting.DefaultValue;
                         else
                         {
-                            var keys = setting.JsonKey.Split('.');
-                            var jObject = JObject.Parse(settingsValues);
-
-                            string value = null;
-
-                            foreach (var key in keys)
+                            if (string.IsNullOrEmpty(setting.JsonKey))
+                                setting.Value = null;
+                            else
                             {
-                                var jValue = jObject[key];
+                                var keys = setting.JsonKey.Split('.');
+                                var jObject = JObject.Parse(settingsValues);
 
-                                if (jValue is JValue finalValue)
-                                    value = finalValue.ToString();
-                                else
-                                    jObject = (JObject)jObject[key];
-                            }                            
+                                string value = null;
 
-                            setting.Value = setting.SettingType == SettingTypes.Boolean ? value.ToLower() : value;
+                                foreach (var key in keys)
+                                {
+                                    var jValue = jObject[key];
+
+                                    if (jValue is JValue finalValue)
+                                        value = finalValue.ToString();
+                                    else
+                                        jObject = (JObject)jObject[key];
+                                }
+
+                                setting.Value = setting.SettingType == SettingTypes.Boolean ? value.ToLower() : value;
+                            }
                         }
                     }
                 }
@@ -203,8 +209,7 @@ namespace Avalanche.Api.Helpers
                         if (jToken is JArray)
                         {
                             JArray child = (JArray)jObject[keys[i]];
-                            string json = child.ToString();
-                            return json.Get<List<ExpandoObject>>();
+                            return child == null ? null : child.Select(d => JsonConvert.DeserializeObject<ExpandoObject>(d.ToString())).ToList();
                         }
                     }
                 }
