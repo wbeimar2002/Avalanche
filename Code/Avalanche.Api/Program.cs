@@ -1,3 +1,4 @@
+using Avalanche.Shared.Infrastructure.Configuration;
 using Ism.Common.Core.Configuration.Models;
 using Ism.Storage.Configuration.Client.V1;
 
@@ -56,11 +57,13 @@ namespace Avalanche.Api
         private static IEnumerable<ConfigurationServiceRequest> GetConfigurationServiceRequests()
         {
             // config types may be decorated with guid and version and other helper attributes
-            var context = new ConfigurationContext();
+            var context = ConfigurationContext.FromEnvironment();
             var requests = new List<ConfigurationServiceRequest>
             {
                 // needed for grpc clients
                 // new ConfigurationServiceRequest(nameof(GrpcServiceRegistry), 1, context)
+                new ConfigurationServiceRequest(nameof(PgsApiConfiguration), 1, context),
+                new ConfigurationServiceRequest(nameof(TimeoutApiConfiguration), 1, context)
             };
 
             return requests;
