@@ -412,30 +412,6 @@ namespace Avalanche.Api.Controllers.V1
             }
         }
 
-        /// <summary>
-        /// Stop PGS
-        /// </summary>
-        /// <returns></returns>
-        [HttpDelete("pgs")]
-        public async Task<IActionResult> StopPgs()
-        {
-            try
-            {
-                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
-                await _pgsTimeoutManager.StopPgs();
-                return Ok();
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, LoggerHelper.GetLogMessage(DebugLogType.Exception), ex);
-                return new BadRequestObjectResult(ex.Get(_environment.IsDevelopment()));
-            }
-            finally
-            {
-                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
-            }
-        }
-
         #endregion
 
         #region Timeout
@@ -612,31 +588,7 @@ namespace Avalanche.Api.Controllers.V1
         }
 
         /// <summary>
-        /// Stop timeout. Call when pressing the stop button or when leaving the timeout tab
-        /// </summary>
-        /// <returns></returns>
-        [HttpDelete("timeout")]
-        public async Task<IActionResult> StopTimeout()
-        {
-            try
-            {
-                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
-                await _pgsTimeoutManager.StopTimeout();
-                return Ok();
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, LoggerHelper.GetLogMessage(DebugLogType.Exception), ex);
-                return new BadRequestObjectResult(ex.Get(_environment.IsDevelopment()));
-            }
-            finally
-            {
-                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
-            }
-        }
-
-        /// <summary>
-        /// Stops pgs and timeout. Call when navigating to the video tab
+        /// Stops pgs and timeout. Call whenever either need to be stopped
         /// </summary>
         /// <returns></returns>
         [HttpDelete("pgsTimeout")]
