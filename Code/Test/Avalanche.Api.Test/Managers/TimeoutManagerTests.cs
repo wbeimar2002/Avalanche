@@ -143,7 +143,7 @@ namespace Avalanche.Api.Test.Managers
             _routingService.Setup(x => x.GetVideoSinks())
                 .Returns(Task.FromResult(new GetVideoSinksResponse()));
 
-            await _timeoutManager.StopTimeout();
+            await _timeoutManager.StopPgsAndTimeout();
         }
     }
 }

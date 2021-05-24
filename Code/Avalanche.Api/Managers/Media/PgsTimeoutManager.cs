@@ -63,11 +63,6 @@ namespace Avalanche.Api.Managers.Media
             await _stateClient.PublishEvent(new PgsTimeoutRoomStateEvent { RoomState = mode });
         }
 
-        /// <summary>
-        /// If true, pgs is restored after timeout unless the video routing tab was navigated to
-        /// </summary>
-        private bool _restorePgsAfterTimeout = false;
-
         // used to handle the pgs->timeout state edge cases
         //private PgsTimeoutModes _previousPgsTimeoutState = PgsTimeoutModes.Idle;
 
@@ -400,31 +395,6 @@ namespace Avalanche.Api.Managers.Media
             }
         }
 
-        /// <summary>
-        /// Restores saved routes
-        /// Mutes the pgs player's audio
-        /// Sets the mode back to idle
-        /// </summary>
-        /// <returns></returns>
-        public async Task StopPgs()
-        {
-            await _startStopLock.WaitAsync(_cts.Token);
-            try
-            {
-                // restore saved routes
-                await LoadSavedRoutes();
-
-                // mute the player
-                await SetPgsMute(true);
-
-                // room is now not in pgs or timeout
-                await SetRoomMode(PgsTimeoutRoomState.Idle);
-            }
-            finally
-            {
-                _startStopLock.Release();
-            }
-        }
 
         public async Task StartTimeout()
         {
@@ -455,13 +425,6 @@ namespace Avalanche.Api.Managers.Media
                 if (request.Routes.Any())
                     await _routingService.RouteVideoBatch(request);
 
-                // TODO: can this be removed if pgs->timeout->stop is simplified?
-                if (_currentPgsTimeoutState == PgsTimeoutRoomState.Pgs)
-                {
-                    // if going pgs->timeout, stopping timeout (without the routing tab) needs to put pgs back the way it was
-                    _restorePgsAfterTimeout = true;
-                }
-
                 if (_timeoutConfig.Mode == TimeoutModes.VideoSource)
                 {
                     // TODO: implement properly when we need to
@@ -483,44 +446,17 @@ namespace Avalanche.Api.Managers.Media
 
 
         /// <summary>
-        /// Call when leaving the timeout tab or pressing the stop timeout button
-        /// Do not call when navigating to the routing tab
-        /// </summary>
-        /// <returns></returns>
-        public async Task StopTimeout()
-        {
-            // put the player back in pgs mode
-            if (_restorePgsAfterTimeout)
-            {
-                // going back to pgs, start pgs
-                await RestoreRoutesOnNonPgsDisplays();
-                await StartPgs();
-                _restorePgsAfterTimeout = false;
-            }
-            else
-            {
-                // going back to normal, load pre pgs saved routes
-                await StopPgsAndTimeout();
-            }
-
-        }
-
-        /// <summary>
-        /// Call this when going to the video routing tab
+        /// Call this when stopping pgs or timeout
         /// </summary>
         /// <returns></returns>
         public async Task StopPgsAndTimeout()
         {
-            // TODO: can we get product people to be ok with not having to restore pgs after timeout?
             await _startStopLock.WaitAsync(_cts.Token);
             try
             {
                 // no pgs or timeout, do nothing
                 if (_currentPgsTimeoutState == PgsTimeoutRoomState.Idle)
                     return;
-
-                // if we get here, it doesn't matter if PGS or timeout was/is active
-                // both should get cancelled
 
                 // tell the player to go back to looping the video
                 await SetPgsTimeoutPlayerMode(PgsTimeoutModes.Pgs);
