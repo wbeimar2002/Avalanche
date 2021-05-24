@@ -68,7 +68,6 @@ namespace Avalanche.Api.Controllers.V1
         /// Exit full screen mode
         /// </summary>
         /// <param name="routingActionViewModel"></param>
-        /// <param name="env"></param>
         /// <returns></returns>
         [HttpDelete("fullscreen")]
         public async Task<IActionResult> ExitFullScreen(FullScreenRequestViewModel routingActionViewModel)
@@ -94,7 +93,6 @@ namespace Avalanche.Api.Controllers.V1
         /// Hide preview 
         /// </summary>
         /// <param name="routingPreviewViewModel"></param>
-        /// <param name="env"></param>
         /// <returns></returns>
         [HttpDelete("preview")]
         public async Task<IActionResult> HidePreview(RoutingPreviewViewModel routingPreviewViewModel)
@@ -120,7 +118,6 @@ namespace Avalanche.Api.Controllers.V1
         /// Show preview
         /// </summary>
         /// <param name="routingPreviewViewModel"></param>
-        /// <param name="env"></param>
         /// <returns></returns>
         [HttpPost("preview")]
         public async Task<IActionResult> ShowPreview(RoutingPreviewViewModel routingPreviewViewModel)
@@ -196,7 +193,6 @@ namespace Avalanche.Api.Controllers.V1
         /// <summary>
         /// Get operating sources
         /// </summary>
-        /// <param name="env"></param>
         /// <returns></returns>
         [HttpGet("operating/sources")]
         [Produces(typeof(IList<VideoSourceModel>))]
@@ -249,7 +245,6 @@ namespace Avalanche.Api.Controllers.V1
         /// </summary>
         /// <param name="alias"></param>
         /// <param name="index"></param>
-        /// <param name="env"></param>
         /// <returns></returns>
         [HttpGet("operating/sources/alternative")]
         [Produces(typeof(VideoSourceModel))]

@@ -209,59 +209,6 @@ namespace Avalanche.Api.Test.Managers
         }
 
         [Test]
-        public async Task PgsTimeout_StartPgsThenStartTimeoutThenStopTimeout_VideoRoutes()
-        {
-            // Arrange is done in Setup
-            // this test starts pgs, then starts timeout, then stops timeout (without going to the video tab) and ensures the system is back in pgs mode
-
-            // Act
-            var pgsConfig = GetConfig().PgsConfig;
-            // uncheck pgs on the first display
-            await _pgsTimeoutManager.SetPgsStateForSink(new PgsSinkStateViewModel
-            {
-                Enabled = false,
-                Sink = _mapper.Map<AliasIndexModel, AliasIndexViewModel>(pgsConfig.Sinks.First())
-            });
-            // start pgs
-            await _pgsTimeoutManager.StartPgs();
-            var routePgsRequest = new RouteVideoBatchRequest();
-            routePgsRequest.Routes.AddRange(pgsConfig.Sinks.Skip(1).Select(x => new RouteVideoRequest
-            {
-                Source = _mapper.Map<AliasIndexModel, AliasIndexMessage>(pgsConfig.Source),
-                Sink = _mapper.Map<AliasIndexModel, AliasIndexMessage>(x)
-            }));
-
-            // Assert pgs was started and routed to all but the first display
-            _routingService.Verify(x => x.RouteVideoBatch(routePgsRequest), Times.Once());
-            _pgsTimeoutService.Verify(x => x.SetPgsTimeoutMode(new SetPgsTimeoutModeRequest { Mode = PgsTimeoutModeEnum.PgsTimeoutModePgs }));
-
-
-            // start timeout
-            await _pgsTimeoutManager.StartTimeout();
-
-            // internally, timeout should be routed to all displays
-            var timeoutConfig = GetConfig().TimeoutConfig;
-            var routeTimeoutRequest = new RouteVideoBatchRequest();
-            routeTimeoutRequest.Routes.AddRange(timeoutConfig.Sinks.Select(x => new RouteVideoRequest
-            {
-                Source = _mapper.Map<AliasIndexModel, AliasIndexMessage>(timeoutConfig.Source),
-                Sink = _mapper.Map<AliasIndexModel, AliasIndexMessage>(x)
-            }));
-
-            // assert that timeout was started and routed everywhere
-            _routingService.Verify(x => x.RouteVideoBatch(routeTimeoutRequest), Times.Once());
-            _pgsTimeoutService.Verify(x => x.SetPgsTimeoutMode(new SetPgsTimeoutModeRequest { Mode = PgsTimeoutModeEnum.PgsTimeoutModeTimeout }));
-
-
-            // stop timeout
-            await _pgsTimeoutManager.StopTimeout();
-
-            // assert is the same as starting pgs
-            _routingService.Verify(x => x.RouteVideoBatch(routePgsRequest));
-            _pgsTimeoutService.Verify(x => x.SetPgsTimeoutMode(new SetPgsTimeoutModeRequest { Mode = PgsTimeoutModeEnum.PgsTimeoutModePgs }));
-        }
-
-        [Test]
         public async Task PgsTimeout_StartPgsThenStartTimeoutThenStopBoth_VideoRoutes()
         {
             // Arrange is done in Setup

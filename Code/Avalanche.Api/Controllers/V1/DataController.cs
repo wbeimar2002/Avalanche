@@ -39,7 +39,6 @@ namespace Avalanche.Api.Controllers.V1
         /// <summary>
         /// Get search columns configuration
         /// </summary>
-        /// <param name="env"></param>
         /// <returns></returns>
         [HttpGet("searchColumns")]
         [Produces(typeof(List<DynamicSourceKeyValuePairViewModel>))]
@@ -66,7 +65,6 @@ namespace Avalanche.Api.Controllers.V1
         /// <summary>
         /// Get sexes list
         /// </summary>
-        /// <param name="env"></param>
         /// <returns></returns>
         [HttpGet("sexes")]
         [Produces(typeof(List<KeyValuePairViewModel>))]
@@ -93,7 +91,6 @@ namespace Avalanche.Api.Controllers.V1
         /// <summary>
         /// Get all departments
         /// </summary>
-        /// <param name="env"></param>
         /// <returns></returns>
         [HttpGet("departments")]
         [Produces(typeof(List<DepartmentModel>))]
@@ -121,7 +118,6 @@ namespace Avalanche.Api.Controllers.V1
         /// Add new department
         /// </summary>
         /// <param name="department"></param>
-        /// <param name="env"></param>
         /// <returns></returns>
         [HttpPost("departments")]
         [Produces(typeof(DepartmentModel))]
@@ -149,7 +145,6 @@ namespace Avalanche.Api.Controllers.V1
         /// Delete department
         /// </summary>
         /// <param name="departmentId"></param>
-        /// <param name="env"></param>
         /// <returns></returns>
         [HttpDelete("departments/{departmentId}")]
         public async Task<IActionResult> DeleteDepartment(int departmentId)
@@ -176,7 +171,6 @@ namespace Avalanche.Api.Controllers.V1
         /// Get departments by procedure type
         /// </summary>
         /// <param name="departmentId"></param>
-        /// <param name="env"></param>
         /// <returns></returns>
         [HttpGet("departments/{departmentId}/procedureTypes")]
         [Produces(typeof(List<ProcedureTypeModel>))]
@@ -203,7 +197,6 @@ namespace Avalanche.Api.Controllers.V1
         /// <summary>
         /// Get procedure types with null department
         /// </summary>
-        /// <param name="env"></param>
         /// <returns></returns>
         [HttpGet("procedureTypes")]
         [Produces(typeof(List<ProcedureTypeModel>))]
@@ -231,7 +224,6 @@ namespace Avalanche.Api.Controllers.V1
         /// Add a procedure type
         /// </summary>
         /// <param name="procedureType"></param>
-        /// <param name="env"></param>
         /// <returns></returns>
         [HttpPost("procedureTypes")]
         [Produces(typeof(ProcedureTypeModel))]
@@ -259,7 +251,6 @@ namespace Avalanche.Api.Controllers.V1
         /// Delete a procedure type
         /// </summary>
         /// <param name="procedureTypeName"></param>
-        /// <param name="env"></param>
         /// <returns></returns>
         [HttpDelete("procedureTypes/{procedureTypeId}")]
         public async Task<IActionResult> DeleteProcedureType(string procedureTypeName)
@@ -291,7 +282,6 @@ namespace Avalanche.Api.Controllers.V1
         /// </summary>
         /// <param name="departmentId"></param>
         /// <param name="procedureTypeId"></param>
-        /// <param name="env"></param>
         /// <returns></returns>
         [HttpDelete("departments/{departmentId}/procedureTypes/{procedureTypeId}")]
         public async Task<IActionResult> DeleteProcedureType(int departmentId, int procedureTypeId)

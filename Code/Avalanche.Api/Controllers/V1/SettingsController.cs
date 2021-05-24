@@ -34,7 +34,6 @@ namespace Avalanche.Api.Controllers.V1
         /// Get any settings values using the filename (key)
         /// </summary>
         /// <param name="key"></param>
-        /// <param name="env"></param>
         /// <returns></returns>
         [HttpGet("{key}")]
         public async Task<IActionResult> GetSettings(string key)

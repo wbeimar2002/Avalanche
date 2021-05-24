@@ -35,7 +35,6 @@ namespace Avalanche.Api.Controllers.V1
         /// Validate license key
         /// </summary>
         /// <param name="key"></param>
-        /// <param name="env"></param>
         /// <returns></returns>
         [HttpPost("{key}")]
         public async Task<IActionResult> Validate(string key)
@@ -60,7 +59,6 @@ namespace Avalanche.Api.Controllers.V1
         /// <summary>
         /// Get all active software installed
         /// </summary>
-        /// <param name="env"></param>
         /// <returns></returns>
         [HttpGet("")]
         [Produces(typeof(List<LicenseModel>))]

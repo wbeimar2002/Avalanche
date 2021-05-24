@@ -29,12 +29,6 @@ namespace Avalanche.Api.Managers.Media
         Task StartPgs();
 
         /// <summary>
-        /// Stops pgs and restores routes to what they were before pgs
-        /// </summary>
-        /// <returns></returns>
-        Task StopPgs();
-
-        /// <summary>
         /// Gets the checked state of all pgs displays
         /// </summary>
         /// <returns></returns>
@@ -65,12 +59,6 @@ namespace Avalanche.Api.Managers.Media
         /// </summary>
         /// <returns></returns>
         Task StartTimeout();
-
-        /// <summary>
-        /// Stops timeout
-        /// </summary>
-        /// <returns></returns>
-        Task StopTimeout();
 
         #region pass through to player
         // these methods are simply passed onto the player application
