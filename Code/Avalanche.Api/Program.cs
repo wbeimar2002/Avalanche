@@ -24,16 +24,7 @@ namespace Avalanche.Api
             var hostLogger = CreateDefaultHostLogger(typeof(Program));
             try
             {
-                var configClient = ConfigurationServiceSecureClient.FromEnvironment(hostLogger);
-                var host = CreateInsecureIsmHostBuilder<Startup>(
-                    args,
-                    hostLogger,
-                    typeof(Program).Assembly,
-                    GetConfigurationServiceRequests(),
-                    configClient,
-                    HttpProtocols.Http1AndHttp2
-                )
-                .Build();
+                var host = CreateHostBuilder(args).Build();
 
                 var loggerFactory = InitializeApplicationLoggerFactory(host);
 
@@ -46,6 +37,21 @@ namespace Avalanche.Api
                 hostLogger.LogError(ex, $"{nameof(Avalanche)}.{nameof(Api)} host terminated unexpectedly");
                 throw;
             }
+        }
+
+        public static IHostBuilder CreateHostBuilder(string[] args)
+        {
+            var hostLogger = CreateDefaultHostLogger(typeof(Program));
+            var configClient = ConfigurationServiceSecureClient.FromEnvironment(hostLogger);
+
+            return CreateInsecureIsmHostBuilder<Startup>(
+                    args,
+                    hostLogger,
+                    typeof(Program).Assembly,
+                    GetConfigurationServiceRequests(),
+                    configClient,
+                    HttpProtocols.Http1AndHttp2
+                );
         }
 
         private static IEnumerable<ConfigurationServiceRequest> GetConfigurationServiceRequests()

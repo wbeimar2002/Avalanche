@@ -37,7 +37,6 @@ namespace Avalanche.Api.Controllers.V1
         /// Register new patient
         /// </summary>
         /// <param name="newPatient"></param>
-        /// <param name="env"></param>
         /// <returns></returns>
         [HttpPost("")]
         [Produces(typeof(PatientViewModel))]
@@ -66,7 +65,6 @@ namespace Avalanche.Api.Controllers.V1
         /// Update patient
         /// </summary>
         /// <param name="existing"></param>
-        /// <param name="env"></param>
         /// <returns></returns>
         [HttpPut("{id}")]
         [Produces(typeof(PatientViewModel))]
@@ -94,7 +92,6 @@ namespace Avalanche.Api.Controllers.V1
         /// Delete patient
         /// </summary>
         /// <param name="id"></param>
-        /// <param name="env"></param>
         /// <returns></returns>
         [HttpDelete("{id}")]
         [Produces(typeof(PatientViewModel))]
@@ -121,7 +118,6 @@ namespace Avalanche.Api.Controllers.V1
         /// <summary>
         /// Quick patient registration
         /// </summary>
-        /// <param name="env"></param>
         /// <returns></returns>
         [HttpPost("quick")]
         [Produces(typeof(PatientViewModel))]
@@ -150,7 +146,6 @@ namespace Avalanche.Api.Controllers.V1
         /// Search patient using keyword and paging
         /// </summary>
         /// <param name="filter"></param>
-        /// <param name="env"></param>
         /// <returns></returns>
         [HttpPost("filtered")]
         [Produces(typeof(PagedCollectionViewModel<PatientViewModel>))]
@@ -159,9 +154,11 @@ namespace Avalanche.Api.Controllers.V1
             try
             {
                 _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
-                
-                var result = new PagedCollectionViewModel<PatientViewModel>();
-                result.Items = await _patientsManager.Search(filter);
+
+                var result = new PagedCollectionViewModel<PatientViewModel>
+                {
+                    Items = await _patientsManager.Search(filter)
+                };
 
                 PagingHelper.AppendPagingContext(this.Url, this.Request, filter, result);
                 return Ok(result);
@@ -181,7 +178,6 @@ namespace Avalanche.Api.Controllers.V1
         /// Search patient using criterias and paging
         /// </summary>
         /// <param name="filter"></param>
-        /// <param name="env"></param>
         /// <returns></returns>
         [HttpPost("filteredDetailed")]
         [Produces(typeof(PagedCollectionViewModel<PatientViewModel>))]
@@ -191,8 +187,10 @@ namespace Avalanche.Api.Controllers.V1
             {
                 _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
 
-                var result = new PagedCollectionViewModel<PatientViewModel>();
-                result.Items = await _patientsManager.Search(filter);
+                var result = new PagedCollectionViewModel<PatientViewModel>
+                {
+                    Items = await _patientsManager.Search(filter)
+                };
 
                 PagingHelper.AppendPagingContext(this.Url, this.Request, filter, result);
                 return Ok(result);
