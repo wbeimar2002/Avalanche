@@ -187,8 +187,10 @@ namespace Avalanche.Api.Controllers.V1
             {
                 _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
 
-                var result = new PagedCollectionViewModel<PatientViewModel>();
-                result.Items = await _patientsManager.Search(filter);
+                var result = new PagedCollectionViewModel<PatientViewModel>
+                {
+                    Items = await _patientsManager.Search(filter)
+                };
 
                 PagingHelper.AppendPagingContext(this.Url, this.Request, filter, result);
                 return Ok(result);
