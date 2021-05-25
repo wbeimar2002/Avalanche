@@ -28,8 +28,11 @@ resources:
     name: avalanche-api-client
     ref: dev
 
-pool:
-  vmImage: $(PoolVmImage)
+pool: 'ism-build-pool-on-prem'
+#pool:
+  #vmImage: $(PoolVmImage)
+
+
 
 name: $(BuildNumberPrefix)-client-generation-$(MajorVersion).$(MinorVersion).$(Patch).$(ReleaseStage)_$(MajorVersion).$(MinorVersion).$(Date:yyMM).$(Date:dd)$(Rev:rr)_$(Date:yyyyMMdd)T$(Date:hhmmss)
   
