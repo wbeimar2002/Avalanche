@@ -1,3 +1,4 @@
+using Avalanche.Shared.Infrastructure.Configuration;
 using Ism.Common.Core.Configuration.Models;
 using Ism.Storage.Configuration.Client.V1;
 
@@ -23,16 +24,7 @@ namespace Avalanche.Api
             var hostLogger = CreateDefaultHostLogger(typeof(Program));
             try
             {
-                var configClient = ConfigurationServiceSecureClient.FromEnvironment(hostLogger);
-                var host = CreateInsecureIsmHostBuilder<Startup>(
-                    args,
-                    hostLogger,
-                    typeof(Program).Assembly,
-                    GetConfigurationServiceRequests(),
-                    configClient,
-                    HttpProtocols.Http1AndHttp2
-                )
-                .Build();
+                var host = CreateHostBuilder(args).Build();
 
                 var loggerFactory = InitializeApplicationLoggerFactory(host);
 
@@ -47,14 +39,31 @@ namespace Avalanche.Api
             }
         }
 
+        public static IHostBuilder CreateHostBuilder(string[] args)
+        {
+            var hostLogger = CreateDefaultHostLogger(typeof(Program));
+            var configClient = ConfigurationServiceSecureClient.FromEnvironment(hostLogger);
+
+            return CreateInsecureIsmHostBuilder<Startup>(
+                    args,
+                    hostLogger,
+                    typeof(Program).Assembly,
+                    GetConfigurationServiceRequests(),
+                    configClient,
+                    HttpProtocols.Http1AndHttp2
+                );
+        }
+
         private static IEnumerable<ConfigurationServiceRequest> GetConfigurationServiceRequests()
         {
             // config types may be decorated with guid and version and other helper attributes
-            var context = new ConfigurationContext();
+            var context = ConfigurationContext.FromEnvironment();
             var requests = new List<ConfigurationServiceRequest>
             {
                 // needed for grpc clients
                 // new ConfigurationServiceRequest(nameof(GrpcServiceRegistry), 1, context)
+                new ConfigurationServiceRequest(nameof(PgsApiConfiguration), 1, context),
+                new ConfigurationServiceRequest(nameof(TimeoutApiConfiguration), 1, context)
             };
 
             return requests;

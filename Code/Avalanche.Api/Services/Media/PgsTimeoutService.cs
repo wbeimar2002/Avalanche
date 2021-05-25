@@ -30,7 +30,7 @@ namespace Avalanche.Api.Services.Media
 
         public async Task<GetTimeoutPageCountResponse> GetTimeoutPageCount() => await _client.GetTimeoutPageCount();
 
-        public async Task<GetTimeoutPdfPathResponse> GetTimeoutPdfPath() => await _client.GetTimeoutPdfPath();
+        public async Task<GetTimeoutPdfFileResponse> GetTimeoutPdfFileName() => await _client.GetTimeoutPdfPath();
 
         public async Task NextPage() => await _client.NextPage();
 

@@ -76,6 +76,8 @@ namespace Avalanche.Api.Services.Notifications
             AddSubscription<SystemErrorRaisedEvent>(evt => _hubContext.Clients.All.OnSystemErrorRaised(evt));
             AddSubscription<SystemPersistantNotificationRaisedEvent>(evt => _hubContext.Clients.All.OnSystemSystemPersistantNotificationRaised(evt));
 
+            AddSubscription<PgsTimeoutRoomStateEvent>(evt => _hubContext.Clients.All.OnPgsTimeoutRoomStateChanged(evt));
+
             return Task.CompletedTask;
         }
 

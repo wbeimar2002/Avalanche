@@ -3,7 +3,7 @@
     public class GreetingVideoModel
     {
         /// <summary>
-        /// Video file index
+        /// Video file index. Internally, this is what the player uses
         /// </summary>
         public int Index { get; set; } = 0;
         public string FilePath { get; set; } = string.Empty;

@@ -20,10 +20,10 @@ namespace Avalanche.Api.Test.Managers
         Mock<IRoutingService> _routingService;
         Mock<IStateClient> _stateClient;
         Mock<IPgsTimeoutService> _pgsTimeoutService;
-        Mock<IPgsManager> _pgsManager;
+        Mock<IPgsTimeoutManager> _pgsManager;
         
         IMapper _mapper;
-        ITimeoutManager _timeoutManager;
+        IPgsTimeoutManager _timeoutManager;
 
         [SetUp]
         public void Setup()
@@ -32,7 +32,7 @@ namespace Avalanche.Api.Test.Managers
             _routingService = new Mock<IRoutingService>();
             _stateClient = new Mock<IStateClient>();
             _pgsTimeoutService = new Mock<IPgsTimeoutService>();
-            _pgsManager = new Mock<IPgsManager>();
+            _pgsManager = new Mock<IPgsTimeoutManager>();
 
             var config = new MapperConfiguration(cfg =>
             {
@@ -41,19 +41,20 @@ namespace Avalanche.Api.Test.Managers
 
             _mapper = config.CreateMapper();
 
-            _timeoutManager = new TimeoutManager(_storageService.Object,
-                                                    _routingService.Object,
+            _timeoutManager = new PgsTimeoutManager(_routingService.Object,
+                                                    _stateClient.Object,
                                                     _pgsTimeoutService.Object,
-                                                    _pgsManager.Object,
-                                                    _mapper);
+                                                    _mapper,
+                                                    null,
+                                                    null);
         }
 
         [Test]
         public async Task GetTimeoutPdfPath_ValidFile_Test()
         {
             var testPdfPath = "TestPdf";
-            _pgsTimeoutService.Setup(x => x.GetTimeoutPdfPath()).Returns(Task.FromResult<GetTimeoutPdfPathResponse>(new GetTimeoutPdfPathResponse {PdfPath = testPdfPath }));
-            var pdfPath = await _timeoutManager.GetTimeoutPdfPath();
+            _pgsTimeoutService.Setup(x => x.GetTimeoutPdfFileName()).Returns(Task.FromResult<GetTimeoutPdfFileResponse>(new GetTimeoutPdfFileResponse { FileName = testPdfPath }));
+            var pdfPath = await _timeoutManager.GetTimeoutPdfFileName();
 
             Assert.NotNull(pdfPath);
             Assert.IsNotEmpty(pdfPath);
@@ -63,17 +64,17 @@ namespace Avalanche.Api.Test.Managers
         [Test]
         public async Task GetTimeoutPdfPath_NoFile_Test()
         {
-            var pdfPath = await _timeoutManager.GetTimeoutPdfPath();
+            var pdfPath = await _timeoutManager.GetTimeoutPdfFileName();
             Assert.Null(pdfPath);
         }
 
         [Test]
         public async Task GetTimeoutPdfPath_Called()
         {
-            _pgsTimeoutService.Setup(mock => mock.GetTimeoutPdfPath()).ReturnsAsync(new GetTimeoutPdfPathResponse() { PdfPath = "Sample" });
-            var pdfPath = await _timeoutManager.GetTimeoutPdfPath();
+            _pgsTimeoutService.Setup(mock => mock.GetTimeoutPdfFileName()).ReturnsAsync(new GetTimeoutPdfFileResponse() { FileName = "Sample" });
+            var pdfPath = await _timeoutManager.GetTimeoutPdfFileName();
 
-            _pgsTimeoutService.Verify(mock => mock.GetTimeoutPdfPath(), Times.Once);
+            _pgsTimeoutService.Verify(mock => mock.GetTimeoutPdfFileName(), Times.Once);
         }
 
         [Test]
@@ -142,7 +143,7 @@ namespace Avalanche.Api.Test.Managers
             _routingService.Setup(x => x.GetVideoSinks())
                 .Returns(Task.FromResult(new GetVideoSinksResponse()));
 
-            await _timeoutManager.StopTimeout(true);
+            await _timeoutManager.StopPgsAndTimeout();
         }
     }
 }
