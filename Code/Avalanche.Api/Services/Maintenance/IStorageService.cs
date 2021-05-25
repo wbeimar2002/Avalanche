@@ -13,9 +13,9 @@ namespace Avalanche.Api.Services.Maintenance
         Task<dynamic> GetJsonDynamic(string configurationKey, int version, ConfigurationContext context);
         Task<List<dynamic>> GetJsonDynamicList(string configurationKey, int version, ConfigurationContext context);
 
-        Task SaveJsonObject(string configurationKey, string json, int version, ConfigurationContext context);
+        Task SaveJsonObject(string configurationKey, string json, int version, ConfigurationContext context, bool isList = false);
         Task SaveJsonMetadata(string configurationKey, string json, int version, ConfigurationContext context);
 
-        Task UpdateJsonProperty(string settingsKey, string jsonKey, string result, int version, ConfigurationContext context);
+        Task UpdateJsonProperty(string configurationKey, string jsonKey, string jsonValue, int version, ConfigurationContext context, bool isList = false);
     }
 }

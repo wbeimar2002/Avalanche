@@ -192,7 +192,7 @@ namespace Avalanche.Api.Helpers
             }
         }
 
-        public static List<ExpandoObject> GetEmbeddedList(string jsonKey, string settingsValues)
+        public static List<dynamic> GetEmbeddedList(string jsonKey, string settingsValues)
         {
             var keys = jsonKey.Split('.');
             var jObject = JObject.Parse(settingsValues);
@@ -209,7 +209,8 @@ namespace Avalanche.Api.Helpers
                         if (jToken is JArray)
                         {
                             JArray child = (JArray)jObject[keys[i]];
-                            return child == null ? null : child.Select(d => JsonConvert.DeserializeObject<ExpandoObject>(d.ToString())).ToList();
+                            return JsonConvert.DeserializeObject<List<dynamic>>(child.ToString());
+                            //return child == null ? null : child.Select(d => JsonConvert.DeserializeObject<ExpandoObject>(d.ToString())).ToList();
                         }
                     }
                 }

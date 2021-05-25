@@ -24,24 +24,32 @@ namespace Avalanche.Api.Services.Maintenance
             _client = client;
         }
 
-        public async Task UpdateJsonProperty(string configurationKey, string jsonKey, string result, int version, ConfigurationContext context)
+        public async Task UpdateJsonProperty(string configurationKey, string jsonKey, string jsonValue, int version, ConfigurationContext context, bool isList = false)
         {
             var json = await _client.GetConfiguration(configurationKey, Convert.ToUInt32(version), context);
 
+            JObject jsonRoot = JObject.Parse(json);
+            jsonRoot = (JObject)jsonRoot[configurationKey];
+
+            var jObject = jsonRoot;
             var keys = jsonKey.Split('.');
-            var jObject = JObject.Parse(json);
 
             for (int i = 0; i < keys.Length; i++)
             {
                 if (i == keys.Length - 1)
                 {
-                    jObject.Add(new JProperty(keys[i], JObject.Parse(result)));
+                    if (isList)
+                        jObject[keys[i]] = JArray.Parse(jsonValue);
+                    else
+                        jObject[keys[i]] = JObject.Parse(jsonValue);
                 }
                 else
                 {
                     jObject = (JObject)jObject[keys[i]];
                 }
             }
+
+            await SaveJsonObject(configurationKey, jsonRoot.ToString(), version, context);
         }
 
         public async Task<T> GetJsonObject<T>(string configurationKey, int version, ConfigurationContext context)
@@ -116,7 +124,7 @@ namespace Avalanche.Api.Services.Maintenance
             }
         }
 
-        public async Task SaveJsonObject(string configurationKey, string json, int version, ConfigurationContext context)
+        public async Task SaveJsonObject(string configurationKey, string json, int version, ConfigurationContext context, bool isList = false)
         {
             var kind = await _client.GetConfigurationKinds();
             var kindId = context.SiteId;
@@ -124,7 +132,10 @@ namespace Avalanche.Api.Services.Maintenance
             string jsonWrapper = @"{}";
             JObject jsonRoot = JObject.Parse(jsonWrapper);
 
-            jsonRoot.Add(new JProperty(configurationKey, JObject.Parse(json)));
+            if (isList)
+                jsonRoot.Add(new JProperty(configurationKey, JArray.Parse(json)));
+            else
+                jsonRoot.Add(new JProperty(configurationKey, JObject.Parse(json)));
 
             string finalJson = jsonRoot.ToString(Newtonsoft.Json.Formatting.None);
             await _client.SaveConfiguration(configurationKey, Convert.ToUInt32(version), finalJson, "Site", kindId);
