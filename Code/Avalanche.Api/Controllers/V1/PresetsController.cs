@@ -35,6 +35,33 @@ namespace Avalanche.Api.Controllers.V1
         }
 
         /// <summary>
+        /// Gets presets by physician
+        /// </summary>
+        /// <param name="physician"></param>
+        /// <returns></returns>
+        [HttpGet("presets/{physician}")]
+        public async Task<IActionResult> GetPresets(string physician)
+        {
+            try
+            {
+                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
+
+                var result = await _presetManager.GetPresets(physician);
+
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, LoggerHelper.GetLogMessage(DebugLogType.Exception), ex);
+                return new BadRequestObjectResult(ex.Get(_environment.IsDevelopment()));
+            }
+            finally
+            {
+                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
+            }
+        }
+
+        /// <summary>
         /// Apply preset by index
         /// </summary>
         /// <param name="index"></param>
@@ -49,8 +76,45 @@ namespace Avalanche.Api.Controllers.V1
                 // Get preset for the physician 
                 // TODO Apply preset based on index provided
                 RoutingPresetModel model = new RoutingPresetModel();
+                model.Id = index;
 
                 await _presetManager.ApplyPreset(model);
+
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, LoggerHelper.GetLogMessage(DebugLogType.Exception), ex);
+                return new BadRequestObjectResult(ex.Get(_environment.IsDevelopment()));
+            }
+            finally
+            {
+                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
+            }
+        }
+
+        /// <summary>
+        /// Save preset by index
+        /// </summary>
+        /// <param name="index"></param>
+        /// <param name="name"></param>
+        /// <returns></returns>
+        [HttpPut("save")]
+        public async Task<IActionResult> SavePreset(int index, [FromBody] string name)
+        {
+            try
+            {
+                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
+
+               
+                // TODO Get current routes and save
+                RoutingPresetModel model = new RoutingPresetModel();
+                model.Id = index;
+                model.Name = name;
+
+                string physician = string.Empty; // TODO get physician
+
+                await _presetManager.SavePreset(physician, model);
 
                 return Ok();
             }
