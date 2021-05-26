@@ -409,31 +409,54 @@ namespace Avalanche.Api.Managers.Maintenance
                         .ToList();
 
                 case "RoutingModes":
+                case "CopiesOptions":
+                case "PaperOrientations":
+                case "SwitchOptions":
+                case "Printers":
+                case "ReportLayouts":
+                    var values = SettingsHelper.GetEmbeddedList(sourceKey, settingValues);
 
-                    var routingModes = SettingsHelper.GetEmbeddedList(sourceKey, settingValues);
-
-                    return routingModes
+                    return values
                         .Select(item =>
                         {
                             dynamic expandoObj = new ExpandoObject();
                             expandoObj.Id = item.Id;
                             expandoObj.Value = item.Name;
+                            expandoObj.RelatedObject = item;
                             return (ExpandoObject)expandoObj;
                         })
                         .ToList();
-                    
+
+
+                case "RecordingModes":
+                    var recordingModes = SettingsHelper.GetEmbeddedList(sourceKey, settingValues);
+
+                    return recordingModes
+                        .Select(item =>
+                        {
+                            dynamic expandoObj = new ExpandoObject();
+                            expandoObj.Id = item.CaptureDeviceId;
+                            expandoObj.Value = item.CaptureDeviceId;
+                            expandoObj.RelatedObject = item;
+                            return (ExpandoObject)expandoObj;
+                        })
+                        .ToList();
+
                 default:
                     var list = await _storageService.GetJsonDynamicList(sourceKey, 1, configurationContext);
 
-                    return list
-                        .Select(item =>
-                        {
-                            dynamic expandoObj = new ExpandoObject();
-                            expandoObj.Id = item.Id;
-                            expandoObj.Value = item.Name;
-                            return (ExpandoObject)expandoObj;
-                        })
-                        .ToList();
+                    if (list == null)
+                        return null;
+                    else
+                        return list
+                            .Select(item =>
+                            {
+                                dynamic expandoObj = new ExpandoObject();
+                                expandoObj.Id = item.Id;
+                                expandoObj.Value = item.Name;
+                                return (ExpandoObject)expandoObj;
+                            })
+                            .ToList();
             }
         }
 
