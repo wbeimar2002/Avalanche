@@ -1,0 +1,176 @@
+
+trigger:
+   branches:
+    include:
+      - dev
+   paths:
+    include:
+      - avalanche-api/Code/Avalanche.Api/Controllers/*
+
+variables:
+  - group: 'vg-dev-avalanche-api'
+
+resources:
+  repositories:
+
+  - repository: devops
+    type: git
+    name: devops
+    ref: dev
+
+  - repository: avalanche-resources
+    type: git
+    name: avalanche-resources
+    ref: dev
+
+  - repository: avalanche-api-client
+    type: git
+    name: avalanche-api-client
+    ref: dev
+
+pool:
+  vmImage: $(PoolVmImage)
+
+name: $(BuildNumberPrefix)-client-generation-$(MajorVersion).$(MinorVersion).$(Patch).$(ReleaseStage)_$(MajorVersion).$(MinorVersion).$(Date:yyMM).$(Date:dd)$(Rev:rr)_$(Date:yyyyMMdd)T$(Date:hhmmss)
+  
+stages:
+
+# stage for creating PR comments if nuget pkgs verssion are not up to date
+- template: pipeline\templates\nuget-version-check.yml@devops
+
+- stage: build
+
+  jobs:
+
+  - job: build_test_publish
+    steps:
+     
+     - checkout: self
+     - checkout: devops
+     - checkout: avalanche-resources
+     - checkout: avalanche-api-client
+
+     - task: PowerShell@2
+       displayName: List environmental variables
+       inputs:
+        targetType: 'inline'
+        script: 'Get-ChildItem -Path Env:\'
+     #- name: System.Debug
+        #value: true
+     
+     - template: 'pipeline\templates\restore-build-test-msbuild7.yml@devops'
+       parameters: 
+          repo: '$(Repo)'
+          projectsolution: '$(ProjectSolution)'
+          buildConfiguration: '$(BuildConfiguration)'
+          buildplatform: '$(BuildPlatform)'
+          vstsfeed: '$(VstsFeed)'
+          adoproject: '$(AdoProject)' 
+     
+     - task: CmdLine@2
+       inputs:
+        script: |
+          dir $(Build.SourcesDirectory)\avalanche-api\Code\Avalanche.Api
+          dir $(Build.SourcesDirectory)\avalanche-api\Code\Avalanche.Api\bin
+          dir $(Build.SourcesDirectory)\avalanche-api\Code\Avalanche.Api\bin\Release
+          dir $(Build.SourcesDirectory)\avalanche-api\Code\Avalanche.Api\bin\Release\netcoreapp3.1
+       displayName: 'List release dir'
+       condition: and(succeeded(), eq(variables['debug'], 'true'))
+
+     - task: CmdLine@2
+       inputs:
+        script: |
+          dir $(Build.SourcesDirectory)\avalanche-resources\certificates
+       displayName: 'List certificates'
+       condition: and(succeeded(), eq(variables['debug'], 'true'))
+
+     - bash: |
+              echo "##vso[task.setvariable variable=AVALANCHE_CLIENT_CERTIFICATE_PASSWORD]0123456789"
+              echo "##vso[task.setvariable variable=AVALANCHE_CLIENT_CERTIFICATE_PATH]$(Build.SourcesDirectory)\avalanche-resources\certificates\grpc_localhost_root_l1.pfx"
+              echo "##vso[task.setvariable variable=AVALANCHE_SERVER_VALIDATION_CERTIFICATE_PATH]$(Build.SourcesDirectory)\avalanche-resources\certificates\grpc_localhost_root_l1.cer"
+              echo "##vso[task.setvariable variable=AVALANCHE_CONFIGURATION_SERVICE_PORT]5012"
+              echo "##vso[task.setvariable variable=AVALANCHE_CONFIGURATION_SERVICE_HOST]10.161.22.121"
+       displayName: 'Set environmental variables'
+
+     - powershell: |
+          Write-Host "AVALANCHE_CLIENT_CERTIFICATE_PASSWORD       ="$(AVALANCHE_CLIENT_CERTIFICATE_PASSWORD)
+          Write-Host "AVALANCHE_CLIENT_CERTIFICATE_PATH           ="$(AVALANCHE_CLIENT_CERTIFICATE_PATH)
+          Write-Host "AVALANCHE_SERVER_VALIDATION_CERTIFICATE_PATH="$(AVALANCHE_SERVER_VALIDATION_CERTIFICATE_PATH)
+          Write-Host "AVALANCHE_CONFIGURATION_SERVICE_PORT        ="$(AVALANCHE_CONFIGURATION_SERVICE_PORT)
+          Write-Host "AVALANCHE_CONFIGURATION_SERVICE_HOST        ="$(AVALANCHE_CONFIGURATION_SERVICE_HOST)
+       displayName: 'List environmental variables'
+
+     - powershell: |
+          set-location $(Build.SourcesDirectory)\avalanche-api\Code\Avalanche.Api
+          $exe = $ENV:SYSTEM_DEFAULTWORKINGDIRECTORY + "\devops\utils\NSwag\NetCore31\dotnet-nswag.exe"
+          & $exe run nswag.json /variables:Configuration=Release,OutDir=bin\Release\netcoreapp3.1\ /runtime:NetCore3
+       displayName: 'Run dotnet-nswag.exe'
+    
+     - task: CopyFiles@2
+       inputs:
+        sourceFolder: 'avalanche-api/Code/Avalanche.Api/ApiClient'
+        contents: '**' 
+        targetFolder: 'avalanche-api-client/projects/avalanche-client-scripts/src/lib'
+       displayName: 'Copy client to Angular project'
+
+     - script:  |
+        mv api.ts client-api.ts
+       workingDirectory: 'avalanche-api-client/projects/avalanche-client-scripts/src/lib'
+       displayName: 'Rename client file'
+
+     - task: NodeTool@0
+       inputs:    
+          versionSpec: '14.x'
+       displayName: 'Install Node'
+
+     - script: |
+        npm install -g @angular/cli
+        npm install
+        ng build --prod
+       displayName: 'npm install/ng build'
+
+     #- script:
+        #npm install
+       #displayName: 'npm install'
+       #workingDirectory: 'avalanche-api-client'
+     #- script:  
+        #ng build 
+       #displayName: 'ng build'
+       #workingDirectory: 'avalanche-api-client'
+    
+    # login using syetem token
+     - template: 'pipeline/templates/login-ado-1.yml@devops'
+      
+     - template: 'pipeline/templates/nuget-increment-version-2.yml@devops' 
+       parameters:
+          organization: '$(adoIntanceUrl)'
+          adoProject: '$(adoProject)'
+          nugetFilenamePrefix: '$(nugetFilenamePrefix)' 
+        
+     - task: Npm@1
+       inputs:
+        command: 'custom'
+        workingDir: 'avalanche-api-client'
+        verbose: false
+        customCommand: 'version $(new_version) --no-git-tag-version --allow-same-version'
+        customRegistry: 'useFeed'
+        customFeed: '$(VstsFeed)'
+       displayName: 'set npm version'
+       condition: and(succeeded(), eq(variables['publish_nuget_version_tofeed'], true))
+
+     - task: Npm@1
+       inputs:
+          command: publish
+          workingDir: 'avalanche-api-client'
+          verbose: false
+          publishRegistry: useFeed
+          publishFeed: '$(VstsFeed)'
+       displayName: 'npm publish'
+       condition: and(succeeded(), eq(variables['publish_nuget_version_tofeed'], true))
+
+     - template: 'pipeline/templates/nuget-update-version-1.yml@devops' 
+       parameters:
+            organization: '$(adoIntanceUrl)'
+            adoProject: '$(adoProject)'
+            nugetFilenamePrefix: '$(nugetFilenamePrefix)'   
+            newNugetVerion: '$(new_version)'
