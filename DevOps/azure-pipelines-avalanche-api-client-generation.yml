@@ -101,10 +101,11 @@ stages:
        displayName: 'List environmental variables'
 
      - powershell: |
-          set-location $(Build.SourcesDirectory)\avalanche-api\Code\Avalanche.Api
+          #set-location $(Build.SourcesDirectory)\avalanche-api\Code\Avalanche.Api
           $exe = $ENV:SYSTEM_DEFAULTWORKINGDIRECTORY + "\devops\utils\NSwag\NetCore31\dotnet-nswag.exe"
           & $exe run nswag.json /variables:Configuration=Release,OutDir=bin\Release\netcoreapp3.1\ /runtime:NetCore3
        displayName: 'Run dotnet-nswag.exe'
+       workingDirectory: 'avalanche-api\Code\Avalanche.Api'
     
      - task: CopyFiles@2
        inputs:
