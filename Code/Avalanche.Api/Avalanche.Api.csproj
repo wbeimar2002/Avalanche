@@ -45,7 +45,7 @@
     <PackageReference Include="Ism.Common.Core.Hosting" Version="1.0.0-prerelease036" />
     <PackageReference Include="Ism.Library.Client" Version="1.0.0-prerelease0024" />
     <PackageReference Include="Ism.PatientInfoEngine.Client" Version="1.0.0-prerelease0021" />
-    <PackageReference Include="Ism.PgsTimeout.Client" Version="1.0.0-prerelease0010" />
+    <PackageReference Include="Ism.PgsTimeout.Client" Version="1.0.0-prerelease0011" />
     <PackageReference Include="Ism.Recorder.Client" Version="1.0.0-prerelease0028" />
     <PackageReference Include="Ism.Routing.Client" Version="1.0.0-prerelease0014" />
     <PackageReference Include="Ism.Security.Grpc.Standard" Version="1.0.0-prerelease023" />

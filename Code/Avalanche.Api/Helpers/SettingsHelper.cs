@@ -4,6 +4,7 @@ using Avalanche.Shared.Infrastructure.Enumerations;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Dynamic;
 using System.Linq;
 using System.Reflection;
@@ -91,13 +92,10 @@ namespace Avalanche.Api.Helpers
             {
                 foreach (var item in section.Sections)
                 {
-                    if (!string.IsNullOrEmpty(item.JsonKey))
-                    {
-                        rootSection.Add(new JProperty(item.JsonKey, JObject.Parse("{}")));
-                        JObject childSection = (JObject)rootSection[item.JsonKey];
+                    rootSection.Add(new JProperty(item.JsonKey, JObject.Parse("{}")));
+                    JObject childSection = (JObject)rootSection[item.JsonKey];
 
-                        AddSettingValues(childSection, item);
-                    }
+                    AddSettingValues(childSection, item);
                 }
             }
         }
@@ -125,7 +123,7 @@ namespace Avalanche.Api.Helpers
             }
         }
 
-        public static void SetSettingValues(DynamicSectionViewModel section, dynamic settingsValues, IList<KeyValuePairViewModel> policiesValues)
+        public static void SetSettingValues(DynamicSectionViewModel section, string settingsValues, IList<KeyValuePairViewModel> policiesValues)
         {
             if (section.Settings != null)
             {
@@ -142,7 +140,22 @@ namespace Avalanche.Api.Helpers
                             setting.Value = null;
                         else
                         {
-                            setting.Value = setting.SettingType == SettingTypes.Boolean ? Convert.ToString(settingsValues[setting.JsonKey]).ToLower() : settingsValues[setting.JsonKey];
+                            var keys = setting.JsonKey.Split('.');
+                            var child = JObject.Parse(settingsValues);
+
+                            string value = null;
+
+                            foreach (var key in keys)
+                            {
+                                var jValue = child[key];
+
+                                if (jValue is JValue finalValue)
+                                    value = finalValue.ToString();
+                                else
+                                    child = (JObject)child[key];
+                            }                            
+
+                            setting.Value = setting.SettingType == SettingTypes.Boolean ? value.ToLower() : value;
                         }
                     }
                 }

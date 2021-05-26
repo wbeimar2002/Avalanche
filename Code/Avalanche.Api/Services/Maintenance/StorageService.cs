@@ -22,6 +22,22 @@ namespace Avalanche.Api.Services.Maintenance
             _client = client;
         }
 
+        public async Task<string> GetJson(string configurationKey, int version, ConfigurationContext context)
+        {
+            var json = await _client.GetConfiguration(configurationKey, Convert.ToUInt32(version), context);
+
+            var jObject = JObject.Parse(json);
+            JObject child = (JObject)jObject[configurationKey];
+
+            return child.ToString();
+        }
+
+        public async Task<dynamic> GetJsonFullDynamic(string configurationKey, int version, ConfigurationContext context)
+        {
+            var json = await _client.GetConfiguration(configurationKey, Convert.ToUInt32(version), context);
+            return json == null ? null : JObject.Parse(json);
+        }
+
         public async Task<dynamic> GetJsonDynamic(string configurationKey, int version, ConfigurationContext context)
         {
             var json = await _client.GetConfiguration(configurationKey, Convert.ToUInt32(version), context);
@@ -58,7 +74,7 @@ namespace Avalanche.Api.Services.Maintenance
             return json.Get<T>();
         }
 
-        public async Task SaveJson(string configurationKey, string json, int version, ConfigurationContext context)
+        public async Task SaveJsonObject(string configurationKey, string json, int version, ConfigurationContext context)
         {
             var kind = await _client.GetConfigurationKinds();
             var kindId = context.SiteId;
@@ -70,6 +86,13 @@ namespace Avalanche.Api.Services.Maintenance
 
             string finalJson = jsonRoot.ToString(Newtonsoft.Json.Formatting.None);
             await _client.SaveConfiguration(configurationKey, Convert.ToUInt32(version), finalJson, "Site", kindId);
+        }
+
+        public async Task SaveJsonMetadata(string configurationKey, string json, int version, ConfigurationContext context)
+        {
+            var kind = await _client.GetConfigurationKinds();
+            var kindId = context.SiteId;
+            await _client.SaveConfiguration(configurationKey, Convert.ToUInt32(version), json, "Site", kindId);
         }
     }
 }

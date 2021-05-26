@@ -27,30 +27,28 @@ namespace Avalanche.Api.Controllers.V1
     public class MediaController : ControllerBase
     {
         private readonly ILogger<MediaController> _logger;
-        private readonly IPgsManager _pgsManager;
-        private readonly ITimeoutManager _timeoutManager;
+        private readonly IPgsTimeoutManager _pgsTimeoutManager;
         private readonly IWebHostEnvironment _environment;
 
-        public MediaController(ILogger<MediaController> logger, IPgsManager pgsManager, ITimeoutManager timeoutManager, IWebHostEnvironment environment)
+        public MediaController(ILogger<MediaController> logger, IPgsTimeoutManager pgsTimeoutManager, IWebHostEnvironment environment)
         {
             _environment = environment;
             _logger = ThrowIfNullOrReturn(nameof(logger), logger);
-            _pgsManager = ThrowIfNullOrReturn(nameof(pgsManager), pgsManager);
-            _timeoutManager = ThrowIfNullOrReturn(nameof(timeoutManager), timeoutManager);
+            _pgsTimeoutManager = ThrowIfNullOrReturn(nameof(pgsTimeoutManager), pgsTimeoutManager);
         }
 
         /// <summary>
-        /// Gets mode for PGS Timeout Player
+        /// Gets the timeout mode. It's either a pdf file or a video source
         /// </summary>
         /// <returns></returns>
-        [HttpGet("mode")]
-        public async Task<IActionResult> GetMode()
+        [HttpGet("timeout/mode")]
+        public async Task<IActionResult> GetTimeoutMode()
         {
             try
             {
                 _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
-                var result = await _pgsManager.GetPgsTimeoutMode(); 
-                return Ok(new { Value = (int)result });
+                var result = await _pgsTimeoutManager.GetTimeoutMode();
+                return Ok(new { Value = result });
             }
             catch (Exception ex)
             {
@@ -68,13 +66,13 @@ namespace Avalanche.Api.Controllers.V1
         /// </summary>
         /// <param name="mode"></param>
         /// <returns></returns>
-        [HttpPut("mode/{mode}")]
-        public async Task<IActionResult> SetMode(PgsTimeoutModes mode)
+        [HttpPut("pgsTimeoutPlayer/mode/{mode}")]
+        public async Task<IActionResult> SetPlayerMode(PgsTimeoutModes mode)
         {
             try
             {
                 _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
-                await _pgsManager.SetPgsTimeoutMode(mode);
+                await _pgsTimeoutManager.SetPgsTimeoutPlayerMode(mode);
                 return Ok();
             }
             catch (Exception ex)
@@ -91,7 +89,7 @@ namespace Avalanche.Api.Controllers.V1
         #region Routing
 
         /// <summary>
-        /// Gets the list of pgs sinks and their current checked state
+        /// Gets the list of pgs sinks
         /// </summary>
         /// <returns></returns>
         [HttpGet("pgs/sinks")]
@@ -101,8 +99,8 @@ namespace Avalanche.Api.Controllers.V1
             try
             {
                 _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
-                var result = await _pgsManager.GetPgsSinks();
-                return Ok(result);
+                var result = await _pgsTimeoutManager.GetPgsSinks();
+                return Ok(new { Value = result });
             }
             catch (Exception ex)
             {
@@ -116,17 +114,17 @@ namespace Avalanche.Api.Controllers.V1
         }
 
         /// <summary>
-        /// Sets the checked state of a pgs sink and internally it gets broadcast
+        /// Sets the checked state of a pgs sink. Internally, it gets broadcast
         /// </summary>
         /// <param name="sinkState"></param>
         /// <returns></returns>
         [HttpPut("pgs/sinks/state")]
-        public async Task<IActionResult> SetPgsStateForSink([FromBody]PgsSinkStateViewModel sinkState)
+        public async Task<IActionResult> SetPgsStateForSink([FromBody] PgsSinkStateViewModel sinkState)
         {
             try
             {
                 _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
-                await _pgsManager.SetPgsStateForSink(sinkState);
+                await _pgsTimeoutManager.SetPgsStateForSink(sinkState);
                 return Ok();
             }
             catch (Exception ex)
@@ -141,24 +139,17 @@ namespace Avalanche.Api.Controllers.V1
         }
 
         /// <summary>
-        /// Gets the checked state of a pgs sink
+        /// Gets the checked state for all pgs sinks
         /// </summary>
-        /// <param name="alias"></param>
-        /// <param name="index"></param>
         /// <returns></returns>
         [HttpGet("pgs/sinks/state")]
-        public async Task<IActionResult> GetPgsStateForSink([FromQuery] string alias, [FromQuery] string index)
+        public async Task<IActionResult> GetPgsStateForSinks()
         {
             try
             {
                 _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
-                var result = await _pgsManager.GetPgsStateForSink(new AliasIndexModel()
-                {
-                    Alias = alias,
-                    Index = index
-                });
-
-                return Ok(new { Value =  result });
+                var result = await _pgsTimeoutManager.GetPgsStateForSinks();
+                return Ok(new { Value = result });
             }
             catch (Exception ex)
             {
@@ -186,7 +177,7 @@ namespace Avalanche.Api.Controllers.V1
             try
             {
                 _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
-                await _pgsManager.SetPgsVolume(level);
+                await _pgsTimeoutManager.SetPgsVolume(level);
                 return Ok();
             }
             catch (Exception ex)
@@ -210,7 +201,7 @@ namespace Avalanche.Api.Controllers.V1
             try
             {
                 _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
-                var result = await _pgsManager.GetPgsVolume();
+                var result = await _pgsTimeoutManager.GetPgsVolume();
                 return Ok(new { Value = result });
             }
             catch (Exception ex)
@@ -234,7 +225,7 @@ namespace Avalanche.Api.Controllers.V1
             try
             {
                 _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
-                await _pgsManager.SetPgsMute(muteState);
+                await _pgsTimeoutManager.SetPgsMute(muteState);
                 return Ok();
             }
             catch (Exception ex)
@@ -252,13 +243,13 @@ namespace Avalanche.Api.Controllers.V1
         /// Gets if the pgs player audio is muted
         /// </summary>
         /// <returns></returns>
-        [HttpGet("pgs/volume")]
+        [HttpGet("pgs/volume/mute")]
         public async Task<IActionResult> GetPgsMute()
         {
             try
             {
                 _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
-                var result = await _pgsManager.GetPgsMute();
+                var result = await _pgsTimeoutManager.GetPgsMute();
                 return Ok(new { Value = result });
             }
             catch (Exception ex)
@@ -278,12 +269,12 @@ namespace Avalanche.Api.Controllers.V1
         /// <param name="greetingVideo"></param>
         /// <returns></returns>
         [HttpPut("pgs/files/videos")]
-        public async Task<IActionResult> SetCurrentGreetingVideo([FromBody]GreetingVideoModel greetingVideo)
+        public async Task<IActionResult> SetPgsVideoFile([FromBody] GreetingVideoModel greetingVideo)
         {
             try
             {
                 _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
-                await _pgsManager.SetPgsVideoFile(greetingVideo);
+                await _pgsTimeoutManager.SetPgsVideoFile(greetingVideo);
                 return Ok();
             }
             catch (Exception ex)
@@ -308,8 +299,8 @@ namespace Avalanche.Api.Controllers.V1
             try
             {
                 _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
-                var result = await _pgsManager.GetPgsVideoFileList();
-                return Ok(result);
+                var result = await _pgsTimeoutManager.GetPgsVideoFileList();
+                return Ok(new { Value = result });
             }
             catch (Exception ex)
             {
@@ -334,7 +325,7 @@ namespace Avalanche.Api.Controllers.V1
             try
             {
                 _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
-                await _pgsManager.SetPgsVideoPosition(position);
+                await _pgsTimeoutManager.SetPgsVideoPosition(position);
                 return Ok();
             }
             catch (Exception ex)
@@ -349,7 +340,7 @@ namespace Avalanche.Api.Controllers.V1
         }
 
         /// <summary>
-        /// Starts or stops PGS mode
+        /// Plays or pauses the pgs video. Note that this is not the same as starting/stopping pgs
         /// </summary>
         /// <param name="isPlaying"></param>
         /// <returns></returns>
@@ -359,7 +350,7 @@ namespace Avalanche.Api.Controllers.V1
             try
             {
                 _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
-                await _pgsManager.SetPgsPlaybackState(isPlaying);
+                await _pgsTimeoutManager.SetPgsVideoPlaybackState(isPlaying);
                 return Ok();
             }
             catch (Exception ex)
@@ -374,7 +365,7 @@ namespace Avalanche.Api.Controllers.V1
         }
 
         /// <summary>
-        /// Gets PGS Playback State
+        /// Returns true/false if the pgs video is playing or paused
         /// </summary>
         /// <returns></returns>
         [HttpGet("pgs/playbackstate")]
@@ -383,8 +374,8 @@ namespace Avalanche.Api.Controllers.V1
             try
             {
                 _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
-                var result = await _pgsManager.GetPgsPlaybackState();
-                return Ok(result);
+                var result = await _pgsTimeoutManager.GetPgsVideoPlaybackState();
+                return Ok(new { Value = result });
             }
             catch (Exception ex)
             {
@@ -398,7 +389,7 @@ namespace Avalanche.Api.Controllers.V1
         }
 
         /// <summary>
-        /// Staet PGS
+        /// Starts PGS
         /// </summary>
         /// <returns></returns>
         [HttpPost("pgs")]
@@ -407,31 +398,7 @@ namespace Avalanche.Api.Controllers.V1
             try
             {
                 _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
-                await _pgsManager.StartPgs();
-                return Ok();
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, LoggerHelper.GetLogMessage(DebugLogType.Exception), ex);
-                return new BadRequestObjectResult(ex.Get(_environment.IsDevelopment()));
-            }
-            finally
-            {
-                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
-            }
-        }
-
-        /// <summary>
-        /// Stop PGS
-        /// </summary>
-        /// <returns></returns>
-        [HttpDelete("pgs")]
-        public async Task<IActionResult> StopPgs()
-        {
-            try
-            {
-                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
-                await _pgsManager.StopPgs();
+                await _pgsTimeoutManager.StartPgs();
                 return Ok();
             }
             catch (Exception ex)
@@ -448,10 +415,10 @@ namespace Avalanche.Api.Controllers.V1
         #endregion
 
         #region Timeout
+
         /// <summary>
         /// Request Next Page for Timeout
         /// </summary>
-
         /// <returns></returns>
         [HttpPut("timeout/pages/next")]
         public async Task<IActionResult> NextPage()
@@ -459,7 +426,7 @@ namespace Avalanche.Api.Controllers.V1
             try
             {
                 _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
-                await _timeoutManager.NextPage();
+                await _pgsTimeoutManager.NextPage();
                 return Ok();
             }
             catch (Exception ex)
@@ -483,7 +450,7 @@ namespace Avalanche.Api.Controllers.V1
             try
             {
                 _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
-                await _timeoutManager.PreviousPage();
+                await _pgsTimeoutManager.PreviousPage();
                 return Ok();
             }
             catch (Exception ex)
@@ -508,7 +475,7 @@ namespace Avalanche.Api.Controllers.V1
             try
             {
                 _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
-                await _timeoutManager.SetTimeoutPage(pageNumber);
+                await _pgsTimeoutManager.SetTimeoutPage(pageNumber);
                 return Ok();
             }
             catch (Exception ex)
@@ -532,7 +499,7 @@ namespace Avalanche.Api.Controllers.V1
             try
             {
                 _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
-                var result = await _timeoutManager.GetTimeoutPage();
+                var result = await _pgsTimeoutManager.GetTimeoutPage();
                 return Ok(new { Value = result });
             }
             catch (Exception ex)
@@ -547,7 +514,7 @@ namespace Avalanche.Api.Controllers.V1
         }
 
         /// <summary>
-        /// Get pages count from timeout file 
+        /// Get page count from timeout file 
         /// </summary>
         /// <returns></returns>
         [HttpGet("timeout/pages/count")]
@@ -556,7 +523,7 @@ namespace Avalanche.Api.Controllers.V1
             try
             {
                 _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
-                var result = await _timeoutManager.GetTimeoutPageCount();
+                var result = await _pgsTimeoutManager.GetTimeoutPageCount();
                 return Ok(new { Value = result });
             }
             catch (Exception ex)
@@ -571,17 +538,17 @@ namespace Avalanche.Api.Controllers.V1
         }
 
         /// <summary>
-        /// Get timeout's file path
+        /// Gets the timeout pdf file
         /// </summary>
         /// <returns></returns>
         [ResponseCache(Location = ResponseCacheLocation.Client, Duration = 60 * 60 * 24)]
-        [HttpGet("timeout/files/pdf")]
+        [HttpGet("timeout/pdfFile")]
         public async Task<IActionResult> GetTimeoutPdf()
         {
             try
             {
                 _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
-                var fullPath = await _timeoutManager.GetTimeoutPdfPath();
+                var fullPath = await _pgsTimeoutManager.GetTimeoutPdfFileName();
 
                 return PhysicalFile(fullPath, "application/pdf");
             }
@@ -597,7 +564,7 @@ namespace Avalanche.Api.Controllers.V1
         }
 
         /// <summary>
-        /// Starts Timeout mode
+        /// Starts timeout
         /// </summary>
         /// <returns></returns>
         [HttpPost("timeout")]
@@ -606,7 +573,7 @@ namespace Avalanche.Api.Controllers.V1
             try
             {
                 _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
-                await _timeoutManager.StartTimeout();
+                await _pgsTimeoutManager.StartTimeout();
                 return Ok();
             }
             catch (Exception ex)
@@ -621,16 +588,16 @@ namespace Avalanche.Api.Controllers.V1
         }
 
         /// <summary>
-        /// Stop Timeout mode
+        /// Stops pgs and timeout. Call whenever either need to be stopped
         /// </summary>
         /// <returns></returns>
-        [HttpDelete("timeout")]
-        public async Task<IActionResult> StopTimeout()
+        [HttpDelete("pgsTimeout")]
+        public async Task<IActionResult> StopPgsAndTimeout()
         {
             try
             {
                 _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
-                await _timeoutManager.StopTimeout(true);
+                await _pgsTimeoutManager.StopPgsAndTimeout();
                 return Ok();
             }
             catch (Exception ex)
@@ -645,17 +612,17 @@ namespace Avalanche.Api.Controllers.V1
         }
 
         /// <summary>
-        /// Deactivates timeout when user moves out of timeout page
+        /// Gets the current pgs/timeout room state
         /// </summary>
         /// <returns></returns>
-        [HttpDelete("timeout/state")]
-        public async Task<IActionResult> DeActivateTimeout()
+        [HttpGet("pgsTimeout/roomState")]
+        public async Task<IActionResult> GetPgsTimeoutRoomState()
         {
             try
             {
                 _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
-                await _timeoutManager.DeActivateTimeout();
-                return Ok();
+                var roomState = await _pgsTimeoutManager.GetRoomState();
+                return Ok(new { Value = roomState });
             }
             catch (Exception ex)
             {
@@ -667,6 +634,7 @@ namespace Avalanche.Api.Controllers.V1
                 _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
             }
         }
+
         #endregion
     }
 }

@@ -69,36 +69,36 @@ namespace Avalanche.Api.MappingConfigurations
             CreateMap<Ism.PgsTimeout.V1.Protos.GetPgsVideoFileResponse, GreetingVideoModel>()
                .ForMember(dest =>
                    dest.Index,
-                   opt => opt.MapFrom(src => src.VideoFile.VideoIndex))
+                   opt => opt.MapFrom(src => src.VideoFile.Index))
                 .ForMember(dest =>
                    dest.Name,
-                   opt => opt.MapFrom(src => src.VideoFile.Name))
+                   opt => opt.MapFrom(src => src.VideoFile.DisplayName))
                 .ForMember(dest =>
                    dest.FilePath,
-                   opt => opt.MapFrom(src => src.VideoFile.FilePath))
+                   opt => opt.MapFrom(src => src.VideoFile.FileName))
                .ReverseMap();
 
             CreateMap<Ism.PgsTimeout.V1.Protos.PgsVideoFileMessage, GreetingVideoModel>()
                .ForMember(dest =>
                    dest.Index,
-                   opt => opt.MapFrom(src => src.VideoIndex))
+                   opt => opt.MapFrom(src => src.Index))
                 .ForMember(dest =>
                    dest.Name,
-                   opt => opt.MapFrom(src => src.Name))
+                   opt => opt.MapFrom(src => src.DisplayName))
                 .ForMember(dest =>
                    dest.FilePath,
-                   opt => opt.MapFrom(src => src.FilePath))
+                   opt => opt.MapFrom(src => src.FileName))
                .ReverseMap();
 
             CreateMap<GreetingVideoModel, Ism.PgsTimeout.V1.Protos.SetPgsVideoFileRequest>()
                .ForPath(dest =>
-                   dest.VideoFile.VideoIndex,
+                   dest.VideoFile.Index,
                    opt => opt.MapFrom(src => src.Index))
                 .ForPath(dest =>
-                   dest.VideoFile.Name,
+                   dest.VideoFile.DisplayName,
                    opt => opt.MapFrom(src => src.Name))
                 .ForPath(dest =>
-                   dest.VideoFile.FilePath,
+                   dest.VideoFile.FileName,
                    opt => opt.MapFrom(src => src.FilePath))
                .ReverseMap();
 
