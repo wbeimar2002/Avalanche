@@ -28,11 +28,8 @@ resources:
     name: avalanche-api-client
     ref: dev
 
-pool: 'ism-build-pool-on-prem'
-#pool:
-  #vmImage: $(PoolVmImage)
-
-
+pool:
+  vmImage: $(PoolVmImage)
 
 name: $(BuildNumberPrefix)-client-generation-$(MajorVersion).$(MinorVersion).$(Patch).$(ReleaseStage)_$(MajorVersion).$(MinorVersion).$(Date:yyMM).$(Date:dd)$(Rev:rr)_$(Date:yyyyMMdd)T$(Date:hhmmss)
   
@@ -104,11 +101,10 @@ stages:
        displayName: 'List environmental variables'
 
      - powershell: |
-          #set-location $(Build.SourcesDirectory)\avalanche-api\Code\Avalanche.Api
+          set-location $(Build.SourcesDirectory)\avalanche-api\Code\Avalanche.Api
           $exe = $ENV:SYSTEM_DEFAULTWORKINGDIRECTORY + "\devops\utils\NSwag\NetCore31\dotnet-nswag.exe"
           & $exe run nswag.json /variables:Configuration=Release,OutDir=bin\Release\netcoreapp3.1\ /runtime:NetCore3
        displayName: 'Run dotnet-nswag.exe'
-       workingDirectory: '$(Build.SourcesDirectory)\avalanche-api\Code\Avalanche.Api'
     
      - task: CopyFiles@2
        inputs:
