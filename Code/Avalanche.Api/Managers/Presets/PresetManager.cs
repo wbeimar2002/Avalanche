@@ -24,6 +24,7 @@ namespace Avalanche.Api.Managers.Presets
         private readonly IStorageService _storageService;
         private readonly ConfigurationContext _configurationContext;
         private const string PRESETS = "presets";
+        private const string SITEID = "Avalanche"; // TODO how to get Site Id
 
         public PresetManager(IRoutingService routingService, IStorageService storageService, IMapper mapper)
         {
@@ -31,8 +32,7 @@ namespace Avalanche.Api.Managers.Presets
             _routingService = ThrowIfNullOrReturn(nameof(routingService), routingService);
             _storageService = ThrowIfNullOrReturn(nameof(storageService), storageService);
 
-            _configurationContext = new ConfigurationContext { SiteId = "Avalanche" };
-            _configurationContext.IdnId = Guid.NewGuid().ToString();
+            _configurationContext = new ConfigurationContext { SiteId = SITEID, IdnId = Guid.NewGuid().ToString() };
         }
 
         public async Task<UserPresetsModel> GetPresets(string userId)
