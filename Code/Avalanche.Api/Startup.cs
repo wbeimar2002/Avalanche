@@ -6,6 +6,7 @@ using Avalanche.Api.Managers.Maintenance;
 using Avalanche.Api.Managers.Media;
 using Avalanche.Api.Managers.Notifications;
 using Avalanche.Api.Managers.Patients;
+using Avalanche.Api.Managers.Presets;
 using Avalanche.Api.Managers.Procedures;
 using Avalanche.Api.Managers.Security;
 using Avalanche.Api.Options;

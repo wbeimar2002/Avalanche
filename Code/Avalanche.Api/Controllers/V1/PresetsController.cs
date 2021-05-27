@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
-using Avalanche.Api.Managers.Media;
-using Avalanche.Shared.Domain.Models.Media;
+using Avalanche.Api.Managers.Presets;
 using Avalanche.Shared.Infrastructure.Enumerations;
 using Avalanche.Shared.Infrastructure.Extensions;
 using Avalanche.Shared.Infrastructure.Helpers;
@@ -35,18 +34,17 @@ namespace Avalanche.Api.Controllers.V1
         }
 
         /// <summary>
-        /// Gets presets by physician
+        /// Gets presets by user
         /// </summary>
-        /// <param name="physician"></param>
         /// <returns></returns>
-        [HttpGet("presets/{physician}")]
-        public async Task<IActionResult> GetPresets(string physician)
+        [HttpGet("presets")]
+        public async Task<IActionResult> GetPresets()
         {
             try
             {
                 _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
 
-                var result = await _presetManager.GetPresets(physician);
+                var result = await _presetManager.GetPresets();
 
                 return Ok(result);
             }
@@ -73,12 +71,7 @@ namespace Avalanche.Api.Controllers.V1
             {
                 _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
 
-                // Get preset for the physician 
-                // TODO Apply preset based on index provided
-                RoutingPresetModel model = new RoutingPresetModel();
-                model.Id = index;
-
-                await _presetManager.ApplyPreset(model);
+                await _presetManager.ApplyPreset(index);
 
                 return Ok();
             }
@@ -100,21 +93,13 @@ namespace Avalanche.Api.Controllers.V1
         /// <param name="name"></param>
         /// <returns></returns>
         [HttpPut("save")]
-        public async Task<IActionResult> SavePreset(int index, [FromBody] string name)
+        public async Task<IActionResult> SavePreset(int index, string name)
         {
             try
             {
                 _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
-
-               
-                // TODO Get current routes and save
-                RoutingPresetModel model = new RoutingPresetModel();
-                model.Id = index;
-                model.Name = name;
-
-                string physician = string.Empty; // TODO get physician
-
-                await _presetManager.SavePreset(physician, model);
+                               
+                await _presetManager.SavePreset(index, name);
 
                 return Ok();
             }

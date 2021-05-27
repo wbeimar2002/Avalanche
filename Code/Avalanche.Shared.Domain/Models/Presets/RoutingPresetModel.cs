@@ -1,6 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using Avalanche.Shared.Domain.Models.Media;
+using System.Collections.Generic;
 
-namespace Avalanche.Shared.Domain.Models.Media
+namespace Avalanche.Shared.Domain.Models.Presets
 {
     public class RoutingPresetModel
     {
