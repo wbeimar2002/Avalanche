@@ -26,7 +26,7 @@ namespace Avalanche.Api.Managers.Maintenance
     public class MaintenanceManager : IMaintenanceManager
     {
         private readonly IStorageService _storageService;
-        private readonly IDataManager _metadataManager;
+        private readonly IDataManager _dataManager;
         private readonly IMapper _mapper;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly ILibraryService _libraryService;
@@ -36,14 +36,14 @@ namespace Avalanche.Api.Managers.Maintenance
         private readonly ConfigurationContext configurationContext;
 
         public MaintenanceManager(IStorageService storageService, 
-            IDataManager metadataManager, 
+            IDataManager dataManager, 
             IMapper mapper, 
             IHttpContextAccessor httpContextAccessor,
             ILibraryService libraryService,
             IFilesService filesService)
         {
             _storageService = storageService;
-            _metadataManager = metadataManager;
+            _dataManager = dataManager;
             _httpContextAccessor = httpContextAccessor;
             _mapper = mapper;
             _libraryService = libraryService;
@@ -52,6 +52,15 @@ namespace Avalanche.Api.Managers.Maintenance
             user = HttpContextUtilities.GetUser(_httpContextAccessor.HttpContext);
             configurationContext = _mapper.Map<Shared.Domain.Models.UserModel, ConfigurationContext>(user);
             configurationContext.IdnId = Guid.NewGuid().ToString();
+        }
+
+        public async Task<ReindexStatusViewModel> ReindexRepository(ReindexRepositoryRequestViewModel reindexRequest)
+        {
+            Preconditions.ThrowIfNull(nameof(reindexRequest), reindexRequest);
+            Preconditions.ThrowIfNullOrEmpty(nameof(reindexRequest.RepositoryName), reindexRequest.RepositoryName);
+
+            var response = await _libraryService.ReindexRepository(reindexRequest.RepositoryName);
+            return _mapper.Map<ReindexStatusViewModel>(response);
         }
 
         public IEnumerable<FileSystemElementViewModel> GetFiles(string folder, string filter)
@@ -108,7 +117,6 @@ namespace Avalanche.Api.Managers.Maintenance
             }
             else
             {
-                //TODO: Pending Exceptions strategy
                 throw new ValidationException("Json Schema Invalid for " + customList.SourceKey);
             }
         }
@@ -123,7 +131,6 @@ namespace Avalanche.Api.Managers.Maintenance
             }
             else
             {   
-                //TODO: Pending Exceptions strategy
                 throw new ValidationException("Json Schema Invalid for " + customList.SourceKey);
             }
         }
@@ -134,16 +141,16 @@ namespace Avalanche.Api.Managers.Maintenance
             var category = await _storageService.GetJsonObject<DynamicSectionViewModel>(key, 1, configurationContext);
             var settingValues = await _storageService.GetJson(category.JsonKey, 1, configurationContext);
 
-            var types = await _metadataManager.GetData(DataTypes.SettingTypes);
-            var policiesTypes = (await _storageService.GetJsonObject<List<KeyValuePairViewModel>>("SettingsPolicies", 1, configurationContext));           
+            var policiesTypes = (await _storageService.GetJsonObject<List<KeyValuePairViewModel>>("SettingsPolicies", 1, configurationContext));
+            var types = await _dataManager.GetList("SettingTypes");
 
-            await SetSources(category, types, settingValues);
+            await SetCategorySources(category, settingValues, types);
 
             SettingsHelper.SetSettingValues(category, settingValues, policiesTypes);
 
             if (category.Sections != null)
             {
-                await SetSettingsValues(category, settingValues, types, policiesTypes);
+                await SetSettingsValues(category, settingValues, policiesTypes, types);
             }
 
             return category;
@@ -152,9 +159,28 @@ namespace Avalanche.Api.Managers.Maintenance
         public async Task<DynamicListViewModel> GetCategoryListByKey(string key)
         {
             var category = await _storageService.GetJsonObject<DynamicListViewModel>(key, 1, configurationContext);
-            var values = await _storageService.GetJsonObject<List<ExpandoObject>>(category.SourceKey, 1, configurationContext);
 
-            return await BuildCategoryList(category, values);
+            List<dynamic> values = null;
+
+            switch (category.SourceKey)
+            {
+                case "Departments":
+                    var departments = await _dataManager.GetAllDepartments();
+                    values = JsonConvert.DeserializeObject<List<dynamic>>(JsonConvert.SerializeObject(departments));
+                    break;
+
+                case "ProcedureTypes":
+                    var procedureTypes = await _dataManager.GetAllProcedureTypes();
+                    values = JsonConvert.DeserializeObject<List<dynamic>>(JsonConvert.SerializeObject(procedureTypes));
+                    break;
+
+                default:
+                    values = await _storageService.GetJsonDynamicList(category.SourceKey, 1, configurationContext);
+                    break;
+
+            }
+
+            return values == null ? null : await BuildCategoryList(category, values);
         }
 
         public async Task<DynamicListViewModel> GetEmbeddedListByKey(string settingValues, string metadataKey, string listKey)
@@ -162,55 +188,37 @@ namespace Avalanche.Api.Managers.Maintenance
             var category = await _storageService.GetJsonObject<DynamicListViewModel>(metadataKey, 1, configurationContext);
             var values = SettingsHelper.GetEmbeddedList(listKey, settingValues);
 
-            return await BuildCategoryList(category, JsonConvert.DeserializeObject<List<ExpandoObject>>(JsonConvert.SerializeObject(values)));
+            return await BuildCategoryList(category, values);
         }
 
-        private async Task<DynamicListViewModel> BuildCategoryList(DynamicListViewModel category, List<ExpandoObject> values) 
-        { 
+        private async Task<DynamicListViewModel> BuildCategoryList(DynamicListViewModel category, List<dynamic> values) 
+        {
+            category.Data = JsonConvert.DeserializeObject<List<ExpandoObject>>(JsonConvert.SerializeObject(values));
+
             if (category.SaveAsFile)
             {
-                category.Data = values;
-
-                foreach (var item in category.Properties)
+                foreach (var property in category.Properties)
                 {
-                    if (!string.IsNullOrEmpty(item.SourceKey))
-                    {
-                        item.SourceValues = await GetDynamicSourceValues(item);
-                    }
+                    property.SourceValues = await GetPropertySources(property);
                 }
             }
             else
             {
-                category.Data = await GetDynamicData(category.SourceKey);
-
-                foreach (var item in category.Properties)
+                foreach (var property in category.Properties)
                 {
-                    await SetIsRequired(configurationContext, category.SourceKey, item);
+                    await SetIsRequired(configurationContext, category.SourceKey, property);
 
-                    if (!string.IsNullOrEmpty(item.SourceKey))
+                    if (!string.IsNullOrEmpty(property.SourceKey))
                     {
-                        item.SourceValues = await GetDynamicSourceValues(item);
+                        property.SourceValues = await GetPropertySources(property);
 
-                        foreach (var element in category.Data)
+                        if (property.SourceValues != null)
                         {
-                            var serializedElement = JsonConvert.SerializeObject(element);
-                            JObject jsonElement = JObject.Parse(serializedElement);
+                            foreach (var element in category.Data)
+                            {
+                                SetRelatedObject(property, element);
 
-                            string relatedObject =
-                                JsonConvert.SerializeObject(item.SourceValues.Where(s => s.Id == jsonElement[item.JsonKey].ToString()).FirstOrDefault()?.RelatedObject);
-
-                            relatedObject = relatedObject == null || relatedObject == "null" ? "{}" : relatedObject;
-
-                            jsonElement.Add(new JProperty(item.JsonKeyForRelatedObject, JObject.Parse(relatedObject)));
-
-                            dynamic jsonElementObject = JsonConvert.DeserializeObject<ExpandoObject>(jsonElement.ToString());
-
-                            var _original = (IDictionary<string, object>)jsonElementObject;
-                            var _clone = (IDictionary<string, object>)element;
-
-                            foreach (var propertyKey in _original)
-                                _clone[propertyKey.Key] = propertyKey.Value;
-
+                            }
                         }
                     }
                 }
@@ -219,13 +227,57 @@ namespace Avalanche.Api.Managers.Maintenance
             return category;
         }
 
-        public async Task<ReindexStatusViewModel> ReindexRepository(ReindexRepositoryRequestViewModel reindexRequest)
+        private static void SetRelatedObject(DynamicPropertyViewModel property, ExpandoObject element)
         {
-            Preconditions.ThrowIfNull(nameof(reindexRequest), reindexRequest);
-            Preconditions.ThrowIfNullOrEmpty(nameof(reindexRequest.RepositoryName), reindexRequest.RepositoryName);
+            var serializedElement = JsonConvert.SerializeObject(element);
+            JObject jsonElement = JObject.Parse(serializedElement);
 
-            var response = await _libraryService.ReindexRepository(reindexRequest.RepositoryName);
-            return _mapper.Map<ReindexStatusViewModel>(response);
+            var id = jsonElement[property.JsonKey].ToString();
+
+            string relatedObject =
+                JsonConvert.SerializeObject(property.SourceValues.Where(s => s.Id == id));
+
+            relatedObject = relatedObject == null || relatedObject == "null" ? "{}" : relatedObject;
+
+            jsonElement.Add(new JProperty(property.JsonKeyForRelatedObject, JObject.Parse(relatedObject)));
+
+            dynamic jsonElementObject = JsonConvert.DeserializeObject<ExpandoObject>(jsonElement.ToString());
+
+            var _original = (IDictionary<string, object>)jsonElementObject;
+            var _clone = (IDictionary<string, object>)element;
+
+            foreach (var propertyKey in _original)
+                _clone[propertyKey.Key] = propertyKey.Value;
+        }
+
+        private async Task<IList<dynamic>> GetPropertySources(DynamicBaseSettingViewModel property)
+        {
+            if (string.IsNullOrEmpty(property.SourceKey))
+            {
+                switch (property.VisualStyle)
+                {
+                    case VisualStyles.FilePicker:
+                        return GetFiles(property);
+
+                    case VisualStyles.FolderPicker:
+                        return GetFolders(property);
+                }
+            }
+            else
+            {
+                switch (property.SourceKey)
+                {
+                    case "Departments":
+                        var departments = await _dataManager.GetAllDepartments();
+                        var dynamicDepartments = JsonConvert.DeserializeObject<List<dynamic>>(JsonConvert.SerializeObject(departments));
+                        return GetDynamicList(property, dynamicDepartments);
+
+                    default:
+                        return await GetDynamicData(property);
+                }
+            }
+
+            return null;
         }
 
         private async Task SetIsRequired(ConfigurationContext configurationContext, string key, DynamicPropertyViewModel item)
@@ -250,67 +302,18 @@ namespace Avalanche.Api.Managers.Maintenance
             }
         }
 
-        private async Task<IList<KeyValuePairObjectViewModel>> GetDynamicSourceValues(DynamicPropertyViewModel dynamicPropertyViewModel)
-        {
-            switch (dynamicPropertyViewModel.SourceKey)
-            {
-                case "Departments":
-
-                    var departments = await GetDynamicData("Departments");
-                    return departments.Select(d => new KeyValuePairObjectViewModel()
-                    {
-                        Id = ((dynamic)d).Id.ToString(),
-                        Value = ((dynamic)d).Name,
-                        RelatedObject = d
-                    }).ToList();
-
-                case "PgsVideoFiles":
-
-                    var videoFiles = _filesService.GetFiles("pgsmedia", "*.mp4");
-
-                    var dynamicVideoFiles = videoFiles
-                        .Select(item =>
-                        {
-                            dynamic expandoObj = new ExpandoObject();
-                            expandoObj.FileName = item;
-                            expandoObj.Icon = dynamicPropertyViewModel.Icon;
-                            return (ExpandoObject)expandoObj;
-                        })
-                        .ToList();
-
-                    return dynamicVideoFiles.Select(d => new KeyValuePairObjectViewModel()
-                    {
-                        Id = ((dynamic)d).FileName,
-                        Value = ((dynamic)d).FileName,
-                        RelatedObject = d
-                    }).ToList();
-
-                case "Sinks":
-
-                    var sinks = (await _storageService.GetJsonObject<List<ExpandoObject>>("Sinks", 1, configurationContext));
-                    return sinks.Select(s => new KeyValuePairObjectViewModel()
-                    {
-                        Id = Guid.NewGuid().ToString(),
-                        Value = $"{((dynamic)s).Alias} ({((dynamic)s).Index})",
-                        RelatedObject = s
-                    }).ToList();
-
-                default:
-                    return new List<KeyValuePairObjectViewModel>();
-            }
-        }
-
-        private async Task SetSettingsValues(DynamicSectionViewModel rootSection, string settingValues, IList<KeyValuePairViewModel> types, IList<KeyValuePairViewModel> policiesTypes)
+        private async Task SetSettingsValues(DynamicSectionViewModel rootSection, string settingValues, 
+            IList<KeyValuePairViewModel> policiesTypes, List<dynamic> types)
         {
             foreach (var section in rootSection.Sections)
             {
-                await SetSources(section, types, settingValues);
+                await SetCategorySources(section, settingValues, types);
 
                 SettingsHelper.SetSettingValues(section, settingValues, policiesTypes);
 
                 if (section.Sections != null)
                 {
-                    await SetSettingsValues(section, settingValues, types, policiesTypes);
+                    await SetSettingsValues(section, settingValues, policiesTypes, types);
                 }
             }
         }
@@ -327,49 +330,50 @@ namespace Avalanche.Api.Managers.Maintenance
             return await _storageService.GetJsonDynamic(key, 1, configurationContext);
         }
 
-        private async Task SetSources(DynamicSectionViewModel category, IList<KeyValuePairViewModel> types, string settingValues)
+        private async Task SetCategorySources(DynamicSectionViewModel category, string settingValues, List<dynamic> types)
         {
             if (category!= null && category.Settings != null)
             {
-                foreach (var item in category.Settings)
+                foreach (var setting in category.Settings)
                 {
-                    if (!string.IsNullOrEmpty(item.SourceKey))
+                    if (string.IsNullOrEmpty(setting.SourceKey))
                     {
-                        switch (item.VisualStyle)
+                        switch (setting.VisualStyle)
                         {
-                            case VisualStyles.ExternalList:
-                                item.CustomList = await GetCategoryListByKey(item.SourceKey);
-                                break;
-
-                            case VisualStyles.EmbeddedList:
-                                item.CustomList = await GetEmbeddedListByKey(settingValues, item.SourceKey, item.JsonKey);
-                                break;
-
                             case VisualStyles.FilePicker:
-
-                                var files = _filesService.GetFiles(item.Folder, item.Filter);
-                                var sourceValuesFiles = files.Select(x => new FileSystemElementViewModel() { DisplayName = x, IsFolder = false });
-                                item.SourceValues = JsonConvert.DeserializeObject<List<ExpandoObject>>(JsonConvert.SerializeObject(sourceValuesFiles));
+                                setting.SourceValues = GetFiles(setting);
                                 break;
 
                             case VisualStyles.FolderPicker:
+                                setting.SourceValues = GetFolders(setting);
+                                break;
+                        }
+                    }
+                    else
+                    { 
+                        switch (setting.VisualStyle)
+                        {
+                            case VisualStyles.ExternalList:
+                                setting.CustomList = await GetCategoryListByKey(setting.SourceKey);
+                                break;
 
-                                var folders = _filesService.GetFolders(item.Folder);
-                                var sourceValuesFolders = folders.Select(x => new FileSystemElementViewModel() { DisplayName = x, IsFolder = false });
-                                item.SourceValues = JsonConvert.DeserializeObject<List<ExpandoObject>>(JsonConvert.SerializeObject(sourceValuesFolders));
+                            case VisualStyles.EmbeddedList:
+                                setting.CustomList = await GetEmbeddedListByKey(settingValues, setting.SourceKey, setting.JsonKey);
+                                break;
+
+                            case VisualStyles.EmbeddedGenericList:
+                                setting.SourceValues = AddTypes(SettingsHelper.GetEmbeddedList(setting.SourceKey, settingValues), types);
                                 break;
 
                             case VisualStyles.DropDownEmbeddedList:
-                                item.SourceValues = await GetDynamicData(item.SourceKey, settingValues);
-                                break;
-
                             case VisualStyles.DropDownExternalList:
-                                item.SourceValues = await GetDynamicData(item.SourceKey);
+                                setting.SourceValues = await GetDynamicData(setting, settingValues);
                                 break;
 
                             case VisualStyles.DropDownGenericList:
-                                item.SourceValues = await GetDynamicData(item.SourceKey);
-                                item.SourceValues.ToList().ForEach(s => s.TryAdd("Types", types));
+                            case VisualStyles.ExternalGenericList:
+                                var values = await GetDynamicData(setting);
+                                setting.SourceValues = AddTypes(values, types);
                                 break;
                         }
                     }
@@ -377,87 +381,87 @@ namespace Avalanche.Api.Managers.Maintenance
             }
         }
 
-        private async Task<List<ExpandoObject>> GetDynamicData(string sourceKey, string settingValues = null)
+        private List<dynamic> AddTypes(List<dynamic> values, List<dynamic> types)
         {
-            switch (sourceKey)
+            var dynamicValues = JsonConvert.DeserializeObject<List<ExpandoObject>>(JsonConvert.SerializeObject(values));
+            dynamicValues.ToList().ForEach(s => s.TryAdd("Types", types));
+
+            return JsonConvert.DeserializeObject<List<dynamic>>(JsonConvert.SerializeObject(dynamicValues));
+        }
+
+        private IList<dynamic> GetFiles(DynamicBaseSettingViewModel setting)
+        {
+            var files = _filesService.GetFiles(setting.Folder, setting.Filter);
+            var sourceValuesFiles = files.Select(x => new FileSystemElementViewModel() { DisplayName = x, IsFolder = false });
+            var dynamicFiles = JsonConvert.DeserializeObject<List<dynamic>>(JsonConvert.SerializeObject(sourceValuesFiles));
+
+            var dynamicResult = dynamicFiles.Select(item =>
             {
-                case "Departments":
-                    var departments = await _metadataManager.GetAllDepartments();
+                dynamic expandoObj = new ExpandoObject();
+                expandoObj.Id = item.DisplayName;
+                expandoObj.Value = item.DisplayName;
+                expandoObj.RelatedObject = item;
 
-                    return departments
-                        .Select(item =>
-                        {
-                            dynamic expandoObj = new ExpandoObject();
-                            expandoObj.Id = item.Id;
-                            expandoObj.Name = item.Name;
-                            return (ExpandoObject)expandoObj;
-                        })
-                        .ToList();
+                return (ExpandoObject)expandoObj;
+            })
+           .ToList();
 
-                case "ProcedureTypes":
-                    var procedureTypes = await _metadataManager.GetAllProcedureTypes();
+            return JsonConvert.DeserializeObject<List<dynamic>>(JsonConvert.SerializeObject(dynamicResult));
+        }
 
-                    return procedureTypes
-                        .Select(item =>
-                        {
-                            dynamic expandoObj = new ExpandoObject();
-                            expandoObj.Id = item.Id;
-                            expandoObj.Name = item.Name;
-                            expandoObj.DepartmentId = item.DepartmentId;
-                            return (ExpandoObject)expandoObj;
-                        })
-                        .ToList();
+        private IList<dynamic> GetFolders(DynamicBaseSettingViewModel setting)
+        {
+            var folders = _filesService.GetFolders(setting.Folder);
+            var sourceValuesFolders = folders.Select(x => new FileSystemElementViewModel() { DisplayName = x, IsFolder = false });
+            var dynamicFolders = JsonConvert.DeserializeObject<List<dynamic>>(JsonConvert.SerializeObject(sourceValuesFolders));
 
-                case "RoutingModes":
-                case "CopiesOptions":
-                case "PaperOrientations":
-                case "SwitchOptions":
-                case "Printers":
-                case "ReportLayouts":
-                    var values = SettingsHelper.GetEmbeddedList(sourceKey, settingValues);
+            var dynamicResult = dynamicFolders.Select(item =>
+            {
+                dynamic expandoObj = new ExpandoObject();
+                expandoObj.Id = item.DisplayName;
+                expandoObj.Value = item.DisplayName;
+                expandoObj.RelatedObject = item;
 
-                    return values
-                        .Select(item =>
-                        {
-                            dynamic expandoObj = new ExpandoObject();
-                            expandoObj.Id = item.Id;
-                            expandoObj.Value = item.Name;
-                            expandoObj.RelatedObject = item;
-                            return (ExpandoObject)expandoObj;
-                        })
-                        .ToList();
+                return (ExpandoObject)expandoObj;
+            })
+            .ToList();
 
+            return JsonConvert.DeserializeObject<List<dynamic>>(JsonConvert.SerializeObject(dynamicResult));
+        }
 
-                case "RecordingModes":
-                    var recordingModes = SettingsHelper.GetEmbeddedList(sourceKey, settingValues);
-
-                    return recordingModes
-                        .Select(item =>
-                        {
-                            dynamic expandoObj = new ExpandoObject();
-                            expandoObj.Id = item.CaptureDeviceId;
-                            expandoObj.Value = item.CaptureDeviceId;
-                            expandoObj.RelatedObject = item;
-                            return (ExpandoObject)expandoObj;
-                        })
-                        .ToList();
-
-                default:
-                    var list = await _storageService.GetJsonDynamicList(sourceKey, 1, configurationContext);
-
-                    if (list == null)
-                        return null;
-                    else
-                        return list
-                            .Select(item =>
-                            {
-                                dynamic expandoObj = new ExpandoObject();
-                                expandoObj.Id = item.Id;
-                                expandoObj.Value = item.Name;
-                                return (ExpandoObject)expandoObj;
-                            })
-                            .ToList();
+        private async Task<List<dynamic>> GetDynamicData(DynamicBaseSettingViewModel setting, string settingValues = null)
+        {
+            if (setting.VisualStyle == VisualStyles.DropDownEmbeddedList 
+                || setting.VisualStyle == VisualStyles.EmbeddedGenericList)
+            {
+                var values = SettingsHelper.GetEmbeddedList(setting.SourceKey, settingValues);
+                return GetDynamicList(setting, values);
             }
+            else
+            {
+                var list = await _storageService.GetJsonDynamicList(setting.SourceKey, 1, configurationContext);
+                return GetDynamicList(setting, list);
+            }
+        }
+
+        private static List<dynamic> GetDynamicList(DynamicBaseSettingViewModel setting, IList<dynamic> values)
+        {
+            var dynamicResult = values
+                .Select(item =>
+                {
+                    dynamic expandoObj = new ExpandoObject();
+                    expandoObj.Id = item[setting.SourceKeyId];
+                    expandoObj.Value = item[setting.SourceKeyValue];
+                    
+                    if (!string.IsNullOrEmpty(setting.SourceKeyTranslationKey))
+                        expandoObj.TranslationKey = item[setting.SourceKeyTranslationKey];
+
+                    expandoObj.RelatedObject = item;
+                    return (ExpandoObject)expandoObj;
+                })
+                .ToList();
+
+            return JsonConvert.DeserializeObject<List<dynamic>>(JsonConvert.SerializeObject(dynamicResult));
         }
 
         private async Task SaveSources(DynamicSectionViewModel section, string settingsKey)
@@ -502,7 +506,6 @@ namespace Avalanche.Api.Managers.Maintenance
             }
             else
             {   
-                //TODO: Pending Exceptions strategy
                 throw new ValidationException("Json Schema Invalid for " + category.JsonKey);
             }
         }
@@ -520,11 +523,11 @@ namespace Avalanche.Api.Managers.Maintenance
                 else
                 {
                     string schemaJson = JsonConvert.SerializeObject(dynamicSchema);
+#pragma warning disable CS0618 // Type or member is obsolete
                     var schema = JsonSchema.Parse(schemaJson);
-
                     JObject jsonObject = JObject.Parse(json);
-
                     return jsonObject.IsValid(schema);
+#pragma warning restore CS0618 // Type or member is obsolete
                 }
             }
         }
@@ -540,7 +543,6 @@ namespace Avalanche.Api.Managers.Maintenance
                     await SaveProcedureTypes(action, customList.Entity);
                     break;
                 default:
-                    //TODO: Pending Exceptions strategy
                     throw new ValidationException("Method Not Allowed");
             }
         }
@@ -576,13 +578,12 @@ namespace Avalanche.Api.Managers.Maintenance
             switch (action)
             {
                 case DynamicListActions.Insert:
-                    await _metadataManager.AddProcedureType(procedureType);
+                    await _dataManager.AddProcedureType(procedureType);
                     break;
                 case DynamicListActions.Delete:
-                    await _metadataManager.DeleteProcedureType(procedureType);
+                    await _dataManager.DeleteProcedureType(procedureType);
                     break;
                 default:
-                    //TODO: Pending Exceptions strategy
                     throw new ValidationException("Method Not Allowed");
             }
         }
@@ -595,10 +596,10 @@ namespace Avalanche.Api.Managers.Maintenance
             switch (action)
             {
                 case DynamicListActions.Insert:
-                    await _metadataManager.AddDepartment(department);
+                    await _dataManager.AddDepartment(department);
                     break;
                 case DynamicListActions.Delete:
-                    await _metadataManager.DeleteDepartment(department.Id);
+                    await _dataManager.DeleteDepartment(department.Id);
                     break;
                 default:
                     throw new ValidationException("Method Not Allowed");

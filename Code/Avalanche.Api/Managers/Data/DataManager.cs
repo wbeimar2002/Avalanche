@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-
+using Avalanche.Api.Helpers;
 using Avalanche.Api.Services.Health;
 using Avalanche.Api.Services.Maintenance;
 using Avalanche.Api.Utilities;
@@ -49,35 +49,16 @@ namespace Avalanche.Api.Managers.Data
             configurationContext.IdnId = Guid.NewGuid().ToString();
         }
 
-        public async Task<IList<KeyValuePairViewModel>> GetData(DataTypes type)
+        public async Task<List<dynamic>> GetList(string sourceKey, string jsonKey = null)
         {
-            var configurationContext = _mapper.Map<UserModel, ConfigurationContext>(user);
-
-            switch (type)
+            if (jsonKey == null)
             {
-                case DataTypes.Sex:
-                    return (await _storageService.GetJsonObject<List<KeyValuePairViewModel>>("Sexes", 1, configurationContext));
-                case DataTypes.SourceTypes:
-                    return (await _storageService.GetJsonObject<List<KeyValuePairViewModel>>("SourceTypes", 1, configurationContext));
-                case DataTypes.SettingTypes:
-                    return (await _storageService.GetJsonObject<List<KeyValuePairViewModel>>("SettingTypes", 1, configurationContext));
-                case DataTypes.PgsVideoFiles:
-                    return (await _storageService.GetJsonObject<List<KeyValuePairViewModel>>("PgsVideoFiles", 1, configurationContext));
-                default:
-                    return new List<KeyValuePairViewModel>();
+                return await _storageService.GetJsonDynamicList(sourceKey, 1, configurationContext);
             }
-        }
-
-        public async Task<IList<DynamicSourceKeyValuePairViewModel>> GetSource(DataTypes type)
-        {
-            switch (type)
+            else
             {
-                case DataTypes.SearchColumns:
-                    return (await _storageService.GetJsonObject<List<DynamicSourceKeyValuePairViewModel>>("SearchColumns", 1, configurationContext));
-                case DataTypes.PgsVideoFiles:
-                    return (await _storageService.GetJsonObject<List<DynamicSourceKeyValuePairViewModel>>("PgsVideoFiles", 1, configurationContext));
-                default:
-                    return new List<DynamicSourceKeyValuePairViewModel>();
+                var settingValues = await _storageService.GetJson(sourceKey, 1, configurationContext);
+                return SettingsHelper.GetEmbeddedList(jsonKey, settingValues);
             }
         }
 

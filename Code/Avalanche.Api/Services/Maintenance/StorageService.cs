@@ -94,7 +94,6 @@ namespace Avalanche.Api.Services.Maintenance
                 }
 
                 return null;
-
             }
         }
 

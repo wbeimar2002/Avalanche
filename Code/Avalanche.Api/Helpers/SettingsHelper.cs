@@ -155,7 +155,7 @@ namespace Avalanche.Api.Helpers
                 foreach (var setting in section.Settings)
                 {
                     if (setting.VisualStyle != VisualStyles.EmbeddedList &&
-                        setting.VisualStyle != VisualStyles.GenericList &&
+                        setting.VisualStyle != VisualStyles.ExternalGenericList &&
                         setting.VisualStyle != VisualStyles.ExternalList)
                     {
                         setting.Policy = string.IsNullOrEmpty(setting.Policy) ? ((int)SettingsPolicies.AllowEdit).ToString() : setting.Policy;
@@ -210,7 +210,6 @@ namespace Avalanche.Api.Helpers
                         {
                             JArray child = (JArray)jObject[keys[i]];
                             return JsonConvert.DeserializeObject<List<dynamic>>(child.ToString());
-                            //return child == null ? null : child.Select(d => JsonConvert.DeserializeObject<ExpandoObject>(d.ToString())).ToList();
                         }
                     }
                 }

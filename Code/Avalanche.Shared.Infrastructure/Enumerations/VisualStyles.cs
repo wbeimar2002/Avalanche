@@ -11,7 +11,7 @@ namespace Avalanche.Shared.Infrastructure.Enumerations
         DropDownGenericList,
         Toggle,
         Switch,
-        GenericList,
+        ExternalGenericList,
         VerticalToogle,
         ExternalList,
         ActionButton,
@@ -20,5 +20,6 @@ namespace Avalanche.Shared.Infrastructure.Enumerations
         EmbeddedList,
         DropDownExternalList,
         DropDownEmbeddedList,
+        EmbeddedGenericList
     }
 }
