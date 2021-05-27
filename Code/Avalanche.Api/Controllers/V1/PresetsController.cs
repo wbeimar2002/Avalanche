@@ -36,15 +36,16 @@ namespace Avalanche.Api.Controllers.V1
         /// <summary>
         /// Gets presets by user
         /// </summary>
+        /// <param name="userId"></param>
         /// <returns></returns>
         [HttpGet("presets")]
-        public async Task<IActionResult> GetPresets()
+        public async Task<IActionResult> GetPresets(string userId)
         {
             try
             {
                 _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
 
-                var result = await _presetManager.GetPresets();
+                var result = await _presetManager.GetPresets(userId);
 
                 return Ok(result);
             }
@@ -62,16 +63,17 @@ namespace Avalanche.Api.Controllers.V1
         /// <summary>
         /// Apply preset by index
         /// </summary>
+        /// <param name="userId"></param>
         /// <param name="index"></param>
         /// <returns></returns>
         [HttpPut("apply")]
-        public async Task<IActionResult> ApplyPreset(int index)
+        public async Task<IActionResult> ApplyPreset(string userId, int index)
         {
             try
             {
                 _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
 
-                await _presetManager.ApplyPreset(index);
+                await _presetManager.ApplyPreset(userId, index);
 
                 return Ok();
             }
@@ -89,17 +91,46 @@ namespace Avalanche.Api.Controllers.V1
         /// <summary>
         /// Save preset by index
         /// </summary>
+        /// <param name="userId"></param>
         /// <param name="index"></param>
         /// <param name="name"></param>
         /// <returns></returns>
         [HttpPut("save")]
-        public async Task<IActionResult> SavePreset(int index, string name)
+        public async Task<IActionResult> SavePreset(string userId, int index, string name)
         {
             try
             {
                 _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
                                
-                await _presetManager.SavePreset(index, name);
+                await _presetManager.SavePreset(userId, index, name);
+
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, LoggerHelper.GetLogMessage(DebugLogType.Exception), ex);
+                return new BadRequestObjectResult(ex.Get(_environment.IsDevelopment()));
+            }
+            finally
+            {
+                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
+            }
+        }
+
+        /// <summary>
+        /// Remove preset by index
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <param name="index"></param>
+        /// <returns></returns>
+        [HttpDelete("remove")]
+        public async Task<IActionResult> RemovePreset(string userId, int index)
+        {
+            try
+            {
+                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
+
+                await _presetManager.RemovePreset(userId, index);
 
                 return Ok();
             }
