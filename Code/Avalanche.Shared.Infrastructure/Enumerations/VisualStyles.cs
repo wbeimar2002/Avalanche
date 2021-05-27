@@ -8,14 +8,18 @@ namespace Avalanche.Shared.Infrastructure.Enumerations
     {
         Undefined = -1,
         Text,
-        DropDown,
+        DropDownGenericList,
         Toggle,
         Switch,
-        GenericList,
+        ExternalGenericList,
         VerticalToogle,
-        CustomList,
+        ExternalList,
         ActionButton,
         FilePicker,
-        FolderPicker
+        FolderPicker,
+        EmbeddedList,
+        DropDownExternalList,
+        DropDownEmbeddedList,
+        EmbeddedGenericList
     }
 }

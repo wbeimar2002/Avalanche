@@ -17,7 +17,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Avalanche.Shared.Infrastructure.Configuration;
-using Avalanche.Shared.Infrastructure.Configuration.Lists;
 
 namespace Avalanche.Api.Managers.Media
 {
@@ -189,7 +188,7 @@ namespace Avalanche.Api.Managers.Media
             var routes = await _routingService.GetCurrentRoutes();
 
             // any display not in the will not have the record buttons next to it
-            var dbrSinks = await _storageService.GetJsonObject<SinksList>("DisplayBasedRecordingSinks", 1, ConfigurationContext.FromEnvironment());
+            var dbrSinks = await _storageService.GetJsonObject<List<AliasIndexModel>>("DisplayBasedRecordingSinks", 1, ConfigurationContext.FromEnvironment());
 
             var listResult = _mapper.Map<IList<VideoSinkMessage>, IList<VideoSinkModel>>(sinks.VideoSinks);
             foreach (var sink in listResult)
@@ -206,7 +205,7 @@ namespace Avalanche.Api.Managers.Media
                 };
 
                 // if this sink is in the dbr sink list, enable it for recording
-                sink.RecordEnabled = dbrSinks.Items.Any(x =>
+                sink.RecordEnabled = dbrSinks.Any(x =>
                     string.Equals(x.Alias, sink.Sink.Alias, StringComparison.OrdinalIgnoreCase) &&
                     string.Equals(x.Index, sink.Sink.Index, StringComparison.OrdinalIgnoreCase));
             }
@@ -333,8 +332,8 @@ namespace Avalanche.Api.Managers.Media
             var recordChannels = (await _recorderService.GetRecordingChannels()).Select(x => new VideoRoutingModels.AliasIndexModel(x.VideoSink.Alias, x.VideoSink.Index));
 
             // filter down to the displays that actually have dbr enabled
-            var dbrSinks = await _storageService.GetJsonObject<SinksList>("DisplayBasedRecordingSinks", 1, ConfigurationContext.FromEnvironment());
-            displays = displays.Where(sink => dbrSinks.Items.Any(x =>
+            var dbrSinks = await _storageService.GetJsonObject<List<AliasIndexModel>>("DisplayBasedRecordingSinks", 1, ConfigurationContext.FromEnvironment());
+            displays = displays.Where(sink => dbrSinks.Any(x =>
                     string.Equals(x.Alias, sink.Alias, StringComparison.OrdinalIgnoreCase) &&
                     string.Equals(x.Index, sink.Index, StringComparison.OrdinalIgnoreCase)));
 

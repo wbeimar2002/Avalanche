@@ -38,37 +38,37 @@ namespace Avalanche.Api.Tests.Controllers
                 _checkLogger = true;
         }
 
-        [Test]
-        public void GetSexesShouldReturnOkResult()
-        {
-            var okResult = _controller.GetSexes();
+        //[Test]
+        //public void GetSexesShouldReturnOkResult()
+        //{
+        //    var okResult = _controller.GetSexes();
 
-            if (_checkLogger)
-            {
-                _logger.Verify(LogLevel.Error, $"Exception {_controller.GetType().Name}.GetSexes", Times.Never());
-                _logger.Verify(LogLevel.Debug, $"Requested {_controller.GetType().Name}.GetSexes", Times.Once());
-                _logger.Verify(LogLevel.Debug, $"Completed {_controller.GetType().Name}.GetSexes", Times.Once());
-            }
+        //    if (_checkLogger)
+        //    {
+        //        _logger.Verify(LogLevel.Error, $"Exception {_controller.GetType().Name}.GetSexes", Times.Never());
+        //        _logger.Verify(LogLevel.Debug, $"Requested {_controller.GetType().Name}.GetSexes", Times.Once());
+        //        _logger.Verify(LogLevel.Debug, $"Completed {_controller.GetType().Name}.GetSexes", Times.Once());
+        //    }
 
-            Assert.IsInstanceOf<OkObjectResult>(okResult.Result);
-        }
+        //    Assert.IsInstanceOf<OkObjectResult>(okResult.Result);
+        //}
 
-        [Test]
-        public void GetSexesShouldReturnBadResultIfFails()
-        {
-            _metadataManager.Setup(mock => mock.GetData(DataTypes.Sex)).Throws(It.IsAny<Exception>());
+        //[Test]
+        //public void GetSexesShouldReturnBadResultIfFails()
+        //{
+        //    _metadataManager.Setup(mock => mock.GetData(DataTypes.Sex)).Throws(It.IsAny<Exception>());
 
-            var badResult = _controller.GetSexes();
+        //    var badResult = _controller.GetSexes();
 
-            if (_checkLogger)
-            {
-                _logger.Verify(LogLevel.Error, $"Exception {_controller.GetType().Name}.GetSexes", Times.Once());
-                _logger.Verify(LogLevel.Debug, $"Requested {_controller.GetType().Name}.GetSexes", Times.Once());
-                _logger.Verify(LogLevel.Debug, $"Completed {_controller.GetType().Name}.GetSexes", Times.Once());
-            }
+        //    if (_checkLogger)
+        //    {
+        //        _logger.Verify(LogLevel.Error, $"Exception {_controller.GetType().Name}.GetSexes", Times.Once());
+        //        _logger.Verify(LogLevel.Debug, $"Requested {_controller.GetType().Name}.GetSexes", Times.Once());
+        //        _logger.Verify(LogLevel.Debug, $"Completed {_controller.GetType().Name}.GetSexes", Times.Once());
+        //    }
 
-            Assert.IsInstanceOf<BadRequestObjectResult>(badResult.Result);
-        }
+        //    Assert.IsInstanceOf<BadRequestObjectResult>(badResult.Result);
+        //}
 
         [Test]
         public void GetDepartmentsShouldReturnOkResult()

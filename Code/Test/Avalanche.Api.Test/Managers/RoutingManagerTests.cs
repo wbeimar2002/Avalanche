@@ -5,7 +5,6 @@ using Avalanche.Api.Services.Maintenance;
 using Avalanche.Api.Services.Media;
 using Avalanche.Api.Utilities;
 using Avalanche.Shared.Domain.Models.Media;
-using Avalanche.Shared.Infrastructure.Configuration.Lists;
 using Ism.Common.Core.Configuration.Models;
 using Ism.Routing.V1.Protos;
 using Ism.SystemState.Client;
@@ -167,16 +166,14 @@ namespace Avalanche.Api.Test.Managers
                 new Ism.Recorder.Core.V1.Protos.RecordChannelMessage { ChannelName = "rec1", VideoSink = new Ism.Recorder.Core.V1.Protos.AliasIndexMessage { Alias = "rec1", Index = "1" } },
                 new Ism.Recorder.Core.V1.Protos.RecordChannelMessage { ChannelName = "rec2", VideoSink = new Ism.Recorder.Core.V1.Protos.AliasIndexMessage { Alias = "rec2", Index = "2" } }
             });
-            _storageService.Setup(s => s.GetJsonObject<SinksList>(It.IsAny<string>(), It.IsAny<int>(), It.IsAny<ConfigurationContext>()))
-                .ReturnsAsync(new SinksList()
+
+            _storageService.Setup(s => s.GetJsonObject<List<AliasIndexModel>>(It.IsAny<string>(), It.IsAny<int>(), It.IsAny<ConfigurationContext>()))
+                .ReturnsAsync(new List<AliasIndexModel>()
                 {
-                    Items = new List<AliasIndexModel>
-                    {
-                        new AliasIndexModel { Alias = "alias1", Index = "1" },
-                        new AliasIndexModel { Alias = "alias2", Index = "2" },
-                        new AliasIndexModel { Alias = "alias3", Index = "3" },
-                        new AliasIndexModel { Alias = "alias4", Index = "4" }
-                    }
+                    new AliasIndexModel { Alias = "alias1", Index = "1" },
+                    new AliasIndexModel { Alias = "alias2", Index = "2" },
+                    new AliasIndexModel { Alias = "alias3", Index = "3" },
+                    new AliasIndexModel { Alias = "alias4", Index = "4" }
                 });
 
             var manager = new RoutingManager(_routingService.Object, _recorderService.Object, _avidisService.Object, _storageService.Object, _mapper, _httpContextAccessor.Object, _stateClient.Object);
@@ -211,14 +208,11 @@ namespace Avalanche.Api.Test.Managers
                 new Ism.Recorder.Core.V1.Protos.RecordChannelMessage { ChannelName = "rec1", VideoSink = new Ism.Recorder.Core.V1.Protos.AliasIndexMessage { Alias = "rec1", Index = "1" } },
                 new Ism.Recorder.Core.V1.Protos.RecordChannelMessage { ChannelName = "rec2", VideoSink = new Ism.Recorder.Core.V1.Protos.AliasIndexMessage { Alias = "rec2", Index = "2" } }
             });
-            _storageService.Setup(s => s.GetJsonObject<SinksList>(It.IsAny<string>(), It.IsAny<int>(), It.IsAny<ConfigurationContext>()))
-                .ReturnsAsync(new SinksList()
+            _storageService.Setup(s => s.GetJsonObject<List<AliasIndexModel>>(It.IsAny<string>(), It.IsAny<int>(), It.IsAny<ConfigurationContext>()))
+                .ReturnsAsync(new List<AliasIndexModel>()
                 {
-                    Items = new List<AliasIndexModel>
-                    {
-                        new AliasIndexModel { Alias = "alias3", Index = "3" },
-                        new AliasIndexModel { Alias = "alias4", Index = "4" }
-                    }
+                    new AliasIndexModel { Alias = "alias3", Index = "3" },
+                    new AliasIndexModel { Alias = "alias4", Index = "4" }
                 });
 
             var manager = new RoutingManager(_routingService.Object, _recorderService.Object, _avidisService.Object, _storageService.Object, _mapper, _httpContextAccessor.Object, _stateClient.Object);
