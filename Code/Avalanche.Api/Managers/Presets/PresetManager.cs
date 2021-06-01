@@ -37,7 +37,7 @@ namespace Avalanche.Api.Managers.Presets
 
         public async Task<UserPresetsModel> GetPresets(string userId)
         {
-            var userPresets = await _storageService.GetJsonFullObject<PresetsModel>(PRESETS, 1, _configurationContext);
+            var userPresets = await _storageService.GetJsonObject<PresetsModel>(PRESETS, 1, _configurationContext);
 
             if (!userPresets.Users.ContainsKey(userId))
                 throw new ArgumentException($"user presets for {userId} does not exists");
