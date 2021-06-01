@@ -273,12 +273,12 @@ namespace Avalanche.Api.Controllers.V1
         }
 
         [HttpPut("displayRecording")]
-        public async Task<IActionResult> SetDisplayRecordingEnabled([FromBody] DisplayRecordingViewModel displayRecordingModel)
+        public async Task<IActionResult> SetDisplayRecordingEnabled([FromBody] DisplayRecordingRequestViewModel displayRecordingRequestModel)
         {
             try
             {
                 _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
-                await _routingManager.SetDisplayRecordingEnabled(displayRecordingModel);
+                await _routingManager.SetDisplayRecordingEnabled(displayRecordingRequestModel);
 
                 return Ok();
             }

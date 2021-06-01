@@ -63,7 +63,7 @@ namespace Avalanche.Api.Test.Managers
 
             var manager = new RoutingManager(_routingService.Object, _recorderService.Object, _avidisService.Object, _storageService.Object, _mapper, _httpContextAccessor.Object, _stateClient.Object);
 
-            await manager.SetDisplayRecordingEnabled(new ViewModels.DisplayRecordingViewModel
+            await manager.SetDisplayRecordingEnabled(new ViewModels.DisplayRecordingRequestViewModel
             {
                 Display = new AliasIndexModel { Alias = "one", Index = "two" },
                 RecordChannel = new RecordingChannelModel { ChannelName = "channel", VideoSink = new AliasIndexModel { Alias = "three", Index = "four" } },
@@ -84,7 +84,7 @@ namespace Avalanche.Api.Test.Managers
 
             var manager = new RoutingManager(_routingService.Object, _recorderService.Object, _avidisService.Object, _storageService.Object, _mapper, _httpContextAccessor.Object, _stateClient.Object);
 
-            await manager.SetDisplayRecordingEnabled(new ViewModels.DisplayRecordingViewModel
+            await manager.SetDisplayRecordingEnabled(new ViewModels.DisplayRecordingRequestViewModel
             {
                 Display = new AliasIndexModel { Alias = "one", Index = "two" },
                 RecordChannel = new RecordingChannelModel { ChannelName = "channel", VideoSink = new AliasIndexModel { Alias = "three", Index = "four" } },
@@ -108,7 +108,7 @@ namespace Avalanche.Api.Test.Managers
 
             var manager = new RoutingManager(_routingService.Object, _recorderService.Object, _avidisService.Object, _storageService.Object, _mapper, _httpContextAccessor.Object, _stateClient.Object);
 
-            await manager.SetDisplayRecordingEnabled(new ViewModels.DisplayRecordingViewModel
+            await manager.SetDisplayRecordingEnabled(new ViewModels.DisplayRecordingRequestViewModel
             {
                 Display = new AliasIndexModel { Alias = "one", Index = "two" },
                 RecordChannel = new RecordingChannelModel { ChannelName = "channel", VideoSink = new AliasIndexModel { Alias = "three", Index = "four" } },
@@ -134,7 +134,7 @@ namespace Avalanche.Api.Test.Managers
 
             var manager = new RoutingManager(_routingService.Object, _recorderService.Object, _avidisService.Object, _storageService.Object, _mapper, _httpContextAccessor.Object, _stateClient.Object);
 
-            await manager.SetDisplayRecordingEnabled(new ViewModels.DisplayRecordingViewModel
+            await manager.SetDisplayRecordingEnabled(new ViewModels.DisplayRecordingRequestViewModel
             {
                 Display = new AliasIndexModel { Alias = "one", Index = "two" },
                 RecordChannel = new RecordingChannelModel { ChannelName = "channel", VideoSink = new AliasIndexModel { Alias = "three", Index = "four" } },
@@ -182,9 +182,9 @@ namespace Avalanche.Api.Test.Managers
             _stateClient.Verify(s => s.PersistData(It.Is<Ism.SystemState.Models.VideoRouting.DisplayRecordStateData>(
                 req => (2 == req.DisplayState.Count)
                     && req.DisplayState[0].DisplayAliasIndex.Alias == "alias1" && req.DisplayState[0].DisplayAliasIndex.Index == "1"
-                    && req.DisplayState[0].RecordChannelAliasIndex.Alias == "rec1" && req.DisplayState[0].RecordChannelAliasIndex.Index == "1"
+                    && req.DisplayState[0].RecordChannelAliasIndexes[0].Alias == "rec1" && req.DisplayState[0].RecordChannelAliasIndexes[0].Index == "1"
                     && req.DisplayState[1].DisplayAliasIndex.Alias == "alias2" && req.DisplayState[1].DisplayAliasIndex.Index == "2"
-                    && req.DisplayState[1].RecordChannelAliasIndex.Alias == "rec2" && req.DisplayState[1].RecordChannelAliasIndex.Index == "2"
+                    && req.DisplayState[1].RecordChannelAliasIndexes[0].Alias == "rec2" && req.DisplayState[1].RecordChannelAliasIndexes[0].Index == "2"
                 )), Times.Once);
         }
 
@@ -221,9 +221,9 @@ namespace Avalanche.Api.Test.Managers
             _stateClient.Verify(s => s.PersistData(It.Is<Ism.SystemState.Models.VideoRouting.DisplayRecordStateData>(
                 req => (2 == req.DisplayState.Count)
                     && req.DisplayState[0].DisplayAliasIndex.Alias == "alias3" && req.DisplayState[0].DisplayAliasIndex.Index == "3"
-                    && req.DisplayState[0].RecordChannelAliasIndex.Alias == "rec1" && req.DisplayState[0].RecordChannelAliasIndex.Index == "1"
+                    && req.DisplayState[0].RecordChannelAliasIndexes[0].Alias == "rec1" && req.DisplayState[0].RecordChannelAliasIndexes[0].Index == "1"
                     && req.DisplayState[1].DisplayAliasIndex.Alias == "alias4" && req.DisplayState[1].DisplayAliasIndex.Index == "4"
-                    && req.DisplayState[1].RecordChannelAliasIndex.Alias == "rec2" && req.DisplayState[1].RecordChannelAliasIndex.Index == "2"
+                    && req.DisplayState[1].RecordChannelAliasIndexes[0].Alias == "rec2" && req.DisplayState[1].RecordChannelAliasIndexes[0].Index == "2"
                 )), Times.Once);
         }
     }

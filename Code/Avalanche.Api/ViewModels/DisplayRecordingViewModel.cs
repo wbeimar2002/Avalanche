@@ -1,20 +1,21 @@
 ﻿using Avalanche.Shared.Domain.Models.Media;
+using System.Collections.Generic;
 
 namespace Avalanche.Api.ViewModels
 {
     public class DisplayRecordingViewModel
     {
         public AliasIndexModel Display { get; set; }
-        public RecordingChannelModel RecordChannel { get; set; }
+        public List<RecordingChannelModel> RecordChannels { get; set; }
 
         public bool Enabled { get; set; }
 
         public DisplayRecordingViewModel() { }
 
-        public DisplayRecordingViewModel(AliasIndexModel display, RecordingChannelModel recordChannel, bool enabled)
+        public DisplayRecordingViewModel(AliasIndexModel display, List<RecordingChannelModel> recordChannels, bool enabled)
         {
             Display = display;
-            RecordChannel = recordChannel;
+            RecordChannels = recordChannels;
             Enabled = enabled;
         }
     }
