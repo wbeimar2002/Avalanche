@@ -17,7 +17,7 @@ namespace Avalanche.Api.Controllers.V1
 {
     [Route("[controller]")]
     [ApiController]
-    [Authorize]
+    //[Authorize]
     public class PresetsController : ControllerBase
     {
         private readonly ILogger _logger;
@@ -38,7 +38,7 @@ namespace Avalanche.Api.Controllers.V1
         /// </summary>
         /// <param name="userId"></param>
         /// <returns></returns>
-        [HttpGet("presets")]
+        [HttpGet]
         public async Task<IActionResult> GetPresets(string userId)
         {
             try

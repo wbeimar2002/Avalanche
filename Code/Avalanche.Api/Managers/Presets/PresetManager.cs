@@ -37,7 +37,8 @@ namespace Avalanche.Api.Managers.Presets
 
         public async Task<UserPresetsModel> GetPresets(string userId)
         {
-            var userPresets = await _storageService.GetJsonObject<PresetsModel>(PRESETS, 1, _configurationContext);
+            var userPresets = await _storageService.GetJsonFullObject<PresetsModel>(PRESETS, 1, _configurationContext);
+
             if (!userPresets.Users.ContainsKey(userId))
                 throw new ArgumentException($"user presets for {userId} does not exists");
 
@@ -86,7 +87,7 @@ namespace Avalanche.Api.Managers.Presets
 
             var result = JsonConvert.SerializeObject(presetsModel);
 
-            await _storageService.SaveJsonObject(PRESETS, result, 1, _configurationContext);
+            await _storageService.SaveJsonMetadata(PRESETS, result, 1, _configurationContext);
         }
 
         public async Task RemovePreset(string userId, int index)
@@ -96,14 +97,10 @@ namespace Avalanche.Api.Managers.Presets
             if (!userPresets.RoutingPresets.ContainsKey(index))
                 throw new ArgumentException($"index {index} not exists in list of presets");
 
-            userPresets.RoutingPresets.Remove(index);
-
-            var presetsModel = new PresetsModel();
-            presetsModel.Users[userId] = userPresets;
-
-            var result = JsonConvert.SerializeObject(presetsModel);
-
-            await _storageService.SaveJsonObject(PRESETS, result, 1, _configurationContext);
+            await _storageService.UpdateConfiguration<PresetsModel>(PRESETS, 1, _configurationContext, (update) =>
+            {
+                update.Remove(config => config.Users[userId].RoutingPresets[index]);
+            });
         }
     }
 }
