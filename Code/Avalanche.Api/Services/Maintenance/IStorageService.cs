@@ -1,5 +1,7 @@
 ﻿using Ism.Common.Core.Configuration.Models;
 using System.Collections.Generic;
+using Microsoft.AspNetCore.JsonPatch;
+using System;
 using System.Threading.Tasks;
 
 namespace Avalanche.Api.Services.Maintenance
@@ -17,5 +19,6 @@ namespace Avalanche.Api.Services.Maintenance
         Task SaveJsonMetadata(string configurationKey, string json, int version, ConfigurationContext context);
 
         Task UpdateJsonProperty(string configurationKey, string jsonKey, string jsonValue, int version, ConfigurationContext context, bool isList = false);
+        Task UpdateConfiguration<TData>(string configurationKey, int version, ConfigurationContext context, Action<JsonPatchDocument<TData>> update) where TData : class, new();
     }
 }

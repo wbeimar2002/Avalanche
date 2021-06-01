@@ -6,6 +6,7 @@ using Avalanche.Api.Managers.Maintenance;
 using Avalanche.Api.Managers.Media;
 using Avalanche.Api.Managers.Notifications;
 using Avalanche.Api.Managers.Patients;
+using Avalanche.Api.Managers.Presets;
 using Avalanche.Api.Managers.Procedures;
 using Avalanche.Api.Managers.Security;
 using Avalanche.Api.Options;
@@ -116,6 +117,7 @@ namespace Avalanche.Api
             services.AddSingleton<ILibraryService, LibraryService>();
             services.AddSingleton<IAccessInfoFactory, AccessInfoFactory>();
             services.AddSingleton<IFilesService, FilesService>();
+            services.AddSingleton<IPresetManager, PresetManager>();
 
             // gRPC Infrastructure
             _ = services.AddConfigurationPoco<GrpcServiceRegistry>(_configuration, nameof(GrpcServiceRegistry));

@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using Avalanche.Api.Extensions;
 using System.Collections.Generic;
 using System.Linq;
+using Microsoft.AspNetCore.JsonPatch;
 
 namespace Avalanche.Api.Services.Maintenance
 {
@@ -172,5 +173,26 @@ namespace Avalanche.Api.Services.Maintenance
 
             return json;
         }
+
+        public async Task UpdateConfiguration<TData>(string configurationKey, int version, ConfigurationContext context, JsonPatchDocument<TData> update) where TData : class, new()
+        {
+            var patch = SerializeJsonPatch(update);
+
+            var kindId = context.SiteId;
+            await _client.UpdateConfiguration(configurationKey, Convert.ToUInt32(version), "Site", kindId, patch);
+        }
+
+        public Task UpdateConfiguration<TData>(string configurationKey, int version, ConfigurationContext context, Action<JsonPatchDocument<TData>> update) where TData : class, new()
+        {
+            var patch = new JsonPatchDocument<TData>();
+            update(patch);
+
+            return UpdateConfiguration(configurationKey, version, context, patch);
+        }
+
+        // json patch deserialize requires newtonsoft; no current plan for system.text.json support: https://github.com/dotnet/aspnetcore/issues/16968
+        private string SerializeJsonPatch<TData>(JsonPatchDocument<TData> patch)
+            where TData : class, new()
+            => Newtonsoft.Json.JsonConvert.SerializeObject(patch);
     }
 }
