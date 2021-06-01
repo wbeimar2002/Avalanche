@@ -7,6 +7,7 @@ using Avalanche.Api.Services.Media;
 using Avalanche.Api.Utilities;
 using Avalanche.Api.ViewModels;
 using Avalanche.Shared.Domain.Models;
+using Avalanche.Shared.Infrastructure.Configuration;
 using Avalanche.Shared.Infrastructure.Enumerations;
 using Ism.Common.Core.Configuration.Models;
 using Ism.Utility.Core;
@@ -267,6 +268,21 @@ namespace Avalanche.Api.Managers.Maintenance
             {
                 switch (property.SourceKey)
                 {
+                    case "VideoSinks":
+                        var videoSinks = await _storageService.GetJsonDynamicList(property.SourceKey, 1, configurationContext);
+
+                        var dynamicVideoSinks = videoSinks
+                            .Select(item =>
+                            {
+                                dynamic expandoObj = new ExpandoObject();
+                                expandoObj.Id = item.Index;
+                                expandoObj.Value = $"{item.Alias} ({item.Index})";
+                                expandoObj.RelatedObject = item;
+                                return (ExpandoObject)expandoObj;
+                            })
+                            .ToList();
+                        return JsonConvert.DeserializeObject<List<dynamic>>(JsonConvert.SerializeObject(dynamicVideoSinks));
+
                     case "Departments":
                         var departments = await _dataManager.GetAllDepartments();
                         var dynamicDepartments = JsonConvert.DeserializeObject<List<dynamic>>(JsonConvert.SerializeObject(departments));
@@ -289,7 +305,7 @@ namespace Avalanche.Api.Managers.Maintenance
                     switch (item.JsonKey)
                     {
                         case "DepartmentId":
-                            dynamic setupSettings = await _storageService.GetJsonDynamic("SetupSettingsValues", 1, configurationContext);
+                            var setupSettings = await _storageService.GetJsonObject<SetupConfiguration>(nameof(SetupConfiguration), 1, configurationContext);
                             bool departmentsSupported = setupSettings.General.DepartmentsSupported;                           
                             
                             item.Required = departmentsSupported;
