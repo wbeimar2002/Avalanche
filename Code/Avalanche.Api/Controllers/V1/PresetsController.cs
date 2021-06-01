@@ -17,7 +17,7 @@ namespace Avalanche.Api.Controllers.V1
 {
     [Route("[controller]")]
     [ApiController]
-    //[Authorize]
+    [Authorize]
     public class PresetsController : ControllerBase
     {
         private readonly ILogger _logger;
