@@ -103,6 +103,7 @@ namespace Avalanche.Api
             services.AddSingleton<IPgsTimeoutManager, PgsTimeoutManager>();
             services.AddConfigurationPoco<PgsApiConfiguration>(_configuration, nameof(PgsApiConfiguration));
             services.AddConfigurationPoco<TimeoutApiConfiguration>(_configuration, nameof(TimeoutApiConfiguration));
+            services.AddConfigurationPoco<SetupConfiguration>(_configuration, nameof(SetupConfiguration));
 
             services.AddSingleton<IWebRTCService, WebRtcService>();
             services.AddSingleton<IRecorderService, RecorderService>();

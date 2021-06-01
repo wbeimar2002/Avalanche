@@ -9,8 +9,6 @@ namespace Avalanche.Api.Managers.Data
 {
     public interface IDataManager
     {
-        Task<IList<KeyValuePairViewModel>> GetData(DataTypes type);
-        Task<IList<DynamicSourceKeyValuePairViewModel>> GetSource(DataTypes settingTypes);
         Task<DepartmentModel> AddDepartment(DepartmentModel department);
         Task DeleteDepartment(int departmentId);
         Task<IList<DepartmentModel>> GetAllDepartments();
@@ -20,5 +18,6 @@ namespace Avalanche.Api.Managers.Data
         Task ValidateDepartmentsSupport();
         Task ValidateDepartmentsSupport(int? departmentId);
         Task<List<ProcedureTypeModel>> GetAllProcedureTypes();
+        Task<List<dynamic>> GetList(string sourceKey, string jsonKey = null);
     }
 }

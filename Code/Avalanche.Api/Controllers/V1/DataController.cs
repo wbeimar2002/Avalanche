@@ -36,19 +36,14 @@ namespace Avalanche.Api.Controllers.V1
             _metadataManager = ThrowIfNullOrReturn(nameof(metadataManager), metadataManager);
         }
 
-        /// <summary>
-        /// Get search columns configuration
-        /// </summary>
-        /// <returns></returns>
-        [HttpGet("searchColumns")]
-        [Produces(typeof(List<DynamicSourceKeyValuePairViewModel>))]
-        public async Task<IActionResult> GetSearchColumns()
+        [HttpGet("{sourceKey}")]
+        public async Task<IActionResult> GetList(string sourceKey)
         {
             try
             {
                 _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
 
-                var result = await _metadataManager.GetSource(DataTypes.SearchColumns);
+                var result = await _metadataManager.GetList(sourceKey);
                 return Ok(result);
             }
             catch (Exception ex)
@@ -62,19 +57,14 @@ namespace Avalanche.Api.Controllers.V1
             }
         }
 
-        /// <summary>
-        /// Get sexes list
-        /// </summary>
-        /// <returns></returns>
-        [HttpGet("sexes")]
-        [Produces(typeof(List<KeyValuePairViewModel>))]
-        public async Task<IActionResult> GetSexes()
+        [HttpGet("{sourceKey}/{jsonKey}")]
+        public async Task<IActionResult> GetList(string sourceKey, string jsonKey)
         {
             try
             {
                 _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
 
-                var result = await _metadataManager.GetData(DataTypes.Sex);
+                var result = await _metadataManager.GetList(sourceKey, jsonKey);
                 return Ok(result);
             }
             catch (Exception ex)
