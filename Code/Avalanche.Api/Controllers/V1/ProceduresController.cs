@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Avalanche.Api.Helpers;
 using Avalanche.Api.Managers.Procedures;
 using Avalanche.Api.ViewModels;
 using Avalanche.Shared.Domain.Enumerations;
@@ -42,15 +43,21 @@ namespace Avalanche.Api.Controllers.V1
         /// </summary>
         /// <param name="filter"></param>
         /// <returns></returns>
-        [HttpPost("")]
-        [Produces(typeof(List<ProcedureModel>))]
+        [HttpPost("filtered")]
+        [Produces(typeof(PagedCollectionViewModel<ProcedureViewModel>))]
         public async Task<IActionResult> Search(ProcedureSearchFilterViewModel filter)
         {
             try
             {
                 _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
-                await Task.CompletedTask;
-                return Ok();
+
+                var result = new PagedCollectionViewModel<ProcedureViewModel>
+                {
+                    Items = await _proceduresManager.Search(filter)
+                };
+
+                PagingHelper.AppendPagingContext(this.Url, this.Request, filter, result);
+                return Ok(result);
             }
             catch (Exception ex)
             {
@@ -69,13 +76,14 @@ namespace Avalanche.Api.Controllers.V1
         /// <returns></returns>
         [HttpGet("{id}")]
         [Produces(typeof(ProcedureDetailsViewModel))]
-        public async Task<IActionResult> Get()
+        public async Task<IActionResult> Get(string id)
         {
             try
             {
                 _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
-                await Task.CompletedTask;
-                return Ok();
+
+                var result = await _proceduresManager.GetProcedureDetails(id);
+                return Ok(result);
             }
             catch (Exception ex)
             {

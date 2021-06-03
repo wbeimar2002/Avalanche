@@ -15,12 +15,6 @@ namespace Avalanche.Api.ViewModels
             this.Limit = 100;
         }
 
-        [JsonIgnore]
-        public AccessInfoModel AccessInformation { get; set; }
-
-        [JsonIgnore]
-        public string CultureName { get; set; }
-
         public abstract object Clone();
     }
 }

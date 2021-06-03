@@ -6,6 +6,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Models\AccessInfoModel.cs" />
     <Compile Remove="Models\Patient.cs" />
   </ItemGroup>
 

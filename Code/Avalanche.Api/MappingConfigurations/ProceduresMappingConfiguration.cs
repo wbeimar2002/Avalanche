@@ -90,7 +90,6 @@ namespace Avalanche.Api.MappingConfigurations
                             MRN = src.Patient?.MRN,
                             Physician = null != src.Physician ? new Shared.Domain.Models.PhysicianModel {  Id= src.Physician.Id, FirstName = src.Physician.FirstName, LastName = src.Physician.LastName } : null,
                             ProcedureType = null != src.ProcedureType ? new Shared.Domain.Models.ProcedureTypeModel { Id = src.ProcedureType.Id, DepartmentId = src.Department?.Id, IsNew = false, Name = src.ProcedureType.Name}: null,
-                            AccessInformation = null,
                             Sex = null != src.Patient?.Sex ? MappingUtilities.GetSexViewModel(src.Patient.Sex) : null
                         }: null
                     )) 
@@ -104,7 +103,8 @@ namespace Avalanche.Api.MappingConfigurations
                 .ForMember(dest => dest.Images, opt => opt.MapFrom(src => src.Images))
                 .ForMember(dest => dest.Videos, opt => opt.MapFrom(src => src.Videos));
 
-            CreateMap<Shared.Domain.Models.AccessInfoModel, Ism.Library.V1.Protos.AccessInfoMessage>()
+
+            CreateMap<Ism.IsmLogCommon.Core.AccessInfo, Ism.Library.V1.Protos.AccessInfoMessage>()
                 .ReverseMap();
 
             CreateMap<Ism.Library.V1.Protos.ProcedureIdMessage, ProcedureIdViewModel>()

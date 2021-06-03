@@ -1,4 +1,5 @@
-﻿using AutoMapper;
+﻿using AutoFixture;
+using AutoMapper;
 
 using Avalanche.Api.Services.Health;
 using Avalanche.Api.Services.Media;
@@ -9,6 +10,7 @@ using Ism.Library.V1.Protos;
 using Ism.SystemState.Client;
 using Ism.SystemState.Models.Procedure;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -122,6 +124,24 @@ namespace Avalanche.Api.Managers.Procedures
             });
 
             return _mapper.Map<ProcedureAllocationViewModel>(response);
+        }
+
+        public async Task<IEnumerable<ProcedureViewModel>> Search(ProcedureSearchFilterViewModel filter)
+        {
+            Fixture fixture = new Fixture();
+            return fixture.CreateMany<ProcedureViewModel>(50);
+        }
+
+        public async Task<ProcedureDetailsViewModel> GetProcedureDetails(string id)
+        {
+            //TODO: Temporary Implementation - Same than active procedure
+            var activeProcedure = await _stateClient.GetData<ActiveProcedureState>();
+            var result = _mapper.Map<ActiveProcedureViewModel>(activeProcedure);
+
+            if (result != null)
+                result.RecorderState = (await _recorderService.GetRecorderState()).State;
+
+            return result;
         }
     }
 }
