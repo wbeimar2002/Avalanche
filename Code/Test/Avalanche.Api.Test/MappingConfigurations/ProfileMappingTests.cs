@@ -21,9 +21,11 @@ namespace Avalanche.Api.Tests.MappingConfigurations
             var config = new MapperConfiguration(cfg =>
             {
                 cfg.AddProfile(new HealthMappingConfiguration());
-                cfg.AddProfile(new ProceduresMappingConfiguration());
-                cfg.AddProfile(new MediaMappingConfiguration());
                 cfg.AddProfile(new MaintenanceMappingConfiguration());
+                cfg.AddProfile(new MediaMappingConfiguration());
+                cfg.AddProfile(new ProceduresMappingConfiguration());
+                cfg.AddProfile(new RecorderMappingConfiguration());
+                cfg.AddProfile(new RoutingMappingConfiguration());
             });
 
             _mapper = config.CreateMapper();
@@ -51,6 +53,18 @@ namespace Avalanche.Api.Tests.MappingConfigurations
         public void MaintenanceMappingConfiguration_IsValid()
         {
             AssertProfileIsValid<MaintenanceMappingConfiguration>();
+        }
+
+        [Test]
+        public void RecorderMappingConfiguration_IsValid()
+        {
+            AssertProfileIsValid<RecorderMappingConfiguration>();
+        }
+
+        [Test]
+        public void RoutingMappingConfiguration_IsValid()
+        {
+            AssertProfileIsValid<RoutingMappingConfiguration>();
         }
 
         [Test]

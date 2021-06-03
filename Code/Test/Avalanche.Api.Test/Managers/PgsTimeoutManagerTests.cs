@@ -85,6 +85,7 @@ namespace Avalanche.Api.Test.Managers
             {
                 _pgsDisplayStateData = add;
             });
+
             _stateClient.Setup(x => x.GetData<PgsDisplayStateData>()).ReturnsAsync(() =>
             {
                 return _pgsDisplayStateData;
@@ -98,10 +99,12 @@ namespace Avalanche.Api.Test.Managers
                 foreach (var route in x.Routes)
                     _currentRoutes[route.Sink] = route.Source;
             });
+
             _routingService.Setup(x => x.RouteVideo(It.IsAny<RouteVideoRequest>())).Callback<RouteVideoRequest>(x =>
             {
                 _currentRoutes[x.Sink] = x.Source;
             });
+
             _routingService.Setup(x => x.GetCurrentRoutes()).ReturnsAsync(() =>
             {
                 var response = new GetCurrentRoutesResponse();
@@ -141,6 +144,7 @@ namespace Avalanche.Api.Test.Managers
             // internally, pgs should be routed to all displays
             var pgsConfig = GetConfig().PgsConfig;
             var request = new RouteVideoBatchRequest();
+
             request.Routes.AddRange(pgsConfig.Sinks.Select(x => new RouteVideoRequest
             {
                 Source = _mapper.Map<AliasIndexModel, AliasIndexMessage>(pgsConfig.Source),
@@ -279,6 +283,103 @@ namespace Avalanche.Api.Test.Managers
                     Sink = new AliasIndexViewModel { Alias = "foobar", Index = "Does not exist" }
                 });
             });
+        }
+
+        [Test]
+        public async Task GetTimeoutPdfPath_ValidFile_Test()
+        {
+            var testPdfPath = "TestPdf";
+            _pgsTimeoutService.Setup(x => x.GetTimeoutPdfFileName()).Returns(Task.FromResult<GetTimeoutPdfFileResponse>(new GetTimeoutPdfFileResponse { FileName = testPdfPath }));
+            var pdfPath = await _pgsTimeoutManager.GetTimeoutPdfFileName();
+
+            Assert.NotNull(pdfPath);
+            Assert.IsNotEmpty(pdfPath);
+            Assert.AreEqual(testPdfPath, pdfPath);
+        }
+
+        [Test]
+        public async Task GetTimeoutPdfPath_NoFile_Test()
+        {
+            var pdfPath = await _pgsTimeoutManager.GetTimeoutPdfFileName();
+            Assert.Null(pdfPath);
+        }
+
+        [Test]
+        public async Task GetTimeoutPdfPath_Called()
+        {
+            _pgsTimeoutService.Setup(mock => mock.GetTimeoutPdfFileName()).ReturnsAsync(new GetTimeoutPdfFileResponse() { FileName = "Sample" });
+            var pdfPath = await _pgsTimeoutManager.GetTimeoutPdfFileName();
+
+            _pgsTimeoutService.Verify(mock => mock.GetTimeoutPdfFileName(), Times.Once);
+        }
+
+        [Test]
+        public async Task SetTimeoutPage_Called()
+        {
+            _pgsTimeoutService.Setup(x => x.SetTimeoutPage(It.IsAny<SetTimeoutPageRequest>()));
+            await _pgsTimeoutManager.SetTimeoutPage(0);
+
+            _pgsTimeoutService.Verify(mock => mock.SetTimeoutPage(It.IsAny<SetTimeoutPageRequest>()), Times.Once);
+        }
+
+        [Test]
+        public async Task GetTimeoutPage_Called()
+        {
+            _pgsTimeoutService.Setup(x => x.GetTimeoutPage());
+            await _pgsTimeoutManager.GetTimeoutPage();
+
+            _pgsTimeoutService.Verify(mock => mock.GetTimeoutPage(), Times.Once);
+        }
+
+        [Test]
+        public async Task GetTimeoutPageCount_Called()
+        {
+            _pgsTimeoutService.Setup(x => x.GetTimeoutPageCount());
+            await _pgsTimeoutManager.GetTimeoutPageCount();
+
+            _pgsTimeoutService.Verify(mock => mock.GetTimeoutPageCount(), Times.Once);
+        }
+
+        [Test]
+        public async Task TimeoutNextPage_Called()
+        {
+            _pgsTimeoutService.Setup(x => x.NextPage());
+            await _pgsTimeoutManager.NextPage();
+
+            _pgsTimeoutService.Verify(mock => mock.NextPage(), Times.Once);
+        }
+
+        [Test]
+        public async Task TimeoutPreviousPage_Called()
+        {
+            _pgsTimeoutService.Setup(x => x.PreviousPage());
+            await _pgsTimeoutManager.PreviousPage();
+
+            _pgsTimeoutService.Verify(mock => mock.PreviousPage(), Times.Once);
+        }
+
+        [Test]
+        [TestCase(true)]
+        [TestCase(false)]
+        public async Task TimeoutState_StartTimeout_DoesNotThrow(bool value)
+        {
+            _pgsTimeoutService.Setup(x => x.GetPgsPlaybackState()).Returns(Task.FromResult(new GetPgsPlaybackStateResponse { IsPlaying = true }));
+            _routingService.Setup(x => x.GetVideoSinks())
+                .Returns(Task.FromResult(new GetVideoSinksResponse()));
+
+            await _pgsTimeoutManager.StartTimeout();
+        }
+
+        [Test]
+        [TestCase(true)]
+        [TestCase(false)]
+        public async Task TimeoutState_StopTimeout_DoesNotThrow(bool value)
+        {
+            _pgsTimeoutService.Setup(x => x.GetPgsPlaybackState()).Returns(Task.FromResult(new GetPgsPlaybackStateResponse { IsPlaying = true }));
+            _routingService.Setup(x => x.GetVideoSinks())
+                .Returns(Task.FromResult(new GetVideoSinksResponse()));
+
+            await _pgsTimeoutManager.StopPgsAndTimeout();
         }
     }
 }
