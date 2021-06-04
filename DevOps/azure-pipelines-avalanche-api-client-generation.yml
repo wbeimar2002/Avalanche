@@ -150,7 +150,7 @@ stages:
      - task: Npm@1
        inputs:
         command: 'custom'
-        workingDir: 'avalanche-api-client'
+        workingDir: 'avalanche-api-client\projects\avalanche-client-scripts'
         verbose: false
         customCommand: 'version $(new_version) --no-git-tag-version --allow-same-version'
         customRegistry: 'useFeed'
@@ -161,7 +161,7 @@ stages:
      - task: Npm@1
        inputs:
           command: publish
-          workingDir: 'avalanche-api-client'
+          workingDir: 'avalanche-api-client\projects\avalanche-client-scripts'
           verbose: false
           publishRegistry: useFeed
           publishFeed: '$(VstsFeed)'
