@@ -8,7 +8,8 @@ namespace Avalanche.Api.ViewModels
 {
     public class ProcedureViewModel
     {
-        public string Id { get; set; }
+        public int Id { get; set; }
+        public string LibraryId { get; set; }
         public PatientModel Patient { get; set; }
         public PhysicianModel Physician { get; set; }
         public List<string> Thumbnails { get; set; }

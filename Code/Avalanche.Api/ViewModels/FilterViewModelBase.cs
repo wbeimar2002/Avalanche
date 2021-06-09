@@ -1,4 +1,5 @@
 ﻿using Avalanche.Shared.Domain.Models;
+using Avalanche.Shared.Infrastructure.Enumerations;
 using System;
 using System.Text.Json.Serialization;
 
@@ -8,12 +9,13 @@ namespace Avalanche.Api.ViewModels
     {
         public int Page { get; set; }
         public int Limit { get; set; }
-        public int SortBy { get; set; }
+        public string SortBy { get; set; }
+        public SortingDirections SortingDirection { get; set; }
 
         public FilterViewModelBase()
         {
             this.Page = 1;
-            this.Limit = 100;
+            this.Limit = 25;
         }
 
         public abstract object Clone();

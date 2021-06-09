@@ -60,13 +60,13 @@ namespace Avalanche.Api.Tests.MappingConfigurations
             var viewModel = new PatientViewModel
             {
                 DateOfBirth = now,
-                Department = new Shared.Domain.Models.DepartmentModel { Id = 1, IsNew = false, Name = "Dept" },
+                Department = new Shared.Domain.Models.DepartmentModel { Id = 1, Name = "Dept" },
                 FirstName = "First",
                 Id = 2,
                 LastName = "Last",
                 MRN = "1234",
                 Physician = new Shared.Domain.Models.PhysicianModel { Id = "3", FirstName = "f", LastName = "l" },
-                ProcedureType = new Shared.Domain.Models.ProcedureTypeModel { Id = 4, IsNew = false, DepartmentId = 1, Name = "proc" },
+                ProcedureType = new Shared.Domain.Models.ProcedureTypeModel { Id = 4, DepartmentId = 1, Name = "proc" },
                 Sex = new KeyValuePairViewModel { Id = "M", TranslationKey = "key", Value = "M" }
             };
             var stateModel = _mapper.Map<Patient>(viewModel);

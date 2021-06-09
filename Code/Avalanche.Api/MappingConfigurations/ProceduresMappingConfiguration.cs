@@ -85,11 +85,11 @@ namespace Avalanche.Api.MappingConfigurations
                             LastName = src.Patient?.LastName,
                             FirstName = src.Patient?.FirstName,
                             DateOfBirth = src.Patient?.DateOfBirth ?? DateTime.MinValue,
-                            Department = null != src.Department ? new Shared.Domain.Models.DepartmentModel { Id = src.Department.Id, IsNew = false, Name = src.Department.Name } : null,
+                            Department = null != src.Department ? new Shared.Domain.Models.DepartmentModel { Id = src.Department.Id, Name = src.Department.Name } : null,
                             Id = src.Patient?.Id,
                             MRN = src.Patient?.MRN,
                             Physician = null != src.Physician ? new Shared.Domain.Models.PhysicianModel {  Id= src.Physician.Id, FirstName = src.Physician.FirstName, LastName = src.Physician.LastName } : null,
-                            ProcedureType = null != src.ProcedureType ? new Shared.Domain.Models.ProcedureTypeModel { Id = src.ProcedureType.Id, DepartmentId = src.Department?.Id, IsNew = false, Name = src.ProcedureType.Name}: null,
+                            ProcedureType = null != src.ProcedureType ? new Shared.Domain.Models.ProcedureTypeModel { Id = src.ProcedureType.Id, DepartmentId = src.Department?.Id, Name = src.ProcedureType.Name}: null,
                             Sex = null != src.Patient?.Sex ? MappingUtilities.GetSexViewModel(src.Patient.Sex) : null
                         }: null
                     )) 
