@@ -47,7 +47,7 @@ stages:
 
      - template: 'pipeline\templates\restore-build-test-msbuild6.yml@devops'
        parameters: 
-          repo: '$(Repo)'
+          repo: '$(Repo)\Code'
           projectsolution: '$(ProjectSolution)'
           buildConfiguration: '$(BuildConfiguration)'
           buildplatform: '$(BuildPlatform)'
