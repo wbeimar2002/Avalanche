@@ -45,7 +45,7 @@ stages:
         targetType: 'inline'
         script: 'Get-ChildItem -Path Env:\'
 
-     - template: 'pipeline\templates\restore-build-test-msbuild4.yml@devops'
+     - template: 'pipeline\templates\restore-build-test-msbuild6.yml@devops'
        parameters: 
           repo: '$(Repo)'
           projectsolution: '$(ProjectSolution)'
@@ -53,7 +53,6 @@ stages:
           buildplatform: '$(BuildPlatform)'
           vstsfeed: '$(VstsFeed)'
           adoproject: '$(AdoProject)'
-          testprojects: '$(TestProjects)'
           sonarprojectkey: '$(SonarProjectKey)'
           sonarprojetname: '$(SonarProjectKey)'
 
