@@ -59,7 +59,9 @@ stages:
           adoproject: '$(AdoProject)'
           sonarprojectkey: '$(SonarProjectKey)'
           sonarprojetname: '$(SonarProjectKey)'
- 
+     
+     - task: NuGetAuthenticate@0
+     
      - template: 'pipeline\templates\pub-sonarqube-codecoverage-win-3.yml@devops'
        parameters: 
           buildnumberprefix: '$(BuildNumberPrefix)'
