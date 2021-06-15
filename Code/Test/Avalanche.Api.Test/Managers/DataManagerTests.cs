@@ -1,0 +1,220 @@
+﻿using AutoMapper;
+
+using Avalanche.Api.Managers.Data;
+using Avalanche.Api.MappingConfigurations;
+using Avalanche.Api.Services.Health;
+using Avalanche.Api.Services.Maintenance;
+using Avalanche.Shared.Domain.Models;
+using Avalanche.Shared.Infrastructure.Configuration;
+using Ism.Common.Core.Configuration.Models;
+
+using Microsoft.AspNetCore.Http;
+
+using Moq;
+
+using NUnit.Framework;
+
+using System;
+using System.Threading.Tasks;
+
+namespace Avalanche.Api.Tests.Managers
+{
+    [TestFixture()]
+    public class DataManagerTests
+    {
+        Mock<IStorageService> _storageService;
+        Mock<IDataManagementService> _dataManagementService;
+        Mock<IHttpContextAccessor> _httpContextAccessor;
+
+        IMapper _mapper;
+        DataManager _manager;
+
+        [SetUp]
+        public void Setup()
+        {
+            _storageService = new Mock<IStorageService>();
+            _dataManagementService = new Mock<IDataManagementService>();
+            _httpContextAccessor = new Mock<IHttpContextAccessor>();
+
+            var config = new MapperConfiguration(cfg =>
+            {
+                cfg.AddProfile(new HealthMappingConfiguration());
+            });
+
+            _mapper = config.CreateMapper();
+            _manager = new DataManager(_storageService.Object, _dataManagementService.Object, _mapper, _httpContextAccessor.Object);
+        }
+
+        [Test]
+        public void AddProcedureTypeShouldFailIfHasDepartmentAndDepartmentIsNotSupported()
+        {
+            var setupConfiguration = new SetupConfiguration
+            {
+                General = new GeneralSetupConfiguration 
+                {
+                    DepartmentsSupported = false
+                }
+            };
+
+            _storageService.Setup(mock => mock.GetJsonObject<SetupConfiguration>(nameof(SetupConfiguration), 1,  It.IsAny<ConfigurationContext>())).ReturnsAsync(setupConfiguration);
+
+            var newProcedureType = new ProcedureTypeModel()
+            {
+                Id = 1,
+                Name = "Sample",
+                DepartmentId = 1
+            };
+
+            Task Act() => _manager.AddProcedureType(newProcedureType);
+
+            Assert.That(Act, Throws.TypeOf<ArgumentException>());
+        }
+
+        [Test]
+        public void AddProcedureTypeShouldFailIfDepartmentIsNullAndDepartmentIsSupported()
+        {
+            var setupConfiguration = new SetupConfiguration
+            {
+                General = new GeneralSetupConfiguration
+                {
+                    DepartmentsSupported = true
+                }
+            };
+
+            _storageService.Setup(mock => mock.GetJsonObject<SetupConfiguration>(nameof(SetupConfiguration), 1, It.IsAny<ConfigurationContext>())).ReturnsAsync(setupConfiguration);
+
+            var newProcedureType = new ProcedureTypeModel()
+            {
+                Id = 1,
+                Name = "Sample",
+                DepartmentId = null
+            };
+
+            Task Act() => _manager.AddProcedureType(newProcedureType);
+
+            Assert.That(Act, Throws.TypeOf<ArgumentNullException>());
+        }
+
+        [Test]
+        public void DeleteProcedureTypeShouldFailIfHasDepartmentAndDepartmentIsNotSupported()
+        {
+            var setupConfiguration = new SetupConfiguration
+            {
+                General = new GeneralSetupConfiguration 
+                {
+                    DepartmentsSupported = false
+                }
+            };
+
+            _storageService.Setup(mock => mock.GetJsonObject<SetupConfiguration>(nameof(SetupConfiguration), 1, It.IsAny<ConfigurationContext>())).ReturnsAsync(setupConfiguration);
+
+            var procedureType = new ProcedureTypeModel()
+            {
+                Id = 1,
+                Name = "Sample",
+                DepartmentId = 1
+            };
+
+            Task Act() => _manager.DeleteProcedureType(procedureType);
+
+            Assert.That(Act, Throws.TypeOf<ArgumentException>());
+        }
+
+        [Test]
+        public void DeleteProcedureTypeShouldFailIfDepartmentIsNullAndDepartmentIsSupported()
+        {
+            var setupConfiguration = new SetupConfiguration
+            {
+                General = new GeneralSetupConfiguration
+                {
+                    DepartmentsSupported = true
+                }
+            };
+
+            _storageService.Setup(mock => mock.GetJsonObject<SetupConfiguration>(nameof(SetupConfiguration), 1, It.IsAny<ConfigurationContext>())).ReturnsAsync(setupConfiguration);
+
+            var procedureType = new ProcedureTypeModel()
+            {
+                Id = 1,
+                Name = "Sample",
+                DepartmentId = null
+            };
+
+            Task Act() => _manager.DeleteProcedureType(procedureType);
+
+            Assert.That(Act, Throws.TypeOf<ArgumentNullException>());
+        }
+
+        [Test]
+        public void GetProceduresByDepartmentShouldFailIfHasDepartmentAndDepartmentIsNotSupported()
+        {
+            var setupConfiguration = new SetupConfiguration
+            {
+                General = new GeneralSetupConfiguration
+                {
+                    DepartmentsSupported = false
+                }
+            };
+
+            _storageService.Setup(mock => mock.GetJsonObject<SetupConfiguration>(nameof(SetupConfiguration), 1, It.IsAny<ConfigurationContext>())).ReturnsAsync(setupConfiguration);
+
+            Task Act() => _manager.GetProcedureTypesByDepartment(1);
+
+            Assert.That(Act, Throws.TypeOf<ArgumentException>());
+        }
+
+        [Test]
+        public void GetProceduresByDepartmentShouldFailIfDepartmentIsNullAndDepartmentIsSupported()
+        {
+            var setupConfiguration = new SetupConfiguration
+            {
+                General = new GeneralSetupConfiguration
+                {
+                    DepartmentsSupported = true
+                }
+            };
+
+            _storageService.Setup(mock => mock.GetJsonObject<SetupConfiguration>(nameof(SetupConfiguration), 1, It.IsAny<ConfigurationContext>())).ReturnsAsync(setupConfiguration);
+
+            Task Act() => _manager.GetProcedureTypesByDepartment(null);
+
+            Assert.That(Act, Throws.TypeOf<ArgumentNullException>());
+        }
+
+        [Test]
+        public void AddDepartmentShouldFailIfDepartmentIsNotSupported()
+        {
+            var setupConfiguration = new SetupConfiguration
+            {
+                General = new GeneralSetupConfiguration
+                {
+                    DepartmentsSupported = false
+                }
+            };
+
+            _storageService.Setup(mock => mock.GetJsonObject<SetupConfiguration>(nameof(SetupConfiguration), 1, It.IsAny<ConfigurationContext>())).ReturnsAsync(setupConfiguration);
+
+            Task Act() => _manager.AddDepartment(It.IsAny<DepartmentModel>());
+
+            Assert.That(Act, Throws.TypeOf<InvalidOperationException>());
+        }
+
+        [Test]
+        public void DeleteDepartmentShouldFailIfDepartmentIsNotSupported()
+        {
+            var setupConfiguration = new SetupConfiguration
+            {
+                General = new GeneralSetupConfiguration
+                {
+                    DepartmentsSupported = false
+                }
+            };
+
+            _storageService.Setup(mock => mock.GetJsonObject<SetupConfiguration>(nameof(SetupConfiguration), 1, It.IsAny<ConfigurationContext>())).ReturnsAsync(setupConfiguration);
+
+            Task Act() => _manager.DeleteDepartment(1);
+
+            Assert.That(Act, Throws.TypeOf<InvalidOperationException>());
+        }
+    }
+}
