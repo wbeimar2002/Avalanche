@@ -51,6 +51,8 @@ stages:
        parameters: 
           repo: '$(Repo)'
           projectsolution: '$(ProjectSolution)'
+          testdirectory: '$(TestRoot)'
+          testfilter: '$(TestFilter)'
           buildConfiguration: '$(BuildConfiguration)'
           buildplatform: '$(BuildPlatform)'
           vstsfeed: '$(VstsFeed)'
