@@ -61,7 +61,8 @@ namespace Avalanche.Api.Test.Managers
                     new Dictionary<string, string>(),
                     null, 
                     null, 
-                    null));
+                    null,
+                    new List<VideoRecordingEvent>()));
 
             var manager = new ProceduresManager(stateClient.Object, _libraryService.Object, _accessInfoFactory.Object, _mapper, _recorderService.Object);
 
@@ -97,7 +98,8 @@ namespace Avalanche.Api.Test.Managers
                     new Dictionary<string, string>(),
                     null,
                     null,
-                    null));
+                    null,
+                    new List<VideoRecordingEvent>()));
 
             var manager = new ProceduresManager(stateClient.Object, _libraryService.Object, _accessInfoFactory.Object, _mapper, _recorderService.Object);
 
@@ -128,7 +130,8 @@ namespace Avalanche.Api.Test.Managers
                     new Dictionary<string, string>(),
                     null,
                     null,
-                    null));
+                    null,
+                    new List<VideoRecordingEvent>()));
 
             var manager = new ProceduresManager(stateClient.Object, _libraryService.Object, _accessInfoFactory.Object, _mapper, _recorderService.Object);
 

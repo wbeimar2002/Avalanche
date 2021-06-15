@@ -129,5 +129,32 @@ namespace Avalanche.Api.Controllers.V1
                 _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
             }
         }
+
+        /// <summary>
+        /// Gets video id and offset timeline info for the image
+        /// </summary>
+        /// <param name="imageId"></param>
+        /// <returns></returns>
+        [HttpGet("timeline/video")]
+        public async Task<IActionResult> GetTimelineVideo(Guid imageId)
+        {
+            try
+            {
+                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
+
+                var model = await _recordingManager.GetRecordingTimelineByImageId(imageId);
+
+                return Ok(model);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(LoggerHelper.GetLogMessage(DebugLogType.Exception), ex);
+                return BadRequest();
+            }
+            finally
+            {
+                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
+            }
+        }
     }
 }

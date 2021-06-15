@@ -81,6 +81,19 @@ namespace Avalanche.Api.Managers.Media
             return _mapper.Map<IEnumerable<RecordChannelMessage>, IEnumerable<RecordingChannelModel>>(channels).ToList();
         }
 
+        public async Task<RecordingTimelineModel> GetRecordingTimelineByImageId(Guid imageId)
+        {
+            var activeProcedure = await _stateClient.GetData<ActiveProcedureState>();
+            if (null == activeProcedure)
+            {
+                throw new InvalidOperationException("No active procedure exists");
+            }
+
+            var recEvent = activeProcedure.RecordingEvents.Find(x => x.ImageId.Equals(imageId));
+
+            return new RecordingTimelineModel { VideoId = recEvent.VideoId, VideoOffset = recEvent.VideoOffset };
+        }
+
         public async Task StartRecording()
         {
             var activeProcedure = await _stateClient.GetData<ActiveProcedureState>();

@@ -19,5 +19,7 @@ namespace Avalanche.Api.Managers.Media
         string GetCaptureVideo(string path, string procedureId, string repository);
 
         Task<IEnumerable<RecordingChannelModel>> GetRecordingChannels();
+
+        Task<RecordingTimelineModel> GetRecordingTimelineByImageId(Guid imageId);
     }
 }
