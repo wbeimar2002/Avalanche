@@ -47,7 +47,7 @@ stages:
        inputs:
            scriptName: devops/misc-scripts/ApplyVersionToAssemblies.ps1
 
-     - template: 'pipeline\templates\restore-build-test-msbuild6.yml@devops'
+     - template: 'pipeline\templates\restore-build-test-msbuild8.yml@devops'
        parameters: 
           repo: '$(Repo)'
           projectsolution: '$(ProjectSolution)'
