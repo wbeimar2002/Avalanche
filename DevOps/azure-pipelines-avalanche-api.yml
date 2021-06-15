@@ -67,7 +67,7 @@ stages:
           sonartoken: '$(SonarToken)'
           workingdirectory: '$(repo)'
           systemworkingdirectory: '$(System.DefaultWorkingDirectory)'
-          $testworkingdirectory: '$(System.DefaultWorkingDirectory)\$(TestRoot)'
+          testworkingdirectory: '$(System.DefaultWorkingDirectory)\$(TestRoot)'
 
      - task: CopyFiles@2
        condition: and(succeeded(),  ne(variables['Build.Reason'], 'PullRequest'))
