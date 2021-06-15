@@ -33,8 +33,8 @@
     <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="8.1.1" />
     <PackageReference Include="AvidisDeviceInterface.Client" Version="1.0.0-prerelease0013" />
     <PackageReference Include="Google.Api.CommonProtos" Version="2.3.0" />
-    <PackageReference Include="Google.Protobuf" Version="3.17.0" />
-    <PackageReference Include="Grpc.Core" Version="2.37.1" />
+    <PackageReference Include="Google.Protobuf" Version="3.17.3" />
+    <PackageReference Include="Grpc.Core" Version="2.38.0" />
     <PackageReference Include="Grpc.Core.Testing" Version="2.37.1" />
     <PackageReference Include="Grpc.Net.Client" Version="2.37.0" />
     <PackageReference Include="Grpc.Tools" Version="2.37.1">
@@ -47,12 +47,12 @@
     <PackageReference Include="Ism.Library.Client" Version="1.0.0-prerelease0024" />
     <PackageReference Include="Ism.PatientInfoEngine.Client" Version="1.0.0-prerelease0021" />
     <PackageReference Include="Ism.PgsTimeout.Client" Version="1.0.0-prerelease0012" />
-    <PackageReference Include="Ism.Recorder.Client" Version="1.0.0-prerelease0028" />
+    <PackageReference Include="Ism.Recorder.Client" Version="1.0.0-prerelease0029" />
     <PackageReference Include="Ism.Routing.Client" Version="1.0.0-prerelease0014" />
     <PackageReference Include="Ism.Security.Grpc.Standard" Version="1.0.0-prerelease023" />
-    <PackageReference Include="Ism.Storage.Configuration.Client" Version="1.0.0-prerelease0019" />
-    <PackageReference Include="Ism.Storage.DataManagement.Client" Version="1.0.0-prerelease0018" />
-    <PackageReference Include="Ism.Storage.PatientList.Client" Version="1.0.0-prerelease0016" />
+    <PackageReference Include="Ism.Storage.Configuration.Client" Version="1.0.0-prerelease0022" />
+    <PackageReference Include="Ism.Storage.DataManagement.Client" Version="1.0.0-prerelease0020" />
+    <PackageReference Include="Ism.Storage.PatientList.Client" Version="1.0.0-prerelease0018" />
     <PackageReference Include="Ism.Streaming.Client" Version="1.0.0-prerelease0013" />
     <PackageReference Include="Ism.SystemState.Client" Version="1.0.0-prerelease0053" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="3.1.12" />
