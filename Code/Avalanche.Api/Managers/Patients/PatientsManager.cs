@@ -262,7 +262,7 @@ namespace Avalanche.Api.Managers.Patients
             //TODO: Validate department support
             var existingProcedureType = await _dataManagementService.GetProcedureType(new GetProcedureTypeRequest()
             {
-                ProcedureTypeId = Convert.ToInt32(procedureType.Id),
+                ProcedureTypeName = procedureType.Name,
                 DepartmentId = Convert.ToInt32(department.Id),
             });
 
