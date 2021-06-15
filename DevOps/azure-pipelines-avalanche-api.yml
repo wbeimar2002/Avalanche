@@ -6,7 +6,7 @@ resources:
   - repository: devops
     type: git
     name: devops
-    ref: fix-tests
+    ref: dev
 
 #pool:
   #vmImage: $(PoolVmImage)
