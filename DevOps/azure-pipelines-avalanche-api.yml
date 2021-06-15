@@ -6,7 +6,7 @@ resources:
   - repository: devops
     type: git
     name: devops
-    ref: dev
+    ref: allavalanchepipeline
 
 #pool:
   #vmImage: $(PoolVmImage)
