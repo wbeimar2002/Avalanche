@@ -65,7 +65,7 @@ stages:
           buildnumberprefix: '$(BuildNumberPrefix)'
           sonarqubeurl: '$(SonarqubeUrl)'
           sonartoken: '$(SonarToken)'
-          workingdirectory: '$(repo)'
+          workingdirectory: '$(repo)\$(ProjectSolutionFolder)'
           systemworkingdirectory: '$(System.DefaultWorkingDirectory)'
           testworkingdirectory: '$(System.DefaultWorkingDirectory)\$(repo)\$(TestRoot)'
 
