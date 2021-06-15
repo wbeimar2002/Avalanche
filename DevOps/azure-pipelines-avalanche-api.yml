@@ -60,7 +60,7 @@ stages:
           sonarprojectkey: '$(SonarProjectKey)'
           sonarprojetname: '$(SonarProjectKey)'
  
-     - template: 'pipeline\templates\pub-sonarqube-codecoverage-win-2.yml@devops'
+     - template: 'pipeline\templates\pub-sonarqube-codecoverage-win-3.yml@devops'
        parameters: 
           buildnumberprefix: '$(BuildNumberPrefix)'
           sonarqubeurl: '$(SonarqubeUrl)'
