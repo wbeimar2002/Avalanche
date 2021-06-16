@@ -1,4 +1,5 @@
-﻿using Avalanche.Shared.Domain.Models.Media;
+﻿using Avalanche.Api.ViewModels;
+using Avalanche.Shared.Domain.Models.Media;
 using Ism.Recorder.Core.V1.Protos;
 using System;
 using System.Collections.Generic;
@@ -20,6 +21,6 @@ namespace Avalanche.Api.Managers.Media
 
         Task<IEnumerable<RecordingChannelModel>> GetRecordingChannels();
 
-        Task<RecordingTimelineModel> GetRecordingTimelineByImageId(Guid imageId);
+        Task<RecordingTimelineViewModel> GetRecordingTimelineByImageId(Guid imageId);
     }
 }

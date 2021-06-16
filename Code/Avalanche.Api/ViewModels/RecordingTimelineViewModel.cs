@@ -1,8 +1,8 @@
 ﻿using System;
 
-namespace Avalanche.Shared.Domain.Models.Media
+namespace Avalanche.Api.ViewModels
 {
-    public class RecordingTimelineModel
+    public class RecordingTimelineViewModel
     {
         public Guid VideoId { get; set; }
 
