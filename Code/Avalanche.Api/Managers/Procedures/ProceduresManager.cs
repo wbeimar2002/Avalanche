@@ -135,6 +135,7 @@ namespace Avalanche.Api.Managers.Procedures
             {
                 foreach (var video in item.Videos)
                 {
+                    video.RelativePath = @"https://static.videezy.com/system/resources/previews/000/032/949/original/pink_pig3.mp4";
                     video.ThumbnailRelativePath = @"https://www.olympus.es/medical/rmt/media/Content/Content-MSD/Images/MSP-Pages/MSP-GS/MSP_GS_Hepato-Pancreato-Biliary-Surgery_Procedure_20172808_ProductHero_320.jpg";
                 }
 
@@ -155,9 +156,11 @@ namespace Avalanche.Api.Managers.Procedures
         {
             Fixture fixture = new Fixture();
             var result = fixture.Create<ProcedureViewModel>();
+            result.Videos = fixture.CreateMany<ProcedureVideoViewModel>(15).ToList();           
 
             foreach (var video in result.Videos)
             {
+                video.RelativePath = @"https://static.videezy.com/system/resources/previews/000/032/949/original/pink_pig3.mp4";
                 video.ThumbnailRelativePath = @"https://www.olympus.es/medical/rmt/media/Content/Content-MSD/Images/MSP-Pages/MSP-GS/MSP_GS_Hepato-Pancreato-Biliary-Surgery_Procedure_20172808_ProductHero_320.jpg";
             }
 
