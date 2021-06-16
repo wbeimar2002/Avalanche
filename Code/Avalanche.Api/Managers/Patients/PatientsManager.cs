@@ -266,7 +266,7 @@ namespace Avalanche.Api.Managers.Patients
             //TODO: Validate department support
             var existingProcedureType = await _dataManagementService.GetProcedureType(new Ism.Storage.DataManagement.Client.V1.Protos.GetProcedureTypeRequest()
             {
-                ProcedureTypeId = Convert.ToInt32(procedureType.Id),
+                ProcedureTypeName = procedureType.Name,
                 DepartmentId = Convert.ToInt32(department.Id),
             });
 
@@ -296,7 +296,7 @@ namespace Avalanche.Api.Managers.Patients
                     repositoryId: allocatedProcedure.ProcedureId.RepositoryName,
 
                     procedureRelativePath: allocatedProcedure.RelativePath,
-
+                    recordingEvents: new List<Ism.SystemState.Models.Procedure.VideoRecordingEvent>(),
                     department: _mapper.Map<Ism.SystemState.Models.Procedure.Department>(patient.Department),
                     procedureType: _mapper.Map<Ism.SystemState.Models.Procedure.ProcedureType>(patient.ProcedureType),
                     physician: _mapper.Map<Ism.SystemState.Models.Procedure.Physician>(patient.Physician),

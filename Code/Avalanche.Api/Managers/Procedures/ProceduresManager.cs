@@ -129,70 +129,34 @@ namespace Avalanche.Api.Managers.Procedures
         public async Task<IEnumerable<ProcedureViewModel>> Search(ProcedureSearchFilterViewModel filter)
         {
             Fixture fixture = new Fixture();
-            return fixture.CreateMany<ProcedureViewModel>(50);
+            var result = fixture.CreateMany<ProcedureViewModel>(50);
 
-            /*
-             *      public string AutoEditMode { get; set; }
-                    public string AutoEditStatus { get; set; }
-                    public IList<ContentItemEntity> Content { get; set; }
-                    public double Created { get; set; }
-                    public double? History_DicomSubmitted { get; set; }
-                    public double? History_LastAccessed { get; set; }
-                    public double? History_Submitted { get; set; }
-                    public int Id { get; set; }
-                    public string LibraryId { get; set; }
-                    public IList<NoteEntity> Notes { get; set; }
-                    public string Patient_FirstName { get; set; }
-                    public string Patient_LastName { get; set; }
-                    public string Patient_Mrn { get; set; }
-                    public string Physician_FirstName { get; set; }
-                    public string Physician_LastName { get; set; }
-                    public string Physician_UserId { get; set; }
-                    public string Procedure_Accession { get; set; }
-                    public bool Procedure_Clinical { get; set; }
-                    public string Procedure_Department { get; set; }
-                    public double Procedure_Dob { get; set; }
-                    public string Procedure_ExternalId { get; set; }
-                    public string Procedure_ScheduleId { get; set; }
-                    public Sex Procedure_Sex { get; set; }
-                    public string Procedure_Type { get; set; }
-                    public string RepositoryName { get; set; }
-             */
+            foreach (var item in result)
+            {
+                item.Thumbnails = new List<string>()
+                {
+                    @"https://www.olympus.es/medical/rmt/media/Content/Content-MSD/Images/MSP-Pages/MSP-GS/MSP_GS_Hepato-Pancreato-Biliary-Surgery_Procedure_20172808_ProductHero_320.jpg",
+                    @"https://www.olympus-europa.com/medical/rmt/media/Content/Content-MSD/Images/SRP-Pages/SRP-ORBEYE/neurosurgery_kachel_ProductHero_GalleryThumb_352.png"
+                };
+            }
 
-            /*
-             * Columns > Sorting Column
-                Patient Name (Last, First) => Patient_FirstName, Patient_LastName
-                Patient ID => Patient_Mrn
-                Physician (Last, First) => Physician_FirstName, Physician_LastName
-                Procedure Date => Created??? Procedure_Dob???
-
-             */
-
-
-            /*
-             * Sorting
-                All columns (excluding Thumbnails and Notes) shall be sortable by clicking on the column header.
-                Clicking a second time shall reverse the sort.
-                Default sort is by Procedure Date descending
-                Default alphanumeric sort is ascending
-                Patient ID used alphanumeric comparison for sorting
-                Procedure Date used date comparison for sorting
-                Patient & Physician Names used alphanumeric comparison for sorting as they are formatted for display (Last, First)
-                Sort is not persisted.  Sorting results to default state on every new Search and page load.
-                UI in column headers should indicate the state of the active sort
-             */
-
-
+            return result;
         }
 
         public async Task<ProcedureDetailsViewModel> GetProcedureDetails(string id)
         {
-            //TODO: Temporary Implementation - Same than active procedure
-            var activeProcedure = await _stateClient.GetData<ActiveProcedureState>();
-            var result = _mapper.Map<ActiveProcedureViewModel>(activeProcedure);
+            Fixture fixture = new Fixture();
+            var result = fixture.Create<ProcedureDetailsViewModel>();
 
-            if (result != null)
-                result.RecorderState = (await _recorderService.GetRecorderState()).State;
+            foreach (var video in result.Videos)
+            {
+                video.ThumbnailRelativePath = @"https://www.olympus.es/medical/rmt/media/Content/Content-MSD/Images/MSP-Pages/MSP-GS/MSP_GS_Hepato-Pancreato-Biliary-Surgery_Procedure_20172808_ProductHero_320.jpg";
+            }
+
+            foreach (var image in result.Images)
+            {
+                ;
+            }
 
             return result;
         }
