@@ -10,7 +10,6 @@ using Ism.Library.V1.Protos;
 using Ism.SystemState.Client;
 using Ism.SystemState.Models.Procedure;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -150,13 +149,27 @@ namespace Avalanche.Api.Managers.Procedures
                 TotalCount = 100,
                 Procedures = result.ToList()
             };
+
+            //var response = await _libraryService.GetFinishedProcedures(new GetFinishedProceduresRequest()
+            //{
+            //    Page = filter.Page,
+            //    PageSize = filter.Limit,
+            //    IsDescending = filter.IsDescending,
+            //    ProcedureIndexSortingColumn = (ProcedureIndexSortingColumns)filter.ProcedureIndexSortingColumn
+            //});
+
+            //return new ProceduresContainerViewModel()
+            //{
+            //    TotalCount = response.TotalCount,
+            //    Procedures = _mapper.Map<IList<ProcedureViewModel>>(response.Procedures) //TODO: Create Mapping
+            //};
         }
 
-        public async Task<ProcedureViewModel> GetProcedureDetails(string id)
+        public async Task<ProcedureViewModel> GetProcedureDetails(string libraryId)
         {
             Fixture fixture = new Fixture();
             var result = fixture.Create<ProcedureViewModel>();
-            result.Videos = fixture.CreateMany<ProcedureVideoViewModel>(15).ToList();           
+            result.Videos = fixture.CreateMany<ProcedureVideoViewModel>(15).ToList();
 
             foreach (var video in result.Videos)
             {
@@ -170,6 +183,13 @@ namespace Avalanche.Api.Managers.Procedures
             }
 
             return result;
+
+            //var response = await _libraryService.GetFinishedProcedure(new GetFinishedProcedureRequest()
+            //{
+            //    LibraryId = libraryId
+            //});
+
+            //return _mapper.Map<ProcedureViewModel>(response.Procedure); //TODO: Create Mapping
         }
     }
 }
