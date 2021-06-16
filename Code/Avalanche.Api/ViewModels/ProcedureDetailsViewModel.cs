@@ -1,11 +1,16 @@
-﻿using System;
+﻿using Avalanche.Shared.Domain.Models;
+using System;
 using System.Collections.Generic;
 
 namespace Avalanche.Api.ViewModels
 {
     public class ProcedureDetailsViewModel
     {
-        public PatientViewModel Patient { get; set; }
+        public PatientModel Patient { get; set; }
+        public KeyValuePairViewModel Sex { get; set; }
+        public DepartmentModel Department { get; set; }
+        public ProcedureTypeModel ProcedureType { get; set; }
+        public PhysicianModel Physician { get; set; }
         public string LibraryId { get; set; }
 
         public string RepositoryId { get; set; }
@@ -21,7 +26,7 @@ namespace Avalanche.Api.ViewModels
         }
 
         public ProcedureDetailsViewModel(
-            PatientViewModel patient,
+            PatientModel patient,
             string libraryId,
             string repositoryId,
             string procedureRelativePath,
