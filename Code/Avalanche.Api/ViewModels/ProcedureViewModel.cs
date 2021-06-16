@@ -14,7 +14,7 @@ namespace Avalanche.Api.ViewModels
         public DepartmentModel Department { get; set; }
         public ProcedureTypeModel ProcedureType { get; set; }
         public PhysicianModel Physician { get; set; }
-        public NoteModel Notes { get; set; }
+        public IList<NoteModel> Notes { get; set; }
 
         public DateTimeOffset ProcedureStartTimeUtc { get; set; }
 
