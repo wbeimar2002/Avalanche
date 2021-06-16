@@ -126,27 +126,35 @@ namespace Avalanche.Api.Managers.Procedures
             return _mapper.Map<ProcedureAllocationViewModel>(response);
         }
 
-        public async Task<IEnumerable<ProcedureViewModel>> Search(ProcedureSearchFilterViewModel filter)
+        public async Task<ProceduresContainerViewModel> Search(ProcedureSearchFilterViewModel filter)
         {
             Fixture fixture = new Fixture();
-            var result = fixture.CreateMany<ProcedureViewModel>(50);
+            var result = fixture.CreateMany<ProcedureViewModel>(filter.Limit);
 
             foreach (var item in result)
             {
-                item.Thumbnails = new List<string>()
+                foreach (var video in item.Videos)
                 {
-                    @"https://www.olympus.es/medical/rmt/media/Content/Content-MSD/Images/MSP-Pages/MSP-GS/MSP_GS_Hepato-Pancreato-Biliary-Surgery_Procedure_20172808_ProductHero_320.jpg",
-                    @"https://www.olympus-europa.com/medical/rmt/media/Content/Content-MSD/Images/SRP-Pages/SRP-ORBEYE/neurosurgery_kachel_ProductHero_GalleryThumb_352.png"
-                };
+                    video.ThumbnailRelativePath = @"https://www.olympus.es/medical/rmt/media/Content/Content-MSD/Images/MSP-Pages/MSP-GS/MSP_GS_Hepato-Pancreato-Biliary-Surgery_Procedure_20172808_ProductHero_320.jpg";
+                }
+
+                foreach (var image in item.Images)
+                {
+                    image.RelativePath = @"https://www.olympus.es/medical/rmt/media/Content/Content-MSD/Images/MSP-Pages/MSP-GS/MSP_GS_Hepato-Pancreato-Biliary-Surgery_Procedure_20172808_ProductHero_320.jpg";
+                }
             }
 
-            return result;
+            return new ProceduresContainerViewModel()
+            {
+                TotalCount = 100,
+                Procedures = result.ToList()
+            };
         }
 
-        public async Task<ProcedureDetailsViewModel> GetProcedureDetails(string id)
+        public async Task<ProcedureViewModel> GetProcedureDetails(string id)
         {
             Fixture fixture = new Fixture();
-            var result = fixture.Create<ProcedureDetailsViewModel>();
+            var result = fixture.Create<ProcedureViewModel>();
 
             foreach (var video in result.Videos)
             {
@@ -155,7 +163,7 @@ namespace Avalanche.Api.Managers.Procedures
 
             foreach (var image in result.Images)
             {
-                ;
+                image.RelativePath = @"https://www.olympus.es/medical/rmt/media/Content/Content-MSD/Images/MSP-Pages/MSP-GS/MSP_GS_Hepato-Pancreato-Biliary-Surgery_Procedure_20172808_ProductHero_320.jpg";
             }
 
             return result;

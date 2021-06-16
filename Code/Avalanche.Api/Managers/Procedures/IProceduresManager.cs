@@ -9,7 +9,6 @@ namespace Avalanche.Api.Managers.Procedures
     public interface IProceduresManager
     {
         Task<ActiveProcedureViewModel> GetActiveProcedure();
-        Task<ProcedureDetailsViewModel> GetProcedureDetails(string id);
 
         Task ConfirmActiveProcedure();
         Task DeleteActiveProcedureMedia(ProcedureContentType procedureContentType, Guid contentId);
@@ -17,6 +16,9 @@ namespace Avalanche.Api.Managers.Procedures
         Task FinishActiveProcedure();
 
         Task<ProcedureAllocationViewModel> AllocateNewProcedure();
-        Task<IEnumerable<ProcedureViewModel>> Search(ProcedureSearchFilterViewModel filter);
+
+        Task<ProceduresContainerViewModel> Search(ProcedureSearchFilterViewModel filter);
+        Task<ProcedureViewModel> GetProcedureDetails(string id);
+
     }
 }

@@ -44,20 +44,22 @@ namespace Avalanche.Api.Controllers.V1
         /// <param name="filter"></param>
         /// <returns></returns>
         [HttpPost("filtered")]
-        [Produces(typeof(PagedCollectionViewModel<ProcedureViewModel>))]
         public async Task<IActionResult> Search(ProcedureSearchFilterViewModel filter)
         {
             try
             {
                 _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
 
-                var result = new PagedCollectionViewModel<ProcedureViewModel>
+                var result = await _proceduresManager.Search(filter);
+
+                var procedures = new PagedCollectionViewModel<ProcedureViewModel>
                 {
-                    Items = await _proceduresManager.Search(filter)
+                    Items = result.Procedures
                 };
 
-                PagingHelper.AppendPagingContext(this.Url, this.Request, filter, result);
-                return Ok(result);
+                PagingHelper.AppendPagingContext(this.Url, this.Request, filter, procedures);
+
+                return Ok(new { TotalCount = result.TotalCount, Procedures = procedures });
             }
             catch (Exception ex)
             {
