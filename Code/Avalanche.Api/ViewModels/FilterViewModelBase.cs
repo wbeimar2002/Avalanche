@@ -9,8 +9,6 @@ namespace Avalanche.Api.ViewModels
     {
         public int Page { get; set; }
         public int Limit { get; set; }
-        public string SortBy { get; set; }
-        public SortingDirections SortingDirection { get; set; }
 
         public FilterViewModelBase()
         {

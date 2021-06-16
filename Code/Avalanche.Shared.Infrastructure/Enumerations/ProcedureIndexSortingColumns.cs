@@ -4,9 +4,11 @@ using System.Text;
 
 namespace Avalanche.Shared.Infrastructure.Enumerations
 {
-    public enum SortingDirections
+    public enum ProcedureIndexSortingColumns
     {
-        Ascending,
-        Descending
+        Created = 0,
+        PatientId = 1,
+        PatientName = 2,
+        Physician = 3,
     }
 }

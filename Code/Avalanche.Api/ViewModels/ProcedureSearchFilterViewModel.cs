@@ -1,14 +1,16 @@
-﻿namespace Avalanche.Api.ViewModels
+﻿using Avalanche.Shared.Infrastructure.Enumerations;
+
+namespace Avalanche.Api.ViewModels
 {
     public class ProcedureSearchFilterViewModel : FilterViewModelBase
     {
-        public ProcedureSearchFilterViewModel() : base()
-        {
-        }
+        public bool IsDescending { get; set; }
+        public ProcedureIndexSortingColumns ProcedureIndexSortingColumn { get; set; }
 
         public override object Clone()
         {
-            return new ProcedureSearchFilterViewModel();
+            return new ProcedureSearchFilterViewModel(); //TODO: Finish this
         }
     }
+
 }
