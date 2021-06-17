@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Avalanche.Api.Services.Media;
 using Avalanche.Api.ViewModels;
+using Avalanche.Shared.Domain.Models;
 using Avalanche.Shared.Domain.Models.Media;
 using Ism.Recorder.Core.V1.Protos;
 using Ism.SystemState.Client;
@@ -86,7 +87,9 @@ namespace Avalanche.Api.Managers.Media
             if (recEvent == null)
                 return null;
 
-            return new RecordingTimelineViewModel { VideoId = recEvent.VideoId, VideoOffset = recEvent.VideoOffset };
+            var timelineModel = new RecordingTimelineModel { VideoId = recEvent.VideoId, VideoOffset = recEvent.VideoOffset };
+
+            return _mapper.Map<RecordingTimelineModel, RecordingTimelineViewModel>(timelineModel);
         }
 
         public async Task StartRecording()
