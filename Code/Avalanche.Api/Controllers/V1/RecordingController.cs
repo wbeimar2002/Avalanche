@@ -1,4 +1,5 @@
 ﻿using Avalanche.Api.Managers.Media;
+using Avalanche.Api.ViewModels;
 using Avalanche.Shared.Domain.Models.Media;
 using Avalanche.Shared.Infrastructure.Enumerations;
 using Avalanche.Shared.Infrastructure.Extensions;
@@ -122,6 +123,36 @@ namespace Avalanche.Api.Controllers.V1
             catch (Exception ex)
             {
                 _logger.LogError(ex, LoggerHelper.GetLogMessage(DebugLogType.Exception), ex);
+                return new BadRequestObjectResult(ex.Get(_environment.IsDevelopment()));
+            }
+            finally
+            {
+                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
+            }
+        }
+
+        /// <summary>
+        /// Gets video id and offset timeline info for the image
+        /// </summary>
+        /// <param name="imageId"></param>
+        /// <returns></returns>
+        [HttpGet("timeline/video")]
+        [Produces(typeof(RecordingTimelineViewModel))]
+        public async Task<IActionResult> GetTimelineVideo(Guid imageId)
+        {
+            try
+            {
+                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
+
+                var viewModel = await _recordingManager.GetRecordingTimelineByImageId(imageId);
+                if (viewModel == null)
+                    return NotFound(imageId);
+
+                return Ok(viewModel);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(LoggerHelper.GetLogMessage(DebugLogType.Exception), ex);
                 return new BadRequestObjectResult(ex.Get(_environment.IsDevelopment()));
             }
             finally

@@ -1,5 +1,7 @@
 ﻿using AutoMapper;
 using Avalanche.Api.Services.Media;
+using Avalanche.Api.ViewModels;
+using Avalanche.Shared.Domain.Models;
 using Avalanche.Shared.Domain.Models.Media;
 using Ism.Recorder.Core.V1.Protos;
 using Ism.SystemState.Client;
@@ -28,12 +30,7 @@ namespace Avalanche.Api.Managers.Media
 
         public async Task CaptureImage()
         {
-            var activeProcedure = await _stateClient.GetData<ActiveProcedureState>();
-            if (null == activeProcedure)
-            {
-                throw new InvalidOperationException("No active procedure exists");
-            }
-
+            var activeProcedure = await GetActiveProcedureState();
             var message = new CaptureImageRequest()
             {
                 Record = new RecordMessage
@@ -81,14 +78,23 @@ namespace Avalanche.Api.Managers.Media
             return _mapper.Map<IEnumerable<RecordChannelMessage>, IEnumerable<RecordingChannelModel>>(channels).ToList();
         }
 
+        public async Task<RecordingTimelineViewModel> GetRecordingTimelineByImageId(Guid imageId)
+        {
+            Preconditions.ThrowIfNullOrDefault(nameof(imageId), imageId);
+
+            var activeProcedure = await GetActiveProcedureState();
+            var recEvent = activeProcedure.RecordingEvents.Find(x => x.ImageId.Equals(imageId));
+            if (recEvent == null)
+                return null;
+
+            var timelineModel = new RecordingTimelineModel { VideoId = recEvent.VideoId, VideoOffset = recEvent.VideoOffset };
+
+            return _mapper.Map<RecordingTimelineModel, RecordingTimelineViewModel>(timelineModel);
+        }
+
         public async Task StartRecording()
         {
-            var activeProcedure = await _stateClient.GetData<ActiveProcedureState>();
-            if (null == activeProcedure)
-            {
-                throw new InvalidOperationException("No active procedure exists");
-            }
-
+            var activeProcedure = await GetActiveProcedureState();
             var message = new RecordMessage
             {
                 LibId = activeProcedure.LibraryId,
@@ -108,6 +114,16 @@ namespace Avalanche.Api.Managers.Media
             var strYear = procedureId.Substring(0, 4);
             var strMonth = procedureId.Substring(5, 2);
             return Path.Combine(strYear, strMonth, procedureId);
+        }
+
+        private async Task<ActiveProcedureState> GetActiveProcedureState()
+        {
+            var activeProcedure = await _stateClient.GetData<ActiveProcedureState>();
+            if (null == activeProcedure)
+            {
+                throw new InvalidOperationException("No active procedure exists");
+            }
+            return activeProcedure;
         }
     }
 }

@@ -262,7 +262,7 @@ namespace Avalanche.Api.Managers.Patients
             //TODO: Validate department support
             var existingProcedureType = await _dataManagementService.GetProcedureType(new GetProcedureTypeRequest()
             {
-                ProcedureTypeId = Convert.ToInt32(procedureType.Id),
+                ProcedureTypeName = procedureType.Name,
                 DepartmentId = Convert.ToInt32(department.Id),
             });
 
@@ -307,7 +307,8 @@ namespace Avalanche.Api.Managers.Patients
                     accession: null,
                     notes: new Dictionary<string, string>(),
                     externalProcedureId: null,
-                    scheduleId: null));
+                    scheduleId: null,
+                    recordingEvents: new List<Ism.SystemState.Models.Procedure.VideoRecordingEvent>()));
             }
             else
             {
