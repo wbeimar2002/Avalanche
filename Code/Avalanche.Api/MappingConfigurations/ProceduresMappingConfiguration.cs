@@ -2,6 +2,7 @@
 
 using Avalanche.Api.ViewModels;
 using Avalanche.Shared.Domain.Enumerations;
+using Avalanche.Shared.Domain.Models;
 using Ism.Library.V1.Protos;
 using Ism.SystemState.Models.Procedure;
 
@@ -113,7 +114,7 @@ namespace Avalanche.Api.MappingConfigurations
             CreateMap<Ism.Library.V1.Protos.AllocateNewProcedureResponse, ProcedureAllocationViewModel>()
                 .ReverseMap();
 
-
+            CreateMap<RecordingTimelineModel, RecordingTimelineViewModel>();
         }
     }
 }

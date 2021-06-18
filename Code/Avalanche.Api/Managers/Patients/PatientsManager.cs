@@ -311,7 +311,8 @@ namespace Avalanche.Api.Managers.Patients
                     accession: null,
                     notes: new Dictionary<string, string>(),
                     externalProcedureId: null,
-                    scheduleId: null));
+                    scheduleId: null,
+                    recordingEvents: new List<Ism.SystemState.Models.Procedure.VideoRecordingEvent>()));
             }
             else
             {

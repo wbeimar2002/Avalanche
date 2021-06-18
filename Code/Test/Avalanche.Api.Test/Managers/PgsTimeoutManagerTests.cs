@@ -1,19 +1,23 @@
 ﻿using AutoMapper;
+
 using Avalanche.Api.Managers.Media;
 using Avalanche.Api.MappingConfigurations;
-using Avalanche.Api.Services.Maintenance;
 using Avalanche.Api.Services.Media;
 using Avalanche.Api.ViewModels;
 using Avalanche.Shared.Domain.Models.Media;
 using Avalanche.Shared.Infrastructure.Configuration;
+
 using Ism.PgsTimeout.V1.Protos;
 using Ism.Routing.V1.Protos;
 using Ism.SystemState.Client;
-using Ism.SystemState.Models;
 using Ism.SystemState.Models.PgsTimeout;
+
 using Microsoft.AspNetCore.JsonPatch;
+
 using Moq;
+
 using NUnit.Framework;
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,16 +25,9 @@ using System.Threading.Tasks;
 
 namespace Avalanche.Api.Test.Managers
 {
-    [TestFixture]
+    //[TestFixture]
     public class PgsTimeoutManagerTests
     {
-        private Mock<IStorageService> _storageService;
-        private Mock<IRoutingService> _routingService;
-        private Mock<IStateClient> _stateClient;
-
-        // mock of grpc state client for pgs player
-        private Mock<IPgsTimeoutService> _pgsTimeoutService;
-
         private IMapper _mapper;
 
         /// <summary>
@@ -39,10 +36,170 @@ namespace Avalanche.Api.Test.Managers
         /// </summary>
         private PgsDisplayStateData _pgsDisplayStateData;
 
-        private Dictionary<AliasIndexMessage, AliasIndexMessage> _currentRoutes = new Dictionary<AliasIndexMessage, AliasIndexMessage>();
+        [Test]
+        public async Task Pgs_StartPgs_VideoRoutes()
+        {
+            // Arrange
+            var currentRoutes = new Dictionary<AliasIndexMessage, AliasIndexMessage>();
+            var pgsTimeoutManager = GetTestPgsTimeoutManager(currentRoutes, out var routingService, out var pgsTimeoutService);
 
-        // thing we're testing
-        private PgsTimeoutManager _pgsTimeoutManager;
+            // Act
+            // starts pgs and ensures that route is called on the displays
+            await pgsTimeoutManager.StartPgs();
+
+            // internally, pgs should be routed to all displays
+            var pgsConfig = GetConfig().PgsConfig;
+            var request = new RouteVideoBatchRequest();
+            request.Routes.AddRange(pgsConfig.Sinks.Select(x => new RouteVideoRequest
+            {
+                Source = _mapper.Map<AliasIndexModel, AliasIndexMessage>(pgsConfig.Source),
+                Sink = _mapper.Map<AliasIndexModel, AliasIndexMessage>(x)
+            }));
+
+            // Assert route video was called
+            routingService.Verify(x => x.RouteVideoBatch(request), Times.Once());
+            // Assert the player started playing
+            pgsTimeoutService.Verify(x => x.SetPgsTimeoutMode(new SetPgsTimeoutModeRequest { Mode = PgsTimeoutModeEnum.PgsTimeoutModePgs }), Times.Once());
+        }
+
+        [Test]
+        public async Task Pgs_StartPgsUncheckedDisplay_VideoRoutes()
+        {
+            // Arrange
+            var currentRoutes = new Dictionary<AliasIndexMessage, AliasIndexMessage>();
+            var pgsTimeoutManager = GetTestPgsTimeoutManager(currentRoutes, out var routingService, out var pgsTimeoutService);
+
+            // Act
+            // unchecks pgs on the first display and verifies that it is not routed to
+            var pgsConfig = GetConfig().PgsConfig;
+            // uncheck pgs on the first display
+            await pgsTimeoutManager.SetPgsStateForSink(new PgsSinkStateViewModel
+            {
+                Enabled = false,
+                Sink = _mapper.Map<AliasIndexModel, AliasIndexViewModel>(pgsConfig.Sinks.First())
+            });
+            // start pgs
+            await pgsTimeoutManager.StartPgs();
+
+            // internally, pgs should be routed to all but the first display
+            // Skip(1) means the first display should have been skipped
+            var request = new RouteVideoBatchRequest();
+            request.Routes.AddRange(pgsConfig.Sinks.Skip(1).Select(x => new RouteVideoRequest
+            {
+                Source = _mapper.Map<AliasIndexModel, AliasIndexMessage>(pgsConfig.Source),
+                Sink = _mapper.Map<AliasIndexModel, AliasIndexMessage>(x)
+            }));
+
+            // Assert
+            routingService.Verify(x => x.RouteVideoBatch(request), Times.Once());
+            pgsTimeoutService.Verify(x => x.SetPgsTimeoutMode(new SetPgsTimeoutModeRequest { Mode = PgsTimeoutModeEnum.PgsTimeoutModePgs }), Times.Once());
+        }
+
+        [Test]
+        public void Pgs_UnCheckInvalidDisplay_Throws()
+        {
+            // Arrange
+            var currentRoutes = new Dictionary<AliasIndexMessage, AliasIndexMessage>();
+            var pgsTimeoutManager = GetTestPgsTimeoutManager(currentRoutes, out var routingService, out var pgsTimeoutService);
+
+
+            // Act
+            // Assert
+            // changes the checked state of a display that does not exist and ensures it throws
+            Assert.ThrowsAsync<InvalidOperationException>(async () =>
+            {
+                await pgsTimeoutManager.SetPgsStateForSink(new PgsSinkStateViewModel
+                {
+                    Enabled = false,
+                    Sink = new AliasIndexViewModel { Alias = "foobar", Index = "Does not exist" }
+                });
+            });
+        }
+
+        [Test]
+        public async Task PgsTimeout_StartPgsThenStartTimeoutThenStopBoth_VideoRoutes()
+        {
+            // Arrange
+            var currentRoutes = new Dictionary<AliasIndexMessage, AliasIndexMessage>();
+            var pgsTimeoutManager = GetTestPgsTimeoutManager(currentRoutes, out var routingService, out var pgsTimeoutService);
+
+            // Act
+            // this test starts pgs, then starts timeout, then stops timeout in the same manner that navigating to the video tab does
+            // it then ensures that the room is in idle mode
+            var pgsConfig = GetConfig().PgsConfig;
+            // uncheck pgs on the first display
+            await pgsTimeoutManager.SetPgsStateForSink(new PgsSinkStateViewModel
+            {
+                Enabled = false,
+                Sink = _mapper.Map<AliasIndexModel, AliasIndexViewModel>(pgsConfig.Sinks.First())
+            });
+
+            // start pgs
+            await pgsTimeoutManager.StartPgs();
+            var routePgsRequest = new RouteVideoBatchRequest();
+
+            routePgsRequest.Routes.AddRange(pgsConfig.Sinks.Skip(1).Select(x => new RouteVideoRequest
+            {
+                Source = _mapper.Map<AliasIndexModel, AliasIndexMessage>(pgsConfig.Source),
+                Sink = _mapper.Map<AliasIndexModel, AliasIndexMessage>(x)
+            }));
+
+            // Assert pgs was started and routed to all but the first display
+            routingService.Verify(x => x.RouteVideoBatch(routePgsRequest), Times.Once());
+            pgsTimeoutService.Verify(x => x.SetPgsTimeoutMode(new SetPgsTimeoutModeRequest { Mode = PgsTimeoutModeEnum.PgsTimeoutModePgs }));
+
+
+            // start timeout
+            await pgsTimeoutManager.StartTimeout();
+
+            // internally, timeout should be routed to all displays
+            var timeoutConfig = GetConfig().TimeoutConfig;
+            var routeTimeoutRequest = new RouteVideoBatchRequest();
+            routeTimeoutRequest.Routes.AddRange(timeoutConfig.Sinks.Select(x => new RouteVideoRequest
+            {
+                Source = _mapper.Map<AliasIndexModel, AliasIndexMessage>(timeoutConfig.Source),
+                Sink = _mapper.Map<AliasIndexModel, AliasIndexMessage>(x)
+            }));
+
+            // assert that timeout was started and routed everywhere
+            routingService.Verify(x => x.RouteVideoBatch(routeTimeoutRequest), Times.Once());
+            pgsTimeoutService.Verify(x => x.SetPgsTimeoutMode(new SetPgsTimeoutModeRequest { Mode = PgsTimeoutModeEnum.PgsTimeoutModeTimeout }));
+
+            // stop timeout by going to the routing tab
+            // should stop both and put the room back in idle mode
+            await pgsTimeoutManager.StopPgsAndTimeout();
+
+            // tests have no saved routes so restoring the route should do nothing
+            routingService.Verify(x => x.RouteVideoBatch(new RouteVideoBatchRequest()));
+            // pgs player is almost always in pgs mode
+            pgsTimeoutService.Verify(x => x.SetPgsTimeoutMode(new SetPgsTimeoutModeRequest { Mode = PgsTimeoutModeEnum.PgsTimeoutModePgs }));
+        }
+
+        [Test]
+        public async Task Timeout_StartTimeout_VideoRoutes()
+        {
+            // Arrange
+            var currentRoutes = new Dictionary<AliasIndexMessage, AliasIndexMessage>();
+            var pgsTimeoutManager = GetTestPgsTimeoutManager(currentRoutes, out var routingService, out var pgsTimeoutService);
+
+            // Act
+            // starts timeout and ensures that route is called on the displays
+            await pgsTimeoutManager.StartTimeout();
+
+            // internally, timeout should be routed to all displays
+            var timeoutConfig = GetConfig().TimeoutConfig;
+            var request = new RouteVideoBatchRequest();
+            request.Routes.AddRange(timeoutConfig.Sinks.Select(x => new RouteVideoRequest
+            {
+                Source = _mapper.Map<AliasIndexModel, AliasIndexMessage>(timeoutConfig.Source),
+                Sink = _mapper.Map<AliasIndexModel, AliasIndexMessage>(x)
+            }));
+
+            // Assert route video was called
+            routingService.Verify(x => x.RouteVideoBatch(request), Times.Once());
+            // Assert the player started playing
+            pgsTimeoutService.Verify(x => x.SetPgsTimeoutMode(new SetPgsTimeoutModeRequest { Mode = PgsTimeoutModeEnum.PgsTimeoutModeTimeout }), Times.Once());
+        }
 
         private (PgsApiConfiguration PgsConfig, TimeoutApiConfiguration TimeoutConfig) GetConfig()
         {
@@ -70,23 +227,21 @@ namespace Avalanche.Api.Test.Managers
             return (pgsConfig, timeoutConfig);
         }
 
-        [SetUp]
-        public void Setup()
+        private PgsTimeoutManager GetTestPgsTimeoutManager(Dictionary<AliasIndexMessage, AliasIndexMessage> currentRoutes, out Mock<IRoutingService> routingService, out Mock<IPgsTimeoutService> pgsTimeoutService)
         {
-            _storageService = new Mock<IStorageService>();
-            _routingService = new Mock<IRoutingService>();
-            _stateClient = new Mock<IStateClient>();
-            _pgsTimeoutService = new Mock<IPgsTimeoutService>();
+            routingService = new Mock<IRoutingService>();
+            pgsTimeoutService = new Mock<IPgsTimeoutService>();
+            var stateClient = new Mock<IStateClient>();
+            
 
             // set up state client so we can add/get the pgs display state data
             // for the test, only need to fake the add
-            _stateClient.Setup(x => x.AddOrUpdateData(It.IsAny<PgsDisplayStateData>(), It.IsAny<Action<JsonPatchDocument<PgsDisplayStateData>>>()))
+            stateClient.Setup(x => x.AddOrUpdateData(It.IsAny<PgsDisplayStateData>(), It.IsAny<Action<JsonPatchDocument<PgsDisplayStateData>>>()))
             .Callback<PgsDisplayStateData, Action<JsonPatchDocument<PgsDisplayStateData>>>((add, update) =>
             {
                 _pgsDisplayStateData = add;
             });
-
-            _stateClient.Setup(x => x.GetData<PgsDisplayStateData>()).ReturnsAsync(() =>
+            stateClient.Setup(x => x.GetData<PgsDisplayStateData>()).ReturnsAsync(() =>
             {
                 return _pgsDisplayStateData;
             });
@@ -94,21 +249,19 @@ namespace Avalanche.Api.Test.Managers
 
             // routing service needs to do a bit of work
             // route and route batch need to maintain some level of state
-            _routingService.Setup(x => x.RouteVideoBatch(It.IsAny<RouteVideoBatchRequest>())).Callback<RouteVideoBatchRequest>(x =>
+            routingService.Setup(x => x.RouteVideoBatch(It.IsAny<RouteVideoBatchRequest>())).Callback<RouteVideoBatchRequest>(x =>
             {
                 foreach (var route in x.Routes)
-                    _currentRoutes[route.Sink] = route.Source;
+                    currentRoutes[route.Sink] = route.Source;
             });
-
-            _routingService.Setup(x => x.RouteVideo(It.IsAny<RouteVideoRequest>())).Callback<RouteVideoRequest>(x =>
+            routingService.Setup(x => x.RouteVideo(It.IsAny<RouteVideoRequest>())).Callback<RouteVideoRequest>(x =>
             {
-                _currentRoutes[x.Sink] = x.Source;
+                currentRoutes[x.Sink] = x.Source;
             });
-
-            _routingService.Setup(x => x.GetCurrentRoutes()).ReturnsAsync(() =>
+            routingService.Setup(x => x.GetCurrentRoutes()).ReturnsAsync(() =>
             {
                 var response = new GetCurrentRoutesResponse();
-                response.Routes.AddRange(_currentRoutes.Select(kv => new VideoRouteMessage { Sink = kv.Key, Source = kv.Value }));
+                response.Routes.AddRange(currentRoutes.Select(kv => new VideoRouteMessage { Sink = kv.Key, Source = kv.Value }));
                 return response;
             });
 
@@ -120,266 +273,15 @@ namespace Avalanche.Api.Test.Managers
 
             _mapper = mapperConfig.CreateMapper();
 
-            var config = GetConfig();
+            var (PgsConfig, TimeoutConfig) = GetConfig();
 
-            _pgsTimeoutManager = new PgsTimeoutManager(
-                _routingService.Object,
-                _stateClient.Object,
-                _pgsTimeoutService.Object,
+            return new PgsTimeoutManager(
+                routingService.Object,
+                stateClient.Object,
+                pgsTimeoutService.Object,
                 _mapper,
-                config.PgsConfig,
-                config.TimeoutConfig);
-        }
-
-
-        [Test]
-        public async Task Pgs_StartPgs_VideoRoutes()
-        {
-            // Arrange is done in Setup
-            // starts pgs and ensures that route is called on the displays
-
-            // Act
-            await _pgsTimeoutManager.StartPgs();
-
-            // internally, pgs should be routed to all displays
-            var pgsConfig = GetConfig().PgsConfig;
-            var request = new RouteVideoBatchRequest();
-
-            request.Routes.AddRange(pgsConfig.Sinks.Select(x => new RouteVideoRequest
-            {
-                Source = _mapper.Map<AliasIndexModel, AliasIndexMessage>(pgsConfig.Source),
-                Sink = _mapper.Map<AliasIndexModel, AliasIndexMessage>(x)
-            }));
-
-            // Assert route video was called
-            _routingService.Verify(x => x.RouteVideoBatch(request), Times.Once());
-            // Assert the player started playing
-            _pgsTimeoutService.Verify(x => x.SetPgsTimeoutMode(new SetPgsTimeoutModeRequest { Mode = PgsTimeoutModeEnum.PgsTimeoutModePgs }), Times.Once());
-        }
-
-        [Test]
-        public async Task Pgs_StartPgsUncheckedDisplay_VideoRoutes()
-        {
-            // Arrange is done in Setup
-            // unchecks pgs on the first display and verifies that it is not routed to
-
-            // Act
-            var pgsConfig = GetConfig().PgsConfig;
-            // uncheck pgs on the first display
-            await _pgsTimeoutManager.SetPgsStateForSink(new PgsSinkStateViewModel
-            {
-                Enabled = false,
-                Sink = _mapper.Map<AliasIndexModel, AliasIndexViewModel>(pgsConfig.Sinks.First())
-            });
-            // start pgs
-            await _pgsTimeoutManager.StartPgs();
-
-            // internally, pgs should be routed to all but the first display
-            // Skip(1) means the first display should have been skipped
-            var request = new RouteVideoBatchRequest();
-            request.Routes.AddRange(pgsConfig.Sinks.Skip(1).Select(x => new RouteVideoRequest
-            {
-                Source = _mapper.Map<AliasIndexModel, AliasIndexMessage>(pgsConfig.Source),
-                Sink = _mapper.Map<AliasIndexModel, AliasIndexMessage>(x)
-            }));
-
-            // Assert
-            _routingService.Verify(x => x.RouteVideoBatch(request), Times.Once());
-            _pgsTimeoutService.Verify(x => x.SetPgsTimeoutMode(new SetPgsTimeoutModeRequest { Mode = PgsTimeoutModeEnum.PgsTimeoutModePgs }), Times.Once());
-        }
-
-        [Test]
-        public async Task Timeout_StartTimeout_VideoRoutes()
-        {
-            // Arrange is done in Setup
-            // starts timeout and ensures that route is called on the displays
-
-            // Act
-            await _pgsTimeoutManager.StartTimeout();
-
-            // internally, timeout should be routed to all displays
-            var timeoutConfig = GetConfig().TimeoutConfig;
-            var request = new RouteVideoBatchRequest();
-            request.Routes.AddRange(timeoutConfig.Sinks.Select(x => new RouteVideoRequest
-            {
-                Source = _mapper.Map<AliasIndexModel, AliasIndexMessage>(timeoutConfig.Source),
-                Sink = _mapper.Map<AliasIndexModel, AliasIndexMessage>(x)
-            }));
-
-            // Assert route video was called
-            _routingService.Verify(x => x.RouteVideoBatch(request), Times.Once());
-            // Assert the player started playing
-            _pgsTimeoutService.Verify(x => x.SetPgsTimeoutMode(new SetPgsTimeoutModeRequest { Mode = PgsTimeoutModeEnum.PgsTimeoutModeTimeout }), Times.Once());
-        }
-
-        [Test]
-        public async Task PgsTimeout_StartPgsThenStartTimeoutThenStopBoth_VideoRoutes()
-        {
-            // Arrange is done in Setup
-            // this test starts pgs, then starts timeout, then stops timeout in the same manner that navigating to the video tab does
-            // it then ensures that the room is in idle mode
-
-            // Act
-            var pgsConfig = GetConfig().PgsConfig;
-            // uncheck pgs on the first display
-            await _pgsTimeoutManager.SetPgsStateForSink(new PgsSinkStateViewModel
-            {
-                Enabled = false,
-                Sink = _mapper.Map<AliasIndexModel, AliasIndexViewModel>(pgsConfig.Sinks.First())
-            });
-            // start pgs
-            await _pgsTimeoutManager.StartPgs();
-            var routePgsRequest = new RouteVideoBatchRequest();
-            routePgsRequest.Routes.AddRange(pgsConfig.Sinks.Skip(1).Select(x => new RouteVideoRequest
-            {
-                Source = _mapper.Map<AliasIndexModel, AliasIndexMessage>(pgsConfig.Source),
-                Sink = _mapper.Map<AliasIndexModel, AliasIndexMessage>(x)
-            }));
-
-            // Assert pgs was started and routed to all but the first display
-            _routingService.Verify(x => x.RouteVideoBatch(routePgsRequest), Times.Once());
-            _pgsTimeoutService.Verify(x => x.SetPgsTimeoutMode(new SetPgsTimeoutModeRequest { Mode = PgsTimeoutModeEnum.PgsTimeoutModePgs }));
-
-
-            // start timeout
-            await _pgsTimeoutManager.StartTimeout();
-
-            // internally, timeout should be routed to all displays
-            var timeoutConfig = GetConfig().TimeoutConfig;
-            var routeTimeoutRequest = new RouteVideoBatchRequest();
-            routeTimeoutRequest.Routes.AddRange(timeoutConfig.Sinks.Select(x => new RouteVideoRequest
-            {
-                Source = _mapper.Map<AliasIndexModel, AliasIndexMessage>(timeoutConfig.Source),
-                Sink = _mapper.Map<AliasIndexModel, AliasIndexMessage>(x)
-            }));
-
-            // assert that timeout was started and routed everywhere
-            _routingService.Verify(x => x.RouteVideoBatch(routeTimeoutRequest), Times.Once());
-            _pgsTimeoutService.Verify(x => x.SetPgsTimeoutMode(new SetPgsTimeoutModeRequest { Mode = PgsTimeoutModeEnum.PgsTimeoutModeTimeout }));
-
-            // stop timeout by going to the routing tab
-            // should stop both and put the room back in idle mode
-            await _pgsTimeoutManager.StopPgsAndTimeout();
-
-            // tests have no saved routes so restoring the route should do nothing
-            _routingService.Verify(x => x.RouteVideoBatch(new RouteVideoBatchRequest()));
-            // pgs player is almost always in pgs mode
-            _pgsTimeoutService.Verify(x => x.SetPgsTimeoutMode(new SetPgsTimeoutModeRequest { Mode = PgsTimeoutModeEnum.PgsTimeoutModePgs }));
-        }
-
-        [Test]
-        public void Pgs_UnCheckInvalidDisplay_Throws()
-        {
-            // Arrange is done in Setup
-            // changes the checked state of a display that does not exist and ensures it throws
-
-            // Act
-            // Assert
-            Assert.ThrowsAsync<InvalidOperationException>(async () =>
-            {
-                await _pgsTimeoutManager.SetPgsStateForSink(new PgsSinkStateViewModel
-                {
-                    Enabled = false,
-                    Sink = new AliasIndexViewModel { Alias = "foobar", Index = "Does not exist" }
-                });
-            });
-        }
-
-        [Test]
-        public async Task GetTimeoutPdfPath_ValidFile_Test()
-        {
-            var testPdfPath = "TestPdf";
-            _pgsTimeoutService.Setup(x => x.GetTimeoutPdfFileName()).Returns(Task.FromResult<GetTimeoutPdfFileResponse>(new GetTimeoutPdfFileResponse { FileName = testPdfPath }));
-            var pdfPath = await _pgsTimeoutManager.GetTimeoutPdfFileName();
-
-            Assert.NotNull(pdfPath);
-            Assert.IsNotEmpty(pdfPath);
-            Assert.AreEqual(testPdfPath, pdfPath);
-        }
-
-        [Test]
-        public async Task GetTimeoutPdfPath_NoFile_Test()
-        {
-            var pdfPath = await _pgsTimeoutManager.GetTimeoutPdfFileName();
-            Assert.Null(pdfPath);
-        }
-
-        [Test]
-        public async Task GetTimeoutPdfPath_Called()
-        {
-            _pgsTimeoutService.Setup(mock => mock.GetTimeoutPdfFileName()).ReturnsAsync(new GetTimeoutPdfFileResponse() { FileName = "Sample" });
-            var pdfPath = await _pgsTimeoutManager.GetTimeoutPdfFileName();
-
-            _pgsTimeoutService.Verify(mock => mock.GetTimeoutPdfFileName(), Times.Once);
-        }
-
-        [Test]
-        public async Task SetTimeoutPage_Called()
-        {
-            _pgsTimeoutService.Setup(x => x.SetTimeoutPage(It.IsAny<SetTimeoutPageRequest>()));
-            await _pgsTimeoutManager.SetTimeoutPage(0);
-
-            _pgsTimeoutService.Verify(mock => mock.SetTimeoutPage(It.IsAny<SetTimeoutPageRequest>()), Times.Once);
-        }
-
-        [Test]
-        public async Task GetTimeoutPage_Called()
-        {
-            _pgsTimeoutService.Setup(x => x.GetTimeoutPage());
-            await _pgsTimeoutManager.GetTimeoutPage();
-
-            _pgsTimeoutService.Verify(mock => mock.GetTimeoutPage(), Times.Once);
-        }
-
-        [Test]
-        public async Task GetTimeoutPageCount_Called()
-        {
-            _pgsTimeoutService.Setup(x => x.GetTimeoutPageCount());
-            await _pgsTimeoutManager.GetTimeoutPageCount();
-
-            _pgsTimeoutService.Verify(mock => mock.GetTimeoutPageCount(), Times.Once);
-        }
-
-        [Test]
-        public async Task TimeoutNextPage_Called()
-        {
-            _pgsTimeoutService.Setup(x => x.NextPage());
-            await _pgsTimeoutManager.NextPage();
-
-            _pgsTimeoutService.Verify(mock => mock.NextPage(), Times.Once);
-        }
-
-        [Test]
-        public async Task TimeoutPreviousPage_Called()
-        {
-            _pgsTimeoutService.Setup(x => x.PreviousPage());
-            await _pgsTimeoutManager.PreviousPage();
-
-            _pgsTimeoutService.Verify(mock => mock.PreviousPage(), Times.Once);
-        }
-
-        [Test]
-        [TestCase(true)]
-        [TestCase(false)]
-        public async Task TimeoutState_StartTimeout_DoesNotThrow(bool value)
-        {
-            _pgsTimeoutService.Setup(x => x.GetPgsPlaybackState()).Returns(Task.FromResult(new GetPgsPlaybackStateResponse { IsPlaying = true }));
-            _routingService.Setup(x => x.GetVideoSinks())
-                .Returns(Task.FromResult(new GetVideoSinksResponse()));
-
-            await _pgsTimeoutManager.StartTimeout();
-        }
-
-        [Test]
-        [TestCase(true)]
-        [TestCase(false)]
-        public async Task TimeoutState_StopTimeout_DoesNotThrow(bool value)
-        {
-            _pgsTimeoutService.Setup(x => x.GetPgsPlaybackState()).Returns(Task.FromResult(new GetPgsPlaybackStateResponse { IsPlaying = true }));
-            _routingService.Setup(x => x.GetVideoSinks())
-                .Returns(Task.FromResult(new GetVideoSinksResponse()));
-
-            await _pgsTimeoutManager.StopPgsAndTimeout();
+                PgsConfig,
+                TimeoutConfig);
         }
     }
 }
