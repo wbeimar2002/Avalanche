@@ -49,9 +49,6 @@ namespace Avalanche.Api.MappingConfigurations
                 .ForMember(dest =>
                     dest.Name,
                     opt => opt.MapFrom(src => src.Name))
-                .ForMember(dest =>
-                    dest.IsNew,
-                    opt => opt.Ignore())
                 .ReverseMap();
 
             CreateMap<ProcedureTypeMessage, ProcedureTypeModel>()
@@ -64,9 +61,6 @@ namespace Avalanche.Api.MappingConfigurations
                 .ForMember(dest =>
                     dest.DepartmentId,
                     opt => opt.MapFrom(src => src.DepartmentId))
-                .ForMember(dest =>
-                    dest.IsNew,
-                    opt => opt.Ignore())
                 .ReverseMap();
 
             CreateMap<DepartmentModel, AddDepartmentRequest>()
@@ -97,9 +91,6 @@ namespace Avalanche.Api.MappingConfigurations
                 .ForMember(dest =>
                     dest.Name,
                     opt => opt.MapFrom(src => src.Department.Name))
-                .ForMember(dest =>
-                    dest.IsNew,
-                    opt => opt.MapFrom(src => src.IsNew))
                 .ReverseMap();
 
             CreateMap<AddProcedureTypeResponse, ProcedureTypeModel>()
@@ -112,12 +103,8 @@ namespace Avalanche.Api.MappingConfigurations
                 .ForMember(dest =>
                     dest.DepartmentId,
                     opt => opt.MapFrom(src => src.ProcedureType.DepartmentId))
-                .ForMember(dest =>
-                    dest.IsNew,
-                    opt => opt.MapFrom(src => src.IsNew))
                 .ReverseMap();
 
-            //TODO: Think this better
             CreateMap < Avalanche.Shared.Domain.Models.UserModel, ConfigurationContext>()
                 .ForMember(dest =>
                     dest.IdnId,
@@ -172,25 +159,25 @@ namespace Avalanche.Api.MappingConfigurations
                    opt => opt.MapFrom(src => src.Limit))
                .ForMember(dest =>
                    dest.SearchCultureName,
-                   opt => opt.MapFrom(src => src.CultureName))
+                   opt => opt.Ignore())
                .ForPath(dest =>
                    dest.AccessInfo.ApplicationName,
-                   opt => opt.MapFrom(src => src.AccessInformation.ApplicationName))
+                   opt => opt.Ignore())
                .ForPath(dest =>
                    dest.AccessInfo.Details,
-                   opt => opt.MapFrom(src => src.AccessInformation.Details))
+                   opt => opt.Ignore())
                .ForPath(dest =>
                    dest.AccessInfo.Id,
-                   opt => opt.MapFrom(src => src.AccessInformation.Id))
+                   opt => opt.Ignore())
                .ForPath(dest =>
                    dest.AccessInfo.Ip,
-                   opt => opt.MapFrom(src => src.AccessInformation.Ip))
+                   opt => opt.Ignore())
                .ForPath(dest =>
                    dest.AccessInfo.MachineName,
-                   opt => opt.MapFrom(src => src.AccessInformation.MachineName))
+                   opt => opt.Ignore())
                .ForPath(dest =>
                    dest.AccessInfo.UserName,
-                   opt => opt.MapFrom(src => src.AccessInformation.UserName))
+                   opt => opt.Ignore())
                .ReverseMap();
 
             CreateMap<PatientKeywordSearchFilterViewModel, Ism.PatientInfoEngine.V1.Protos.SearchRequest>()
@@ -226,33 +213,32 @@ namespace Avalanche.Api.MappingConfigurations
                     opt => opt.MapFrom(src => src.Limit))
                 .ForMember(dest =>
                     dest.SearchCultureName,
-                    opt => opt.MapFrom(src => src.CultureName))
+                    opt => opt.Ignore())
                 .ForPath(dest =>
                     dest.AccessInfo.ApplicationName,
-                    opt => opt.MapFrom(src => src.AccessInformation.ApplicationName))
+                    opt => opt.Ignore())
                 .ForPath(dest =>
                     dest.AccessInfo.Details,
-                    opt => opt.MapFrom(src => src.AccessInformation.Details))
+                    opt => opt.Ignore())
                 .ForPath(dest =>
                     dest.AccessInfo.Id,
-                    opt => opt.MapFrom(src => src.AccessInformation.Id))
+                    opt => opt.Ignore())
                 .ForPath(dest =>
                     dest.AccessInfo.Ip,
-                    opt => opt.MapFrom(src => src.AccessInformation.Ip))
+                    opt => opt.Ignore())
                 .ForPath(dest =>
                     dest.AccessInfo.MachineName,
-                    opt => opt.MapFrom(src => src.AccessInformation.MachineName))
+                    opt => opt.Ignore())
                 .ForPath(dest =>
                     dest.AccessInfo.UserName,
-                    opt => opt.MapFrom(src => src.AccessInformation.UserName))
+                    opt => opt.Ignore())
                 .ReverseMap();
 
-            CreateMap<Ism.IsmLogCommon.Core.AccessInfo, AccessInfoModel>();
+            
+            CreateMap<Ism.IsmLogCommon.Core.AccessInfo, Ism.Storage.PatientList.Client.V1.Protos.AccessInfoMessage>();
+            CreateMap<Ism.IsmLogCommon.Core.AccessInfo, Ism.PatientInfoEngine.V1.Protos.AccessInfoMessage>();
 
             CreateMap<Ism.Storage.PatientList.Client.V1.Protos.AddPatientRecordResponse, PatientViewModel>()
-                .ForMember(dest =>
-                    dest.AccessInformation,
-                    opt => opt.Ignore())
                 .ForMember(dest =>
                     dest.FirstName,
                     opt => opt.MapFrom(src => src.PatientRecord.Patient.FirstName))
@@ -289,9 +275,6 @@ namespace Avalanche.Api.MappingConfigurations
                 .ReverseMap();
 
             CreateMap<Ism.PatientInfoEngine.V1.Protos.PatientRecordMessage, PatientViewModel>()
-                .ForMember(dest =>
-                    dest.AccessInformation,
-                    opt => opt.Ignore())
                 .ForMember(dest =>
                     dest.FirstName,
                     opt => opt.MapFrom(src => src.Patient.FirstName))
@@ -330,22 +313,22 @@ namespace Avalanche.Api.MappingConfigurations
             CreateMap<PatientViewModel, Ism.Storage.PatientList.Client.V1.Protos.AddPatientRecordRequest>()
                 .ForPath(dest =>
                     dest.AccessInfo.ApplicationName,
-                    opt => opt.MapFrom(src => src.AccessInformation.ApplicationName))
+                    opt => opt.Ignore())
                 .ForPath(dest =>
                     dest.AccessInfo.Details,
-                    opt => opt.MapFrom(src => src.AccessInformation.Details))
+                    opt => opt.Ignore())
                 .ForPath(dest =>
                     dest.AccessInfo.Id,
-                    opt => opt.MapFrom(src => src.AccessInformation.Id))
+                    opt => opt.Ignore())
                 .ForPath(dest =>
                     dest.AccessInfo.Ip,
-                    opt => opt.MapFrom(src => src.AccessInformation.Ip))
+                    opt => opt.Ignore())
                 .ForPath(dest =>
                     dest.AccessInfo.MachineName,
-                    opt => opt.MapFrom(src => src.AccessInformation.MachineName))
+                    opt => opt.Ignore())
                 .ForPath(dest =>
                     dest.AccessInfo.UserName,
-                    opt => opt.MapFrom(src => src.AccessInformation.UserName))
+                    opt => opt.Ignore())
                 .ForPath(dest =>
                     dest.PatientRecord.AccessionNumber,
                     opt => opt.MapFrom(src => "Unknown"))
@@ -410,22 +393,22 @@ namespace Avalanche.Api.MappingConfigurations
             CreateMap<PatientViewModel, Ism.Storage.PatientList.Client.V1.Protos.UpdatePatientRecordRequest>()
                 .ForPath(dest =>
                     dest.AccessInfo.ApplicationName,
-                    opt => opt.MapFrom(src => src.AccessInformation.ApplicationName))
+                    opt => opt.Ignore())
                 .ForPath(dest =>
                     dest.AccessInfo.Details,
-                    opt => opt.MapFrom(src => src.AccessInformation.Details))
+                    opt => opt.Ignore())
                 .ForPath(dest =>
                     dest.AccessInfo.Id,
-                    opt => opt.MapFrom(src => src.AccessInformation.Id))
+                    opt => opt.Ignore())
                 .ForPath(dest =>
                     dest.AccessInfo.Ip,
-                    opt => opt.MapFrom(src => src.AccessInformation.Ip))
+                    opt => opt.Ignore())
                 .ForPath(dest =>
                     dest.AccessInfo.MachineName,
-                    opt => opt.MapFrom(src => src.AccessInformation.MachineName))
+                    opt => opt.Ignore())
                 .ForPath(dest =>
                     dest.AccessInfo.UserName,
-                    opt => opt.MapFrom(src => src.AccessInformation.UserName))
+                    opt => opt.Ignore())
                 .ForPath(dest =>
                     dest.PatientRecord.AccessionNumber,
                     opt => opt.MapFrom(src => "Unknown"))

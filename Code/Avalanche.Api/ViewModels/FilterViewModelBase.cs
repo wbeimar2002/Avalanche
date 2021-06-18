@@ -1,6 +1,4 @@
-﻿using Avalanche.Shared.Domain.Models;
-using System;
-using System.Text.Json.Serialization;
+﻿using System;
 
 namespace Avalanche.Api.ViewModels
 {
@@ -12,14 +10,8 @@ namespace Avalanche.Api.ViewModels
         public FilterViewModelBase()
         {
             this.Page = 1;
-            this.Limit = 100;
+            this.Limit = 25;
         }
-
-        [JsonIgnore]
-        public AccessInfoModel AccessInformation { get; set; }
-
-        [JsonIgnore]
-        public string CultureName { get; set; }
 
         public abstract object Clone();
     }

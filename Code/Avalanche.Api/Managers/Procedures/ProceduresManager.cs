@@ -1,4 +1,5 @@
-﻿using AutoMapper;
+﻿using AutoFixture;
+using AutoMapper;
 
 using Avalanche.Api.Services.Health;
 using Avalanche.Api.Services.Media;
@@ -122,6 +123,73 @@ namespace Avalanche.Api.Managers.Procedures
             });
 
             return _mapper.Map<ProcedureAllocationViewModel>(response);
+        }
+
+        public async Task<ProceduresContainerViewModel> Search(ProcedureSearchFilterViewModel filter)
+        {
+            Fixture fixture = new Fixture();
+            var result = fixture.CreateMany<ProcedureViewModel>(filter.Limit);
+
+            foreach (var item in result)
+            {
+                foreach (var video in item.Videos)
+                {
+                    video.RelativePath = @"https://static.videezy.com/system/resources/previews/000/032/949/original/pink_pig3.mp4";
+                    video.ThumbnailRelativePath = @"https://www.olympus.es/medical/rmt/media/Content/Content-MSD/Images/MSP-Pages/MSP-GS/MSP_GS_Hepato-Pancreato-Biliary-Surgery_Procedure_20172808_ProductHero_320.jpg";
+                }
+
+                foreach (var image in item.Images)
+                {
+                    image.RelativePath = @"https://www.olympus.es/medical/rmt/media/Content/Content-MSD/Images/MSP-Pages/MSP-GS/MSP_GS_Hepato-Pancreato-Biliary-Surgery_Procedure_20172808_ProductHero_320.jpg";
+                }
+            }
+
+            return new ProceduresContainerViewModel()
+            {
+                TotalCount = 100,
+                Procedures = result.ToList()
+            };
+
+            //var response = await _libraryService.GetFinishedProcedures(new GetFinishedProceduresRequest()
+            //{
+            //    Page = filter.Page,
+            //    PageSize = filter.Limit,
+            //    IsDescending = filter.IsDescending,
+            //    ProcedureIndexSortingColumn = (ProcedureIndexSortingColumns)filter.ProcedureIndexSortingColumn
+            //});
+
+            //return new ProceduresContainerViewModel()
+            //{
+            //    TotalCount = response.TotalCount,
+            //    Procedures = _mapper.Map<IList<ProcedureViewModel>>(response.Procedures) //TODO: Create Mapping
+            //};
+        }
+
+        public async Task<ProcedureViewModel> GetProcedureDetails(string libraryId)
+        {
+            Fixture fixture = new Fixture();
+            var result = fixture.Create<ProcedureViewModel>();
+            result.Videos = fixture.CreateMany<ProcedureVideoViewModel>(15).ToList();
+
+            foreach (var video in result.Videos)
+            {
+                video.RelativePath = @"https://static.videezy.com/system/resources/previews/000/032/949/original/pink_pig3.mp4";
+                video.ThumbnailRelativePath = @"https://www.olympus.es/medical/rmt/media/Content/Content-MSD/Images/MSP-Pages/MSP-GS/MSP_GS_Hepato-Pancreato-Biliary-Surgery_Procedure_20172808_ProductHero_320.jpg";
+            }
+
+            foreach (var image in result.Images)
+            {
+                image.RelativePath = @"https://www.olympus.es/medical/rmt/media/Content/Content-MSD/Images/MSP-Pages/MSP-GS/MSP_GS_Hepato-Pancreato-Biliary-Surgery_Procedure_20172808_ProductHero_320.jpg";
+            }
+
+            return result;
+
+            //var response = await _libraryService.GetFinishedProcedure(new GetFinishedProcedureRequest()
+            //{
+            //    LibraryId = libraryId
+            //});
+
+            //return _mapper.Map<ProcedureViewModel>(response.Procedure); //TODO: Create Mapping
         }
     }
 }

@@ -8,6 +8,8 @@ namespace Avalanche.Api.MappingConfigurations
     {
         public RecorderMappingConfiguration()
         {
+            CreateMap<Ism.IsmLogCommon.Core.AccessInfo, Ism.Recorder.Core.V1.Protos.AccessInfoMessage>();
+
             CreateMap<AliasIndexModel, AliasIndexMessage>()
                .ForMember(dest =>
                   dest.Alias,

@@ -130,6 +130,7 @@ namespace Avalanche.Api
             _ = services.AddConfigurationServiceSecureClient();
             _ = services.AddDataManagementStorageSecureClient();
             _ = services.AddLibraryServiceSecureClient();
+            _ = services.AddLibrarySearchServiceSecureClient();
             _ = services.AddLibraryActiveProcedureServiceSecureClient();
             _ = services.AddPatientListSecureClient();
             _ = services.AddPatientListStorageSecureClient();
@@ -153,11 +154,10 @@ namespace Avalanche.Api
 
             // Configure
             services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
-            .AddJwtBearer()
-            .AddCookie();
+                .AddJwtBearer()
+                .AddCookie();
             services.ConfigureOptions<ConfigureJwtBearerOptions>();
             services.ConfigureOptions<ConfigureCookieAuthenticiationOptions>();
-
 
             services.AddScoped<AvalancheCookieAuthenticationEvents>();
             services.AddSingleton<ICookieValidationService, CookieValidationService>();
@@ -203,7 +203,6 @@ namespace Avalanche.Api
             {
                 app.UseHsts();
             } // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts
-
 
             app.UseSerilogRequestLogging();
 

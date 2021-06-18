@@ -10,9 +10,6 @@ namespace Avalanche.Api.Managers.Maintenance
 {
     public interface IMaintenanceManager
     {
-        IEnumerable<FileSystemElementViewModel> GetFiles(string folder, string filter);
-        IEnumerable<FileSystemElementViewModel> GetFolders(string folder);
-
         Task SaveCategory(DynamicSectionViewModel category);
         Task SaveEntityChanges(DynamicListViewModel category, DynamicListActions action);
         Task<DynamicSectionViewModel> GetCategoryByKey(string key);

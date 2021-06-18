@@ -8,6 +8,7 @@ namespace Avalanche.Api.Services.Maintenance
 {
     public interface IStorageService
     {
+        Task<bool> ValidateSchema(string schemaKey, string json, int version, ConfigurationContext configurationContext);
         Task<string> GetJson(string configurationKey, int version, ConfigurationContext context);
         Task<T> GetJsonObject<T>(string configurationKey, int version, ConfigurationContext context);
 

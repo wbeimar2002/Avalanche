@@ -237,45 +237,5 @@ namespace Avalanche.Api.Controllers.V1
                 _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
             }
         }
-
-        [HttpGet("{folder}/files/{filter}")]
-        public async Task<IActionResult> GetFiles(string folder, string filter)
-        {
-            try
-            {
-                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
-                var result = _maintenanceManager.GetFiles(folder, filter);
-                return Ok(result);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, LoggerHelper.GetLogMessage(DebugLogType.Exception), ex);
-                return new BadRequestObjectResult(ex.Get(_environment.IsDevelopment()));
-            }
-            finally
-            {
-                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
-            }
-        }
-
-        [HttpGet("{folder}/folders")]
-        public async Task<IActionResult> GetFolders(string folder)
-        {
-            try
-            {
-                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
-                var result = _maintenanceManager.GetFolders(folder);
-                return Ok(result);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, LoggerHelper.GetLogMessage(DebugLogType.Exception), ex);
-                return new BadRequestObjectResult(ex.Get(_environment.IsDevelopment()));
-            }
-            finally
-            {
-                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
-            }
-        }
     }
 }
