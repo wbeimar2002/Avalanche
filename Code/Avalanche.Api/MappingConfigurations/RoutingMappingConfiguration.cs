@@ -34,6 +34,12 @@ namespace Avalanche.Api.MappingConfigurations
                 .ForMember(dest =>
                     dest.Sink,
                     opt => opt.MapFrom(src => src.Sink))
+                .ForMember(dest =>
+                    dest.TilingEnabled,
+                    opt => opt.Ignore())
+                .ForMember(dest =>
+                    dest.RecordEnabled,
+                    opt => opt.Ignore())
                 .ReverseMap();
 
             CreateMap<VideoDeviceModel, VideoSourceModel>()
@@ -45,6 +51,9 @@ namespace Avalanche.Api.MappingConfigurations
                     opt => opt.Ignore())
                 .ForMember(dest =>
                     dest.IsDynamic,
+                    opt => opt.Ignore())
+                .ForMember(dest =>
+                    dest.ControlType,
                     opt => opt.Ignore())
                 .ReverseMap();
 
@@ -118,6 +127,9 @@ namespace Avalanche.Api.MappingConfigurations
                 .ForMember(dest =>
                     dest.Type,
                     opt => opt.MapFrom(src => src.VideoSourceType))
+                .ForMember(dest =>
+                    dest.ControlType,
+                    opt => opt.Ignore())
                 .ReverseMap();
 
             CreateMap<Ism.Routing.V1.Protos.VideoSinkMessage, VideoSinkModel>()
@@ -139,6 +151,15 @@ namespace Avalanche.Api.MappingConfigurations
                 .ForMember(dest =>
                     dest.IsVisible,
                     opt => opt.MapFrom(src => src.ShowInUi))
+                .ForMember(dest =>
+                    dest.Source,
+                    opt => opt.Ignore())
+                .ForMember(dest =>
+                    dest.TilingEnabled,
+                    opt => opt.Ignore())
+                .ForMember(dest =>
+                    dest.RecordEnabled,
+                    opt => opt.Ignore())
                 .ReverseMap();
         }
     }
