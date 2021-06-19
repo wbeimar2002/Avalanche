@@ -11,7 +11,7 @@ namespace Avalanche.Api.Services.Health
         Task CommitActiveProcedure(CommitActiveProcedureRequest commitActiveProcedureRequest);
         Task<AllocateNewProcedureResponse> AllocateNewProcedure(AllocateNewProcedureRequest allocateNewProcedureRequest);
         Task<ReindexRepositoryResponse> ReindexRepository(string repositoryName);
-        //Task<GetFinishedProcedureResponse> GetFinishedProcedure(GetFinishedProcedureRequest getFinishedProcedureRequest);
-        //Task<GetFinishedProceduresResponse> GetFinishedProcedures(GetFinishedProceduresRequest getFinishedProceduresRequest);
+        Task<GetFinishedProcedureResponse> GetFinishedProcedure(GetFinishedProcedureRequest getFinishedProcedureRequest);
+        Task<GetFinishedProceduresResponse> GetFinishedProcedures(GetFinishedProceduresRequest getFinishedProceduresRequest);
     }
 }

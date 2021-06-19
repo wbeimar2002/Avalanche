@@ -1,6 +1,6 @@
 ﻿using AutoFixture;
 using AutoMapper;
-
+using Avalanche.Api.Helpers;
 using Avalanche.Api.Services.Health;
 using Avalanche.Api.Services.Media;
 using Avalanche.Api.Utilities;
@@ -10,6 +10,8 @@ using Ism.Library.V1.Protos;
 using Ism.SystemState.Client;
 using Ism.SystemState.Models.Procedure;
 using System;
+using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -127,69 +129,56 @@ namespace Avalanche.Api.Managers.Procedures
 
         public async Task<ProceduresContainerViewModel> Search(ProcedureSearchFilterViewModel filter)
         {
-            Fixture fixture = new Fixture();
-            var result = fixture.CreateMany<ProcedureViewModel>(filter.Limit);
-
-            foreach (var item in result)
+            var response = await _libraryService.GetFinishedProcedures(new GetFinishedProceduresRequest()
             {
-                foreach (var video in item.Videos)
+                Page = filter.Page,
+                PageSize = filter.Limit,
+                IsDescending = filter.IsDescending,
+                ProcedureIndexSortingColumn = (ProcedureIndexSortingColumns)filter.ProcedureIndexSortingColumn
+            });
+
+            var results = new ProceduresContainerViewModel()
+            {
+                TotalCount = response.TotalCount,
+                Procedures = _mapper.Map<IList<ProcedureMessage>, IList<ProcedureViewModel>>(response.Procedures)
+            };
+
+            foreach (var result in results.Procedures)
+            {
+                foreach (var item in result.Videos)
                 {
-                    video.RelativePath = @"https://static.videezy.com/system/resources/previews/000/032/949/original/pink_pig3.mp4";
-                    video.ThumbnailRelativePath = @"https://www.olympus.es/medical/rmt/media/Content/Content-MSD/Images/MSP-Pages/MSP-GS/MSP_GS_Hepato-Pancreato-Biliary-Surgery_Procedure_20172808_ProductHero_320.jpg";
+                    item.RelativePath = ProceduresHelper.GetRelativePath(result.LibraryId, result.Repository, item.FileName);
                 }
 
-                foreach (var image in item.Images)
+                foreach (var item in result.Images)
                 {
-                    image.RelativePath = @"https://www.olympus.es/medical/rmt/media/Content/Content-MSD/Images/MSP-Pages/MSP-GS/MSP_GS_Hepato-Pancreato-Biliary-Surgery_Procedure_20172808_ProductHero_320.jpg";
+                    item.RelativePath = ProceduresHelper.GetRelativePath(result.LibraryId, result.Repository, item.FileName);
                 }
             }
 
-            return new ProceduresContainerViewModel()
-            {
-                TotalCount = 100,
-                Procedures = result.ToList()
-            };
-
-            //var response = await _libraryService.GetFinishedProcedures(new GetFinishedProceduresRequest()
-            //{
-            //    Page = filter.Page,
-            //    PageSize = filter.Limit,
-            //    IsDescending = filter.IsDescending,
-            //    ProcedureIndexSortingColumn = (ProcedureIndexSortingColumns)filter.ProcedureIndexSortingColumn
-            //});
-
-            //return new ProceduresContainerViewModel()
-            //{
-            //    TotalCount = response.TotalCount,
-            //    Procedures = _mapper.Map<IList<ProcedureViewModel>>(response.Procedures) //TODO: Create Mapping
-            //};
+            return results;
         }
 
         public async Task<ProcedureViewModel> GetProcedureDetails(string libraryId)
         {
-            Fixture fixture = new Fixture();
-            var result = fixture.Create<ProcedureViewModel>();
-            result.Videos = fixture.CreateMany<ProcedureVideoViewModel>(15).ToList();
-
-            foreach (var video in result.Videos)
+            var response = await _libraryService.GetFinishedProcedure(new GetFinishedProcedureRequest()
             {
-                video.RelativePath = @"https://static.videezy.com/system/resources/previews/000/032/949/original/pink_pig3.mp4";
-                video.ThumbnailRelativePath = @"https://www.olympus.es/medical/rmt/media/Content/Content-MSD/Images/MSP-Pages/MSP-GS/MSP_GS_Hepato-Pancreato-Biliary-Surgery_Procedure_20172808_ProductHero_320.jpg";
+                LibraryId = libraryId
+            });
+
+            var result = _mapper.Map<ProcedureViewModel>(response.Procedure);
+
+            foreach (var item in result.Videos)
+            {
+                item.RelativePath = ProceduresHelper.GetRelativePath(libraryId, result.Repository, item.FileName);
             }
 
-            foreach (var image in result.Images)
+            foreach (var item in result.Images)
             {
-                image.RelativePath = @"https://www.olympus.es/medical/rmt/media/Content/Content-MSD/Images/MSP-Pages/MSP-GS/MSP_GS_Hepato-Pancreato-Biliary-Surgery_Procedure_20172808_ProductHero_320.jpg";
+                item.RelativePath = ProceduresHelper.GetRelativePath(libraryId, result.Repository, item.FileName);
             }
 
             return result;
-
-            //var response = await _libraryService.GetFinishedProcedure(new GetFinishedProcedureRequest()
-            //{
-            //    LibraryId = libraryId
-            //});
-
-            //return _mapper.Map<ProcedureViewModel>(response.Procedure); //TODO: Create Mapping
         }
     }
 }
