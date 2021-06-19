@@ -19,10 +19,13 @@ namespace Avalanche.Api.MappingConfigurations
             CreateMap<ProcedureContentType, ContentType>();
 
             CreateMap<ProcedureImageMessage, ContentViewModel>()
+                .ForMember(dest => dest.Length, opt => opt.Ignore()) //Does not apply for image, serialization ignores null data
+                .ForMember(dest => dest.Thumbnail, opt => opt.MapFrom(src => src.RelativePath))
                 .ForMember(dest => dest.FileName, opt => opt.MapFrom(src => src.RelativePath))
                 .ForMember(dest => dest.CaptureTimeUtc, opt => opt.MapFrom(src => new DateTime(src.CaptureTimeUtc.Year, src.CaptureTimeUtc.Month, src.CaptureTimeUtc.Day, src.CaptureTimeUtc.Hour, src.CaptureTimeUtc.Minute, src.CaptureTimeUtc.Second)));
 
             CreateMap<ProcedureVideoMessage, ContentViewModel>()
+                .ForMember(dest => dest.Thumbnail, opt => opt.MapFrom(crs => "assets/images/video-preview.PNG")) //TODO: Still no thumbnail available for video
                 .ForMember(dest => dest.FileName, opt => opt.MapFrom(src => src.RelativePath))
                 .ForMember(dest => dest.Length, opt => opt.MapFrom(src => src.VideoDuration))
                 .ForMember(dest => dest.CaptureTimeUtc, opt => opt.MapFrom(src => new DateTime(src.VideoStartTimeUtc.Year, src.VideoStartTimeUtc.Month, src.VideoStartTimeUtc.Day, src.VideoStartTimeUtc.Hour, src.VideoStartTimeUtc.Minute, src.VideoStartTimeUtc.Second)));                

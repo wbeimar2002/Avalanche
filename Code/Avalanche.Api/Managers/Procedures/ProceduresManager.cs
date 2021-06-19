@@ -137,26 +137,11 @@ namespace Avalanche.Api.Managers.Procedures
                 ProcedureIndexSortingColumn = (ProcedureIndexSortingColumns)filter.ProcedureIndexSortingColumn
             });
 
-            var results = new ProceduresContainerViewModel()
+            return new ProceduresContainerViewModel()
             {
                 TotalCount = response.TotalCount,
                 Procedures = _mapper.Map<IList<ProcedureMessage>, IList<ProcedureViewModel>>(response.Procedures)
             };
-
-            foreach (var result in results.Procedures)
-            {
-                foreach (var item in result.Videos)
-                {
-                    item.RelativePath = ProceduresHelper.GetRelativePath(result.LibraryId, result.Repository, item.FileName);
-                }
-
-                foreach (var item in result.Images)
-                {
-                    item.RelativePath = ProceduresHelper.GetRelativePath(result.LibraryId, result.Repository, item.FileName);
-                }
-            }
-
-            return results;
         }
 
         public async Task<ProcedureViewModel> GetProcedureDetails(string libraryId)
@@ -166,19 +151,7 @@ namespace Avalanche.Api.Managers.Procedures
                 LibraryId = libraryId
             });
 
-            var result = _mapper.Map<ProcedureViewModel>(response.Procedure);
-
-            foreach (var item in result.Videos)
-            {
-                item.RelativePath = ProceduresHelper.GetRelativePath(libraryId, result.Repository, item.FileName);
-            }
-
-            foreach (var item in result.Images)
-            {
-                item.RelativePath = ProceduresHelper.GetRelativePath(libraryId, result.Repository, item.FileName);
-            }
-
-            return result;
+            return _mapper.Map<ProcedureViewModel>(response.Procedure);
         }
     }
 }

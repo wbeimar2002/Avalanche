@@ -13,5 +13,6 @@ namespace Avalanche.Api.ViewModels
         public string RelativePath { get; set; }
         public int? Length { get; set; }
         public DateTimeOffset CaptureTimeUtc { get; set; }
+        public string Thumbnail { get; internal set; }
     }
 }
