@@ -14,6 +14,8 @@ namespace Avalanche.Api.MappingConfigurations
     {
         public ProceduresMappingConfiguration()
         {
+            CreateMap<ProcedureImage, ProcedureImageViewModel>();
+            CreateMap<ProcedureVideo, ProcedureVideoViewModel>();
             CreateMap<ProcedureContentType, ContentType>();
 
             CreateMap<ProcedureImageMessage, ContentViewModel>()
