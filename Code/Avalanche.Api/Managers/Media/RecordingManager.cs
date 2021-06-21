@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Avalanche.Api.Helpers;
 using Avalanche.Api.Services.Media;
 using Avalanche.Api.ViewModels;
 using Avalanche.Shared.Domain.Models;
@@ -48,13 +49,7 @@ namespace Avalanche.Api.Managers.Media
             Preconditions.ThrowIfNullOrEmpty(nameof(procedureId), procedureId);
             Preconditions.ThrowIfNullOrEmpty(nameof(repository), repository);
 
-            var libraryRoot = Environment.GetEnvironmentVariable("LibraryDataRoot");
-            var relative = GetRepositoryRelativePathFromProcedureId(procedureId);
-            relative = Path.Combine(repository, relative, path);
-
-            var translated = relative.Replace('\\', '/').TrimStart('/');
-
-            return System.IO.Path.Combine(libraryRoot, translated);
+            return ProceduresHelper.GetRelativePath(procedureId, repository, path);
         }
 
         public string GetCaptureVideo(string path, string procedureId, string repository)
@@ -63,13 +58,7 @@ namespace Avalanche.Api.Managers.Media
             Preconditions.ThrowIfNullOrEmpty(nameof(procedureId), procedureId);
             Preconditions.ThrowIfNullOrEmpty(nameof(repository), repository);
 
-            var libraryRoot = Environment.GetEnvironmentVariable("LibraryDataRoot");
-            var relative = GetRepositoryRelativePathFromProcedureId(procedureId);
-            relative = Path.Combine(repository, relative, path);
-            
-            var translated = relative.Replace('\\', '/').TrimStart('/');
-
-            return System.IO.Path.Combine(libraryRoot, translated);
+            return ProceduresHelper.GetRelativePath(procedureId, repository, path);
         }
 
         public async Task<IEnumerable<RecordingChannelModel>> GetRecordingChannels()
@@ -107,13 +96,6 @@ namespace Avalanche.Api.Managers.Media
         public async Task StopRecording()
         {
             await _recorderService.StopRecording();
-        }
-
-        private string GetRepositoryRelativePathFromProcedureId(string procedureId)
-        {
-            var strYear = procedureId.Substring(0, 4);
-            var strMonth = procedureId.Substring(5, 2);
-            return Path.Combine(strYear, strMonth, procedureId);
         }
 
         private async Task<ActiveProcedureState> GetActiveProcedureState()

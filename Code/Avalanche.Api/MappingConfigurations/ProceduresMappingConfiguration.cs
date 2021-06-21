@@ -16,7 +16,34 @@ namespace Avalanche.Api.MappingConfigurations
         {
             CreateMap<ProcedureImage, ProcedureImageViewModel>();
             CreateMap<ProcedureVideo, ProcedureVideoViewModel>();
+            CreateMap<NoteMessage, NoteModel>();
             CreateMap<ProcedureContentType, ContentType>();
+
+            CreateMap<ProcedureImageMessage, ImageContentViewModel>()
+                .ForMember(dest => dest.Thumbnail, opt => opt.MapFrom(src => src.Thumbnail))
+                .ForMember(dest => dest.FileName, opt => opt.MapFrom(src => src.FileName))
+                .ForMember(dest => dest.CaptureTimeUtc, opt => opt.MapFrom(src => new DateTime(src.CaptureTimeUtc.Year, src.CaptureTimeUtc.Month, src.CaptureTimeUtc.Day, src.CaptureTimeUtc.Hour, src.CaptureTimeUtc.Minute, src.CaptureTimeUtc.Second)));
+
+            CreateMap<ProcedureVideoMessage, VideoContentViewModel>()
+                .ForMember(dest => dest.Thumbnail, opt => opt.MapFrom(crs => "assets/images/video-preview.PNG")) //TODO: Still no thumbnail available for video
+                .ForMember(dest => dest.FileName, opt => opt.MapFrom(src => src.FileName))
+                .ForMember(dest => dest.Length, opt => opt.MapFrom(src => src.Length))
+                .ForMember(dest => dest.CaptureTimeUtc, opt => opt.MapFrom(src => new DateTime(src.CaptureTimeUtc.Year, src.CaptureTimeUtc.Month, src.CaptureTimeUtc.Day, src.CaptureTimeUtc.Hour, src.CaptureTimeUtc.Minute, src.CaptureTimeUtc.Second)));                
+
+            CreateMap<ProcedureMessage, ProcedureViewModel>()
+                .ForMember(dest => dest.Videos, opt => opt.MapFrom(src => src.Videos))
+                .ForMember(dest => dest.Images, opt => opt.MapFrom(src => src.Images))
+                .ForPath(dest => dest.Patient.MRN, opt => opt.MapFrom(src => src.Patient.Mrn))
+                .ForPath(dest => dest.Patient.FirstName, opt => opt.MapFrom(src => src.Patient.FirstName))
+                .ForPath(dest => dest.Patient.LastName, opt => opt.MapFrom(src => src.Patient.LastName))
+                .ForPath(dest => dest.Physician.Id, opt => opt.MapFrom(src => src.Physician.Id))
+                .ForPath(dest => dest.Physician.FirstName, opt => opt.MapFrom(src => src.Physician.FirstName))
+                .ForPath(dest => dest.Physician.LastName, opt => opt.MapFrom(src => src.Physician.LastName))
+                .ForPath(dest => dest.Department.Name, opt => opt.MapFrom(src => src.Department))
+                .ForPath(dest => dest.ProcedureType.Name, opt => opt.MapFrom(src => src.ProcedureType))
+                .ForPath(dest => dest.ProcedureStartTimeUtc, opt => opt.MapFrom(src => new DateTime(src.ProcedureStartTimeUtc.Year, src.ProcedureStartTimeUtc.Month, src.ProcedureStartTimeUtc.Day, src.ProcedureStartTimeUtc.Hour, src.ProcedureStartTimeUtc.Minute, src.ProcedureStartTimeUtc.Second)))
+                .ForMember(dest => dest.Repository, opt => opt.MapFrom(src => "cache")) //TODO: Temporary, waiting for nuget package update
+                .ForMember(dest => dest.LibraryId, opt => opt.MapFrom(src => src.LibraryId));
 
             CreateMap<ActiveProcedureState, DiscardActiveProcedureRequest>()
                 .ForPath(dest => dest.ProcedureId.Id, opt => opt.MapFrom(src => src.LibraryId))

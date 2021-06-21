@@ -9,6 +9,8 @@ namespace Avalanche.Api.ViewModels
     public class ProcedureViewModel
     {
         public string LibraryId { get; set; }
+        public string Repository { get; set; }
+        public DateTime ProcedureStartTimeUtc { get; set; }
 
         public PatientModel Patient { get; set; }
         public DepartmentModel Department { get; set; }
@@ -16,9 +18,7 @@ namespace Avalanche.Api.ViewModels
         public PhysicianModel Physician { get; set; }
         public IList<NoteModel> Notes { get; set; }
 
-        public DateTimeOffset ProcedureStartTimeUtc { get; set; }
-
-        public List<ProcedureImageViewModel> Images { get; set; }
-        public List<ProcedureVideoViewModel> Videos { get; set; }
+        public List<ImageContentViewModel> Images { get; set; }
+        public List<VideoContentViewModel> Videos { get; set; }
     }
 }
