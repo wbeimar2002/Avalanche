@@ -1,6 +1,4 @@
-﻿using AutoFixture;
-using AutoMapper;
-using Avalanche.Api.Helpers;
+﻿using AutoMapper;
 using Avalanche.Api.Services.Health;
 using Avalanche.Api.Services.Media;
 using Avalanche.Api.Utilities;
@@ -9,9 +7,9 @@ using Avalanche.Shared.Domain.Enumerations;
 using Ism.Library.V1.Protos;
 using Ism.SystemState.Client;
 using Ism.SystemState.Models.Procedure;
+using Ism.Utility.Core;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -24,6 +22,9 @@ namespace Avalanche.Api.Managers.Procedures
         private readonly IMapper _mapper;
         private readonly IAccessInfoFactory _accessInfoFactory;
         private readonly IRecorderService _recorderService;
+
+        public const int MinPageSize = 25;
+        public const int MaxPageSize = 100;
 
         public ProceduresManager(IStateClient stateClient, ILibraryService libraryService, IAccessInfoFactory accessInfoFactory, IMapper mapper, IRecorderService recorderService)
         {
@@ -129,6 +130,11 @@ namespace Avalanche.Api.Managers.Procedures
 
         public async Task<ProceduresContainerViewModel> Search(ProcedureSearchFilterViewModel filter)
         {
+            Preconditions.ThrowIfNull(nameof(filter), filter);
+            Preconditions.ThrowIfTrue<ArgumentException>($"{nameof(filter.Limit)} must be a positive integer greater than 0", filter.Page <= 0);
+            Preconditions.ThrowIfTrue<ArgumentException>($"{nameof(filter.Limit)} cannot be lower than {MinPageSize}", filter.Limit < MinPageSize);
+            Preconditions.ThrowIfTrue<ArgumentException>($"{nameof(filter.Limit)} cannot be larger than {MaxPageSize}", filter.Limit > MaxPageSize);
+
             var response = await _libraryService.GetFinishedProcedures(new GetFinishedProceduresRequest()
             {
                 Page = filter.Page,
@@ -146,12 +152,15 @@ namespace Avalanche.Api.Managers.Procedures
 
         public async Task<ProcedureViewModel> GetProcedureDetails(string libraryId)
         {
+            Preconditions.ThrowIfNull(nameof(libraryId), libraryId);
+            Preconditions.ThrowIfNullOrEmptyOrWhiteSpace(nameof(libraryId), libraryId);
+
             var response = await _libraryService.GetFinishedProcedure(new GetFinishedProcedureRequest()
             {
                 LibraryId = libraryId
             });
 
-            return _mapper.Map<ProcedureViewModel>(response.Procedure);
+            return _mapper.Map<ProcedureMessage, ProcedureViewModel>(response.Procedure);
         }
     }
 }

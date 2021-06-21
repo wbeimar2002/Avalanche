@@ -7,13 +7,12 @@ using Avalanche.Api.Utilities;
 using Avalanche.Api.ViewModels;
 using Avalanche.Shared.Domain.Models;
 using Avalanche.Shared.Infrastructure.Configuration;
-using Avalanche.Shared.Infrastructure.Helpers;
 
 using Google.Protobuf.WellKnownTypes;
 
 using Ism.Common.Core.Configuration.Models;
 using Ism.SystemState.Client;
-
+using Ism.Utility.Core;
 using Microsoft.AspNetCore.Http;
 
 using System;
