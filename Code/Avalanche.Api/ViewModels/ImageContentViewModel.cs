@@ -6,12 +6,9 @@ using System.Threading.Tasks;
 
 namespace Avalanche.Api.ViewModels
 {
-    [JsonObject(ItemNullValueHandling = NullValueHandling.Ignore)]
-    public class ContentViewModel
+    public class ImageContentViewModel
     {
         public string FileName { get; set; }
-        public string RelativePath { get; set; }
-        public int? Length { get; set; }
         public DateTimeOffset CaptureTimeUtc { get; set; }
         public string Thumbnail { get; internal set; }
     }

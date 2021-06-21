@@ -18,17 +18,16 @@ namespace Avalanche.Api.MappingConfigurations
             CreateMap<ProcedureVideo, ProcedureVideoViewModel>();
             CreateMap<ProcedureContentType, ContentType>();
 
-            CreateMap<ProcedureImageMessage, ContentViewModel>()
-                .ForMember(dest => dest.Length, opt => opt.Ignore()) //Does not apply for image, serialization ignores null data
-                .ForMember(dest => dest.Thumbnail, opt => opt.MapFrom(src => src.RelativePath))
-                .ForMember(dest => dest.FileName, opt => opt.MapFrom(src => src.RelativePath))
+            CreateMap<ProcedureImageMessage, ImageContentViewModel>()
+                .ForMember(dest => dest.Thumbnail, opt => opt.MapFrom(src => src.Thumbnail))
+                .ForMember(dest => dest.FileName, opt => opt.MapFrom(src => src.FileName))
                 .ForMember(dest => dest.CaptureTimeUtc, opt => opt.MapFrom(src => new DateTime(src.CaptureTimeUtc.Year, src.CaptureTimeUtc.Month, src.CaptureTimeUtc.Day, src.CaptureTimeUtc.Hour, src.CaptureTimeUtc.Minute, src.CaptureTimeUtc.Second)));
 
-            CreateMap<ProcedureVideoMessage, ContentViewModel>()
+            CreateMap<ProcedureVideoMessage, VideoContentViewModel>()
                 .ForMember(dest => dest.Thumbnail, opt => opt.MapFrom(crs => "assets/images/video-preview.PNG")) //TODO: Still no thumbnail available for video
-                .ForMember(dest => dest.FileName, opt => opt.MapFrom(src => src.RelativePath))
-                .ForMember(dest => dest.Length, opt => opt.MapFrom(src => src.VideoDuration))
-                .ForMember(dest => dest.CaptureTimeUtc, opt => opt.MapFrom(src => new DateTime(src.VideoStartTimeUtc.Year, src.VideoStartTimeUtc.Month, src.VideoStartTimeUtc.Day, src.VideoStartTimeUtc.Hour, src.VideoStartTimeUtc.Minute, src.VideoStartTimeUtc.Second)));                
+                .ForMember(dest => dest.FileName, opt => opt.MapFrom(src => src.FileName))
+                .ForMember(dest => dest.Length, opt => opt.MapFrom(src => src.Length))
+                .ForMember(dest => dest.CaptureTimeUtc, opt => opt.MapFrom(src => new DateTime(src.CaptureTimeUtc.Year, src.CaptureTimeUtc.Month, src.CaptureTimeUtc.Day, src.CaptureTimeUtc.Hour, src.CaptureTimeUtc.Minute, src.CaptureTimeUtc.Second)));                
 
             CreateMap<ProcedureMessage, ProcedureViewModel>()
                 .ForMember(dest => dest.Videos, opt => opt.MapFrom(src => src.Videos))

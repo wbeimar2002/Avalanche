@@ -18,7 +18,7 @@ namespace Avalanche.Api.ViewModels
         public PhysicianModel Physician { get; set; }
         public IList<NoteModel> Notes { get; set; }
 
-        public List<ContentViewModel> Images { get; set; }
-        public List<ContentViewModel> Videos { get; set; }
+        public List<ImageContentViewModel> Images { get; set; }
+        public List<VideoContentViewModel> Videos { get; set; }
     }
 }
