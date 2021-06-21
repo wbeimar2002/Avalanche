@@ -212,6 +212,21 @@ stages:
        #condition: and(succeeded(),  eq(variables['Build.Reason'], 'PullRequest'))
        artifact: drop
        
+     # %AZURE_DEVOPS_CLI_PAT% on Windows when using script
+     - script: echo %AZURE_DEVOPS_CLI_PAT% | az devops login
+       condition: and(succeeded(), eq(variables['auto_deploy'], 'true'))
+       env:
+         AZURE_DEVOPS_CLI_PAT: $(System.AccessToken)
+       displayName: 'Login Azure DevOps Extension'
+       
+     - task: PowerShell@2
+       condition: and(succeeded(), eq(variables['auto_deploy'], 'true'))
+       inputs:
+         targetType: 'inline'
+         script: |
+          az pipelines build queue --definition-id 657 --detect --branch  $(BranchForMainBuild) --org $(AdoInstanceUrl) -p $(AdoProject)
+       displayName: "Run Avalanche build"
+     
      
 - stage: publish_te
   dependsOn: build
