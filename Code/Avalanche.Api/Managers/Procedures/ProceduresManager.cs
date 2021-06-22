@@ -131,7 +131,7 @@ namespace Avalanche.Api.Managers.Procedures
         public async Task<ProceduresContainerViewModel> Search(ProcedureSearchFilterViewModel filter)
         {
             Preconditions.ThrowIfNull(nameof(filter), filter);
-            Preconditions.ThrowIfTrue<ArgumentException>($"{nameof(filter.Limit)} must be a positive integer greater than 0", filter.Page <= 0);
+            Preconditions.ThrowIfTrue<ArgumentException>($"{nameof(filter.Page)} must be a positive integer greater than 0", filter.Page < 0);
             Preconditions.ThrowIfTrue<ArgumentException>($"{nameof(filter.Limit)} cannot be lower than {MinPageSize}", filter.Limit < MinPageSize);
             Preconditions.ThrowIfTrue<ArgumentException>($"{nameof(filter.Limit)} cannot be larger than {MaxPageSize}", filter.Limit > MaxPageSize);
 
