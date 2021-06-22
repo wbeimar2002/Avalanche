@@ -5,6 +5,7 @@ using Avalanche.Shared.Domain.Models;
 using Avalanche.Shared.Domain.Models.Media;
 using Avalanche.Shared.Infrastructure.Helpers;
 using Ism.Streaming.V1.Protos;
+using Ism.Utility.Core;
 using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;

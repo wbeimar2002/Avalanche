@@ -1,4 +1,5 @@
 ﻿using Avalanche.Shared.Infrastructure.Helpers;
+using Ism.Utility.Core;
 using System;
 using System.Collections.Concurrent;
 using System.IdentityModel.Tokens.Jwt;
