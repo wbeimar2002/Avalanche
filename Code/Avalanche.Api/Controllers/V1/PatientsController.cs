@@ -39,7 +39,7 @@ namespace Avalanche.Api.Controllers.V1
         /// <param name="newPatient"></param>
         /// <returns></returns>
         [HttpPost("")]
-        [Produces(typeof(PatientViewModel))]
+        [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(PatientViewModel))]
         public async Task<IActionResult> ManualPatientRegistration(PatientViewModel newPatient)
         {
             try
@@ -119,7 +119,7 @@ namespace Avalanche.Api.Controllers.V1
         /// </summary>
         /// <returns></returns>
         [HttpPost("quick")]
-        [Produces(typeof(PatientViewModel))]
+        [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(PatientViewModel))]
         public async Task<IActionResult> QuickPatientRegistration()
         {
             try
