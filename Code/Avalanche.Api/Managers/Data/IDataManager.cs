@@ -19,5 +19,9 @@ namespace Avalanche.Api.Managers.Data
         Task ValidateDepartmentsSupport(int? departmentId);
         Task<List<ProcedureTypeModel>> GetAllProcedureTypes();
         Task<List<dynamic>> GetList(string sourceKey, string jsonKey = null);
+        Task<LabelModel> AddLabel(LabelModel label);
+        Task DeleteLabel(LabelModel label);
+        Task<List<LabelModel>> GetLabelsByProcedureType(int? procedureTypeId);
+        Task<List<LabelModel>> GetAllLabels();
     }
 }

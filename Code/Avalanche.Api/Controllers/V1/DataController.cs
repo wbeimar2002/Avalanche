@@ -298,5 +298,147 @@ namespace Avalanche.Api.Controllers.V1
                 _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
             }
         }
+
+        /// <summary>
+        /// Add a label
+        /// </summary>
+        /// <param name="label"></param>
+        /// <returns></returns>
+        [HttpPost("labels")]
+        [Produces(typeof(LabelModel))]
+        public async Task<IActionResult> AddLabel(LabelModel label)
+        {
+            try
+            {
+                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
+
+                var result = await _metadataManager.AddLabel(label);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, LoggerHelper.GetLogMessage(DebugLogType.Exception), ex);
+                return new BadRequestObjectResult(ex.Get(_environment.IsDevelopment()));
+            }
+            finally
+            {
+                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
+            }
+        }
+
+        /// <summary>
+        /// Delete a label
+        /// </summary>
+        /// <param name="labelName"></param>
+        /// <returns></returns>
+        [HttpDelete("labels/{labelId}")]
+        public async Task<IActionResult> DeleteLabel(string labelName)
+        {
+            try
+            {
+                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
+
+                await _metadataManager.DeleteLabel(new LabelModel()
+                {
+                    Name = labelName
+                });
+
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, LoggerHelper.GetLogMessage(DebugLogType.Exception), ex);
+                return new BadRequestObjectResult(ex.Get(_environment.IsDevelopment()));
+            }
+            finally
+            {
+                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
+            }
+        }
+
+        /// <summary>
+        /// Delete a labels from a procedure type
+        /// </summary>
+        /// <param name="procedureTypeId"></param>
+        /// <param name="labelId"></param>
+        /// <returns></returns>
+        [HttpDelete("procedureTypes/{procedureTypeId}/labels/{labelId}")]
+        public async Task<IActionResult> DeleteLabel(int procedureTypeId, int labelId)
+        {
+            try
+            {
+                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
+
+                await _metadataManager.DeleteLabel(new LabelModel()
+                {
+                    ProcedureTypeId = procedureTypeId,
+                    Id = labelId
+                });
+
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, LoggerHelper.GetLogMessage(DebugLogType.Exception), ex);
+                return new BadRequestObjectResult(ex.Get(_environment.IsDevelopment()));
+            }
+            finally
+            {
+                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
+            }
+        }
+
+        /// <summary>
+        /// Get labels by procedure type
+        /// </summary>
+        /// <param name="procedureTypeId"></param>
+        /// <returns></returns>
+        [HttpGet("procedureTypes/{procedureTypeId}/labels")]
+        [Produces(typeof(List<LabelModel>))]
+        public async Task<IActionResult> GetLabelsByProcedureType(int procedureTypeId)
+        {
+            try
+            {
+                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
+
+                var result = await _metadataManager.GetLabelsByProcedureType(procedureTypeId);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, LoggerHelper.GetLogMessage(DebugLogType.Exception), ex);
+                return new BadRequestObjectResult(ex.Get(_environment.IsDevelopment()));
+            }
+            finally
+            {
+                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
+            }
+        }
+
+        /// <summary>
+        /// Get labels with null/empty procedure type
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("labels")]
+        [Produces(typeof(List<LabelModel>))]
+        public async Task<IActionResult> GetLabels()
+        {
+            try
+            {
+                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
+
+                var result = await _metadataManager.GetLabelsByProcedureType(null);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, LoggerHelper.GetLogMessage(DebugLogType.Exception), ex);
+                return new BadRequestObjectResult(ex.Get(_environment.IsDevelopment()));
+            }
+            finally
+            {
+                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
+            }
+        }
     }
 }

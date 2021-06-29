@@ -216,5 +216,136 @@ namespace Avalanche.Api.Tests.Managers
 
             Assert.That(Act, Throws.TypeOf<InvalidOperationException>());
         }
+
+        [Test]
+        public void AddLabelShouldFailIfHasProcedureTypeAndProcedureTypeIsNotSupported()
+        {
+            var setupConfiguration = new SetupConfiguration
+            {
+                General = new GeneralSetupConfiguration
+                {
+                    ProcedureTypesSupported = false
+                }
+            };
+
+            _storageService.Setup(mock => mock.GetJsonObject<SetupConfiguration>(nameof(SetupConfiguration), 1, It.IsAny<ConfigurationContext>())).ReturnsAsync(setupConfiguration);
+
+            var newLabel = new LabelModel()
+            {
+                Id = 1,
+                Name = "Sample",
+                ProcedureTypeId = 1
+            };
+
+            Task Act() => _manager.AddLabel(newLabel);
+
+            Assert.That(Act, Throws.TypeOf<ArgumentException>());
+        }
+        [Test]
+        public void AddLabelShouldFailIfProcedureTypeIsNullAndProcedureTyeIsSupported()
+        {
+            var setupConfiguration = new SetupConfiguration
+            {
+                General = new GeneralSetupConfiguration
+                {
+                    ProcedureTypesSupported = true
+                }
+            };
+
+            _storageService.Setup(mock => mock.GetJsonObject<SetupConfiguration>(nameof(SetupConfiguration), 1, It.IsAny<ConfigurationContext>())).ReturnsAsync(setupConfiguration);
+
+            var newLabel = new LabelModel()
+            {
+                Id = 1,
+                Name = "Sample",
+                ProcedureTypeId = null
+            };
+
+            Task Act() => _manager.AddLabel(newLabel);
+
+            Assert.That(Act, Throws.TypeOf<ArgumentNullException>());
+        }
+        [Test]
+        public void DeleteLabelShouldFailIfHasProcedureTypeAndProcedureTypeIsNotSupported()
+        {
+            var setupConfiguration = new SetupConfiguration
+            {
+                General = new GeneralSetupConfiguration
+                {
+                    ProcedureTypesSupported = false
+                }
+            };
+
+            _storageService.Setup(mock => mock.GetJsonObject<SetupConfiguration>(nameof(SetupConfiguration), 1, It.IsAny<ConfigurationContext>())).ReturnsAsync(setupConfiguration);
+
+            var label = new LabelModel()
+            {
+                Id = 1,
+                Name = "Sample",
+                ProcedureTypeId = 1
+            };
+
+            Task Act() => _manager.DeleteLabel(label);
+
+            Assert.That(Act, Throws.TypeOf<ArgumentException>());
+        }
+        [Test]
+        public void DeleteLabelShouldFailIfProcedureTypeIsNullAndProcedureTypeIsSupported()
+        {
+            var setupConfiguration = new SetupConfiguration
+            {
+                General = new GeneralSetupConfiguration
+                {
+                    ProcedureTypesSupported = true
+                }
+            };
+
+            _storageService.Setup(mock => mock.GetJsonObject<SetupConfiguration>(nameof(SetupConfiguration), 1, It.IsAny<ConfigurationContext>())).ReturnsAsync(setupConfiguration);
+
+            var label = new LabelModel()
+            {
+                Id = 1,
+                Name = "Sample",
+                ProcedureTypeId = null
+            };
+
+            Task Act() => _manager.DeleteLabel(label);
+
+            Assert.That(Act, Throws.TypeOf<ArgumentNullException>());
+        }
+        [Test]
+        public void GetLabelsByProcedureTypeShouldFailIfHasProcedureTypeAndProcedureTypeIsNotSupported()
+        {
+            var setupConfiguration = new SetupConfiguration
+            {
+                General = new GeneralSetupConfiguration
+                {
+                    ProcedureTypesSupported = false
+                }
+            };
+
+            _storageService.Setup(mock => mock.GetJsonObject<SetupConfiguration>(nameof(SetupConfiguration), 1, It.IsAny<ConfigurationContext>())).ReturnsAsync(setupConfiguration);
+
+            Task Act() => _manager.GetLabelsByProcedureType(1);
+
+            Assert.That(Act, Throws.TypeOf<ArgumentException>());
+        }
+        [Test]
+        public void GetLabelsByProcedureTypeShouldFailIfProcedureTypeIsNullAndProcedureTypeIsSupported()
+        {
+            var setupConfiguration = new SetupConfiguration
+            {
+                General = new GeneralSetupConfiguration
+                {
+                    ProcedureTypesSupported = true
+                }
+            };
+
+            _storageService.Setup(mock => mock.GetJsonObject<SetupConfiguration>(nameof(SetupConfiguration), 1, It.IsAny<ConfigurationContext>())).ReturnsAsync(setupConfiguration);
+
+            Task Act() => _manager.GetLabelsByProcedureType(null);
+
+            Assert.That(Act, Throws.TypeOf<ArgumentNullException>());
+        }
     }
 }

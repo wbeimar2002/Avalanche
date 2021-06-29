@@ -174,7 +174,10 @@ namespace Avalanche.Api.Managers.Maintenance
                     var procedureTypes = await _dataManager.GetAllProcedureTypes();
                     values = JsonConvert.DeserializeObject<List<dynamic>>(JsonConvert.SerializeObject(procedureTypes));
                     break;
-
+                case "Labels":
+                    var labels = await _dataManager.GetAllLabels();
+                    values = JsonConvert.DeserializeObject<List<dynamic>>(JsonConvert.SerializeObject(labels));
+                    break;
                 default:
                     values = await _storageService.GetJsonDynamicList(category.SourceKey, 1, configurationContext);
                     break;
@@ -558,6 +561,9 @@ namespace Avalanche.Api.Managers.Maintenance
                 case "ProcedureTypes":
                     await SaveProcedureTypes(action, customList.Entity);
                     break;
+                case "Labels":
+                    await SaveLabels(action, customList.Entity);
+                    break;
                 default:
                     throw new ValidationException("Method Not Allowed");
             }
@@ -577,6 +583,12 @@ namespace Avalanche.Api.Managers.Maintenance
                     foreach (var item in category.DeletedData)
                     {
                         await SaveDepartments(DynamicListActions.Delete, item);
+                    }
+                    break;
+                case "Labels":
+                    foreach (var item in category.DeletedData)
+                    {
+                        await SaveLabels(DynamicListActions.Delete, item);
                     }
                     break;
             }
@@ -616,6 +628,28 @@ namespace Avalanche.Api.Managers.Maintenance
                     break;
                 case DynamicListActions.Delete:
                     await _dataManager.DeleteDepartment(department.Id);
+                    break;
+                default:
+                    throw new ValidationException("Method Not Allowed");
+            }
+        }
+
+        private async Task SaveLabels(DynamicListActions action, dynamic source)
+        {
+            var label = new LabelModel();
+
+            if (SettingsHelper.IsPropertyExist(source.Label, "Id"))
+                label.ProcedureTypeId = source.ProcedureTypeId?.Id;
+
+            SettingsHelper.Map(source, label);
+
+            switch (action)
+            {
+                case DynamicListActions.Insert:
+                    await _dataManager.AddLabel(label);
+                    break;
+                case DynamicListActions.Delete:
+                    await _dataManager.DeleteLabel(label);
                     break;
                 default:
                     throw new ValidationException("Method Not Allowed");

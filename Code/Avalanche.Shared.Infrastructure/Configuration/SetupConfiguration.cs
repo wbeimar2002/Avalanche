@@ -24,6 +24,8 @@ namespace Avalanche.Shared.Infrastructure.Configuration
         public RoutingModes SurgeryMode { get; set; }
         public int ScreenMode { get; set; }
         public bool DepartmentsSupported { get; set; }
+        public bool ProcedureTypesSupported { get; set; }
+        public bool LabelsSupported { get; set; }
     }
 
     public class QuickSetupConfiguration
