@@ -72,7 +72,7 @@ namespace Avalanche.Api.Managers.Procedures
                 var video = activeProcedure.Videos.Single(v => v.VideoId == contentId);
                 if (!video.VideoStopTimeUtc.HasValue)
                 {
-                    throw new InvalidOperationException("Can not delete video that is currently recording");
+                    throw new InvalidOperationException("Cannot delete video that is currently recording");
                 }
             }
 
@@ -100,7 +100,7 @@ namespace Avalanche.Api.Managers.Procedures
                     var video = activeProcedure.Videos.Single(v => v.VideoId == videoContent);
                     if (!video.VideoStopTimeUtc.HasValue)
                     {
-                        throw new InvalidOperationException("Can not delete video that is currently recording");
+                        throw new InvalidOperationException("Cannot delete video that is currently recording");
                     }
                 }
             }
