@@ -40,6 +40,11 @@ namespace Avalanche.Api.Services.Health
             await _activeClient.DeleteActiveProcedureMedia(deleteActiveProcedureMediaRequest);
         }
 
+        public async Task DeleteActiveProcedureMediaItems(DeleteActiveProcedureMediaItemsRequest deleteActiveProcedureMediaItemsRequest)
+        {
+            await _activeClient.DeleteActiveProcedureMediaItems(deleteActiveProcedureMediaItemsRequest);
+        }
+
         public async Task<ReindexRepositoryResponse> ReindexRepository(string repositoryName)
         {
             return await _serviceClient.ReindexRepository(new ReindexRepositoryRequest()

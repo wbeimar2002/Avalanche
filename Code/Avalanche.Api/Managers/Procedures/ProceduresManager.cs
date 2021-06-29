@@ -87,6 +87,35 @@ namespace Avalanche.Api.Managers.Procedures
             await _libraryService.DeleteActiveProcedureMedia(request);
         }
 
+
+        public async Task DeleteActiveProcedureMediaItems(ProcedureContentType procedureContentType, IEnumerable<Guid> contentIds)
+        {
+            var accessInfo = _accessInfoFactory.GenerateAccessInfo();
+            var activeProcedure = await _stateClient.GetData<ActiveProcedureState>();
+
+            if (procedureContentType == ProcedureContentType.Video)
+            {
+                foreach (var videoContent in contentIds)
+                {
+                    var video = activeProcedure.Videos.Single(v => v.VideoId == videoContent);
+                    if (!video.VideoStopTimeUtc.HasValue)
+                    {
+                        throw new InvalidOperationException("Can not delete video that is currently recording");
+                    }
+                }
+            }
+
+            var request = new DeleteActiveProcedureMediaItemsRequest()
+            {
+                ContentType = _mapper.Map<ContentType>(procedureContentType),
+                ProcedureId = _mapper.Map<ProcedureIdMessage>(activeProcedure),
+                AccessInfo = _mapper.Map<AccessInfoMessage>(accessInfo)
+            };
+            request.ContentIds.AddRange(contentIds.Select(x => x.ToString()));
+
+            await _libraryService.DeleteActiveProcedureMediaItems(request);
+        }
+
         public async Task DiscardActiveProcedure()
         {
             var accessInfo = _accessInfoFactory.GenerateAccessInfo();
@@ -162,5 +191,6 @@ namespace Avalanche.Api.Managers.Procedures
 
             return _mapper.Map<ProcedureMessage, ProcedureViewModel>(response.Procedure);
         }
+
     }
 }

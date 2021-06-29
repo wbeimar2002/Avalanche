@@ -12,6 +12,7 @@ namespace Avalanche.Api.Managers.Procedures
 
         Task ConfirmActiveProcedure();
         Task DeleteActiveProcedureMedia(ProcedureContentType procedureContentType, Guid contentId);
+        Task DeleteActiveProcedureMediaItems(ProcedureContentType procedureContentType, IEnumerable<Guid> contentIds);
         Task DiscardActiveProcedure();
         Task FinishActiveProcedure();
 
