@@ -11,11 +11,13 @@ namespace Avalanche.Api.Services.Health
     {
         private readonly LibraryActiveProcedureServiceSecureClient _activeClient;
         private readonly LibraryServiceSecureClient _serviceClient;
+        private readonly LibrarySearchServiceSecureClient _serviceSearchClient;
 
-        public LibraryService(LibraryActiveProcedureServiceSecureClient activeClient, LibraryServiceSecureClient serviceClient)
+        public LibraryService(LibraryActiveProcedureServiceSecureClient activeClient, LibraryServiceSecureClient serviceClient, LibrarySearchServiceSecureClient serviceSearchClient)
         {
             _activeClient = activeClient;
             _serviceClient = serviceClient;
+            _serviceSearchClient = serviceSearchClient;
         }
 
         public async Task DiscardActiveProcedure(DiscardActiveProcedureRequest discardActiveProcedureRequest)
@@ -44,6 +46,16 @@ namespace Avalanche.Api.Services.Health
             {
                 RepositoryName = repositoryName
             });
+        }
+
+        public async Task<GetFinishedProcedureResponse> GetFinishedProcedure(GetFinishedProcedureRequest getFinishedProcedureRequest)
+        {
+            return await _serviceSearchClient.GetFinishedProcedure(getFinishedProcedureRequest);
+        }
+
+        public async Task<GetFinishedProceduresResponse> GetFinishedProcedures(GetFinishedProceduresRequest getFinishedProceduresRequest)
+        {
+            return await _serviceSearchClient.GetFinishedProcedures(getFinishedProceduresRequest);
         }
     }
 }

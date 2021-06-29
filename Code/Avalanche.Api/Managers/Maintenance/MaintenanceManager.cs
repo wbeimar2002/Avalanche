@@ -14,7 +14,6 @@ using Ism.Utility.Core;
 using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using Newtonsoft.Json.Schema;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -64,25 +63,13 @@ namespace Avalanche.Api.Managers.Maintenance
             return _mapper.Map<ReindexStatusViewModel>(response);
         }
 
-        public IEnumerable<FileSystemElementViewModel> GetFiles(string folder, string filter)
-        {
-            var list = _filesService.GetFiles(folder, filter);
-            return list.Select(x => new FileSystemElementViewModel() { DisplayName = x, IsFolder = false });
-        }
-
-        public IEnumerable<FileSystemElementViewModel> GetFolders(string folder)
-        {
-            var list = _filesService.GetFolders(folder);
-            return list.Select(x => new FileSystemElementViewModel() { DisplayName = x, IsFolder = true });
-        }
-
         public async Task SaveCategoryPolicies(DynamicSectionViewModel category)
         {
             await SaveJsonValues(category, configurationContext);
 
             SettingsHelper.CleanSettings(category);
 
-            await _storageService.SaveJsonMetadata(category.JsonKey + "Metadata", JsonConvert.SerializeObject(category), 1, configurationContext);
+            await _storageService.SaveJsonMetadata(category.Metadata, JsonConvert.SerializeObject(category), 1, configurationContext);
         }
 
         public async Task SaveCategory(DynamicSectionViewModel category)
@@ -110,11 +97,11 @@ namespace Avalanche.Api.Managers.Maintenance
 
         private async Task SaveEmbeddedList(string settingsKey, string jsonKey, DynamicListViewModel customList)
         {
-            var result = JsonConvert.SerializeObject(customList.Data);
+            var json = JsonConvert.SerializeObject(customList.Data);
 
-            if (await SchemaIsValid(customList.Schema, result, configurationContext))
+            if (await _storageService.ValidateSchema(customList.Schema, json, 1, configurationContext))
             {
-                await _storageService.UpdateJsonProperty(settingsKey, jsonKey, result, 1, configurationContext, true);
+                await _storageService.UpdateJsonProperty(settingsKey, jsonKey, json, 1, configurationContext, true);
             }
             else
             {
@@ -124,11 +111,11 @@ namespace Avalanche.Api.Managers.Maintenance
 
         private async Task SaveCustomListFile(DynamicListViewModel customList)
         {
-            var result = JsonConvert.SerializeObject(customList.Data);
+            var json = JsonConvert.SerializeObject(customList.Data);
 
-            if (await SchemaIsValid(customList.Schema, result, configurationContext))
+            if (await _storageService.ValidateSchema(customList.Schema, json, 1, configurationContext))
             {
-                await _storageService.SaveJsonObject(customList.SourceKey, result, 1, configurationContext, true);
+                await _storageService.SaveJsonObject(customList.SourceKey, json, 1, configurationContext, true);
             }
             else
             {   
@@ -517,37 +504,15 @@ namespace Avalanche.Api.Managers.Maintenance
 
         private async Task SaveJsonValues(DynamicSectionViewModel category, ConfigurationContext configurationContext)
         {
-            string result = SettingsHelper.GetJsonValues(category);
+            string json = SettingsHelper.GetJsonValues(category);
 
-            if (await SchemaIsValid(category.Schema, result, configurationContext))
+            if (await _storageService.ValidateSchema(category.Schema, json, 1, configurationContext))
             {
-                await _storageService.SaveJsonObject(category.JsonKey, result, 1, configurationContext);
+                await _storageService.SaveJsonObject(category.JsonKey, json, 1, configurationContext);
             }
             else
             {   
                 throw new ValidationException("Json Schema Invalid for " + category.JsonKey);
-            }
-        }
-
-        private async Task<bool> SchemaIsValid(string schemaKey, string json, ConfigurationContext configurationContext)
-        {
-            if (string.IsNullOrEmpty(schemaKey))
-                return true;
-            else
-            {
-                dynamic dynamicSchema = await _storageService.GetJsonFullDynamic(schemaKey, 1, configurationContext);
-
-                if (dynamicSchema == null)
-                    return true;
-                else
-                {
-                    string schemaJson = JsonConvert.SerializeObject(dynamicSchema);
-#pragma warning disable CS0618 // Type or member is obsolete
-                    var schema = JsonSchema.Parse(schemaJson);
-                    JObject jsonObject = JObject.Parse(json);
-                    return jsonObject.IsValid(schema);
-#pragma warning restore CS0618 // Type or member is obsolete
-                }
             }
         }
 

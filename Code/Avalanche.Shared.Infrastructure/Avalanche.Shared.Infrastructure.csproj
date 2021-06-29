@@ -12,6 +12,7 @@
 
   <ItemGroup>
     <Compile Remove="Configuration\PgsTimeoutConfig.cs" />
+    <Compile Remove="Helpers\Preconditions.cs" />
     <Compile Remove="Models\AdministratorSettings.cs" />
     <Compile Remove="Models\ApiSettings.cs" />
     <Compile Remove="Models\ConfigSettings.cs" />
@@ -34,7 +35,7 @@
 
   <ItemGroup>
     <PackageReference Include="Google.Api.CommonProtos" Version="2.3.0" />
-    <PackageReference Include="Grpc.Core" Version="2.38.1" />
+    <PackageReference Include="Grpc.Core" Version="2.38.0" />
     <PackageReference Include="Ism.Common.Core" Version="1.0.0-prerelease043" />
     <PackageReference Include="Microsoft.IdentityModel.Tokens" Version="6.8.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />

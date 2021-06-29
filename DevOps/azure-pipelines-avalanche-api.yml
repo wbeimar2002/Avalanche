@@ -1,12 +1,8 @@
 trigger:
-  none
-
-name: $(build_number_prefix)-$(majorversion).$(minorversion).$(patch).$(Releasestage)_$(majorversion).$(minorversion).$(Date:yyMM).$(Date:dd)$(Rev:rr)
-
+  - dev
+  
 resources:
-
   repositories:
-
   - repository: devops
     type: git
     name: devops
@@ -15,13 +11,19 @@ resources:
 #pool:
   #vmImage: $(PoolVmImage)
 
-variables:
+pool: $(pool)
 
+variables:
+  
   - group: 'vg-dev-avalanche-api'
+  
+  #- name: System.Debug
+    #value: true
+name: $(BuildNumberPrefix)-$(MajorVersion).$(MinorVersion).$(Patch).$(ReleaseStage)_$(MajorVersion).$(MinorVersion).$(Date:yyMM).$(Date:dd)$(Rev:rr)_$(Date:yyyyMMdd)T$(Date:hhmmss)
 
 stages:
 
-# stage for creating PR comment if nuget pkgs verssion not up to date
+# stage for creating PR comments if nuget pkgs verssion are not up to date
 - template: pipeline\templates\nuget-version-check.yml@devops
 
 - stage: build
@@ -29,11 +31,6 @@ stages:
   jobs:
 
   - job: build_test_publish
-    
-    pool:
-    
-      vmImage: '$(pool_vm_image)'
-    
     steps:
      
      - checkout: self
@@ -44,212 +41,84 @@ stages:
        inputs:
         targetType: 'inline'
         script: 'Get-ChildItem -Path Env:\'
+ 
+     - task: PowerShell@1
+       displayName: 'Apply Version To Application'
+       inputs:
+           scriptName: devops/misc-scripts/ApplyVersionToAssemblies.ps1
 
-     - template: 'pipeline\templates\restore-build-test-msbuild4.yml@devops'
+     - template: 'pipeline\templates\restore-build-test-msbuild8.yml@devops'
        parameters: 
           repo: '$(Repo)'
           projectsolution: '$(ProjectSolution)'
+          testdirectory: '$(TestRoot)'
+          testfilter: '$(TestFilter)'
           buildConfiguration: '$(BuildConfiguration)'
           buildplatform: '$(BuildPlatform)'
           vstsfeed: '$(VstsFeed)'
           adoproject: '$(AdoProject)'
-          testprojects: '$(TestProjects)'
           sonarprojectkey: '$(SonarProjectKey)'
           sonarprojetname: '$(SonarProjectKey)'
+     
+     - task: NuGetAuthenticate@0
+     
+     - template: 'pipeline\templates\pub-sonarqube-codecoverage-win-3.yml@devops'
+       parameters: 
+          buildnumberprefix: '$(BuildNumberPrefix)'
+          sonarqubeurl: '$(SonarqubeUrl)'
+          sonartoken: '$(SonarToken)'
+          workingdirectory: '$(repo)\$(ProjectSolutionFolder)'
+          systemworkingdirectory: '$(System.DefaultWorkingDirectory)'
+          testworkingdirectory: '$(System.DefaultWorkingDirectory)\$(repo)\$(TestRoot)'
 
-     #- template: 'pipeline\coverage\publish_ado_code_coverage-3.yml@devops'
-
-     # make app artifacts
-     - task: DotNetCoreCLI@2
-       displayName: 'Publish project'
+     - task: CopyFiles@2
+       condition: and(succeeded(),  ne(variables['Build.Reason'], 'PullRequest'))
        inputs:
-        command: publish
-        publishWebProjects: false
-        projects: '$(CsProject)'
-        arguments: '-c $(BuildConfiguration)  -o publish --no-build'
-        zipAfterPublish: false
-        modifyOutputPath: false
-
-    # store artifacts
-     - task: PublishBuildArtifacts@1
-       displayName: 'Publish Build Artifacts'
+        Contents: |
+          $(Repo)/$(BinFolder)/**
+        TargetFolder: '$(Build.ArtifactStagingDirectory)'
+       displayName: 'Copy Files to $(Build.ArtifactStagingDirectory)'
+     
+     - task: PublishPipelineArtifact@1
+       condition: and(succeeded(),  ne(variables['Build.Reason'], 'PullRequest'))
        inputs:
-        PathtoPublish: '$(PathtoApp)'
-        ArtifactName: '$(PathtoApp)'
-
-- stage: push_to_acr
-  condition: |
-        and
-        (
-          eq(variables['Build.SourceBranchName'], 'dev'),
-          eq(variables['push_to_acr'], 'true')
-        )
-
-  jobs:
-     - job: push
-       
-       #pool:
-    
-        #vmImage: 'ubuntu-latest'
-
-       steps:  
-       - checkout: self
-       - checkout: devops
-       
-       - task: DownloadBuildArtifacts@0
-         displayName: 'Download Build Artifacts'
-         inputs:
-          artifactName: $(PathtoApp)
-          downloadPath: '.'
-       
-       - powershell: |
-          $temp = "$(ImageName)"
-          $temp = $temp.ToLower()
-          Write-Host "##vso[task.setvariable variable=ImageNameLowercase;]$temp"
-         displayName: 'Set image name'
-       
-       - task: Docker@0
-         displayName: 'Docker command -Build'
-         inputs:
-          action: 'Run a Docker command'
-          customCommand: 'build -t $(ImageNameLowercase) . -f $(DockerFile)' 
-       
-       - bash: |
-          acrname='acr$(env)$(AppPlatform)global'
-          echo 'target acr name' $acrname
-          echo "##vso[task.setvariable variable=acrname]$acrname"
-         displayName: 'Set acr name'
-
-       - powershell: |
-            $tag =""
-            $buildnumber = $Env:BUILD_BUILDNUMBER
-            write-host "buildnumber="$buildnumber 
-            $tempString=$buildnumber.split("_")
-            $tag = $tempString[1]
-            
-            if($tag)
-            {
-            write-host "tag="$tag 
-            Write-Host "##vso[task.setvariable variable=tag;]$tag"
-            }
-            else
-            {
-            Throw("package version variable is empty")
-            }
-         displayName: "Set environment variable tag number"
-
-       - task: Docker@2
-         displayName: 'Docker image -Tag w/ build number'
-         inputs:
-          command: 'tag'
-          arguments: '$(ImageNameLowercase) $(acrname).azurecr.io/$(ImageNameLowercase):$(tag)'
-          addPipelineData: false
-          
-       - task: Docker@2
-         displayName: 'Docker image -Tag w/ latest'
-         inputs:
-          command: 'tag'
-          arguments: '$(ImageNameLowercase) $(acrname).azurecr.io/$(ImageNameLowercase):latest'
-          addPipelineData: false
-       
-       # get ip so acr can give access for push
-       # ip of the router if server is behing a firewall
-       - bash: |
-          source devops/common/commonfunctions.sh
-          ip=$(get_ext_ip)
-          echo 'build server external ip is ' $ip
-          echo "##vso[task.setvariable variable=ip]$ip"
-          echo 'variable ip ' $(ip)
-         displayName: 'Get build server external ip'
-
-       - task: AzureCLI@1
-         displayName: 'Add build server external ip to acr firewall'
-         inputs:
-          azureSubscription: $(azuresubscription)
-          scriptPath: 'devops/resources/add-acr-firewall-ip.sh'
-          arguments: '$(azuresubscription) $(acrname) $(ip)'
-
-       - task: Docker@1
-         displayName: 'Docker push w/ build number'
-         inputs:
-          azureSubscriptionEndpoint: $(azuresubscription)
-          azureContainerRegistry: '$(acrname).azurecr.io'
-          command: 'Push an image'
-          imageName: '$(acrname).azurecr.io/$(ImageNameLowercase):$(tag)'
-
-       - task: Docker@1
-         displayName: 'Docker push w/ latest'
-         inputs:
-          azureSubscriptionEndpoint: $(azuresubscription)
-          azureContainerRegistry: '$(acrname).azurecr.io'
-          command: 'Push an image'
-          imageName: '$(acrname).azurecr.io/$(ImageNameLowercase):latest'
-          
-       - task: AzureCLI@1
-         displayName: 'Delete build server external ip from acr firewall'
-         inputs:
-          azureSubscription: $(azuresubscription)
-          scriptPath: 'devops/resources/delete-acr-firewall-ip.sh'
-          arguments: '$(azuresubscription) $(acrname) $(ip)'
+         targetPath: '$(Pipeline.Workspace)'
+         artifact: 'drop'
+         publishLocation: 'pipeline'
+       displayName: 'Pub pipeline art'
 
 - stage: publish_te
-  dependsOn: 'push_to_acr'
-  condition: |
-        and
-        (
-          eq(variables['Build.SourceBranchName'], 'dev'),
-          eq(variables['publish_te'], 'true')
-        )
+  dependsOn: build
+  condition: and(succeeded(), eq(variables['publish_te'], 'true'))
   
   jobs:
-  - job: octo_rel_and_copy_to_network_share
+  - job: publish
 
     pool:
-      name: ism-build-pool-on-prem
+      name: 'ism-build-pool-on-prem'
       demands: 
         - msbuild
-
+       
     steps:
-
+    - checkout: devops
     - task: DownloadPipelineArtifact@2
       displayName: 'Download Pipeline Artifact'
       inputs:
         source: 'current'
-        artifactName: publish
+        artifactName: drop
         targetPath: '$(System.DefaultWorkingDirectory)\drop'
-    
-    - powershell: |
-            $package_version =""
-            $buildnumber = $Env:BUILD_BUILDNUMBER
-            #e.g $releaseName = "avalanchec-dicom-1.0.0.0_20.3.30.02"
-            write-host "buildnumber="$buildnumber 
-            $tempString=$buildnumber.split("_")
-            $package_version = $tempString[1]
-            
-            if($package_version)
-            {
-            write-host "package version="$package_version 
-            Write-Host "##vso[task.setvariable variable=PackageVersion;]$package_version"
-            }
-            else
-            {
-            Throw("package version variable is empty")
-            }
-      displayName: "Set environment variable package number"
 
-    - powershell: |
-        write-host "package version="$ENV:PACKAGEVERSION
-      displayName: 'Print package version'
-
-    - task: octopusdeploy.octopus-deploy-build-release-tasks.octopus-create-release.OctopusCreateRelease@4
-      displayName: 'Create Octopus Release'
-      inputs:
-       OctoConnectedServiceName: 'Octopus Server'
-       Space: 'Default'
-       ProjectName: '$(OctopusProject)'
-       ReleaseNumber: '$(PackageVersion)'
-       #Channel: 'Channels-167'
-    
+    - template: 'pipeline\templates\create-push-octopus-release1.yml@devops'
+      parameters: 
+        octopusBaseURL: '$(OctopusBaseURL)'
+        octopusAPIKey: '$(OctopusAPIKey)'
+        octopusSpaceName: '$(OctopusSpaceName)'
+        octopusEnvironmentName: '$(OctopusEnvironmentName)'
+        octopusChannelName: '$(OctopusChannelName)'
+        octopusProject: '$(OctopusProject)'
+        octopusPackageId: '$(OctopusPackageId)'
+        triggerBranch: 'dev'
+       
     - template: 'pipeline\templates\copy-release-to-network-share.yml@devops'
       parameters: 
         adoProject: '$(AdoProject)'
@@ -259,13 +128,4 @@ stages:
         networkUser: '$(NetworkUser)'
         networkPassword: '$(NetworkPassword)'
         builidNumber: '$Env:BUILD_BUILDNUMBER'
-
-    - template: 'pipeline\templates\copy-release-to-network-share.yml@devops'
-      parameters: 
-        adoProject: '$(AdoProject)'
-        vsProjectNamePrefix: '$(VsProjectNamePrefix)'
-        networkShare: '$(NetworkShare)'
-        networkSubPath: '$(NetworkSubPath)'
-        networkUser: '$(NetworkUser)'
-        networkPassword: '$(NetworkPassword)'
-        builidNumber: '$Env:BUILD_BUILDNUMBER'
+        copyTrue: '$(copy_to_network_share)'  

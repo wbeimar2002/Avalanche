@@ -12,6 +12,8 @@ using Avalanche.Api.Extensions;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNetCore.JsonPatch;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Schema;
 
 namespace Avalanche.Api.Services.Maintenance
 {
@@ -23,6 +25,28 @@ namespace Avalanche.Api.Services.Maintenance
         public StorageService(ConfigurationServiceSecureClient client)
         {
             _client = client;
+        }
+
+        public async Task<bool> ValidateSchema(string schemaKey, string json, int version, ConfigurationContext configurationContext)
+        {
+            if (string.IsNullOrEmpty(schemaKey))
+                return true;
+            else
+            {
+                dynamic dynamicSchema = await GetJsonFullDynamic(schemaKey, version, configurationContext);
+
+                if (dynamicSchema == null)
+                    return true;
+                else
+                {
+                    string schemaJson = JsonConvert.SerializeObject(dynamicSchema);
+#pragma warning disable CS0618 // Type or member is obsolete
+                    var schema = JsonSchema.Parse(schemaJson);
+                    JObject jsonObject = JObject.Parse(json);
+                    return jsonObject.IsValid(schema);
+#pragma warning restore CS0618 // Type or member is obsolete
+                }
+            }
         }
 
         public async Task UpdateJsonProperty(string configurationKey, string jsonKey, string jsonValue, int version, ConfigurationContext context, bool isList = false)

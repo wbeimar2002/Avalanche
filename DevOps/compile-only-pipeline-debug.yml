@@ -1,0 +1,29 @@
+# Separate pipeline for compile-only with debug config
+# Current goal: upload bin folder to Veracode for static scans
+
+trigger: none
+
+variables:
+  solution: '**/*.sln'
+  buildConfiguration: 'debug'
+  vstsFeed: '0b214fa2-b3b1-42b0-b0e3-ab1d83cc701f/a3df6df2-e351-48be-9590-ce52438af6bc'
+
+steps:
+
+- task: NuGetToolInstaller@1
+
+- task: NuGetCommand@2
+  inputs:
+    solution: '$(solution)'
+    vstsfeed: '$(vstsFeed)'
+
+- task: MSBuild@1
+  inputs:
+    solution: '$(solution)' 
+    configuration: '$(buildConfiguration)'
+    msbuildArguments: '/p:OutDir="$(Build.ArtifactStagingDirectory)"'
+
+- task: PublishBuildArtifacts@1
+  inputs:
+    pathToPublish: '$(Build.ArtifactStagingDirectory)' 
+    artifactName: 'drop' 

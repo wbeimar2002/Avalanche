@@ -1,13 +1,10 @@
-﻿using AutoMapper;
+﻿using Avalanche.Api.Helpers;
 using Avalanche.Api.Managers.Procedures;
 using Avalanche.Api.ViewModels;
 using Avalanche.Shared.Domain.Enumerations;
-using Avalanche.Shared.Domain.Models;
 using Avalanche.Shared.Infrastructure.Enumerations;
 using Avalanche.Shared.Infrastructure.Extensions;
 using Avalanche.Shared.Infrastructure.Helpers;
-using Ism.SystemState.Client;
-using Ism.SystemState.Models.Procedure;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -15,9 +12,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using System;
-using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
+using System.Linq;
 
 namespace Avalanche.Api.Controllers.V1
 {
@@ -42,15 +38,23 @@ namespace Avalanche.Api.Controllers.V1
         /// </summary>
         /// <param name="filter"></param>
         /// <returns></returns>
-        [HttpPost("")]
-        [Produces(typeof(List<ProcedureModel>))]
+        [HttpPost("filtered")]
+        [Produces(typeof(ProceduresContainerReponseViewModel))]
         public async Task<IActionResult> Search(ProcedureSearchFilterViewModel filter)
         {
             try
             {
                 _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
-                await Task.CompletedTask;
-                return Ok();
+                var result = await _proceduresManager.Search(filter);
+
+                var procedures = new PagedCollectionViewModel<ProcedureViewModel>
+                {
+                    Items = result.Procedures
+                };
+
+                PagingHelper.AppendPagingContext(this.Url, this.Request, filter, procedures);
+
+                return Ok(new ProceduresContainerReponseViewModel { TotalCount = result.TotalCount, PagedProcedures = procedures });
             }
             catch (Exception ex)
             {
@@ -68,14 +72,15 @@ namespace Avalanche.Api.Controllers.V1
         /// </summary>
         /// <returns></returns>
         [HttpGet("{id}")]
-        [Produces(typeof(ProcedureDetailsViewModel))]
-        public async Task<IActionResult> Get()
+        [Produces(typeof(ProcedureViewModel))]
+        public async Task<IActionResult> Get(string id)
         {
             try
             {
                 _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
-                await Task.CompletedTask;
-                return Ok();
+
+                var result = await _proceduresManager.GetProcedureDetails(id);
+                return Ok(result);
             }
             catch (Exception ex)
             {

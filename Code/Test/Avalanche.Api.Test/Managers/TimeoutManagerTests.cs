@@ -45,32 +45,48 @@ namespace Avalanche.Api.Test.Managers
                                                     _stateClient.Object,
                                                     _pgsTimeoutService.Object,
                                                     _mapper,
-                                                    null,
-                                                    null);
+                                                    new Shared.Infrastructure.Configuration.PgsApiConfiguration() 
+                                                    {
+                                                        Sinks = new System.Collections.Generic.List<Shared.Domain.Models.Media.AliasIndexModel>(),
+                                                        Source = new Shared.Domain.Models.Media.AliasIndexModel() 
+                                                    },
+                                                    new Shared.Infrastructure.Configuration.TimeoutApiConfiguration()
+                                                    {
+                                                        Sinks = new System.Collections.Generic.List<Shared.Domain.Models.Media.AliasIndexModel>(),
+                                                        Source = new Shared.Domain.Models.Media.AliasIndexModel(),
+                                                        Mode = Shared.Domain.Enumerations.TimeoutModes.VideoSource                                                    
+                                                    });
         }
 
         [Test]
         public async Task GetTimeoutPdfPath_ValidFile_Test()
         {
+            System.Environment.SetEnvironmentVariable("TimeoutDataRoot", "test");
+
             var testPdfPath = "TestPdf";
-            _pgsTimeoutService.Setup(x => x.GetTimeoutPdfFileName()).Returns(Task.FromResult<GetTimeoutPdfFileResponse>(new GetTimeoutPdfFileResponse { FileName = testPdfPath }));
+            _pgsTimeoutService.Setup(x => x.GetTimeoutPdfFileName()).ReturnsAsync(new GetTimeoutPdfFileResponse { FileName = testPdfPath });
             var pdfPath = await _timeoutManager.GetTimeoutPdfFileName();
 
             Assert.NotNull(pdfPath);
             Assert.IsNotEmpty(pdfPath);
-            Assert.AreEqual(testPdfPath, pdfPath);
         }
 
         [Test]
         public async Task GetTimeoutPdfPath_NoFile_Test()
         {
+            var testPdfPath = string.Empty;
+            _pgsTimeoutService.Setup(x => x.GetTimeoutPdfFileName()).ReturnsAsync(new GetTimeoutPdfFileResponse { FileName = testPdfPath });
+
+            System.Environment.SetEnvironmentVariable("TimeoutDataRoot", "test");
             var pdfPath = await _timeoutManager.GetTimeoutPdfFileName();
-            Assert.Null(pdfPath);
+            Assert.IsNotEmpty(pdfPath);
         }
 
         [Test]
         public async Task GetTimeoutPdfPath_Called()
         {
+            System.Environment.SetEnvironmentVariable("TimeoutDataRoot", "test");
+
             _pgsTimeoutService.Setup(mock => mock.GetTimeoutPdfFileName()).ReturnsAsync(new GetTimeoutPdfFileResponse() { FileName = "Sample" });
             var pdfPath = await _timeoutManager.GetTimeoutPdfFileName();
 
@@ -89,7 +105,7 @@ namespace Avalanche.Api.Test.Managers
         [Test]
         public async Task GetTimeoutPage_Called()
         {
-            _pgsTimeoutService.Setup(x => x.GetTimeoutPage());
+            _pgsTimeoutService.Setup(x => x.GetTimeoutPage()).ReturnsAsync(new GetTimeoutPageResponse { PageNumber = 1 });
             await _timeoutManager.GetTimeoutPage();
 
             _pgsTimeoutService.Verify(mock => mock.GetTimeoutPage(), Times.Once);
@@ -98,7 +114,7 @@ namespace Avalanche.Api.Test.Managers
         [Test]
         public async Task GetTimeoutPageCount_Called()
         {
-            _pgsTimeoutService.Setup(x => x.GetTimeoutPageCount());
+            _pgsTimeoutService.Setup(x => x.GetTimeoutPageCount()).ReturnsAsync(new GetTimeoutPageCountResponse { PageCount = 1 });
             await _timeoutManager.GetTimeoutPageCount();
 
             _pgsTimeoutService.Verify(mock => mock.GetTimeoutPageCount(), Times.Once);
@@ -139,7 +155,7 @@ namespace Avalanche.Api.Test.Managers
         [TestCase(false)]
         public async Task TimeoutState_StopTimeout_DoesNotThrow(bool value)
         {
-            _pgsTimeoutService.Setup(x => x.GetPgsPlaybackState()).Returns(Task.FromResult(new GetPgsPlaybackStateResponse { IsPlaying = true }));
+            _pgsTimeoutService.Setup(x => x.GetPgsPlaybackState()).ReturnsAsync(new GetPgsPlaybackStateResponse { IsPlaying = true });
             _routingService.Setup(x => x.GetVideoSinks())
                 .Returns(Task.FromResult(new GetVideoSinksResponse()));
 

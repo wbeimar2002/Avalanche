@@ -2,6 +2,7 @@
 
 using Avalanche.Api.ViewModels;
 using Avalanche.Shared.Domain.Enumerations;
+using Avalanche.Shared.Domain.Models;
 using Ism.Library.V1.Protos;
 using Ism.SystemState.Models.Procedure;
 
@@ -15,7 +16,34 @@ namespace Avalanche.Api.MappingConfigurations
         {
             CreateMap<ProcedureImage, ProcedureImageViewModel>();
             CreateMap<ProcedureVideo, ProcedureVideoViewModel>();
+            CreateMap<NoteMessage, NoteModel>();
             CreateMap<ProcedureContentType, ContentType>();
+
+            CreateMap<ProcedureImageMessage, ImageContentViewModel>()
+                .ForMember(dest => dest.Thumbnail, opt => opt.MapFrom(src => src.Thumbnail))
+                .ForMember(dest => dest.FileName, opt => opt.MapFrom(src => src.FileName))
+                .ForMember(dest => dest.CaptureTimeUtc, opt => opt.MapFrom(src => new DateTime(src.CaptureTimeUtc.Year, src.CaptureTimeUtc.Month, src.CaptureTimeUtc.Day, src.CaptureTimeUtc.Hour, src.CaptureTimeUtc.Minute, src.CaptureTimeUtc.Second)));
+
+            CreateMap<ProcedureVideoMessage, VideoContentViewModel>()
+                .ForMember(dest => dest.Thumbnail, opt => opt.MapFrom(crs => "assets/images/video-preview.PNG")) //TODO: Still no thumbnail available for video
+                .ForMember(dest => dest.FileName, opt => opt.MapFrom(src => src.FileName))
+                .ForMember(dest => dest.Length, opt => opt.MapFrom(src => src.Length))
+                .ForMember(dest => dest.CaptureTimeUtc, opt => opt.MapFrom(src => new DateTime(src.CaptureTimeUtc.Year, src.CaptureTimeUtc.Month, src.CaptureTimeUtc.Day, src.CaptureTimeUtc.Hour, src.CaptureTimeUtc.Minute, src.CaptureTimeUtc.Second)));                
+
+            CreateMap<ProcedureMessage, ProcedureViewModel>()
+                .ForMember(dest => dest.Videos, opt => opt.MapFrom(src => src.Videos))
+                .ForMember(dest => dest.Images, opt => opt.MapFrom(src => src.Images))
+                .ForPath(dest => dest.Patient.MRN, opt => opt.MapFrom(src => src.Patient.Mrn))
+                .ForPath(dest => dest.Patient.FirstName, opt => opt.MapFrom(src => src.Patient.FirstName))
+                .ForPath(dest => dest.Patient.LastName, opt => opt.MapFrom(src => src.Patient.LastName))
+                .ForPath(dest => dest.Physician.Id, opt => opt.MapFrom(src => src.Physician.Id))
+                .ForPath(dest => dest.Physician.FirstName, opt => opt.MapFrom(src => src.Physician.FirstName))
+                .ForPath(dest => dest.Physician.LastName, opt => opt.MapFrom(src => src.Physician.LastName))
+                .ForPath(dest => dest.Department.Name, opt => opt.MapFrom(src => src.Department))
+                .ForPath(dest => dest.ProcedureType.Name, opt => opt.MapFrom(src => src.ProcedureType))
+                .ForPath(dest => dest.ProcedureStartTimeUtc, opt => opt.MapFrom(src => new DateTime(src.ProcedureStartTimeUtc.Year, src.ProcedureStartTimeUtc.Month, src.ProcedureStartTimeUtc.Day, src.ProcedureStartTimeUtc.Hour, src.ProcedureStartTimeUtc.Minute, src.ProcedureStartTimeUtc.Second)))
+                .ForMember(dest => dest.Repository, opt => opt.MapFrom(src => "cache")) //TODO: Temporary, waiting for nuget package update
+                .ForMember(dest => dest.LibraryId, opt => opt.MapFrom(src => src.LibraryId));
 
             CreateMap<ActiveProcedureState, DiscardActiveProcedureRequest>()
                 .ForPath(dest => dest.ProcedureId.Id, opt => opt.MapFrom(src => src.LibraryId))
@@ -85,12 +113,11 @@ namespace Avalanche.Api.MappingConfigurations
                             LastName = src.Patient?.LastName,
                             FirstName = src.Patient?.FirstName,
                             DateOfBirth = src.Patient?.DateOfBirth ?? DateTime.MinValue,
-                            Department = null != src.Department ? new Shared.Domain.Models.DepartmentModel { Id = src.Department.Id, IsNew = false, Name = src.Department.Name } : null,
+                            Department = null != src.Department ? new Shared.Domain.Models.DepartmentModel { Id = src.Department.Id, Name = src.Department.Name } : null,
                             Id = src.Patient?.Id,
                             MRN = src.Patient?.MRN,
                             Physician = null != src.Physician ? new Shared.Domain.Models.PhysicianModel {  Id= src.Physician.Id, FirstName = src.Physician.FirstName, LastName = src.Physician.LastName } : null,
-                            ProcedureType = null != src.ProcedureType ? new Shared.Domain.Models.ProcedureTypeModel { Id = src.ProcedureType.Id, DepartmentId = src.Department?.Id, IsNew = false, Name = src.ProcedureType.Name}: null,
-                            AccessInformation = null,
+                            ProcedureType = null != src.ProcedureType ? new Shared.Domain.Models.ProcedureTypeModel { Id = src.ProcedureType.Id, DepartmentId = src.Department?.Id, Name = src.ProcedureType.Name}: null,
                             Sex = null != src.Patient?.Sex ? MappingUtilities.GetSexViewModel(src.Patient.Sex) : null
                         }: null
                     )) 
@@ -104,7 +131,8 @@ namespace Avalanche.Api.MappingConfigurations
                 .ForMember(dest => dest.Images, opt => opt.MapFrom(src => src.Images))
                 .ForMember(dest => dest.Videos, opt => opt.MapFrom(src => src.Videos));
 
-            CreateMap<Shared.Domain.Models.AccessInfoModel, Ism.Library.V1.Protos.AccessInfoMessage>()
+
+            CreateMap<Ism.IsmLogCommon.Core.AccessInfo, Ism.Library.V1.Protos.AccessInfoMessage>()
                 .ReverseMap();
 
             CreateMap<Ism.Library.V1.Protos.ProcedureIdMessage, ProcedureIdViewModel>()
@@ -113,7 +141,7 @@ namespace Avalanche.Api.MappingConfigurations
             CreateMap<Ism.Library.V1.Protos.AllocateNewProcedureResponse, ProcedureAllocationViewModel>()
                 .ReverseMap();
 
-
+            CreateMap<RecordingTimelineModel, RecordingTimelineViewModel>();
         }
     }
 }

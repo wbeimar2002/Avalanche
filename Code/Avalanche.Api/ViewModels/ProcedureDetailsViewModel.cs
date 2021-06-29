@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Avalanche.Shared.Domain.Models;
+using System;
 using System.Collections.Generic;
 
 namespace Avalanche.Api.ViewModels

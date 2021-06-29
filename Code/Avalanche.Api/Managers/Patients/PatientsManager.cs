@@ -7,15 +7,12 @@ using Avalanche.Api.Utilities;
 using Avalanche.Api.ViewModels;
 using Avalanche.Shared.Domain.Models;
 using Avalanche.Shared.Infrastructure.Configuration;
-using Avalanche.Shared.Infrastructure.Helpers;
 
 using Google.Protobuf.WellKnownTypes;
 
 using Ism.Common.Core.Configuration.Models;
-using Ism.PatientInfoEngine.V1.Protos;
-using Ism.Storage.DataManagement.Client.V1.Protos;
 using Ism.SystemState.Client;
-
+using Ism.Utility.Core;
 using Microsoft.AspNetCore.Http;
 
 using System;
@@ -79,8 +76,6 @@ namespace Avalanche.Api.Managers.Patients
             Preconditions.ThrowIfNull(nameof(newPatient.ProcedureType.Name), newPatient.ProcedureType.Name);
 
             var accessInfo = _accessInfoFactory.GenerateAccessInfo();
-            newPatient.AccessInformation = _mapper.Map<AccessInfoModel>(accessInfo);
-
             var setupSettings = await _storageService.GetJsonObject<SetupConfiguration>(nameof(SetupConfiguration), 1, configurationContext);
 
             //TODO: Pending facility
@@ -105,8 +100,10 @@ namespace Avalanche.Api.Managers.Patients
 
             var allocatedProcedure = await _proceduresManager.AllocateNewProcedure();
 
-            var patientRequest = _mapper.Map<PatientViewModel, Ism.Storage.PatientList.Client.V1.Protos.AddPatientRecordRequest>(newPatient);
-            var result = await _pieService.RegisterPatient(patientRequest);
+            var request = _mapper.Map<PatientViewModel, Ism.Storage.PatientList.Client.V1.Protos.AddPatientRecordRequest>(newPatient);
+            request.AccessInfo = _mapper.Map<Ism.Storage.PatientList.Client.V1.Protos.AccessInfoMessage>(accessInfo);
+
+            var result = await _pieService.RegisterPatient(request);
 
             await PublishActiveProcedure(newPatient, allocatedProcedure);
 
@@ -153,12 +150,13 @@ namespace Avalanche.Api.Managers.Patients
             };
 
             var accessInfo = _accessInfoFactory.GenerateAccessInfo();
-            newPatient.AccessInformation = _mapper.Map<AccessInfoModel>(accessInfo);
-
             var allocatedProcedure = await _proceduresManager.AllocateNewProcedure();
 
-            var patientRequest = _mapper.Map<PatientViewModel, Ism.Storage.PatientList.Client.V1.Protos.AddPatientRecordRequest>(newPatient);
-            var result = await _pieService.RegisterPatient(patientRequest);
+            var request = _mapper.Map<PatientViewModel, Ism.Storage.PatientList.Client.V1.Protos.AddPatientRecordRequest>(newPatient);
+            request.AccessInfo = _mapper.Map<Ism.Storage.PatientList.Client.V1.Protos.AccessInfoMessage>(accessInfo);
+            var result = await _pieService.RegisterPatient(request);
+
+
             await PublishActiveProcedure(newPatient, allocatedProcedure);
 
             return _mapper.Map<Ism.Storage.PatientList.Client.V1.Protos.AddPatientRecordResponse, PatientViewModel>(result);
@@ -179,12 +177,13 @@ namespace Avalanche.Api.Managers.Patients
             var setupSettings = await _storageService.GetJsonObject<SetupConfiguration>(nameof(SetupConfiguration), 1, configurationContext);
 
             var accessInfo = _accessInfoFactory.GenerateAccessInfo();
-            existingPatient.AccessInformation = _mapper.Map<AccessInfoModel>(accessInfo);
 
             await CheckProcedureType(existingPatient.ProcedureType, existingPatient.Department);
 
-            var patientRequest = _mapper.Map<PatientViewModel, Ism.Storage.PatientList.Client.V1.Protos.UpdatePatientRecordRequest>(existingPatient);
-            await _pieService.UpdatePatient(patientRequest);
+            var request = _mapper.Map<PatientViewModel, Ism.Storage.PatientList.Client.V1.Protos.UpdatePatientRecordRequest>(existingPatient);
+            request.AccessInfo = _mapper.Map<Ism.Storage.PatientList.Client.V1.Protos.AccessInfoMessage>(accessInfo);
+
+            await _pieService.UpdatePatient(request);
         }
 
         public async Task DeletePatient(ulong id)
@@ -206,19 +205,21 @@ namespace Avalanche.Api.Managers.Patients
             Preconditions.ThrowIfNull(nameof(filter), filter);
             Preconditions.ThrowIfNull(nameof(filter.Term), filter.Term);
 
-            var search = new PatientSearchFieldsMessage();
+            var search = new Ism.PatientInfoEngine.V1.Protos.PatientSearchFieldsMessage();
             search.Keyword = filter.Term;
 
             //TODO: Facility is internal??? just backend??? Un check box en configuraciones que dice si se filtra o no por facility
             // TODO - get valid culture (either system configuration or passed in via caller)
             var cultureName = CultureInfo.CurrentCulture.Name;
-            filter.CultureName = string.IsNullOrEmpty(cultureName) ? "en-US" : cultureName;
+            cultureName = string.IsNullOrEmpty(cultureName) ? "en-US" : cultureName;
 
             //TODO: This is the final implementation?
-            var accessInfo = _accessInfoFactory.GenerateAccessInfo();
-            filter.AccessInformation = _mapper.Map<AccessInfoModel>(accessInfo);
+            var accessInfo = _accessInfoFactory.GenerateAccessInfo();          
 
             var request = _mapper.Map<Ism.PatientInfoEngine.V1.Protos.SearchRequest>(filter);
+            request.SearchCultureName = cultureName;
+            request.AccessInfo = _mapper.Map<Ism.PatientInfoEngine.V1.Protos.AccessInfoMessage>(accessInfo);
+
             var queryResult = await _pieService.Search(request);
 
             return _mapper.Map<IList<Ism.PatientInfoEngine.V1.Protos.PatientRecordMessage>, IList<PatientViewModel>>(queryResult.UpdatedPatList);
@@ -228,7 +229,7 @@ namespace Avalanche.Api.Managers.Patients
         {
             Preconditions.ThrowIfNull(nameof(filter), filter);
 
-            var search = new PatientSearchFieldsMessage()
+            var search = new Ism.PatientInfoEngine.V1.Protos.PatientSearchFieldsMessage()
             {
                 RoomName = filter.RoomName,
                 LastName = filter.LastName,
@@ -244,13 +245,15 @@ namespace Avalanche.Api.Managers.Patients
             //TODO: Facility is internal??? just backend??? Un check box en configuraciones que dice si se filtra o no por facility
             //TODO: This is the final implementation?
             var accessInfo = _accessInfoFactory.GenerateAccessInfo();
-            filter.AccessInformation = _mapper.Map<AccessInfoModel>(accessInfo);
 
             // TODO - get valid culture (either system configuration or passed in via caller)
             var cultureName = CultureInfo.CurrentCulture.Name;
-            filter.CultureName = string.IsNullOrEmpty(cultureName) ? "en-US" : cultureName;
+            cultureName = string.IsNullOrEmpty(cultureName) ? "en-US" : cultureName;
 
             var request = _mapper.Map<Ism.PatientInfoEngine.V1.Protos.SearchRequest>(filter);
+            request.SearchCultureName = cultureName;
+            request.AccessInfo = _mapper.Map<Ism.PatientInfoEngine.V1.Protos.AccessInfoMessage>(accessInfo);
+
             var queryResult = await _pieService.Search(request);
 
             return _mapper.Map<IList<Ism.PatientInfoEngine.V1.Protos.PatientRecordMessage>, IList<PatientViewModel>>(queryResult.UpdatedPatList);
@@ -260,16 +263,17 @@ namespace Avalanche.Api.Managers.Patients
         private async Task CheckProcedureType(ProcedureTypeModel procedureType, DepartmentModel department)
         {
             //TODO: Validate department support
-            var existingProcedureType = await _dataManagementService.GetProcedureType(new GetProcedureTypeRequest()
+            var existingProcedureType = await _dataManagementService.GetProcedureType(new Ism.Storage.DataManagement.Client.V1.Protos.GetProcedureTypeRequest()
             {
-                 DepartmentId = Convert.ToInt32(department.Id),
+                ProcedureTypeName = procedureType.Name,
+                DepartmentId = Convert.ToInt32(department.Id),
             });
 
             if (existingProcedureType.Id == 0  && string.IsNullOrEmpty(existingProcedureType.Name))
             {
-                await _dataManagementService.AddProcedureType(new AddProcedureTypeRequest()
+                await _dataManagementService.AddProcedureType(new Ism.Storage.DataManagement.Client.V1.Protos.AddProcedureTypeRequest()
                 {
-                    ProcedureType = new ProcedureTypeMessage()
+                    ProcedureType = new Ism.Storage.DataManagement.Client.V1.Protos.ProcedureTypeMessage()
                     {
                         Id = Convert.ToInt32(procedureType.Id),
                         Name = procedureType.Name,
@@ -291,7 +295,7 @@ namespace Avalanche.Api.Managers.Patients
                     repositoryId: allocatedProcedure.ProcedureId.RepositoryName,
 
                     procedureRelativePath: allocatedProcedure.RelativePath,
-
+                    recordingEvents: new List<Ism.SystemState.Models.Procedure.VideoRecordingEvent>(),
                     department: _mapper.Map<Ism.SystemState.Models.Procedure.Department>(patient.Department),
                     procedureType: _mapper.Map<Ism.SystemState.Models.Procedure.ProcedureType>(patient.ProcedureType),
                     physician: _mapper.Map<Ism.SystemState.Models.Procedure.Physician>(patient.Physician),
