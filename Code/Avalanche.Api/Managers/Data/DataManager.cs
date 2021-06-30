@@ -97,8 +97,6 @@ namespace Avalanche.Api.Managers.Data
             return _mapper.Map<AddProcedureTypeResponse, ProcedureTypeModel>(result);
         }
 
-
-
         public async Task DeleteProcedureType(ProcedureTypeModel procedureType)
         {
             Preconditions.ThrowIfNull(nameof(procedureType.Name), procedureType.Name);
@@ -107,8 +105,6 @@ namespace Avalanche.Api.Managers.Data
 
             await _dataManagementService.DeleteProcedureType(_mapper.Map<ProcedureTypeModel, DeleteProcedureTypeRequest>(procedureType));
         }
-
-
 
         public async Task<List<ProcedureTypeModel>> GetProcedureTypesByDepartment(int? departmentId)
         {
@@ -121,8 +117,6 @@ namespace Avalanche.Api.Managers.Data
 
             return _mapper.Map<IList<ProcedureTypeMessage>, IList<ProcedureTypeModel>>(result.ProcedureTypeList).ToList();
         }
-
-
 
         public async Task<List<ProcedureTypeModel>> GetAllProcedureTypes()
         {
@@ -160,44 +154,21 @@ namespace Avalanche.Api.Managers.Data
             }
         }
 
-        public async Task ValidateProcedureTypesSupport(int? procedureTypeId)
-        {
-            var setupSettings = await _storageService.GetJsonObject<SetupConfiguration>(nameof(SetupConfiguration), 1, configurationContext);
-
-            bool procedureTypeSupported = setupSettings.General.ProcedureTypesSupported;
-#warning TODO: Check the strategy to throw business logic exceptions. Same exceptions in Patients Manager
-            if (procedureTypeSupported)
-            {
-                if (procedureTypeId == null || procedureTypeId == 0)
-                    throw new System.ArgumentNullException("Procedure type value is invalid. It should not be null. Departments are supported.");
-            }
-            else
-            {
-                if (procedureTypeId != null && procedureTypeId != 0)
-                    throw new System.ArgumentException("Department value is invalid. Departments are not supported.");
-            }
-        }
-
         public async Task<LabelModel> AddLabel(LabelModel label)
         {
-            await ValidateProcedureTypesSupport(label.ProcedureTypeId);
             Preconditions.ThrowIfNull(nameof(label.Name), label.Name);
-
             var result = await _dataManagementService.AddLabel(_mapper.Map<LabelModel, AddLabelRequest>(label));
             return _mapper.Map<AddLabelResponse, LabelModel>(result);
         }
+
         public async Task DeleteLabel(LabelModel label)
         {
             Preconditions.ThrowIfNull(nameof(label.Name), label.Name);
-
-            await ValidateProcedureTypesSupport(label.ProcedureTypeId);
-
             await _dataManagementService.DeleteLabel(_mapper.Map<LabelModel, DeleteLabelRequest>(label));
         }
+
         public async Task<List<LabelModel>> GetLabelsByProcedureType(int? procedureTypeId)
         {
-            await ValidateProcedureTypesSupport(procedureTypeId);
-
             var result = await _dataManagementService.GetLabelsByProcedureType(new Ism.Storage.DataManagement.Client.V1.Protos.GetLabelsByProcedureTypeRequest()
             {
                 ProcedureTypeId = procedureTypeId
@@ -205,6 +176,7 @@ namespace Avalanche.Api.Managers.Data
 
             return _mapper.Map<IList<LabelMessage>, IList<LabelModel>>(result.LabelList).ToList();
         }
+
         public async Task<List<LabelModel>> GetAllLabels()
         {
             var result = await _dataManagementService.GetAllLabels();

@@ -7,7 +7,6 @@ using Avalanche.Api.Services.Maintenance;
 using Avalanche.Shared.Domain.Models;
 using Avalanche.Shared.Infrastructure.Configuration;
 using Ism.Common.Core.Configuration.Models;
-
 using Microsoft.AspNetCore.Http;
 
 using Moq;
@@ -15,6 +14,7 @@ using Moq;
 using NUnit.Framework;
 
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Avalanche.Api.Tests.Managers
@@ -39,6 +39,7 @@ namespace Avalanche.Api.Tests.Managers
             var config = new MapperConfiguration(cfg =>
             {
                 cfg.AddProfile(new HealthMappingConfiguration());
+                cfg.AddProfile(new LabelMappingConfiguration());
             });
 
             _mapper = config.CreateMapper();
@@ -218,18 +219,102 @@ namespace Avalanche.Api.Tests.Managers
         }
 
         [Test]
-        public void AddLabelShouldFailIfHasProcedureTypeAndProcedureTypeIsNotSupported()
+        public async Task AddLabelWithValidLabelName()
         {
+            var newLabel = new LabelModel()
+            {
+                Id = 1,
+                Name = "Sample",
+                ProcedureTypeId = 1
+            };
             var setupConfiguration = new SetupConfiguration
             {
                 General = new GeneralSetupConfiguration
                 {
-                    ProcedureTypesSupported = false
+                    DepartmentsSupported = false
                 }
             };
 
             _storageService.Setup(mock => mock.GetJsonObject<SetupConfiguration>(nameof(SetupConfiguration), 1, It.IsAny<ConfigurationContext>())).ReturnsAsync(setupConfiguration);
 
+            _dataManagementService.Setup(mock => mock.AddLabel(It.IsAny<Ism.Storage.DataManagement.Client.V1.Protos.AddLabelRequest>()))
+                .ReturnsAsync(new Ism.Storage.DataManagement.Client.V1.Protos.AddLabelResponse()
+                {
+                    IsNew = true,
+                    Label = new Ism.Storage.DataManagement.Client.V1.Protos.LabelMessage
+                    {
+                        Id = 1,
+                        Name = "Sample",
+                        ProcedureTypeId = 1
+                    }
+                });
+
+            var result = await _manager.AddLabel(newLabel);
+            Assert.AreEqual(result.Name, newLabel.Name);
+        }
+
+        [Test]
+        public void AddLabelWithLabelNameAsNull()
+        {
+            var newLabel = new LabelModel()
+            {
+                Id = 1,
+                Name = null,
+                ProcedureTypeId = 1
+            };
+            var setupConfiguration = new SetupConfiguration
+            {
+                General = new GeneralSetupConfiguration
+                {
+                    DepartmentsSupported = false
+                }
+            };
+
+            _storageService.Setup(mock => mock.GetJsonObject<SetupConfiguration>(nameof(SetupConfiguration), 1, It.IsAny<ConfigurationContext>())).ReturnsAsync(setupConfiguration);
+
+            Task Act = _manager.AddLabel(newLabel);
+            Assert.AreEqual(Act.Exception.InnerException.Message, "Value cannot be null. (Parameter 'Name')");
+        }
+
+        [Test]
+        public async Task AddLabelWithValidLabelNameAndEmptyProcedureType()
+        {
+            var newLabel = new LabelModel()
+            {
+                Id = 1,
+                Name = "Sample",
+                ProcedureTypeId = null
+            };
+            var setupConfiguration = new SetupConfiguration
+            {
+                General = new GeneralSetupConfiguration
+                {
+                    DepartmentsSupported = false
+                }
+            };
+
+            _storageService.Setup(mock => mock.GetJsonObject<SetupConfiguration>(nameof(SetupConfiguration), 1, It.IsAny<ConfigurationContext>())).ReturnsAsync(setupConfiguration);
+
+            _dataManagementService.Setup(mock => mock.AddLabel(It.IsAny<Ism.Storage.DataManagement.Client.V1.Protos.AddLabelRequest>()))
+                .ReturnsAsync(new Ism.Storage.DataManagement.Client.V1.Protos.AddLabelResponse()
+                {
+                    IsNew = true,
+                    Label = new Ism.Storage.DataManagement.Client.V1.Protos.LabelMessage
+                    {
+                        Id = 1,
+                        Name = "Sample",
+                        ProcedureTypeId = null
+                    }
+                });
+
+            var result = await _manager.AddLabel(newLabel);
+            Assert.AreEqual(result.Name, newLabel.Name);
+            Assert.AreEqual(result.ProcedureTypeId, null);
+        }
+
+        [Test]
+        public async Task DeleteLabelWithValidLabelName()
+        {
             var newLabel = new LabelModel()
             {
                 Id = 1,
@@ -237,115 +322,48 @@ namespace Avalanche.Api.Tests.Managers
                 ProcedureTypeId = 1
             };
 
-            Task Act() => _manager.AddLabel(newLabel);
+            _dataManagementService.Setup(mock => mock.DeleteLabel(It.IsAny<Ism.Storage.DataManagement.Client.V1.Protos.DeleteLabelRequest>())).Returns(Task.CompletedTask);
 
-            Assert.That(Act, Throws.TypeOf<ArgumentException>());
+            await _manager.DeleteLabel(newLabel);
+
+            _dataManagementService
+                .Verify(mock => mock.DeleteLabel(_mapper.Map<LabelModel, Ism.Storage.DataManagement.Client.V1.Protos.DeleteLabelRequest>(newLabel)), Times.Once);
         }
+
         [Test]
-        public void AddLabelShouldFailIfProcedureTypeIsNullAndProcedureTyeIsSupported()
+        public async Task GetLabelsByProcedureTypeWithValidProcedureTypeId()
         {
-            var setupConfiguration = new SetupConfiguration
-            {
-                General = new GeneralSetupConfiguration
-                {
-                    ProcedureTypesSupported = true
-                }
-            };
-
-            _storageService.Setup(mock => mock.GetJsonObject<SetupConfiguration>(nameof(SetupConfiguration), 1, It.IsAny<ConfigurationContext>())).ReturnsAsync(setupConfiguration);
-
             var newLabel = new LabelModel()
-            {
-                Id = 1,
-                Name = "Sample",
-                ProcedureTypeId = null
-            };
-
-            Task Act() => _manager.AddLabel(newLabel);
-
-            Assert.That(Act, Throws.TypeOf<ArgumentNullException>());
-        }
-        [Test]
-        public void DeleteLabelShouldFailIfHasProcedureTypeAndProcedureTypeIsNotSupported()
-        {
-            var setupConfiguration = new SetupConfiguration
-            {
-                General = new GeneralSetupConfiguration
-                {
-                    ProcedureTypesSupported = false
-                }
-            };
-
-            _storageService.Setup(mock => mock.GetJsonObject<SetupConfiguration>(nameof(SetupConfiguration), 1, It.IsAny<ConfigurationContext>())).ReturnsAsync(setupConfiguration);
-
-            var label = new LabelModel()
             {
                 Id = 1,
                 Name = "Sample",
                 ProcedureTypeId = 1
             };
 
-            Task Act() => _manager.DeleteLabel(label);
+            var response = new Ism.Storage.DataManagement.Client.V1.Protos.GetLabelsResponse();            
 
-            Assert.That(Act, Throws.TypeOf<ArgumentException>());
-        }
-        [Test]
-        public void DeleteLabelShouldFailIfProcedureTypeIsNullAndProcedureTypeIsSupported()
-        {
-            var setupConfiguration = new SetupConfiguration
-            {
-                General = new GeneralSetupConfiguration
+            _dataManagementService.Setup(mock => mock.GetLabelsByProcedureType(It.IsAny<Ism.Storage.DataManagement.Client.V1.Protos.GetLabelsByProcedureTypeRequest>()))
+                .ReturnsAsync(response);
+
+            var result = await _manager.GetLabelsByProcedureType(newLabel.ProcedureTypeId);
+
+            _dataManagementService.Verify(mock => mock.GetLabelsByProcedureType(
+                new Ism.Storage.DataManagement.Client.V1.Protos.GetLabelsByProcedureTypeRequest()
                 {
-                    ProcedureTypesSupported = true
-                }
-            };
-
-            _storageService.Setup(mock => mock.GetJsonObject<SetupConfiguration>(nameof(SetupConfiguration), 1, It.IsAny<ConfigurationContext>())).ReturnsAsync(setupConfiguration);
-
-            var label = new LabelModel()
-            {
-                Id = 1,
-                Name = "Sample",
-                ProcedureTypeId = null
-            };
-
-            Task Act() => _manager.DeleteLabel(label);
-
-            Assert.That(Act, Throws.TypeOf<ArgumentNullException>());
+                    ProcedureTypeId = newLabel.ProcedureTypeId
+                }), Times.Once); 
         }
+
         [Test]
-        public void GetLabelsByProcedureTypeShouldFailIfHasProcedureTypeAndProcedureTypeIsNotSupported()
+        public async Task GetAllLabels()
         {
-            var setupConfiguration = new SetupConfiguration
-            {
-                General = new GeneralSetupConfiguration
-                {
-                    ProcedureTypesSupported = false
-                }
-            };
+            var response = new Ism.Storage.DataManagement.Client.V1.Protos.GetLabelsResponse();
 
-            _storageService.Setup(mock => mock.GetJsonObject<SetupConfiguration>(nameof(SetupConfiguration), 1, It.IsAny<ConfigurationContext>())).ReturnsAsync(setupConfiguration);
+            _dataManagementService.Setup(mock => mock.GetAllLabels()).ReturnsAsync(response);
 
-            Task Act() => _manager.GetLabelsByProcedureType(1);
+            var result = await _manager.GetAllLabels();
 
-            Assert.That(Act, Throws.TypeOf<ArgumentException>());
-        }
-        [Test]
-        public void GetLabelsByProcedureTypeShouldFailIfProcedureTypeIsNullAndProcedureTypeIsSupported()
-        {
-            var setupConfiguration = new SetupConfiguration
-            {
-                General = new GeneralSetupConfiguration
-                {
-                    ProcedureTypesSupported = true
-                }
-            };
-
-            _storageService.Setup(mock => mock.GetJsonObject<SetupConfiguration>(nameof(SetupConfiguration), 1, It.IsAny<ConfigurationContext>())).ReturnsAsync(setupConfiguration);
-
-            Task Act() => _manager.GetLabelsByProcedureType(null);
-
-            Assert.That(Act, Throws.TypeOf<ArgumentNullException>());
+            _dataManagementService.Verify(mock => mock.GetAllLabels(), Times.Once);
         }
     }
 }

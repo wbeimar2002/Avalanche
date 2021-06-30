@@ -9,8 +9,7 @@ namespace Avalanche.Shared.Infrastructure.Configuration
     public class SetupConfiguration : IConfigurationPoco
     {
         public GeneralSetupConfiguration General { get; set; }
-        public RegistrationSetupConfiguration Registration { get; set; }
-        
+        public RegistrationSetupConfiguration Registration { get; set; }        
 
         public bool Validate()
         {
@@ -24,8 +23,6 @@ namespace Avalanche.Shared.Infrastructure.Configuration
         public RoutingModes SurgeryMode { get; set; }
         public int ScreenMode { get; set; }
         public bool DepartmentsSupported { get; set; }
-        public bool ProcedureTypesSupported { get; set; }
-        public bool LabelsSupported { get; set; }
     }
 
     public class QuickSetupConfiguration
