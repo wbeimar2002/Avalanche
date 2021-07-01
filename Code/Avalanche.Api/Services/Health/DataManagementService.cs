@@ -33,5 +33,15 @@ namespace Avalanche.Api.Services.Health
         public async Task<GetProcedureTypesResponse> GetAllProcedureTypes() => await _client.GetProceduresTypes(new Empty());
 
         public async Task<ProcedureTypeMessage> GetProcedureType(GetProcedureTypeRequest request) => await _client.GetProcedureType(request);
+
+        public async Task<AddLabelResponse> AddLabel(AddLabelRequest request) => await _client.AddLabel(request);
+
+        public async Task DeleteLabel(DeleteLabelRequest request) => await _client.DeleteLabel(request);
+
+        public async Task<GetLabelsResponse> GetLabelsByProcedureType(GetLabelsByProcedureTypeRequest request) => await _client.GetLabelsByProcedureType(request);
+
+        public async Task<GetLabelsResponse> GetAllLabels() => await _client.GetLabels(new Empty());
+
+        public async Task<LabelMessage> GetLabel(GetLabelRequest request) => await _client.GetLabel(request);
     }
 }

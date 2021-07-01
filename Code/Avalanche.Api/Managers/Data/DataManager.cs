@@ -153,5 +153,35 @@ namespace Avalanche.Api.Managers.Data
                     throw new System.ArgumentException("Department value is invalid. Departments are not supported.");
             }
         }
+
+        public async Task<LabelModel> AddLabel(LabelModel label)
+        {
+            Preconditions.ThrowIfNull(nameof(label.Name), label.Name);
+            var result = await _dataManagementService.AddLabel(_mapper.Map<LabelModel, AddLabelRequest>(label));
+            return _mapper.Map<AddLabelResponse, LabelModel>(result);
+        }
+
+        public async Task DeleteLabel(LabelModel label)
+        {
+            Preconditions.ThrowIfNull(nameof(label.Name), label.Name);
+            await _dataManagementService.DeleteLabel(_mapper.Map<LabelModel, DeleteLabelRequest>(label));
+        }
+
+        public async Task<List<LabelModel>> GetLabelsByProcedureType(int? procedureTypeId)
+        {
+            var result = await _dataManagementService.GetLabelsByProcedureType(new Ism.Storage.DataManagement.Client.V1.Protos.GetLabelsByProcedureTypeRequest()
+            {
+                ProcedureTypeId = procedureTypeId
+            });
+
+            return _mapper.Map<IList<LabelMessage>, IList<LabelModel>>(result.LabelList).ToList();
+        }
+
+        public async Task<List<LabelModel>> GetAllLabels()
+        {
+            var result = await _dataManagementService.GetAllLabels();
+
+            return _mapper.Map<IList<LabelMessage>, IList<LabelModel>>(result.LabelList).ToList();
+        }
     }
 }
