@@ -255,6 +255,7 @@ namespace Avalanche.Api.Tests.Controllers
 
             Assert.IsInstanceOf<OkObjectResult>(okResult.Result);
         }
+
         [Test]
         public void DeleteLabelTypeShouldReturnOkResult()
         {
@@ -269,6 +270,7 @@ namespace Avalanche.Api.Tests.Controllers
 
             Assert.IsInstanceOf<OkResult>(okResult.Result);
         }
+
         [Test]
         public void DeleteLabelByProcedureTypeShouldReturnOkResult()
         {
@@ -283,6 +285,7 @@ namespace Avalanche.Api.Tests.Controllers
 
             Assert.IsInstanceOf<OkResult>(okResult.Result);
         }
+
         [Test]
         public void GetLabelsByProcedureTypeShouldReturnBadResultIfFails()
         {
@@ -299,6 +302,7 @@ namespace Avalanche.Api.Tests.Controllers
 
             Assert.IsInstanceOf<BadRequestObjectResult>(badResult.Result);
         }
+
         [Test]
         public void GetLabelsShouldReturnOkResult()
         {
@@ -313,6 +317,7 @@ namespace Avalanche.Api.Tests.Controllers
 
             Assert.IsInstanceOf<OkObjectResult>(okResult.Result);
         }
+
         [Test]
         public void GetLabelsShouldReturnBadResultIfFails()
         {
@@ -329,6 +334,7 @@ namespace Avalanche.Api.Tests.Controllers
 
             Assert.IsInstanceOf<BadRequestObjectResult>(badResult.Result);
         }
+
         [Test]
         public void GetLabelsByProcedureTypeShouldReturnOkResult()
         {
