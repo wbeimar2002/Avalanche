@@ -8,6 +8,7 @@ namespace Avalanche.Api.ViewModels
         public string SourceName { get; set; }
         public string ChannelName { get; set; }
         public string RelativePath { get; set; }
+        public string Label { get; set; }
         public string ThumbnailRelativePath { get; set; }
         public DateTimeOffset VideoStartTimeUtc { get; set; }
         public DateTimeOffset? VideoStopTimeUtc { get; set; }
@@ -16,13 +17,14 @@ namespace Avalanche.Api.ViewModels
         public ProcedureVideoViewModel()
         { }
 
-        public ProcedureVideoViewModel(Guid videoId, string sourceName, string channelName, string relativePath, string thumbnailRelativePath, DateTimeOffset videoStartTimeUtc, DateTimeOffset? videoStopTimeUtc, TimeSpan videoDuration)
+        public ProcedureVideoViewModel(Guid videoId, string sourceName, string channelName, string relativePath, string thumbnailRelativePath, DateTimeOffset videoStartTimeUtc, DateTimeOffset? videoStopTimeUtc, TimeSpan videoDuration, string label)
         {
             VideoId = videoId;
             SourceName = sourceName;
             ChannelName = channelName;
             RelativePath = relativePath;
             ThumbnailRelativePath = thumbnailRelativePath;
+            Label = label;
             VideoStartTimeUtc = videoStartTimeUtc;
             VideoStopTimeUtc = videoStopTimeUtc;
             VideoDuration = videoDuration;

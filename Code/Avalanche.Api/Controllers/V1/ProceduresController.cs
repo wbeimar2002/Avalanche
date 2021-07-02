@@ -255,9 +255,9 @@ namespace Avalanche.Api.Controllers.V1
         /// </summary>
         /// <returns></returns>
         [HttpPut]
-        [Route("{id}/videos/{contentId}", Name = "ApplyLabelToVideo")]
-        [Route("{id}/images/{contentId}", Name = "ApplyLabelToImage")]
-        public async Task<IActionResult> ApplyLabelToActiveProcedure(string id, string contentId, LabelContentViewModel labelContent)
+        [Route("active/videos/{id}", Name = "ApplyLabelToVideo")]
+        [Route("active/images/{id}", Name = "ApplyLabelToImage")]
+        public async Task<IActionResult> ApplyLabelToActiveProcedure(string id, LabelContentViewModel labelContent)
         {
             try
             {

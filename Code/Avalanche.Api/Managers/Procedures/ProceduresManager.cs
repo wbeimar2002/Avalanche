@@ -196,21 +196,29 @@ namespace Avalanche.Api.Managers.Procedures
         {
             Preconditions.ThrowIfNullOrEmptyOrWhiteSpace(nameof(labelContent.Label), labelContent.Label);
             var activeProcedure = await _stateClient.GetData<ActiveProcedureState>();
-            var test = activeProcedure.Images;
+
+            if (labelContent.ProcedureContentType == ProcedureContentType.Image)
+            {
+                var imageToEdit = activeProcedure.Images.First(y => y.ImageId == labelContent.ContentId);
+                imageToEdit.Label = labelContent.Label;
+            }
+            else 
+            {
+                var videoToEdit = activeProcedure.Videos.First(y => y.VideoId == labelContent.ContentId);
+                videoToEdit.Label = labelContent.Label;
+            }
 
             await _stateClient.AddOrUpdateData(activeProcedure, x =>
             {
                 if (labelContent.ProcedureContentType == ProcedureContentType.Image)
                 {
-                    x.Replace(data => data.Images.First(y => y.ImageId == labelContent.ContentId).Label, labelContent.Label);
+                    x.Replace(data => data.Images, activeProcedure.Images);
                 }
-
-                if (labelContent.ProcedureContentType == ProcedureContentType.Video)
+                else 
                 {
-                    x.Replace(data => data.Videos.First(y => y.VideoId == labelContent.ContentId).Label, labelContent.Label);
+                    x.Replace(data => data.Videos, activeProcedure.Videos);
                 }
             });
         }
-
     }
 }
