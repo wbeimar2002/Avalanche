@@ -192,5 +192,25 @@ namespace Avalanche.Api.Managers.Procedures
             return _mapper.Map<ProcedureMessage, ProcedureViewModel>(response.Procedure);
         }
 
+        public async Task ApplyLabelToActiveProcedure(LabelContentViewModel labelContent)
+        {
+            Preconditions.ThrowIfNullOrEmptyOrWhiteSpace(nameof(labelContent.Label), labelContent.Label);
+            var activeProcedure = await _stateClient.GetData<ActiveProcedureState>();
+            var test = activeProcedure.Images;
+
+            await _stateClient.AddOrUpdateData(activeProcedure, x =>
+            {
+                if (labelContent.ProcedureContentType == ProcedureContentType.Image)
+                {
+                    x.Replace(data => data.Images.First(y => y.ImageId == labelContent.ContentId).Label, labelContent.Label);
+                }
+
+                if (labelContent.ProcedureContentType == ProcedureContentType.Video)
+                {
+                    x.Replace(data => data.Videos.First(y => y.VideoId == labelContent.ContentId).Label, labelContent.Label);
+                }
+            });
+        }
+
     }
 }
