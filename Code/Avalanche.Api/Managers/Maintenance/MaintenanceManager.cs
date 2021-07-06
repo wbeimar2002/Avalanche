@@ -579,8 +579,8 @@ namespace Avalanche.Api.Managers.Maintenance
 
             SettingsHelper.Map(source, label);
 
-            if (SettingsHelper.IsPropertyExist(source.Label, "Id"))
-                label.ProcedureTypeId = source.ProcedureTypeId?.Id;
+            if (SettingsHelper.PropertyExists(source.ProcedureType, "Id"))
+                label.ProcedureTypeId = Convert.ToInt32(source.ProcedureType?.Id);
 
             switch (action)
             {
@@ -601,7 +601,7 @@ namespace Avalanche.Api.Managers.Maintenance
 
             SettingsHelper.Map(source, procedureType);
 
-            if (SettingsHelper.IsPropertyExist(source.Department, "Id"))
+            if (SettingsHelper.PropertyExists(source.Department, "Id"))
                 procedureType.DepartmentId = Convert.ToInt32(source.Department?.Id);
 
             switch (action)

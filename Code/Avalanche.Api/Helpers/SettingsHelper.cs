@@ -41,7 +41,7 @@ namespace Avalanche.Api.Helpers
             }
         }
 
-        public static bool IsPropertyExist(dynamic entity, string name)
+        public static bool PropertyExists(dynamic entity, string name)
         {
             if (entity is ExpandoObject)
                 return ((IDictionary<string, object>)entity).ContainsKey(name);
