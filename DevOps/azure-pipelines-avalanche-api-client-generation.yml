@@ -131,7 +131,7 @@ stages:
         #nom run build
         #ng build --prod
        displayName: 'npm install/ng build'
-
+       workingDirectory: 'avalanche-api-client'
      - script:  |
         npm run build
        displayName: 'npm run build'
