@@ -126,7 +126,8 @@ stages:
      - script: |
         npm install -g @angular/cli
         npm install
-        ng build --prod
+        nom run build
+        #ng build --prod
        displayName: 'npm install/ng build'
 
      #- script:
