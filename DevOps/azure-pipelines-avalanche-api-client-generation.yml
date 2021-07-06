@@ -127,8 +127,8 @@ stages:
 
      - script: |
         npm install -g @angular/cli@12.0.1
-       displayName: 'npm install/ng build'
-       workingDirectory: 'npm install -g @angular/cli@12.0.1'
+       displayName: 'npm install -g @angular/cli@12.0.1'
+       workingDirectory: 'avalanche-api-client''
 
      - script: |
         npm install -g @angular-devkit/build-angular
