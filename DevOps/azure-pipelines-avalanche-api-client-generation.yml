@@ -110,12 +110,14 @@ stages:
        inputs:
         sourceFolder: 'avalanche-api/Code/Avalanche.Api/ApiClient'
         contents: '**' 
-        targetFolder: 'avalanche-api-client/dist/avalanche-client-scripts/src/lib'
+        targetFolder: 'avalanche-api-client/projects/avalanche-client-scripts/src/lib'
+        #targetFolder: 'avalanche-api-client/dist/avalanche-client-scripts/src/lib'
        displayName: 'Copy client to Angular project'
 
      - script:  |
         mv api.ts client-api.ts
-       workingDirectory: 'avalanche-api-client/dist/avalanche-client-scripts/src/lib'
+       workingDirectory: 'avalanche-api-client/projects/avalanche-client-scripts/src/lib' 
+       #workingDirectory: 'avalanche-api-client/dist/avalanche-client-scripts/src/lib'
        displayName: 'Rename client file'
 
      - task: NodeTool@0
