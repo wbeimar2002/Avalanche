@@ -6,7 +6,7 @@ namespace Avalanche.Api.ViewModels
 {
     public class ProcedureSearchFilterViewModel : FilterViewModelBase
     {
-        public string KeyWord { get; set; }
+        public string Keyword { get; set; }
 
         public DateTime? StartCreationTime { get; set; }
         public DateTime? EndCreationTime { get; set; }

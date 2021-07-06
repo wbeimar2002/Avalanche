@@ -6,6 +6,7 @@ namespace Avalanche.Shared.Domain.Enumerations
 {
     public enum VideoAutoEditStatus
     {
+        Empty,
         Pending,
         InProgress,
         Completed
