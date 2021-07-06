@@ -135,7 +135,7 @@ stages:
      - script:  |
         npm run build
        displayName: 'npm run build'
-      #workingDirectory: 'avalanche-web/avalanche-web'
+       workingDirectory: 'avalanche-api-client'
 
      #- script:
         #npm install
