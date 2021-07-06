@@ -128,9 +128,14 @@ stages:
      - script: |
         npm install -g @angular/cli
         npm install
-        nom run build
+        #nom run build
         #ng build --prod
        displayName: 'npm install/ng build'
+
+     - script:  |
+        npm run build
+       displayName: 'npm run build'
+      #workingDirectory: 'avalanche-web/avalanche-web'
 
      #- script:
         #npm install
