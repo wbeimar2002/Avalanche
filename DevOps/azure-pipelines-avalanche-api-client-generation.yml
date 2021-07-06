@@ -110,12 +110,12 @@ stages:
        inputs:
         sourceFolder: 'avalanche-api/Code/Avalanche.Api/ApiClient'
         contents: '**' 
-        targetFolder: 'avalanche-api-client/projects/avalanche-client-scripts/src/lib'
+        targetFolder: 'avalanche-api-client/dist/avalanche-client-scripts/src/lib'
        displayName: 'Copy client to Angular project'
 
      - script:  |
         mv api.ts client-api.ts
-       workingDirectory: 'avalanche-api-client/projects/avalanche-client-scripts/src/lib'
+       workingDirectory: 'avalanche-api-client/dist/avalanche-client-scripts/src/lib'
        displayName: 'Rename client file'
 
      - task: NodeTool@0
@@ -150,7 +150,7 @@ stages:
      - task: Npm@1
        inputs:
         command: 'custom'
-        workingDir: 'avalanche-api-client\projects\avalanche-client-scripts'
+        workingDir: 'avalanche-api-client\dist\avalanche-client-scripts'
         verbose: false
         customCommand: 'version $(new_version) --no-git-tag-version --allow-same-version'
         customRegistry: 'useFeed'
@@ -161,7 +161,7 @@ stages:
      - task: Npm@1
        inputs:
           command: publish
-          workingDir: 'avalanche-api-client\projects\avalanche-client-scripts'
+          workingDir: 'avalanche-api-client\dist\avalanche-client-scripts'
           verbose: false
           publishRegistry: useFeed
           publishFeed: '$(VstsFeed)'

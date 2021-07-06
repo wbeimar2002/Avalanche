@@ -9,8 +9,7 @@ namespace Avalanche.Shared.Infrastructure.Configuration
     public class SetupConfiguration : IConfigurationPoco
     {
         public GeneralSetupConfiguration General { get; set; }
-        public RegistrationSetupConfiguration Registration { get; set; }
-        
+        public RegistrationSetupConfiguration Registration { get; set; }        
 
         public bool Validate()
         {

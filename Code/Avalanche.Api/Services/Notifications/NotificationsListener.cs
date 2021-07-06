@@ -66,7 +66,12 @@ namespace Avalanche.Api.Services.Notifications
 
             AddSubscription<DiskSpaceEvent>(evt => _hubContext.Clients.All.OnDiskSpaceStateChanged(evt));
 
-            AddDataSubscription<ActiveProcedureState>(data => _hubContext.Clients.All.OnActiveProcedureStateChanged(_mapper.Map<Avalanche.Api.ViewModels.ActiveProcedureViewModel>(data)));
+            AddDataSubscription<ActiveProcedureState>(data =>
+            {
+                var mapped = _mapper.Map<Avalanche.Api.ViewModels.ActiveProcedureViewModel>(data);
+                _hubContext.Clients.All.OnActiveProcedureStateChanged(mapped);
+            });
+
             AddDataSubscription<PgsDisplayStateData>(data => _hubContext.Clients.All.OnPgsDisplayStateDataChanged(data));
             AddDataSubscription<PgsTimeoutPlayerData>(data => _hubContext.Clients.All.OnPgsTimeoutPlayerDataChanged(data));
             AddDataSubscription<DisplayRecordStateData>(data => _hubContext.Clients.All.OnDisplayBasedRecordingStateDataChanged(data));

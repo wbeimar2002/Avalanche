@@ -240,5 +240,114 @@ namespace Avalanche.Api.Tests.Controllers
 
             Assert.IsInstanceOf<OkResult>(okResult.Result);
         }
+
+        [Test]
+        public void AddLabelShouldReturnOkResult()
+        {
+            var okResult = _controller.AddLabel(It.IsAny<LabelModel>());
+
+            if (_checkLogger)
+            {
+                _logger.Verify(LogLevel.Error, $"Exception {_controller.GetType().Name}.AddLabel", Times.Never());
+                _logger.Verify(LogLevel.Debug, $"Requested {_controller.GetType().Name}.AddLabel", Times.Once());
+                _logger.Verify(LogLevel.Debug, $"Completed {_controller.GetType().Name}.AddLabel", Times.Once());
+            }
+
+            Assert.IsInstanceOf<OkObjectResult>(okResult.Result);
+        }
+
+        [Test]
+        public void DeleteLabelTypeShouldReturnOkResult()
+        {
+            var okResult = _controller.DeleteLabel(It.IsAny<string>());
+
+            if (_checkLogger)
+            {
+                _logger.Verify(LogLevel.Error, $"Exception {_controller.GetType().Name}.DeleteLabel", Times.Never());
+                _logger.Verify(LogLevel.Debug, $"Requested {_controller.GetType().Name}.DeleteLabel", Times.Once());
+                _logger.Verify(LogLevel.Debug, $"Completed {_controller.GetType().Name}.DeleteLabel", Times.Once());
+            }
+
+            Assert.IsInstanceOf<OkResult>(okResult.Result);
+        }
+
+        [Test]
+        public void DeleteLabelByProcedureTypeShouldReturnOkResult()
+        {
+            var okResult = _controller.DeleteLabel(It.IsAny<int>(), It.IsAny<int>());
+
+            if (_checkLogger)
+            {
+                _logger.Verify(LogLevel.Error, $"Exception {_controller.GetType().Name}.DeleteLabel", Times.Never());
+                _logger.Verify(LogLevel.Debug, $"Requested {_controller.GetType().Name}.DeleteLabel", Times.Once());
+                _logger.Verify(LogLevel.Debug, $"Completed {_controller.GetType().Name}.DeleteLabel", Times.Once());
+            }
+
+            Assert.IsInstanceOf<OkResult>(okResult.Result);
+        }
+
+        [Test]
+        public void GetLabelsByProcedureTypeShouldReturnBadResultIfFails()
+        {
+            _metadataManager.Setup(mock => mock.GetLabelsByProcedureType(It.IsAny<int>())).Throws(It.IsAny<Exception>());
+
+            var badResult = _controller.GetLabelsByProcedureType(It.IsAny<int>());
+
+            if (_checkLogger)
+            {
+                _logger.Verify(LogLevel.Error, $"Exception {_controller.GetType().Name}.GetLabelsByProcedureType", Times.Once());
+                _logger.Verify(LogLevel.Debug, $"Requested {_controller.GetType().Name}.GetLabelsByProcedureType", Times.Once());
+                _logger.Verify(LogLevel.Debug, $"Completed {_controller.GetType().Name}.GetLabelsByProcedureType", Times.Once());
+            }
+
+            Assert.IsInstanceOf<BadRequestObjectResult>(badResult.Result);
+        }
+
+        [Test]
+        public void GetLabelsShouldReturnOkResult()
+        {
+            var okResult = _controller.GetLabels();
+
+            if (_checkLogger)
+            {
+                _logger.Verify(LogLevel.Error, $"Exception {_controller.GetType().Name}.GetLabels", Times.Never());
+                _logger.Verify(LogLevel.Debug, $"Requested {_controller.GetType().Name}.GetLabels", Times.Once());
+                _logger.Verify(LogLevel.Debug, $"Completed {_controller.GetType().Name}.GetLabels", Times.Once());
+            }
+
+            Assert.IsInstanceOf<OkObjectResult>(okResult.Result);
+        }
+
+        [Test]
+        public void GetLabelsShouldReturnBadResultIfFails()
+        {
+            _metadataManager.Setup(mock => mock.GetLabelsByProcedureType(null)).Throws(It.IsAny<Exception>());
+
+            var badResult = _controller.GetLabels();
+
+            if (_checkLogger)
+            {
+                _logger.Verify(LogLevel.Error, $"Exception {_controller.GetType().Name}.GetLabels", Times.Once());
+                _logger.Verify(LogLevel.Debug, $"Requested {_controller.GetType().Name}.GetLabels", Times.Once());
+                _logger.Verify(LogLevel.Debug, $"Completed {_controller.GetType().Name}.GetLabels", Times.Once());
+            }
+
+            Assert.IsInstanceOf<BadRequestObjectResult>(badResult.Result);
+        }
+
+        [Test]
+        public void GetLabelsByProcedureTypeShouldReturnOkResult()
+        {
+            var okResult = _controller.GetLabelsByProcedureType(It.IsAny<int>());
+
+            if (_checkLogger)
+            {
+                _logger.Verify(LogLevel.Error, $"Exception {_controller.GetType().Name}.GetLabelsByProcedureType", Times.Never());
+                _logger.Verify(LogLevel.Debug, $"Requested {_controller.GetType().Name}.GetLabelsByProcedureType", Times.Once());
+                _logger.Verify(LogLevel.Debug, $"Completed {_controller.GetType().Name}.GetLabelsByProcedureType", Times.Once());
+            }
+
+            Assert.IsInstanceOf<OkObjectResult>(okResult.Result);
+        }
     }
 }

@@ -13,7 +13,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Threading.Tasks;
-using System.Linq;
+using System.Collections.Generic;
 
 namespace Avalanche.Api.Controllers.V1
 {
@@ -144,6 +144,33 @@ namespace Avalanche.Api.Controllers.V1
             }
         }
 
+        /// <summary>
+        /// Delete content items (image/video) from the active procedure
+        /// </summary>
+        /// <param name="contentType"></param>
+        /// <param name="contentIds"></param>
+        /// <returns></returns>
+        [HttpDelete("active/contents")]
+        public async Task<IActionResult> DeleteActiveProcedureContentItems(ProcedureContentType contentType, IEnumerable<Guid> contentIds)
+        {
+            try
+            {
+                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
+
+                await _proceduresManager.DeleteActiveProcedureMediaItems(contentType, contentIds);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, LoggerHelper.GetLogMessage(DebugLogType.Exception));
+                return new BadRequestObjectResult(ex.Get(_environment.IsDevelopment()));
+            }
+            finally
+            {
+                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
+            }
+        }
+
 
         /// <summary>
         /// Discard Active Procedure
@@ -209,6 +236,34 @@ namespace Avalanche.Api.Controllers.V1
                 _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
 
                 await _proceduresManager.ConfirmActiveProcedure();
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, LoggerHelper.GetLogMessage(DebugLogType.Exception));
+                return new BadRequestObjectResult(ex.Get(_environment.IsDevelopment()));
+            }
+            finally
+            {
+                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
+            }
+        }
+
+
+        /// <summary>
+        /// Apply label to image or video
+        /// </summary>
+        /// <returns></returns>
+        [HttpPut]
+        [Route("active/videos/{id}", Name = "ApplyLabelToVideo")]
+        [Route("active/images/{id}", Name = "ApplyLabelToImage")]
+        public async Task<IActionResult> ApplyLabelToActiveProcedure(string id, LabelContentViewModel labelContent)
+        {
+            try
+            {
+                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
+
+                await _proceduresManager.ApplyLabelToActiveProcedure(labelContent);
                 return Ok();
             }
             catch (Exception ex)
