@@ -161,6 +161,12 @@ namespace Avalanche.Api.Managers.Maintenance
                     var procedureTypes = await _dataManager.GetAllProcedureTypes();
                     values = JsonConvert.DeserializeObject<List<dynamic>>(JsonConvert.SerializeObject(procedureTypes));
                     break;
+
+                case "Labels":
+                    var labels = await _dataManager.GetAllLabels();
+                    values = JsonConvert.DeserializeObject<List<dynamic>>(JsonConvert.SerializeObject(labels));
+                    break;
+
                 default:
                     values = await _storageService.GetJsonDynamicList(category.SourceKey, 1, configurationContext);
                     break;
@@ -204,7 +210,6 @@ namespace Avalanche.Api.Managers.Maintenance
                             foreach (var element in category.Data)
                             {
                                 SetRelatedObject(property, element);
-
                             }
                         }
                     }
@@ -217,24 +222,32 @@ namespace Avalanche.Api.Managers.Maintenance
         private static void SetRelatedObject(DynamicPropertyViewModel property, ExpandoObject element)
         {
             var serializedElement = JsonConvert.SerializeObject(element);
+            
             JObject jsonElement = JObject.Parse(serializedElement);
 
             var id = jsonElement[property.JsonKey].ToString();
 
-            string relatedObject =
-                JsonConvert.SerializeObject(property.SourceValues.Where(s => s.Id == id));
+            var found = property.SourceValues.Where(s => s.Id == id).FirstOrDefault();
 
-            relatedObject = relatedObject == null || relatedObject == "null" ? "{}" : relatedObject;
+            if (found == null)
+            {
+                jsonElement.Add(new JProperty(property.JsonKeyForRelatedObject, JObject.Parse("{}")));
+            }
+            else
+            { 
+                string relatedObject = JsonConvert.SerializeObject(found.RelatedObject);
 
-            jsonElement.Add(new JProperty(property.JsonKeyForRelatedObject, JObject.Parse(relatedObject)));
+                jsonElement.Add(new JProperty(property.JsonKeyForRelatedObject, JObject.Parse(relatedObject)));
 
-            dynamic jsonElementObject = JsonConvert.DeserializeObject<ExpandoObject>(jsonElement.ToString());
+                dynamic jsonElementObject = JsonConvert.DeserializeObject<ExpandoObject>(JsonConvert.SerializeObject(jsonElement));
 
-            var _original = (IDictionary<string, object>)jsonElementObject;
-            var _clone = (IDictionary<string, object>)element;
+                var _original = (IDictionary<string, object>)jsonElementObject;
+                var _clone = (IDictionary<string, object>)element;
 
-            foreach (var propertyKey in _original)
-                _clone[propertyKey.Key] = propertyKey.Value;
+                foreach (var propertyKey in _original)
+                    _clone[propertyKey.Key] = propertyKey.Value;
+            }
+
         }
 
         private async Task<IList<dynamic>> GetPropertySources(DynamicBaseSettingViewModel property)
@@ -273,6 +286,11 @@ namespace Avalanche.Api.Managers.Maintenance
                         var departments = await _dataManager.GetAllDepartments();
                         var dynamicDepartments = JsonConvert.DeserializeObject<List<dynamic>>(JsonConvert.SerializeObject(departments));
                         return GetDynamicList(property, dynamicDepartments);
+
+                    case "ProcedureTypes":
+                        var procedureTypes = await _dataManager.GetAllProcedureTypes();
+                        var dynamicProcedureTypes = JsonConvert.DeserializeObject<List<dynamic>>(JsonConvert.SerializeObject(procedureTypes));
+                        return GetDynamicList(property, dynamicProcedureTypes);
 
                     default:
                         return await GetDynamicData(property);
@@ -517,10 +535,13 @@ namespace Avalanche.Api.Managers.Maintenance
             switch (customList.SourceKey)
             {
                 case "Departments":
-                    await SaveDepartments(action, customList.Entity);
+                    await SaveDepartment(action, customList.Entity);
                     break;
                 case "ProcedureTypes":
-                    await SaveProcedureTypes(action, customList.Entity);
+                    await SaveProcedureType(action, customList.Entity);
+                    break;
+                case "Labels":
+                    await SaveLabel(action, customList.Entity);
                     break;
                 default:
                     throw new ValidationException("Method Not Allowed");
@@ -534,26 +555,54 @@ namespace Avalanche.Api.Managers.Maintenance
                 case "Departments":
                     foreach (var item in category.NewData)
                     {
-                        await SaveDepartments(DynamicListActions.Insert, item);
+                        await SaveDepartment(DynamicListActions.Insert, item);
                     }
                     break;
                 case "ProcedureTypes":
                     foreach (var item in category.DeletedData)
                     {
-                        await SaveDepartments(DynamicListActions.Delete, item);
+                        await SaveDepartment(DynamicListActions.Delete, item);
+                    }
+                    break;
+                case "Labels":
+                    foreach (var item in category.DeletedData)
+                    {
+                        await SaveLabel(DynamicListActions.Delete, item);
                     }
                     break;
             }
         }
 
-        private async Task SaveProcedureTypes(DynamicListActions action, dynamic source)
+        private async Task SaveLabel(DynamicListActions action, dynamic source)
+        {
+            var label = new LabelModel();
+
+            SettingsHelper.Map(source, label);
+
+            if (SettingsHelper.IsPropertyExist(source.Label, "Id"))
+                label.ProcedureTypeId = source.ProcedureTypeId?.Id;
+
+            switch (action)
+            {
+                case DynamicListActions.Insert:
+                    await _dataManager.AddLabel(label);
+                    break;
+                case DynamicListActions.Delete:
+                    await _dataManager.DeleteLabel(label);
+                    break;
+                default:
+                    throw new ValidationException("Method Not Allowed");
+            }
+        }
+
+        private async Task SaveProcedureType(DynamicListActions action, dynamic source)
         {
             var procedureType = new ProcedureTypeModel();
 
+            SettingsHelper.Map(source, procedureType);
+
             if (SettingsHelper.IsPropertyExist(source.Department, "Id"))
                 procedureType.DepartmentId = Convert.ToInt32(source.Department?.Id);
-
-            SettingsHelper.Map(source, procedureType);
 
             switch (action)
             {
@@ -568,9 +617,10 @@ namespace Avalanche.Api.Managers.Maintenance
             }
         }
 
-        private async Task SaveDepartments(DynamicListActions action, dynamic source)
+        private async Task SaveDepartment(DynamicListActions action, dynamic source)
         {
             var department = new DepartmentModel();
+
             SettingsHelper.Map(source, department);
 
             switch (action)
@@ -580,28 +630,6 @@ namespace Avalanche.Api.Managers.Maintenance
                     break;
                 case DynamicListActions.Delete:
                     await _dataManager.DeleteDepartment(department.Id);
-                    break;
-                default:
-                    throw new ValidationException("Method Not Allowed");
-            }
-        }
-
-        private async Task SaveLabels(DynamicListActions action, dynamic source)
-        {
-            var label = new LabelModel();
-
-            if (SettingsHelper.IsPropertyExist(source.Label, "Id"))
-                label.ProcedureTypeId = source.ProcedureTypeId?.Id;
-
-            SettingsHelper.Map(source, label);
-
-            switch (action)
-            {
-                case DynamicListActions.Insert:
-                    await _dataManager.AddLabel(label);
-                    break;
-                case DynamicListActions.Delete:
-                    await _dataManager.DeleteLabel(label);
                     break;
                 default:
                     throw new ValidationException("Method Not Allowed");
