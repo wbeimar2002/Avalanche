@@ -225,7 +225,7 @@ namespace Avalanche.Api.Managers.Maintenance
             
             JObject jsonElement = JObject.Parse(serializedElement);
 
-            var id = jsonElement[property.JsonKey].ToString();
+            var id = jsonElement[property.JsonKey];
 
             var found = property.SourceValues.Where(s => s.Id == id).FirstOrDefault();
 
@@ -234,7 +234,7 @@ namespace Avalanche.Api.Managers.Maintenance
                 jsonElement.Add(new JProperty(property.JsonKeyForRelatedObject, JObject.Parse("{}")));
             }
             else
-            { 
+            {
                 string relatedObject = JsonConvert.SerializeObject(found.RelatedObject);
 
                 jsonElement.Add(new JProperty(property.JsonKeyForRelatedObject, JObject.Parse(relatedObject)));
@@ -247,7 +247,6 @@ namespace Avalanche.Api.Managers.Maintenance
                 foreach (var propertyKey in _original)
                     _clone[propertyKey.Key] = propertyKey.Value;
             }
-
         }
 
         private async Task<IList<dynamic>> GetPropertySources(DynamicBaseSettingViewModel property)
@@ -579,7 +578,7 @@ namespace Avalanche.Api.Managers.Maintenance
 
             SettingsHelper.Map(source, label);
 
-            if (SettingsHelper.PropertyExists(source.ProcedureType, "Id"))
+            if (SettingsHelper.PropertyExists(source, "ProcedureType") && SettingsHelper.PropertyExists(source.ProcedureType, "Id"))
                 label.ProcedureTypeId = Convert.ToInt32(source.ProcedureType?.Id);
 
             switch (action)
@@ -601,7 +600,7 @@ namespace Avalanche.Api.Managers.Maintenance
 
             SettingsHelper.Map(source, procedureType);
 
-            if (SettingsHelper.PropertyExists(source.Department, "Id"))
+            if (SettingsHelper.PropertyExists(source, "Department") && SettingsHelper.PropertyExists(source.Department, "Id"))
                 procedureType.DepartmentId = Convert.ToInt32(source.Department?.Id);
 
             switch (action)
