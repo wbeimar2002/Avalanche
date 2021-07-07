@@ -1,6 +1,7 @@
 variables:
   - group: 'vg-dev-avalanche-api'
   
+
 trigger:
   - dev
   
@@ -9,8 +10,8 @@ resources:
   - repository: devops
     type: git
     name: devops
-    ref: task14728-create-sq-poc-1
-    
+    ref: dev
+
 pool: $(pool)
 
 name: $(BuildNumberPrefix)-$(MajorVersion).$(MinorVersion).$(Patch).$(ReleaseStage)_$(MajorVersion).$(MinorVersion).$(Date:yyMM).$(Date:dd)$(Rev:rr)_$(Date:yyyyMMdd)T$(Date:hhmmss)
@@ -40,55 +41,19 @@ stages:
        displayName: 'Apply Version To Application'
        inputs:
            scriptName: devops/misc-scripts/ApplyVersionToAssemblies.ps1
-           workingFolder: $(Repo)
-     
-     - template: 'pipeline\templates\restore-build-test-msbuild10.yml@devops'
-       parameters: 
-            repo: '$(Repo)'
-            projectsolution: '$(ProjectSolution)'
-            testFolder: '$(TestRoot)'
-            testfilter: '$(TestFilter)'
-            buildconfiguration: '$(BuildConfiguration)'
-            buildplatform: '$(BuildPlatform)'
-            vstsfeed: '$(VstsFeed)'
-            adoproject: '$(AdoProject)'
-            sonarprojectkey: '$(SonarProjectKey)'
-            sonarprojetname: '$(SonarProjectKey)'   
 
-     #- task: PowerShell@2
-       #inputs:
-        ##filePath: $(RepoDevops)\pipeline\coverage\publish-coverage-to-sonarqube-win-exp1.ps1
-        #filePath: $(RepoDevops)\pipeline\templates\restore-build-test-msbuild10-with-sq-scanner-command-line.ps1
-        #arguments: '$(SonarProjectKey) $(SonarqubeUrl) $(SonarToken) $(ProjectSolution) $env:System_DefaultWorkingDirectory\$(RepoDevops)\pipeline\run-tests2.ps1 $env:System_DefaultWorkingDirectory\$(Repo)\$(TestFolder) sonarscanner-msbuild-net46 $env:System_DefaultWorkingDirectory\$(repo)\coveragereport $env:System_DefaultWorkingDirectory\$(repo)\TestResults'
-     
-     # Publish code coverage to azdo
-     #- task: PublishCodeCoverageResults@1
-       #condition: and(succeeded(), eq(variables['run_tests'], true ))
-       #displayName: 'Publish Code Coverage Results'
-       #inputs:
-        #codeCoverageTool: 'cobertura'
-        #summaryFileLocation: '$(System.DefaultWorkingDirectory)\$(repo)\coveragereport\Cobertura.xml'
-        #failIfCoverageEmpty: true
-     #- task: DotNetCoreCLI@2
-       #condition: and(succeeded(), eq(variables['run_tests'], true ))
-       #displayName: 'Run Unit tests'
-       #inputs:
-        #command: test
-        #projects: '$(System.DefaultWorkingDirectory)\$(repo)/Test/**/*Test.csproj'
-        #arguments: '--configuration release --no-build'
-        #arguments: '--configuration release  /p:CollectCoverage=true /p:CoverletOutputFormat=json /p:CoverletOutput=$(System.DefaultWorkingDirectory)\$(repo)\TestResults\ /p:MergeWith=$(System.DefaultWorkingDirectory)\$(repo)\TestResults\coverlet.json"'     
-     #- template: 'pipeline\templates\restore-build-test-msbuild9.yml@devops'
-       #parameters: 
-          #adoInstanceurl: 'AdoInstanceUrl'
-          #repo: '$(Repo)'
-          #p#rojectsolution: '$(ProjectSolution)'
-          #testfilter: '$(TestFilter)'
-          #buildConfiguration: '$(BuildConfiguration)'
-          #buildplatform: '$(BuildPlatform)'
-          #vstsfeed: '$(VstsFeed)'
-          #adoproject: '$(AdoProject)'
-          #sonarprojectkey: '$(SonarProjectKey)'
-          #sonarprojetname: '$(SonarProjectKey)'
+     - template: 'pipeline\templates\restore-build-test-msbuild9.yml@devops'
+       parameters: 
+          adoInstanceurl: 'AdoInstanceUrl'
+          repo: '$(Repo)'
+          projectsolution: '$(ProjectSolution)'
+          testfilter: '$(TestFilter)'
+          buildConfiguration: '$(BuildConfiguration)'
+          buildplatform: '$(BuildPlatform)'
+          vstsfeed: '$(VstsFeed)'
+          adoproject: '$(AdoProject)'
+          sonarprojectkey: '$(SonarProjectKey)'
+          sonarprojetname: '$(SonarProjectKey)'
      
      - task: CopyFiles@2
        condition: and(succeeded(),  ne(variables['Build.Reason'], 'PullRequest'))
