@@ -1,7 +1,3 @@
-variables:
-  - group: 'vg-dev-avalanche-api'
-  
-
 trigger:
   - dev
   
@@ -12,8 +8,17 @@ resources:
     name: devops
     ref: dev
 
+#pool:
+  #vmImage: $(PoolVmImage)
+
 pool: $(pool)
 
+variables:
+  
+  - group: 'vg-dev-avalanche-api'
+  
+  #- name: System.Debug
+    #value: true
 name: $(BuildNumberPrefix)-$(MajorVersion).$(MinorVersion).$(Patch).$(ReleaseStage)_$(MajorVersion).$(MinorVersion).$(Date:yyMM).$(Date:dd)$(Rev:rr)_$(Date:yyyyMMdd)T$(Date:hhmmss)
 
 stages:
@@ -42,11 +47,11 @@ stages:
        inputs:
            scriptName: devops/misc-scripts/ApplyVersionToAssemblies.ps1
 
-     - template: 'pipeline\templates\restore-build-test-msbuild9.yml@devops'
+     - template: 'pipeline\templates\restore-build-test-msbuild8.yml@devops'
        parameters: 
-          adoInstanceurl: 'AdoInstanceUrl'
           repo: '$(Repo)'
           projectsolution: '$(ProjectSolution)'
+          testdirectory: '$(TestRoot)'
           testfilter: '$(TestFilter)'
           buildConfiguration: '$(BuildConfiguration)'
           buildplatform: '$(BuildPlatform)'
@@ -55,6 +60,17 @@ stages:
           sonarprojectkey: '$(SonarProjectKey)'
           sonarprojetname: '$(SonarProjectKey)'
      
+     - task: NuGetAuthenticate@0
+     
+     - template: 'pipeline\templates\pub-sonarqube-codecoverage-win-3.yml@devops'
+       parameters: 
+          buildnumberprefix: '$(BuildNumberPrefix)'
+          sonarqubeurl: '$(SonarqubeUrl)'
+          sonartoken: '$(SonarToken)'
+          workingdirectory: '$(repo)\$(ProjectSolutionFolder)'
+          systemworkingdirectory: '$(System.DefaultWorkingDirectory)'
+          testworkingdirectory: '$(System.DefaultWorkingDirectory)\$(repo)\$(TestRoot)'
+
      - task: CopyFiles@2
        condition: and(succeeded(),  ne(variables['Build.Reason'], 'PullRequest'))
        inputs:
