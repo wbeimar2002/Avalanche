@@ -144,7 +144,7 @@ namespace Avalanche.Api.Managers.Maintenance
             return category;
         }
 
-        public async Task<DynamicListViewModel> GetCategoryListByKey(string key)
+        public async Task<DynamicListViewModel> GetCategoryListByKey(string key, string parentId)
         {
             var category = await _storageService.GetJsonObject<DynamicListViewModel>(key, 1, configurationContext);
 
@@ -163,7 +163,13 @@ namespace Avalanche.Api.Managers.Maintenance
                     break;
 
                 case "Labels":
-                    var labels = await _dataManager.GetAllLabels();
+                    List<LabelModel> labels = null;
+
+                    if (parentId == null)
+                        labels = await _dataManager.GetAllLabels();
+                    else
+                        labels = await _dataManager.GetLabelsByProcedureType(Convert.ToInt32(parentId));
+
                     values = JsonConvert.DeserializeObject<List<dynamic>>(JsonConvert.SerializeObject(labels));
                     break;
 
@@ -373,7 +379,7 @@ namespace Avalanche.Api.Managers.Maintenance
                         switch (setting.VisualStyle)
                         {
                             case VisualStyles.ExternalList:
-                                setting.CustomList = await GetCategoryListByKey(setting.SourceKey);
+                                setting.CustomList = await GetCategoryListByKey(setting.SourceKey, null);
                                 break;
 
                             case VisualStyles.EmbeddedList:

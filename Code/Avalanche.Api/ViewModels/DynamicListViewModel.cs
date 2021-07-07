@@ -12,6 +12,7 @@ namespace Avalanche.Api.ViewModels
         public string Schema { get; set; }
         public bool InsertAllowed { get; set; }
         public bool EditAllowed { get; set; }
+        public bool ShowEditConfirmation { get; set; }
         public bool DeleteAllowed { get; set; }
         public bool SaveAsFile { get; set; }
         public string DefaultSortProperty { get; set; }

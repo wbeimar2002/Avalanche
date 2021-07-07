@@ -26,14 +26,14 @@ namespace Avalanche.Api.Controllers.V1
     public class DataController : ControllerBase
     {
         private readonly ILogger _logger;
-        private readonly IDataManager _metadataManager;
+        private readonly IDataManager _dataManager;
         private readonly IWebHostEnvironment _environment;
 
         public DataController(ILogger<DataController> logger, IDataManager metadataManager, IWebHostEnvironment environment)
         {
             _environment = environment;
             _logger = ThrowIfNullOrReturn(nameof(logger), logger);
-            _metadataManager = ThrowIfNullOrReturn(nameof(metadataManager), metadataManager);
+            _dataManager = ThrowIfNullOrReturn(nameof(metadataManager), metadataManager);
         }
 
         [HttpGet("{sourceKey}")]
@@ -43,7 +43,7 @@ namespace Avalanche.Api.Controllers.V1
             {
                 _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
 
-                var result = await _metadataManager.GetList(sourceKey);
+                var result = await _dataManager.GetList(sourceKey);
                 return Ok(result);
             }
             catch (Exception ex)
@@ -64,7 +64,7 @@ namespace Avalanche.Api.Controllers.V1
             {
                 _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
 
-                var result = await _metadataManager.GetList(sourceKey, jsonKey);
+                var result = await _dataManager.GetList(sourceKey, jsonKey);
                 return Ok(result);
             }
             catch (Exception ex)
@@ -90,61 +90,8 @@ namespace Avalanche.Api.Controllers.V1
             {
                 _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
 
-                var result = await _metadataManager.GetAllDepartments();
+                var result = await _dataManager.GetAllDepartments();
                 return Ok(result);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, LoggerHelper.GetLogMessage(DebugLogType.Exception), ex);
-                return new BadRequestObjectResult(ex.Get(_environment.IsDevelopment()));
-            }
-            finally
-            {
-                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
-            }
-        }
-
-        /// <summary>
-        /// Add new department
-        /// </summary>
-        /// <param name="department"></param>
-        /// <returns></returns>
-        [HttpPost("departments")]
-        [Produces(typeof(DepartmentModel))]
-        public async Task<IActionResult> AddDepartment(DepartmentModel department)
-        {
-            try
-            {
-                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
-
-                var result = await _metadataManager.AddDepartment(department);
-                return Ok(result);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, LoggerHelper.GetLogMessage(DebugLogType.Exception), ex);
-                return new BadRequestObjectResult(ex.Get(_environment.IsDevelopment()));
-            }
-            finally
-            {
-                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
-            }
-        }
-
-        /// <summary>
-        /// Delete department
-        /// </summary>
-        /// <param name="departmentId"></param>
-        /// <returns></returns>
-        [HttpDelete("departments/{departmentId}")]
-        public async Task<IActionResult> DeleteDepartment(int departmentId)
-        {
-            try
-            {
-                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
-
-                await _metadataManager.DeleteDepartment(departmentId);
-                return Ok();
             }
             catch (Exception ex)
             {
@@ -170,7 +117,33 @@ namespace Avalanche.Api.Controllers.V1
             {
                 _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
 
-                var result = await _metadataManager.GetProcedureTypesByDepartment(departmentId);
+                var result = await _dataManager.GetProcedureTypesByDepartment(departmentId);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, LoggerHelper.GetLogMessage(DebugLogType.Exception), ex);
+                return new BadRequestObjectResult(ex.Get(_environment.IsDevelopment()));
+            }
+            finally
+            {
+                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
+            }
+        }
+
+        /// <summary>
+        /// Get all procedure types
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("procedureTypes/all")]
+        [Produces(typeof(List<ProcedureTypeModel>))]
+        public async Task<IActionResult> GetAllProcedureTypes()
+        {
+            try
+            {
+                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
+
+                var result = await _dataManager.GetAllProcedureTypes();
                 return Ok(result);
             }
             catch (Exception ex)
@@ -196,186 +169,8 @@ namespace Avalanche.Api.Controllers.V1
             {
                 _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
 
-                var result = await _metadataManager.GetProcedureTypesByDepartment(null);
+                var result = await _dataManager.GetProcedureTypesByDepartment(null);
                 return Ok(result);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, LoggerHelper.GetLogMessage(DebugLogType.Exception), ex);
-                return new BadRequestObjectResult(ex.Get(_environment.IsDevelopment()));
-            }
-            finally
-            {
-                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
-            }
-        }
-
-        /// <summary>
-        /// Add a procedure type
-        /// </summary>
-        /// <param name="procedureType"></param>
-        /// <returns></returns>
-        [HttpPost("procedureTypes")]
-        [Produces(typeof(ProcedureTypeModel))]
-        public async Task<IActionResult> AddProcedureType(ProcedureTypeModel procedureType)
-        {
-            try
-            {
-                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
-
-                var result = await _metadataManager.AddProcedureType(procedureType);
-                return Ok(result);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, LoggerHelper.GetLogMessage(DebugLogType.Exception), ex);
-                return new BadRequestObjectResult(ex.Get(_environment.IsDevelopment()));
-            }
-            finally
-            {
-                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
-            }
-        }
-
-        /// <summary>
-        /// Delete a procedure type
-        /// </summary>
-        /// <param name="procedureTypeName"></param>
-        /// <returns></returns>
-        [HttpDelete("procedureTypes/{procedureTypeId}")]
-        public async Task<IActionResult> DeleteProcedureType(string procedureTypeName)
-        {
-            try
-            {
-                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
-
-                await _metadataManager.DeleteProcedureType(new ProcedureTypeModel()
-                {
-                    Name = procedureTypeName
-                });
-
-                return Ok();
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, LoggerHelper.GetLogMessage(DebugLogType.Exception), ex);
-                return new BadRequestObjectResult(ex.Get(_environment.IsDevelopment()));
-            }
-            finally
-            {
-                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
-            }
-        }
-
-        /// <summary>
-        /// Delete a procedure types from a department
-        /// </summary>
-        /// <param name="departmentId"></param>
-        /// <param name="procedureTypeId"></param>
-        /// <returns></returns>
-        [HttpDelete("departments/{departmentId}/procedureTypes/{procedureTypeId}")]
-        public async Task<IActionResult> DeleteProcedureType(int departmentId, int procedureTypeId)
-        {
-            try
-            {
-                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
-
-                await _metadataManager.DeleteProcedureType(new ProcedureTypeModel()
-                {
-                    DepartmentId = departmentId,
-                    Id = procedureTypeId
-                });
-
-                return Ok();
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, LoggerHelper.GetLogMessage(DebugLogType.Exception), ex);
-                return new BadRequestObjectResult(ex.Get(_environment.IsDevelopment()));
-            }
-            finally
-            {
-                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
-            }
-        }
-
-        /// <summary>
-        /// Add a label
-        /// </summary>
-        /// <param name="label"></param>
-        /// <returns></returns>
-        [HttpPost("labels")]
-        [Produces(typeof(LabelModel))]
-        public async Task<IActionResult> AddLabel(LabelModel label)
-        {
-            try
-            {
-                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
-
-                var result = await _metadataManager.AddLabel(label);
-                return Ok(result);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, LoggerHelper.GetLogMessage(DebugLogType.Exception), ex);
-                return new BadRequestObjectResult(ex.Get(_environment.IsDevelopment()));
-            }
-            finally
-            {
-                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
-            }
-        }
-
-        /// <summary>
-        /// Delete a label
-        /// </summary>
-        /// <param name="labelName"></param>
-        /// <returns></returns>
-        [HttpDelete("labels/{labelId}")]
-        public async Task<IActionResult> DeleteLabel(string labelName)
-        {
-            try
-            {
-                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
-
-                await _metadataManager.DeleteLabel(new LabelModel()
-                {
-                    Name = labelName
-                });
-
-                return Ok();
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, LoggerHelper.GetLogMessage(DebugLogType.Exception), ex);
-                return new BadRequestObjectResult(ex.Get(_environment.IsDevelopment()));
-            }
-            finally
-            {
-                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
-            }
-        }
-
-        /// <summary>
-        /// Delete a labels from a procedure type
-        /// </summary>
-        /// <param name="procedureTypeId"></param>
-        /// <param name="labelId"></param>
-        /// <returns></returns>
-        [HttpDelete("procedureTypes/{procedureTypeId}/labels/{labelId}")]
-        public async Task<IActionResult> DeleteLabel(int procedureTypeId, int labelId)
-        {
-            try
-            {
-                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
-
-                await _metadataManager.DeleteLabel(new LabelModel()
-                {
-                    ProcedureTypeId = procedureTypeId,
-                    Id = labelId
-                });
-
-                return Ok();
             }
             catch (Exception ex)
             {
@@ -401,33 +196,7 @@ namespace Avalanche.Api.Controllers.V1
             {
                 _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
 
-                var result = await _metadataManager.GetLabelsByProcedureType(procedureTypeId);
-                return Ok(result);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, LoggerHelper.GetLogMessage(DebugLogType.Exception), ex);
-                return new BadRequestObjectResult(ex.Get(_environment.IsDevelopment()));
-            }
-            finally
-            {
-                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
-            }
-        }
-
-        /// <summary>
-        /// Get labels with null/empty procedure type
-        /// </summary>
-        /// <returns></returns>
-        [HttpGet("labels")]
-        [Produces(typeof(List<LabelModel>))]
-        public async Task<IActionResult> GetLabels()
-        {
-            try
-            {
-                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
-
-                var result = await _metadataManager.GetLabelsByProcedureType(null);
+                var result = await _dataManager.GetLabelsByProcedureType(procedureTypeId);
                 return Ok(result);
             }
             catch (Exception ex)

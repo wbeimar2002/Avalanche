@@ -13,7 +13,7 @@ namespace Avalanche.Api.Managers.Maintenance
         Task SaveCategory(DynamicSectionViewModel category);
         Task SaveEntityChanges(DynamicListViewModel category, DynamicListActions action);
         Task<DynamicSectionViewModel> GetCategoryByKey(string key);
-        Task<DynamicListViewModel> GetCategoryListByKey(string key);
+        Task<DynamicListViewModel> GetCategoryListByKey(string key, string parentId);
         Task<List<dynamic>> GetListValues(string key);
         Task<dynamic> GetSettingValues(string key);
         Task SaveCategoryPolicies(DynamicSectionViewModel category);
