@@ -121,8 +121,16 @@ namespace Avalanche.Api.Managers.Data
         public async Task<List<ProcedureTypeModel>> GetAllProcedureTypes()
         {
             var result = await _dataManagementService.GetAllProcedureTypes();
+            var list = _mapper.Map<IList<ProcedureTypeMessage>, IList<ProcedureTypeModel>>(result.ProcedureTypeList).ToList();
 
-            return _mapper.Map<IList<ProcedureTypeMessage>, IList<ProcedureTypeModel>>(result.ProcedureTypeList).ToList();
+            //Added to follow business rule. This represents empty procedure type
+            list.Insert(0, new ProcedureTypeModel
+            {
+                Id = -1,
+                Name = "*"
+            });
+
+            return list;
         }
 
         public async Task ValidateDepartmentsSupport()
@@ -169,10 +177,22 @@ namespace Avalanche.Api.Managers.Data
 
         public async Task<List<LabelModel>> GetLabelsByProcedureType(int? procedureTypeId)
         {
-            var result = await _dataManagementService.GetLabelsByProcedureType(new Ism.Storage.DataManagement.Client.V1.Protos.GetLabelsByProcedureTypeRequest()
+            GetLabelsResponse result;
+            //This is because Empty procType is set as Id -1 and Name *
+            if (procedureTypeId > 0)
             {
-                ProcedureTypeId = procedureTypeId
-            });
+                result = await _dataManagementService.GetLabelsByProcedureType(new Ism.Storage.DataManagement.Client.V1.Protos.GetLabelsByProcedureTypeRequest()
+                {
+                    ProcedureTypeId = procedureTypeId
+                });
+            }
+            else
+            {
+                result = await _dataManagementService.GetLabelsByProcedureType(new Ism.Storage.DataManagement.Client.V1.Protos.GetLabelsByProcedureTypeRequest()
+                {
+                    ProcedureTypeId = null
+                });
+            }
 
             return _mapper.Map<IList<LabelMessage>, IList<LabelModel>>(result.LabelList).ToList();
         }

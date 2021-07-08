@@ -12,10 +12,11 @@ namespace Avalanche.Api.ViewModels
         public string Schema { get; set; }
         public bool InsertAllowed { get; set; }
         public bool EditAllowed { get; set; }
-        public bool ShowEditConfirmation { get; set; }
+        public string EditTranslationKeyOnSuccess { get; set; }
         public bool DeleteAllowed { get; set; }
         public bool SaveAsFile { get; set; }
         public string DefaultSortProperty { get; set; }
+        public List<ActionViewModel> Links { get; set; }
         public List<DynamicPropertyViewModel> Properties { get; set; }
         public List<ExpandoObject> Data { get; set; }
         public ExpandoObject Entity { get; set; }
