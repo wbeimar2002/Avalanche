@@ -249,5 +249,33 @@ namespace Avalanche.Api.Controllers.V1
             }
         }
 
+
+        /// <summary>
+        /// Apply label to image or video
+        /// </summary>
+        /// <returns></returns>
+        [HttpPut]
+        [Route("active/videos/{id}", Name = "ApplyLabelToVideo")]
+        [Route("active/images/{id}", Name = "ApplyLabelToImage")]
+        public async Task<IActionResult> ApplyLabelToActiveProcedure(string id, LabelContentViewModel labelContent)
+        {
+            try
+            {
+                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
+
+                await _proceduresManager.ApplyLabelToActiveProcedure(labelContent);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, LoggerHelper.GetLogMessage(DebugLogType.Exception));
+                return new BadRequestObjectResult(ex.Get(_environment.IsDevelopment()));
+            }
+            finally
+            {
+                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
+            }
+        }
+
     }
 }

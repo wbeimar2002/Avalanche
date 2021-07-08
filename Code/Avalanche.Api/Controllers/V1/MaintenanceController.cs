@@ -195,14 +195,15 @@ namespace Avalanche.Api.Controllers.V1
         /// Get metadata and values for a List Maintenance Page
         /// </summary>
         /// <param name="key"></param>
+        /// <param name="parentId"></param>
         /// <returns></returns>
-        [HttpGet("categories/lists/{key}")]
-        public async Task<IActionResult> GetCategoryListByKey(string key)
+        [HttpGet("categories/lists/{key}/{parentId}")]
+        public async Task<IActionResult> GetCategoryListByKey(string key, string parentId)
         {
             try
             {
                 _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
-                var result = await _maintenanceManager.GetCategoryListByKey(key);
+                var result = await _maintenanceManager.GetCategoryListByKey(key, parentId);
 
                 return Ok(result);
             }

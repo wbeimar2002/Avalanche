@@ -164,13 +164,7 @@ namespace Avalanche.Api.Managers.Procedures
             Preconditions.ThrowIfTrue<ArgumentException>($"{nameof(filter.Limit)} cannot be lower than {MinPageSize}", filter.Limit < MinPageSize);
             Preconditions.ThrowIfTrue<ArgumentException>($"{nameof(filter.Limit)} cannot be larger than {MaxPageSize}", filter.Limit > MaxPageSize);
 
-            var response = await _libraryService.GetFinishedProcedures(new GetFinishedProceduresRequest()
-            {
-                Page = filter.Page,
-                PageSize = filter.Limit,
-                IsDescending = filter.IsDescending,
-                ProcedureIndexSortingColumn = (ProcedureIndexSortingColumns)filter.ProcedureIndexSortingColumn
-            });
+            var response = await _libraryService.GetFinishedProcedures(_mapper.Map<ProcedureSearchFilterViewModel, GetFinishedProceduresRequest>(filter));
 
             return new ProceduresContainerViewModel()
             {
@@ -192,5 +186,33 @@ namespace Avalanche.Api.Managers.Procedures
             return _mapper.Map<ProcedureMessage, ProcedureViewModel>(response.Procedure);
         }
 
+        public async Task ApplyLabelToActiveProcedure(LabelContentViewModel labelContent)
+        {
+            Preconditions.ThrowIfNullOrEmptyOrWhiteSpace(nameof(labelContent.Label), labelContent.Label);
+            var activeProcedure = await _stateClient.GetData<ActiveProcedureState>();
+
+            if (labelContent.ProcedureContentType == ProcedureContentType.Image)
+            {
+                var imageToEdit = activeProcedure.Images.First(y => y.ImageId == labelContent.ContentId);
+                imageToEdit.Label = labelContent.Label;
+            }
+            else 
+            {
+                var videoToEdit = activeProcedure.Videos.First(y => y.VideoId == labelContent.ContentId);
+                videoToEdit.Label = labelContent.Label;
+            }
+
+            await _stateClient.AddOrUpdateData(activeProcedure, x =>
+            {
+                if (labelContent.ProcedureContentType == ProcedureContentType.Image)
+                {
+                    x.Replace(data => data.Images, activeProcedure.Images);
+                }
+                else 
+                {
+                    x.Replace(data => data.Videos, activeProcedure.Videos);
+                }
+            });
+        }
     }
 }

@@ -21,5 +21,7 @@ namespace Avalanche.Api.Managers.Procedures
         Task<ProceduresContainerViewModel> Search(ProcedureSearchFilterViewModel filter);
         Task<ProcedureViewModel> GetProcedureDetails(string id);
 
+        Task ApplyLabelToActiveProcedure(LabelContentViewModel labelContent);
+
     }
 }
