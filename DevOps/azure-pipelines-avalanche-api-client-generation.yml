@@ -3,10 +3,7 @@ trigger:
    branches:
     include:
       - dev
-   paths:
-    include:
-      - avalanche-api/Code/Avalanche.Api/Controllers/*
-
+      
 variables:
   - group: 'vg-dev-avalanche-api'
 
