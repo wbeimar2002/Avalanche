@@ -12,7 +12,9 @@ resources:
     name: devops
     ref: dev
 
-pool: $(pool)
+#pool: $(pool)
+pool:
+  vmImage: 'ubuntu-latest'
 
 name: $(BuildNumberPrefix)-$(MajorVersion).$(MinorVersion).$(Patch).$(ReleaseStage)_$(MajorVersion).$(MinorVersion).$(Date:yyMM).$(Date:dd)$(Rev:rr)_$(Date:yyyyMMdd)T$(Date:hhmmss)
 
