@@ -20,6 +20,7 @@ namespace Avalanche.Api.Managers.Data
         Task<List<ProcedureTypeModel>> GetAllProcedureTypes();
         Task<List<dynamic>> GetList(string sourceKey, string jsonKey = null);
         Task<LabelModel> AddLabel(LabelModel label);
+        Task UpdateLabel(LabelModel label);
         Task DeleteLabel(LabelModel label);
         Task<List<LabelModel>> GetLabelsByProcedureType(int? procedureTypeId);
         Task<List<LabelModel>> GetAllLabels();

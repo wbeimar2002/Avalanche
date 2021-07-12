@@ -36,10 +36,22 @@ namespace Avalanche.Api.MappingConfigurations
                     opt => opt.MapFrom(src => src.Label.ProcedureTypeId))
                 .ReverseMap();
 
+            CreateMap<LabelModel, UpdateLabelRequest>()
+                .ForPath(dest =>
+                    dest.Label.Id,
+                    opt => opt.MapFrom(src => 0))
+                .ForPath(dest =>
+                    dest.Label.Name,
+                    opt => opt.MapFrom(src => src.Name))
+                .ForPath(dest =>
+                    dest.Label.ProcedureTypeId,
+                    opt => opt.MapFrom(src => src.ProcedureTypeId))
+                .ReverseMap();
+
             CreateMap<LabelModel, DeleteLabelRequest>()
                 .ForPath(dest =>
                     dest.LabelId,
-                    opt => opt.MapFrom(src => 0))
+                    opt => opt.MapFrom(src => src.Id))
                 .ForPath(dest =>
                     dest.ProcedureTypeId,
                     opt => opt.MapFrom(src => src.ProcedureTypeId))

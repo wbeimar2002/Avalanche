@@ -36,6 +36,8 @@ namespace Avalanche.Api.Services.Health
 
         public async Task<AddLabelResponse> AddLabel(AddLabelRequest request) => await _client.AddLabel(request);
 
+        public async Task UpdateLabel(UpdateLabelRequest request) => await _client.AddOrUpdateLabel(request);
+
         public async Task DeleteLabel(DeleteLabelRequest request) => await _client.DeleteLabel(request);
 
         public async Task<GetLabelsResponse> GetLabelsByProcedureType(GetLabelsByProcedureTypeRequest request) => await _client.GetLabelsByProcedureType(request);

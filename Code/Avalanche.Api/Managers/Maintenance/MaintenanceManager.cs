@@ -237,7 +237,7 @@ namespace Avalanche.Api.Managers.Maintenance
 
             if (found == null)
             {
-                jsonElement.Add(new JProperty(property.JsonKeyForRelatedObject, JObject.Parse("{}")));
+                jsonElement.Add(new JProperty(property.JsonKeyForRelatedObject, JObject.Parse("{}")));                
             }
             else
             {
@@ -585,12 +585,20 @@ namespace Avalanche.Api.Managers.Maintenance
             SettingsHelper.Map(source, label);
 
             if (SettingsHelper.PropertyExists(source, "ProcedureType") && SettingsHelper.PropertyExists(source.ProcedureType, "Id"))
+            {
                 label.ProcedureTypeId = Convert.ToInt32(source.ProcedureType?.Id);
+
+                if (label.ProcedureTypeId <= 0)
+                    label.ProcedureTypeId = null;
+            }
 
             switch (action)
             {
                 case DynamicListActions.Insert:
                     await _dataManager.AddLabel(label);
+                    break;
+                case DynamicListActions.Update:
+                    await _dataManager.UpdateLabel(label);
                     break;
                 case DynamicListActions.Delete:
                     await _dataManager.DeleteLabel(label);
