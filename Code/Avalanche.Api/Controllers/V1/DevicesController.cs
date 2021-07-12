@@ -293,14 +293,14 @@ namespace Avalanche.Api.Controllers.V1
             }
         }
 
-        [HttpGet("displayRecording")]
+        [HttpGet("displayRecordings")]
         [Produces(typeof(IList<DisplayRecordingViewModel>))]
-        public async Task<IActionResult> GetDisplayRecordingState()
+        public async Task<IActionResult> GetDisplayRecordingStates()
         {
             try
             {
                 _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
-                var result = await _routingManager.GetDisplayRecordingState();
+                var result = await _routingManager.GetDisplayRecordingStates();
 
                 return Ok(result);
             }
