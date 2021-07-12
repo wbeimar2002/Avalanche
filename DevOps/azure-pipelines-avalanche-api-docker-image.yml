@@ -11,7 +11,7 @@ resources:
     ref: dev
 
 pool:
-  vmImage: 'windows-ubuntu'
+  vmImage: 'ubuntu-latest'
 
 #pool: $(pool)
 
