@@ -186,7 +186,7 @@ namespace Avalanche.Api.Managers.Procedures
             return _mapper.Map<ProcedureMessage, ProcedureViewModel>(response.Procedure);
         }
 
-        public async Task ApplyLabelToActiveProcedure(LabelContentViewModel labelContent)
+        public async Task ApplyLabelToActiveProcedure(ContentViewModel labelContent)
         {
             Preconditions.ThrowIfNullOrEmptyOrWhiteSpace(nameof(labelContent.Label), labelContent.Label);
             var activeProcedure = await _stateClient.GetData<ActiveProcedureState>();

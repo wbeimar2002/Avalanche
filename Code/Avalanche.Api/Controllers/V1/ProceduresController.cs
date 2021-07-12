@@ -249,21 +249,25 @@ namespace Avalanche.Api.Controllers.V1
             }
         }
 
-
         /// <summary>
-        /// Apply label to image or video
+        /// Apply label to image 
         /// </summary>
         /// <returns></returns>
         [HttpPut]
-        [Route("active/videos/{id}", Name = "ApplyLabelToVideo")]
-        [Route("active/images/{id}", Name = "ApplyLabelToImage")]
-        public async Task<IActionResult> ApplyLabelToActiveProcedure(string id, LabelContentViewModel labelContent)
+        [Route("active/images/{id}")]
+        public async Task<IActionResult> ApplyLabelToImage(string id, LabelViewModel label)
         {
             try
             {
                 _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
 
-                await _proceduresManager.ApplyLabelToActiveProcedure(labelContent);
+                await _proceduresManager.ApplyLabelToActiveProcedure(new ContentViewModel()
+                {
+                    ContentId = new Guid(id),
+                    Label = label.Label,
+                    ProcedureContentType = ProcedureContentType.Image
+                });
+                
                 return Ok();
             }
             catch (Exception ex)
@@ -277,5 +281,35 @@ namespace Avalanche.Api.Controllers.V1
             }
         }
 
+        /// <summary>
+        /// Apply label to video 
+        /// </summary>
+        /// <returns></returns>
+        [Route("active/videos/{id}")]
+        public async Task<IActionResult> ApplyLabelToVideo(string id, LabelViewModel label)
+        {
+            try
+            {
+                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
+
+                await _proceduresManager.ApplyLabelToActiveProcedure(new ContentViewModel()
+                {
+                    ContentId = new Guid(id),
+                    Label = label.Label,
+                    ProcedureContentType = ProcedureContentType.Video
+                });
+
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, LoggerHelper.GetLogMessage(DebugLogType.Exception));
+                return new BadRequestObjectResult(ex.Get(_environment.IsDevelopment()));
+            }
+            finally
+            {
+                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
+            }
+        }
     }
 }

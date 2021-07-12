@@ -157,8 +157,13 @@ namespace Avalanche.Api.Managers.Maintenance
                     values = JsonConvert.DeserializeObject<List<dynamic>>(JsonConvert.SerializeObject(departments));
                     break;
 
+                case "ProcedureTypesWithEmpty":
+                    var procedureTypesWithEmpty = await _dataManager.GetAllProcedureTypes(true);
+                    values = JsonConvert.DeserializeObject<List<dynamic>>(JsonConvert.SerializeObject(procedureTypesWithEmpty));
+                    break;
+
                 case "ProcedureTypes":
-                    var procedureTypes = await _dataManager.GetAllProcedureTypes();
+                    var procedureTypes = await _dataManager.GetAllProcedureTypes(false);
                     values = JsonConvert.DeserializeObject<List<dynamic>>(JsonConvert.SerializeObject(procedureTypes));
                     break;
 
@@ -292,8 +297,9 @@ namespace Avalanche.Api.Managers.Maintenance
                         var dynamicDepartments = JsonConvert.DeserializeObject<List<dynamic>>(JsonConvert.SerializeObject(departments));
                         return GetDynamicList(property, dynamicDepartments);
 
+                    case "ProcedureTypesWithEmpty":
                     case "ProcedureTypes":
-                        var procedureTypes = await _dataManager.GetAllProcedureTypes();
+                        var procedureTypes = await _dataManager.GetAllProcedureTypes(true);
                         var dynamicProcedureTypes = JsonConvert.DeserializeObject<List<dynamic>>(JsonConvert.SerializeObject(procedureTypes));
                         return GetDynamicList(property, dynamicProcedureTypes);
 

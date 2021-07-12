@@ -118,17 +118,20 @@ namespace Avalanche.Api.Managers.Data
             return _mapper.Map<IList<ProcedureTypeMessage>, IList<ProcedureTypeModel>>(result.ProcedureTypeList).ToList();
         }
 
-        public async Task<List<ProcedureTypeModel>> GetAllProcedureTypes()
+        public async Task<List<ProcedureTypeModel>> GetAllProcedureTypes(bool addEmpty)
         {
             var result = await _dataManagementService.GetAllProcedureTypes();
             var list = _mapper.Map<IList<ProcedureTypeMessage>, IList<ProcedureTypeModel>>(result.ProcedureTypeList).ToList();
 
-            //Added to follow business rule. This represents empty procedure type
-            list.Insert(0, new ProcedureTypeModel
+            if (addEmpty)
             {
-                Id = -1,
-                Name = "*"
-            });
+                //Added to follow business rule. This represents empty procedure type, used just in dropdown of labels
+                list.Insert(0, new ProcedureTypeModel
+                {
+                    Id = -1,
+                    Name = "*"
+                });
+            }
 
             return list;
         }
