@@ -50,15 +50,15 @@ stages:
        inputs:
            scriptName: devops/misc-scripts/ApplyVersionToAssemblies.ps1
 
-     - bash: |
-        if [ "$(Build.Reason)" == "IndividualCI" ]; then
-            echo "Disable tests"
-            echo "##vso[task.setvariable variable=run_tests]false"
-        else
-            echo "Run tests"
-            echo "##vso[task.setvariable variable=run_tests]true"
-        fi
-       displayName: set run_tests variable
+     #- bash: |
+        #if [ "$(Build.Reason)" == "IndividualCI" ]; then
+            #echo "Disable tests"
+            #echo "##vso[task.setvariable variable=run_tests]false"
+        #else
+            #echo "Run tests"
+            #echo "##vso[task.setvariable variable=run_tests]true"
+        #fi
+       #displayName: set run_tests variable
 
      - template: 'pipeline\templates\restore-build-test-msbuild7.yml@devops'
        parameters: 
