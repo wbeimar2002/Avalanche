@@ -212,7 +212,7 @@ namespace Avalanche.Api.Managers.Media
             return listResult;
         }
 
-        public async Task<IList<DisplayRecordingViewModel>> GetDisplayRecordingState()
+        public async Task<IList<DisplayRecordingViewModel>> GetDisplayRecordingStates()
         {
             var currentData = await _stateClient.GetData<VideoRoutingModels.DisplayRecordStateData>();
             var recordChannels = await _recorderService.GetRecordingChannels();
