@@ -10,10 +10,10 @@ resources:
     name: devops
     ref: dev
 
-#pool:
-  #vmImage: $(PoolVmImage)
+pool:
+  vmImage: 'ubuntu-latest'
 
-pool: $(pool)
+#pool: $(pool)
 
 variables:
   
