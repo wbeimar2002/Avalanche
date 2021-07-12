@@ -43,12 +43,12 @@ stages:
         targetType: 'inline'
         script: 'Get-ChildItem -Path Env:\'
  
-     - task: PowerShell@1
+     #- task: PowerShell@1
        #condition: and(succeeded(),  ne(variables['Build.Reason'], 'PullRequest'))
        #condition: and(succeeded(), eq(variables['Build.SourceBranchName'], variables['TriggerBranch']))
-       displayName: 'Apply Version To Application'
-       inputs:
-           scriptName: devops/misc-scripts/ApplyVersionToAssemblies.ps1
+       #displayName: 'Apply Version To Application'
+       #inputs:
+           #scriptName: devops/misc-scripts/ApplyVersionToAssemblies.ps1
 
      #- bash: |
         #if [ "$(Build.Reason)" == "IndividualCI" ]; then
