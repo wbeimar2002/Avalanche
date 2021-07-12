@@ -43,7 +43,8 @@ stages:
            scriptName: devops/misc-scripts/ApplyVersionToAssemblies.ps1
 
      - task: NuGetToolInstaller@1
-       checkLatest: false # Optional
+       inputs:
+         checkLatest: true
 
      - template: 'pipeline\templates\restore-build-test-msbuild9.yml@devops'
        parameters: 
