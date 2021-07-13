@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Avalanche.Api.Managers.Presets;
+using Avalanche.Shared.Domain.Models.Presets;
 using Avalanche.Shared.Infrastructure.Enumerations;
 using Avalanche.Shared.Infrastructure.Extensions;
 using Avalanche.Shared.Infrastructure.Helpers;
@@ -39,6 +40,7 @@ namespace Avalanche.Api.Controllers.V1
         /// <param name="userId"></param>
         /// <returns></returns>
         [HttpGet]
+        [Produces(typeof(UserPresetsModel))]
         public async Task<IActionResult> GetPresets(string userId)
         {
             try
