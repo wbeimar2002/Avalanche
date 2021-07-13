@@ -3,6 +3,7 @@ using Avalanche.Api.ViewModels;
 using Avalanche.Shared.Infrastructure.Enumerations;
 using Avalanche.Shared.Infrastructure.Extensions;
 using Avalanche.Shared.Infrastructure.Helpers;
+using Grpc.Core;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -11,6 +12,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
+using System.Net;
 using System.Threading.Tasks;
 
 namespace Avalanche.Api.Controllers.V1
@@ -100,6 +102,15 @@ namespace Avalanche.Api.Controllers.V1
 
                 return Ok();
             }
+            catch (RpcException ex)
+            {
+                _logger.LogError(ex, LoggerHelper.GetLogMessage(DebugLogType.Exception), ex);
+
+                if (ex.StatusCode == Grpc.Core.StatusCode.AlreadyExists)
+                    return Conflict(ex.Get(_environment.IsDevelopment()));
+                else
+                    return new BadRequestObjectResult(ex.Get(_environment.IsDevelopment()));
+            }
             catch (Exception ex)
             {
                 _logger.LogError(ex, LoggerHelper.GetLogMessage(DebugLogType.Exception), ex);
@@ -126,6 +137,16 @@ namespace Avalanche.Api.Controllers.V1
                 await _maintenanceManager.SaveEntityChanges(list, DynamicListActions.Update);
 
                 return Ok();
+            }
+            catch (RpcException ex)
+            {
+                _logger.LogError(ex, LoggerHelper.GetLogMessage(DebugLogType.Exception), ex);
+
+                if (ex.StatusCode == Grpc.Core.StatusCode.AlreadyExists)
+                    return Conflict(ex.Get(_environment.IsDevelopment()));
+                else
+                    return new BadRequestObjectResult(ex.Get(_environment.IsDevelopment()));
+
             }
             catch (Exception ex)
             {
