@@ -150,8 +150,8 @@ namespace Avalanche.Api.Controllers.V1
         /// <param name="contentType"></param>
         /// <param name="contentIds"></param>
         /// <returns></returns>
-        [HttpDelete("active/contents")]
-        public async Task<IActionResult> DeleteActiveProcedureContentItems(ProcedureContentType contentType, IEnumerable<Guid> contentIds)
+        [HttpDelete("active/contents/{contentType}")]
+        public async Task<IActionResult> DeleteActiveProcedureContentItems(ProcedureContentType contentType, [FromBody] IEnumerable<Guid> contentIds)
         {
             try
             {
