@@ -39,7 +39,7 @@ namespace Avalanche.Api.MappingConfigurations
             CreateMap<LabelModel, UpdateLabelRequest>()
                 .ForPath(dest =>
                     dest.Label.Id,
-                    opt => opt.MapFrom(src => 0))
+                    opt => opt.MapFrom(src => src.Id))
                 .ForPath(dest =>
                     dest.Label.Name,
                     opt => opt.MapFrom(src => src.Name))
