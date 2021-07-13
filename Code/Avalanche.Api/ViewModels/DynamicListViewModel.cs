@@ -16,7 +16,8 @@ namespace Avalanche.Api.ViewModels
         public bool DeleteAllowed { get; set; }
         public bool SaveAsFile { get; set; }
         public string DefaultSortProperty { get; set; }
-        public List<ActionViewModel> Links { get; set; }
+        public List<LinkViewModel> Links { get; set; }
+        public List<ErrorViewModel> CustomErrorMessages { get; set; }
         public List<DynamicPropertyViewModel> Properties { get; set; }
         public List<ExpandoObject> Data { get; set; }
         public ExpandoObject Entity { get; set; }

@@ -118,17 +118,20 @@ namespace Avalanche.Api.Managers.Data
             return _mapper.Map<IList<ProcedureTypeMessage>, IList<ProcedureTypeModel>>(result.ProcedureTypeList).ToList();
         }
 
-        public async Task<List<ProcedureTypeModel>> GetAllProcedureTypes()
+        public async Task<List<ProcedureTypeModel>> GetAllProcedureTypes(bool addEmpty)
         {
             var result = await _dataManagementService.GetAllProcedureTypes();
             var list = _mapper.Map<IList<ProcedureTypeMessage>, IList<ProcedureTypeModel>>(result.ProcedureTypeList).ToList();
 
-            //Added to follow business rule. This represents empty procedure type
-            list.Insert(0, new ProcedureTypeModel
+            if (addEmpty)
             {
-                Id = -1,
-                Name = "*"
-            });
+                //Added to follow business rule. This represents empty procedure type, used just in dropdown of labels
+                list.Insert(0, new ProcedureTypeModel
+                {
+                    Id = -1,
+                    Name = "*"
+                });
+            }
 
             return list;
         }
@@ -169,6 +172,14 @@ namespace Avalanche.Api.Managers.Data
             return _mapper.Map<AddLabelResponse, LabelModel>(result);
         }
 
+        public async Task UpdateLabel(LabelModel label)
+        {
+            Preconditions.ThrowIfNull(nameof(label.Id), label.Id);
+            Preconditions.ThrowIfNull(nameof(label.Name), label.Name);
+            
+            await _dataManagementService.UpdateLabel(_mapper.Map<LabelModel, UpdateLabelRequest>(label));
+        }
+
         public async Task DeleteLabel(LabelModel label)
         {
             Preconditions.ThrowIfNull(nameof(label.Name), label.Name);
@@ -177,22 +188,15 @@ namespace Avalanche.Api.Managers.Data
 
         public async Task<List<LabelModel>> GetLabelsByProcedureType(int? procedureTypeId)
         {
-            GetLabelsResponse result;
-            //This is because Empty procType is set as Id -1 and Name *
-            if (procedureTypeId > 0)
+            if (procedureTypeId != null && procedureTypeId <= 0)
             {
-                result = await _dataManagementService.GetLabelsByProcedureType(new Ism.Storage.DataManagement.Client.V1.Protos.GetLabelsByProcedureTypeRequest()
-                {
-                    ProcedureTypeId = procedureTypeId
-                });
+                procedureTypeId = null;
             }
-            else
+
+            var result = await _dataManagementService.GetLabelsByProcedureType(new Ism.Storage.DataManagement.Client.V1.Protos.GetLabelsByProcedureTypeRequest()
             {
-                result = await _dataManagementService.GetLabelsByProcedureType(new Ism.Storage.DataManagement.Client.V1.Protos.GetLabelsByProcedureTypeRequest()
-                {
-                    ProcedureTypeId = null
-                });
-            }
+                ProcedureTypeId = procedureTypeId
+            });
 
             return _mapper.Map<IList<LabelMessage>, IList<LabelModel>>(result.LabelList).ToList();
         }

@@ -5,9 +5,8 @@ using System.Threading.Tasks;
 
 namespace Avalanche.Api.ViewModels
 {
-    public class ActionViewModel
+    public class LabelViewModel
     {
-        public string Key { get; set; }
-        public string TranslationKey { get; set; }
+        public string Label { get; set; }
     }
 }

@@ -14,8 +14,9 @@ namespace Avalanche.Api.Services.Health
         Task<GetProcedureTypesResponse> GetProcedureTypesByDepartment(GetProcedureTypesByDepartmentRequest request);
         Task<ProcedureTypeMessage> GetProcedureType(GetProcedureTypeRequest request);
         Task<GetProcedureTypesResponse> GetAllProcedureTypes();
-        Task<AddLabelResponse> AddLabel(AddLabelRequest label);
+        Task<AddLabelResponse> AddLabel(AddLabelRequest request);
         Task DeleteLabel(DeleteLabelRequest request);
+        Task UpdateLabel(UpdateLabelRequest request);
         Task<GetLabelsResponse> GetLabelsByProcedureType(GetLabelsByProcedureTypeRequest request);
         Task<LabelMessage> GetLabel(GetLabelRequest request);
         Task<GetLabelsResponse> GetAllLabels();
