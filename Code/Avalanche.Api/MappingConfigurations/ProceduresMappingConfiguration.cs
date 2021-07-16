@@ -27,7 +27,8 @@ namespace Avalanche.Api.MappingConfigurations
                 .ForMember(dest => dest.Keyword, opt => opt.MapFrom(src => src.Keyword))
                 .ForMember(dest => dest.StartCreationTime, opt => opt.MapFrom(src => GetFixedDateTime(src.StartCreationTime)))
                 .ForMember(dest => dest.EndCreationTime, opt => opt.MapFrom(src => GetFixedDateTime(src.EndCreationTime)))
-                .ForMember(dest => dest.VideoAutoEditStatus, opt => opt.MapFrom(src => src.VideoAutoEditStatus));
+                .ForMember(dest => dest.HasPendingEdits, opt => opt.Ignore());
+            // .ForMember(dest => dest.VideoAutoEditStatus, opt => opt.MapFrom(src => src.VideoAutoEditStatus)); # Temp commented out breaking change.  Sorey to resolve
 
             CreateMap<ProcedureImageMessage, ImageContentViewModel>()
                 .ForMember(dest => dest.Thumbnail, opt => opt.MapFrom(src => src.Thumbnail))
