@@ -188,7 +188,6 @@ namespace Avalanche.Api.Managers.Procedures
 
         public async Task ApplyLabelToActiveProcedure(ContentViewModel labelContent)
         {
-            Preconditions.ThrowIfNullOrEmptyOrWhiteSpace(nameof(labelContent.Label), labelContent.Label);
             var activeProcedure = await _stateClient.GetData<ActiveProcedureState>();
 
             if (labelContent.ProcedureContentType == ProcedureContentType.Image)
