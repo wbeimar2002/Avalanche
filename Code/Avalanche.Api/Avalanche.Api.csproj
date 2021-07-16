@@ -5,9 +5,14 @@
     <DockerComposeProjectPath>..\docker-compose.dcproj</DockerComposeProjectPath>
     <UserSecretsId>2f27c3dd-6545-459d-9b88-0b474aab5e53</UserSecretsId>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+    <Configurations>Debug;Release;DebugLocal</Configurations>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DebugLocal|AnyCPU'">
     <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
   </PropertyGroup>
 
@@ -31,7 +36,7 @@
   <ItemGroup>
     <PackageReference Include="AutoFixture" Version="4.17.0" />
     <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="8.1.1" />
-    <PackageReference Include="AvidisDeviceInterface.Client" Version="1.0.0-prerelease0013" />
+    <PackageReference Include="AvidisDeviceInterface.Client" Version="1.0.0-prerelease0014" />
     <PackageReference Include="Google.Api.CommonProtos" Version="2.3.0" />
     <PackageReference Include="Google.Protobuf" Version="3.17.3" />
     <PackageReference Include="Grpc.Core" Version="2.38.0" />
@@ -51,7 +56,6 @@
     <PackageReference Include="Ism.Routing.Client" Version="1.0.0-prerelease0015" />
     <PackageReference Include="Ism.Security.Grpc.Standard" Version="1.0.0-prerelease024" />
     <PackageReference Include="Ism.Storage.Configuration.Client" Version="1.0.0-prerelease0024" />
-    <PackageReference Include="Ism.Storage.DataManagement.Client" Version="1.0.0-prerelease0028" />
     <PackageReference Include="Ism.Storage.PatientList.Client" Version="1.0.0-prerelease0020" />
     <PackageReference Include="Ism.Streaming.Client" Version="1.0.0-prerelease0014" />
     <PackageReference Include="Ism.SystemState.Client" Version="1.0.0-prerelease0054" />
@@ -69,12 +73,17 @@
     <PackageReference Include="Serilog.AspNetCore" Version="4.1.0" />
     <PackageReference Include="Serilog.Extensions.Logging" Version="3.0.1" />
     <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.11.0" />
-
     <PackageReference Include="StackExchange.Redis" Version="2.2.4" />
     <PackageReference Include="System.Text.Json" Version="5.0.2" />
     <PackageReference Include="Polly" Version="7.2.2" />
-
-
+  </ItemGroup>
+  
+  <ItemGroup Condition="'$(Configuration)'=='Debug' Or '$(Configuration)'=='Release'">  
+    <PackageReference Include="Ism.Storage.DataManagement.Client" Version="1.0.0-prerelease0028" />
+  </ItemGroup>
+  
+  <ItemGroup Condition="'$(Configuration)'=='DebugLocal'">
+    <PackageReference Include="Ism.Storage.DataManagement.Client" Version="99.99.*" />
   </ItemGroup>
 
   <ItemGroup>
