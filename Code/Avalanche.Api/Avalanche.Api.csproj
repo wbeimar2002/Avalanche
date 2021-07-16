@@ -36,7 +36,7 @@
   <ItemGroup>
     <PackageReference Include="AutoFixture" Version="4.17.0" />
     <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="8.1.1" />
-    <PackageReference Include="AvidisDeviceInterface.Client" Version="1.0.0-prerelease0013" />
+    <PackageReference Include="AvidisDeviceInterface.Client" Version="1.0.0-prerelease0014" />
     <PackageReference Include="Google.Api.CommonProtos" Version="2.3.0" />
     <PackageReference Include="Google.Protobuf" Version="3.17.3" />
     <PackageReference Include="Grpc.Core" Version="2.38.0" />
@@ -49,7 +49,7 @@
     <PackageReference Include="Ism.Broadcaster.Standard" Version="1.0.0-prerelease0003" />
     <PackageReference Include="Ism.Common.Core" Version="1.0.0-prerelease044" />
     <PackageReference Include="Ism.Common.Core.Hosting" Version="1.0.0-prerelease037" />
-    <PackageReference Include="Ism.Library.Client" Version="1.0.0-prerelease0032" />
+    <PackageReference Include="Ism.Library.Client" Version="1.0.0-prerelease0033" />
     <PackageReference Include="Ism.PatientInfoEngine.Client" Version="1.0.0-prerelease0022" />
     <PackageReference Include="Ism.PgsTimeout.Client" Version="1.0.0-prerelease0014" />
     <PackageReference Include="Ism.Recorder.Client" Version="1.0.0-prerelease0034" />
@@ -79,7 +79,7 @@
   </ItemGroup>
   
   <ItemGroup Condition="'$(Configuration)'=='Debug' Or '$(Configuration)'=='Release'">  
-    <PackageReference Include="Ism.Storage.DataManagement.Client" Version="1.0.0-prerelease0024" />
+    <PackageReference Include="Ism.Storage.DataManagement.Client" Version="1.0.0-prerelease0028" />
   </ItemGroup>
   
   <ItemGroup Condition="'$(Configuration)'=='DebugLocal'">
