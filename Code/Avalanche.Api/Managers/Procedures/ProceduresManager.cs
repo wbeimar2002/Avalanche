@@ -1,9 +1,12 @@
 ﻿using AutoMapper;
+using Avalanche.Api.Managers.Data;
 using Avalanche.Api.Services.Health;
 using Avalanche.Api.Services.Media;
 using Avalanche.Api.Utilities;
 using Avalanche.Api.ViewModels;
 using Avalanche.Shared.Domain.Enumerations;
+using Avalanche.Shared.Domain.Models;
+using Avalanche.Shared.Infrastructure.Configuration;
 using Ism.Library.V1.Protos;
 using Ism.SystemState.Client;
 using Ism.SystemState.Models.Procedure;
@@ -23,10 +26,14 @@ namespace Avalanche.Api.Managers.Procedures
         private readonly IAccessInfoFactory _accessInfoFactory;
         private readonly IRecorderService _recorderService;
 
+        private readonly IDataManager _dataManager;
+        private readonly GeneralConfiguration _generalConfig;
+
         public const int MinPageSize = 25;
         public const int MaxPageSize = 100;
 
-        public ProceduresManager(IStateClient stateClient, ILibraryService libraryService, IAccessInfoFactory accessInfoFactory, IMapper mapper, IRecorderService recorderService)
+        public ProceduresManager(IStateClient stateClient, ILibraryService libraryService, IAccessInfoFactory accessInfoFactory, IMapper mapper, IRecorderService recorderService,
+            IDataManager dataManager, GeneralConfiguration generalConfig) 
         {
             _stateClient = stateClient;
             _libraryService = libraryService;
@@ -35,6 +42,8 @@ namespace Avalanche.Api.Managers.Procedures
             _libraryService = libraryService;
             _accessInfoFactory = accessInfoFactory;
             _recorderService = recorderService;
+            _dataManager = dataManager;
+            _generalConfig = generalConfig;
         }
 
         /// <summary>
@@ -200,6 +209,21 @@ namespace Avalanche.Api.Managers.Procedures
                 var videoToEdit = activeProcedure.Videos.First(y => y.VideoId == labelContent.ContentId);
                 videoToEdit.Label = labelContent.Label;
             }
+            // If adhoc labels allowed option enabled, add label to LabelEntity
+            if (_generalConfig.General.AdHocLabelsAllowed)
+            {
+                await _dataManager.AddLabel(new LabelModel
+                {
+                    Name = labelContent.Label,
+                    ProcedureTypeId = activeProcedure.ProcedureType.Id
+                });
+
+                var labels = await _dataManager.GetLabelsByProcedureType(activeProcedure.ProcedureType.Id);
+                if (labels.FirstOrDefault(x => x.Name == labelContent.Label) == null)
+                {
+                    throw new System.ArgumentException("Label does not exist.");
+                }
+            }
 
             await _stateClient.AddOrUpdateData(activeProcedure, x =>
             {
@@ -207,7 +231,7 @@ namespace Avalanche.Api.Managers.Procedures
                 {
                     x.Replace(data => data.Images, activeProcedure.Images);
                 }
-                else 
+                else
                 {
                     x.Replace(data => data.Videos, activeProcedure.Videos);
                 }

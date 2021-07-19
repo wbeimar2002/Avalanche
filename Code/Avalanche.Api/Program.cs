@@ -63,7 +63,9 @@ namespace Avalanche.Api
                 // needed for grpc clients
                 // new ConfigurationServiceRequest(nameof(GrpcServiceRegistry), 1, context)
                 new ConfigurationServiceRequest(nameof(PgsApiConfiguration), 1, context),
-                new ConfigurationServiceRequest(nameof(TimeoutApiConfiguration), 1, context)
+                new ConfigurationServiceRequest(nameof(TimeoutApiConfiguration), 1, context),
+                new ConfigurationServiceRequest(nameof(GeneralConfiguration), 1, context)
+
             };
 
             return requests;
