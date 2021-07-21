@@ -77,14 +77,14 @@
     <PackageReference Include="Polly" Version="7.2.2" />
   </ItemGroup>
   
-  <ItemGroup Condition="'$(Configuration)'=='Debug' Or '$(Configuration)'=='Release'">  
-    <PackageReference Include="Ism.Storage.DataManagement.Client" Version="1.0.0-prerelease0028" />
-    <PackageReference Include="Ism.Library.Client" Version="1.0.0-prerelease0033" />
-  </ItemGroup>
-  
   <ItemGroup Condition="'$(Configuration)'=='DebugLocal'">
     <PackageReference Include="Ism.Storage.DataManagement.Client" Version="99.99.*" />
     <PackageReference Include="Ism.Library.Client" Version="99.99.*" />
+  </ItemGroup>
+  
+  <ItemGroup Condition="'$(Configuration)'=='Debug' Or '$(Configuration)'=='Release'">  
+    <PackageReference Include="Ism.Storage.DataManagement.Client" Version="1.0.0-prerelease0028" />
+    <PackageReference Include="Ism.Library.Client" Version="1.0.0-prerelease0033" />
   </ItemGroup>
 
   <ItemGroup>
