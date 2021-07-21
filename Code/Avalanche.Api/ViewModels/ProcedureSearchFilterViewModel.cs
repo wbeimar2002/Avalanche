@@ -11,7 +11,7 @@ namespace Avalanche.Api.ViewModels
         public DateTime? StartCreationTime { get; set; }
         public DateTime? EndCreationTime { get; set; }
 
-        public VideoAutoEditStatus? VideoAutoEditStatus { get; set; }
+        public bool? HasPendingEdits { get; set; }
 
         public bool IsDescending { get; set; }
         public ProcedureIndexSortingColumns ProcedureIndexSortingColumn { get; set; }

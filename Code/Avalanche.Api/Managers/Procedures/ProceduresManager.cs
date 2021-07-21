@@ -186,24 +186,24 @@ namespace Avalanche.Api.Managers.Procedures
             return _mapper.Map<ProcedureMessage, ProcedureViewModel>(response.Procedure);
         }
 
-        public async Task ApplyLabelToActiveProcedure(ContentViewModel labelContent)
+        public async Task ApplyLabelToActiveProcedure(ContentViewModel contentViewModel)
         {
             var activeProcedure = await _stateClient.GetData<ActiveProcedureState>();
 
-            if (labelContent.ProcedureContentType == ProcedureContentType.Image)
+            if (contentViewModel.ProcedureContentType == ProcedureContentType.Image)
             {
-                var imageToEdit = activeProcedure.Images.First(y => y.ImageId == labelContent.ContentId);
-                imageToEdit.Label = labelContent.Label;
+                var imageToEdit = activeProcedure.Images.First(y => y.ImageId == contentViewModel.ContentId);
+                imageToEdit.Label = contentViewModel.Label;
             }
             else 
             {
-                var videoToEdit = activeProcedure.Videos.First(y => y.VideoId == labelContent.ContentId);
-                videoToEdit.Label = labelContent.Label;
+                var videoToEdit = activeProcedure.Videos.First(y => y.VideoId == contentViewModel.ContentId);
+                videoToEdit.Label = contentViewModel.Label;
             }
 
             await _stateClient.AddOrUpdateData(activeProcedure, x =>
             {
-                if (labelContent.ProcedureContentType == ProcedureContentType.Image)
+                if (contentViewModel.ProcedureContentType == ProcedureContentType.Image)
                 {
                     x.Replace(data => data.Images, activeProcedure.Images);
                 }
