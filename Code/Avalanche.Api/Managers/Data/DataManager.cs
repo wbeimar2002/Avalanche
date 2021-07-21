@@ -207,5 +207,21 @@ namespace Avalanche.Api.Managers.Data
 
             return _mapper.Map<IList<LabelMessage>, IList<LabelModel>>(result.LabelList).ToList();
         }
+
+        public async Task<LabelModel> GetLabel(string labelName, int? procedureTypeId)
+        {
+            if (procedureTypeId != null && procedureTypeId <= 0)
+            {
+                procedureTypeId = null;
+            }
+
+            var result = await _dataManagementService.GetLabel(new Ism.Storage.DataManagement.Client.V1.Protos.GetLabelRequest()
+            {
+                LabelName = labelName,
+                ProcedureTypeId = procedureTypeId
+            });
+
+            return _mapper.Map<LabelMessage, LabelModel>(result);
+        }
     }
 }

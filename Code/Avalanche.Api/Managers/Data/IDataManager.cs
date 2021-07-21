@@ -24,5 +24,7 @@ namespace Avalanche.Api.Managers.Data
         Task DeleteLabel(LabelModel label);
         Task<List<LabelModel>> GetLabelsByProcedureType(int? procedureTypeId);
         Task<List<LabelModel>> GetAllLabels();
+
+        Task<LabelModel> GetLabel(string labelName, int? procedureTypeId);
     }
 }
