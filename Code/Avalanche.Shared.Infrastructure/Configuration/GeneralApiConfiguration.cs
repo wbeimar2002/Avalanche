@@ -5,7 +5,7 @@ using Ism.Common.Core.Configuration.Attributes;
 
 namespace Avalanche.Shared.Infrastructure.Configuration
 {
-    [ConfigurationRequest(nameof(GeneralConfiguration), 1)]
+    [ConfigurationRequest(nameof(GeneralApiConfiguration), 1)]
     public class GeneralApiConfiguration : IConfigurationPoco
     {
         public int CacheDuration { get; private set; }

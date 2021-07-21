@@ -1,4 +1,5 @@
 ﻿using Avalanche.Api.Managers.Maintenance;
+using Avalanche.Shared.Infrastructure.Configuration;
 using Avalanche.Shared.Infrastructure.Enumerations;
 using Avalanche.Shared.Infrastructure.Extensions;
 using Avalanche.Shared.Infrastructure.Helpers;
@@ -55,12 +56,14 @@ namespace Avalanche.Api.Controllers.V1
             }
         }
 
-        public async Task<IActionResult> GetGeneralConfigurationSettings()
+        [HttpGet]
+        [Produces(typeof(GeneralApiConfiguration))]
+        public async Task<IActionResult> GetGeneralApiConfigurationSettings()
         {
             try
             {
                 _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
-                var result = await _maintenanceManager.GetSettingValues("GeneralConfiguration");
+                var result = await _maintenanceManager.GetSettingValues("GeneralApiConfiguration");
                 return Ok(result);
             }
             catch (Exception ex)
