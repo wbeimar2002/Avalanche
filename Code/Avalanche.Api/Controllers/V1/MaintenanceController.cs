@@ -1,4 +1,5 @@
-﻿using Avalanche.Api.Managers.Maintenance;
+﻿using Avalanche.Api.Helpers;
+using Avalanche.Api.Managers.Maintenance;
 using Avalanche.Api.ViewModels;
 using Avalanche.Shared.Infrastructure.Configuration;
 using Avalanche.Shared.Infrastructure.Enumerations;
@@ -269,7 +270,7 @@ namespace Avalanche.Api.Controllers.V1
             {
                 _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
                 var result = await _maintenanceManager.GetSettingValues("GeneralApiConfiguration");
-                return Ok(result);
+                return Ok(SerializationHelper.Get<GeneralApiConfiguration>(SerializationHelper.Json(result)));
             }
             catch (Exception ex)
             {
