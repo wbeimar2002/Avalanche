@@ -1,9 +1,12 @@
 ﻿using AutoMapper;
+using Avalanche.Api.Managers.Data;
 using Avalanche.Api.Services.Health;
 using Avalanche.Api.Services.Media;
 using Avalanche.Api.Utilities;
 using Avalanche.Api.ViewModels;
 using Avalanche.Shared.Domain.Enumerations;
+using Avalanche.Shared.Domain.Models;
+using Avalanche.Shared.Infrastructure.Configuration;
 using Ism.Library.V1.Protos;
 using Ism.SystemState.Client;
 using Ism.SystemState.Models.Procedure;
@@ -23,10 +26,14 @@ namespace Avalanche.Api.Managers.Procedures
         private readonly IAccessInfoFactory _accessInfoFactory;
         private readonly IRecorderService _recorderService;
 
+        private readonly IDataManager _dataManager;
+        private readonly GeneralApiConfiguration _generalApiConfig;
+
         public const int MinPageSize = 25;
         public const int MaxPageSize = 100;
 
-        public ProceduresManager(IStateClient stateClient, ILibraryService libraryService, IAccessInfoFactory accessInfoFactory, IMapper mapper, IRecorderService recorderService)
+        public ProceduresManager(IStateClient stateClient, ILibraryService libraryService, IAccessInfoFactory accessInfoFactory, IMapper mapper, IRecorderService recorderService,
+            IDataManager dataManager, GeneralApiConfiguration generalApiConfig) 
         {
             _stateClient = stateClient;
             _libraryService = libraryService;
@@ -35,6 +42,8 @@ namespace Avalanche.Api.Managers.Procedures
             _libraryService = libraryService;
             _accessInfoFactory = accessInfoFactory;
             _recorderService = recorderService;
+            _dataManager = dataManager;
+            _generalApiConfig = generalApiConfig;
         }
 
         /// <summary>
@@ -186,28 +195,54 @@ namespace Avalanche.Api.Managers.Procedures
             return _mapper.Map<ProcedureMessage, ProcedureViewModel>(response.Procedure);
         }
 
-        public async Task ApplyLabelToActiveProcedure(ContentViewModel contentViewModel)
+        public async Task ApplyLabelToActiveProcedure(ContentViewModel labelContent)
         {
+            Preconditions.ThrowIfNullOrEmptyOrWhiteSpace(nameof(labelContent.Label), labelContent.Label);            
+
             var activeProcedure = await _stateClient.GetData<ActiveProcedureState>();
 
-            if (contentViewModel.ProcedureContentType == ProcedureContentType.Image)
+            // If adhoc labels allowed option enabled, add label to store
+            if (_generalApiConfig.AdHocLabelsAllowed)
             {
-                var imageToEdit = activeProcedure.Images.First(y => y.ImageId == contentViewModel.ContentId);
-                imageToEdit.Label = contentViewModel.Label;
+                await _dataManager.AddLabel(new LabelModel
+                {
+                    Name = labelContent.Label,
+                    ProcedureTypeId = activeProcedure.ProcedureType?.Id
+                });
             }
-            else 
+
+            //check label exist in store before associating the label to active procedure
+            var labelModel = await _dataManager.GetLabel(labelContent.Label, activeProcedure.ProcedureType?.Id);
+            if(labelModel == null || !labelModel.Name.Equals(labelContent.Label))
             {
-                var videoToEdit = activeProcedure.Videos.First(y => y.VideoId == contentViewModel.ContentId);
-                videoToEdit.Label = contentViewModel.Label;
+                throw new ArgumentException($"{nameof(labelContent.Label)} '{labelContent.Label}' does not exist and cannot be added", labelContent.Label);
+            }
+
+            try
+            {
+                if (labelContent.ProcedureContentType == ProcedureContentType.Image)
+                {
+                    var imageToEdit = activeProcedure.Images.First(y => y.ImageId == labelContent.ContentId);
+                    imageToEdit.Label = labelContent.Label;
+                }
+                else
+                {
+                    var videoToEdit = activeProcedure.Videos.First(y => y.VideoId == labelContent.ContentId);
+                    videoToEdit.Label = labelContent.Label;
+                }
+            }
+            catch(InvalidOperationException ex)
+            {
+                throw new InvalidOperationException($"{labelContent.ProcedureContentType} with {nameof(labelContent.ContentId)} {labelContent.ContentId} does not exist in {nameof(ActiveProcedureState)}", ex);
             }
 
             await _stateClient.AddOrUpdateData(activeProcedure, x =>
             {
-                if (contentViewModel.ProcedureContentType == ProcedureContentType.Image)
+                if (labelContent.ProcedureContentType == ProcedureContentType.Image)
                 {
                     x.Replace(data => data.Images, activeProcedure.Images);
                 }
-                else 
+                else
                 {
                     x.Replace(data => data.Videos, activeProcedure.Videos);
                 }

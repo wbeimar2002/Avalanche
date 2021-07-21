@@ -12,6 +12,7 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 
 using static Ism.Common.Core.Hosting.HostingUtilities;
+using Ism.Common.Core.Configuration;
 
 namespace Avalanche.Api
 {
@@ -60,12 +61,11 @@ namespace Avalanche.Api
             var context = ConfigurationContext.FromEnvironment();
             var requests = new List<ConfigurationServiceRequest>
             {
-                // needed for grpc clients
-                // new ConfigurationServiceRequest(nameof(GrpcServiceRegistry), 1, context)
                 new ConfigurationServiceRequest(nameof(PgsApiConfiguration), 1, context),
                 new ConfigurationServiceRequest(nameof(TimeoutApiConfiguration), 1, context)
             };
 
+            ConfigurationServiceRequestFactory.CreateRequest<GeneralApiConfiguration>(context);
             return requests;
         }
     }
