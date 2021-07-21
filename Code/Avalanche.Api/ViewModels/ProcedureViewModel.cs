@@ -12,6 +12,9 @@ namespace Avalanche.Api.ViewModels
         public string Repository { get; set; }
         public DateTime ProcedureStartTimeUtc { get; set; }
         public bool IsClinical { get; set; }
+        public string Accession { get; set; }
+        public string ScopeSerialNumber { get; set; }
+        public string Diagnosis { get; set; }
 
         public PatientModel Patient { get; set; }
         public DepartmentModel Department { get; set; }

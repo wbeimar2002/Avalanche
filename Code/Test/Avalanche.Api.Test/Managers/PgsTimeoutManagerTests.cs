@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 
 using Avalanche.Api.Managers.Media;
-using Avalanche.Api.MappingConfigurations;
+using Avalanche.Api.Mapping;
 using Avalanche.Api.Services.Media;
 using Avalanche.Api.ViewModels;
 using Avalanche.Shared.Domain.Models.Media;

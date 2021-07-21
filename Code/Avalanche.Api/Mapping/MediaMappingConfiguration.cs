@@ -2,7 +2,7 @@
 using Avalanche.Api.ViewModels;
 using Avalanche.Shared.Domain.Models.Media;
 
-namespace Avalanche.Api.MappingConfigurations
+namespace Avalanche.Api.Mapping
 {
     public class MediaMappingConfiguration : Profile
     {

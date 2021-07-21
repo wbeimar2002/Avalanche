@@ -57,7 +57,7 @@
     <PackageReference Include="Ism.Storage.Configuration.Client" Version="1.0.0-prerelease0024" />
     <PackageReference Include="Ism.Storage.PatientList.Client" Version="1.0.0-prerelease0020" />
     <PackageReference Include="Ism.Streaming.Client" Version="1.0.0-prerelease0014" />
-    <PackageReference Include="Ism.SystemState.Client" Version="1.0.0-prerelease0054" />
+    <PackageReference Include="Ism.SystemState.Client" Version="1.0.0-prerelease0055" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="3.1.12" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Cors" Version="2.2.0" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="3.1.12" />

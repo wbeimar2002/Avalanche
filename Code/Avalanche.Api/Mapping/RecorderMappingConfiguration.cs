@@ -2,7 +2,7 @@
 using Avalanche.Shared.Domain.Models.Media;
 using Ism.Recorder.Core.V1.Protos;
 
-namespace Avalanche.Api.MappingConfigurations
+namespace Avalanche.Api.Mapping
 {
     public class RecorderMappingConfiguration : Profile
     {

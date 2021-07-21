@@ -8,7 +8,7 @@ using Ism.SystemState.Models.Procedure;
 
 using System;
 
-namespace Avalanche.Api.MappingConfigurations
+namespace Avalanche.Api.Mapping
 {
     public class ProceduresMappingConfiguration : Profile
     {
@@ -43,10 +43,15 @@ namespace Avalanche.Api.MappingConfigurations
             CreateMap<ProcedureMessage, ProcedureViewModel>()
                 .ForMember(dest => dest.Videos, opt => opt.MapFrom(src => src.Videos))
                 .ForMember(dest => dest.Images, opt => opt.MapFrom(src => src.Images))
-                .ForMember(dest => dest.IsClinical, opt => opt.Ignore()) //TODO: Add IsClinical to Library
+                .ForMember(dest => dest.IsClinical, opt => opt.MapFrom(src => src.IsClinical))
+                .ForMember(dest => dest.Accession, opt => opt.MapFrom(src => src.Accession))
+                .ForMember(dest => dest.ScopeSerialNumber, opt => opt.MapFrom(src => src.ScopeSerialNumber))
+                .ForMember(dest => dest.Diagnosis, opt => opt.MapFrom(src => src.Diagnosis))
                 .ForPath(dest => dest.Patient.MRN, opt => opt.MapFrom(src => src.Patient.Mrn))
                 .ForPath(dest => dest.Patient.FirstName, opt => opt.MapFrom(src => src.Patient.FirstName))
                 .ForPath(dest => dest.Patient.LastName, opt => opt.MapFrom(src => src.Patient.LastName))
+                .ForPath(dest => dest.Patient.Sex, opt => opt.MapFrom(src => src.Patient.Sex))
+                .ForPath(dest => dest.Patient.DateOfBirth, opt => opt.MapFrom(src => GetDateTime(src.Patient.DateOfBirth)))
                 .ForPath(dest => dest.Physician.Id, opt => opt.MapFrom(src => src.Physician.Id))
                 .ForPath(dest => dest.Physician.FirstName, opt => opt.MapFrom(src => src.Physician.FirstName))
                 .ForPath(dest => dest.Physician.LastName, opt => opt.MapFrom(src => src.Physician.LastName))
@@ -153,6 +158,18 @@ namespace Avalanche.Api.MappingConfigurations
                 .ReverseMap();
 
             CreateMap<RecordingTimelineModel, RecordingTimelineViewModel>();
+        }
+
+        private DateTime GetDateTime(FixedDateTimeMessage dateTime)
+        {
+            return new DateTime(
+                dateTime.Year,
+                dateTime.Month,
+                dateTime.Day,
+                dateTime.Hour,
+                dateTime.Minute,
+                dateTime.Second
+            );
         }
 
         private FixedDateTimeMessage GetFixedDateTime(DateTime? dateTime)

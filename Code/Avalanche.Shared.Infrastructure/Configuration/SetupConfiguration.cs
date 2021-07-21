@@ -1,11 +1,13 @@
 ﻿using Avalanche.Shared.Domain.Enumerations;
 using Ism.Common.Core.Configuration;
+using Ism.Common.Core.Configuration.Attributes;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
 namespace Avalanche.Shared.Infrastructure.Configuration
 {
+    [ConfigurationRequest(nameof(SetupConfiguration), 1)]
     public class SetupConfiguration : IConfigurationPoco
     {
         public GeneralSetupConfiguration General { get; set; }

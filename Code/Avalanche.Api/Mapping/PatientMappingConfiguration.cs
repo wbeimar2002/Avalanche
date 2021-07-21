@@ -6,12 +6,15 @@ using Ism.Common.Core.Configuration.Models;
 using Ism.Storage.DataManagement.Client.V1.Protos;
 using System;
 
-namespace Avalanche.Api.MappingConfigurations
+namespace Avalanche.Api.Mapping
 {
-    public class HealthMappingConfiguration : Profile
+    public class PatientMappingConfiguration : Profile
     {
-        public HealthMappingConfiguration()
+        public PatientMappingConfiguration()
         {
+            CreateMap<Ism.IsmLogCommon.Core.AccessInfo, Ism.Storage.PatientList.Client.V1.Protos.AccessInfoMessage>();
+            CreateMap<Ism.IsmLogCommon.Core.AccessInfo, Ism.PatientInfoEngine.V1.Protos.AccessInfoMessage>();
+
             CreateMap<Ism.IsmLogCommon.Core.AccessInfo, Ism.Storage.PatientList.Client.V1.Protos.AccessInfoMessage>()
                 .ForPath(dest =>
                     dest.ApplicationName,
@@ -33,79 +36,7 @@ namespace Avalanche.Api.MappingConfigurations
                     opt => opt.MapFrom(src => src.UserName))
                 .ReverseMap();
 
-            CreateMap<ProcedureTypeModel, DeleteProcedureTypeRequest>()
-                .ForMember(dest =>
-                    dest.DepartmentId,
-                    opt => opt.MapFrom(src => src.DepartmentId))
-                .ForMember(dest =>
-                    dest.ProcedureTypeId,
-                    opt => opt.MapFrom(src => src.Id))
-                .ReverseMap();
-
-            CreateMap<DepartmentMessage, DepartmentModel>()
-                .ForMember(dest =>
-                    dest.Id,
-                    opt => opt.MapFrom(src => src.Id))
-                .ForMember(dest =>
-                    dest.Name,
-                    opt => opt.MapFrom(src => src.Name))
-                .ReverseMap();
-
-            CreateMap<ProcedureTypeMessage, ProcedureTypeModel>()
-                .ForMember(dest =>
-                    dest.Id,
-                    opt => opt.MapFrom(src => src.Id))
-                .ForMember(dest =>
-                    dest.Name,
-                    opt => opt.MapFrom(src => src.Name))
-                .ForMember(dest =>
-                    dest.DepartmentId,
-                    opt => opt.MapFrom(src => src.DepartmentId))
-                .ReverseMap();
-
-            CreateMap<DepartmentModel, AddDepartmentRequest>()
-                .ForPath(dest =>
-                    dest.Department.Id,
-                    opt => opt.MapFrom(src => src.Id))
-                .ForPath(dest =>
-                    dest.Department.Name,
-                    opt => opt.MapFrom(src => src.Name))
-                .ReverseMap();
-
-            CreateMap<ProcedureTypeModel, AddProcedureTypeRequest>()
-                .ForPath(dest =>
-                    dest.ProcedureType.Id,
-                    opt => opt.MapFrom(src => 0))
-                .ForPath(dest =>
-                    dest.ProcedureType.Name,
-                    opt => opt.MapFrom(src => src.Name))
-                .ForPath(dest =>
-                    dest.ProcedureType.DepartmentId,
-                    opt => opt.MapFrom(src => src.DepartmentId))
-                .ReverseMap();
-
-            CreateMap<AddDepartmentResponse, DepartmentModel>()
-                .ForMember(dest =>
-                    dest.Id,
-                    opt => opt.MapFrom(src => src.Department.Id))
-                .ForMember(dest =>
-                    dest.Name,
-                    opt => opt.MapFrom(src => src.Department.Name))
-                .ReverseMap();
-
-            CreateMap<AddProcedureTypeResponse, ProcedureTypeModel>()
-                .ForMember(dest =>
-                    dest.Id,
-                    opt => opt.MapFrom(src => src.ProcedureType.Id))
-                .ForMember(dest =>
-                    dest.Name,
-                    opt => opt.MapFrom(src => src.ProcedureType.Name))
-                .ForMember(dest =>
-                    dest.DepartmentId,
-                    opt => opt.MapFrom(src => src.ProcedureType.DepartmentId))
-                .ReverseMap();
-
-            CreateMap < Avalanche.Shared.Domain.Models.UserModel, ConfigurationContext>()
+            CreateMap <Avalanche.Shared.Domain.Models.UserModel, ConfigurationContext>()
                 .ForMember(dest =>
                     dest.IdnId,
                     opt => opt.MapFrom(src => src.IdnId))
@@ -233,10 +164,6 @@ namespace Avalanche.Api.MappingConfigurations
                     dest.AccessInfo.UserName,
                     opt => opt.Ignore())
                 .ReverseMap();
-
-            
-            CreateMap<Ism.IsmLogCommon.Core.AccessInfo, Ism.Storage.PatientList.Client.V1.Protos.AccessInfoMessage>();
-            CreateMap<Ism.IsmLogCommon.Core.AccessInfo, Ism.PatientInfoEngine.V1.Protos.AccessInfoMessage>();
 
             CreateMap<Ism.Storage.PatientList.Client.V1.Protos.AddPatientRecordResponse, PatientViewModel>()
                 .ForMember(dest =>

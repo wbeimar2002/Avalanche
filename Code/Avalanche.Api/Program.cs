@@ -65,6 +65,7 @@ namespace Avalanche.Api
                 new ConfigurationServiceRequest(nameof(TimeoutApiConfiguration), 1, context)
             };
 
+            ConfigurationServiceRequestFactory.CreateRequest<SetupConfiguration>(context);
             ConfigurationServiceRequestFactory.CreateRequest<GeneralApiConfiguration>(context);
             return requests;
         }
