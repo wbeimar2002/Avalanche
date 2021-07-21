@@ -26,11 +26,11 @@ namespace Avalanche.Api.Services.Health
 
         public async Task DeleteProcedureType(DeleteProcedureTypeRequest request) => await _client.DeleteProcedureType(request);
 
-        public async Task<GetDepartmentsResponse> GetAllDepartments() => await _client.GetAllDepartments();
+        public async Task<GetDepartmentsResponse> GetAllDepartments() => await _client.GetAllDepartments(new Empty());
 
         public async Task<GetProcedureTypesResponse> GetProcedureTypesByDepartment(GetProcedureTypesByDepartmentRequest request) => await _client.GetProcedureTypesByDepartment(request);
 
-        public async Task<GetProcedureTypesResponse> GetAllProcedureTypes() => await _client.GetProceduresTypes();
+        public async Task<GetProcedureTypesResponse> GetAllProcedureTypes() => await _client.GetProceduresTypes(new Empty());
 
         public async Task<ProcedureTypeMessage> GetProcedureType(GetProcedureTypeRequest request) => await _client.GetProcedureType(request);
 
@@ -42,7 +42,7 @@ namespace Avalanche.Api.Services.Health
 
         public async Task<GetLabelsResponse> GetLabelsByProcedureType(GetLabelsByProcedureTypeRequest request) => await _client.GetLabelsByProcedureType(request);
 
-        public async Task<GetLabelsResponse> GetAllLabels() => await _client.GetLabels();
+        public async Task<GetLabelsResponse> GetAllLabels() => await _client.GetLabels(new Empty());
 
         public async Task<LabelMessage> GetLabel(GetLabelRequest request) => await _client.GetLabel(request);
     }
