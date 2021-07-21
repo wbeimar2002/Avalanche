@@ -56,7 +56,7 @@ namespace Avalanche.Api.Controllers.V1
             }
         }
 
-        [HttpGet("GeneralApiConfiguration")]
+        [HttpGet("Typed/GeneralApiConfiguration")]
         [Produces(typeof(GeneralApiConfiguration))]
         public async Task<IActionResult> GetGeneralApiConfigurationSettings()
         {
