@@ -93,6 +93,26 @@ namespace Avalanche.Api.Controllers.V1
             }
         }
 
+        [HttpPut("{id}")]
+        [Produces(typeof(ProcedureViewModel))]
+        public async Task<IActionResult> Update(string id, [FromBody] ProcedureViewModel procedureViewModel)
+        {
+            try
+            {
+                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, LoggerHelper.GetLogMessage(DebugLogType.Exception));
+                return new BadRequestObjectResult(ex.Get(_environment.IsDevelopment()));
+            }
+            finally
+            {
+                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
+            }
+        }
+
         /// <summary>
         /// Load the active procedure (if exists)
         /// </summary>
