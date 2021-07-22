@@ -143,6 +143,9 @@ namespace Avalanche.Api.Mapping
                     dest.Name,
                     opt => opt.MapFrom(src => src.Name))
                 .ForMember(dest =>
+                    dest.IsNew,
+                    opt => opt.Ignore())
+                .ForMember(dest =>
                     dest.ProcedureTypeId,
                     opt => opt.MapFrom(src => src.ProcedureTypeId))
                 .ReverseMap();
