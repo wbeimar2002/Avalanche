@@ -83,6 +83,8 @@ namespace Avalanche.Api.Services.Notifications
 
             AddSubscription<PgsTimeoutRoomStateEvent>(evt => _hubContext.Clients.All.OnPgsTimeoutRoomStateChanged(evt));
 
+            AddSubscription<ImageCaptureStartedEvent>(evt => _hubContext.Clients.All.OnImageCaptureStarted(evt));
+
             return Task.CompletedTask;
         }
 
