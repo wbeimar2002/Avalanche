@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using Avalanche.Api.MappingConfigurations;
+using Avalanche.Api.Mapping;
 using Avalanche.Api.ViewModels;
 using Ism.SystemState.Models.Procedure;
 using Microsoft.Extensions.DependencyInjection;
@@ -20,7 +20,8 @@ namespace Avalanche.Api.Tests.MappingConfigurations
         {
             var config = new MapperConfiguration(cfg =>
             {
-                cfg.AddProfile(new HealthMappingConfiguration());
+                cfg.AddProfile(new PatientMappingConfiguration());
+                cfg.AddProfile(new DataMappingConfiguration());
                 cfg.AddProfile(new MaintenanceMappingConfiguration());
                 cfg.AddProfile(new MediaMappingConfiguration());
                 cfg.AddProfile(new ProceduresMappingConfiguration());
@@ -32,9 +33,15 @@ namespace Avalanche.Api.Tests.MappingConfigurations
         }
 
         [Test]
-        public void HealthMappingConfigurations_IsValid()
+        public void PatientMappingConfiguration_IsValid()
         {
-            AssertProfileIsValid<HealthMappingConfiguration>();      
+            AssertProfileIsValid<PatientMappingConfiguration>();      
+        }
+
+        [Test]
+        public void DataMappingConfiguration_IsValid()
+        {
+            AssertProfileIsValid<DataMappingConfiguration>();
         }
 
         [Test]

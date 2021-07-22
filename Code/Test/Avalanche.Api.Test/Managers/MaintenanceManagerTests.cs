@@ -2,7 +2,7 @@
 using Avalanche.Api.Helpers;
 using Avalanche.Api.Managers.Data;
 using Avalanche.Api.Managers.Maintenance;
-using Avalanche.Api.MappingConfigurations;
+using Avalanche.Api.Mapping;
 using Avalanche.Api.Services.Health;
 using Avalanche.Api.Services.Maintenance;
 using Avalanche.Api.Services.Media;
@@ -38,7 +38,8 @@ namespace Avalanche.Api.Test.Managers
         {
             var config = new MapperConfiguration(cfg =>
             {
-                cfg.AddProfile(new HealthMappingConfiguration());
+                cfg.AddProfile(new PatientMappingConfiguration());
+                cfg.AddProfile(new DataMappingConfiguration());
                 cfg.AddProfile(new MaintenanceMappingConfiguration());
             });
 

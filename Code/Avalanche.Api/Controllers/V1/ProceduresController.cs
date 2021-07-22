@@ -38,9 +38,38 @@ namespace Avalanche.Api.Controllers.V1
         /// </summary>
         /// <param name="filter"></param>
         /// <returns></returns>
-        [HttpPost("filtered")]
+        [HttpPost("filtered/basic")]
         [Produces(typeof(ProceduresContainerReponseViewModel))]
-        public async Task<IActionResult> Search(ProcedureSearchFilterViewModel filter)
+        public async Task<IActionResult> BasicSearch(ProcedureSearchFilterViewModel filter)
+        {
+            try
+            {
+                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
+                var result = await _proceduresManager.Search(filter);
+
+                var procedures = new PagedCollectionViewModel<ProcedureViewModel>
+                {
+                    Items = result.Procedures
+                };
+
+                PagingHelper.AppendPagingContext(this.Url, this.Request, filter, procedures);
+
+                return Ok(new ProceduresContainerReponseViewModel { TotalCount = result.TotalCount, PagedProcedures = procedures });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, LoggerHelper.GetLogMessage(DebugLogType.Exception));
+                return new BadRequestObjectResult(ex.Get(_environment.IsDevelopment()));
+            }
+            finally
+            {
+                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
+            }
+        }
+
+        [HttpPost("filtered/advanced")]
+        [Produces(typeof(ProceduresContainerReponseViewModel))]
+        public async Task<IActionResult> AdvancedSearch(ProcedureSearchFilterViewModel filter)
         {
             try
             {
@@ -81,6 +110,26 @@ namespace Avalanche.Api.Controllers.V1
 
                 var result = await _proceduresManager.GetProcedureDetails(id);
                 return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, LoggerHelper.GetLogMessage(DebugLogType.Exception));
+                return new BadRequestObjectResult(ex.Get(_environment.IsDevelopment()));
+            }
+            finally
+            {
+                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
+            }
+        }
+
+        [HttpPut("{id}")]
+        [Produces(typeof(ProcedureViewModel))]
+        public async Task<IActionResult> Update(string id, [FromBody] ProcedureViewModel procedureViewModel)
+        {
+            try
+            {
+                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
+                return Ok();
             }
             catch (Exception ex)
             {

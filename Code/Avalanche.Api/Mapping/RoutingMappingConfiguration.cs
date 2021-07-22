@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Avalanche.Api.MappingConfigurations
+namespace Avalanche.Api.Mapping
 {
     public class RoutingMappingConfiguration : Profile
     {

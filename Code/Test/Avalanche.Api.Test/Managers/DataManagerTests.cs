@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 
 using Avalanche.Api.Managers.Data;
-using Avalanche.Api.MappingConfigurations;
+using Avalanche.Api.Mapping;
 using Avalanche.Api.Services.Health;
 using Avalanche.Api.Services.Maintenance;
 using Avalanche.Shared.Domain.Models;
@@ -38,8 +38,8 @@ namespace Avalanche.Api.Tests.Managers
 
             var config = new MapperConfiguration(cfg =>
             {
-                cfg.AddProfile(new HealthMappingConfiguration());
-                cfg.AddProfile(new LabelMappingConfiguration());
+                cfg.AddProfile(new PatientMappingConfiguration());
+                cfg.AddProfile(new DataMappingConfiguration());
             });
 
             _mapper = config.CreateMapper();

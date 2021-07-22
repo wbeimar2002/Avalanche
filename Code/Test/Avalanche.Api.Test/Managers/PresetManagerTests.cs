@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using Avalanche.Api.Managers.Presets;
-using Avalanche.Api.MappingConfigurations;
+using Avalanche.Api.Mapping;
 using Avalanche.Api.Services.Maintenance;
 using Avalanche.Api.Services.Media;
 using Avalanche.Shared.Domain.Models.Presets;
