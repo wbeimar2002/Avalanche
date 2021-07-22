@@ -38,5 +38,7 @@ namespace Avalanche.Api.Hubs
         Task OnTimeoutStateDataChanged(TimeoutStateData evt);
 
         Task OnPgsTimeoutRoomStateChanged(PgsTimeoutRoomStateEvent evt);
+
+        Task OnImageCaptureStarted(ImageCaptureStartedEvent evt);
     }
 }
