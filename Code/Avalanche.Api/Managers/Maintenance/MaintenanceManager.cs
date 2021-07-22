@@ -32,15 +32,17 @@ namespace Avalanche.Api.Managers.Maintenance
         private readonly ILibraryService _libraryService;
         private readonly IFilesService _filesService;
 
-        private readonly UserModel user;
-        private readonly ConfigurationContext configurationContext;
+        private readonly UserModel _user;
+        private readonly ConfigurationContext _configurationContext;
+        private readonly GeneralApiConfiguration _generalApiConfiguration;
 
         public MaintenanceManager(IStorageService storageService, 
             IDataManager dataManager, 
             IMapper mapper, 
             IHttpContextAccessor httpContextAccessor,
             ILibraryService libraryService,
-            IFilesService filesService)
+            IFilesService filesService,
+            GeneralApiConfiguration generalApiConfiguration)
         {
             _storageService = storageService;
             _dataManager = dataManager;
@@ -49,9 +51,10 @@ namespace Avalanche.Api.Managers.Maintenance
             _libraryService = libraryService;
             _filesService = filesService;
 
-            user = HttpContextUtilities.GetUser(_httpContextAccessor.HttpContext);
-            configurationContext = _mapper.Map<Shared.Domain.Models.UserModel, ConfigurationContext>(user);
-            configurationContext.IdnId = Guid.NewGuid().ToString();
+            _user = HttpContextUtilities.GetUser(_httpContextAccessor.HttpContext);
+            _configurationContext = _mapper.Map<Shared.Domain.Models.UserModel, ConfigurationContext>(_user);
+            _configurationContext.IdnId = Guid.NewGuid().ToString();
+            _generalApiConfiguration = generalApiConfiguration;
         }
 
         public async Task<ReindexStatusViewModel> ReindexRepository(ReindexRepositoryRequestViewModel reindexRequest)
@@ -65,11 +68,11 @@ namespace Avalanche.Api.Managers.Maintenance
 
         public async Task SaveCategoryPolicies(DynamicSectionViewModel category)
         {
-            await SaveJsonValues(category, configurationContext);
+            await SaveJsonValues(category, _configurationContext);
 
             SettingsHelper.CleanSettings(category);
 
-            await _storageService.SaveJsonMetadata(category.Metadata, JsonConvert.SerializeObject(category), 1, configurationContext);
+            await _storageService.SaveJsonMetadata(category.Metadata, JsonConvert.SerializeObject(category), 1, _configurationContext);
         }
 
         public async Task SaveCategory(DynamicSectionViewModel category)
@@ -84,7 +87,7 @@ namespace Avalanche.Api.Managers.Maintenance
                 }
             }
 
-            await SaveJsonValues(category, configurationContext);
+            await SaveJsonValues(category, _configurationContext);
         }
 
         public async Task SaveEntityChanges(DynamicListViewModel category, DynamicListActions action)
@@ -92,16 +95,16 @@ namespace Avalanche.Api.Managers.Maintenance
             if (category.SaveAsFile)
                 await SaveCustomListFile(category);
             else
-                await SaveCustomEntity(user, category, action);
+                await SaveCustomEntity(_user, category, action);
         }
 
         private async Task SaveEmbeddedList(string settingsKey, string jsonKey, DynamicListViewModel customList)
         {
             var json = JsonConvert.SerializeObject(customList.Data);
 
-            if (await _storageService.ValidateSchema(customList.Schema, json, 1, configurationContext))
+            if (await _storageService.ValidateSchema(customList.Schema, json, 1, _configurationContext))
             {
-                await _storageService.UpdateJsonProperty(settingsKey, jsonKey, json, 1, configurationContext, true);
+                await _storageService.UpdateJsonProperty(settingsKey, jsonKey, json, 1, _configurationContext, true);
             }
             else
             {
@@ -113,9 +116,9 @@ namespace Avalanche.Api.Managers.Maintenance
         {
             var json = JsonConvert.SerializeObject(customList.Data);
 
-            if (await _storageService.ValidateSchema(customList.Schema, json, 1, configurationContext))
+            if (await _storageService.ValidateSchema(customList.Schema, json, 1, _configurationContext))
             {
-                await _storageService.SaveJsonObject(customList.SourceKey, json, 1, configurationContext, true);
+                await _storageService.SaveJsonObject(customList.SourceKey, json, 1, _configurationContext, true);
             }
             else
             {   
@@ -125,7 +128,7 @@ namespace Avalanche.Api.Managers.Maintenance
 
         public async Task<DynamicSectionViewModel> GetCategoryByKey(string key)
         {
-            var configurationContext = _mapper.Map<UserModel, ConfigurationContext>(user);
+            var configurationContext = _mapper.Map<UserModel, ConfigurationContext>(_user);
             var category = await _storageService.GetJsonObject<DynamicSectionViewModel>(key, 1, configurationContext);
             var settingValues = await _storageService.GetJson(category.JsonKey, 1, configurationContext);
 
@@ -146,7 +149,7 @@ namespace Avalanche.Api.Managers.Maintenance
 
         public async Task<DynamicListViewModel> GetCategoryListByKey(string key, string parentId)
         {
-            var category = await _storageService.GetJsonObject<DynamicListViewModel>(key, 1, configurationContext);
+            var category = await _storageService.GetJsonObject<DynamicListViewModel>(key, 1, _configurationContext);
 
             List<dynamic> values = null;
 
@@ -179,7 +182,7 @@ namespace Avalanche.Api.Managers.Maintenance
                     break;
 
                 default:
-                    values = await _storageService.GetJsonDynamicList(category.SourceKey, 1, configurationContext);
+                    values = await _storageService.GetJsonDynamicList(category.SourceKey, 1, _configurationContext);
                     break;
 
             }
@@ -189,7 +192,7 @@ namespace Avalanche.Api.Managers.Maintenance
 
         public async Task<DynamicListViewModel> GetEmbeddedListByKey(string settingValues, string metadataKey, string listKey)
         {
-            var category = await _storageService.GetJsonObject<DynamicListViewModel>(metadataKey, 1, configurationContext);
+            var category = await _storageService.GetJsonObject<DynamicListViewModel>(metadataKey, 1, _configurationContext);
             var values = SettingsHelper.GetEmbeddedList(listKey, settingValues);
 
             return await BuildCategoryList(category, values);
@@ -210,7 +213,7 @@ namespace Avalanche.Api.Managers.Maintenance
             {
                 foreach (var property in category.Properties)
                 {
-                    await SetIsRequired(configurationContext, category.SourceKey, property);
+                    await SetIsRequired(_configurationContext, category.SourceKey, property);
 
                     if (!string.IsNullOrEmpty(property.SourceKey))
                     {
@@ -278,7 +281,7 @@ namespace Avalanche.Api.Managers.Maintenance
                 switch (property.SourceKey)
                 {
                     case "VideoSinks":
-                        var videoSinks = await _storageService.GetJsonDynamicList(property.SourceKey, 1, configurationContext);
+                        var videoSinks = await _storageService.GetJsonDynamicList(property.SourceKey, 1, _configurationContext);
 
                         var dynamicVideoSinks = videoSinks
                             .Select(item =>
@@ -351,14 +354,19 @@ namespace Avalanche.Api.Managers.Maintenance
 
         public async Task<List<dynamic>> GetListValues(string key)
         {
-            var configurationContext = _mapper.Map<Shared.Domain.Models.UserModel, ConfigurationContext>(user);
+            var configurationContext = _mapper.Map<Shared.Domain.Models.UserModel, ConfigurationContext>(_user);
             return await _storageService.GetJsonDynamicList(key, 1, configurationContext);
         }
 
         public async Task<dynamic> GetSettingValues(string key)
         {
-            var configurationContext = _mapper.Map<Shared.Domain.Models.UserModel, ConfigurationContext>(user);
+            var configurationContext = _mapper.Map<Shared.Domain.Models.UserModel, ConfigurationContext>(_user);
             return await _storageService.GetJsonDynamic(key, 1, configurationContext);
+        }
+
+        public async Task<GeneralApiConfiguration> GetGeneralApiConfigurationSettings()
+        {
+            return _generalApiConfiguration;
         }
 
         private async Task SetCategorySources(DynamicSectionViewModel category, string settingValues, List<dynamic> types)
@@ -470,7 +478,7 @@ namespace Avalanche.Api.Managers.Maintenance
             }
             else
             {
-                var list = await _storageService.GetJsonDynamicList(setting.SourceKey, 1, configurationContext);
+                var list = await _storageService.GetJsonDynamicList(setting.SourceKey, 1, _configurationContext);
                 return GetDynamicList(setting, list);
             }
         }
@@ -510,7 +518,7 @@ namespace Avalanche.Api.Managers.Maintenance
                             if (customList.SaveAsFile)
                                 await SaveCustomListFile(customList);
                             else
-                                await SaveCustomEntities(user, customList);
+                                await SaveCustomEntities(_user, customList);
                         }
                         else if (item.VisualStyle == VisualStyles.EmbeddedList)
                         {
@@ -519,7 +527,7 @@ namespace Avalanche.Api.Managers.Maintenance
                         }
                         else
                         {
-                            await _storageService.SaveJsonObject(item.SourceKey, JsonConvert.SerializeObject(item.SourceValues), 1, configurationContext);
+                            await _storageService.SaveJsonObject(item.SourceKey, JsonConvert.SerializeObject(item.SourceValues), 1, _configurationContext);
                             item.SourceValues = null;
                         }
                     }

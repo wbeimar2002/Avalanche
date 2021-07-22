@@ -62,11 +62,11 @@ namespace Avalanche.Api
             var requests = new List<ConfigurationServiceRequest>
             {
                 new ConfigurationServiceRequest(nameof(PgsApiConfiguration), 1, context),
-                new ConfigurationServiceRequest(nameof(TimeoutApiConfiguration), 1, context)
+                new ConfigurationServiceRequest(nameof(TimeoutApiConfiguration), 1, context),
+                ConfigurationServiceRequestFactory.CreateRequest<SetupConfiguration>(context),
+                ConfigurationServiceRequestFactory.CreateRequest<GeneralApiConfiguration>(context),
             };
-
-            ConfigurationServiceRequestFactory.CreateRequest<SetupConfiguration>(context);
-            ConfigurationServiceRequestFactory.CreateRequest<GeneralApiConfiguration>(context);
+           
             return requests;
         }
     }
