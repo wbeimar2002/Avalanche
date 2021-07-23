@@ -14,7 +14,6 @@ using Moq;
 using NUnit.Framework;
 
 using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Avalanche.Api.Tests.Managers
@@ -364,6 +363,28 @@ namespace Avalanche.Api.Tests.Managers
             var result = await _manager.GetAllLabels();
 
             _dataManagementService.Verify(mock => mock.GetAllLabels(), Times.Once);
+        }
+
+        [Test]
+        public async Task DataManager_GetLabelWithIgnoreCustomExceptions_ReturnsEmptyLabel_Succeeds()
+        {
+            var request = new Ism.Storage.DataManagement.Client.V1.Protos.GetLabelRequest()
+            {
+                LabelName = "LabelA",
+                ProcedureTypeId = null,
+                IgnoreCustomExceptions = true
+            };
+
+            var response = new Ism.Storage.DataManagement.Client.V1.Protos.LabelMessage();
+
+            //arrange
+            _dataManagementService.Setup(mock => mock.GetLabel(request)).ReturnsAsync(response);
+
+            //act
+            var result = await _manager.GetLabel("labelA", null);
+
+            //assert
+            Assert.IsNull(result);
         }
     }
 }
