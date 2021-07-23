@@ -28,7 +28,7 @@ namespace Avalanche.Api.Controllers.V1
         private readonly IMaintenanceManager _maintenanceManager;
         private readonly IWebHostEnvironment _environment;
 
-        public MaintenanceController(IMaintenanceManager maintenanceManager, ILogger<MaintenanceController> logger, IWebHostEnvironment environment)
+        public MaintenanceController(IMaintenanceManager maintenanceManager, ILogger<MaintenanceController> logger, GeneralApiConfiguration config, IWebHostEnvironment environment)
         {
             _environment = environment;
             _logger = logger;
@@ -269,8 +269,9 @@ namespace Avalanche.Api.Controllers.V1
             try
             {
                 _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
-                var result = await _maintenanceManager.GetSettingValues("GeneralApiConfiguration");
-                return Ok(SerializationHelper.Get<GeneralApiConfiguration>(SerializationHelper.Json(result)));
+                var result = await _maintenanceManager.GetGeneralApiConfigurationSettings();
+                return Ok(result);
+
             }
             catch (Exception ex)
             {

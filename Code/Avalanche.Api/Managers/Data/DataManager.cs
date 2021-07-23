@@ -218,7 +218,8 @@ namespace Avalanche.Api.Managers.Data
             var result = await _dataManagementService.GetLabel(new Ism.Storage.DataManagement.Client.V1.Protos.GetLabelRequest()
             {
                 LabelName = labelName,
-                ProcedureTypeId = procedureTypeId
+                ProcedureTypeId = procedureTypeId,                
+                IgnoreCustomExceptions = true
             });
 
             return _mapper.Map<LabelMessage, LabelModel>(result);

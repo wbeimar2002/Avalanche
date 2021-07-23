@@ -204,16 +204,20 @@ namespace Avalanche.Api.Managers.Procedures
             // If adhoc labels allowed option enabled, add label to store
             if (_generalApiConfig.AdHocLabelsAllowed)
             {
-                await _dataManager.AddLabel(new LabelModel
+                var newLabel = await _dataManager.GetLabel(labelContent.Label, activeProcedure.ProcedureType?.Id);
+                if (newLabel == null || newLabel?.Id == 0)
                 {
-                    Name = labelContent.Label,
-                    ProcedureTypeId = activeProcedure.ProcedureType?.Id
-                });
+                    await _dataManager.AddLabel(new LabelModel
+                    {
+                        Name = labelContent.Label,
+                        ProcedureTypeId = activeProcedure.ProcedureType?.Id
+                    });
+                }
             }
 
             //check label exist in store before associating the label to active procedure
             var labelModel = await _dataManager.GetLabel(labelContent.Label, activeProcedure.ProcedureType?.Id);
-            if(labelModel == null || !labelModel.Name.Equals(labelContent.Label))
+            if(labelModel == null || labelModel?.Id == 0)
             {
                 throw new ArgumentException($"{nameof(labelContent.Label)} '{labelContent.Label}' does not exist and cannot be added", labelContent.Label);
             }

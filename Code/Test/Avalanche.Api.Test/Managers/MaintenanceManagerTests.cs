@@ -7,6 +7,7 @@ using Avalanche.Api.Services.Health;
 using Avalanche.Api.Services.Maintenance;
 using Avalanche.Api.Services.Media;
 using Avalanche.Api.ViewModels;
+using Avalanche.Shared.Infrastructure.Configuration;
 using Ism.Common.Core.Configuration.Models;
 using Microsoft.AspNetCore.Http;
 using Moq;
@@ -31,6 +32,8 @@ namespace Avalanche.Api.Test.Managers
         Mock<IHttpContextAccessor> _httpContextAccessor;
         Mock<IFilesService> _filesService;
 
+        Mock<GeneralApiConfiguration> _generalApiConfiguration;
+
         MaintenanceManager _manager;
 
         [SetUp]
@@ -50,7 +53,9 @@ namespace Avalanche.Api.Test.Managers
             _httpContextAccessor = new Mock<IHttpContextAccessor>();
             _filesService = new Mock<IFilesService>();
 
-            _manager = new MaintenanceManager(_storageService.Object, _dataManager.Object, _mapper, _httpContextAccessor.Object, _libraryService.Object, _filesService.Object);
+            _generalApiConfiguration = new Mock<GeneralApiConfiguration>();
+
+            _manager = new MaintenanceManager(_storageService.Object, _dataManager.Object, _mapper, _httpContextAccessor.Object, _libraryService.Object, _filesService.Object, _generalApiConfiguration.Object);
         }
 
         [Test]

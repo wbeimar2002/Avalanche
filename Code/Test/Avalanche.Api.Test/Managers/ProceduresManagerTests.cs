@@ -396,6 +396,7 @@ namespace Avalanche.Api.Test.Managers
 
             var labelModel = new LabelModel
             {
+                Id = 1,
                 ProcedureTypeId = 1,
                 Name = "AdhocLabelA"
             };
@@ -456,6 +457,7 @@ namespace Avalanche.Api.Test.Managers
 
             var labelModel = new LabelModel
             {
+                Id = 1,
                 ProcedureTypeId = 1,
                 Name = "AdhocLabelB"
             };
@@ -574,6 +576,7 @@ namespace Avalanche.Api.Test.Managers
 
             var labelModel = new LabelModel
             {
+                Id = 1,
                 ProcedureTypeId = 1,
                 Name = "LabelA"
             };
@@ -633,6 +636,7 @@ namespace Avalanche.Api.Test.Managers
 
             var labelModel = new LabelModel
             {
+                Id = 1,
                 ProcedureTypeId = 1,
                 Name = "LabelB"
             };
