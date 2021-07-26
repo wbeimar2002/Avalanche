@@ -10,13 +10,13 @@ namespace Avalanche.Api.Services.Health
     public class LibraryService : ILibraryService
     {
         private readonly LibraryActiveProcedureServiceSecureClient _activeClient;
-        private readonly LibraryServiceSecureClient _serviceClient;
+        private readonly LibraryManagerServiceSecureClient _managerServiceClient;
         private readonly LibrarySearchServiceSecureClient _serviceSearchClient;
 
-        public LibraryService(LibraryActiveProcedureServiceSecureClient activeClient, LibraryServiceSecureClient serviceClient, LibrarySearchServiceSecureClient serviceSearchClient)
+        public LibraryService(LibraryActiveProcedureServiceSecureClient activeClient, LibraryManagerServiceSecureClient managerServiceClient, LibrarySearchServiceSecureClient serviceSearchClient)
         {
             _activeClient = activeClient;
-            _serviceClient = serviceClient;
+            _managerServiceClient = managerServiceClient;
             _serviceSearchClient = serviceSearchClient;
         }
 
@@ -35,6 +35,11 @@ namespace Avalanche.Api.Services.Health
             return await _activeClient.AllocateNewProcedure(allocateNewProcedureRequest);
         }
 
+        public async Task UpdateProcedure(UpdateProcedureRequest updateProcedureRequest)
+        {
+            await _managerServiceClient.UpdateProcedure(updateProcedureRequest);
+        }
+
         public async Task DeleteActiveProcedureMedia(DeleteActiveProcedureMediaRequest deleteActiveProcedureMediaRequest)
         {
             await _activeClient.DeleteActiveProcedureMedia(deleteActiveProcedureMediaRequest);
@@ -47,7 +52,7 @@ namespace Avalanche.Api.Services.Health
 
         public async Task<ReindexRepositoryResponse> ReindexRepository(string repositoryName)
         {
-            return await _serviceClient.ReindexRepository(new ReindexRepositoryRequest()
+            return await _managerServiceClient.ReindexRepository(new ReindexRepositoryRequest()
             {
                 RepositoryName = repositoryName
             });

@@ -9,7 +9,7 @@ namespace Avalanche.Api.ViewModels
         public string? PatientLastName { get; set; }
         public int? PatientId { get; set; }
         public int? PhysicianId { get; set; }
-        public int? DepartmentId { get; set; }
-        public int? ProcedureTypeId { get; set; }
+        public string? DepartmentName { get; set; }
+        public string? ProcedureTypeName { get; set; }
     }
 }

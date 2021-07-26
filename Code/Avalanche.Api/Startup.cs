@@ -130,7 +130,7 @@ namespace Avalanche.Api
             _ = services.AddAvidisSecureClient();
             _ = services.AddConfigurationServiceSecureClient();
             _ = services.AddDataManagementStorageSecureClient();
-            _ = services.AddLibraryServiceSecureClient();
+            _ = services.AddLibraryManagerServiceSecureClient();
             _ = services.AddLibrarySearchServiceSecureClient();
             _ = services.AddLibraryActiveProcedureServiceSecureClient();
             _ = services.AddPatientListSecureClient();

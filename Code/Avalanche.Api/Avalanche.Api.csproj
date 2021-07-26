@@ -51,13 +51,13 @@
     <PackageReference Include="Ism.Common.Core.Hosting" Version="1.0.0-prerelease037" />
     <PackageReference Include="Ism.PatientInfoEngine.Client" Version="1.0.0-prerelease0022" />
     <PackageReference Include="Ism.PgsTimeout.Client" Version="1.0.0-prerelease0014" />
-    <PackageReference Include="Ism.Recorder.Client" Version="1.0.0-prerelease0034" />
+    <PackageReference Include="Ism.Recorder.Client" Version="1.0.0-prerelease0035" />
     <PackageReference Include="Ism.Routing.Client" Version="1.0.0-prerelease0015" />
     <PackageReference Include="Ism.Security.Grpc.Standard" Version="1.0.0-prerelease024" />
     <PackageReference Include="Ism.Storage.Configuration.Client" Version="1.0.0-prerelease0024" />
     <PackageReference Include="Ism.Storage.PatientList.Client" Version="1.0.0-prerelease0020" />
     <PackageReference Include="Ism.Streaming.Client" Version="1.0.0-prerelease0014" />
-    <PackageReference Include="Ism.SystemState.Client" Version="1.0.0-prerelease0055" />
+    <PackageReference Include="Ism.SystemState.Client" Version="1.0.0-prerelease0056" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="3.1.12" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Cors" Version="2.2.0" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="3.1.12" />
