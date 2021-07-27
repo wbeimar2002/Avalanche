@@ -3,10 +3,13 @@
 using Avalanche.Api.ViewModels;
 using Avalanche.Shared.Domain.Enumerations;
 using Avalanche.Shared.Domain.Models;
+using Google.Protobuf.Collections;
 using Ism.Library.V1.Protos;
 using Ism.SystemState.Models.Procedure;
 
 using System;
+using System.Collections.Generic;
+using static Avalanche.Api.Mapping.MappingUtilities;
 
 namespace Avalanche.Api.Mapping
 {
@@ -14,9 +17,21 @@ namespace Avalanche.Api.Mapping
     {
         public ProceduresMappingConfiguration()
         {
+            CreateMap(typeof(IEnumerable<>), typeof(RepeatedField<>)).ConvertUsing(typeof(EnumerableToRepeatedFieldTypeConverter<,>));
+            CreateMap(typeof(RepeatedField<>), typeof(List<>)).ConvertUsing(typeof(RepeatedFieldToListTypeConverter<,>));
+
             CreateMap<ProcedureImage, ProcedureImageViewModel>();
             CreateMap<ProcedureVideo, ProcedureVideoViewModel>();
+
             CreateMap<NoteMessage, NoteModel>();
+            CreateMap<NoteModel, NoteMessage>();
+
+            CreateMap<DateTime, FixedDateTimeMessage>();
+            CreateMap<FixedDateTimeMessage, DateTime>();
+
+            CreateMap<DateTimeOffset, FixedDateTimeMessage>();
+            CreateMap<FixedDateTimeMessage, DateTimeOffset>();
+
             CreateMap<ProcedureContentType, ContentType>();
 
             CreateMap<ProcedureSearchFilterViewModel, GetFinishedProceduresRequest>()
@@ -27,22 +42,54 @@ namespace Avalanche.Api.Mapping
                 .ForMember(dest => dest.Keyword, opt => opt.MapFrom(src => src.Keyword))
                 .ForMember(dest => dest.StartCreationTime, opt => opt.MapFrom(src => GetFixedDateTime(src.StartCreationTime)))
                 .ForMember(dest => dest.EndCreationTime, opt => opt.MapFrom(src => GetFixedDateTime(src.EndCreationTime)))
-                .ForMember(dest => dest.HasPendingEdits, opt => opt.MapFrom(src => src.HasPendingEdits)); 
+                .ForMember(dest => dest.PatientId, opt => opt.Ignore())
+                .ForMember(dest => dest.PatientLastName, opt => opt.Ignore())
+                .ForMember(dest => dest.PhysicianId, opt => opt.Ignore())
+                .ForMember(dest => dest.DepartmentName, opt => opt.Ignore())
+                .ForMember(dest => dest.ProcedureTypeName, opt => opt.Ignore())
+                .ForMember(dest => dest.HasPendingEdits, opt => opt.MapFrom(src => src.HasPendingEdits));
+
+            CreateMap<ProcedureAdvancedSearchFilterViewModel, GetFinishedProceduresRequest>()
+                .ForMember(dest => dest.Page, opt => opt.MapFrom(src => src.Page))
+                .ForMember(dest => dest.PageSize, opt => opt.MapFrom(src => src.Limit))
+                .ForMember(dest => dest.IsDescending, opt => opt.MapFrom(src => src.IsDescending))
+                .ForMember(dest => dest.ProcedureIndexSortingColumn, opt => opt.MapFrom(src => src.ProcedureIndexSortingColumn))
+                .ForMember(dest => dest.Keyword, opt => opt.MapFrom(src => src.Keyword))
+                .ForMember(dest => dest.StartCreationTime, opt => opt.MapFrom(src => GetFixedDateTime(src.StartCreationTime)))
+                .ForMember(dest => dest.EndCreationTime, opt => opt.MapFrom(src => GetFixedDateTime(src.EndCreationTime)))
+                .ForMember(dest => dest.PatientId, opt => opt.MapFrom(src => src.PatientId))
+                .ForMember(dest => dest.PatientLastName, opt => opt.MapFrom(src => src.PatientLastName))
+                .ForMember(dest => dest.PhysicianId, opt => opt.MapFrom(src => src.PhysicianId))
+                .ForMember(dest => dest.DepartmentName, opt => opt.MapFrom(src => src.DepartmentName))
+                .ForMember(dest => dest.ProcedureTypeName, opt => opt.MapFrom(src => src.ProcedureTypeName))
+                .ForMember(dest => dest.HasPendingEdits, opt => opt.MapFrom(src => src.HasPendingEdits));
 
             CreateMap<ProcedureImageMessage, ImageContentViewModel>()
                 .ForMember(dest => dest.Thumbnail, opt => opt.MapFrom(src => src.Thumbnail))
                 .ForMember(dest => dest.FileName, opt => opt.MapFrom(src => src.FileName))
-                .ForMember(dest => dest.CaptureTimeUtc, opt => opt.MapFrom(src => new DateTime(src.CaptureTimeUtc.Year, src.CaptureTimeUtc.Month, src.CaptureTimeUtc.Day, src.CaptureTimeUtc.Hour, src.CaptureTimeUtc.Minute, src.CaptureTimeUtc.Second)));
+                .ForMember(dest => dest.CaptureTimeUtc, opt => opt.MapFrom(src => src.CaptureTimeUtc));
 
             CreateMap<ProcedureVideoMessage, VideoContentViewModel>()
                 .ForMember(dest => dest.Thumbnail, opt => opt.MapFrom(src => src.Thumbnail)) 
                 .ForMember(dest => dest.FileName, opt => opt.MapFrom(src => src.FileName))
                 .ForMember(dest => dest.Length, opt => opt.MapFrom(src => src.Length))
-                .ForMember(dest => dest.CaptureTimeUtc, opt => opt.MapFrom(src => new DateTime(src.CaptureTimeUtc.Year, src.CaptureTimeUtc.Month, src.CaptureTimeUtc.Day, src.CaptureTimeUtc.Hour, src.CaptureTimeUtc.Minute, src.CaptureTimeUtc.Second)));                
+                .ForMember(dest => dest.CaptureTimeUtc, opt => opt.MapFrom(src => src.CaptureTimeUtc));
+
+            CreateMap<ImageContentViewModel, ProcedureImageMessage>()
+                .ForMember(dest => dest.Thumbnail, opt => opt.MapFrom(src => src.Thumbnail))
+                .ForMember(dest => dest.FileName, opt => opt.MapFrom(src => src.FileName))
+                .ForMember(dest => dest.CaptureTimeUtc, opt => opt.MapFrom(src => src.CaptureTimeUtc));
+
+            CreateMap<VideoContentViewModel, ProcedureVideoMessage>()
+                .ForMember(dest => dest.Thumbnail, opt => opt.MapFrom(src => src.Thumbnail))
+                .ForMember(dest => dest.FileName, opt => opt.MapFrom(src => src.FileName))
+                .ForMember(dest => dest.Length, opt => opt.MapFrom(src => src.Length))
+                .ForMember(dest => dest.CaptureTimeUtc, opt => opt.MapFrom(src => src.CaptureTimeUtc));
 
             CreateMap<ProcedureMessage, ProcedureViewModel>()
                 .ForMember(dest => dest.Videos, opt => opt.MapFrom(src => src.Videos))
                 .ForMember(dest => dest.Images, opt => opt.MapFrom(src => src.Images))
+                .ForMember(dest => dest.Notes, opt => opt.MapFrom(src => src.Notes))
                 .ForMember(dest => dest.IsClinical, opt => opt.MapFrom(src => src.IsClinical))
                 .ForMember(dest => dest.Accession, opt => opt.MapFrom(src => src.Accession))
                 .ForMember(dest => dest.ScopeSerialNumber, opt => opt.MapFrom(src => src.ScopeSerialNumber))
@@ -51,14 +98,36 @@ namespace Avalanche.Api.Mapping
                 .ForPath(dest => dest.Patient.FirstName, opt => opt.MapFrom(src => src.Patient.FirstName))
                 .ForPath(dest => dest.Patient.LastName, opt => opt.MapFrom(src => src.Patient.LastName))
                 .ForPath(dest => dest.Patient.Sex, opt => opt.MapFrom(src => src.Patient.Sex))
-                .ForPath(dest => dest.Patient.DateOfBirth, opt => opt.MapFrom(src => GetDateTime(src.Patient.DateOfBirth)))
+                .ForPath(dest => dest.Patient.DateOfBirth, opt => opt.MapFrom(src => src.Patient.DateOfBirth))
                 .ForPath(dest => dest.Physician.Id, opt => opt.MapFrom(src => src.Physician.Id))
                 .ForPath(dest => dest.Physician.FirstName, opt => opt.MapFrom(src => src.Physician.FirstName))
                 .ForPath(dest => dest.Physician.LastName, opt => opt.MapFrom(src => src.Physician.LastName))
                 .ForPath(dest => dest.Department.Name, opt => opt.MapFrom(src => src.Department))
                 .ForPath(dest => dest.ProcedureType.Name, opt => opt.MapFrom(src => src.ProcedureType))
-                .ForPath(dest => dest.ProcedureStartTimeUtc, opt => opt.MapFrom(src => new DateTime(src.ProcedureStartTimeUtc.Year, src.ProcedureStartTimeUtc.Month, src.ProcedureStartTimeUtc.Day, src.ProcedureStartTimeUtc.Hour, src.ProcedureStartTimeUtc.Minute, src.ProcedureStartTimeUtc.Second)))
+                .ForMember(dest => dest.ProcedureStartTimeUtc, opt => opt.MapFrom(src => src.ProcedureStartTimeUtc))
                 .ForMember(dest => dest.Repository, opt => opt.MapFrom(src => src.Repository)) 
+                .ForMember(dest => dest.LibraryId, opt => opt.MapFrom(src => src.LibraryId));
+
+            CreateMap<ProcedureViewModel, ProcedureMessage>()
+                .ForMember(dest => dest.Videos, opt => opt.MapFrom(src => src.Videos))
+                .ForMember(dest => dest.Images, opt => opt.MapFrom(src => src.Images))
+                .ForMember(dest => dest.Notes, opt => opt.MapFrom(src => src.Notes))
+                .ForMember(dest => dest.IsClinical, opt => opt.MapFrom(src => src.IsClinical))
+                .ForMember(dest => dest.Accession, opt => opt.MapFrom(src => src.Accession))
+                .ForMember(dest => dest.ScopeSerialNumber, opt => opt.MapFrom(src => src.ScopeSerialNumber))
+                .ForMember(dest => dest.Diagnosis, opt => opt.MapFrom(src => src.Diagnosis))
+                .ForPath(dest => dest.Patient.Mrn, opt => opt.MapFrom(src => src.Patient.MRN))
+                .ForPath(dest => dest.Patient.FirstName, opt => opt.MapFrom(src => src.Patient.FirstName))
+                .ForPath(dest => dest.Patient.LastName, opt => opt.MapFrom(src => src.Patient.LastName))
+                .ForPath(dest => dest.Patient.Sex, opt => opt.MapFrom(src => src.Patient.Sex))
+                .ForPath(dest => dest.Patient.DateOfBirth, opt => opt.MapFrom(src => src.Patient.DateOfBirth))
+                .ForPath(dest => dest.Physician.Id, opt => opt.MapFrom(src => src.Physician.Id))
+                .ForPath(dest => dest.Physician.FirstName, opt => opt.MapFrom(src => src.Physician.FirstName))
+                .ForPath(dest => dest.Physician.LastName, opt => opt.MapFrom(src => src.Physician.LastName))
+                .ForMember(dest => dest.Department, opt => opt.MapFrom(src => src.Department == null ? null : src.Department.Name))
+                .ForMember(dest => dest.ProcedureType, opt => opt.MapFrom(src => src.ProcedureType == null ? null : src.ProcedureType.Name))
+                .ForMember(dest => dest.ProcedureStartTimeUtc, opt => opt.MapFrom(src => src.ProcedureStartTimeUtc))
+                .ForMember(dest => dest.Repository, opt => opt.MapFrom(src => src.Repository))
                 .ForMember(dest => dest.LibraryId, opt => opt.MapFrom(src => src.LibraryId));
 
             CreateMap<ActiveProcedureState, DiscardActiveProcedureRequest>()
@@ -158,18 +227,6 @@ namespace Avalanche.Api.Mapping
                 .ReverseMap();
 
             CreateMap<RecordingTimelineModel, RecordingTimelineViewModel>();
-        }
-
-        private DateTime GetDateTime(FixedDateTimeMessage dateTime)
-        {
-            return new DateTime(
-                dateTime.Year,
-                dateTime.Month,
-                dateTime.Day,
-                dateTime.Hour,
-                dateTime.Minute,
-                dateTime.Second
-            );
         }
 
         private FixedDateTimeMessage GetFixedDateTime(DateTime? dateTime)

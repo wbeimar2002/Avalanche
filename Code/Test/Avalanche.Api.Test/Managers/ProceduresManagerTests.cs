@@ -72,7 +72,7 @@ namespace Avalanche.Api.Test.Managers
                     DateTimeOffset.UtcNow,
                     TimeZoneInfo.Local.Id,
                     false,
-                    new Dictionary<string, string>(),
+                    new List<ProcedureNote>(),
                     null,
                     null,
                     null,
@@ -107,7 +107,7 @@ namespace Avalanche.Api.Test.Managers
                     DateTimeOffset.UtcNow,
                     TimeZoneInfo.Local.Id,
                     false,
-                    new Dictionary<string, string>(),
+                    new List<ProcedureNote>(),
                     null,
                     null,
                     null,
@@ -135,7 +135,7 @@ namespace Avalanche.Api.Test.Managers
                     DateTimeOffset.UtcNow,
                     TimeZoneInfo.Local.Id,
                     false,
-                    new Dictionary<string, string>(),
+                    new List<ProcedureNote>(),
                     null,
                     null,
                     null,
@@ -164,7 +164,7 @@ namespace Avalanche.Api.Test.Managers
                     DateTimeOffset.UtcNow,
                     TimeZoneInfo.Local.Id,
                     false,
-                    new Dictionary<string, string>(),
+                    new List<ProcedureNote>(),
                     null,
                     null,
                     null,
@@ -192,7 +192,7 @@ namespace Avalanche.Api.Test.Managers
                     DateTimeOffset.UtcNow,
                     TimeZoneInfo.Local.Id,
                     false,
-                    new Dictionary<string, string>(),
+                    new List<ProcedureNote>(),
                     null,
                     null,
                     null,
@@ -268,7 +268,7 @@ namespace Avalanche.Api.Test.Managers
                 ProcedureIndexSortingColumn = (ProcedureIndexSortingColumns)filter.ProcedureIndexSortingColumn
             })).ReturnsAsync(response);
 
-            await _manager.Search(filter);
+            await _manager.BasicSearch(filter);
 
             _libraryService.Verify(mock => mock.GetFinishedProcedures(new GetFinishedProceduresRequest()
             {
@@ -302,7 +302,7 @@ namespace Avalanche.Api.Test.Managers
                 ProcedureIndexSortingColumn = (ProcedureIndexSortingColumns)filter.ProcedureIndexSortingColumn
             })).ReturnsAsync(response);
 
-            Task Act() => _manager.Search(filter);
+            Task Act() => _manager.BasicSearch(filter);
             Assert.That(Act, Throws.TypeOf<ArgumentException>());
 
             _libraryService.Verify(mock => mock.GetFinishedProcedures(new GetFinishedProceduresRequest()
@@ -336,7 +336,7 @@ namespace Avalanche.Api.Test.Managers
                 ProcedureIndexSortingColumn = (ProcedureIndexSortingColumns)filter.ProcedureIndexSortingColumn
             })).ReturnsAsync(response);
 
-            Task Act() => _manager.Search(filter);
+            Task Act() => _manager.BasicSearch(filter);
             Assert.That(Act, Throws.TypeOf<ArgumentException>());
             
             _libraryService.Verify(mock => mock.GetFinishedProcedures(new GetFinishedProceduresRequest()
@@ -370,7 +370,7 @@ namespace Avalanche.Api.Test.Managers
                 ProcedureIndexSortingColumn = (ProcedureIndexSortingColumns)filter.ProcedureIndexSortingColumn
             })).ReturnsAsync(response);
 
-            Task Act() => _manager.Search(filter);
+            Task Act() => _manager.BasicSearch(filter);
             Assert.That(Act, Throws.TypeOf<ArgumentException>());
 
             _libraryService.Verify(mock => mock.GetFinishedProcedures(new GetFinishedProceduresRequest()
@@ -415,7 +415,7 @@ namespace Avalanche.Api.Test.Managers
                     DateTimeOffset.UtcNow,
                     TimeZoneInfo.Local.Id,
                     false,
-                    new Dictionary<string, string>(),
+                    new List<ProcedureNote>(),
                     null,
                     null,
                     null,
@@ -476,7 +476,7 @@ namespace Avalanche.Api.Test.Managers
                     DateTimeOffset.UtcNow,
                     TimeZoneInfo.Local.Id,
                     false,
-                    new Dictionary<string, string>(),
+                    new List<ProcedureNote>(),
                     null,
                     null,
                     null,
@@ -536,7 +536,7 @@ namespace Avalanche.Api.Test.Managers
                     DateTimeOffset.UtcNow,
                     TimeZoneInfo.Local.Id,
                     false,
-                    new Dictionary<string, string>(),
+                    new List<ProcedureNote>(),
                     null,
                     null,
                     null,
@@ -595,7 +595,7 @@ namespace Avalanche.Api.Test.Managers
                     DateTimeOffset.UtcNow,
                     TimeZoneInfo.Local.Id,
                     false,
-                    new Dictionary<string, string>(),
+                    new List<ProcedureNote>(),
                     null,
                     null,
                     null,
@@ -655,7 +655,7 @@ namespace Avalanche.Api.Test.Managers
                     DateTimeOffset.UtcNow,
                     TimeZoneInfo.Local.Id,
                     false,
-                    new Dictionary<string, string>(),
+                    new List<ProcedureNote>(),
                     null,
                     null,
                     null,

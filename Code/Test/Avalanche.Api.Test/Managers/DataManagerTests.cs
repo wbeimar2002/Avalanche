@@ -239,7 +239,6 @@ namespace Avalanche.Api.Tests.Managers
             _dataManagementService.Setup(mock => mock.AddLabel(It.IsAny<Ism.Storage.DataManagement.Client.V1.Protos.AddLabelRequest>()))
                 .ReturnsAsync(new Ism.Storage.DataManagement.Client.V1.Protos.AddLabelResponse()
                 {
-                    IsNew = true,
                     Label = new Ism.Storage.DataManagement.Client.V1.Protos.LabelMessage
                     {
                         Id = 1,
@@ -297,7 +296,6 @@ namespace Avalanche.Api.Tests.Managers
             _dataManagementService.Setup(mock => mock.AddLabel(It.IsAny<Ism.Storage.DataManagement.Client.V1.Protos.AddLabelRequest>()))
                 .ReturnsAsync(new Ism.Storage.DataManagement.Client.V1.Protos.AddLabelResponse()
                 {
-                    IsNew = true,
                     Label = new Ism.Storage.DataManagement.Client.V1.Protos.LabelMessage
                     {
                         Id = 1,

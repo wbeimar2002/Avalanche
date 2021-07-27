@@ -8,6 +8,7 @@ namespace Avalanche.Shared.Infrastructure.Enumerations
     {
         AllowEdit,
         ReadOnly,
-        UseDefaultValue
+        UseDefaultValue,
+        Hidden
     }
 }

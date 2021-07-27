@@ -166,7 +166,17 @@ namespace Avalanche.Api.Managers.Procedures
             return _mapper.Map<ProcedureAllocationViewModel>(response);
         }
 
-        public async Task<ProceduresContainerViewModel> Search(ProcedureSearchFilterViewModel filter)
+        public async Task UpdateProcedure(ProcedureViewModel procedureViewModel)
+        {
+            var procedure = _mapper.Map<ProcedureViewModel, ProcedureMessage>(procedureViewModel);
+
+            await _libraryService.UpdateProcedure(new UpdateProcedureRequest
+            {
+                Procedure = procedure
+            });
+        }
+
+        public async Task<ProceduresContainerViewModel> BasicSearch(ProcedureSearchFilterViewModel filter)
         {
             Preconditions.ThrowIfNull(nameof(filter), filter);
             Preconditions.ThrowIfTrue<ArgumentException>($"{nameof(filter.Page)} must be a positive integer greater than 0", filter.Page < 0);
@@ -174,6 +184,22 @@ namespace Avalanche.Api.Managers.Procedures
             Preconditions.ThrowIfTrue<ArgumentException>($"{nameof(filter.Limit)} cannot be larger than {MaxPageSize}", filter.Limit > MaxPageSize);
 
             var response = await _libraryService.GetFinishedProcedures(_mapper.Map<ProcedureSearchFilterViewModel, GetFinishedProceduresRequest>(filter));
+
+            return new ProceduresContainerViewModel()
+            {
+                TotalCount = response.TotalCount,
+                Procedures = _mapper.Map<IList<ProcedureMessage>, IList<ProcedureViewModel>>(response.Procedures)
+            };
+        }
+
+        public async Task<ProceduresContainerViewModel> AdvancedSearch(ProcedureAdvancedSearchFilterViewModel filter)
+        {
+            Preconditions.ThrowIfNull(nameof(filter), filter);
+            Preconditions.ThrowIfTrue<ArgumentException>($"{nameof(filter.Page)} must be a positive integer greater than 0", filter.Page < 0);
+            Preconditions.ThrowIfTrue<ArgumentException>($"{nameof(filter.Limit)} cannot be lower than {MinPageSize}", filter.Limit < MinPageSize);
+            Preconditions.ThrowIfTrue<ArgumentException>($"{nameof(filter.Limit)} cannot be larger than {MaxPageSize}", filter.Limit > MaxPageSize);
+
+            var response = await _libraryService.GetFinishedProcedures(_mapper.Map<ProcedureAdvancedSearchFilterViewModel, GetFinishedProceduresRequest>(filter));
 
             return new ProceduresContainerViewModel()
             {

@@ -273,12 +273,8 @@ namespace Avalanche.Api.Managers.Patients
             {
                 await _dataManagementService.AddProcedureType(new Ism.Storage.DataManagement.Client.V1.Protos.AddProcedureTypeRequest()
                 {
-                    ProcedureType = new Ism.Storage.DataManagement.Client.V1.Protos.ProcedureTypeMessage()
-                    {
-                        Id = Convert.ToInt32(procedureType.Id),
-                        Name = procedureType.Name,
-                        DepartmentId = Convert.ToInt32(department.Id),
-                    }
+                    ProcedureTypeName = procedureType.Name,
+                    DepartmentId = Convert.ToInt32(department.Id),
                 });
             }
         }
@@ -308,7 +304,7 @@ namespace Avalanche.Api.Managers.Patients
                     procedureTimezoneId: TimeZoneInfo.Local.Id,
                     isClinical: true,
                     accession: null,
-                    notes: new Dictionary<string, string>(),
+                    notes: new List<Ism.SystemState.Models.Procedure.ProcedureNote>(),
                     externalProcedureId: null,
                     scheduleId: null));
             }

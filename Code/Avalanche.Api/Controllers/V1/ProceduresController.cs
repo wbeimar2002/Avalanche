@@ -45,7 +45,7 @@ namespace Avalanche.Api.Controllers.V1
             try
             {
                 _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
-                var result = await _proceduresManager.Search(filter);
+                var result = await _proceduresManager.BasicSearch(filter);
 
                 var procedures = new PagedCollectionViewModel<ProcedureViewModel>
                 {
@@ -69,12 +69,12 @@ namespace Avalanche.Api.Controllers.V1
 
         [HttpPost("filtered/advanced")]
         [Produces(typeof(ProceduresContainerReponseViewModel))]
-        public async Task<IActionResult> AdvancedSearch(ProcedureSearchFilterViewModel filter)
+        public async Task<IActionResult> AdvancedSearch(ProcedureAdvancedSearchFilterViewModel filter)
         {
             try
             {
                 _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
-                var result = await _proceduresManager.Search(filter);
+                var result = await _proceduresManager.AdvancedSearch(filter);
 
                 var procedures = new PagedCollectionViewModel<ProcedureViewModel>
                 {
@@ -129,6 +129,7 @@ namespace Avalanche.Api.Controllers.V1
             try
             {
                 _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
+                await _proceduresManager.UpdateProcedure(procedureViewModel);
                 return Ok();
             }
             catch (Exception ex)

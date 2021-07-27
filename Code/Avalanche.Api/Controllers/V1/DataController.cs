@@ -1,4 +1,5 @@
-﻿using Avalanche.Api.Managers.Data;
+﻿using Avalanche.Api.Helpers;
+using Avalanche.Api.Managers.Data;
 using Avalanche.Api.ViewModels;
 using Avalanche.Shared.Domain.Models;
 using Avalanche.Shared.Infrastructure.Enumerations;
@@ -66,6 +67,33 @@ namespace Avalanche.Api.Controllers.V1
 
                 var result = await _dataManager.GetList(sourceKey, jsonKey);
                 return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, LoggerHelper.GetLogMessage(DebugLogType.Exception), ex);
+                return new BadRequestObjectResult(ex.Get(_environment.IsDevelopment()));
+            }
+            finally
+            {
+                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
+            }
+        }
+
+        /// <summary>
+        /// Get all departments
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("sexes")]
+        [Produces(typeof(List<DepartmentModel>))]
+        public async Task<IActionResult> GetSexes()
+        {
+            try
+            {
+                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
+
+                var list = await _dataManager.GetList("Sexes");
+                var result = SerializationHelper.Json(list);
+                return Ok(SerializationHelper.Get<List<KeyValuePairViewModel>>(result));
             }
             catch (Exception ex)
             {
