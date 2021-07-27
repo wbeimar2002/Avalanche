@@ -168,9 +168,26 @@ namespace Avalanche.Api.Managers.Procedures
 
         public async Task UpdateProcedure(ProcedureViewModel procedureViewModel)
         {
+            var procedure = _mapper.Map<ProcedureViewModel, ProcedureMessage>(procedureViewModel);
+
+            foreach (var video in procedureViewModel.Videos)
+            {
+                procedure.Videos.Add(_mapper.Map<VideoContentViewModel, ProcedureVideoMessage>(video));
+            }
+
+            foreach (var image in procedureViewModel.Images)
+            {
+                procedure.Images.Add(_mapper.Map<ImageContentViewModel, ProcedureImageMessage>(image));
+            }
+
+            foreach (var note in procedureViewModel.Notes)
+            {
+                procedure.Notes.Add(_mapper.Map<NoteModel, NoteMessage>(note));
+            }
+
             await _libraryService.UpdateProcedure(new UpdateProcedureRequest
             {
-                Procedure = _mapper.Map<ProcedureViewModel, ProcedureMessage>(procedureViewModel),
+                Procedure = procedure
             });
         }
 

@@ -20,7 +20,7 @@ namespace Avalanche.Api.ViewModels
         public DepartmentModel Department { get; set; }
         public ProcedureTypeModel ProcedureType { get; set; }
         public PhysicianModel Physician { get; set; }
-        public IList<NoteModel> Notes { get; set; }
+        public List<NoteModel> Notes { get; set; }
 
         public List<ImageContentViewModel> Images { get; set; }
         public List<VideoContentViewModel> Videos { get; set; }
