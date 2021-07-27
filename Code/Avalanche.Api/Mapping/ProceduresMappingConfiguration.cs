@@ -3,10 +3,13 @@
 using Avalanche.Api.ViewModels;
 using Avalanche.Shared.Domain.Enumerations;
 using Avalanche.Shared.Domain.Models;
+using Google.Protobuf.Collections;
 using Ism.Library.V1.Protos;
 using Ism.SystemState.Models.Procedure;
 
 using System;
+using System.Collections.Generic;
+using static Avalanche.Api.Mapping.MappingUtilities;
 
 namespace Avalanche.Api.Mapping
 {
@@ -14,6 +17,9 @@ namespace Avalanche.Api.Mapping
     {
         public ProceduresMappingConfiguration()
         {
+            CreateMap(typeof(IEnumerable<>), typeof(RepeatedField<>)).ConvertUsing(typeof(EnumerableToRepeatedFieldTypeConverter<,>));
+            CreateMap(typeof(RepeatedField<>), typeof(List<>)).ConvertUsing(typeof(RepeatedFieldToListTypeConverter<,>));
+
             CreateMap<ProcedureImage, ProcedureImageViewModel>();
             CreateMap<ProcedureVideo, ProcedureVideoViewModel>();
 
@@ -75,7 +81,7 @@ namespace Avalanche.Api.Mapping
                 .ForMember(dest => dest.CaptureTimeUtc, opt => opt.MapFrom(src => src.CaptureTimeUtc));
 
             CreateMap<VideoContentViewModel, ProcedureVideoMessage>()
-                //.ForMember(dest => dest.Thumbnail, opt => opt.MapFrom(src => src.Thumbnail))
+                .ForMember(dest => dest.Thumbnail, opt => opt.MapFrom(src => src.Thumbnail))
                 .ForMember(dest => dest.FileName, opt => opt.MapFrom(src => src.FileName))
                 .ForMember(dest => dest.Length, opt => opt.MapFrom(src => src.Length))
                 .ForMember(dest => dest.CaptureTimeUtc, opt => opt.MapFrom(src => src.CaptureTimeUtc));
@@ -103,9 +109,9 @@ namespace Avalanche.Api.Mapping
                 .ForMember(dest => dest.LibraryId, opt => opt.MapFrom(src => src.LibraryId));
 
             CreateMap<ProcedureViewModel, ProcedureMessage>()
-                .ForMember(dest => dest.Videos, opt => opt.Ignore()) //Mapped after this call
-                .ForMember(dest => dest.Images, opt => opt.Ignore()) //Mapped after this call
-                .ForMember(dest => dest.Notes, opt => opt.Ignore()) //Mapped after this call
+                .ForMember(dest => dest.Videos, opt => opt.MapFrom(src => src.Videos))
+                .ForMember(dest => dest.Images, opt => opt.MapFrom(src => src.Images))
+                .ForMember(dest => dest.Notes, opt => opt.MapFrom(src => src.Notes))
                 .ForMember(dest => dest.IsClinical, opt => opt.MapFrom(src => src.IsClinical))
                 .ForMember(dest => dest.Accession, opt => opt.MapFrom(src => src.Accession))
                 .ForMember(dest => dest.ScopeSerialNumber, opt => opt.MapFrom(src => src.ScopeSerialNumber))

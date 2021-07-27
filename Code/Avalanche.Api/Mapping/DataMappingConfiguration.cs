@@ -14,9 +14,6 @@ namespace Avalanche.Api.Mapping
         {
             CreateMap<ProcedureTypeModel, DeleteProcedureTypeRequest>()
                 .ForMember(dest =>
-                    dest.DepartmentId,
-                    opt => opt.MapFrom(src => src.DepartmentId))
-                .ForMember(dest =>
                     dest.ProcedureTypeId,
                     opt => opt.MapFrom(src => src.Id))
                 .ReverseMap();
@@ -44,22 +41,16 @@ namespace Avalanche.Api.Mapping
 
             CreateMap<DepartmentModel, AddDepartmentRequest>()
                 .ForPath(dest =>
-                    dest.Department.Id,
-                    opt => opt.MapFrom(src => src.Id))
-                .ForPath(dest =>
-                    dest.Department.Name,
+                    dest.DepartmentName,
                     opt => opt.MapFrom(src => src.Name))
                 .ReverseMap();
 
             CreateMap<ProcedureTypeModel, AddProcedureTypeRequest>()
                 .ForPath(dest =>
-                    dest.ProcedureType.Id,
-                    opt => opt.MapFrom(src => 0))
-                .ForPath(dest =>
-                    dest.ProcedureType.Name,
+                    dest.ProcedureTypeName,
                     opt => opt.MapFrom(src => src.Name))
                 .ForPath(dest =>
-                    dest.ProcedureType.DepartmentId,
+                    dest.DepartmentId,
                     opt => opt.MapFrom(src => src.DepartmentId))
                 .ReverseMap();
 
@@ -86,13 +77,10 @@ namespace Avalanche.Api.Mapping
 
             CreateMap<LabelModel, AddLabelRequest>()
                 .ForPath(dest =>
-                    dest.Label.Id,
-                    opt => opt.MapFrom(src => 0))
-                .ForPath(dest =>
-                    dest.Label.Name,
+                    dest.LabelName,
                     opt => opt.MapFrom(src => src.Name))
                 .ForPath(dest =>
-                    dest.Label.ProcedureTypeId,
+                    dest.ProcedureTypeId,
                     opt => opt.MapFrom(src => src.ProcedureTypeId))
                 .ReverseMap();
 
@@ -124,9 +112,6 @@ namespace Avalanche.Api.Mapping
                 .ForPath(dest =>
                     dest.LabelId,
                     opt => opt.MapFrom(src => src.Id))
-                .ForPath(dest =>
-                    dest.ProcedureTypeId,
-                    opt => opt.MapFrom(src => src.ProcedureTypeId))
                 .ReverseMap();
 
             CreateMap<LabelModel, GetLabelsByProcedureTypeRequest>()
