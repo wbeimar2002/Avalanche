@@ -308,7 +308,7 @@ namespace Avalanche.Api.Managers.Patients
                     procedureTimezoneId: TimeZoneInfo.Local.Id,
                     isClinical: true,
                     accession: null,
-                    notes: new Dictionary<string, string>(),
+                    notes: new List<Ism.SystemState.Models.Procedure.ProcedureNote>(),
                     externalProcedureId: null,
                     scheduleId: null));
             }

@@ -57,7 +57,6 @@
     <PackageReference Include="Ism.Storage.Configuration.Client" Version="1.0.0-prerelease0024" />
     <PackageReference Include="Ism.Storage.PatientList.Client" Version="1.0.0-prerelease0020" />
     <PackageReference Include="Ism.Streaming.Client" Version="1.0.0-prerelease0014" />
-    <PackageReference Include="Ism.SystemState.Client" Version="1.0.0-prerelease0056" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="3.1.12" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Cors" Version="2.2.0" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="3.1.12" />
@@ -80,11 +79,13 @@
   <ItemGroup Condition="'$(Configuration)'=='DebugLocal'">
     <PackageReference Include="Ism.Storage.DataManagement.Client" Version="99.99.*" />
     <PackageReference Include="Ism.Library.Client" Version="99.99.*" />
+    <PackageReference Include="Ism.SystemState.Client" Version="99.99.*" />
   </ItemGroup>
   
   <ItemGroup Condition="'$(Configuration)'=='Debug' Or '$(Configuration)'=='Release'">  
     <PackageReference Include="Ism.Storage.DataManagement.Client" Version="1.0.0-prerelease0030" />
     <PackageReference Include="Ism.Library.Client" Version="1.0.0-prerelease0035" />
+    <PackageReference Include="Ism.SystemState.Client" Version="1.0.0-prerelease0056" />
   </ItemGroup>
 
   <ItemGroup>
