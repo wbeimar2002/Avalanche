@@ -199,7 +199,8 @@ namespace Avalanche.Api.Managers.Procedures
             Preconditions.ThrowIfTrue<ArgumentException>($"{nameof(filter.Limit)} cannot be lower than {MinPageSize}", filter.Limit < MinPageSize);
             Preconditions.ThrowIfTrue<ArgumentException>($"{nameof(filter.Limit)} cannot be larger than {MaxPageSize}", filter.Limit > MaxPageSize);
 
-            var response = await _libraryService.GetFinishedProcedures(_mapper.Map<ProcedureAdvancedSearchFilterViewModel, GetFinishedProceduresRequest>(filter));
+            var libraryFilter = _mapper.Map<ProcedureAdvancedSearchFilterViewModel, GetFinishedProceduresRequest>(filter);
+            var response = await _libraryService.GetFinishedProcedures(libraryFilter);
 
             return new ProceduresContainerViewModel()
             {
