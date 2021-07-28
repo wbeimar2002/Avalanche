@@ -262,20 +262,29 @@ namespace Avalanche.Api.Managers.Patients
 
         private async Task CheckProcedureType(ProcedureTypeModel procedureType, DepartmentModel department)
         {
-            //TODO: Validate department support
-            var existingProcedureType = await _dataManagementService.GetProcedureType(new Ism.Storage.DataManagement.Client.V1.Protos.GetProcedureTypeRequest()
+            //incase user is not selected or entered a procedure type, assign it to Unknown like in QuickRegister
+            if (string.IsNullOrEmpty(procedureType.Name) || procedureType.Name.Length == 0)
             {
-                ProcedureTypeName = procedureType.Name,
-                DepartmentId = Convert.ToInt32(department.Id),
-            });
-
-            if (existingProcedureType.Id == 0  && string.IsNullOrEmpty(existingProcedureType.Name))
+                procedureType.Id = 0;
+                procedureType.Name = "Unknown";
+            }
+            else
             {
-                await _dataManagementService.AddProcedureType(new Ism.Storage.DataManagement.Client.V1.Protos.AddProcedureTypeRequest()
+                //TODO: Validate department support
+                var existingProcedureType = await _dataManagementService.GetProcedureType(new Ism.Storage.DataManagement.Client.V1.Protos.GetProcedureTypeRequest()
                 {
                     ProcedureTypeName = procedureType.Name,
                     DepartmentId = Convert.ToInt32(department.Id),
                 });
+
+                if (existingProcedureType.Id == 0 && string.IsNullOrEmpty(existingProcedureType.Name))
+                {
+                    await _dataManagementService.AddProcedureType(new Ism.Storage.DataManagement.Client.V1.Protos.AddProcedureTypeRequest()
+                    {
+                        ProcedureTypeName = procedureType.Name,
+                        DepartmentId = Convert.ToInt32(department.Id),
+                    });
+                }
             }
         }
 
