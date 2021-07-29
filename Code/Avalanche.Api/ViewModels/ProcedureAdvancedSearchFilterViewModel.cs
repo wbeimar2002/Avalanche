@@ -7,8 +7,8 @@ namespace Avalanche.Api.ViewModels
     public class ProcedureAdvancedSearchFilterViewModel : FilterViewModelBase
     {
         public string? PatientLastName { get; set; }
-        public int? PatientId { get; set; }
-        public int? PhysicianId { get; set; }
+        public string? PatientId { get; set; }
+        public string? PhysicianId { get; set; }
         public string? DepartmentName { get; set; }
         public string? ProcedureTypeName { get; set; }
 
@@ -29,7 +29,7 @@ namespace Avalanche.Api.ViewModels
 
         public ProcedureAdvancedSearchFilterViewModel(string keyword, DateTime? startCreationTime,
             DateTime? endCreationTime, bool? hasPendingEdits, bool isDescending, ProcedureIndexSortingColumns procedureIndexSortingColumn,
-            string patientLastName, int? patientId, int? physicianId, string departmentName, string procedureTypeName)
+            string patientLastName, string? patientId, string? physicianId, string departmentName, string procedureTypeName)
         {
             this.Keyword = keyword;
             this.StartCreationTime = startCreationTime;
