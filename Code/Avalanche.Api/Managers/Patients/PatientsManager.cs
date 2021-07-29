@@ -287,6 +287,7 @@ namespace Avalanche.Api.Managers.Patients
                     patient: _mapper.Map<Ism.SystemState.Models.Procedure.Patient>(patient),
                     images: new List<Ism.SystemState.Models.Procedure.ProcedureImage>(),
                     videos: new List<Ism.SystemState.Models.Procedure.ProcedureVideo>(),
+                    backgroundVideos: new List<Ism.SystemState.Models.Procedure.ProcedureVideo>(),
                     libraryId: allocatedProcedure.ProcedureId.Id,
                     repositoryId: allocatedProcedure.ProcedureId.RepositoryName,
 
@@ -306,7 +307,9 @@ namespace Avalanche.Api.Managers.Patients
                     accession: null,
                     notes: new List<Ism.SystemState.Models.Procedure.ProcedureNote>(),
                     externalProcedureId: null,
-                    scheduleId: null));
+                    scheduleId: null,
+                    recordingMode: Ism.SystemState.Models.Procedure.BackgroundRecordingMode.StartImmediately
+                    ));
             }
             else
             {
