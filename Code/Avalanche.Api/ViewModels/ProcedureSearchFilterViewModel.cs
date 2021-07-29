@@ -16,9 +16,25 @@ namespace Avalanche.Api.ViewModels
         public bool IsDescending { get; set; }
         public ProcedureIndexSortingColumns ProcedureIndexSortingColumn { get; set; }
 
+        public ProcedureSearchFilterViewModel()
+        {
+
+        }
+
+        public ProcedureSearchFilterViewModel(string keyword, DateTime? startCreationTime, 
+            DateTime? endCreationTime, bool? hasPendingEdits, bool isDescending, ProcedureIndexSortingColumns procedureIndexSortingColumn)
+        {
+            this.Keyword = keyword;
+            this.StartCreationTime = startCreationTime;
+            this.EndCreationTime = endCreationTime;
+            this.HasPendingEdits = hasPendingEdits;
+            this.IsDescending = IsDescending;
+            this.ProcedureIndexSortingColumn = procedureIndexSortingColumn;
+        }
+
         public override object Clone()
         {
-            return new ProcedureSearchFilterViewModel(); //TODO: Finish this, add constructor with parameters
+            return new ProcedureSearchFilterViewModel(this.Keyword, this.StartCreationTime, this.EndCreationTime, this.HasPendingEdits, this.IsDescending, this.ProcedureIndexSortingColumn);
         }
     }
 

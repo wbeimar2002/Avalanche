@@ -171,7 +171,7 @@ namespace Avalanche.Api.Controllers.V1
             {
                 _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
 
-                var result = await _dataManager.GetAllProcedureTypes(true);
+                var result = await _dataManager.GetAllProcedureTypes();
                 return Ok(result);
             }
             catch (Exception ex)

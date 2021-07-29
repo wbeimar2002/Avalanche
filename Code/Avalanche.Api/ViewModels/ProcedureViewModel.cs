@@ -15,6 +15,7 @@ namespace Avalanche.Api.ViewModels
         public string Accession { get; set; }
         public string ScopeSerialNumber { get; set; }
         public string Diagnosis { get; set; }
+        public string ClinicalNotes { get; set; }        
 
         public PatientModel Patient { get; set; }
         public DepartmentModel Department { get; set; }

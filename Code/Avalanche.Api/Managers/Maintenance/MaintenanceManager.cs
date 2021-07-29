@@ -161,12 +161,18 @@ namespace Avalanche.Api.Managers.Maintenance
                     break;
 
                 case "ProcedureTypesWithEmpty":
-                    var procedureTypesWithEmpty = await _dataManager.GetAllProcedureTypes(true);
+                    var procedureTypesWithEmpty = await _dataManager.GetAllProcedureTypes();
+                    //Added to follow business rule. This represents empty procedure type, used just in dropdown of labels
+                    procedureTypesWithEmpty.Insert(0, new ProcedureTypeModel
+                    {
+                        Id = -1,
+                        Name = "*"
+                    });
                     values = JsonConvert.DeserializeObject<List<dynamic>>(JsonConvert.SerializeObject(procedureTypesWithEmpty));
                     break;
 
                 case "ProcedureTypes":
-                    var procedureTypes = await _dataManager.GetAllProcedureTypes(false);
+                    var procedureTypes = await _dataManager.GetAllProcedureTypes();
                     values = JsonConvert.DeserializeObject<List<dynamic>>(JsonConvert.SerializeObject(procedureTypes));
                     break;
 
@@ -302,7 +308,13 @@ namespace Avalanche.Api.Managers.Maintenance
 
                     case "ProcedureTypesWithEmpty":
                     case "ProcedureTypes":
-                        var procedureTypes = await _dataManager.GetAllProcedureTypes(true);
+                        var procedureTypes = await _dataManager.GetAllProcedureTypes();
+                        //Added to follow business rule. This represents empty procedure type, used just in dropdown of labels
+                        procedureTypes.Insert(0, new ProcedureTypeModel
+                        {
+                            Id = -1,
+                            Name = "*"
+                        });
                         var dynamicProcedureTypes = JsonConvert.DeserializeObject<List<dynamic>>(JsonConvert.SerializeObject(procedureTypes));
                         return GetDynamicList(property, dynamicProcedureTypes);
 
