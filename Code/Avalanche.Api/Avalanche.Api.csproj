@@ -85,7 +85,7 @@
   <ItemGroup Condition="'$(Configuration)'=='Debug' Or '$(Configuration)'=='Release'">  
     <PackageReference Include="Ism.Storage.DataManagement.Client" Version="1.0.0-prerelease0032" />
     <PackageReference Include="Ism.Library.Client" Version="1.0.0-prerelease0036" />
-    <PackageReference Include="Ism.SystemState.Client" Version="1.0.0-prerelease0058" />
+    <PackageReference Include="Ism.SystemState.Client" Version="1.0.0-prerelease0059" />
   </ItemGroup>
 
   <ItemGroup>
