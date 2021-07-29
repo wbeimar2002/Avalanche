@@ -240,68 +240,68 @@ namespace Avalanche.Api.Tests.Managers
             _pieService.Verify(mock => mock.RegisterPatient(new Ism.Storage.PatientList.Client.V1.Protos.AddPatientRecordRequest()), Times.Never);            
         }
 
-        //[Test]
-        //public void RegisterPatientWorksWithRightDataShouldAddProcedureTypeIfNotExists()
-        //{
-        //    PatientViewModel newPatient = new PatientViewModel()
-        //    {
-        //        MRN = "Sample",
-        //        DateOfBirth = DateTime.Today,
-        //        FirstName = "Sample",
-        //        LastName = "Sample",
-        //        Sex = new KeyValuePairViewModel()
-        //        {
-        //            Id = "S",
-        //            TranslationKey = "SampleKey",
-        //            Value = "Sample"
-        //        },
-        //        Department = new DepartmentModel() { Id = 1, Name = "SampleDepartment" },
-        //        Physician = new PhysicianModel()
-        //        {
-        //            Id = "SampleId",
-        //            FirstName = "SampleFirstName",
-        //            LastName = "SampleLastName"
-        //        },
-        //        ProcedureType = new ProcedureTypeModel() { Id = 1, Name = "SampleProcedureType" }
-        //    };
+        [Test]
+        public void RegisterPatientWorksWithRightDataShouldAddProcedureTypeIfNotExists()
+        {
+            PatientViewModel newPatient = new PatientViewModel()
+            {
+                MRN = "Sample",
+                DateOfBirth = DateTime.Today,
+                FirstName = "Sample",
+                LastName = "Sample",
+                Sex = new KeyValuePairViewModel()
+                {
+                    Id = "S",
+                    TranslationKey = "SampleKey",
+                    Value = "Sample"
+                },
+                Department = new DepartmentModel() { Id = 1, Name = "SampleDepartment" },
+                Physician = new PhysicianModel()
+                {
+                    Id = "SampleId",
+                    FirstName = "SampleFirstName",
+                    LastName = "SampleLastName"
+                },
+                ProcedureType = new ProcedureTypeModel() { Id = 1, Name = "SampleProcedureType" }
+            };
 
-        //    var response = new Ism.Storage.PatientList.Client.V1.Protos.AddPatientRecordResponse()
-        //    { 
-        //        PatientRecord = new Ism.Storage.PatientList.Client.V1.Protos.PatientRecordMessage()
-        //        { 
-        //            InternalId = 1233
-        //        }
-        //    };
+            var response = new Ism.Storage.PatientList.Client.V1.Protos.AddPatientRecordResponse()
+            {
+                PatientRecord = new Ism.Storage.PatientList.Client.V1.Protos.PatientRecordMessage()
+                {
+                    InternalId = 1233
+                }
+            };
 
-        //    var setupConfiguration = new SetupConfiguration
-        //    {
-        //        Registration = new RegistrationSetupConfiguration 
-        //        {
-        //            Quick = new QuickSetupConfiguration 
-        //            {
-        //                DateFormat = "yyyyMMdd_T_mmss"
-        //            }
-        //        }
-        //    };
+            var setupConfiguration = new SetupConfiguration
+            {
+                Registration = new RegistrationSetupConfiguration
+                {
+                    Quick = new QuickSetupConfiguration
+                    {
+                        DateFormat = "yyyyMMdd_T_mmss"
+                    }
+                }
+            };
 
-        //    _dataManagementService.Setup(mock => mock.GetProcedureType(It.IsAny<Ism.Storage.DataManagement.Client.V1.Protos.GetProcedureTypeRequest>()))
-        //        .ReturnsAsync(new Ism.Storage.DataManagement.Client.V1.Protos.ProcedureTypeMessage()
-        //        {
-        //            DepartmentId = 0,
-        //            Id = 0,
-        //            Name = null
-        //        });
+            _dataManagementService.Setup(mock => mock.GetProcedureType(It.IsAny<Ism.Storage.DataManagement.Client.V1.Protos.GetProcedureTypeRequest>()))
+                .ReturnsAsync(new Ism.Storage.DataManagement.Client.V1.Protos.ProcedureTypeMessage()
+                {
+                    DepartmentId = 0,
+                    Id = 0,
+                    Name = ""
+                });
 
-        //    _storageService.Setup(mock => mock.GetJsonObject<SetupConfiguration>(nameof(SetupConfiguration), 1, It.IsAny<ConfigurationContext>())).ReturnsAsync(setupConfiguration);
+            _storageService.Setup(mock => mock.GetJsonObject<SetupConfiguration>(nameof(SetupConfiguration), 1, It.IsAny<ConfigurationContext>())).ReturnsAsync(setupConfiguration);
 
-        //    _pieService.Setup(mock => mock.RegisterPatient(It.IsAny<Ism.Storage.PatientList.Client.V1.Protos.AddPatientRecordRequest>())).ReturnsAsync(response);
+            _pieService.Setup(mock => mock.RegisterPatient(It.IsAny<Ism.Storage.PatientList.Client.V1.Protos.AddPatientRecordRequest>())).ReturnsAsync(response);
 
-        //    var result = _manager.RegisterPatient(newPatient);
+            var result = _manager.RegisterPatient(newPatient);
 
-        //    _dataManagementService.Verify(mock => mock.GetProcedureType(It.IsAny<Ism.Storage.DataManagement.Client.V1.Protos.GetProcedureTypeRequest>()), Times.Once);
-        //    _dataManagementService.Verify(mock => mock.AddProcedureType(It.IsAny<Ism.Storage.DataManagement.Client.V1.Protos.AddProcedureTypeRequest>()), Times.Once);
-        //    _pieService.Verify(mock => mock.RegisterPatient(It.IsAny<Ism.Storage.PatientList.Client.V1.Protos.AddPatientRecordRequest>()), Times.Once);
-        //}
+            _dataManagementService.Verify(mock => mock.GetProcedureType(It.IsAny<Ism.Storage.DataManagement.Client.V1.Protos.GetProcedureTypeRequest>()), Times.Once);
+            _dataManagementService.Verify(mock => mock.AddProcedureType(It.IsAny<Ism.Storage.DataManagement.Client.V1.Protos.AddProcedureTypeRequest>()), Times.Once);
+            _pieService.Verify(mock => mock.RegisterPatient(It.IsAny<Ism.Storage.PatientList.Client.V1.Protos.AddPatientRecordRequest>()), Times.Once);
+        }
 
         [Test]
         public void RegisterPatientWorksWithRightDataShouldNotAddProcedureTypeIfExists()
@@ -421,61 +421,61 @@ namespace Avalanche.Api.Tests.Managers
             _pieService.Verify(mock => mock.UpdatePatient(new Ism.Storage.PatientList.Client.V1.Protos.UpdatePatientRecordRequest()), Times.Never);
         }
 
-        //[Test]
+        [Test]
 
-        //public void UpdatePatientWorksWithRightDataShouldAddProcedureTypeIfNotExists()
-        //{
-        //    PatientViewModel existingPatient = new PatientViewModel()
-        //    {
-        //        Id = 1,
-        //        MRN = "Sample",
-        //        DateOfBirth = DateTime.Today,
-        //        FirstName = "Sample",
-        //        LastName = "Sample",
-        //        Sex = new KeyValuePairViewModel()
-        //        {
-        //            Id = "S",
-        //            TranslationKey = "SampleKey",
-        //            Value = "Sample"
-        //        },
-        //        Department = new DepartmentModel() { Id = 1, Name = "SampleDepartment" },
-        //        Physician = new PhysicianModel()
-        //        {
-        //            Id = "SampleId",
-        //            FirstName = "SampleFirstName",
-        //            LastName = "SampleLastName"
-        //        },
-        //        ProcedureType = new ProcedureTypeModel() { Id = 1, Name = "SampleProcedureType" }
-        //    };
+        public void UpdatePatientWorksWithRightDataShouldAddProcedureTypeIfNotExists()
+        {
+            PatientViewModel existingPatient = new PatientViewModel()
+            {
+                Id = 1,
+                MRN = "Sample",
+                DateOfBirth = DateTime.Today,
+                FirstName = "Sample",
+                LastName = "Sample",
+                Sex = new KeyValuePairViewModel()
+                {
+                    Id = "S",
+                    TranslationKey = "SampleKey",
+                    Value = "Sample"
+                },
+                Department = new DepartmentModel() { Id = 1, Name = "SampleDepartment" },
+                Physician = new PhysicianModel()
+                {
+                    Id = "SampleId",
+                    FirstName = "SampleFirstName",
+                    LastName = "SampleLastName"
+                },
+                ProcedureType = new ProcedureTypeModel() { Id = 1, Name = "SampleProcedureType" }
+            };
 
-        //    var setupConfiguration = new SetupConfiguration
-        //    {
-        //        Registration = new RegistrationSetupConfiguration 
-        //        {
-        //            Quick = new QuickSetupConfiguration  
-        //            {
-        //                DateFormat = "yyyyMMdd_T_mmss"
-        //            }
-        //        }
-        //    };
+            var setupConfiguration = new SetupConfiguration
+            {
+                Registration = new RegistrationSetupConfiguration
+                {
+                    Quick = new QuickSetupConfiguration
+                    {
+                        DateFormat = "yyyyMMdd_T_mmss"
+                    }
+                }
+            };
 
-        //    _dataManagementService.Setup(mock => mock.GetProcedureType(It.IsAny<Ism.Storage.DataManagement.Client.V1.Protos.GetProcedureTypeRequest>()))
-        //        .ReturnsAsync(new Ism.Storage.DataManagement.Client.V1.Protos.ProcedureTypeMessage()
-        //        {
-        //            DepartmentId = 0,
-        //            Id = 0,
-        //            Name = null
-        //        });
+            _dataManagementService.Setup(mock => mock.GetProcedureType(It.IsAny<Ism.Storage.DataManagement.Client.V1.Protos.GetProcedureTypeRequest>()))
+                .ReturnsAsync(new Ism.Storage.DataManagement.Client.V1.Protos.ProcedureTypeMessage()
+                {
+                    DepartmentId = 0,
+                    Id = 0,
+                    Name = ""
+                });
 
-        //    _storageService.Setup(mock => mock.GetJsonObject<SetupConfiguration>(nameof(SetupConfiguration), 1, It.IsAny<ConfigurationContext>())).ReturnsAsync(setupConfiguration);
-        //    _pieService.Setup(mock => mock.UpdatePatient(It.IsAny<Ism.Storage.PatientList.Client.V1.Protos.UpdatePatientRecordRequest>()));
+            _storageService.Setup(mock => mock.GetJsonObject<SetupConfiguration>(nameof(SetupConfiguration), 1, It.IsAny<ConfigurationContext>())).ReturnsAsync(setupConfiguration);
+            _pieService.Setup(mock => mock.UpdatePatient(It.IsAny<Ism.Storage.PatientList.Client.V1.Protos.UpdatePatientRecordRequest>()));
 
-        //    var result = _manager.UpdatePatient(existingPatient);
+            var result = _manager.UpdatePatient(existingPatient);
 
-        //    _dataManagementService.Verify(mock => mock.GetProcedureType(It.IsAny<Ism.Storage.DataManagement.Client.V1.Protos.GetProcedureTypeRequest>()), Times.Once);
-        //    _dataManagementService.Verify(mock => mock.AddProcedureType(It.IsAny<Ism.Storage.DataManagement.Client.V1.Protos.AddProcedureTypeRequest>()), Times.Once);
-        //    _pieService.Verify(mock => mock.UpdatePatient(It.IsAny<Ism.Storage.PatientList.Client.V1.Protos.UpdatePatientRecordRequest>()), Times.Once);
-        //}
+            _dataManagementService.Verify(mock => mock.GetProcedureType(It.IsAny<Ism.Storage.DataManagement.Client.V1.Protos.GetProcedureTypeRequest>()), Times.Once);
+            _dataManagementService.Verify(mock => mock.AddProcedureType(It.IsAny<Ism.Storage.DataManagement.Client.V1.Protos.AddProcedureTypeRequest>()), Times.Once);
+            _pieService.Verify(mock => mock.UpdatePatient(It.IsAny<Ism.Storage.PatientList.Client.V1.Protos.UpdatePatientRecordRequest>()), Times.Once);
+        }
 
         [Test]
 
