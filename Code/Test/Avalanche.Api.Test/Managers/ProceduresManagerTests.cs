@@ -62,6 +62,7 @@ namespace Avalanche.Api.Test.Managers
                     new Patient() { LastName = "name" },
                     new List<ProcedureImage>(),
                     new List<ProcedureVideo>(),
+                    new List<ProcedureVideo>(),
                     "libId",
                     "repId",
                     "path",
@@ -76,7 +77,8 @@ namespace Avalanche.Api.Test.Managers
                     null,
                     null,
                     null,
-                    new List<VideoRecordingEvent>()));
+                    new List<VideoRecordingEvent>(),
+                    BackgroundRecordingMode.StartImmediately));
 
 
 
@@ -97,62 +99,6 @@ namespace Avalanche.Api.Test.Managers
                     new Patient() { LastName = "name" },
                     new List<ProcedureImage>() { new ProcedureImage(id, "source", "channel", false, "path", "path", null, DateTimeOffset.UtcNow) },
                     new List<ProcedureVideo>(),
-                    "libId",
-                    "repId",
-                    "path",
-                    null,
-                    null,
-                    null,
-                    false,
-                    DateTimeOffset.UtcNow,
-                    TimeZoneInfo.Local.Id,
-                    false,
-                    new List<ProcedureNote>(),
-                    null,
-                    null,
-                    null,
-                    new List<VideoRecordingEvent>()));
-
-            await _manager.DeleteActiveProcedureMedia(Shared.Domain.Enumerations.ProcedureContentType.Image, id);
-        }
-
-        [Test]
-        public void TestDeleteActiveProcedureMediaFailsIfVideoIsRecording()
-        {
-            var id = Guid.NewGuid();
-            _stateClient.Setup(s => s.GetData<ActiveProcedureState>()).ReturnsAsync(
-                new ActiveProcedureState(
-                    new Patient() { LastName = "name" },
-                    new List<ProcedureImage>(),
-                    new List<ProcedureVideo>() { new ProcedureVideo(id, "source", "channel", "path", "path", DateTimeOffset.UtcNow, null, TimeSpan.FromSeconds(1)) },
-                    "libId",
-                    "repId",
-                    "path",
-                    null,
-                    null,
-                    null,
-                    false,
-                    DateTimeOffset.UtcNow,
-                    TimeZoneInfo.Local.Id,
-                    false,
-                    new List<ProcedureNote>(),
-                    null,
-                    null,
-                    null,
-                    new List<VideoRecordingEvent>()));
-
-            var ex = Assert.ThrowsAsync<InvalidOperationException>(() => _manager.DeleteActiveProcedureMedia(Shared.Domain.Enumerations.ProcedureContentType.Video, id));
-            Assert.True(ex.Message.Contains("Cannot delete video that is currently recording"));
-        }
-
-        [Test]
-        public async Task TestDeleteActiveProcedureMediaItemsSucceedsIfValid()
-        {
-            var imageId = Guid.NewGuid();
-            _stateClient.Setup(s => s.GetData<ActiveProcedureState>()).ReturnsAsync(
-                new ActiveProcedureState(
-                    new Patient() { LastName = "name" },
-                    new List<ProcedureImage>() { new ProcedureImage(imageId, "source", "channel", false, "path", "path", null, DateTimeOffset.UtcNow) },
                     new List<ProcedureVideo>(),
                     "libId",
                     "repId",
@@ -168,20 +114,22 @@ namespace Avalanche.Api.Test.Managers
                     null,
                     null,
                     null,
-                    new List<VideoRecordingEvent>()));
+                    new List<VideoRecordingEvent>(),
+                    BackgroundRecordingMode.StartImmediately));
 
-            await _manager.DeleteActiveProcedureMediaItems(Shared.Domain.Enumerations.ProcedureContentType.Image, new List<Guid>() { imageId });
+            await _manager.DeleteActiveProcedureMedia(Shared.Domain.Enumerations.ProcedureContentType.Image, id);
         }
 
         [Test]
-        public void TestDeleteActiveProcedureMediaItemsFailsIfVideoIsRecording()
+        public void TestDeleteActiveProcedureMediaFailsIfVideoIsRecording()
         {
-            var videoId = Guid.NewGuid();
+            var id = Guid.NewGuid();
             _stateClient.Setup(s => s.GetData<ActiveProcedureState>()).ReturnsAsync(
                 new ActiveProcedureState(
                     new Patient() { LastName = "name" },
                     new List<ProcedureImage>(),
-                    new List<ProcedureVideo>() { new ProcedureVideo(videoId, "source", "channel", "path", "path", DateTimeOffset.UtcNow, null, TimeSpan.FromSeconds(1)) },
+                    new List<ProcedureVideo>() { new ProcedureVideo(id, "source", "channel", "path", "path", DateTimeOffset.UtcNow, null, TimeSpan.FromSeconds(1)) },
+                    new List<ProcedureVideo>(),
                     "libId",
                     "repId",
                     "path",
@@ -196,7 +144,69 @@ namespace Avalanche.Api.Test.Managers
                     null,
                     null,
                     null,
-                    new List<VideoRecordingEvent>()));
+                    new List<VideoRecordingEvent>(),
+                    BackgroundRecordingMode.StartImmediately));
+
+            var ex = Assert.ThrowsAsync<InvalidOperationException>(() => _manager.DeleteActiveProcedureMedia(Shared.Domain.Enumerations.ProcedureContentType.Video, id));
+            Assert.True(ex.Message.Contains("Cannot delete video that is currently recording"));
+        }
+
+        [Test]
+        public async Task TestDeleteActiveProcedureMediaItemsSucceedsIfValid()
+        {
+            var imageId = Guid.NewGuid();
+            _stateClient.Setup(s => s.GetData<ActiveProcedureState>()).ReturnsAsync(
+                new ActiveProcedureState(
+                    new Patient() { LastName = "name" },
+                    new List<ProcedureImage>() { new ProcedureImage(imageId, "source", "channel", false, "path", "path", null, DateTimeOffset.UtcNow) },
+                    new List<ProcedureVideo>(),
+                    new List<ProcedureVideo>(),
+                    "libId",
+                    "repId",
+                    "path",
+                    null,
+                    null,
+                    null,
+                    false,
+                    DateTimeOffset.UtcNow,
+                    TimeZoneInfo.Local.Id,
+                    false,
+                    new List<ProcedureNote>(),
+                    null,
+                    null,
+                    null,
+                    new List<VideoRecordingEvent>(),
+                    BackgroundRecordingMode.StartImmediately));
+
+            await _manager.DeleteActiveProcedureMediaItems(Shared.Domain.Enumerations.ProcedureContentType.Image, new List<Guid>() { imageId });
+        }
+
+        [Test]
+        public void TestDeleteActiveProcedureMediaItemsFailsIfVideoIsRecording()
+        {
+            var videoId = Guid.NewGuid();
+            _stateClient.Setup(s => s.GetData<ActiveProcedureState>()).ReturnsAsync(
+                new ActiveProcedureState(
+                    new Patient() { LastName = "name" },
+                    new List<ProcedureImage>(),
+                    new List<ProcedureVideo>() { new ProcedureVideo(videoId, "source", "channel", "path", "path", DateTimeOffset.UtcNow, null, TimeSpan.FromSeconds(1)) },
+                    new List<ProcedureVideo>(),
+                    "libId",
+                    "repId",
+                    "path",
+                    null,
+                    null,
+                    null,
+                    false,
+                    DateTimeOffset.UtcNow,
+                    TimeZoneInfo.Local.Id,
+                    false,
+                    new List<ProcedureNote>(),
+                    null,
+                    null,
+                    null,
+                    new List<VideoRecordingEvent>(),
+                    BackgroundRecordingMode.StartImmediately));
 
             var ex = Assert.ThrowsAsync<InvalidOperationException>(() => _manager.DeleteActiveProcedureMediaItems(Shared.Domain.Enumerations.ProcedureContentType.Video, new List<Guid>() { videoId }));
             Assert.True(ex.Message.Contains("Cannot delete video that is currently recording"));
@@ -405,6 +415,7 @@ namespace Avalanche.Api.Test.Managers
                     new Patient() { LastName = "name" },
                     new List<ProcedureImage>() { new ProcedureImage(id, "source", "channel", false, "path", "path", null, DateTimeOffset.UtcNow) },
                     new List<ProcedureVideo>(),
+                    new List<ProcedureVideo>(),
                     "libId",
                     "repId",
                     "path",
@@ -419,7 +430,8 @@ namespace Avalanche.Api.Test.Managers
                     null,
                     null,
                     null,
-                    new List<VideoRecordingEvent>());
+                    new List<VideoRecordingEvent>(),
+                    BackgroundRecordingMode.StartImmediately);
 
             //arrange
             _stateClient.Setup(s => s.GetData<ActiveProcedureState>()).ReturnsAsync(activeProcedure);
@@ -466,6 +478,7 @@ namespace Avalanche.Api.Test.Managers
                     new Patient() { LastName = "name" },
                     new List<ProcedureImage>(),
                     new List<ProcedureVideo>() { new ProcedureVideo(id, "source", "channel", "path", "path", DateTimeOffset.UtcNow, DateTimeOffset.UtcNow.AddSeconds(10), TimeSpan.FromSeconds(10)) },
+                    new List<ProcedureVideo>(),
                     "libId",
                     "repId",
                     "path",
@@ -480,7 +493,8 @@ namespace Avalanche.Api.Test.Managers
                     null,
                     null,
                     null,
-                    new List<VideoRecordingEvent>());
+                    new List<VideoRecordingEvent>(),
+                    BackgroundRecordingMode.StartImmediately);
 
             //arrange
             _stateClient.Setup(s => s.GetData<ActiveProcedureState>()).ReturnsAsync(activeProcedure);
@@ -526,6 +540,7 @@ namespace Avalanche.Api.Test.Managers
                     new Patient() { LastName = "name" },
                     new List<ProcedureImage>() { new ProcedureImage(id, "source", "channel", false, "path", "path", null, DateTimeOffset.UtcNow) },
                     new List<ProcedureVideo>(),
+                    new List<ProcedureVideo>(),
                     "libId",
                     "repId",
                     "path",
@@ -540,7 +555,8 @@ namespace Avalanche.Api.Test.Managers
                     null,
                     null,
                     null,
-                    new List<VideoRecordingEvent>());
+                    new List<VideoRecordingEvent>(),
+                    BackgroundRecordingMode.StartImmediately);
 
             //arrange
             _stateClient.Setup(s => s.GetData<ActiveProcedureState>()).ReturnsAsync(activeProcedure);
@@ -585,6 +601,7 @@ namespace Avalanche.Api.Test.Managers
                     new Patient() { LastName = "name" },
                     new List<ProcedureImage>() { new ProcedureImage(id, "source", "channel", false, "path", "path", null, DateTimeOffset.UtcNow) },
                     new List<ProcedureVideo>(),
+                    new List<ProcedureVideo>(),
                     "libId",
                     "repId",
                     "path",
@@ -599,7 +616,8 @@ namespace Avalanche.Api.Test.Managers
                     null,
                     null,
                     null,
-                    new List<VideoRecordingEvent>());
+                    new List<VideoRecordingEvent>(),
+                    BackgroundRecordingMode.StartImmediately);
 
             //arrange
             _stateClient.Setup(s => s.GetData<ActiveProcedureState>()).ReturnsAsync(activeProcedure);
@@ -645,6 +663,7 @@ namespace Avalanche.Api.Test.Managers
                     new Patient() { LastName = "name" },
                     new List<ProcedureImage>(),
                     new List<ProcedureVideo>() { new ProcedureVideo(id, "source", "channel", "path", "path", DateTimeOffset.UtcNow, DateTimeOffset.UtcNow.AddSeconds(10), TimeSpan.FromSeconds(10)) },
+                    new List<ProcedureVideo>(),
                     "libId",
                     "repId",
                     "path",
@@ -659,7 +678,8 @@ namespace Avalanche.Api.Test.Managers
                     null,
                     null,
                     null,
-                    new List<VideoRecordingEvent>());
+                    new List<VideoRecordingEvent>(),
+                    BackgroundRecordingMode.StartImmediately);
 
             //arrange
             _stateClient.Setup(s => s.GetData<ActiveProcedureState>()).ReturnsAsync(activeProcedure);
