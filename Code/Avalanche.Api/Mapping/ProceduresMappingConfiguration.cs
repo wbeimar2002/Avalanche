@@ -116,6 +116,7 @@ namespace Avalanche.Api.Mapping
                 .ForMember(dest => dest.Accession, opt => opt.MapFrom(src => src.Accession))
                 .ForMember(dest => dest.ScopeSerialNumber, opt => opt.MapFrom(src => src.ScopeSerialNumber))
                 .ForMember(dest => dest.Diagnosis, opt => opt.MapFrom(src => src.Diagnosis))
+                .ForMember(dest => dest.ClinicalNotes, opt => opt.MapFrom(src => src.ClinicalNotes))
                 .ForPath(dest => dest.Patient.Mrn, opt => opt.MapFrom(src => src.Patient.MRN))
                 .ForPath(dest => dest.Patient.FirstName, opt => opt.MapFrom(src => src.Patient.FirstName))
                 .ForPath(dest => dest.Patient.LastName, opt => opt.MapFrom(src => src.Patient.LastName))
