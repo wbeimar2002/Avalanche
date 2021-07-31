@@ -39,7 +39,7 @@ namespace Avalanche.Api.Controllers.V1
         /// <param name="filter"></param>
         /// <returns></returns>
         [HttpPost("filtered/basic")]
-        [Produces(typeof(ProceduresContainerReponseViewModel))]
+        [ProducesResponseType(typeof(ProceduresContainerReponseViewModel), StatusCodes.Status200OK)]
         public async Task<IActionResult> BasicSearch(ProcedureSearchFilterViewModel filter)
         {
             try
@@ -68,7 +68,7 @@ namespace Avalanche.Api.Controllers.V1
         }
 
         [HttpPost("filtered/advanced")]
-        [Produces(typeof(ProceduresContainerReponseViewModel))]
+        [ProducesResponseType(typeof(ProceduresContainerReponseViewModel), StatusCodes.Status200OK)]
         public async Task<IActionResult> AdvancedSearch(ProcedureAdvancedSearchFilterViewModel filter)
         {
             try
@@ -101,7 +101,7 @@ namespace Avalanche.Api.Controllers.V1
         /// </summary>
         /// <returns></returns>
         [HttpGet("{id}")]
-        [Produces(typeof(ProcedureViewModel))]
+        [ProducesResponseType(typeof(ProcedureViewModel), StatusCodes.Status200OK)]
         public async Task<IActionResult> Get(string id)
         {
             try
@@ -122,9 +122,9 @@ namespace Avalanche.Api.Controllers.V1
             }
         }
 
+        // TODO: Is this being used by anything?
         [HttpPut("{id}")]
-        [Produces(typeof(ProcedureViewModel))]
-        public async Task<IActionResult> Update(string id, [FromBody] ProcedureViewModel procedureViewModel)
+        public async Task<IActionResult> Update([FromBody] ProcedureViewModel procedureViewModel)
         {
             try
             {
@@ -148,7 +148,7 @@ namespace Avalanche.Api.Controllers.V1
         /// </summary>
         /// <returns>Active Procedure model or null</returns>
         [HttpGet("active")]
-        [Produces(typeof(ProcedureDetailsViewModel))]
+        [ProducesResponseType(typeof(ActiveProcedureViewModel), StatusCodes.Status200OK)]
         public async Task<IActionResult> GetActive()
         {
             try
@@ -174,6 +174,7 @@ namespace Avalanche.Api.Controllers.V1
         /// </summary>
         /// <returns></returns>
         [HttpDelete("active/{contentType}/{contentId}")]
+        [ProducesResponseType(typeof(void), StatusCodes.Status200OK)]
         public async Task<IActionResult> DeleteActiveProcedureContentItem(ProcedureContentType contentType, Guid contentId)
         {
             try
@@ -201,6 +202,7 @@ namespace Avalanche.Api.Controllers.V1
         /// <param name="contentIds"></param>
         /// <returns></returns>
         [HttpDelete("active/contents/{contentType}")]
+        [ProducesResponseType(typeof(void), StatusCodes.Status200OK)]
         public async Task<IActionResult> DeleteActiveProcedureContentItems(ProcedureContentType contentType, [FromBody] IEnumerable<Guid> contentIds)
         {
             try
@@ -226,7 +228,7 @@ namespace Avalanche.Api.Controllers.V1
         /// </summary>
         /// <returns></returns>
         [HttpDelete("active")]
-        [Produces(typeof(ProcedureDetailsViewModel))]
+        [ProducesResponseType(typeof(void), StatusCodes.Status200OK)]
         public async Task<IActionResult> DiscardActiveProcedure()
         {
             try
@@ -252,7 +254,7 @@ namespace Avalanche.Api.Controllers.V1
         /// </summary>
         /// <returns></returns>
         [HttpPut("active")]
-        [Produces(typeof(ProcedureDetailsViewModel))]
+        [ProducesResponseType(typeof(void), StatusCodes.Status200OK)]
         public async Task<IActionResult> FinishActiveProcedure()
         {
             try
@@ -278,6 +280,7 @@ namespace Avalanche.Api.Controllers.V1
         /// </summary>
         /// <returns></returns>
         [HttpDelete("active/confirmation")]
+        [ProducesResponseType(typeof(void), StatusCodes.Status200OK)]
         public async Task<IActionResult> ConfirmActiveProcedure()
         {
             try
@@ -304,6 +307,7 @@ namespace Avalanche.Api.Controllers.V1
         /// <returns></returns>
         [HttpPut]
         [Route("active/images/{id}")]
+        [ProducesResponseType(typeof(void), StatusCodes.Status200OK)]
         public async Task<IActionResult> ApplyLabelToImage(string id, string label)
         {
             try
@@ -334,6 +338,7 @@ namespace Avalanche.Api.Controllers.V1
         /// </summary>
         /// <returns></returns>
         [Route("active/videos/{id}")]
+        [ProducesResponseType(typeof(void), StatusCodes.Status200OK)]
         public async Task<IActionResult> ApplyLabelToVideo(string id, string label)
         {
             try
