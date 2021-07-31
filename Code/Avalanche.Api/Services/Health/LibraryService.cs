@@ -40,7 +40,7 @@ namespace Avalanche.Api.Services.Health
             await _managerServiceClient.UpdateProcedure(updateProcedureRequest);
         }
 
-        public async Task DeleteActiveProcedureMedia(DeleteActiveProcedureMediaRequest deleteActiveProcedureMediaRequest)
+        public async Task DeleteActiveProcedureMediaItem(DeleteActiveProcedureMediaRequest deleteActiveProcedureMediaRequest)
         {
             await _activeClient.DeleteActiveProcedureMedia(deleteActiveProcedureMediaRequest);
         }

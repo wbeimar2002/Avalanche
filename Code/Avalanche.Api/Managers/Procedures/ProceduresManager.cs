@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+using AutoMapper;
 using Avalanche.Api.Managers.Data;
 using Avalanche.Api.Services.Health;
 using Avalanche.Api.Services.Media;
@@ -71,18 +71,14 @@ namespace Avalanche.Api.Managers.Procedures
             await _stateClient.PersistData(activeProcedure);
         }
 
-        public async Task DeleteActiveProcedureMedia(ProcedureContentType procedureContentType, Guid contentId)
+        public async Task DeleteActiveProcedureMediaItem(ProcedureContentType procedureContentType, Guid contentId)
         {
             var accessInfo = _accessInfoFactory.GenerateAccessInfo();
             var activeProcedure = await _stateClient.GetData<ActiveProcedureState>();
 
             if (procedureContentType == ProcedureContentType.Video)
             {
-                var video = activeProcedure.Videos.Single(v => v.VideoId == contentId);
-                if (!video.VideoStopTimeUtc.HasValue)
-                {
-                    throw new InvalidOperationException("Cannot delete video that is currently recording");
-                }
+                ThrowIfVideoCannotBeDeleted(activeProcedure, contentId);
             }
 
             var request = new DeleteActiveProcedureMediaRequest()
@@ -93,7 +89,7 @@ namespace Avalanche.Api.Managers.Procedures
                 AccessInfo = _mapper.Map<AccessInfoMessage>(accessInfo)
             };
 
-            await _libraryService.DeleteActiveProcedureMedia(request);
+            await _libraryService.DeleteActiveProcedureMediaItem(request);
         }
 
 
@@ -104,13 +100,9 @@ namespace Avalanche.Api.Managers.Procedures
 
             if (procedureContentType == ProcedureContentType.Video)
             {
-                foreach (var videoContent in contentIds)
+                foreach (var videoContentId in contentIds)
                 {
-                    var video = activeProcedure.Videos.Single(v => v.VideoId == videoContent);
-                    if (!video.VideoStopTimeUtc.HasValue)
-                    {
-                        throw new InvalidOperationException("Cannot delete video that is currently recording");
-                    }
+                    ThrowIfVideoCannotBeDeleted(activeProcedure, videoContentId);
                 }
             }
 
@@ -123,6 +115,15 @@ namespace Avalanche.Api.Managers.Procedures
             request.ContentIds.AddRange(contentIds.Select(x => x.ToString()));
 
             await _libraryService.DeleteActiveProcedureMediaItems(request);
+        }
+
+        private static void ThrowIfVideoCannotBeDeleted(ActiveProcedureState activeProcedure, Guid videoContent)
+        {
+            var video = activeProcedure.Videos.Single(v => v.VideoId == videoContent);
+            if (!video.VideoStopTimeUtc.HasValue)
+            {
+                throw new InvalidOperationException("Cannot delete video that is currently recording");
+            }
         }
 
         public async Task DiscardActiveProcedure()

@@ -1,4 +1,4 @@
-﻿using Ism.Library.V1.Protos;
+using Ism.Library.V1.Protos;
 
 using System.Threading.Tasks;
 
@@ -6,7 +6,7 @@ namespace Avalanche.Api.Services.Health
 {
     public interface ILibraryService
     {
-        Task DeleteActiveProcedureMedia(DeleteActiveProcedureMediaRequest deleteActiveProcedureMediaRequest);
+        Task DeleteActiveProcedureMediaItem(DeleteActiveProcedureMediaRequest deleteActiveProcedureMediaRequest);
         Task DeleteActiveProcedureMediaItems(DeleteActiveProcedureMediaItemsRequest deleteActiveProcedureMediaItemsRequest);
         Task DiscardActiveProcedure(DiscardActiveProcedureRequest discardActiveProcedureRequest);
         Task CommitActiveProcedure(CommitActiveProcedureRequest commitActiveProcedureRequest);
