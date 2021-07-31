@@ -1,4 +1,4 @@
-﻿using Ism.Library.Client.V1;
+using Ism.Library.Client.V1;
 using Ism.Library.V1.Protos;
 
 using System.Diagnostics.CodeAnalysis;
@@ -40,9 +40,9 @@ namespace Avalanche.Api.Services.Health
             await _managerServiceClient.UpdateProcedure(updateProcedureRequest);
         }
 
-        public async Task DeleteActiveProcedureMediaItem(DeleteActiveProcedureMediaRequest deleteActiveProcedureMediaRequest)
+        public async Task DeleteActiveProcedureMediaItem(DeleteActiveProcedureMediaItemRequest deleteActiveProcedureMediaItemRequest)
         {
-            await _activeClient.DeleteActiveProcedureMedia(deleteActiveProcedureMediaRequest);
+            await _activeClient.DeleteActiveProcedureMediaItem(deleteActiveProcedureMediaItemRequest);
         }
 
         public async Task DeleteActiveProcedureMediaItems(DeleteActiveProcedureMediaItemsRequest deleteActiveProcedureMediaItemsRequest)

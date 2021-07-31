@@ -81,7 +81,7 @@ namespace Avalanche.Api.Managers.Procedures
                 ThrowIfVideoCannotBeDeleted(activeProcedure, contentId);
             }
 
-            var request = new DeleteActiveProcedureMediaRequest()
+            var request = new DeleteActiveProcedureMediaItemRequest()
             {
                 ContentId = contentId.ToString(),
                 ContentType = _mapper.Map<ContentType>(procedureContentType),
