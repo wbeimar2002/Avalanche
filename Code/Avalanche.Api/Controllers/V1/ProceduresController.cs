@@ -304,7 +304,7 @@ namespace Avalanche.Api.Controllers.V1
         /// <returns></returns>
         [HttpPut]
         [Route("active/images/{id}")]
-        public async Task<IActionResult> ApplyLabelToImage(string id, LabelViewModel label)
+        public async Task<IActionResult> ApplyLabelToImage(string id, string label)
         {
             try
             {
@@ -313,7 +313,7 @@ namespace Avalanche.Api.Controllers.V1
                 await _proceduresManager.ApplyLabelToActiveProcedure(new ContentViewModel()
                 {
                     ContentId = new Guid(id),
-                    Label = label.Label,
+                    Label = label,
                     ProcedureContentType = ProcedureContentType.Image
                 });
                 return Ok();
@@ -334,7 +334,7 @@ namespace Avalanche.Api.Controllers.V1
         /// </summary>
         /// <returns></returns>
         [Route("active/videos/{id}")]
-        public async Task<IActionResult> ApplyLabelToVideo(string id, LabelViewModel label)
+        public async Task<IActionResult> ApplyLabelToVideo(string id, string label)
         {
             try
             {
@@ -343,7 +343,7 @@ namespace Avalanche.Api.Controllers.V1
                 await _proceduresManager.ApplyLabelToActiveProcedure(new ContentViewModel()
                 {
                     ContentId = new Guid(id),
-                    Label = label.Label,
+                    Label = label,
                     ProcedureContentType = ProcedureContentType.Video
                 });
 
