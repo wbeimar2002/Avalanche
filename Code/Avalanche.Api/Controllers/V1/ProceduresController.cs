@@ -1,4 +1,4 @@
-﻿using Avalanche.Api.Helpers;
+using Avalanche.Api.Helpers;
 using Avalanche.Api.Managers.Procedures;
 using Avalanche.Api.ViewModels;
 using Avalanche.Shared.Domain.Enumerations;
@@ -174,13 +174,13 @@ namespace Avalanche.Api.Controllers.V1
         /// </summary>
         /// <returns></returns>
         [HttpDelete("active/{contentType}/{contentId}")]
-        public async Task<IActionResult> DeleteActiveProcedureContent(ProcedureContentType contentType, Guid contentId)
+        public async Task<IActionResult> DeleteActiveProcedureContentItem(ProcedureContentType contentType, Guid contentId)
         {
             try
             {
                 _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
 
-                await _proceduresManager.DeleteActiveProcedureMedia(contentType, contentId);
+                await _proceduresManager.DeleteActiveProcedureMediaItem(contentType, contentId);
                 return Ok();
             }
             catch (Exception ex)
@@ -220,7 +220,6 @@ namespace Avalanche.Api.Controllers.V1
                 _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
             }
         }
-
 
         /// <summary>
         /// Discard Active Procedure
@@ -317,7 +316,6 @@ namespace Avalanche.Api.Controllers.V1
                     Label = label.Label,
                     ProcedureContentType = ProcedureContentType.Image
                 });
-                
                 return Ok();
             }
             catch (Exception ex)
