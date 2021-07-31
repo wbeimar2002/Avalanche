@@ -306,9 +306,9 @@ namespace Avalanche.Api.Controllers.V1
         /// </summary>
         /// <returns></returns>
         [HttpPut]
-        [Route("active/images/{id}")]
+        [Route("active/images/{id}/label")]
         [ProducesResponseType(typeof(void), StatusCodes.Status200OK)]
-        public async Task<IActionResult> ApplyLabelToImage(string id, string label)
+        public async Task<IActionResult> ApplyLabelToImage(string id, [FromBody] string label)
         {
             try
             {
@@ -337,9 +337,10 @@ namespace Avalanche.Api.Controllers.V1
         /// Apply label to video 
         /// </summary>
         /// <returns></returns>
-        [Route("active/videos/{id}")]
+        [HttpPut]
+        [Route("active/videos/{id}/label")]
         [ProducesResponseType(typeof(void), StatusCodes.Status200OK)]
-        public async Task<IActionResult> ApplyLabelToVideo(string id, string label)
+        public async Task<IActionResult> ApplyLabelToVideo(string id, [FromBody] string label)
         {
             try
             {
