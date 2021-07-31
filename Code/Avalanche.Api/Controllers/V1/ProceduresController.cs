@@ -39,7 +39,7 @@ namespace Avalanche.Api.Controllers.V1
         /// <param name="filter"></param>
         /// <returns></returns>
         [HttpPost("filtered/basic")]
-        [Produces(typeof(ProceduresContainerReponseViewModel))]
+        [ProducesResponseType(typeof(ProceduresContainerReponseViewModel), StatusCodes.Status200OK)]
         public async Task<IActionResult> BasicSearch(ProcedureSearchFilterViewModel filter)
         {
             try
@@ -68,7 +68,7 @@ namespace Avalanche.Api.Controllers.V1
         }
 
         [HttpPost("filtered/advanced")]
-        [Produces(typeof(ProceduresContainerReponseViewModel))]
+        [ProducesResponseType(typeof(ProceduresContainerReponseViewModel), StatusCodes.Status200OK)]
         public async Task<IActionResult> AdvancedSearch(ProcedureAdvancedSearchFilterViewModel filter)
         {
             try
@@ -101,7 +101,7 @@ namespace Avalanche.Api.Controllers.V1
         /// </summary>
         /// <returns></returns>
         [HttpGet("{id}")]
-        [Produces(typeof(ProcedureViewModel))]
+        [ProducesResponseType(typeof(ProcedureViewModel), StatusCodes.Status200OK)]
         public async Task<IActionResult> Get(string id)
         {
             try
@@ -148,7 +148,7 @@ namespace Avalanche.Api.Controllers.V1
         /// </summary>
         /// <returns>Active Procedure model or null</returns>
         [HttpGet("active")]
-        [Produces(typeof(ActiveProcedureViewModel))]
+        [ProducesResponseType(typeof(ActiveProcedureViewModel), StatusCodes.Status200OK)]
         public async Task<IActionResult> GetActive()
         {
             try
@@ -228,7 +228,6 @@ namespace Avalanche.Api.Controllers.V1
         /// </summary>
         /// <returns></returns>
         [HttpDelete("active")]
-        [Produces(typeof(ProcedureDetailsViewModel))]
         [ProducesResponseType(typeof(void), StatusCodes.Status200OK)]
         public async Task<IActionResult> DiscardActiveProcedure()
         {
