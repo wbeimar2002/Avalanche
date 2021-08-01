@@ -4,7 +4,7 @@ using Avalanche.Security.Server.Core.Models;
 using Avalanche.Security.Server.Core.Security.Hashing;
 using Avalanche.Security.Server.Core.Security.Tokens;
 using Avalanche.Security.Server.Security.Tokens;
-using Avalanche.Shared.Infrastructure.Models;
+using Avalanche.Shared.Infrastructure.Options;
 using Microsoft.Extensions.Options;
 using Moq;
 using Xunit;
@@ -13,9 +13,9 @@ namespace Avalanche.Security.Tests.Security.Tokens
 {
     public class TokenHandlerTests
     {
-        private Mock<IOptions<TokenOptions>> _tokenOptions;
+        private TokenAuthConfiguration _tokenConfig;
         private Mock<IPasswordHasher> _passwordHasher;
-        private SigningConfigurations _signingConfigurations;
+        private SigningOptions _signingOptions;
         private User _user;
 
         private ITokenHandler _tokenHandler;
@@ -23,30 +23,31 @@ namespace Avalanche.Security.Tests.Security.Tokens
         public TokenHandlerTests()
         {
             SetupMocks();
-            _tokenHandler = new TokenHandler(_tokenOptions.Object, _signingConfigurations, _passwordHasher.Object);
+            _tokenHandler = new TokenHandler(_tokenConfig, _signingOptions, _passwordHasher.Object);
         }
 
         private void SetupMocks()
         {
-            _tokenOptions = new Mock<IOptions<TokenOptions>>();
-            _tokenOptions.Setup(to => to.Value).Returns(new TokenOptions
-            {
-                Audience = "Testing",
-                    Issuer = "Testing",
-                    AccessTokenExpiration = 30,
-                    RefreshTokenExpiration = 60
-            });
+            _tokenConfig = new TokenAuthConfiguration
+            (
+                "Testing",
+                "Testing",
+                30,
+                60
+            );
 
             _passwordHasher = new Mock<IPasswordHasher>();
             _passwordHasher.Setup(ph => ph.HashPassword(It.IsAny<string>())).Returns("123");
 
-            _signingConfigurations = new SigningConfigurations();
+            _signingOptions = new SigningOptions();
 
             _user = new User
             {
                 Id = 1,
                 Email = "test@test.com",
                 Password = "123",
+                FirstName = "Some",
+                LastName = "User",
                 UserRoles = new Collection<UserRole>
                 {
                     new UserRole
@@ -54,7 +55,7 @@ namespace Avalanche.Security.Tests.Security.Tokens
                         Role = new Role
                         {
                             Id = 1,
-                            Name = ERole.Common.ToString()
+                            Name = nameof(ERole.Common)
                         }
                     }
                 }

@@ -11,4 +11,10 @@
     <Compile Remove="Models\Patient.cs" />
   </ItemGroup>
 
+  <ItemGroup>
+    <PackageReference Include="Ism.CodeQuality" Version="1.0.0-prerelease0007">
+      <TreatAsUsed>true</TreatAsUsed>
+    </PackageReference>
+  </ItemGroup>
+
 </Project>
