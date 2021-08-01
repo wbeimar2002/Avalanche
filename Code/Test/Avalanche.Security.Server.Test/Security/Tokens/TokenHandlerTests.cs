@@ -46,6 +46,8 @@ namespace Avalanche.Security.Tests.Security.Tokens
                 Id = 1,
                 Email = "test@test.com",
                 Password = "123",
+                FirstName = "Some",
+                LastName = "User",
                 UserRoles = new Collection<UserRole>
                 {
                     new UserRole

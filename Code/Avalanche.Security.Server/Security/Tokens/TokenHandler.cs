@@ -56,8 +56,8 @@ namespace Avalanche.Security.Server.Security.Tokens
         {
             var refreshToken = new RefreshToken
             (
-                token : _passwordHaser.HashPassword(Guid.NewGuid().ToString()),
-                expiration : DateTime.UtcNow.AddSeconds(_tokenConfiguration.RefreshExpirationSeconds).Ticks
+                token: _passwordHaser.HashPassword(Guid.NewGuid().ToString()),
+                expiration: DateTime.UtcNow.AddSeconds(_tokenConfiguration.RefreshExpirationSeconds).Ticks
             );
 
             return refreshToken;
@@ -69,12 +69,12 @@ namespace Avalanche.Security.Server.Security.Tokens
 
             var securityToken = new JwtSecurityToken
             (
-                issuer : _tokenConfiguration.Issuer,
-                audience : _tokenConfiguration.Audience,
-                claims : GetClaims(user),
-                expires : accessTokenExpiration,
-                notBefore : DateTime.UtcNow,
-                signingCredentials : _signingConfigurations.SigningCredentials
+                issuer: _tokenConfiguration.Issuer,
+                audience: _tokenConfiguration.Audience,
+                claims: GetClaims(user),
+                expires: accessTokenExpiration,
+                notBefore: DateTime.UtcNow,
+                signingCredentials: _signingConfigurations.SigningCredentials
             );
 
             var handler = new JwtSecurityTokenHandler();
