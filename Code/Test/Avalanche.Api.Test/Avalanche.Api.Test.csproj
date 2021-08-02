@@ -31,6 +31,7 @@
     <PackageReference Include="Ism.CodeQuality" Version="1.0.0-prerelease0007">
       <TreatAsUsed>true</TreatAsUsed>
     </PackageReference>
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="5.0.0" />
     <PackageReference Include="Moq" Version="4.16.1" />
 
   </ItemGroup>

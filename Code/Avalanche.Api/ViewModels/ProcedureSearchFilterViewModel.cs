@@ -20,7 +20,7 @@ namespace Avalanche.Api.ViewModels
 
         }
 
-        public ProcedureSearchFilterViewModel(string keyword?, DateTime? startCreationTime, 
+        public ProcedureSearchFilterViewModel(string? keyword, DateTime? startCreationTime, 
             DateTime? endCreationTime, bool? hasPendingEdits, bool isDescending, ProcedureIndexSortingColumns procedureIndexSortingColumn)
         {
             this.Keyword = keyword;
