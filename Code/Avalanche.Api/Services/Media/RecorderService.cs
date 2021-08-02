@@ -45,5 +45,7 @@ namespace Avalanche.Api.Services.Media
             var response = await _client.GetRecordingChannels();
             return response.RecordingChannels.ToList();
         }
+
+        public async Task FinishProcedure() => await _client.FinishProcedure();
     }
 }
