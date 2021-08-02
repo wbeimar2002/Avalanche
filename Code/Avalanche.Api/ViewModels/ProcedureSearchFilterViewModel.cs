@@ -1,6 +1,5 @@
-﻿using Avalanche.Shared.Domain.Enumerations;
-using Avalanche.Shared.Infrastructure.Enumerations;
 using System;
+using Avalanche.Shared.Infrastructure.Enumerations;
 
 namespace Avalanche.Api.ViewModels
 {
@@ -28,7 +27,7 @@ namespace Avalanche.Api.ViewModels
             this.StartCreationTime = startCreationTime;
             this.EndCreationTime = endCreationTime;
             this.HasPendingEdits = hasPendingEdits;
-            this.IsDescending = IsDescending;
+            this.IsDescending = isDescending;
             this.ProcedureIndexSortingColumn = procedureIndexSortingColumn;
         }
 

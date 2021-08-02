@@ -1,8 +1,7 @@
-﻿using Avalanche.Shared.Domain.Models;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using Avalanche.Shared.Domain.Enumerations;
+using Avalanche.Shared.Domain.Models;
 
 namespace Avalanche.Api.ViewModels
 {
@@ -15,7 +14,8 @@ namespace Avalanche.Api.ViewModels
         public string Accession { get; set; }
         public string ScopeSerialNumber { get; set; }
         public string Diagnosis { get; set; }
-        public string ClinicalNotes { get; set; }        
+        public string ClinicalNotes { get; set; }
+        public VideoAutoEditStatus VideoAutoEditStatus { get; set; }
 
         public PatientModel Patient { get; set; }
         public DepartmentModel Department { get; set; }

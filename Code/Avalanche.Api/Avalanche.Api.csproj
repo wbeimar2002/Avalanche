@@ -48,12 +48,13 @@
     <PackageReference Include="Ism.Common.Core.Hosting" Version="1.0.0-prerelease037" />
     <PackageReference Include="Ism.PatientInfoEngine.Client" Version="1.0.0-prerelease0022" />
     <PackageReference Include="Ism.PgsTimeout.Client" Version="1.0.0-prerelease0014" />
-    <PackageReference Include="Ism.Recorder.Client" Version="1.0.0-prerelease0035" />
+    <PackageReference Include="Ism.Recorder.Client" Version="1.0.0-prerelease0036" />
     <PackageReference Include="Ism.Routing.Client" Version="1.0.0-prerelease0015" />
     <PackageReference Include="Ism.Storage.Configuration.Client" Version="1.0.0-prerelease0026" />
     <PackageReference Include="Ism.Storage.PatientList.Client" Version="1.0.0-prerelease0021" />
     <PackageReference Include="Ism.Streaming.Client" Version="1.0.0-prerelease0014" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="3.1.17" />
+    <PackageReference Include="Microsoft.AspNetCore.JsonPatch" Version="5.0.8" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="3.1.17" />
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.10.9" />
     <PackageReference Include="Newtonsoft.Json.Schema" Version="3.0.14" />

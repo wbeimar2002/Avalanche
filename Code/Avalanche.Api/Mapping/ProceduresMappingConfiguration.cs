@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+using AutoMapper;
 
 using Avalanche.Api.ViewModels;
 using Avalanche.Shared.Domain.Enumerations;
@@ -47,6 +47,8 @@ namespace Avalanche.Api.Mapping
                 .ForMember(dest => dest.PhysicianId, opt => opt.Ignore())
                 .ForMember(dest => dest.DepartmentName, opt => opt.Ignore())
                 .ForMember(dest => dest.ProcedureTypeName, opt => opt.Ignore())
+                .ForMember(dest => dest.IsClinical, opt => opt.Ignore())
+                .ForMember(dest => dest.Sex, opt => opt.Ignore())
                 .ForMember(dest => dest.HasPendingEdits, opt => opt.MapFrom(src => src.HasPendingEdits));
 
             CreateMap<ProcedureAdvancedSearchFilterViewModel, GetFinishedProceduresRequest>()
@@ -62,6 +64,8 @@ namespace Avalanche.Api.Mapping
                 .ForMember(dest => dest.PhysicianId, opt => opt.MapFrom(src => src.PhysicianId))
                 .ForMember(dest => dest.DepartmentName, opt => opt.MapFrom(src => src.DepartmentName))
                 .ForMember(dest => dest.ProcedureTypeName, opt => opt.MapFrom(src => src.ProcedureTypeName))
+                .ForMember(dest => dest.IsClinical, opt => opt.MapFrom(src => src.IsClinical))
+                .ForMember(dest => dest.Sex, opt => opt.MapFrom(src => src.Sex))
                 .ForMember(dest => dest.HasPendingEdits, opt => opt.MapFrom(src => src.HasPendingEdits));
 
             CreateMap<ProcedureImageMessage, ImageContentViewModel>()
@@ -91,6 +95,7 @@ namespace Avalanche.Api.Mapping
                 .ForMember(dest => dest.Images, opt => opt.MapFrom(src => src.Images))
                 .ForMember(dest => dest.Notes, opt => opt.MapFrom(src => src.Notes))
                 .ForMember(dest => dest.IsClinical, opt => opt.MapFrom(src => src.IsClinical))
+                .ForMember(dest => dest.VideoAutoEditStatus, opt => opt.MapFrom(src => src.VideoAutoEditStatus))
                 .ForMember(dest => dest.Accession, opt => opt.MapFrom(src => src.Accession))
                 .ForMember(dest => dest.ScopeSerialNumber, opt => opt.MapFrom(src => src.ScopeSerialNumber))
                 .ForMember(dest => dest.Diagnosis, opt => opt.MapFrom(src => src.Diagnosis))
@@ -113,6 +118,7 @@ namespace Avalanche.Api.Mapping
                 .ForMember(dest => dest.Images, opt => opt.MapFrom(src => src.Images))
                 .ForMember(dest => dest.Notes, opt => opt.MapFrom(src => src.Notes))
                 .ForMember(dest => dest.IsClinical, opt => opt.MapFrom(src => src.IsClinical))
+                .ForMember(dest => dest.VideoAutoEditStatus, opt => opt.MapFrom(src => src.VideoAutoEditStatus))
                 .ForMember(dest => dest.Accession, opt => opt.MapFrom(src => src.Accession))
                 .ForMember(dest => dest.ScopeSerialNumber, opt => opt.MapFrom(src => src.ScopeSerialNumber))
                 .ForMember(dest => dest.Diagnosis, opt => opt.MapFrom(src => src.Diagnosis))
