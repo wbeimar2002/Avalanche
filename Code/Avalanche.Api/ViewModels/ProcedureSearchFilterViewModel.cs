@@ -1,12 +1,11 @@
-﻿using Avalanche.Shared.Domain.Enumerations;
-using Avalanche.Shared.Infrastructure.Enumerations;
 using System;
+using Avalanche.Shared.Infrastructure.Enumerations;
 
 namespace Avalanche.Api.ViewModels
 {
     public class ProcedureSearchFilterViewModel : FilterViewModelBase
     {
-        public string Keyword { get; set; }
+        public string? Keyword { get; set; }
 
         public DateTime? StartCreationTime { get; set; }
         public DateTime? EndCreationTime { get; set; }
@@ -21,14 +20,14 @@ namespace Avalanche.Api.ViewModels
 
         }
 
-        public ProcedureSearchFilterViewModel(string keyword, DateTime? startCreationTime, 
+        public ProcedureSearchFilterViewModel(string? keyword, DateTime? startCreationTime, 
             DateTime? endCreationTime, bool? hasPendingEdits, bool isDescending, ProcedureIndexSortingColumns procedureIndexSortingColumn)
         {
             this.Keyword = keyword;
             this.StartCreationTime = startCreationTime;
             this.EndCreationTime = endCreationTime;
             this.HasPendingEdits = hasPendingEdits;
-            this.IsDescending = IsDescending;
+            this.IsDescending = isDescending;
             this.ProcedureIndexSortingColumn = procedureIndexSortingColumn;
         }
 

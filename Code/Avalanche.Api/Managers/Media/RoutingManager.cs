@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+using AutoMapper;
 using Avalanche.Api.Services.Maintenance;
 using Avalanche.Api.Services.Media;
 using Avalanche.Api.Utilities;
@@ -85,8 +85,7 @@ namespace Avalanche.Api.Managers.Media
         {
             var setupSettings = await _storageService.GetJsonObject<SetupConfiguration>(nameof(SetupConfiguration), 1, configurationContext);
 
-            if (setupSettings.General.SurgeryMode == RoutingModes.Hardware)
-                await _avidisService.ShowPreview(_mapper.Map<RegionModel, ShowPreviewRequest>(routingPreviewViewModel.Region));
+            await _avidisService.ShowPreview(_mapper.Map<RegionModel, ShowPreviewRequest>(routingPreviewViewModel.Region));
 
             //TODO: Map this
             await _avidisService.ShowPreview(new ShowPreviewRequest()
