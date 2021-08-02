@@ -1,9 +1,6 @@
-﻿using Avalanche.Shared.Domain.Enumerations;
+using Avalanche.Shared.Domain.Enumerations;
 using Ism.Common.Core.Configuration;
 using Ism.Common.Core.Configuration.Attributes;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Avalanche.Shared.Infrastructure.Configuration
 {
@@ -11,7 +8,7 @@ namespace Avalanche.Shared.Infrastructure.Configuration
     public class SetupConfiguration : IConfigurationPoco
     {
         public GeneralSetupConfiguration General { get; set; }
-        public RegistrationSetupConfiguration Registration { get; set; }        
+        public RegistrationSetupConfiguration Registration { get; set; }
 
         public bool Validate()
         {
@@ -22,7 +19,6 @@ namespace Avalanche.Shared.Infrastructure.Configuration
     public class GeneralSetupConfiguration
     {
         public int Mode { get; set; }
-        public RoutingModes SurgeryMode { get; set; }
         public int ScreenMode { get; set; }
         public bool DepartmentsSupported { get; set; }
     }
