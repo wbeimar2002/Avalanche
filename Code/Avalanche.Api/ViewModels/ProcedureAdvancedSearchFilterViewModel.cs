@@ -13,7 +13,7 @@ namespace Avalanche.Api.ViewModels
         public bool? IsClinical { get; set; }
         public int? Sex { get; set; }
 
-        public string Keyword { get; set; }
+        public string? Keyword { get; set; }
 
         public DateTime? StartCreationTime { get; set; }
         public DateTime? EndCreationTime { get; set; }
@@ -28,7 +28,7 @@ namespace Avalanche.Api.ViewModels
 
         }
 
-        public ProcedureAdvancedSearchFilterViewModel(string keyword, DateTime? startCreationTime,
+        public ProcedureAdvancedSearchFilterViewModel(string? keyword, DateTime? startCreationTime,
             DateTime? endCreationTime, bool? hasPendingEdits, bool isDescending, ProcedureIndexSortingColumns procedureIndexSortingColumn,
             string patientLastName, string? patientId, string? physicianId, string? departmentName, string? procedureTypeName, bool? isClinical, int? sex)
         {
