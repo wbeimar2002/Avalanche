@@ -332,3 +332,4 @@ ASALocalRun/
 
 # Ignore NSwag generated files
 Code/Avalanche.Api/ApiClient/**
+*.editorconfig

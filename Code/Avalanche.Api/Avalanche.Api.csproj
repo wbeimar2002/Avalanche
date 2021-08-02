@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
@@ -37,41 +37,29 @@
     <PackageReference Include="AutoFixture" Version="4.17.0" />
     <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="8.1.1" />
     <PackageReference Include="AvidisDeviceInterface.Client" Version="1.0.0-prerelease0014" />
-    <PackageReference Include="Google.Api.CommonProtos" Version="2.3.0" />
-    <PackageReference Include="Google.Protobuf" Version="3.17.3" />
-    <PackageReference Include="Grpc.Core" Version="2.38.1" />
-    <PackageReference Include="Grpc.Core.Testing" Version="2.37.1" />
-    <PackageReference Include="Grpc.Net.Client" Version="2.37.0" />
-    <PackageReference Include="Grpc.Tools" Version="2.37.1">
+    <PackageReference Include="Grpc.Tools" Version="2.38.1">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Ism.Broadcaster.Standard" Version="1.0.0-prerelease0003" />
-    <PackageReference Include="Ism.Common.Core" Version="1.0.0-prerelease044" />
+    <PackageReference Include="Ism.CodeQuality" Version="1.0.0-prerelease0007">
+      <TreatAsUsed>true</TreatAsUsed>
+    </PackageReference>
     <PackageReference Include="Ism.Common.Core.Hosting" Version="1.0.0-prerelease037" />
     <PackageReference Include="Ism.PatientInfoEngine.Client" Version="1.0.0-prerelease0022" />
     <PackageReference Include="Ism.PgsTimeout.Client" Version="1.0.0-prerelease0014" />
     <PackageReference Include="Ism.Recorder.Client" Version="1.0.0-prerelease0035" />
     <PackageReference Include="Ism.Routing.Client" Version="1.0.0-prerelease0015" />
-    <PackageReference Include="Ism.Security.Grpc.Standard" Version="1.0.0-prerelease024" />
-    <PackageReference Include="Ism.Storage.Configuration.Client" Version="1.0.0-prerelease0025" />
+    <PackageReference Include="Ism.Storage.Configuration.Client" Version="1.0.0-prerelease0026" />
     <PackageReference Include="Ism.Storage.PatientList.Client" Version="1.0.0-prerelease0021" />
     <PackageReference Include="Ism.Streaming.Client" Version="1.0.0-prerelease0014" />
-    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="3.1.12" />
-    <PackageReference Include="Microsoft.AspNetCore.Mvc.Cors" Version="2.2.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="3.1.12" />
-    <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="3.1.10" />
-    <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="3.1.15" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="3.1.17" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="3.1.17" />
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.10.9" />
-    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="3.1.5" />
-    <PackageReference Include="Moq" Version="4.16.1" />
     <PackageReference Include="Newtonsoft.Json.Schema" Version="3.0.14" />
-    <PackageReference Include="NodaTime" Version="3.0.5" />
     <PackageReference Include="NSwag.AspNetCore" Version="13.11.1" />
     <PackageReference Include="Serilog.AspNetCore" Version="4.1.0" />
-    <PackageReference Include="Serilog.Extensions.Logging" Version="3.0.1" />
-    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.11.0" />
-    <PackageReference Include="StackExchange.Redis" Version="2.2.4" />
+    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.12.0" />
     <PackageReference Include="System.Text.Json" Version="5.0.2" />
     <PackageReference Include="Polly" Version="7.2.2" />
   </ItemGroup>
@@ -84,8 +72,8 @@
   
   <ItemGroup Condition="'$(Configuration)'=='Debug' Or '$(Configuration)'=='Release'">  
     <PackageReference Include="Ism.Storage.DataManagement.Client" Version="1.0.0-prerelease0035" />
-    <PackageReference Include="Ism.Library.Client" Version="1.0.0-prerelease0039" />
-    <PackageReference Include="Ism.SystemState.Client" Version="1.0.0-prerelease0059" />
+    <PackageReference Include="Ism.Library.Client" Version="1.0.0-prerelease0042" />
+    <PackageReference Include="Ism.SystemState.Client" Version="1.0.0-prerelease0060" />
   </ItemGroup>
 
   <ItemGroup>

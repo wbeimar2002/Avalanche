@@ -117,7 +117,7 @@ namespace Avalanche.Api.Test.Managers
                     new List<VideoRecordingEvent>(),
                     BackgroundRecordingMode.StartImmediately));
 
-            await _manager.DeleteActiveProcedureMedia(Shared.Domain.Enumerations.ProcedureContentType.Image, id);
+            await _manager.DeleteActiveProcedureMediaItem(Shared.Domain.Enumerations.ProcedureContentType.Image, id);
         }
 
         [Test]
@@ -147,7 +147,7 @@ namespace Avalanche.Api.Test.Managers
                     new List<VideoRecordingEvent>(),
                     BackgroundRecordingMode.StartImmediately));
 
-            var ex = Assert.ThrowsAsync<InvalidOperationException>(() => _manager.DeleteActiveProcedureMedia(Shared.Domain.Enumerations.ProcedureContentType.Video, id));
+            var ex = Assert.ThrowsAsync<InvalidOperationException>(() => _manager.DeleteActiveProcedureMediaItem(Shared.Domain.Enumerations.ProcedureContentType.Video, id));
             Assert.True(ex.Message.Contains("Cannot delete video that is currently recording"));
         }
 
