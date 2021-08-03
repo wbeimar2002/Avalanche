@@ -46,12 +46,12 @@
       <TreatAsUsed>true</TreatAsUsed>
     </PackageReference>
     <PackageReference Include="Ism.Common.Core.Hosting" Version="1.0.0-prerelease041" />
-    <PackageReference Include="Ism.PatientInfoEngine.Client" Version="1.0.0-prerelease0023" />
+    <PackageReference Include="Ism.PatientInfoEngine.Client" Version="1.0.0-prerelease0024" />
     <PackageReference Include="Ism.PgsTimeout.Client" Version="1.0.0-prerelease0014" />
     <PackageReference Include="Ism.Recorder.Client" Version="1.0.0-prerelease0036" />
     <PackageReference Include="Ism.Routing.Client" Version="1.0.0-prerelease0015" />
-    <PackageReference Include="Ism.Storage.Configuration.Client" Version="1.0.0-prerelease0026" />
-    <PackageReference Include="Ism.Storage.PatientList.Client" Version="1.0.0-prerelease0021" />
+    <PackageReference Include="Ism.Storage.Configuration.Client" Version="1.0.0-prerelease0027" />
+    <PackageReference Include="Ism.Storage.PatientList.Client" Version="1.0.0-prerelease0022" />
     <PackageReference Include="Ism.Streaming.Client" Version="1.0.0-prerelease0014" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="3.1.17" />
     <PackageReference Include="Microsoft.AspNetCore.JsonPatch" Version="5.0.8" />
@@ -73,9 +73,9 @@
   </ItemGroup>
   
   <ItemGroup Condition="'$(Configuration)'=='Debug' Or '$(Configuration)'=='Release'">  
-    <PackageReference Include="Ism.Storage.DataManagement.Client" Version="1.0.0-prerelease0036" />
-    <PackageReference Include="Ism.Library.Client" Version="1.0.0-prerelease0043" />
-    <PackageReference Include="Ism.SystemState.Client" Version="1.0.0-prerelease0060" />
+    <PackageReference Include="Ism.Storage.DataManagement.Client" Version="1.0.0-prerelease0037" />
+    <PackageReference Include="Ism.Library.Client" Version="1.0.0-prerelease0044" />
+    <PackageReference Include="Ism.SystemState.Client" Version="1.0.0-prerelease0062" />
   </ItemGroup>
 
   <ItemGroup>
