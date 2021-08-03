@@ -1,4 +1,5 @@
-﻿using Avalanche.Api.Helpers;
+using System;
+using System.Threading.Tasks;
 using Avalanche.Api.Managers.Maintenance;
 using Avalanche.Api.ViewModels;
 using Avalanche.Shared.Infrastructure.Configuration;
@@ -12,10 +13,6 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.Net;
-using System.Threading.Tasks;
 
 namespace Avalanche.Api.Controllers.V1
 {
@@ -40,7 +37,6 @@ namespace Avalanche.Api.Controllers.V1
         /// </summary>
         /// <param name="key"></param>
         /// <param name="section"></param>
-        /// <returns></returns>
         [HttpPut("categories/{key}/policies")]
         public async Task<IActionResult> SaveCategoryPolicies(string key, [FromBody] DynamicSectionViewModel section)
         {
@@ -67,7 +63,6 @@ namespace Avalanche.Api.Controllers.V1
         /// </summary>
         /// <param name="key"></param>
         /// <param name="section"></param>
-        /// <returns></returns>
         [HttpPut("categories/{key}")]
         public async Task<IActionResult> SaveCategory(string key, [FromBody]DynamicSectionViewModel section)
         {
@@ -93,7 +88,7 @@ namespace Avalanche.Api.Controllers.V1
         /// Add a new item to a list
         /// </summary>
         /// <param name="key"></param>
-        /// <returns></returns>
+        /// <param name="list"></param>
         [HttpPost("categories/lists/{key}")]
         public async Task<IActionResult> AddEntity(string key, [FromBody] DynamicListViewModel list)
         {
@@ -129,7 +124,6 @@ namespace Avalanche.Api.Controllers.V1
         /// </summary>
         /// <param name="key"></param>
         /// <param name="list"></param>
-        /// <returns></returns>
         [HttpPut("categories/lists/{key}")]
         public async Task<IActionResult> UpdateEntity(string key, [FromBody] DynamicListViewModel list)
         {
@@ -166,7 +160,6 @@ namespace Avalanche.Api.Controllers.V1
         /// </summary>
         /// <param name="key"></param>
         /// <param name="list"></param>
-        /// <returns></returns>
         [HttpDelete("categories/lists/{key}")]
         public async Task<IActionResult> DeleteEntity(string key, [FromBody] DynamicListViewModel list)
         {
@@ -192,7 +185,6 @@ namespace Avalanche.Api.Controllers.V1
         /// Get metadata and values for a Maintenance Page
         /// </summary>
         /// <param name="key"></param>
-        /// <returns></returns>
         [HttpGet("categories/{key}")]
         public async Task<IActionResult> GetCategoryByKey(string key)
         {
@@ -219,7 +211,6 @@ namespace Avalanche.Api.Controllers.V1
         /// </summary>
         /// <param name="key"></param>
         /// <param name="parentId"></param>
-        /// <returns></returns>
         [HttpGet("categories/lists/{key}/{parentId}")]
         public async Task<IActionResult> GetCategoryListByKey(string key, string parentId)
         {
