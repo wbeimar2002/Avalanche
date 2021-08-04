@@ -1,4 +1,4 @@
-﻿using Ism.Recorder.Client.V1;
+using Ism.Recorder.Client.V1;
 using Ism.Recorder.Core.V1.Protos;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
@@ -14,8 +14,7 @@ namespace Avalanche.Api.Services.Media
 
         public async Task<bool> IsRecording()
         {
-            var recorderState = (Avalanche.Shared.Domain.Enumerations.RecorderState)(await _client.GetRecorderState()).State;
-            switch (recorderState)
+            switch ((Avalanche.Shared.Domain.Enumerations.RecorderState)(await _client.GetRecorderState().ConfigureAwait(false)).State)
             {
                 case Avalanche.Shared.Domain.Enumerations.RecorderState.proc_recording_mov:
                 case Avalanche.Shared.Domain.Enumerations.RecorderState.proc_recording_mov_and_pm:
@@ -27,23 +26,22 @@ namespace Avalanche.Api.Services.Media
             }
         }
 
-        public RecorderService(RecorderSecureClient client)
-        {
-            _client = client;
-        }
+        public RecorderService(RecorderSecureClient client) => _client = client;
 
-        public async Task StartRecording(RecordMessage recordMessage) => await _client.StartRecording(recordMessage);
+        public async Task StartRecording(RecordMessage recordMessage) => await _client.StartRecording(recordMessage).ConfigureAwait(false);
 
-        public async Task<RecorderState> GetRecorderState() => await _client.GetRecorderState();
+        public async Task<RecorderState> GetRecorderState() => await _client.GetRecorderState().ConfigureAwait(false);
 
-        public async Task StopRecording() => await _client.StopRecording();
+        public async Task StopRecording() => await _client.StopRecording().ConfigureAwait(false);
 
-        public async Task CaptureImage(CaptureImageRequest captureRequest) => await _client.CaptureImage(captureRequest);
+        public async Task CaptureImage(CaptureImageRequest captureRequest) => await _client.CaptureImage(captureRequest).ConfigureAwait(false);
 
         public async Task<IEnumerable<RecordChannelMessage>> GetRecordingChannels()
         {
-            var response = await _client.GetRecordingChannels();
+            var response = await _client.GetRecordingChannels().ConfigureAwait(false);
             return response.RecordingChannels.ToList();
         }
+
+        public async Task FinishProcedure() => await _client.FinishProcedure().ConfigureAwait(false);
     }
 }
