@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+using AutoMapper;
 using Avalanche.Shared.Domain.Models.Media;
 using Ism.Recorder.Core.V1.Protos;
 
@@ -8,7 +8,9 @@ namespace Avalanche.Api.Mapping
     {
         public RecorderMappingConfiguration()
         {
-            CreateMap<Ism.IsmLogCommon.Core.AccessInfo, Ism.Recorder.Core.V1.Protos.AccessInfoMessage>();
+            CreateMap<Shared.Infrastructure.Enumerations.BackgroundRecordingMode, Ism.SystemState.Models.Procedure.BackgroundRecordingMode>();
+
+            CreateMap<Ism.IsmLogCommon.Core.AccessInfo, AccessInfoMessage>();
 
             CreateMap<AliasIndexModel, AliasIndexMessage>()
                .ForMember(dest =>
