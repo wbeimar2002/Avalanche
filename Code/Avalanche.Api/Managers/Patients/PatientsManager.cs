@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+using AutoMapper;
 using Avalanche.Api.Managers.Media;
 using Avalanche.Api.Managers.Procedures;
 using Avalanche.Api.Services.Health;
@@ -7,7 +7,6 @@ using Avalanche.Api.Utilities;
 using Avalanche.Api.ViewModels;
 using Avalanche.Shared.Domain.Models;
 using Avalanche.Shared.Infrastructure.Configuration;
-
 using Google.Protobuf.WellKnownTypes;
 
 using Ism.Common.Core.Configuration.Models;
@@ -38,6 +37,7 @@ namespace Avalanche.Api.Managers.Patients
 
         private readonly UserModel user;
         private readonly ConfigurationContext configurationContext;
+        private readonly RecorderConfiguration _recorderConfiguration;
 
         public PatientsManager(IPieService pieService, 
             IAccessInfoFactory accessInfoFactory,
@@ -47,7 +47,9 @@ namespace Avalanche.Api.Managers.Patients
             IStateClient stateClient,
             IProceduresManager proceduresManager,
             IRoutingManager routingManager,
-            IHttpContextAccessor httpContextAccessor)
+            IHttpContextAccessor httpContextAccessor,
+            RecorderConfiguration recorderConfiguration
+            )
         {
             _pieService = pieService;
             _storageService = storageService;
@@ -58,7 +60,7 @@ namespace Avalanche.Api.Managers.Patients
             _proceduresManager = proceduresManager;
             _routingManager = routingManager;
             _httpContextAccessor = httpContextAccessor;
-
+            _recorderConfiguration = recorderConfiguration;
             user = HttpContextUtilities.GetUser(_httpContextAccessor.HttpContext);
             configurationContext = _mapper.Map<UserModel, ConfigurationContext>(user);
             configurationContext.IdnId = Guid.NewGuid().ToString();
@@ -105,7 +107,9 @@ namespace Avalanche.Api.Managers.Patients
 
             var result = await _pieService.RegisterPatient(request);
 
-            await PublishActiveProcedure(newPatient, allocatedProcedure);
+            // TODO get user from user selected options
+            var backgroundRecordingMode = _mapper.Map<Ism.SystemState.Models.Procedure.BackgroundRecordingMode>(_recorderConfiguration.BackgroundRecordingMode);
+            await PublishActiveProcedure(newPatient, allocatedProcedure, backgroundRecordingMode);
 
             var response = _mapper.Map<Ism.Storage.PatientList.Client.V1.Protos.AddPatientRecordResponse, PatientViewModel>(result);
             return response;
@@ -156,8 +160,8 @@ namespace Avalanche.Api.Managers.Patients
             request.AccessInfo = _mapper.Map<Ism.Storage.PatientList.Client.V1.Protos.AccessInfoMessage>(accessInfo);
             var result = await _pieService.RegisterPatient(request);
 
-
-            await PublishActiveProcedure(newPatient, allocatedProcedure);
+            var backgroundRecordingMode = _mapper.Map<Ism.SystemState.Models.Procedure.BackgroundRecordingMode>(_recorderConfiguration.BackgroundRecordingMode);
+            await PublishActiveProcedure(newPatient, allocatedProcedure, backgroundRecordingMode);
 
             return _mapper.Map<Ism.Storage.PatientList.Client.V1.Protos.AddPatientRecordResponse, PatientViewModel>(result);
         }
@@ -288,7 +292,7 @@ namespace Avalanche.Api.Managers.Patients
             }
         }
 
-        private async Task PublishActiveProcedure(PatientViewModel patient, ProcedureAllocationViewModel allocatedProcedure)
+        private async Task PublishActiveProcedure(PatientViewModel patient, ProcedureAllocationViewModel allocatedProcedure, Ism.SystemState.Models.Procedure.BackgroundRecordingMode backgroundRecordingMode)
         {
             if (null != patient)
             {
@@ -317,7 +321,7 @@ namespace Avalanche.Api.Managers.Patients
                     notes: new List<Ism.SystemState.Models.Procedure.ProcedureNote>(),
                     externalProcedureId: null,
                     scheduleId: null,
-                    recordingMode: Ism.SystemState.Models.Procedure.BackgroundRecordingMode.StartImmediately
+                    recordingMode: backgroundRecordingMode
                     ));
             }
             else
