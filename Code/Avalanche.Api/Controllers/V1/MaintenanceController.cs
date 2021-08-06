@@ -260,7 +260,73 @@ namespace Avalanche.Api.Controllers.V1
             try
             {
                 _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
-                var result = await _maintenanceManager.GetGeneralApiConfigurationSettings();
+                var result = _maintenanceManager.GetGeneralApiConfigurationSettings();
+                return Ok(result);
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, LoggerHelper.GetLogMessage(DebugLogType.Exception), ex);
+                return new BadRequestObjectResult(ex.Get(_environment.IsDevelopment()));
+            }
+            finally
+            {
+                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
+            }
+        }
+
+        [HttpGet("settings/ProceduresSearchConfiguration")]
+        [Produces(typeof(ProceduresSearchConfiguration))]
+        public async Task<IActionResult> GetProceduresSearchConfigurationSettings()
+        {
+            try
+            {
+                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
+                var result = _maintenanceManager.GetProceduresSearchConfigurationSettings();
+                return Ok(result);
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, LoggerHelper.GetLogMessage(DebugLogType.Exception), ex);
+                return new BadRequestObjectResult(ex.Get(_environment.IsDevelopment()));
+            }
+            finally
+            {
+                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
+            }
+        }
+
+        [HttpGet("settings/AutoLabelsConfiguration")]
+        [Produces(typeof(ProceduresSearchConfiguration))]
+        public async Task<IActionResult> GetAutoLabelsConfigurationSettings()
+        {
+            try
+            {
+                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
+                var result = _maintenanceManager.GetAutoLabelsConfigurationSettings();
+                return Ok(result);
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, LoggerHelper.GetLogMessage(DebugLogType.Exception), ex);
+                return new BadRequestObjectResult(ex.Get(_environment.IsDevelopment()));
+            }
+            finally
+            {
+                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
+            }
+        }
+
+        [HttpGet("settings/LabelsConfiguration")]
+        [Produces(typeof(ProceduresSearchConfiguration))]
+        public async Task<IActionResult> GetLabelsConfigurationSettings()
+        {
+            try
+            {
+                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
+                var result = _maintenanceManager.GetLabelsConfigurationSettings();
                 return Ok(result);
 
             }

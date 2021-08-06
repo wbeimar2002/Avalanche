@@ -1,11 +1,8 @@
-﻿using Avalanche.Api.ViewModels;
-using Avalanche.Shared.Domain.Models;
-using Avalanche.Shared.Infrastructure.Configuration;
-using Avalanche.Shared.Infrastructure.Enumerations;
-using Avalanche.Shared.Infrastructure.Models;
-using Newtonsoft.Json.Linq;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Avalanche.Api.ViewModels;
+using Avalanche.Shared.Infrastructure.Configuration;
+using Avalanche.Shared.Infrastructure.Enumerations;
 
 namespace Avalanche.Api.Managers.Maintenance
 {
@@ -19,6 +16,10 @@ namespace Avalanche.Api.Managers.Maintenance
         Task<dynamic> GetSettingValues(string key);
         Task SaveCategoryPolicies(DynamicSectionViewModel category);
         Task<ReindexStatusViewModel> ReindexRepository(ReindexRepositoryRequestViewModel reindexRequest);
-        Task<GeneralApiConfiguration> GetGeneralApiConfigurationSettings();
+
+        GeneralApiConfiguration GetGeneralApiConfigurationSettings();
+        ProceduresSearchConfiguration GetProceduresSearchConfigurationSettings();
+        AutoLabelsConfiguration GetAutoLabelsConfigurationSettings();
+        LabelsConfiguration GetLabelsConfigurationSettings();
     }
 }
