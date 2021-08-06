@@ -105,6 +105,7 @@ namespace Avalanche.Api
             services.AddConfigurationPoco<TimeoutApiConfiguration>(_configuration, nameof(TimeoutApiConfiguration));
             services.AddConfigurationPoco<SetupConfiguration>(_configuration, nameof(SetupConfiguration));
             services.AddConfigurationPoco<GeneralApiConfiguration>(_configuration, nameof(GeneralApiConfiguration));
+            services.AddConfigurationPoco<RecorderConfiguration>(_configuration, nameof(RecorderConfiguration));
             services.AddConfigurationPoco<ProceduresSearchConfiguration>(_configuration, nameof(ProceduresSearchConfiguration));
             services.AddConfigurationPoco<AutoLabelsConfiguration>(_configuration, nameof(AutoLabelsConfiguration));
             services.AddConfigurationPoco<LabelsConfiguration>(_configuration, nameof(LabelsConfiguration));
