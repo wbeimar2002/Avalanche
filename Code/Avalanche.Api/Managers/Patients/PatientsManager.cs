@@ -107,7 +107,7 @@ namespace Avalanche.Api.Managers.Patients
 
             var result = await _pieService.RegisterPatient(request);
 
-            // TODO get user from user selected options
+            // TODO get user user selected options for background recording
             var backgroundRecordingMode = _mapper.Map<Ism.SystemState.Models.Procedure.BackgroundRecordingMode>(_recorderConfiguration.BackgroundRecordingMode);
             await PublishActiveProcedure(newPatient, allocatedProcedure, backgroundRecordingMode);
 
