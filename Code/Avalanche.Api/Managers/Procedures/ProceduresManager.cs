@@ -278,5 +278,34 @@ namespace Avalanche.Api.Managers.Procedures
                 }
             });
         }
+
+        public async Task ApplyLabelToLatestImages(string label)
+        {
+            Preconditions.ThrowIfNullOrEmptyOrWhiteSpace("Label", label);
+
+            //get active procedure state
+            var activeProcedure = await _stateClient.GetData<ActiveProcedureState>();
+
+            //retrieve correlationid from the latest image from the list of images in active procedure state
+            var correlationId = activeProcedure.Images.OrderByDescending(img => img.CaptureTimeUtc).FirstOrDefault()?.CorrelationId;
+
+            //check latest image contains valid correlationid (valid Guid)
+            if(correlationId == null || correlationId == Guid.Empty)
+            {
+                throw new InvalidOperationException("Active procedure doesnt contain images or latest image doesnt have valid correlation id");
+            }            
+
+            //get all the images with the above correlationid from active procedure state
+            var listOfImagesWithCorrelationId = activeProcedure.Images.Where(x => x.CorrelationId == correlationId);
+
+            //update label field for each image
+            listOfImagesWithCorrelationId.ToList().ForEach(x => x.Label = label);
+
+            //update active procedure state with latest changes to the images collection
+            await _stateClient.AddOrUpdateData(activeProcedure, x =>
+            {
+                x.Replace(data => data.Images, activeProcedure.Images);
+            });
+        }
     }
 }

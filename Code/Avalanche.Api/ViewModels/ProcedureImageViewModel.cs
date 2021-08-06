@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 
 namespace Avalanche.Api.ViewModels
 {
@@ -14,10 +14,13 @@ namespace Avalanche.Api.ViewModels
         public TimeSpan? CaptureOffsetFromVideoStart { get; set; }
         public DateTimeOffset CaptureTimeUtc { get; set; }
 
+        public Guid CorrelationId { get; set; }
+
         public ProcedureImageViewModel() 
         { }
 
-        public ProcedureImageViewModel(Guid imageId, string sourceName, string channelName, bool is4k, string relativePath, TimeSpan? captureOffsetFromVideoStart, DateTimeOffset captureTimeUtc, string label)
+        public ProcedureImageViewModel(Guid imageId, string sourceName, string channelName, bool is4k, string relativePath, TimeSpan? captureOffsetFromVideoStart,
+            DateTimeOffset captureTimeUtc, string label, Guid correlationId)
         {
             ImageId = imageId;
             SourceName = sourceName;
@@ -27,6 +30,7 @@ namespace Avalanche.Api.ViewModels
             Label = label;
             CaptureOffsetFromVideoStart = captureOffsetFromVideoStart;
             CaptureTimeUtc = captureTimeUtc;
+            CorrelationId = correlationId;
         }
     }
 }
