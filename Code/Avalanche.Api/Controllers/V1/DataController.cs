@@ -1,4 +1,4 @@
-﻿using Avalanche.Api.Helpers;
+using Avalanche.Api.Helpers;
 using Avalanche.Api.Managers.Data;
 using Avalanche.Api.ViewModels;
 using Avalanche.Shared.Domain.Models;
@@ -82,9 +82,8 @@ namespace Avalanche.Api.Controllers.V1
         /// <summary>
         /// Get all departments
         /// </summary>
-        /// <returns></returns>
         [HttpGet("sexes")]
-        [Produces(typeof(List<DepartmentModel>))]
+        [Produces(typeof(List<KeyValuePairViewModel>))]
         public async Task<IActionResult> GetSexes()
         {
             try
@@ -109,7 +108,6 @@ namespace Avalanche.Api.Controllers.V1
         /// <summary>
         /// Get all departments
         /// </summary>
-        /// <returns></returns>
         [HttpGet("departments")]
         [Produces(typeof(List<DepartmentModel>))]
         public async Task<IActionResult> GetDepartments()
@@ -136,7 +134,6 @@ namespace Avalanche.Api.Controllers.V1
         /// Get departments by procedure type
         /// </summary>
         /// <param name="departmentId"></param>
-        /// <returns></returns>
         [HttpGet("departments/{departmentId}/procedureTypes")]
         [Produces(typeof(List<ProcedureTypeModel>))]
         public async Task<IActionResult> GetProcedureTypesByDepartment(int departmentId)
@@ -162,7 +159,6 @@ namespace Avalanche.Api.Controllers.V1
         /// <summary>
         /// Get all procedure types
         /// </summary>
-        /// <returns></returns>
         [HttpGet("procedureTypes/all")]
         [Produces(typeof(List<ProcedureTypeModel>))]
         public async Task<IActionResult> GetAllProcedureTypes()
@@ -188,7 +184,6 @@ namespace Avalanche.Api.Controllers.V1
         /// <summary>
         /// Get procedure types with null department
         /// </summary>
-        /// <returns></returns>
         [HttpGet("procedureTypes")]
         [Produces(typeof(List<ProcedureTypeModel>))]
         public async Task<IActionResult> GetProcedureTypes()
@@ -215,7 +210,6 @@ namespace Avalanche.Api.Controllers.V1
         /// Get labels by procedure type
         /// </summary>
         /// <param name="procedureTypeId"></param>
-        /// <returns></returns>
         [HttpGet("procedureTypes/{procedureTypeId}/labels")]
         [Produces(typeof(List<LabelModel>))]
         public async Task<IActionResult> GetLabelsByProcedureType(int procedureTypeId)

@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+using AutoMapper;
 using Avalanche.Api.Helpers;
 using Avalanche.Api.Managers.Data;
 using Avalanche.Api.Managers.Maintenance;
@@ -33,6 +33,9 @@ namespace Avalanche.Api.Test.Managers
         Mock<IFilesService> _filesService;
 
         Mock<GeneralApiConfiguration> _generalApiConfiguration;
+        Mock<ProceduresSearchConfiguration> _proceduresSearchConfiguration;
+        Mock<AutoLabelsConfiguration> _autoLabelsConfiguration;
+        Mock<LabelsConfiguration> _labelsConfiguration;
 
         MaintenanceManager _manager;
 
@@ -54,8 +57,12 @@ namespace Avalanche.Api.Test.Managers
             _filesService = new Mock<IFilesService>();
 
             _generalApiConfiguration = new Mock<GeneralApiConfiguration>();
+            _proceduresSearchConfiguration = new Mock<ProceduresSearchConfiguration>();
+            _autoLabelsConfiguration = new Mock<AutoLabelsConfiguration>();
+            _labelsConfiguration = new Mock<LabelsConfiguration>();
 
-            _manager = new MaintenanceManager(_storageService.Object, _dataManager.Object, _mapper, _httpContextAccessor.Object, _libraryService.Object, _filesService.Object, _generalApiConfiguration.Object);
+            _manager = new MaintenanceManager(_storageService.Object, _dataManager.Object, _mapper, _httpContextAccessor.Object, _libraryService.Object,
+                _filesService.Object, _generalApiConfiguration.Object, _proceduresSearchConfiguration.Object, _autoLabelsConfiguration.Object, _labelsConfiguration.Object);
         }
 
         [Test]

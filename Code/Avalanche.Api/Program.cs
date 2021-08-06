@@ -66,8 +66,11 @@ namespace Avalanche.Api
                 new ConfigurationServiceRequest(nameof(RecorderConfiguration), 1, context),
                 ConfigurationServiceRequestFactory.CreateRequest<SetupConfiguration>(context),
                 ConfigurationServiceRequestFactory.CreateRequest<GeneralApiConfiguration>(context),
+                ConfigurationServiceRequestFactory.CreateRequest<ProceduresSearchConfiguration>(context),
+                ConfigurationServiceRequestFactory.CreateRequest<AutoLabelsConfiguration>(context),
+                ConfigurationServiceRequestFactory.CreateRequest<LabelsConfiguration>(context),
             };
-           
+
             return requests;
         }
     }
