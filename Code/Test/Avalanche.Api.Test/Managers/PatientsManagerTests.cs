@@ -65,11 +65,13 @@ namespace Avalanche.Api.Tests.Managers
                 cfg.AddProfile(new ProceduresMappingConfiguration());
             });
 
+            var recorderConfig = new RecorderConfiguration { BackgroundRecordingMode = Shared.Infrastructure.Enumerations.BackgroundRecordingMode.StartImmediately };
+
             _accessInfoFactory.Setup(m => m.GenerateAccessInfo(It.IsAny<string>()))
                 .Returns(new Ism.IsmLogCommon.Core.AccessInfo("127.0.0.1", "tests", "unit-tests", "name", "none", false));
 
             _mapper = config.CreateMapper();
-            _manager = new PatientsManager(_pieService.Object, _accessInfoFactory.Object, _storageService.Object, _mapper, _dataManagementService.Object, _stateClient.Object, _proceduresManager.Object, _routingManager.Object, _httpContextAccessor.Object);
+            _manager = new PatientsManager(_pieService.Object, _accessInfoFactory.Object, _storageService.Object, _mapper, _dataManagementService.Object, _stateClient.Object, _proceduresManager.Object, _routingManager.Object, _httpContextAccessor.Object, recorderConfig);
         }
 
         public static IEnumerable<TestCaseData> NewPatientViewModelWrongDataTestCases

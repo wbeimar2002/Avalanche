@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+using AutoMapper;
 using Avalanche.Api.Managers.Data;
 using Avalanche.Api.Managers.Media;
 using Avalanche.Api.Managers.Procedures;
@@ -97,7 +97,7 @@ namespace Avalanche.Api.Test.Managers
             _stateClient.Setup(s => s.GetData<ActiveProcedureState>()).ReturnsAsync(
                 new ActiveProcedureState(
                     new Patient() { LastName = "name" },
-                    new List<ProcedureImage>() { new ProcedureImage(id, "source", "channel", false, "path", "path", null, DateTimeOffset.UtcNow) },
+                    new List<ProcedureImage>() { new ProcedureImage(id, "source", "channel", false, "path", "path", null, DateTimeOffset.UtcNow, Guid.NewGuid()) },
                     new List<ProcedureVideo>(),
                     new List<ProcedureVideo>(),
                     "libId",
@@ -128,7 +128,7 @@ namespace Avalanche.Api.Test.Managers
                 new ActiveProcedureState(
                     new Patient() { LastName = "name" },
                     new List<ProcedureImage>(),
-                    new List<ProcedureVideo>() { new ProcedureVideo(id, "source", "channel", "path", "path", DateTimeOffset.UtcNow, null, TimeSpan.FromSeconds(1)) },
+                    new List<ProcedureVideo>() { new ProcedureVideo(id, "source", "channel", "path", "path", DateTimeOffset.UtcNow, null, TimeSpan.FromSeconds(1), Guid.NewGuid()) },
                     new List<ProcedureVideo>(),
                     "libId",
                     "repId",
@@ -158,7 +158,7 @@ namespace Avalanche.Api.Test.Managers
             _stateClient.Setup(s => s.GetData<ActiveProcedureState>()).ReturnsAsync(
                 new ActiveProcedureState(
                     new Patient() { LastName = "name" },
-                    new List<ProcedureImage>() { new ProcedureImage(imageId, "source", "channel", false, "path", "path", null, DateTimeOffset.UtcNow) },
+                    new List<ProcedureImage>() { new ProcedureImage(imageId, "source", "channel", false, "path", "path", null, DateTimeOffset.UtcNow, Guid.NewGuid()) },
                     new List<ProcedureVideo>(),
                     new List<ProcedureVideo>(),
                     "libId",
@@ -189,7 +189,7 @@ namespace Avalanche.Api.Test.Managers
                 new ActiveProcedureState(
                     new Patient() { LastName = "name" },
                     new List<ProcedureImage>(),
-                    new List<ProcedureVideo>() { new ProcedureVideo(videoId, "source", "channel", "path", "path", DateTimeOffset.UtcNow, null, TimeSpan.FromSeconds(1)) },
+                    new List<ProcedureVideo>() { new ProcedureVideo(videoId, "source", "channel", "path", "path", DateTimeOffset.UtcNow, null, TimeSpan.FromSeconds(1), Guid.NewGuid()) },
                     new List<ProcedureVideo>(),
                     "libId",
                     "repId",
@@ -413,7 +413,7 @@ namespace Avalanche.Api.Test.Managers
 
             var activeProcedure = new ActiveProcedureState(
                     new Patient() { LastName = "name" },
-                    new List<ProcedureImage>() { new ProcedureImage(id, "source", "channel", false, "path", "path", null, DateTimeOffset.UtcNow) },
+                    new List<ProcedureImage>() { new ProcedureImage(id, "source", "channel", false, "path", "path", null, DateTimeOffset.UtcNow, Guid.NewGuid()) },
                     new List<ProcedureVideo>(),
                     new List<ProcedureVideo>(),
                     "libId",
@@ -477,7 +477,7 @@ namespace Avalanche.Api.Test.Managers
             var activeProcedure = new ActiveProcedureState(
                     new Patient() { LastName = "name" },
                     new List<ProcedureImage>(),
-                    new List<ProcedureVideo>() { new ProcedureVideo(id, "source", "channel", "path", "path", DateTimeOffset.UtcNow, DateTimeOffset.UtcNow.AddSeconds(10), TimeSpan.FromSeconds(10)) },
+                    new List<ProcedureVideo>() { new ProcedureVideo(id, "source", "channel", "path", "path", DateTimeOffset.UtcNow, DateTimeOffset.UtcNow.AddSeconds(10), TimeSpan.FromSeconds(10), Guid.NewGuid()) },
                     new List<ProcedureVideo>(),
                     "libId",
                     "repId",
@@ -538,7 +538,7 @@ namespace Avalanche.Api.Test.Managers
 
             var activeProcedure = new ActiveProcedureState(
                     new Patient() { LastName = "name" },
-                    new List<ProcedureImage>() { new ProcedureImage(id, "source", "channel", false, "path", "path", null, DateTimeOffset.UtcNow) },
+                    new List<ProcedureImage>() { new ProcedureImage(id, "source", "channel", false, "path", "path", null, DateTimeOffset.UtcNow, Guid.NewGuid()) },
                     new List<ProcedureVideo>(),
                     new List<ProcedureVideo>(),
                     "libId",
@@ -599,7 +599,7 @@ namespace Avalanche.Api.Test.Managers
 
             var activeProcedure = new ActiveProcedureState(
                     new Patient() { LastName = "name" },
-                    new List<ProcedureImage>() { new ProcedureImage(id, "source", "channel", false, "path", "path", null, DateTimeOffset.UtcNow) },
+                    new List<ProcedureImage>() { new ProcedureImage(id, "source", "channel", false, "path", "path", null, DateTimeOffset.UtcNow, Guid.NewGuid()) },
                     new List<ProcedureVideo>(),
                     new List<ProcedureVideo>(),
                     "libId",
@@ -662,7 +662,7 @@ namespace Avalanche.Api.Test.Managers
             var activeProcedure = new ActiveProcedureState(
                     new Patient() { LastName = "name" },
                     new List<ProcedureImage>(),
-                    new List<ProcedureVideo>() { new ProcedureVideo(id, "source", "channel", "path", "path", DateTimeOffset.UtcNow, DateTimeOffset.UtcNow.AddSeconds(10), TimeSpan.FromSeconds(10)) },
+                    new List<ProcedureVideo>() { new ProcedureVideo(id, "source", "channel", "path", "path", DateTimeOffset.UtcNow, DateTimeOffset.UtcNow.AddSeconds(10), TimeSpan.FromSeconds(10), Guid.NewGuid()) },
                     new List<ProcedureVideo>(),
                     "libId",
                     "repId",
