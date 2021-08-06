@@ -1,5 +1,6 @@
-﻿using Avalanche.Api.Managers.Maintenance;
-using Avalanche.Shared.Infrastructure.Configuration;
+using System;
+using System.Threading.Tasks;
+using Avalanche.Api.Managers.Maintenance;
 using Avalanche.Shared.Infrastructure.Enumerations;
 using Avalanche.Shared.Infrastructure.Extensions;
 using Avalanche.Shared.Infrastructure.Helpers;
@@ -9,9 +10,6 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
-using System;
-using System.Threading.Tasks;
 
 namespace Avalanche.Api.Controllers.V1
 {
@@ -35,7 +33,6 @@ namespace Avalanche.Api.Controllers.V1
         /// Get any settings values using the filename (key)
         /// </summary>
         /// <param name="key"></param>
-        /// <returns></returns>
         [HttpGet("{key}")]
         public async Task<IActionResult> GetSettings(string key)
         {

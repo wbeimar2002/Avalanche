@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+using AutoMapper;
 using Avalanche.Api.Helpers;
 using Avalanche.Api.Managers.Data;
 using Avalanche.Api.Services.Health;
@@ -35,14 +35,20 @@ namespace Avalanche.Api.Managers.Maintenance
         private readonly UserModel _user;
         private readonly ConfigurationContext _configurationContext;
         private readonly GeneralApiConfiguration _generalApiConfiguration;
+        private readonly ProceduresSearchConfiguration _proceduresSearchConfiguration;
+        private readonly AutoLabelsConfiguration _autoLabelsConfiguration;
+        private readonly LabelsConfiguration _labelsConfiguration;
 
-        public MaintenanceManager(IStorageService storageService, 
+        public MaintenanceManager(IStorageService storageService,
             IDataManager dataManager, 
             IMapper mapper, 
             IHttpContextAccessor httpContextAccessor,
             ILibraryService libraryService,
             IFilesService filesService,
-            GeneralApiConfiguration generalApiConfiguration)
+            GeneralApiConfiguration generalApiConfiguration,
+            ProceduresSearchConfiguration proceduresSearchConfiguration,
+            AutoLabelsConfiguration autoLabelsConfiguration,
+            LabelsConfiguration labelsConfiguration)
         {
             _storageService = storageService;
             _dataManager = dataManager;
@@ -52,10 +58,24 @@ namespace Avalanche.Api.Managers.Maintenance
             _filesService = filesService;
 
             _user = HttpContextUtilities.GetUser(_httpContextAccessor.HttpContext);
-            _configurationContext = _mapper.Map<Shared.Domain.Models.UserModel, ConfigurationContext>(_user);
+            _configurationContext = _mapper.Map<UserModel, ConfigurationContext>(_user);
             _configurationContext.IdnId = Guid.NewGuid().ToString();
             _generalApiConfiguration = generalApiConfiguration;
+            _proceduresSearchConfiguration = proceduresSearchConfiguration;
+            _autoLabelsConfiguration = autoLabelsConfiguration;
+            _labelsConfiguration = labelsConfiguration;
         }
+
+        #region Settings
+        public GeneralApiConfiguration GetGeneralApiConfigurationSettings() => _generalApiConfiguration;
+
+        public ProceduresSearchConfiguration GetProceduresSearchConfigurationSettings() => _proceduresSearchConfiguration;
+
+        public AutoLabelsConfiguration GetAutoLabelsConfigurationSettings() => _autoLabelsConfiguration;
+
+        public LabelsConfiguration GetLabelsConfigurationSettings() => _labelsConfiguration;
+
+        #endregion
 
         public async Task<ReindexStatusViewModel> ReindexRepository(ReindexRepositoryRequestViewModel reindexRequest)
         {
@@ -376,11 +396,6 @@ namespace Avalanche.Api.Managers.Maintenance
             return await _storageService.GetJsonDynamic(key, 1, configurationContext);
         }
 
-        public async Task<GeneralApiConfiguration> GetGeneralApiConfigurationSettings()
-        {
-            return _generalApiConfiguration;
-        }
-
         private async Task SetCategorySources(DynamicSectionViewModel category, string settingValues, List<dynamic> types)
         {
             if (category!= null && category.Settings != null)
@@ -537,11 +552,11 @@ namespace Avalanche.Api.Managers.Maintenance
                             var embeddedList = item.CustomList;
                             await SaveEmbeddedList(settingsKey, item.JsonKey, embeddedList);
                         }
-                        else
-                        {
-                            await _storageService.SaveJsonObject(item.SourceKey, JsonConvert.SerializeObject(item.SourceValues), 1, _configurationContext);
-                            item.SourceValues = null;
-                        }
+                        //else
+                        //{
+                        //    await _storageService.SaveJsonObject(item.SourceKey, JsonConvert.SerializeObject(item.SourceValues), 1, _configurationContext);
+                        //    item.SourceValues = null;
+                        //}
                     }
                 }
             }
