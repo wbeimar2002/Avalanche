@@ -700,5 +700,183 @@ namespace Avalanche.Api.Test.Managers
             Assert.NotNull(result);
             Assert.AreEqual("LabelB", result.Videos[0].Label);
         }
+
+        [Test]
+        public async Task ProcedureManager_ApplyLabelToLatestImages_Succeeds()
+        {
+            //arrange
+            const string autolabel = "LabelA";
+            var correlationId = Guid.NewGuid();
+
+            var activeProcedure = new ActiveProcedureState(
+                    new Patient() { LastName = "name" },
+                    new List<ProcedureImage>
+                    {
+                        new ProcedureImage(Guid.NewGuid(), "source", "channel", false, "path", "path", null, DateTimeOffset.UtcNow, correlationId),
+                        new ProcedureImage(Guid.NewGuid(), "source", "channel", false, "path", "path", null, DateTimeOffset.UtcNow, correlationId),
+                        new ProcedureImage(Guid.NewGuid(), "source", "channel", false, "path", "path", null, DateTimeOffset.UtcNow, correlationId),
+                    },
+                    new List<ProcedureVideo>(),
+                    new List<ProcedureVideo>(),
+                    "libId",
+                    "repId",
+                    "path",
+                    null,
+                    new ProcedureType() { Id = 1, Name = "TestProceType" },
+                    null,
+                    false,
+                    DateTimeOffset.UtcNow,
+                    TimeZoneInfo.Local.Id,
+                    false,
+                    new List<ProcedureNote>(),
+                    null,
+                    null,
+                    null,
+                    new List<VideoRecordingEvent>(),
+                    BackgroundRecordingMode.StartImmediately);
+
+            _stateClient.Setup(s => s.GetData<ActiveProcedureState>()).ReturnsAsync(activeProcedure);
+            _recorderService.Setup(mock => mock.GetRecorderState()).ReturnsAsync(new Ism.Recorder.Core.V1.Protos.RecorderState() { State = 0 });
+
+            //act
+            await _manager.ApplyLabelToLatestImages(autolabel);
+            var result = await _manager.GetActiveProcedure();
+
+            //assert
+            Assert.NotNull(result);
+            Assert.AreEqual(autolabel, result.Images[0].Label);
+            Assert.AreEqual(autolabel, result.Images[1].Label);
+            Assert.AreEqual(autolabel, result.Images[2].Label);
+        }
+
+        [Test]
+        [TestCase("")]
+        [TestCase(" ")]
+        [TestCase(null)]
+        public async Task ProcedureManager_ApplyLabelToLatestImages_LabelNameEmpty_Fails(string label)
+        {
+            //arrange
+            var correlationId = Guid.NewGuid();
+
+            var activeProcedure = new ActiveProcedureState(
+                    new Patient() { LastName = "name" },
+                    new List<ProcedureImage>
+                    {
+                        new ProcedureImage(Guid.NewGuid(), "source", "channel", false, "path", "path", null, DateTimeOffset.UtcNow, correlationId),
+                        new ProcedureImage(Guid.NewGuid(), "source", "channel", false, "path", "path", null, DateTimeOffset.UtcNow, correlationId),
+                        new ProcedureImage(Guid.NewGuid(), "source", "channel", false, "path", "path", null, DateTimeOffset.UtcNow, correlationId),
+                    },
+                    new List<ProcedureVideo>(),
+                    new List<ProcedureVideo>(),
+                    "libId",
+                    "repId",
+                    "path",
+                    null,
+                    new ProcedureType() { Id = 1, Name = "TestProceType" },
+                    null,
+                    false,
+                    DateTimeOffset.UtcNow,
+                    TimeZoneInfo.Local.Id,
+                    false,
+                    new List<ProcedureNote>(),
+                    null,
+                    null,
+                    null,
+                    new List<VideoRecordingEvent>(),
+                    BackgroundRecordingMode.StartImmediately);
+
+            _stateClient.Setup(s => s.GetData<ActiveProcedureState>()).ReturnsAsync(activeProcedure);
+            _recorderService.Setup(mock => mock.GetRecorderState()).ReturnsAsync(new Ism.Recorder.Core.V1.Protos.RecorderState() { State = 0 });
+
+            //act
+            Task Act() => _manager.ApplyLabelToLatestImages(label);
+
+            //assert
+            Assert.That(Act, Throws.TypeOf<ArgumentNullException>());
+        }
+
+        [Test]
+        public async Task ProcedureManager_ApplyLabelToLatestImages_NoImagesExists_Fails()
+        {
+            //arrange
+            const string autolabel = "LabelA";
+
+            var activeProcedure = new ActiveProcedureState(
+                    new Patient() { LastName = "name" },
+                    new List<ProcedureImage>(),
+                    new List<ProcedureVideo>(),
+                    new List<ProcedureVideo>(),
+                    "libId",
+                    "repId",
+                    "path",
+                    null,
+                    new ProcedureType() { Id = 1, Name = "TestProceType" },
+                    null,
+                    false,
+                    DateTimeOffset.UtcNow,
+                    TimeZoneInfo.Local.Id,
+                    false,
+                    new List<ProcedureNote>(),
+                    null,
+                    null,
+                    null,
+                    new List<VideoRecordingEvent>(),
+                    BackgroundRecordingMode.StartImmediately);
+
+            _stateClient.Setup(s => s.GetData<ActiveProcedureState>()).ReturnsAsync(activeProcedure);
+            _recorderService.Setup(mock => mock.GetRecorderState()).ReturnsAsync(new Ism.Recorder.Core.V1.Protos.RecorderState() { State = 0 });
+
+            //act
+            Task Act() => _manager.ApplyLabelToLatestImages(autolabel);
+
+            //assert
+            Assert.That(Act, Throws.TypeOf<InvalidOperationException>());
+        }
+
+        [Test]
+        public async Task ProcedureManager_ApplyLabelToLatestImages_WithDifferentCorrelationIds_Succeeds()
+        {
+            //arrange
+            const string autolabel = "LabelA";
+            var activeProcedure = new ActiveProcedureState(
+                    new Patient() { LastName = "name" },
+                    new List<ProcedureImage>
+                    {
+                        new ProcedureImage(Guid.NewGuid(), "source", "channel", false, "path", "path", null, DateTimeOffset.UtcNow.AddSeconds(-2), Guid.NewGuid()),
+                        new ProcedureImage(Guid.NewGuid(), "source", "channel", false, "path", "path", null, DateTimeOffset.UtcNow.AddSeconds(-1), Guid.NewGuid()),
+                        new ProcedureImage(Guid.NewGuid(), "source", "channel", false, "path", "path", null, DateTimeOffset.UtcNow, Guid.NewGuid()),
+                    },
+                    new List<ProcedureVideo>(),
+                    new List<ProcedureVideo>(),
+                    "libId",
+                    "repId",
+                    "path",
+                    null,
+                    new ProcedureType() { Id = 1, Name = "TestProceType" },
+                    null,
+                    false,
+                    DateTimeOffset.UtcNow,
+                    TimeZoneInfo.Local.Id,
+                    false,
+                    new List<ProcedureNote>(),
+                    null,
+                    null,
+                    null,
+                    new List<VideoRecordingEvent>(),
+                    BackgroundRecordingMode.StartImmediately);
+
+            _stateClient.Setup(s => s.GetData<ActiveProcedureState>()).ReturnsAsync(activeProcedure);
+            _recorderService.Setup(mock => mock.GetRecorderState()).ReturnsAsync(new Ism.Recorder.Core.V1.Protos.RecorderState() { State = 0 });
+
+            //act
+            await _manager.ApplyLabelToLatestImages(autolabel);
+            var result = await _manager.GetActiveProcedure();
+
+            //assert
+            Assert.NotNull(result);
+            Assert.AreNotEqual(autolabel, result.Images[0].Label);
+            Assert.AreNotEqual(autolabel, result.Images[1].Label);
+            Assert.AreEqual(autolabel, result.Images[2].Label);
+        }
     }
 }

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 
 namespace Avalanche.Api.ViewModels
 {
@@ -17,7 +17,8 @@ namespace Avalanche.Api.ViewModels
         public ProcedureImageViewModel() 
         { }
 
-        public ProcedureImageViewModel(Guid imageId, string sourceName, string channelName, bool is4k, string relativePath, TimeSpan? captureOffsetFromVideoStart, DateTimeOffset captureTimeUtc, string label)
+        public ProcedureImageViewModel(Guid imageId, string sourceName, string channelName, bool is4k, string relativePath, TimeSpan? captureOffsetFromVideoStart,
+            DateTimeOffset captureTimeUtc, string label)
         {
             ImageId = imageId;
             SourceName = sourceName;
