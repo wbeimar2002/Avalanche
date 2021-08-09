@@ -14,12 +14,11 @@ namespace Avalanche.Api.ViewModels
         public DateTimeOffset? VideoStopTimeUtc { get; set; }
         public TimeSpan VideoDuration { get; set; }
 
-        public Guid CorrelationId { get; set; }
         public ProcedureVideoViewModel()
         { }
 
         public ProcedureVideoViewModel(Guid videoId, string sourceName, string channelName, string relativePath, string thumbnailRelativePath,
-            DateTimeOffset videoStartTimeUtc, DateTimeOffset? videoStopTimeUtc, TimeSpan videoDuration, string label, Guid correlationId)
+            DateTimeOffset videoStartTimeUtc, DateTimeOffset? videoStopTimeUtc, TimeSpan videoDuration, string label)
         {
             VideoId = videoId;
             SourceName = sourceName;
@@ -30,7 +29,6 @@ namespace Avalanche.Api.ViewModels
             VideoStartTimeUtc = videoStartTimeUtc;
             VideoStopTimeUtc = videoStopTimeUtc;
             VideoDuration = videoDuration;
-            CorrelationId = correlationId;
         }
     }
 }
