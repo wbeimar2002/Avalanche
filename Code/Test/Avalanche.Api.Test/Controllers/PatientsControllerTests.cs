@@ -1,9 +1,10 @@
-﻿using AutoFixture;
+using AutoFixture;
 using Avalanche.Api.Controllers.V1;
 using Avalanche.Api.Managers.Patients;
 using Avalanche.Api.Tests.Extensions;
 using Avalanche.Api.ViewModels;
 using Avalanche.Shared.Domain.Models;
+using Avalanche.Shared.Infrastructure.Enumerations;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -202,9 +203,9 @@ namespace Avalanche.Api.Tests.Controllers
         public void RegisterPatientShouldReturnOkWithNewPatientInfo()
         {
             PatientViewModel patient = new PatientViewModel();
-            _patientsManager.Setup(mock => mock.RegisterPatient(patient)).ReturnsAsync(new PatientViewModel());
+            _patientsManager.Setup(mock => mock.RegisterPatient(patient,BackgroundRecordingMode.StartImmediately)).ReturnsAsync(new PatientViewModel());
 
-            var okResult = _controller.ManualPatientRegistration(patient);
+            var okResult = _controller.ManualPatientRegistration(patient,BackgroundRecordingMode.StartImmediately);
 
             if (_checkLogger)
             {
@@ -219,9 +220,9 @@ namespace Avalanche.Api.Tests.Controllers
         [Test]
         public void RegisterPatientShouldReturnBadResultIfFails()
         {
-            _patientsManager.Setup(mock => mock.RegisterPatient(It.IsAny<PatientViewModel>())).Throws(It.IsAny<Exception>());
+            _patientsManager.Setup(mock => mock.RegisterPatient(It.IsAny<PatientViewModel>(), It.IsAny<BackgroundRecordingMode>())).Throws(It.IsAny<Exception>());
 
-            var badResult = _controller.ManualPatientRegistration(It.IsAny<PatientViewModel>());
+            var badResult = _controller.ManualPatientRegistration(It.IsAny<PatientViewModel>(), It.IsAny<BackgroundRecordingMode>());
 
             if (_checkLogger)
             {

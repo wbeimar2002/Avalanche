@@ -1,6 +1,6 @@
-﻿using Avalanche.Shared.Domain.Models;
+using Avalanche.Shared.Domain.Models;
+using Avalanche.Shared.Infrastructure.Enumerations;
 using System;
-using System.Text.Json.Serialization;
 
 namespace Avalanche.Api.ViewModels
 {

@@ -1,4 +1,4 @@
-﻿using Avalanche.Shared.Domain.Models;
+using Avalanche.Shared.Domain.Models;
 using System;
 using System.Collections.Generic;
 
@@ -16,6 +16,7 @@ namespace Avalanche.Api.ViewModels
 
         public List<ProcedureImageViewModel> Images { get; set; }
         public List<ProcedureVideoViewModel> Videos { get; set; }
+        public List<ProcedureVideoViewModel> BackgroundVideos { get; set; }
 
         public ProcedureDetailsViewModel()
         {
@@ -29,7 +30,8 @@ namespace Avalanche.Api.ViewModels
             DateTimeOffset procedureStartTimeUtc,
             string procedureTimezoneId,
             List<ProcedureImageViewModel> images,
-            List<ProcedureVideoViewModel> videos)
+            List<ProcedureVideoViewModel> videos,
+            List<ProcedureVideoViewModel> backgroundVideos)
         {
             Patient = patient;
             LibraryId = libraryId;
@@ -40,6 +42,7 @@ namespace Avalanche.Api.ViewModels
 
             Images = images;
             Videos = videos;
+            BackgroundVideos = backgroundVideos;
         }
     }
 }

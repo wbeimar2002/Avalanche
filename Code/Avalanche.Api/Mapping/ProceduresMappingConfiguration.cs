@@ -221,7 +221,8 @@ namespace Avalanche.Api.Mapping
                 .ForMember(dest => dest.RequiresUserConfirmation, opt => opt.MapFrom(src => src.RequiresUserConfirmation))
                 .ForMember(dest => dest.RecorderState, opt => opt.Ignore())
                 .ForMember(dest => dest.Images, opt => opt.MapFrom(src => src.Images))
-                .ForMember(dest => dest.Videos, opt => opt.MapFrom(src => src.Videos));
+                .ForMember(dest => dest.Videos, opt => opt.MapFrom(src => src.Videos))
+                .ForMember(dest => dest.BackgroundVideos, opt => opt.MapFrom(src => src.BackgroundVideos));
 
 
             CreateMap<Ism.IsmLogCommon.Core.AccessInfo, Ism.Library.V1.Protos.AccessInfoMessage>()
