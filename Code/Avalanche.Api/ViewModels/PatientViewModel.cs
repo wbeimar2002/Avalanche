@@ -1,6 +1,6 @@
-﻿using Avalanche.Shared.Domain.Models;
+using Avalanche.Shared.Domain.Models;
+using Avalanche.Shared.Infrastructure.Enumerations;
 using System;
-using System.Text.Json.Serialization;
 
 namespace Avalanche.Api.ViewModels
 {
@@ -15,5 +15,6 @@ namespace Avalanche.Api.ViewModels
         public DepartmentModel Department { get; set; }
         public ProcedureTypeModel ProcedureType { get; set; }
         public PhysicianModel Physician { get; set; }
+        public BackgroundRecordingMode BackgroundRecordingMode { get; set; }
     }
 }
