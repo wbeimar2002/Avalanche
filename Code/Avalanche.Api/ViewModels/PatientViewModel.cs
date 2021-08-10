@@ -15,6 +15,5 @@ namespace Avalanche.Api.ViewModels
         public DepartmentModel Department { get; set; }
         public ProcedureTypeModel ProcedureType { get; set; }
         public PhysicianModel Physician { get; set; }
-        public BackgroundRecordingMode BackgroundRecordingMode { get; set; }
     }
 }

@@ -1,4 +1,4 @@
-﻿using Avalanche.Api.Extensions;
+using Avalanche.Api.Extensions;
 using Avalanche.Api.Helpers;
 using Avalanche.Api.Managers.Patients;
 using Avalanche.Api.ViewModels;
@@ -40,12 +40,12 @@ namespace Avalanche.Api.Controllers.V1
         /// <returns></returns>
         [HttpPost("")]
         [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(PatientViewModel))]
-        public async Task<IActionResult> ManualPatientRegistration(PatientViewModel newPatient)
+        public async Task<IActionResult> ManualPatientRegistration(PatientViewModel newPatient, BackgroundRecordingMode backgroundRecordingMode)
         {
             try
             {
                 _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
-                var patientRegistered = await _patientsManager.RegisterPatient(newPatient);
+                var patientRegistered = await _patientsManager.RegisterPatient(newPatient, backgroundRecordingMode);
                 
                 return new ObjectResult(patientRegistered) { StatusCode = StatusCodes.Status201Created };
             }

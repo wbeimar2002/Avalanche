@@ -66,7 +66,7 @@ namespace Avalanche.Api.Managers.Patients
             configurationContext.IdnId = Guid.NewGuid().ToString();
         }
 
-        public async Task<PatientViewModel> RegisterPatient(PatientViewModel newPatient)
+        public async Task<PatientViewModel> RegisterPatient(PatientViewModel newPatient, Shared.Infrastructure.Enumerations.BackgroundRecordingMode backgroundRecordingMode)
         {
             Preconditions.ThrowIfNull(nameof(newPatient), newPatient);
             Preconditions.ThrowIfNull(nameof(newPatient.MRN), newPatient.MRN);
@@ -107,8 +107,8 @@ namespace Avalanche.Api.Managers.Patients
 
             var result = await _pieService.RegisterPatient(request);
             
-            var backgroundRecordingMode = _mapper.Map<Ism.SystemState.Models.Procedure.BackgroundRecordingMode>(newPatient.BackgroundRecordingMode);
-            await PublishActiveProcedure(newPatient, allocatedProcedure, backgroundRecordingMode);
+            var backRecordingMode = _mapper.Map<Ism.SystemState.Models.Procedure.BackgroundRecordingMode>(backgroundRecordingMode);
+            await PublishActiveProcedure(newPatient, allocatedProcedure, backRecordingMode);
 
             var response = _mapper.Map<Ism.Storage.PatientList.Client.V1.Protos.AddPatientRecordResponse, PatientViewModel>(result);
             return response;
