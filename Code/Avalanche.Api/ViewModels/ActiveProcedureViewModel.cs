@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 
 namespace Avalanche.Api.ViewModels
@@ -20,8 +20,9 @@ namespace Avalanche.Api.ViewModels
             string procedureTimezoneId,
             List<ProcedureImageViewModel> images,
             List<ProcedureVideoViewModel> videos,
+            List<ProcedureVideoViewModel> backgroundVideos,
             bool requiresUserConfirmation)
-            : base(patient, libraryId, repositoryId, procedureRelativePath, procedureStartTimeUtc, procedureTimezoneId, images, videos)
+            : base(patient, libraryId, repositoryId, procedureRelativePath, procedureStartTimeUtc, procedureTimezoneId, images, videos, backgroundVideos)
         {
             RequiresUserConfirmation = requiresUserConfirmation;
         }
