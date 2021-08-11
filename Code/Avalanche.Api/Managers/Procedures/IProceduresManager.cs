@@ -18,8 +18,7 @@ namespace Avalanche.Api.Managers.Procedures
 
         Task<ProcedureAllocationViewModel> AllocateNewProcedure();
 
-        Task<ProceduresContainerViewModel> BasicSearch(ProcedureSearchFilterViewModel filter);
-        Task<ProceduresContainerViewModel> AdvancedSearch(ProcedureAdvancedSearchFilterViewModel filter);
+        Task<ProceduresContainerViewModel> Search(ProcedureSearchFilterViewModel filter);
         Task<ProcedureViewModel> GetProcedureDetails(string id);
 
         Task ApplyLabelToActiveProcedure(ContentViewModel labelContent);

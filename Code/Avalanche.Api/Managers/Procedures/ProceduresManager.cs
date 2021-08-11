@@ -175,30 +175,14 @@ namespace Avalanche.Api.Managers.Procedures
             });
         }
 
-        public async Task<ProceduresContainerViewModel> BasicSearch(ProcedureSearchFilterViewModel filter)
+        public async Task<ProceduresContainerViewModel> Search(ProcedureSearchFilterViewModel filter)
         {
             Preconditions.ThrowIfNull(nameof(filter), filter);
             Preconditions.ThrowIfTrue<ArgumentException>($"{nameof(filter.Page)} must be a positive integer greater than 0", filter.Page < 0);
             Preconditions.ThrowIfTrue<ArgumentException>($"{nameof(filter.Limit)} cannot be lower than {MinPageSize}", filter.Limit < MinPageSize);
             Preconditions.ThrowIfTrue<ArgumentException>($"{nameof(filter.Limit)} cannot be larger than {MaxPageSize}", filter.Limit > MaxPageSize);
 
-            var response = await _libraryService.GetFinishedProcedures(_mapper.Map<ProcedureSearchFilterViewModel, GetFinishedProceduresRequest>(filter));
-
-            return new ProceduresContainerViewModel()
-            {
-                TotalCount = response.TotalCount,
-                Procedures = _mapper.Map<IList<ProcedureMessage>, IList<ProcedureViewModel>>(response.Procedures)
-            };
-        }
-
-        public async Task<ProceduresContainerViewModel> AdvancedSearch(ProcedureAdvancedSearchFilterViewModel filter)
-        {
-            Preconditions.ThrowIfNull(nameof(filter), filter);
-            Preconditions.ThrowIfTrue<ArgumentException>($"{nameof(filter.Page)} must be a positive integer greater than 0", filter.Page < 0);
-            Preconditions.ThrowIfTrue<ArgumentException>($"{nameof(filter.Limit)} cannot be lower than {MinPageSize}", filter.Limit < MinPageSize);
-            Preconditions.ThrowIfTrue<ArgumentException>($"{nameof(filter.Limit)} cannot be larger than {MaxPageSize}", filter.Limit > MaxPageSize);
-
-            var libraryFilter = _mapper.Map<ProcedureAdvancedSearchFilterViewModel, GetFinishedProceduresRequest>(filter);
+            var libraryFilter = _mapper.Map<ProcedureSearchFilterViewModel, GetFinishedProceduresRequest>(filter);
             var response = await _libraryService.GetFinishedProcedures(libraryFilter);
 
             return new ProceduresContainerViewModel()

@@ -40,12 +40,12 @@ namespace Avalanche.Api.Controllers.V1
         /// <param name="filter"></param>
         [HttpPost("filtered")]
         [ProducesResponseType(typeof(ProceduresContainerReponseViewModel), StatusCodes.Status200OK)]
-        public async Task<IActionResult> Search(ProcedureAdvancedSearchFilterViewModel filter)
+        public async Task<IActionResult> Search(ProcedureSearchFilterViewModel filter)
         {
             try
             {
                 _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
-                var result = await _proceduresManager.AdvancedSearch(filter);
+                var result = await _proceduresManager.Search(filter);
 
                 var procedures = new PagedCollectionViewModel<ProcedureViewModel>
                 {
