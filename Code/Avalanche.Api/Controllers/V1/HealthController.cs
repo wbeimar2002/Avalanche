@@ -1,4 +1,4 @@
-﻿using Avalanche.Shared.Infrastructure.Enumerations;
+using Avalanche.Shared.Infrastructure.Enumerations;
 using Avalanche.Shared.Infrastructure.Extensions;
 using Avalanche.Shared.Infrastructure.Helpers;
 using Microsoft.AspNetCore.Authorization;
@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.FeatureManagement;
 using System;
 
 namespace Avalanche.Api.Controllers.V1
@@ -17,9 +18,11 @@ namespace Avalanche.Api.Controllers.V1
     {
         private readonly ILogger _logger;
         private readonly IWebHostEnvironment _environment;
+        private readonly IFeatureManager _featureManager;
 
-        public HealthController(ILogger<HealthController> logger, IWebHostEnvironment environment)
+        public HealthController(ILogger<HealthController> logger, IWebHostEnvironment environment, IFeatureManager featureManager)
         {
+            _featureManager = featureManager;
             _environment = environment;
             _logger = logger;
         }
@@ -35,14 +38,13 @@ namespace Avalanche.Api.Controllers.V1
             try
             {
                 _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
-                
                 _logger.LogInformation("Avalanche Api is healthy.");
-                
                 return new OkObjectResult(new
                 {
                     UtcDateTime = DateTime.UtcNow,
-                    LocalDateTime = DateTime.UtcNow.ToLocalTime()
-                });
+                    LocalDateTime = DateTime.UtcNow.ToLocalTime(),
+                    IsVSS = _featureManager.IsEnabledAsync(FeatureFlags.IsVSS).Result
+                });;
             }
             catch (Exception ex)
             {
@@ -73,7 +75,8 @@ namespace Avalanche.Api.Controllers.V1
                 return new OkObjectResult(new
                 {
                     UtcDateTime = DateTime.UtcNow,
-                    LocalDateTime = DateTime.UtcNow.ToLocalTime()
+                    LocalDateTime = DateTime.UtcNow.ToLocalTime(),
+                    IsVSS = _featureManager.IsEnabledAsync(FeatureFlags.IsVSS).Result
                 });
             }
             catch (Exception ex)

@@ -89,7 +89,7 @@ namespace Avalanche.Api.Test.Managers
                 JsonKey = "Sample"
             };
 
-            string json = SettingsHelper.GetJsonValues(category);
+            string json = DynamicSettingsHelper.GetJsonValues(category);
             _storageService.Setup(mock => mock.ValidateSchema(category.Schema, json, 1, It.IsAny<ConfigurationContext>())).ReturnsAsync(true);
 
             await _manager.SaveCategoryPolicies(category);
@@ -109,7 +109,7 @@ namespace Avalanche.Api.Test.Managers
                 JsonKey = "Sample"
             };
 
-            string json = SettingsHelper.GetJsonValues(category);
+            string json = DynamicSettingsHelper.GetJsonValues(category);
             _storageService.Setup(mock => mock.ValidateSchema(category.Schema, json, 1, It.IsAny<ConfigurationContext>())).ReturnsAsync(false);
 
             var ex = Assert.ThrowsAsync<ValidationException>(() => _manager.SaveCategoryPolicies(category));
@@ -129,7 +129,7 @@ namespace Avalanche.Api.Test.Managers
                 JsonKey = "Sample"
             };
 
-            string json = SettingsHelper.GetJsonValues(category);
+            string json = DynamicSettingsHelper.GetJsonValues(category);
             _storageService.Setup(mock => mock.ValidateSchema(category.Schema, json, 1, It.IsAny<ConfigurationContext>())).ReturnsAsync(true);
 
             await _manager.SaveCategory(category);
@@ -148,7 +148,7 @@ namespace Avalanche.Api.Test.Managers
                 JsonKey = "Sample"
             };
 
-            string json = SettingsHelper.GetJsonValues(category);
+            string json = DynamicSettingsHelper.GetJsonValues(category);
             _storageService.Setup(mock => mock.ValidateSchema(category.Schema, json, 1, It.IsAny<ConfigurationContext>())).ReturnsAsync(false);
 
             var ex = Assert.ThrowsAsync<ValidationException>(() => _manager.SaveCategory(category));

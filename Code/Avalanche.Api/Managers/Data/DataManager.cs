@@ -58,7 +58,7 @@ namespace Avalanche.Api.Managers.Data
             else
             {
                 var settingValues = await _storageService.GetJson(sourceKey, 1, configurationContext);
-                return SettingsHelper.GetEmbeddedList(jsonKey, settingValues);
+                return DynamicSettingsHelper.GetEmbeddedList(jsonKey, settingValues);
             }
         }
 

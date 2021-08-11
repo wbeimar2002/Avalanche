@@ -90,7 +90,7 @@ namespace Avalanche.Api.Managers.Maintenance
         {
             await SaveJsonValues(category, _configurationContext);
 
-            SettingsHelper.CleanSettings(category);
+            DynamicSettingsHelper.CleanSettings(category);
 
             await _storageService.SaveJsonMetadata(category.Metadata, JsonConvert.SerializeObject(category), 1, _configurationContext);
         }
@@ -157,7 +157,7 @@ namespace Avalanche.Api.Managers.Maintenance
 
             await SetCategorySources(category, settingValues, types);
 
-            SettingsHelper.SetSettingValues(category, settingValues, policiesTypes);
+            DynamicSettingsHelper.SetSettingValues(category, settingValues, policiesTypes);
 
             if (category.Sections != null)
             {
@@ -219,7 +219,7 @@ namespace Avalanche.Api.Managers.Maintenance
         public async Task<DynamicListViewModel> GetEmbeddedListByKey(string settingValues, string metadataKey, string listKey)
         {
             var category = await _storageService.GetJsonObject<DynamicListViewModel>(metadataKey, 1, _configurationContext);
-            var values = SettingsHelper.GetEmbeddedList(listKey, settingValues);
+            var values = DynamicSettingsHelper.GetEmbeddedList(listKey, settingValues);
 
             return await BuildCategoryList(category, values);
         }
@@ -375,7 +375,7 @@ namespace Avalanche.Api.Managers.Maintenance
             {
                 await SetCategorySources(section, settingValues, types);
 
-                SettingsHelper.SetSettingValues(section, settingValues, policiesTypes);
+                DynamicSettingsHelper.SetSettingValues(section, settingValues, policiesTypes);
 
                 if (section.Sections != null)
                 {
@@ -428,7 +428,7 @@ namespace Avalanche.Api.Managers.Maintenance
                                 break;
 
                             case VisualStyles.EmbeddedGenericList:
-                                setting.SourceValues = AddTypes(SettingsHelper.GetEmbeddedList(setting.SourceKey, settingValues), types);
+                                setting.SourceValues = AddTypes(DynamicSettingsHelper.GetEmbeddedList(setting.SourceKey, settingValues), types);
                                 break;
 
                             case VisualStyles.DropDownEmbeddedList:
@@ -500,7 +500,7 @@ namespace Avalanche.Api.Managers.Maintenance
             if (setting.VisualStyle == VisualStyles.DropDownEmbeddedList 
                 || setting.VisualStyle == VisualStyles.EmbeddedGenericList)
             {
-                var values = SettingsHelper.GetEmbeddedList(setting.SourceKey, settingValues);
+                var values = DynamicSettingsHelper.GetEmbeddedList(setting.SourceKey, settingValues);
                 return GetDynamicList(setting, values);
             }
             else
@@ -564,7 +564,7 @@ namespace Avalanche.Api.Managers.Maintenance
 
         private async Task SaveJsonValues(DynamicSectionViewModel category, ConfigurationContext configurationContext)
         {
-            string json = SettingsHelper.GetJsonValues(category);
+            string json = DynamicSettingsHelper.GetJsonValues(category);
 
             if (await _storageService.ValidateSchema(category.Schema, json, 1, configurationContext))
             {
@@ -623,9 +623,9 @@ namespace Avalanche.Api.Managers.Maintenance
         {
             var label = new LabelModel();
 
-            SettingsHelper.Map(source, label);
+            DynamicSettingsHelper.Map(source, label);
 
-            if (SettingsHelper.PropertyExists(source, "ProcedureType") && SettingsHelper.PropertyExists(source.ProcedureType, "Id"))
+            if (DynamicSettingsHelper.PropertyExists(source, "ProcedureType") && DynamicSettingsHelper.PropertyExists(source.ProcedureType, "Id"))
             {
                 label.ProcedureTypeId = Convert.ToInt32(source.ProcedureType?.Id);
 
@@ -653,9 +653,9 @@ namespace Avalanche.Api.Managers.Maintenance
         {
             var procedureType = new ProcedureTypeModel();
 
-            SettingsHelper.Map(source, procedureType);
+            DynamicSettingsHelper.Map(source, procedureType);
 
-            if (SettingsHelper.PropertyExists(source, "Department") && SettingsHelper.PropertyExists(source.Department, "Id"))
+            if (DynamicSettingsHelper.PropertyExists(source, "Department") && DynamicSettingsHelper.PropertyExists(source.Department, "Id"))
                 procedureType.DepartmentId = Convert.ToInt32(source.Department?.Id);
 
             switch (action)
@@ -675,7 +675,7 @@ namespace Avalanche.Api.Managers.Maintenance
         {
             var department = new DepartmentModel();
 
-            SettingsHelper.Map(source, department);
+            DynamicSettingsHelper.Map(source, department);
 
             switch (action)
             {
