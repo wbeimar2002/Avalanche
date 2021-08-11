@@ -14,23 +14,23 @@ using NUnit.Framework;
 
 namespace Avalanche.Api.Test.Controllers
 {
-    class ActiveProceduresControllerTests
+    class ActiveProcedureControllerTests
     {
-        Mock<ILogger<ActiveProceduresController>> _logger;
+        Mock<ILogger<ActiveProcedureController>> _logger;
         Mock<IWebHostEnvironment> _environment;
         Mock<IProceduresManager> _proceduresManager;
 
-        ActiveProceduresController _controller;
+        ActiveProcedureController _controller;
         bool _checkLogger = false;
 
         [SetUp]
         public void Setup()
         {
-            _logger = new Mock<ILogger<ActiveProceduresController>>();
+            _logger = new Mock<ILogger<ActiveProcedureController>>();
             _environment = new Mock<IWebHostEnvironment>();
             _proceduresManager = new Mock<IProceduresManager>();
 
-            _controller = new ActiveProceduresController(_logger.Object, _proceduresManager.Object, _environment.Object);
+            _controller = new ActiveProcedureController(_logger.Object, _proceduresManager.Object, _environment.Object);
 
             var mockUrlHelper = new Mock<IUrlHelper>(MockBehavior.Strict);
             mockUrlHelper
@@ -65,9 +65,9 @@ namespace Avalanche.Api.Test.Controllers
 
             if (_checkLogger)
             {
-                _logger.Verify(LogLevel.Error, $"Exception {nameof(ActiveProceduresController)}.{nameof(ActiveProceduresController.GetActive)}", Times.Never());
-                _logger.Verify(LogLevel.Debug, $"Requested {nameof(ActiveProceduresController)}.{nameof(ActiveProceduresController.GetActive)}", Times.Once());
-                _logger.Verify(LogLevel.Debug, $"Completed {nameof(ActiveProceduresController)}.{nameof(ActiveProceduresController.GetActive)}", Times.Once());
+                _logger.Verify(LogLevel.Error, $"Exception {nameof(ActiveProcedureController)}.{nameof(ActiveProcedureController.GetActive)}", Times.Never());
+                _logger.Verify(LogLevel.Debug, $"Requested {nameof(ActiveProcedureController)}.{nameof(ActiveProcedureController.GetActive)}", Times.Once());
+                _logger.Verify(LogLevel.Debug, $"Completed {nameof(ActiveProcedureController)}.{nameof(ActiveProcedureController.GetActive)}", Times.Once());
             }
 
             Assert.IsInstanceOf<OkObjectResult>(okResult.Result);

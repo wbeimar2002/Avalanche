@@ -13,19 +13,21 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.FeatureManagement.Mvc;
 
 namespace Avalanche.Api.Controllers.V1
 {
     [Route("procedures/active")]
     [ApiController]
     [Authorize]
-    public class ActiveProceduresController : ControllerBase
+    [FeatureGate(FeatureFlags.ActiveProcedure)]
+    public class ActiveProcedureController : ControllerBase
     {
         private readonly ILogger _logger;
         private readonly IProceduresManager _proceduresManager;
         private readonly IWebHostEnvironment _environment;
 
-        public ActiveProceduresController(ILogger<ActiveProceduresController> logger, IProceduresManager proceduresManager, IWebHostEnvironment environment)
+        public ActiveProcedureController(ILogger<ActiveProcedureController> logger, IProceduresManager proceduresManager, IWebHostEnvironment environment)
         {
             _environment = environment;
             _logger = logger;

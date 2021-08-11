@@ -1,7 +1,8 @@
+using System;
+using System.Threading.Tasks;
 using Avalanche.Api.Helpers;
 using Avalanche.Api.Managers.Procedures;
 using Avalanche.Api.ViewModels;
-using Avalanche.Shared.Domain.Enumerations;
 using Avalanche.Shared.Infrastructure.Enumerations;
 using Avalanche.Shared.Infrastructure.Extensions;
 using Avalanche.Shared.Infrastructure.Helpers;
@@ -11,8 +12,6 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using System;
-using System.Threading.Tasks;
 using Microsoft.FeatureManagement.Mvc;
 
 namespace Avalanche.Api.Controllers.V1
@@ -20,7 +19,7 @@ namespace Avalanche.Api.Controllers.V1
     [Route("[controller]")]
     [ApiController]
     [Authorize]
-    [FeatureGate(FeatureFlags.IsVSS)]
+    [FeatureGate(FeatureFlags.Procedures)]
     public class ProceduresController : ControllerBase
     {
         private readonly ILogger _logger;

@@ -71,7 +71,7 @@ namespace Avalanche.Api
         public void ConfigureServices(IServiceCollection services)
         {
             //ASP.NET Features
-            services.AddFeatureManagement(ConfigurationHelper.GetCustomFeatureManagementSection())
+            services.AddFeatureManagement()
                 .UseDisabledFeaturesHandler(new DisabledFeatureHandler());
 
             services.AddControllers();

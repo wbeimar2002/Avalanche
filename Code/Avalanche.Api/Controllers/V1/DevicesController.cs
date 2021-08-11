@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+using AutoMapper;
 using Avalanche.Api.Managers.Media;
 using Avalanche.Api.ViewModels;
 using Avalanche.Shared.Domain.Models.Media;
@@ -12,7 +12,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-
+using Microsoft.FeatureManagement.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -24,6 +24,7 @@ namespace Avalanche.Api.Controllers.V1
     [Route("[controller]")]
     [ApiController]
     [Authorize]
+    [FeatureGate(FeatureFlags.Devices)]
     public class DevicesController : ControllerBase
     {
         private readonly ILogger _logger;

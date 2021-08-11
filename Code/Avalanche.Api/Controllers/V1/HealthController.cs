@@ -42,8 +42,18 @@ namespace Avalanche.Api.Controllers.V1
                 {
                     UtcDateTime = DateTime.UtcNow,
                     LocalDateTime = DateTime.UtcNow.ToLocalTime(),
-                    IsVSS = _featureManager.IsEnabledAsync(FeatureFlags.IsVSS).Result
-                });;
+                    Features = new
+                    {
+                        ActiveProcedure = _featureManager.IsEnabledAsync(FeatureFlags.ActiveProcedure),
+                        Devices = _featureManager.IsEnabledAsync(FeatureFlags.Devices),
+                        Media = _featureManager.IsEnabledAsync(FeatureFlags.Media),
+                        Patients = _featureManager.IsEnabledAsync(FeatureFlags.Patients),
+                        Procedures = _featureManager.IsEnabledAsync(FeatureFlags.Procedures),
+                        Presets = _featureManager.IsEnabledAsync(FeatureFlags.Presets),
+                        Recording = _featureManager.IsEnabledAsync(FeatureFlags.Recording),
+                        StreamSessions = _featureManager.IsEnabledAsync(FeatureFlags.StreamSessions),
+                    }
+                });
             }
             catch (Exception ex)
             {
@@ -75,7 +85,17 @@ namespace Avalanche.Api.Controllers.V1
                 {
                     UtcDateTime = DateTime.UtcNow,
                     LocalDateTime = DateTime.UtcNow.ToLocalTime(),
-                    IsVSS = _featureManager.IsEnabledAsync(FeatureFlags.IsVSS).Result
+                    Features = new
+                    {
+                        ActiveProcedure = _featureManager.IsEnabledAsync(FeatureFlags.ActiveProcedure),
+                        Devices = _featureManager.IsEnabledAsync(FeatureFlags.Devices),
+                        Media = _featureManager.IsEnabledAsync(FeatureFlags.Media),
+                        Patients = _featureManager.IsEnabledAsync(FeatureFlags.Patients),
+                        Procedures = _featureManager.IsEnabledAsync(FeatureFlags.Procedures),
+                        Presets = _featureManager.IsEnabledAsync(FeatureFlags.Presets),
+                        Recording = _featureManager.IsEnabledAsync(FeatureFlags.Recording),
+                        StreamSessions = _featureManager.IsEnabledAsync(FeatureFlags.StreamSessions),
+                    }
                 });
             }
             catch (Exception ex)

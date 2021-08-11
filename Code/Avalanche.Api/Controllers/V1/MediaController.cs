@@ -1,22 +1,20 @@
-﻿using Avalanche.Api.Managers.Media;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using Avalanche.Api.Managers.Media;
 using Avalanche.Api.ViewModels;
 using Avalanche.Shared.Domain.Enumerations;
 using Avalanche.Shared.Domain.Models.Media;
 using Avalanche.Shared.Infrastructure.Enumerations;
 using Avalanche.Shared.Infrastructure.Extensions;
 using Avalanche.Shared.Infrastructure.Helpers;
-using Ism.PgsTimeout.V1.Protos;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
+using Microsoft.FeatureManagement.Mvc;
 using static Ism.Utility.Core.Preconditions;
 
 namespace Avalanche.Api.Controllers.V1
@@ -24,6 +22,7 @@ namespace Avalanche.Api.Controllers.V1
     [Route("[controller]")]
     [ApiController]
     [Authorize]
+    [FeatureGate(FeatureFlags.Media)]
     public class MediaController : ControllerBase
     {
         private readonly ILogger<MediaController> _logger;
