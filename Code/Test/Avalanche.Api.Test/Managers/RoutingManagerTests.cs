@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+using AutoMapper;
 using Avalanche.Api.Managers.Media;
 using Avalanche.Api.Mapping;
 using Avalanche.Api.Services.Maintenance;
@@ -226,6 +226,58 @@ namespace Avalanche.Api.Test.Managers
                     && req.DisplayState[1].DisplayAliasIndex.Alias == "alias4" && req.DisplayState[1].DisplayAliasIndex.Index == "4"
                     && req.DisplayState[1].RecordChannelAliasIndexes[0].Alias == "rec2" && req.DisplayState[1].RecordChannelAliasIndexes[0].Index == "2"
                 )), Times.Once);
+        }
+
+        [Test]
+        public async Task RoutingManager_SetSelectedSource_Succeeds()
+        {
+            var manager = new RoutingManager(_routingService.Object, _recorderService.Object, _avidisService.Object, _storageService.Object, _mapper, _httpContextAccessor.Object, _stateClient.Object);
+            await manager.SetSelectedSource(new AliasIndexModel { Alias = "alias3", Index = "3" });
+            _stateClient.Verify(s => s.PersistData(It.Is<Ism.SystemState.Models.VideoRouting.SelectedSourceStateData>(req => (req.SelectedSource.Alias == "alias3" && req.SelectedSource.Index == "3"))), Times.Once);
+        }
+
+        [Test]
+        public async Task RoutingManager_SetSelectedSource_Overrides_ExistingSource_Succeeds()
+        {
+            var manager = new RoutingManager(_routingService.Object, _recorderService.Object, _avidisService.Object, _storageService.Object, _mapper, _httpContextAccessor.Object, _stateClient.Object);
+            _stateClient.Setup(s => s.GetData<Ism.SystemState.Models.VideoRouting.SelectedSourceStateData>()).ReturnsAsync(
+                new Ism.SystemState.Models.VideoRouting.SelectedSourceStateData(new Ism.SystemState.Models.VideoRouting.AliasIndexModel { Alias = "alias3", Index = "3" }));
+
+            await manager.SetSelectedSource(new AliasIndexModel { Alias = "alias4", Index = "4" });
+            _stateClient.Verify(s => s.PersistData(It.Is<Ism.SystemState.Models.VideoRouting.SelectedSourceStateData>(req => (req.SelectedSource.Alias == "alias4" && req.SelectedSource.Index == "4"))), Times.Once);
+        }
+
+        [Test]
+        public async Task RoutingManager_SetSelectedSource_NoSelectedSource_Fails()
+        {
+            var manager = new RoutingManager(_routingService.Object, _recorderService.Object, _avidisService.Object, _storageService.Object, _mapper, _httpContextAccessor.Object, _stateClient.Object);
+            _stateClient.Setup(s => s.GetData<Ism.SystemState.Models.VideoRouting.SelectedSourceStateData>()).ReturnsAsync(
+                new Ism.SystemState.Models.VideoRouting.SelectedSourceStateData(new Ism.SystemState.Models.VideoRouting.AliasIndexModel { Alias = "alias3", Index = "3" }));
+
+            Task Act() => manager.SetSelectedSource(null);
+            Assert.That(Act, Throws.TypeOf<ArgumentNullException>());
+        }
+
+        [Test]
+        public async Task RoutingManager_SetSelectedSource_EmptyAlias_Fails()
+        {
+            var manager = new RoutingManager(_routingService.Object, _recorderService.Object, _avidisService.Object, _storageService.Object, _mapper, _httpContextAccessor.Object, _stateClient.Object);
+            _stateClient.Setup(s => s.GetData<Ism.SystemState.Models.VideoRouting.SelectedSourceStateData>()).ReturnsAsync(
+                new Ism.SystemState.Models.VideoRouting.SelectedSourceStateData(new Ism.SystemState.Models.VideoRouting.AliasIndexModel { Alias = "alias3", Index = "3" }));
+
+            Task Act() => manager.SetSelectedSource(new AliasIndexModel { Alias = "", Index = "4" });
+            Assert.That(Act, Throws.TypeOf<ArgumentNullException>());
+        }
+
+        [Test]
+        public async Task RoutingManager_SetSelectedSource_EmptyIndex_Fails()
+        {
+            var manager = new RoutingManager(_routingService.Object, _recorderService.Object, _avidisService.Object, _storageService.Object, _mapper, _httpContextAccessor.Object, _stateClient.Object);
+            _stateClient.Setup(s => s.GetData<Ism.SystemState.Models.VideoRouting.SelectedSourceStateData>()).ReturnsAsync(
+                new Ism.SystemState.Models.VideoRouting.SelectedSourceStateData(new Ism.SystemState.Models.VideoRouting.AliasIndexModel { Alias = "alias3", Index = "3" }));
+
+            Task Act() => manager.SetSelectedSource(new AliasIndexModel { Alias = "alias4", Index = "" });
+            Assert.That(Act, Throws.TypeOf<ArgumentNullException>());
         }
     }
 }

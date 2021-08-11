@@ -1,11 +1,10 @@
-﻿using AutoMapper;
+using AutoMapper;
 using Avalanche.Api.Managers.Media;
 using Avalanche.Api.ViewModels;
 using Avalanche.Shared.Domain.Models.Media;
 using Avalanche.Shared.Infrastructure.Enumerations;
 using Avalanche.Shared.Infrastructure.Extensions;
 using Avalanche.Shared.Infrastructure.Helpers;
-
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -303,6 +302,32 @@ namespace Avalanche.Api.Controllers.V1
                 var result = await _routingManager.GetDisplayRecordingStates();
 
                 return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, LoggerHelper.GetLogMessage(DebugLogType.Exception), ex);
+                return new BadRequestObjectResult(ex.Get(_environment.IsDevelopment()));
+            }
+            finally
+            {
+                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
+            }
+        }
+
+        [HttpPut("operating/sources/setselectedsource")]
+        [ProducesResponseType(typeof(void), StatusCodes.Status200OK)]
+        public async Task<IActionResult> SetSelectedSource([FromQuery] string alias, [FromQuery] string index)
+        {
+            try
+            {
+                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
+                await _routingManager.SetSelectedSource(new AliasIndexModel
+                {
+                    Alias = alias,
+                    Index = index
+                });
+
+                return Ok();
             }
             catch (Exception ex)
             {

@@ -17,6 +17,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Avalanche.Shared.Infrastructure.Configuration;
+using Ism.Utility.Core;
 
 namespace Avalanche.Api.Managers.Media
 {
@@ -378,6 +379,25 @@ namespace Avalanche.Api.Managers.Media
 
             // publish the new DBR state data
             await _stateClient.PersistData(new VideoRoutingModels.DisplayRecordStateData(dbrStates));
+        }
+
+        public async Task SetSelectedSource(AliasIndexModel selectedSourceModel)
+        {
+            Preconditions.ThrowIfNull(nameof(selectedSourceModel), selectedSourceModel);
+            Preconditions.ThrowIfNullOrEmptyOrWhiteSpace(nameof(selectedSourceModel.Alias), selectedSourceModel.Alias);
+            Preconditions.ThrowIfNullOrEmptyOrWhiteSpace(nameof(selectedSourceModel.Index), selectedSourceModel.Index);
+
+
+            VideoRoutingModels.AliasIndexModel aliasIndexModel = new VideoRoutingModels.AliasIndexModel
+            {
+                Alias = selectedSourceModel.Alias,
+                Index = selectedSourceModel.Index
+            };
+            VideoRoutingModels.SelectedSourceStateData selectedSourceData = new VideoRoutingModels.SelectedSourceStateData(aliasIndexModel);
+
+            var currentSelectedSource = await _stateClient.GetData<VideoRoutingModels.SelectedSourceStateData>() ?? new VideoRoutingModels.SelectedSourceStateData();
+            currentSelectedSource = selectedSourceData;
+            _stateClient.PersistData(currentSelectedSource);
         }
     }
 }
