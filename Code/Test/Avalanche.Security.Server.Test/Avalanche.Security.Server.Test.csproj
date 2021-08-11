@@ -7,7 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Ism.CodeQuality" Version="1.0.0-prerelease0007">
+    <PackageReference Include="Ism.CodeQuality" Version="1.0.0-prerelease0008">
       <TreatAsUsed>true</TreatAsUsed>
     </PackageReference>
     <PackageReference Include="Moq" Version="4.16.1" />

@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
@@ -42,7 +42,7 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Ism.Broadcaster.Standard" Version="1.0.0-prerelease0003" />
-    <PackageReference Include="Ism.CodeQuality" Version="1.0.0-prerelease0007">
+    <PackageReference Include="Ism.CodeQuality" Version="1.0.0-prerelease0008">
       <TreatAsUsed>true</TreatAsUsed>
     </PackageReference>
     <PackageReference Include="Ism.Common.Core.Hosting" Version="1.0.0-prerelease041" />
@@ -75,7 +75,7 @@
   <ItemGroup Condition="'$(Configuration)'=='Debug' Or '$(Configuration)'=='Release'">  
     <PackageReference Include="Ism.Storage.DataManagement.Client" Version="1.0.0-prerelease0037" />
     <PackageReference Include="Ism.Library.Client" Version="1.0.0-prerelease0044" />
-    <PackageReference Include="Ism.SystemState.Client" Version="1.0.0-prerelease0064" />
+    <PackageReference Include="Ism.SystemState.Client" Version="1.0.0-prerelease0065" />
   </ItemGroup>
 
   <ItemGroup>

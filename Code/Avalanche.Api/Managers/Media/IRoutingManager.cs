@@ -1,4 +1,4 @@
-﻿using Avalanche.Api.ViewModels;
+using Avalanche.Api.ViewModels;
 using Avalanche.Shared.Domain.Models.Media;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -24,5 +24,7 @@ namespace Avalanche.Api.Managers.Media
         Task HandleSinkSourceChanged(AliasIndexModel sink, AliasIndexModel source);
 
         Task PublishDefaultDisplayRecordingState();
+
+        Task SetSelectedSource(AliasIndexModel selectedSource);
     }
 }
