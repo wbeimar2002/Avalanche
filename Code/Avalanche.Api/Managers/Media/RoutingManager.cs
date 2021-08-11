@@ -387,17 +387,12 @@ namespace Avalanche.Api.Managers.Media
             Preconditions.ThrowIfNullOrEmptyOrWhiteSpace(nameof(selectedSourceModel.Alias), selectedSourceModel.Alias);
             Preconditions.ThrowIfNullOrEmptyOrWhiteSpace(nameof(selectedSourceModel.Index), selectedSourceModel.Index);
 
-
-            VideoRoutingModels.AliasIndexModel aliasIndexModel = new VideoRoutingModels.AliasIndexModel
+            var aliasIndexModel = new VideoRoutingModels.AliasIndexModel
             {
                 Alias = selectedSourceModel.Alias,
                 Index = selectedSourceModel.Index
             };
-            VideoRoutingModels.SelectedSourceStateData selectedSourceData = new VideoRoutingModels.SelectedSourceStateData(aliasIndexModel);
-
-            var currentSelectedSource = await _stateClient.GetData<VideoRoutingModels.SelectedSourceStateData>() ?? new VideoRoutingModels.SelectedSourceStateData();
-            currentSelectedSource = selectedSourceData;
-            _stateClient.PersistData(currentSelectedSource);
+            _stateClient.PersistData(new VideoRoutingModels.SelectedSourceStateData(aliasIndexModel));
         }
     }
 }
