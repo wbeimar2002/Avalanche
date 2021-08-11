@@ -254,8 +254,7 @@ namespace Avalanche.Api.Test.Managers
             _stateClient.Setup(s => s.GetData<Ism.SystemState.Models.VideoRouting.SelectedSourceStateData>()).ReturnsAsync(
                 new Ism.SystemState.Models.VideoRouting.SelectedSourceStateData(new Ism.SystemState.Models.VideoRouting.AliasIndexModel { Alias = "alias3", Index = "3" }));
 
-            Task Act() => manager.SetSelectedSource(null);
-            Assert.That(Act, Throws.TypeOf<ArgumentNullException>());
+            Assert.ThrowsAsync<ArgumentNullException>(async () => await manager.SetSelectedSource(null));
         }
 
         [Test]
@@ -265,8 +264,7 @@ namespace Avalanche.Api.Test.Managers
             _stateClient.Setup(s => s.GetData<Ism.SystemState.Models.VideoRouting.SelectedSourceStateData>()).ReturnsAsync(
                 new Ism.SystemState.Models.VideoRouting.SelectedSourceStateData(new Ism.SystemState.Models.VideoRouting.AliasIndexModel { Alias = "alias3", Index = "3" }));
 
-            Task Act() => manager.SetSelectedSource(new AliasIndexModel { Alias = "", Index = "4" });
-            Assert.That(Act, Throws.TypeOf<ArgumentNullException>());
+            Assert.ThrowsAsync<ArgumentNullException>(async () => await manager.SetSelectedSource(new AliasIndexModel { Alias = "", Index = "4" }));
         }
 
         [Test]
@@ -276,8 +274,7 @@ namespace Avalanche.Api.Test.Managers
             _stateClient.Setup(s => s.GetData<Ism.SystemState.Models.VideoRouting.SelectedSourceStateData>()).ReturnsAsync(
                 new Ism.SystemState.Models.VideoRouting.SelectedSourceStateData(new Ism.SystemState.Models.VideoRouting.AliasIndexModel { Alias = "alias3", Index = "3" }));
 
-            Task Act() => manager.SetSelectedSource(new AliasIndexModel { Alias = "alias4", Index = "" });
-            Assert.That(Act, Throws.TypeOf<ArgumentNullException>());
+            Assert.ThrowsAsync<ArgumentNullException>(async () => await manager.SetSelectedSource(new AliasIndexModel { Alias = "alias4", Index = "" }));
         }
     }
 }
