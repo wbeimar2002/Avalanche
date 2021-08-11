@@ -19,7 +19,6 @@ namespace Avalanche.Api.Controllers.V1
     [Route("[controller]")]
     [ApiController]
     [Authorize]
-    [FeatureGate(FeatureFlags.Patients)]
     public class PatientsController : ControllerBase
     {
         private readonly ILogger _logger;

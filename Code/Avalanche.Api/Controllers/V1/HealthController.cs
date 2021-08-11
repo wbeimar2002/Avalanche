@@ -47,8 +47,6 @@ namespace Avalanche.Api.Controllers.V1
                         ActiveProcedure = _featureManager.IsEnabledAsync(FeatureFlags.ActiveProcedure),
                         Devices = _featureManager.IsEnabledAsync(FeatureFlags.Devices),
                         Media = _featureManager.IsEnabledAsync(FeatureFlags.Media),
-                        Patients = _featureManager.IsEnabledAsync(FeatureFlags.Patients),
-                        Procedures = _featureManager.IsEnabledAsync(FeatureFlags.Procedures),
                         Presets = _featureManager.IsEnabledAsync(FeatureFlags.Presets),
                         Recording = _featureManager.IsEnabledAsync(FeatureFlags.Recording),
                         StreamSessions = _featureManager.IsEnabledAsync(FeatureFlags.StreamSessions),
@@ -69,7 +67,6 @@ namespace Avalanche.Api.Controllers.V1
         /// <summary>
         /// Health check with secure
         /// </summary>
-        /// <returns></returns>
         [Authorize]
         [Route("check/secure")]
         [HttpGet]
@@ -90,8 +87,6 @@ namespace Avalanche.Api.Controllers.V1
                         ActiveProcedure = _featureManager.IsEnabledAsync(FeatureFlags.ActiveProcedure),
                         Devices = _featureManager.IsEnabledAsync(FeatureFlags.Devices),
                         Media = _featureManager.IsEnabledAsync(FeatureFlags.Media),
-                        Patients = _featureManager.IsEnabledAsync(FeatureFlags.Patients),
-                        Procedures = _featureManager.IsEnabledAsync(FeatureFlags.Procedures),
                         Presets = _featureManager.IsEnabledAsync(FeatureFlags.Presets),
                         Recording = _featureManager.IsEnabledAsync(FeatureFlags.Recording),
                         StreamSessions = _featureManager.IsEnabledAsync(FeatureFlags.StreamSessions),
