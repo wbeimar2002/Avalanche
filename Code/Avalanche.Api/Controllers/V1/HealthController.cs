@@ -30,7 +30,6 @@ namespace Avalanche.Api.Controllers.V1
         /// <summary>
         ///  Health check without secure
         /// </summary>
-        /// <returns></returns>
         [Route("check")]
         [HttpGet]
         public IActionResult HealthCheck()

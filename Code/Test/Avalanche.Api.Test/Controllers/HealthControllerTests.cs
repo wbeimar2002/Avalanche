@@ -1,4 +1,4 @@
-﻿using Avalanche.Api.Controllers.V1;
+using Avalanche.Api.Controllers.V1;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -9,6 +9,7 @@ using Avalanche.Api.Tests.Extensions;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.FeatureManagement;
 
 namespace Avalanche.Api.Tests.Controllers
 {
@@ -17,6 +18,7 @@ namespace Avalanche.Api.Tests.Controllers
     {
         Mock<ILogger<HealthController>> _logger;
         Mock<IWebHostEnvironment> _environment;
+        Mock<IFeatureManager> featureManager;
 
         HealthController _controller;
 
@@ -27,8 +29,9 @@ namespace Avalanche.Api.Tests.Controllers
         {
             _logger = new Mock<ILogger<HealthController>>();
             _environment = new Mock<IWebHostEnvironment>();
+            featureManager = new Mock<IFeatureManager>();
 
-            _controller = new HealthController(_logger.Object, _environment.Object);
+            _controller = new HealthController(_logger.Object, _environment.Object, featureManager.Object);
 
             OperatingSystem os = Environment.OSVersion;
 
