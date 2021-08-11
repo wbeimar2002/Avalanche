@@ -1,8 +1,9 @@
-﻿using AutoFixture;
+using System;
+using AutoFixture;
 using Avalanche.Api.Controllers.V1;
 using Avalanche.Api.Managers.Procedures;
-using Avalanche.Api.ViewModels;
 using Avalanche.Api.Tests.Extensions;
+using Avalanche.Api.ViewModels;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -10,30 +11,27 @@ using Microsoft.AspNetCore.Mvc.Routing;
 using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Avalanche.Api.Test.Controllers
 {
-    class ProceduresContollerTests
+    class ActiveProceduresContollerTests
     {
-        Mock<ILogger<ProceduresController>> _logger;
+        Mock<ILogger<ActiveProceduresController>> _logger;
         Mock<IWebHostEnvironment> _environment;
         Mock<IProceduresManager> _proceduresManager;
 
-        ProceduresController _controller;
+        ActiveProceduresController _controller;
 
         bool _checkLogger = false;
 
         [SetUp]
         public void Setup()
         {
-            _logger = new Mock<ILogger<ProceduresController>>();
+            _logger = new Mock<ILogger<ActiveProceduresController>>();
             _environment = new Mock<IWebHostEnvironment>();
             _proceduresManager = new Mock<IProceduresManager>();
 
-            _controller = new ProceduresController(_logger.Object, _proceduresManager.Object, _environment.Object);
+            _controller = new ActiveProceduresController(_logger.Object, _proceduresManager.Object, _environment.Object);
 
             var mockUrlHelper = new Mock<IUrlHelper>(MockBehavior.Strict);
             mockUrlHelper
@@ -68,9 +66,9 @@ namespace Avalanche.Api.Test.Controllers
 
             if (_checkLogger)
             {
-                _logger.Verify(LogLevel.Error, $"Exception {nameof(ProceduresController)}.{nameof(ProceduresController.GetActive)}", Times.Never());
-                _logger.Verify(LogLevel.Debug, $"Requested {nameof(ProceduresController)}.{nameof(ProceduresController.GetActive)}", Times.Once());
-                _logger.Verify(LogLevel.Debug, $"Completed {nameof(ProceduresController)}.{nameof(ProceduresController.GetActive)}", Times.Once());
+                _logger.Verify(LogLevel.Error, $"Exception {nameof(ProceduresController)}.{nameof(ActiveProceduresController.GetActive)}", Times.Never());
+                _logger.Verify(LogLevel.Debug, $"Requested {nameof(ProceduresController)}.{nameof(ActiveProceduresController.GetActive)}", Times.Once());
+                _logger.Verify(LogLevel.Debug, $"Completed {nameof(ProceduresController)}.{nameof(ActiveProceduresController.GetActive)}", Times.Once());
             }
 
             Assert.IsInstanceOf<OkObjectResult>(okResult.Result);
