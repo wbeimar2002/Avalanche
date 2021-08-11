@@ -10,9 +10,11 @@ namespace Avalanche.Api.Helpers
     {
         public static IConfigurationSection GetCustomFeatureManagementSection()
         {
+            EnvironmentUtilities.TryGetProcessThenMachineEnvironmentVariable("IsVSS", out var isVSS);
+
             var appSettings = JsonConvert.SerializeObject(new
             {
-                FeatureManagement = new { IsVSS = EnvironmentUtilities.GetProcessThenMachineEnvironmentVariable("IsVSS") }
+                FeatureManagement = new { IsVSS = isVSS ?? "false" }
             });
 
             var builder = new ConfigurationBuilder();
