@@ -1,4 +1,4 @@
-﻿using AvidisDeviceInterface.Client.V1;
+using AvidisDeviceInterface.Client.V1;
 using AvidisDeviceInterface.V1.Protos;
 
 using System.Diagnostics.CodeAnalysis;
@@ -19,11 +19,6 @@ namespace Avalanche.Api.Services.Media
         public async Task HidePreview(HidePreviewRequest hidePreviewRequest)
         {
             await _client.HidePreview(hidePreviewRequest);
-        }
-
-        public async Task RoutePreview(RoutePreviewRequest routePreviewRequest)
-        {
-            await _client.RoutePreview(routePreviewRequest);
         }
 
         public async Task ShowPreview(ShowPreviewRequest showPreviewRequest)
