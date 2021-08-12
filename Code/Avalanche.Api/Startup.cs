@@ -1,4 +1,6 @@
 using Avalanche.Api.Extensions;
+using Avalanche.Api.Handlers;
+using Avalanche.Api.Helpers;
 using Avalanche.Api.Hubs;
 using Avalanche.Api.Managers.Data;
 using Avalanche.Api.Managers.Licensing;
@@ -49,9 +51,8 @@ using Microsoft.AspNetCore.Http.Features;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-
+using Microsoft.FeatureManagement;
 using Serilog;
-
 using System.Diagnostics.CodeAnalysis;
 
 namespace Avalanche.Api
@@ -70,16 +71,16 @@ namespace Avalanche.Api
         public void ConfigureServices(IServiceCollection services)
         {
             //ASP.NET Features
+            services.AddFeatureManagement()
+                .UseDisabledFeaturesHandler(new DisabledFeatureHandler());
+
             services.AddControllers();
             services.AddSignalR();
             services.AddMvc().AddNewtonsoftJson();
             services.AddHttpContextAccessor();
             services.AddCustomSwagger();
             services.AddAutoMapper(typeof(Startup));
-            services.Configure<FormOptions>(x =>
-            {
-                x.MultipartBodyLengthLimit = 209715200;
-            });
+            services.Configure<FormOptions>(x => x.MultipartBodyLengthLimit = 209715200);
 
             ConfigureAuthorization(services);
             ConfigureCorsPolicy(services);
@@ -109,6 +110,7 @@ namespace Avalanche.Api
             services.AddConfigurationPoco<ProceduresSearchConfiguration>(_configuration, nameof(ProceduresSearchConfiguration));
             services.AddConfigurationPoco<AutoLabelsConfiguration>(_configuration, nameof(AutoLabelsConfiguration));
             services.AddConfigurationPoco<LabelsConfiguration>(_configuration, nameof(LabelsConfiguration));
+            services.AddConfigurationPoco<PrintingConfiguration>(_configuration, nameof(PrintingConfiguration));
 
             services.AddSingleton<IWebRTCService, WebRtcService>();
             services.AddSingleton<IRecorderService, RecorderService>();
@@ -222,7 +224,7 @@ namespace Avalanche.Api
             app.UseAuthorization();
 
             app.UseFileServer();
-            
+
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapHub<BroadcastHub>(BroadcastHub.BroadcastHubRoute);

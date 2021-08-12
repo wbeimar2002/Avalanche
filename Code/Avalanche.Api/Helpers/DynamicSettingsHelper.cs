@@ -1,4 +1,4 @@
-﻿using Avalanche.Api.Extensions;
+using Avalanche.Api.Extensions;
 using Avalanche.Api.ViewModels;
 using Avalanche.Shared.Infrastructure.Enumerations;
 using Avalanche.Shared.Infrastructure.Extensions;
@@ -15,7 +15,7 @@ using System.Threading.Tasks;
 
 namespace Avalanche.Api.Helpers
 {
-    public static class SettingsHelper
+    public static class DynamicSettingsHelper
     {
         public static void Map(ExpandoObject source, object destination)
         {

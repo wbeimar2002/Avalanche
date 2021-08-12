@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+using AutoMapper;
 using Avalanche.Api.Managers.Presets;
 using Avalanche.Shared.Domain.Models.Presets;
 using Avalanche.Shared.Infrastructure.Enumerations;
@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.FeatureManagement.Mvc;
 using System;
 using System.Threading.Tasks;
 using static Ism.Utility.Core.Preconditions;
@@ -19,6 +20,7 @@ namespace Avalanche.Api.Controllers.V1
     [Route("[controller]")]
     [ApiController]
     [Authorize]
+    [FeatureGate(FeatureFlags.Presets)]
     public class PresetsController : ControllerBase
     {
         private readonly ILogger _logger;

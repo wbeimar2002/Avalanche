@@ -1,4 +1,5 @@
-using Avalanche.Api.Extensions;
+using System;
+using System.Threading.Tasks;
 using Avalanche.Api.Helpers;
 using Avalanche.Api.Managers.Patients;
 using Avalanche.Api.ViewModels;
@@ -11,9 +12,6 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using System;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Avalanche.Api.Controllers.V1
 {
@@ -46,7 +44,6 @@ namespace Avalanche.Api.Controllers.V1
             {
                 _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
                 var patientRegistered = await _patientsManager.RegisterPatient(newPatient, backgroundRecordingMode);
-                
                 return new ObjectResult(patientRegistered) { StatusCode = StatusCodes.Status201Created };
             }
             catch (Exception ex)

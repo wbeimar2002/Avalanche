@@ -1,4 +1,4 @@
-﻿using Avalanche.Shared.Infrastructure.Enumerations;
+using Avalanche.Shared.Infrastructure.Enumerations;
 using Avalanche.Shared.Infrastructure.Extensions;
 using Avalanche.Shared.Infrastructure.Helpers;
 using Microsoft.AspNetCore.Authorization;
@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.FeatureManagement;
 using System;
 
 namespace Avalanche.Api.Controllers.V1
@@ -17,9 +18,11 @@ namespace Avalanche.Api.Controllers.V1
     {
         private readonly ILogger _logger;
         private readonly IWebHostEnvironment _environment;
+        private readonly IFeatureManager _featureManager;
 
-        public HealthController(ILogger<HealthController> logger, IWebHostEnvironment environment)
+        public HealthController(ILogger<HealthController> logger, IWebHostEnvironment environment, IFeatureManager featureManager)
         {
+            _featureManager = featureManager;
             _environment = environment;
             _logger = logger;
         }
@@ -27,7 +30,6 @@ namespace Avalanche.Api.Controllers.V1
         /// <summary>
         ///  Health check without secure
         /// </summary>
-        /// <returns></returns>
         [Route("check")]
         [HttpGet]
         public IActionResult HealthCheck()
@@ -35,13 +37,12 @@ namespace Avalanche.Api.Controllers.V1
             try
             {
                 _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
-                
                 _logger.LogInformation("Avalanche Api is healthy.");
-                
                 return new OkObjectResult(new
                 {
                     UtcDateTime = DateTime.UtcNow,
-                    LocalDateTime = DateTime.UtcNow.ToLocalTime()
+                    LocalDateTime = DateTime.UtcNow.ToLocalTime(),
+                    Features = GetFeatures()
                 });
             }
             catch (Exception ex)
@@ -58,7 +59,6 @@ namespace Avalanche.Api.Controllers.V1
         /// <summary>
         /// Health check with secure
         /// </summary>
-        /// <returns></returns>
         [Authorize]
         [Route("check/secure")]
         [HttpGet]
@@ -73,7 +73,8 @@ namespace Avalanche.Api.Controllers.V1
                 return new OkObjectResult(new
                 {
                     UtcDateTime = DateTime.UtcNow,
-                    LocalDateTime = DateTime.UtcNow.ToLocalTime()
+                    LocalDateTime = DateTime.UtcNow.ToLocalTime(),
+                    Features = GetFeatures()
                 });
             }
             catch (Exception ex)
@@ -86,5 +87,15 @@ namespace Avalanche.Api.Controllers.V1
                 _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
             }
         }
+
+        private object GetFeatures() => new
+        {
+            ActiveProcedure = _featureManager.IsEnabledAsync(FeatureFlags.ActiveProcedure),
+            Devices = _featureManager.IsEnabledAsync(FeatureFlags.Devices),
+            Media = _featureManager.IsEnabledAsync(FeatureFlags.Media),
+            Presets = _featureManager.IsEnabledAsync(FeatureFlags.Presets),
+            Recording = _featureManager.IsEnabledAsync(FeatureFlags.Recording),
+            StreamSessions = _featureManager.IsEnabledAsync(FeatureFlags.StreamSessions),
+        };
     }
 }

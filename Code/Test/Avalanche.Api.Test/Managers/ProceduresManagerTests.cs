@@ -278,7 +278,7 @@ namespace Avalanche.Api.Test.Managers
                 ProcedureIndexSortingColumn = (ProcedureIndexSortingColumns)filter.ProcedureIndexSortingColumn
             })).ReturnsAsync(response);
 
-            await _manager.BasicSearch(filter);
+            await _manager.Search(filter);
 
             _libraryService.Verify(mock => mock.GetFinishedProcedures(new GetFinishedProceduresRequest()
             {
@@ -312,7 +312,7 @@ namespace Avalanche.Api.Test.Managers
                 ProcedureIndexSortingColumn = (ProcedureIndexSortingColumns)filter.ProcedureIndexSortingColumn
             })).ReturnsAsync(response);
 
-            Task Act() => _manager.BasicSearch(filter);
+            Task Act() => _manager.Search(filter);
             Assert.That(Act, Throws.TypeOf<ArgumentException>());
 
             _libraryService.Verify(mock => mock.GetFinishedProcedures(new GetFinishedProceduresRequest()
@@ -346,7 +346,7 @@ namespace Avalanche.Api.Test.Managers
                 ProcedureIndexSortingColumn = (ProcedureIndexSortingColumns)filter.ProcedureIndexSortingColumn
             })).ReturnsAsync(response);
 
-            Task Act() => _manager.BasicSearch(filter);
+            Task Act() => _manager.Search(filter);
             Assert.That(Act, Throws.TypeOf<ArgumentException>());
             
             _libraryService.Verify(mock => mock.GetFinishedProcedures(new GetFinishedProceduresRequest()
@@ -380,7 +380,7 @@ namespace Avalanche.Api.Test.Managers
                 ProcedureIndexSortingColumn = (ProcedureIndexSortingColumns)filter.ProcedureIndexSortingColumn
             })).ReturnsAsync(response);
 
-            Task Act() => _manager.BasicSearch(filter);
+            Task Act() => _manager.Search(filter);
             Assert.That(Act, Throws.TypeOf<ArgumentException>());
 
             _libraryService.Verify(mock => mock.GetFinishedProcedures(new GetFinishedProceduresRequest()
