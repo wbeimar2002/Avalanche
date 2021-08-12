@@ -42,15 +42,7 @@ namespace Avalanche.Api.Controllers.V1
                 {
                     UtcDateTime = DateTime.UtcNow,
                     LocalDateTime = DateTime.UtcNow.ToLocalTime(),
-                    Features = new
-                    {
-                        ActiveProcedure = _featureManager.IsEnabledAsync(FeatureFlags.ActiveProcedure),
-                        Devices = _featureManager.IsEnabledAsync(FeatureFlags.Devices),
-                        Media = _featureManager.IsEnabledAsync(FeatureFlags.Media),
-                        Presets = _featureManager.IsEnabledAsync(FeatureFlags.Presets),
-                        Recording = _featureManager.IsEnabledAsync(FeatureFlags.Recording),
-                        StreamSessions = _featureManager.IsEnabledAsync(FeatureFlags.StreamSessions),
-                    }
+                    Features = GetFeatures()
                 });
             }
             catch (Exception ex)
@@ -82,15 +74,7 @@ namespace Avalanche.Api.Controllers.V1
                 {
                     UtcDateTime = DateTime.UtcNow,
                     LocalDateTime = DateTime.UtcNow.ToLocalTime(),
-                    Features = new
-                    {
-                        ActiveProcedure = _featureManager.IsEnabledAsync(FeatureFlags.ActiveProcedure),
-                        Devices = _featureManager.IsEnabledAsync(FeatureFlags.Devices),
-                        Media = _featureManager.IsEnabledAsync(FeatureFlags.Media),
-                        Presets = _featureManager.IsEnabledAsync(FeatureFlags.Presets),
-                        Recording = _featureManager.IsEnabledAsync(FeatureFlags.Recording),
-                        StreamSessions = _featureManager.IsEnabledAsync(FeatureFlags.StreamSessions),
-                    }
+                    Features = GetFeatures()
                 });
             }
             catch (Exception ex)
@@ -103,5 +87,15 @@ namespace Avalanche.Api.Controllers.V1
                 _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
             }
         }
+
+        private object GetFeatures() => new
+        {
+            ActiveProcedure = _featureManager.IsEnabledAsync(FeatureFlags.ActiveProcedure),
+            Devices = _featureManager.IsEnabledAsync(FeatureFlags.Devices),
+            Media = _featureManager.IsEnabledAsync(FeatureFlags.Media),
+            Presets = _featureManager.IsEnabledAsync(FeatureFlags.Presets),
+            Recording = _featureManager.IsEnabledAsync(FeatureFlags.Recording),
+            StreamSessions = _featureManager.IsEnabledAsync(FeatureFlags.StreamSessions),
+        };
     }
 }

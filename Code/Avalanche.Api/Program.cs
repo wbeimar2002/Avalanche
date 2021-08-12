@@ -69,6 +69,7 @@ namespace Avalanche.Api
                 ConfigurationServiceRequestFactory.CreateRequest<ProceduresSearchConfiguration>(context),
                 ConfigurationServiceRequestFactory.CreateRequest<AutoLabelsConfiguration>(context),
                 ConfigurationServiceRequestFactory.CreateRequest<LabelsConfiguration>(context),
+                ConfigurationServiceRequestFactory.CreateRequest<PrintingConfiguration>(context),
             };
 
             return requests;
