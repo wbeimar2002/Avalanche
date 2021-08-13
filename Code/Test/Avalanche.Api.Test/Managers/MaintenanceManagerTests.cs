@@ -37,6 +37,7 @@ namespace Avalanche.Api.Test.Managers
         Mock<AutoLabelsConfiguration> _autoLabelsConfiguration;
         Mock<LabelsConfiguration> _labelsConfiguration;
         Mock<PrintingConfiguration> _printingConfiguration;
+        Mock<SetupConfiguration> _setupConfiguration;
 
         MaintenanceManager _manager;
 
@@ -62,10 +63,11 @@ namespace Avalanche.Api.Test.Managers
             _autoLabelsConfiguration = new Mock<AutoLabelsConfiguration>();
             _labelsConfiguration = new Mock<LabelsConfiguration>();
             _printingConfiguration = new Mock<PrintingConfiguration>();
+            _setupConfiguration = new Mock<SetupConfiguration>();
 
             _manager = new MaintenanceManager(_storageService.Object, _dataManager.Object, _mapper, _httpContextAccessor.Object, _libraryService.Object,
                 _filesService.Object, _generalApiConfiguration.Object, _proceduresSearchConfiguration.Object, _autoLabelsConfiguration.Object,
-                _labelsConfiguration.Object, _printingConfiguration.Object);
+                _labelsConfiguration.Object, _printingConfiguration.Object, _setupConfiguration.Object);
         }
 
         [Test]
