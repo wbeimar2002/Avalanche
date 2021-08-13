@@ -10,8 +10,6 @@ namespace Avalanche.Api.Mapping
         {
             CreateMap<Shared.Infrastructure.Enumerations.BackgroundRecordingMode, Ism.SystemState.Models.Procedure.BackgroundRecordingMode>();
 
-            CreateMap<Ism.IsmLogCommon.Core.AccessInfo, AccessInfoMessage>();
-
             CreateMap<AliasIndexModel, AliasIndexMessage>()
                .ForMember(dest =>
                   dest.Alias,

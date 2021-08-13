@@ -315,7 +315,7 @@ namespace Avalanche.Api.Controllers.V1
             }
         }
 
-        [HttpPut("operating/sources/setselectedsource")]
+        [HttpPut("operate/sources/selected")]
         [ProducesResponseType(typeof(void), StatusCodes.Status200OK)]
         public async Task<IActionResult> SetSelectedSource([FromQuery] string alias, [FromQuery] string index)
         {

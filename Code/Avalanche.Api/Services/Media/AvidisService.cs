@@ -4,6 +4,8 @@ using AvidisDeviceInterface.V1.Protos;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 
+using static Ism.Utility.Core.Preconditions;
+
 namespace Avalanche.Api.Services.Media
 {
     [ExcludeFromCodeCoverage]
@@ -11,19 +13,10 @@ namespace Avalanche.Api.Services.Media
     {
         private readonly AvidisSecureClient _client;
 
-        public AvidisService(AvidisSecureClient client)
-        {
-            _client = client;
-        }
+        public AvidisService(AvidisSecureClient client) => _client = ThrowIfNullOrReturn(nameof(client), client);
 
-        public async Task HidePreview(HidePreviewRequest hidePreviewRequest)
-        {
-            await _client.HidePreview(hidePreviewRequest);
-        }
+        public async Task HidePreview(HidePreviewRequest hidePreviewRequest) => await _client.HidePreview(hidePreviewRequest).ConfigureAwait(false);
 
-        public async Task ShowPreview(ShowPreviewRequest showPreviewRequest)
-        {
-            await _client.ShowPreview(showPreviewRequest);
-        }
+        public async Task ShowPreview(ShowPreviewRequest showPreviewRequest) => await _client.ShowPreview(showPreviewRequest).ConfigureAwait(false);
     }
 }

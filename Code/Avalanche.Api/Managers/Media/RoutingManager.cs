@@ -97,7 +97,6 @@ namespace Avalanche.Api.Managers.Media
                 X = routingPreviewViewModel.Region.X,
                 Y = routingPreviewViewModel.Region.Y
             });
-
         }
 
         public async Task RouteVideoSource(RouteModel route)
