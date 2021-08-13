@@ -55,7 +55,7 @@ namespace Avalanche.Api.Managers.Procedures
             var result = _mapper.Map<ActiveProcedureViewModel>(activeProcedure);
 
             if (result != null)
-                result.RecorderState = (await _recorderService.GetRecorderState()).State;
+                result.RecorderState = (int?)(await _recorderService.GetRecorderState().ConfigureAwait(false)).State;
 
             return result;
         }
