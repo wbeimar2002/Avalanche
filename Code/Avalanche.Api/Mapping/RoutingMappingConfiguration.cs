@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+using AutoMapper;
 using Avalanche.Api.ViewModels;
 using Avalanche.Shared.Domain.Models.Media;
 using System;
@@ -76,24 +76,6 @@ namespace Avalanche.Api.Mapping
                 .ReverseMap();
 
             CreateMap<VideoSinkModel, Ism.Routing.V1.Protos.AliasIndexMessage>()
-                .ForMember(dest =>
-                    dest.Alias,
-                    opt => opt.MapFrom(src => src.Sink.Alias))
-                .ForMember(dest =>
-                    dest.Index,
-                    opt => opt.MapFrom(src => src.Sink.Index))
-                .ReverseMap();
-
-            CreateMap<VideoSourceModel, AvidisDeviceInterface.V1.Protos.AliasIndexMessage>()
-                .ForMember(dest =>
-                    dest.Alias,
-                    opt => opt.MapFrom(src => src.Sink.Alias))
-                .ForMember(dest =>
-                    dest.Index,
-                    opt => opt.MapFrom(src => src.Sink.Index))
-                .ReverseMap();
-
-            CreateMap<VideoDeviceModel, AvidisDeviceInterface.V1.Protos.AliasIndexMessage>()
                 .ForMember(dest =>
                     dest.Alias,
                     opt => opt.MapFrom(src => src.Sink.Alias))

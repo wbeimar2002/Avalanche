@@ -97,17 +97,6 @@ namespace Avalanche.Api.Managers.Media
                 X = routingPreviewViewModel.Region.X,
                 Y = routingPreviewViewModel.Region.Y
             });
-
-            await RoutePreview(routingPreviewViewModel);
-        }
-
-        public async Task RoutePreview(RoutingPreviewViewModel routingPreviewViewModel)
-        {
-            await _avidisService.RoutePreview(new RoutePreviewRequest()
-            {
-                PreviewIndex = routingPreviewViewModel.Index,
-                Source = _mapper.Map<AliasIndexViewModel, AvidisDeviceInterface.V1.Protos.AliasIndexMessage>(routingPreviewViewModel.Source),
-            });
         }
 
         public async Task RouteVideoSource(RouteModel route)
