@@ -298,7 +298,7 @@ namespace Avalanche.Api.Controllers.V1
         }
 
         [HttpGet("settings/AutoLabelsConfiguration")]
-        [Produces(typeof(ProceduresSearchConfiguration))]
+        [Produces(typeof(AutoLabelsConfiguration))]
         public async Task<IActionResult> GetAutoLabelsConfigurationSettings()
         {
             try
@@ -320,7 +320,7 @@ namespace Avalanche.Api.Controllers.V1
         }
 
         [HttpGet("settings/LabelsConfiguration")]
-        [Produces(typeof(ProceduresSearchConfiguration))]
+        [Produces(typeof(LabelsConfiguration))]
         public async Task<IActionResult> GetLabelsConfigurationSettings()
         {
             try
