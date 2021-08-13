@@ -362,7 +362,7 @@ namespace Avalanche.Api.Controllers.V1
         }
 
         [HttpGet("settings/SetupConfiguration")]
-        [Produces(typeof(PrintingConfiguration))]
+        [Produces(typeof(SetupConfiguration))]
         public async Task<IActionResult> GetSetupConfigurationSettings()
         {
             try
