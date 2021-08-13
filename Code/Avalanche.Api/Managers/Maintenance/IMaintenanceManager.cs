@@ -21,6 +21,7 @@ namespace Avalanche.Api.Managers.Maintenance
         ProceduresSearchConfiguration GetProceduresSearchConfigurationSettings();
         AutoLabelsConfiguration GetAutoLabelsConfigurationSettings();
         LabelsConfiguration GetLabelsConfigurationSettings();
+        SetupConfiguration GetSetupConfigurationSettings();
         PrintingConfiguration GetPrintingConfigurationSettings();
     }
 }

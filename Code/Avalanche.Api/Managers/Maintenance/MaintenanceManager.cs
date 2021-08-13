@@ -39,6 +39,7 @@ namespace Avalanche.Api.Managers.Maintenance
         private readonly AutoLabelsConfiguration _autoLabelsConfiguration;
         private readonly LabelsConfiguration _labelsConfiguration;
         private readonly PrintingConfiguration _printingConfiguration;
+        private readonly SetupConfiguration _setupConfiguration;
 
         public MaintenanceManager(IStorageService storageService,
             IDataManager dataManager, 
@@ -50,7 +51,8 @@ namespace Avalanche.Api.Managers.Maintenance
             ProceduresSearchConfiguration proceduresSearchConfiguration,
             AutoLabelsConfiguration autoLabelsConfiguration,
             LabelsConfiguration labelsConfiguration,
-            PrintingConfiguration printingConfiguration)
+            PrintingConfiguration printingConfiguration,
+            SetupConfiguration setupConfiguration)
         {
             _storageService = storageService;
             _dataManager = dataManager;
@@ -67,6 +69,7 @@ namespace Avalanche.Api.Managers.Maintenance
             _autoLabelsConfiguration = autoLabelsConfiguration;
             _labelsConfiguration = labelsConfiguration;
             _printingConfiguration = printingConfiguration;
+            _setupConfiguration = setupConfiguration;
         }
 
         #region Settings
@@ -79,6 +82,8 @@ namespace Avalanche.Api.Managers.Maintenance
         public LabelsConfiguration GetLabelsConfigurationSettings() => _labelsConfiguration;
 
         public PrintingConfiguration GetPrintingConfigurationSettings() => _printingConfiguration;
+
+        public SetupConfiguration GetSetupConfigurationSettings() => _setupConfiguration;
 
         #endregion
 
