@@ -12,7 +12,7 @@ namespace Avalanche.Api.Managers.Media
         Task HidePreview(RoutingPreviewViewModel routingPreviewViewModel);
         Task ShowPreview(RoutingPreviewViewModel routingPreviewViewModel);
 
-        Task RouteVideoSource(RouteModel routesViewModel);
+        Task RouteVideoSource(AliasIndexModel sink, AliasIndexModel source);
         Task UnrouteVideoSource(AliasIndexModel sinkViewModel);
 
         Task<IList<VideoSourceModel>> GetRoutingSources();
@@ -26,5 +26,7 @@ namespace Avalanche.Api.Managers.Media
         Task PublishDefaultDisplayRecordingState();
 
         Task SetSelectedSource(AliasIndexModel selectedSource);
+
+        Task<AliasIndexViewModel> GetSelectedSource();
     }
 }

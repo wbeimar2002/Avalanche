@@ -24,14 +24,14 @@ namespace Avalanche.Api.Controllers.V1
     [ApiController]
     [Authorize]
     [FeatureGate(FeatureFlags.Devices)]
-    public class DevicesController : ControllerBase
+    public class DeviceController : ControllerBase
     {
         private readonly ILogger _logger;
         private readonly IRoutingManager _routingManager;
         private readonly IWebHostEnvironment _environment;
         private readonly IMapper _mapper;
 
-        public DevicesController(ILogger<DevicesController> logger, IRoutingManager routingManager, IMapper mapper, IWebHostEnvironment environment)
+        public DeviceController(ILogger<DeviceController> logger, IRoutingManager routingManager, IMapper mapper, IWebHostEnvironment environment)
         {
             _environment = environment;
             _logger = ThrowIfNullOrReturn(nameof(logger), logger);
@@ -44,7 +44,7 @@ namespace Avalanche.Api.Controllers.V1
         /// </summary>
         /// <param name="routingActionViewModel"></param>
         /// <returns></returns>
-        [HttpPost("fullscreen")]
+        [HttpPost("videorouting/fullscreen")]
         public async Task<IActionResult> EnterFullScreen(FullScreenRequestViewModel routingActionViewModel)
         {
             try
@@ -65,36 +65,11 @@ namespace Avalanche.Api.Controllers.V1
         }
 
         /// <summary>
-        /// Exit full screen mode
-        /// </summary>
-        /// <param name="routingActionViewModel"></param>
-        /// <returns></returns>
-        [HttpDelete("fullscreen")]
-        public async Task<IActionResult> ExitFullScreen(FullScreenRequestViewModel routingActionViewModel)
-        {
-            try
-            {
-                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
-                await _routingManager.ExitFullScreen(routingActionViewModel);
-                return Ok();
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, LoggerHelper.GetLogMessage(DebugLogType.Exception), ex);
-                return new BadRequestObjectResult(ex.Get(_environment.IsDevelopment()));
-            }
-            finally
-            {
-                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
-            }
-        }
-
-        /// <summary>
         /// Hide preview 
         /// </summary>
         /// <param name="routingPreviewViewModel"></param>
         /// <returns></returns>
-        [HttpDelete("preview")]
+        [HttpDelete("hardwarepreview")]
         public async Task<IActionResult> HidePreview(RoutingPreviewViewModel routingPreviewViewModel)
         {
             try
@@ -119,7 +94,7 @@ namespace Avalanche.Api.Controllers.V1
         /// </summary>
         /// <param name="routingPreviewViewModel"></param>
         /// <returns></returns>
-        [HttpPost("preview")]
+        [HttpPost("hardwarepreview")]
         public async Task<IActionResult> ShowPreview(RoutingPreviewViewModel routingPreviewViewModel)
         {
             try
@@ -144,13 +119,14 @@ namespace Avalanche.Api.Controllers.V1
         /// </summary>
         /// <param name="routesViewModel"></param>
         /// <returns></returns>
-        [HttpPut("routes")]
-        public async Task<IActionResult> RouteVideoSource(RouteViewModel routesViewModel)
+        [HttpPut("videorouting/routes/{sink}")]
+        public async Task<IActionResult> RouteVideoSource([FromRoute] AliasIndexViewModel sink, [FromBody] AliasIndexViewModel source)
         {
             try
             {
                 _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
-                await _routingManager.RouteVideoSource(_mapper.Map<RouteViewModel, RouteModel>(routesViewModel));
+                await _routingManager.RouteVideoSource(_mapper.Map<AliasIndexViewModel, AliasIndexModel>(sink),
+                    _mapper.Map<AliasIndexViewModel, AliasIndexModel>(source));
                 return Ok();
             }
             catch (Exception ex)
@@ -169,7 +145,7 @@ namespace Avalanche.Api.Controllers.V1
         /// </summary>
         /// <param name="sink"></param>
         /// <returns></returns>
-        [HttpDelete("routes")]
+        [HttpDelete("videorouting/routes/{sink}")]
         public async Task<IActionResult> UnrouteVideo(AliasIndexViewModel sink)
         {
             try
@@ -194,7 +170,7 @@ namespace Avalanche.Api.Controllers.V1
         /// Get operating sources
         /// </summary>
         /// <returns></returns>
-        [HttpGet("operating/sources")]
+        [HttpGet("videorouting/sources")]
         [Produces(typeof(IList<VideoSourceModel>))]
         public async Task<IActionResult> GetRoutingSources()
         {
@@ -219,7 +195,7 @@ namespace Avalanche.Api.Controllers.V1
         /// Get operating outputs
         /// </summary>
         /// <returns></returns>
-        [HttpGet("operating/outputs")]
+        [HttpGet("videorouting/sinks")]
         [Produces(typeof(IList<VideoSinkModel>))]
         public async Task<IActionResult> GetRoutingSinks()
         {
@@ -246,17 +222,17 @@ namespace Avalanche.Api.Controllers.V1
         /// <param name="alias"></param>
         /// <param name="index"></param>
         /// <returns></returns>
-        [HttpGet("operating/sources/alternative")]
+        [HttpGet("videorouting/sources/{source}/alternative")]
         [Produces(typeof(VideoSourceModel))]
-        public async Task<IActionResult> GetAlternativeSource([FromQuery] string alias, [FromQuery] string index)
+        public async Task<IActionResult> GetAlternativeSource([FromRoute] AliasIndexViewModel source)
         {
             try
             {
                 _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
                 var result = await _routingManager.GetAlternativeSource(new AliasIndexModel()
                 {
-                    Alias = alias,
-                    Index = index
+                    Alias = source.Alias,
+                    Index = source.Index
                 });
 
                 return Ok(result);
@@ -272,7 +248,7 @@ namespace Avalanche.Api.Controllers.V1
             }
         }
 
-        [HttpPut("displayRecording")]
+        [HttpPut("videorouting/displayRecording")]
         public async Task<IActionResult> SetDisplayRecordingEnabled([FromBody] DisplayRecordingRequestViewModel displayRecordingRequestModel)
         {
             try
@@ -293,7 +269,7 @@ namespace Avalanche.Api.Controllers.V1
             }
         }
 
-        [HttpGet("displayRecordings")]
+        [HttpGet("videorouting/displayRecording")]
         [Produces(typeof(IList<DisplayRecordingViewModel>))]
         public async Task<IActionResult> GetDisplayRecordingStates()
         {
@@ -315,20 +291,41 @@ namespace Avalanche.Api.Controllers.V1
             }
         }
 
-        [HttpPut("operate/sources/selected")]
+        [HttpPut("videorouting/sources/selected")]
         [ProducesResponseType(typeof(void), StatusCodes.Status200OK)]
-        public async Task<IActionResult> SetSelectedSource([FromQuery] string alias, [FromQuery] string index)
+        public async Task<IActionResult> SetSelectedSource([FromBody] AliasIndexViewModel selectedSource)
         {
             try
             {
                 _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
                 await _routingManager.SetSelectedSource(new AliasIndexModel
                 {
-                    Alias = alias,
-                    Index = index
+                    Alias = selectedSource.Alias,
+                    Index = selectedSource.Index
                 });
 
                 return Ok();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, LoggerHelper.GetLogMessage(DebugLogType.Exception), ex);
+                return new BadRequestObjectResult(ex.Get(_environment.IsDevelopment()));
+            }
+            finally
+            {
+                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
+            }
+        }
+
+        [HttpGet("videorouting/sources/selected")]
+        [ProducesResponseType(typeof(AliasIndexViewModel), StatusCodes.Status200OK)]
+        public async Task<IActionResult> GetSelectedSource()
+        {
+            try
+            {
+                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
+                var result = await _routingManager.GetSelectedSource();
+                return Ok(result);
             }
             catch (Exception ex)
             {
