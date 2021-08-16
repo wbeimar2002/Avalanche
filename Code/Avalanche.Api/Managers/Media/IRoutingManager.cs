@@ -8,7 +8,6 @@ namespace Avalanche.Api.Managers.Media
     public interface IRoutingManager
     {
         Task EnterFullScreen(FullScreenRequestViewModel routingActionViewModel);
-        Task ExitFullScreen(FullScreenRequestViewModel routingActionViewModel);
         Task HidePreview(RoutingPreviewViewModel routingPreviewViewModel);
         Task ShowPreview(RoutingPreviewViewModel routingPreviewViewModel);
 
