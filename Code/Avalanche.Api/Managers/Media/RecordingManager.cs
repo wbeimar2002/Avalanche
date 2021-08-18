@@ -29,21 +29,7 @@ namespace Avalanche.Api.Managers.Media
             _mapper = mapper;
         }
 
-        public async Task CaptureImage()
-        {
-            var activeProcedure = await GetActiveProcedureState().ConfigureAwait(false);
-            var message = new CaptureImageRequest()
-            {
-                Record = new RecordMessage
-                {
-                    LibId = activeProcedure.LibraryId, 
-                    RepositoryId = activeProcedure.RepositoryId
-                },
-            };
-            await _recorderService.CaptureImage(message).ConfigureAwait(false);
-
-            await _stateClient.PublishEvent(new ImageCaptureStartedEvent()).ConfigureAwait(false);
-        }
+        public async Task CaptureImage() => await _stateClient.PublishEvent(new ImageCaptureStartedEvent()).ConfigureAwait(false);
 
         public string GetCapturePreview(string path, string procedureId, string repository)
         {
@@ -85,19 +71,7 @@ namespace Avalanche.Api.Managers.Media
             return _mapper.Map<RecordingTimelineModel, RecordingTimelineViewModel>(timelineModel);
         }
 
-        public async Task StartRecording()
-        {
-            var activeProcedure = await GetActiveProcedureState().ConfigureAwait(false);
-            var message = new RecordMessage
-            {
-                LibId = activeProcedure.LibraryId,
-                RepositoryId = activeProcedure.RepositoryId
-            };
-
-            await _recorderService.StartRecording(message).ConfigureAwait(false);
-
-            await _stateClient.PublishEvent(new RecordingStartEvent()).ConfigureAwait(false);
-        }
+        public async Task StartRecording() => await _stateClient.PublishEvent(new RecordingStartEvent()).ConfigureAwait(false);
 
         public async Task StopRecording() => await _recorderService.StopRecording().ConfigureAwait(false);
 
