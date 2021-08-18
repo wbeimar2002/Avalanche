@@ -1,4 +1,4 @@
-﻿using Avalanche.Api.ViewModels;
+using Avalanche.Api.ViewModels;
 using Ism.SystemState.Models.VideoRouting;
 using Ism.SystemState.Models.PgsTimeout;
 using System.Threading.Tasks;
@@ -40,5 +40,7 @@ namespace Avalanche.Api.Hubs
         Task OnPgsTimeoutRoomStateChanged(PgsTimeoutRoomStateEvent evt);
 
         Task OnImageCaptureStarted(ImageCaptureStartedEvent evt);
+
+        Task OnSelectedSourceStateDataChanged(SelectedSourceStateData selectedSourceStateData);
     }
 }
