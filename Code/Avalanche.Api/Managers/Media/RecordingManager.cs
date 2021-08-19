@@ -29,7 +29,7 @@ namespace Avalanche.Api.Managers.Media
             _mapper = mapper;
         }
 
-        public async Task CaptureImage() => await _stateClient.PublishEvent(new ImageCaptureStartedEvent()).ConfigureAwait(false);
+        public async Task CaptureImage() => await _stateClient.PublishEvent(new CaptureImageEvent()).ConfigureAwait(false);
 
         public string GetCapturePreview(string path, string procedureId, string repository)
         {
@@ -71,7 +71,7 @@ namespace Avalanche.Api.Managers.Media
             return _mapper.Map<RecordingTimelineModel, RecordingTimelineViewModel>(timelineModel);
         }
 
-        public async Task StartRecording() => await _stateClient.PublishEvent(new RecordingStartEvent()).ConfigureAwait(false);
+        public async Task StartRecording() => await _stateClient.PublishEvent(new StartRecordingEvent()).ConfigureAwait(false);
 
         public async Task StopRecording() => await _recorderService.StopRecording().ConfigureAwait(false);
 
