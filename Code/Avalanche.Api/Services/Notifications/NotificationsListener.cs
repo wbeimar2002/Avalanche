@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+using AutoMapper;
 using Avalanche.Api.Hubs;
 using Ism.Broadcaster.EventArgs;
 using Ism.Broadcaster.Services;
@@ -84,6 +84,8 @@ namespace Avalanche.Api.Services.Notifications
             AddSubscription<PgsTimeoutRoomStateEvent>(evt => _hubContext.Clients.All.OnPgsTimeoutRoomStateChanged(evt));
 
             AddSubscription<ImageCaptureStartedEvent>(evt => _hubContext.Clients.All.OnImageCaptureStarted(evt));
+
+            AddDataSubscription<SelectedSourceStateData>(data => _hubContext.Clients.All.OnSelectedSourceStateDataChanged(data));
 
             return Task.CompletedTask;
         }
