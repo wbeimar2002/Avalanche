@@ -28,13 +28,9 @@ namespace Avalanche.Api.Services.Media
 
         public RecorderService(RecorderSecureClient client) => _client = client;
 
-        public async Task StartRecording(RecordMessage recordMessage) => await _client.StartRecording(recordMessage).ConfigureAwait(false);
-
         public async Task<RecorderState> GetRecorderState() => await _client.GetRecorderState().ConfigureAwait(false);
 
         public async Task StopRecording() => await _client.StopRecording().ConfigureAwait(false);
-
-        public async Task CaptureImage(CaptureImageRequest captureRequest) => await _client.CaptureImage(captureRequest).ConfigureAwait(false);
 
         public async Task<IEnumerable<RecordChannelMessage>> GetRecordingChannels()
         {
