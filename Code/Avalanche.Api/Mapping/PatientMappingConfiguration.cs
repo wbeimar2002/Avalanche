@@ -297,7 +297,7 @@ namespace Avalanche.Api.Mapping
                     opt => opt.MapFrom(src => src.LastName))
                 .ForPath(dest =>
                     dest.PatientRecord.Patient.Sex,
-                    opt => opt.MapFrom(src => GetSex(src.Sex.Id)))
+                    opt => opt.MapFrom(src => src.Sex.Id))
                 .ForPath(dest =>
                     dest.PatientRecord.Patient.Dob,
                     opt => opt.MapFrom(src => new Ism.Storage.PatientList.Client.V1.Protos.FixedDateMessage
@@ -405,30 +405,9 @@ namespace Avalanche.Api.Mapping
 
         }
 
-        private KeyValuePairViewModel GetSex(Ism.Storage.PatientList.Client.V1.Protos.SexMessage sex)
+        private KeyValuePairViewModel GetSex(string sex)
         {
-            string id = System.Enum.GetName(typeof(Ism.Storage.PatientList.Client.V1.Protos.SexMessage), sex);
-            return MappingUtilities.GetSexViewModel(id);
-        }
-        private KeyValuePairViewModel GetSex(Ism.PatientInfoEngine.V1.Protos.Sex sex)
-        {
-            string id = System.Enum.GetName(typeof(Ism.PatientInfoEngine.V1.Protos.Sex), sex);
-            return MappingUtilities.GetSexViewModel(id);
-        }
-
-        private Ism.Storage.PatientList.Client.V1.Protos.SexMessage GetSex(string sex)
-        {
-            switch (sex)
-            {
-                case "F":
-                    return Ism.Storage.PatientList.Client.V1.Protos.SexMessage.F;
-                case "M":
-                    return Ism.Storage.PatientList.Client.V1.Protos.SexMessage.M;
-                case "O": //TODO: Check this O is not supported by Pie Service
-                case "U":
-                default:
-                    return Ism.Storage.PatientList.Client.V1.Protos.SexMessage.U;
-            }
+            return MappingUtilities.GetSexViewModel(sex);
         }
     }
 }
