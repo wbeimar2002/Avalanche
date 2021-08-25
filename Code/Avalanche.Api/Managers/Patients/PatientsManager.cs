@@ -101,13 +101,11 @@ namespace Avalanche.Api.Managers.Patients
 
             await CheckProcedureType(newPatient.ProcedureType, newPatient.Department);
 
-            var allocatedProcedure = await _proceduresManager.AllocateNewProcedure();
-
             var request = _mapper.Map<PatientViewModel, Ism.Storage.PatientList.Client.V1.Protos.AddPatientRecordRequest>(newPatient);
             request.AccessInfo = _mapper.Map<Ism.Storage.PatientList.Client.V1.Protos.AccessInfoMessage>(accessInfo);
 
             var result = await _pieService.RegisterPatient(request);
-            await PublishActiveProcedure(newPatient, allocatedProcedure);
+            await AllocateNewProcedure(newPatient, false);
 
             return _mapper.Map<Ism.Storage.PatientList.Client.V1.Protos.AddPatientRecordResponse, PatientViewModel>(result);
         }
@@ -151,25 +149,11 @@ namespace Avalanche.Api.Managers.Patients
             };
 
             var accessInfo = _accessInfoFactory.GenerateAccessInfo();
-            var allocatedProcedure = await _proceduresManager.AllocateNewProcedure();
-
             var request = _mapper.Map<PatientViewModel, Ism.Storage.PatientList.Client.V1.Protos.AddPatientRecordRequest>(newPatient);
             request.AccessInfo = _mapper.Map<Ism.Storage.PatientList.Client.V1.Protos.AccessInfoMessage>(accessInfo);
             var result = await _pieService.RegisterPatient(request);
 
-            var configuredBackgroundRecordingMode = _recorderConfiguration.BackgroundRecordingMode;
-
-            //AlwaysStartOnCapture: This value can be configured in maintenance but it is not used in the Media system to control the behavior
-            if (configuredBackgroundRecordingMode == Shared.Infrastructure.Enumerations.BackgroundRecordingMode.AlwaysStartOnCapture)
-            {
-                newPatient.BackgroundRecordingMode = Shared.Infrastructure.Enumerations.BackgroundRecordingMode.StartOnMediaCapture;
-            }
-            else
-            {
-                newPatient.BackgroundRecordingMode = configuredBackgroundRecordingMode;
-            }
-
-            await PublishActiveProcedure(newPatient, allocatedProcedure);
+            await AllocateNewProcedure(newPatient, true);
 
             return _mapper.Map<Ism.Storage.PatientList.Client.V1.Protos.AddPatientRecordResponse, PatientViewModel>(result);
         }
@@ -194,6 +178,8 @@ namespace Avalanche.Api.Managers.Patients
 
             var request = _mapper.Map<PatientViewModel, Ism.Storage.PatientList.Client.V1.Protos.UpdatePatientRecordRequest>(existingPatient);
             request.AccessInfo = _mapper.Map<Ism.Storage.PatientList.Client.V1.Protos.AccessInfoMessage>(accessInfo);
+
+            await AllocateNewProcedure(existingPatient, false);
 
             await _pieService.UpdatePatient(request);
         }
@@ -226,7 +212,7 @@ namespace Avalanche.Api.Managers.Patients
             cultureName = string.IsNullOrEmpty(cultureName) ? "en-US" : cultureName;
 
             //TODO: This is the final implementation?
-            var accessInfo = _accessInfoFactory.GenerateAccessInfo();          
+            var accessInfo = _accessInfoFactory.GenerateAccessInfo();
 
             var request = _mapper.Map<Ism.PatientInfoEngine.V1.Protos.SearchRequest>(filter);
             request.SearchCultureName = cultureName;
@@ -300,19 +286,19 @@ namespace Avalanche.Api.Managers.Patients
             }
         }
 
-        private async Task PublishActiveProcedure(PatientViewModel patient, ProcedureAllocationViewModel allocatedProcedure)
+        private async Task PublishActiveProcedure(PatientViewModel patient, ProcedureAllocationViewModel procedure)
         {
-            if (null != patient)
+            if (patient != null && procedure != null)
             {
                 await _stateClient.PersistData(new Ism.SystemState.Models.Procedure.ActiveProcedureState(
                     patient: _mapper.Map<Ism.SystemState.Models.Procedure.Patient>(patient),
                     images: new List<Ism.SystemState.Models.Procedure.ProcedureImage>(),
                     videos: new List<Ism.SystemState.Models.Procedure.ProcedureVideo>(),
                     backgroundVideos: new List<Ism.SystemState.Models.Procedure.ProcedureVideo>(),
-                    libraryId: allocatedProcedure.ProcedureId.Id,
-                    repositoryId: allocatedProcedure.ProcedureId.RepositoryName,
+                    libraryId: procedure.ProcedureId.Id,
+                    repositoryId: procedure.ProcedureId.RepositoryName,
 
-                    procedureRelativePath: allocatedProcedure.RelativePath,
+                    procedureRelativePath: procedure.RelativePath,
                     recordingEvents: new List<Ism.SystemState.Models.Procedure.VideoRecordingEvent>(),
                     department: _mapper.Map<Ism.SystemState.Models.Procedure.Department>(patient.Department),
                     procedureType: _mapper.Map<Ism.SystemState.Models.Procedure.ProcedureType>(patient.ProcedureType),
@@ -330,17 +316,39 @@ namespace Avalanche.Api.Managers.Patients
                     notes: new List<Ism.SystemState.Models.Procedure.ProcedureNote>(),
                     externalProcedureId: null,
                     scheduleId: null
-                    ));
+                ));
             }
             else
             {
-                await _stateClient.PersistData<Ism.SystemState.Models.Procedure.ActiveProcedureState>(null); 
+                await _stateClient.PersistData<Ism.SystemState.Models.Procedure.ActiveProcedureState>(null);
             }
 
             // TODO: figure out how to do dependencies better
             // maybe have a separate data/event for when a patient is registered
             // routing manager subscribes to that event and we can have a cleaner dependency graph
             await _routingManager?.PublishDefaultDisplayRecordingState();
+        }
+
+        private async Task AllocateNewProcedure(PatientViewModel patient, bool useconfiguredBackgroundRecordingMode)
+        {
+            var allocatedProcedure = await _proceduresManager.AllocateNewProcedure();
+
+            if (useconfiguredBackgroundRecordingMode)
+            {
+                var configuredBackgroundRecordingMode = _recorderConfiguration.BackgroundRecordingMode;
+
+                //AlwaysStartOnCapture: This value can be configured in maintenance but it is not used in the Media system to control the behavior
+                if (configuredBackgroundRecordingMode == Shared.Infrastructure.Enumerations.BackgroundRecordingMode.AlwaysStartOnCapture)
+                {
+                    patient.BackgroundRecordingMode = Shared.Infrastructure.Enumerations.BackgroundRecordingMode.StartOnMediaCapture;
+                }
+                else
+                {
+                    patient.BackgroundRecordingMode = configuredBackgroundRecordingMode;
+                }
+            }
+
+            await PublishActiveProcedure(patient, allocatedProcedure);
         }
     }
 }
