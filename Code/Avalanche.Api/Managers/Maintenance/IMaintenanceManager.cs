@@ -23,5 +23,6 @@ namespace Avalanche.Api.Managers.Maintenance
         LabelsConfiguration GetLabelsConfigurationSettings();
         SetupConfiguration GetSetupConfigurationSettings();
         PrintingConfiguration GetPrintingConfigurationSettings();
+        RecorderConfiguration GetRecorderConfigurationSettings();
     }
 }

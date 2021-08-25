@@ -40,6 +40,7 @@ namespace Avalanche.Api.Managers.Maintenance
         private readonly LabelsConfiguration _labelsConfiguration;
         private readonly PrintingConfiguration _printingConfiguration;
         private readonly SetupConfiguration _setupConfiguration;
+        private readonly RecorderConfiguration _recorderConfiguration;
 
         public MaintenanceManager(IStorageService storageService,
             IDataManager dataManager, 
@@ -52,7 +53,8 @@ namespace Avalanche.Api.Managers.Maintenance
             AutoLabelsConfiguration autoLabelsConfiguration,
             LabelsConfiguration labelsConfiguration,
             PrintingConfiguration printingConfiguration,
-            SetupConfiguration setupConfiguration)
+            SetupConfiguration setupConfiguration,
+            RecorderConfiguration recorderConfiguration)
         {
             _storageService = storageService;
             _dataManager = dataManager;
@@ -70,6 +72,7 @@ namespace Avalanche.Api.Managers.Maintenance
             _labelsConfiguration = labelsConfiguration;
             _printingConfiguration = printingConfiguration;
             _setupConfiguration = setupConfiguration;
+            _recorderConfiguration = recorderConfiguration;
         }
 
         #region Settings
@@ -84,6 +87,8 @@ namespace Avalanche.Api.Managers.Maintenance
         public PrintingConfiguration GetPrintingConfigurationSettings() => _printingConfiguration;
 
         public SetupConfiguration GetSetupConfigurationSettings() => _setupConfiguration;
+
+        public RecorderConfiguration GetRecorderConfigurationSettings() => _recorderConfiguration;
 
         #endregion
 
@@ -272,7 +277,7 @@ namespace Avalanche.Api.Managers.Maintenance
         private static void SetRelatedObject(DynamicPropertyViewModel property, ExpandoObject element)
         {
             var serializedElement = JsonConvert.SerializeObject(element);
-            
+
             JObject jsonElement = JObject.Parse(serializedElement);
 
             var id = jsonElement[property.JsonKey];
@@ -281,7 +286,7 @@ namespace Avalanche.Api.Managers.Maintenance
 
             if (found == null)
             {
-                jsonElement.Add(new JProperty(property.JsonKeyForRelatedObject, JObject.Parse("{}")));                
+                jsonElement.Add(new JProperty(property.JsonKeyForRelatedObject, JObject.Parse("{}")));
             }
             else
             {

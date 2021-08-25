@@ -235,11 +235,11 @@ namespace Avalanche.Api.Tests.Managers
         {
             _pieService.Setup(mock => mock.RegisterPatient(new AddPatientRecordRequest()));
 
-            Task Act() => _manager.RegisterPatient(newPatient, BackgroundRecordingMode.StartImmediately);
+            Task Act() => _manager.RegisterPatient(newPatient);
 
             Assert.That(Act, Throws.TypeOf<ArgumentNullException>());
 
-            _pieService.Verify(mock => mock.RegisterPatient(new AddPatientRecordRequest()), Times.Never);            
+            _pieService.Verify(mock => mock.RegisterPatient(new AddPatientRecordRequest()), Times.Never);
         }
 
         [Test]
@@ -299,7 +299,7 @@ namespace Avalanche.Api.Tests.Managers
             _pieService.Setup(mock => mock.RegisterPatient(It.IsAny<AddPatientRecordRequest>())).ReturnsAsync(response);
 
             // Act
-            var result = _manager.RegisterPatient(newPatient, BackgroundRecordingMode.StartImmediately);
+            var result = _manager.RegisterPatient(newPatient);
 
             // Assert
             _dataManagementService.Verify(mock => mock.GetProcedureType(It.IsAny<Ism.Storage.DataManagement.Client.V1.Protos.GetProcedureTypeRequest>()), Times.Once);
@@ -367,7 +367,7 @@ namespace Avalanche.Api.Tests.Managers
 
             _pieService.Setup(mock => mock.RegisterPatient(It.IsAny<AddPatientRecordRequest>())).ReturnsAsync(response);
 
-            var result = _manager.RegisterPatient(newPatient, BackgroundRecordingMode.StartImmediately);
+            var result = _manager.RegisterPatient(newPatient);
 
             _dataManagementService.Verify(mock => mock.GetProcedureType(It.IsAny<Ism.Storage.DataManagement.Client.V1.Protos.GetProcedureTypeRequest>()), Times.Once);
             _dataManagementService.Verify(mock => mock.AddProcedureType(It.IsAny<Ism.Storage.DataManagement.Client.V1.Protos.AddProcedureTypeRequest>()), Times.Never);

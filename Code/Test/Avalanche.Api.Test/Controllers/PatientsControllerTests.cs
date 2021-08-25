@@ -203,9 +203,9 @@ namespace Avalanche.Api.Tests.Controllers
         public void RegisterPatientShouldReturnOkWithNewPatientInfo()
         {
             PatientViewModel patient = new PatientViewModel();
-            _patientsManager.Setup(mock => mock.RegisterPatient(patient,BackgroundRecordingMode.StartImmediately)).ReturnsAsync(new PatientViewModel());
+            _patientsManager.Setup(mock => mock.RegisterPatient(patient)).ReturnsAsync(new PatientViewModel());
 
-            var okResult = _controller.ManualPatientRegistration(patient,BackgroundRecordingMode.StartImmediately);
+            var okResult = _controller.ManualPatientRegistration(patient);
 
             if (_checkLogger)
             {
@@ -220,9 +220,9 @@ namespace Avalanche.Api.Tests.Controllers
         [Test]
         public void RegisterPatientShouldReturnBadResultIfFails()
         {
-            _patientsManager.Setup(mock => mock.RegisterPatient(It.IsAny<PatientViewModel>(), It.IsAny<BackgroundRecordingMode>())).Throws(It.IsAny<Exception>());
+            _patientsManager.Setup(mock => mock.RegisterPatient(It.IsAny<PatientViewModel>())).Throws(It.IsAny<Exception>());
 
-            var badResult = _controller.ManualPatientRegistration(It.IsAny<PatientViewModel>(), It.IsAny<BackgroundRecordingMode>());
+            var badResult = _controller.ManualPatientRegistration(It.IsAny<PatientViewModel>());
 
             if (_checkLogger)
             {

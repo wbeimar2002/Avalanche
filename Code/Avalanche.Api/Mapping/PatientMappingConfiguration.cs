@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+using AutoMapper;
 using Avalanche.Api.ViewModels;
 using Avalanche.Shared.Domain.Models;
 using Google.Protobuf.WellKnownTypes;
@@ -199,6 +199,9 @@ namespace Avalanche.Api.Mapping
                 .ForMember(dest =>
                     dest.Sex,
                     opt => opt.MapFrom(src => GetSex(src.PatientRecord.Patient.Sex)))
+                .ForMember(dest =>
+                    dest.BackgroundRecordingMode,
+                    opt => opt.Ignore())
                 .ReverseMap();
 
             CreateMap<Ism.PatientInfoEngine.V1.Protos.PatientRecordMessage, PatientViewModel>()
@@ -235,6 +238,9 @@ namespace Avalanche.Api.Mapping
                 .ForMember(dest =>
                     dest.Sex,
                     opt => opt.MapFrom(src => GetSex(src.Patient.Sex)))
+                .ForMember(dest =>
+                    dest.BackgroundRecordingMode,
+                    opt => opt.Ignore())
                 .ReverseMap();
 
             CreateMap<PatientViewModel, Ism.Storage.PatientList.Client.V1.Protos.AddPatientRecordRequest>()
