@@ -383,7 +383,7 @@ namespace Avalanche.Api.Controllers.V1
         }
 
         [HttpGet("settings/RecorderConfiguration")]
-        [Produces(typeof(SetupConfiguration))]
+        [Produces(typeof(RecorderConfiguration))]
         public async Task<IActionResult> GetRecorderConfigurationSettings()
         {
             try
