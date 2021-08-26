@@ -5,7 +5,7 @@ using System.Dynamic;
 namespace Avalanche.Api.ViewModels
 {
     [JsonObject(ItemNullValueHandling = NullValueHandling.Ignore)]
-    public class DynamicListViewModel 
+    public class DynamicListViewModel
     {
         public string? TitleTranslationKey { get; set; }
         public string? SourceKey { get; set; }
