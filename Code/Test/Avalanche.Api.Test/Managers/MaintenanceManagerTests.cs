@@ -38,6 +38,7 @@ namespace Avalanche.Api.Test.Managers
         Mock<LabelsConfiguration> _labelsConfiguration;
         Mock<PrintingConfiguration> _printingConfiguration;
         Mock<SetupConfiguration> _setupConfiguration;
+        Mock<RecorderConfiguration> _recorderConfiguration;
 
         MaintenanceManager _manager;
 
@@ -64,10 +65,11 @@ namespace Avalanche.Api.Test.Managers
             _labelsConfiguration = new Mock<LabelsConfiguration>();
             _printingConfiguration = new Mock<PrintingConfiguration>();
             _setupConfiguration = new Mock<SetupConfiguration>();
+            _recorderConfiguration = new Mock<RecorderConfiguration>();
 
             _manager = new MaintenanceManager(_storageService.Object, _dataManager.Object, _mapper, _httpContextAccessor.Object, _libraryService.Object,
                 _filesService.Object, _generalApiConfiguration.Object, _proceduresSearchConfiguration.Object, _autoLabelsConfiguration.Object,
-                _labelsConfiguration.Object, _printingConfiguration.Object, _setupConfiguration.Object);
+                _labelsConfiguration.Object, _printingConfiguration.Object, _setupConfiguration.Object, _recorderConfiguration.Object);
         }
 
         [Test]
@@ -75,7 +77,7 @@ namespace Avalanche.Api.Test.Managers
         {
             var expected = new Ism.Library.V1.Protos.ReindexRepositoryResponse { ErrorCount = 2, SuccessCount = 4, TotalCount = 6 };
             _libraryService.Setup(m => m.ReindexRepository(It.IsAny<string>())).ReturnsAsync(expected);
-            
+
             var response = await _manager.ReindexRepository(new ViewModels.ReindexRepositoryRequestViewModel("repo"));
 
             Assert.NotNull(response);

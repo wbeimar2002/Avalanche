@@ -31,7 +31,7 @@ namespace Avalanche.Api.Managers.Patients
         private readonly IStateClient _stateClient;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IProceduresManager _proceduresManager;
-        
+
         // TODO: remove this when we figure out how to clean up dependencies
         private readonly IRoutingManager _routingManager;
 
@@ -39,7 +39,7 @@ namespace Avalanche.Api.Managers.Patients
         private readonly ConfigurationContext configurationContext;
         private readonly RecorderConfiguration _recorderConfiguration;
 
-        public PatientsManager(IPieService pieService, 
+        public PatientsManager(IPieService pieService,
             IAccessInfoFactory accessInfoFactory,
             IStorageService storageService,
             IMapper mapper, 
@@ -61,12 +61,13 @@ namespace Avalanche.Api.Managers.Patients
             _routingManager = routingManager;
             _httpContextAccessor = httpContextAccessor;
             _recorderConfiguration = recorderConfiguration;
+
             user = HttpContextUtilities.GetUser(_httpContextAccessor.HttpContext);
             configurationContext = _mapper.Map<UserModel, ConfigurationContext>(user);
             configurationContext.IdnId = Guid.NewGuid().ToString();
         }
 
-        public async Task<PatientViewModel> RegisterPatient(PatientViewModel newPatient, Shared.Infrastructure.Enumerations.BackgroundRecordingMode backgroundRecordingMode)
+        public async Task<PatientViewModel> RegisterPatient(PatientViewModel newPatient)
         {
             Preconditions.ThrowIfNull(nameof(newPatient), newPatient);
             Preconditions.ThrowIfNull(nameof(newPatient.MRN), newPatient.MRN);
@@ -100,25 +101,20 @@ namespace Avalanche.Api.Managers.Patients
 
             await CheckProcedureType(newPatient.ProcedureType, newPatient.Department);
 
-            var allocatedProcedure = await _proceduresManager.AllocateNewProcedure();
-
             var request = _mapper.Map<PatientViewModel, Ism.Storage.PatientList.Client.V1.Protos.AddPatientRecordRequest>(newPatient);
             request.AccessInfo = _mapper.Map<Ism.Storage.PatientList.Client.V1.Protos.AccessInfoMessage>(accessInfo);
 
             var result = await _pieService.RegisterPatient(request);
-            
-            var backRecordingMode = _mapper.Map<Ism.SystemState.Models.Procedure.BackgroundRecordingMode>(backgroundRecordingMode);
-            await PublishActiveProcedure(newPatient, allocatedProcedure, backRecordingMode);
+            await AllocateNewProcedure(newPatient, false);
 
-            var response = _mapper.Map<Ism.Storage.PatientList.Client.V1.Protos.AddPatientRecordResponse, PatientViewModel>(result);
-            return response;
+            return _mapper.Map<Ism.Storage.PatientList.Client.V1.Protos.AddPatientRecordResponse, PatientViewModel>(result);
         }
 
         public async Task<PatientViewModel> QuickPatientRegistration()
         {
             var setupSettings = await _storageService.GetJsonObject<SetupConfiguration>(nameof(SetupConfiguration), 1, configurationContext);
-            string quickRegistrationDateFormat = setupSettings.Registration.Quick.DateFormat;
-            string formattedDate = DateTime.UtcNow.ToLocalTime().ToString(quickRegistrationDateFormat);
+            var quickRegistrationDateFormat = setupSettings.Registration.Quick.DateFormat;
+            var formattedDate = DateTime.UtcNow.ToLocalTime().ToString(quickRegistrationDateFormat);
 
             //TODO: Pending facility
             //TODO: Pending check this default data
@@ -153,14 +149,11 @@ namespace Avalanche.Api.Managers.Patients
             };
 
             var accessInfo = _accessInfoFactory.GenerateAccessInfo();
-            var allocatedProcedure = await _proceduresManager.AllocateNewProcedure();
-
             var request = _mapper.Map<PatientViewModel, Ism.Storage.PatientList.Client.V1.Protos.AddPatientRecordRequest>(newPatient);
             request.AccessInfo = _mapper.Map<Ism.Storage.PatientList.Client.V1.Protos.AccessInfoMessage>(accessInfo);
             var result = await _pieService.RegisterPatient(request);
 
-            var backgroundRecordingMode = _mapper.Map<Ism.SystemState.Models.Procedure.BackgroundRecordingMode>(_recorderConfiguration.BackgroundRecordingMode);
-            await PublishActiveProcedure(newPatient, allocatedProcedure, backgroundRecordingMode);
+            await AllocateNewProcedure(newPatient, true);
 
             return _mapper.Map<Ism.Storage.PatientList.Client.V1.Protos.AddPatientRecordResponse, PatientViewModel>(result);
         }
@@ -185,6 +178,8 @@ namespace Avalanche.Api.Managers.Patients
 
             var request = _mapper.Map<PatientViewModel, Ism.Storage.PatientList.Client.V1.Protos.UpdatePatientRecordRequest>(existingPatient);
             request.AccessInfo = _mapper.Map<Ism.Storage.PatientList.Client.V1.Protos.AccessInfoMessage>(accessInfo);
+
+            await AllocateNewProcedure(existingPatient, false);
 
             await _pieService.UpdatePatient(request);
         }
@@ -217,7 +212,7 @@ namespace Avalanche.Api.Managers.Patients
             cultureName = string.IsNullOrEmpty(cultureName) ? "en-US" : cultureName;
 
             //TODO: This is the final implementation?
-            var accessInfo = _accessInfoFactory.GenerateAccessInfo();          
+            var accessInfo = _accessInfoFactory.GenerateAccessInfo();
 
             var request = _mapper.Map<Ism.PatientInfoEngine.V1.Protos.SearchRequest>(filter);
             request.SearchCultureName = cultureName;
@@ -291,24 +286,25 @@ namespace Avalanche.Api.Managers.Patients
             }
         }
 
-        private async Task PublishActiveProcedure(PatientViewModel patient, ProcedureAllocationViewModel allocatedProcedure, Ism.SystemState.Models.Procedure.BackgroundRecordingMode backgroundRecordingMode)
+        private async Task PublishActiveProcedure(PatientViewModel patient, ProcedureAllocationViewModel procedure)
         {
-            if (null != patient)
+            if (patient != null && procedure != null)
             {
                 await _stateClient.PersistData(new Ism.SystemState.Models.Procedure.ActiveProcedureState(
                     patient: _mapper.Map<Ism.SystemState.Models.Procedure.Patient>(patient),
                     images: new List<Ism.SystemState.Models.Procedure.ProcedureImage>(),
                     videos: new List<Ism.SystemState.Models.Procedure.ProcedureVideo>(),
                     backgroundVideos: new List<Ism.SystemState.Models.Procedure.ProcedureVideo>(),
-                    libraryId: allocatedProcedure.ProcedureId.Id,
-                    repositoryId: allocatedProcedure.ProcedureId.RepositoryName,
+                    libraryId: procedure.ProcedureId.Id,
+                    repositoryId: procedure.ProcedureId.RepositoryName,
 
-                    procedureRelativePath: allocatedProcedure.RelativePath,
+                    procedureRelativePath: procedure.RelativePath,
                     recordingEvents: new List<Ism.SystemState.Models.Procedure.VideoRecordingEvent>(),
                     department: _mapper.Map<Ism.SystemState.Models.Procedure.Department>(patient.Department),
                     procedureType: _mapper.Map<Ism.SystemState.Models.Procedure.ProcedureType>(patient.ProcedureType),
                     physician: _mapper.Map<Ism.SystemState.Models.Procedure.Physician>(patient.Physician),
                     requiresUserConfirmation: false,
+                    recordingMode: _mapper.Map<Ism.SystemState.Models.Procedure.BackgroundRecordingMode>(patient.BackgroundRecordingMode),
 
                     // TODO:
                     procedureStartTimeUtc: DateTimeOffset.UtcNow,
@@ -319,19 +315,40 @@ namespace Avalanche.Api.Managers.Patients
                     accession: null,
                     notes: new List<Ism.SystemState.Models.Procedure.ProcedureNote>(),
                     externalProcedureId: null,
-                    scheduleId: null,
-                    recordingMode: backgroundRecordingMode
-                    ));
+                    scheduleId: null
+                ));
             }
             else
             {
-                await _stateClient.PersistData<Ism.SystemState.Models.Procedure.ActiveProcedureState>(null); 
+                await _stateClient.PersistData<Ism.SystemState.Models.Procedure.ActiveProcedureState>(null);
             }
 
             // TODO: figure out how to do dependencies better
             // maybe have a separate data/event for when a patient is registered
             // routing manager subscribes to that event and we can have a cleaner dependency graph
             await _routingManager?.PublishDefaultDisplayRecordingState();
+        }
+
+        private async Task AllocateNewProcedure(PatientViewModel patient, bool useconfiguredBackgroundRecordingMode)
+        {
+            var allocatedProcedure = await _proceduresManager.AllocateNewProcedure();
+
+            if (useconfiguredBackgroundRecordingMode)
+            {
+                var configuredBackgroundRecordingMode = _recorderConfiguration.BackgroundRecordingMode;
+
+                //AlwaysStartOnCapture: This value can be configured in maintenance but it is not used in the Media system to control the behavior
+                if (configuredBackgroundRecordingMode == Shared.Infrastructure.Enumerations.BackgroundRecordingMode.AlwaysStartOnCapture)
+                {
+                    patient.BackgroundRecordingMode = Shared.Infrastructure.Enumerations.BackgroundRecordingMode.StartOnMediaCapture;
+                }
+                else
+                {
+                    patient.BackgroundRecordingMode = configuredBackgroundRecordingMode;
+                }
+            }
+
+            await PublishActiveProcedure(patient, allocatedProcedure);
         }
     }
 }

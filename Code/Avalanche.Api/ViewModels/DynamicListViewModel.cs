@@ -5,7 +5,7 @@ using System.Dynamic;
 namespace Avalanche.Api.ViewModels
 {
     [JsonObject(ItemNullValueHandling = NullValueHandling.Ignore)]
-    public class DynamicListViewModel 
+    public class DynamicListViewModel
     {
         public string? TitleTranslationKey { get; set; }
         public string? SourceKey { get; set; }
@@ -15,6 +15,7 @@ namespace Avalanche.Api.ViewModels
         public string? EditTranslationKeyOnSuccess { get; set; }
         public bool DeleteAllowed { get; set; }
         public bool SaveAsFile { get; set; }
+        public List<DynamicExtendedPropertyViewModel>? ExtendedProperties { get; set; }
         public string? DefaultSortProperty { get; set; }
         public List<LinkViewModel>? Links { get; set; }
         public List<ErrorViewModel>? CustomErrorMessages { get; set; }
