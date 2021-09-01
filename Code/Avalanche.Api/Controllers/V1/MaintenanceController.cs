@@ -297,14 +297,14 @@ namespace Avalanche.Api.Controllers.V1
             }
         }
 
-        [HttpGet("settings/AutoLabelsConfiguration")]
+        [HttpGet("settings/AutoLabelsConfiguration/{procedureTypeId}")]
         [Produces(typeof(AutoLabelsConfiguration))]
-        public async Task<IActionResult> GetAutoLabelsConfigurationSettings()
+        public async Task<IActionResult> GetAutoLabelsConfigurationSettings(int procedureTypeId)
         {
             try
             {
                 _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
-                var result = _maintenanceManager.GetAutoLabelsConfigurationSettings();
+                var result = _maintenanceManager.GetAutoLabelsConfigurationSettings(procedureTypeId);
                 return Ok(result);
 
             }
