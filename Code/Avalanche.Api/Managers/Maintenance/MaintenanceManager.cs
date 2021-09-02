@@ -83,7 +83,7 @@ namespace Avalanche.Api.Managers.Maintenance
 
         public AutoLabelsConfiguration GetAutoLabelsConfigurationSettings(int procedureTypeId) => new AutoLabelsConfiguration()
         {
-            AutoLabels = _autoLabelsConfiguration.AutoLabels.Where(l => l.ProcedureTypeId == procedureTypeId).ToList()
+            AutoLabels = _autoLabelsConfiguration.AutoLabels?.Where(l => l.ProcedureTypeId == procedureTypeId).ToList()
         };
 
         public LabelsConfiguration GetLabelsConfigurationSettings() => _labelsConfiguration;
@@ -714,7 +714,15 @@ namespace Avalanche.Api.Managers.Maintenance
 
         public async Task UpdateAutoLabelsConfigurationByProcedureType(int procedureTypeId, List<AutoLabelAutoLabelsConfiguration> autoLabels)
         {
-            _autoLabelsConfiguration.AutoLabels.RemoveAll(l => l.ProcedureTypeId == procedureTypeId);
+            if (_autoLabelsConfiguration.AutoLabels == null)
+            {
+                _autoLabelsConfiguration.AutoLabels = new List<AutoLabelAutoLabelsConfiguration>();
+            }
+            else
+            {
+                _autoLabelsConfiguration.AutoLabels.RemoveAll(l => l.ProcedureTypeId == procedureTypeId);
+            }
+
             _autoLabelsConfiguration.AutoLabels.AddRange(autoLabels);
 
             await _storageService.SaveJsonObject(nameof(AutoLabelsConfiguration), _autoLabelsConfiguration.Json(), 1, _configurationContext);
