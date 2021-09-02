@@ -9,6 +9,7 @@ using Avalanche.Api.ViewModels;
 using Avalanche.Shared.Domain.Models;
 using Avalanche.Shared.Infrastructure.Configuration;
 using Avalanche.Shared.Infrastructure.Enumerations;
+using Avalanche.Shared.Infrastructure.Extensions;
 using Ism.Common.Core.Configuration.Models;
 using Ism.Utility.Core;
 using Microsoft.AspNetCore.Http;
@@ -256,7 +257,7 @@ namespace Avalanche.Api.Managers.Maintenance
             {
                 foreach (var property in category.Properties)
                 {
-                    await SetIsRequired(_configurationContext, category.SourceKey, property);
+                    await SetIsRequired(category.SourceKey, property);
 
                     if (!string.IsNullOrEmpty(property.SourceKey))
                     {
@@ -363,7 +364,7 @@ namespace Avalanche.Api.Managers.Maintenance
             return null;
         }
 
-        private async Task SetIsRequired(ConfigurationContext configurationContext, string key, DynamicPropertyViewModel item)
+        private async Task SetIsRequired(string key, DynamicPropertyViewModel item)
         {
             //It is a switch because this can grow on time
             switch (key)
@@ -372,7 +373,7 @@ namespace Avalanche.Api.Managers.Maintenance
                     switch (item.JsonKey)
                     {
                         case "DepartmentId":
-                            var setupSettings = await _storageService.GetJsonObject<SetupConfiguration>(nameof(SetupConfiguration), 1, configurationContext);
+                            var setupSettings = await _storageService.GetJsonObject<SetupConfiguration>(nameof(SetupConfiguration), 1, _configurationContext);
                             bool departmentsSupported = setupSettings.General.DepartmentsSupported;
 
                             item.Required = departmentsSupported;
@@ -592,7 +593,7 @@ namespace Avalanche.Api.Managers.Maintenance
                 await _storageService.SaveJsonObject(category.JsonKey, json, 1, configurationContext);
             }
             else
-            {   
+            {
                 throw new ValidationException("Json Schema Invalid for " + category.JsonKey);
             }
         }
@@ -709,6 +710,14 @@ namespace Avalanche.Api.Managers.Maintenance
                 default:
                     throw new ValidationException("Method Not Allowed");
             }
+        }
+
+        public async Task UpdateAutoLabelsConfigurationByProcedureType(int procedureTypeId, List<AutoLabelAutoLabelsConfiguration> autoLabels)
+        {
+            _autoLabelsConfiguration.AutoLabels.RemoveAll(l => l.ProcedureTypeId == procedureTypeId);
+            _autoLabelsConfiguration.AutoLabels.AddRange(autoLabels);
+
+            await _storageService.SaveJsonObject(nameof(AutoLabelsConfiguration), _autoLabelsConfiguration.Json(), 1, _configurationContext);
         }
     }
 }
