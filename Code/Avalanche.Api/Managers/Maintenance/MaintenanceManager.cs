@@ -190,6 +190,8 @@ namespace Avalanche.Api.Managers.Maintenance
         {
             var category = await _storageService.GetJsonObject<DynamicListViewModel>(key, 1, _configurationContext);
 
+            CheckLinks(category);
+
             List<dynamic> values = null;
 
             switch (category.SourceKey)
@@ -233,6 +235,32 @@ namespace Avalanche.Api.Managers.Maintenance
             }
 
             return values == null ? null : await BuildCategoryList(category, values);
+        }
+
+        private void CheckLinks(DynamicListViewModel category)
+        {
+            switch (category.SourceKey)
+            {
+                case "ProcedureTypes":
+                    for (int i = 0; i < category.Links.Count; i++)
+                    {
+                        var link = category.Links[i];
+                        switch (link.Key)
+                        {
+                            case "AutoLabels":
+                                if (!_labelsConfiguration.AutoLabelsEnabled)
+                                {
+                                    category.Links.Remove(link);
+                                }
+                                break;
+                            default:
+                                break;
+                        }
+                    }
+                    break;
+                default:
+                    break;
+            }
         }
 
         public async Task<DynamicListViewModel> GetEmbeddedListByKey(string settingValues, string metadataKey, string listKey)
