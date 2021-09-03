@@ -12,6 +12,7 @@ using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
 using System;
+using System.Threading.Tasks;
 
 namespace Avalanche.Api.Tests.Controllers
 {
@@ -44,7 +45,7 @@ namespace Avalanche.Api.Tests.Controllers
         }
 
         [Test]
-        public void DevicesController_ShowPreview_Verify_Success()
+        public async Task DevicesController_ShowPreview_Verify_Success()
         {
             var vm = new RoutingPreviewViewModel()
             {
@@ -58,7 +59,7 @@ namespace Avalanche.Api.Tests.Controllers
                 }
             };
 
-            var okResult = _controller.ShowPreview(vm);
+            var okResult = await _controller.ShowPreview(vm);
 
             if (_checkLogger)
             {
@@ -67,11 +68,11 @@ namespace Avalanche.Api.Tests.Controllers
                 _logger.Verify(LogLevel.Debug, $"Completed {nameof(DevicesController)}.{nameof(DevicesController.ShowPreview)}", Times.Once());
             }
 
-            Assert.IsInstanceOf<OkResult>(okResult.Result);
+            Assert.IsInstanceOf<OkResult>(okResult);
         }
 
         [Test]
-        public void DevicesController_HidePreview_Verify_Success()
+        public async Task DevicesController_HidePreview_Verify_Success()
         {
             var vm = new RoutingPreviewViewModel()
             {
@@ -85,7 +86,7 @@ namespace Avalanche.Api.Tests.Controllers
                 }
             };
 
-            var okResult = _controller.HidePreview(vm);
+            var okResult = await _controller.HidePreview(vm);
 
             if (_checkLogger)
             {
@@ -94,7 +95,7 @@ namespace Avalanche.Api.Tests.Controllers
                 _logger.Verify(LogLevel.Debug, $"Completed {nameof(DevicesController)}.{nameof(DevicesController.HidePreview)}", Times.Once());
             }
 
-            Assert.IsInstanceOf<OkResult>(okResult.Result);
+            Assert.IsInstanceOf<OkResult>(okResult);
         }
     }
 }
