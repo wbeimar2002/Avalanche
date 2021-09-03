@@ -81,9 +81,10 @@ namespace Avalanche.Api.Managers.Maintenance
 
         public ProceduresSearchConfiguration GetProceduresSearchConfigurationSettings() => _proceduresSearchConfiguration;
 
-        public AutoLabelsConfiguration GetAutoLabelsConfigurationSettings(int procedureTypeId) => new AutoLabelsConfiguration()
+        public AutoLabelsConfiguration GetAutoLabelsConfigurationSettings(int? procedureTypeId) => new AutoLabelsConfiguration()
         {
-            AutoLabels = _autoLabelsConfiguration.AutoLabels?.Where(l => l.ProcedureTypeId == procedureTypeId).ToList()
+            AutoLabels = _autoLabelsConfiguration.AutoLabels?.Where(l => l.ProcedureTypeId == procedureTypeId).ToList(),
+            Colors = _autoLabelsConfiguration.Colors
         };
 
         public LabelsConfiguration GetLabelsConfigurationSettings() => _labelsConfiguration;

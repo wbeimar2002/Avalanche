@@ -260,8 +260,8 @@ namespace Avalanche.Api.Controllers.V1
             try
             {
                 _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
-                var result = _maintenanceManager.UpdateAutoLabelsConfigurationByProcedureType(procedureTypeId, autoLabels);
-                return Ok(result);
+                await _maintenanceManager.UpdateAutoLabelsConfigurationByProcedureType(procedureTypeId, autoLabels);
+                return Ok();
             }
             catch (Exception ex)
             {
