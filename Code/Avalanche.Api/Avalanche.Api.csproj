@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
@@ -49,6 +49,7 @@
     <PackageReference Include="Ism.PgsTimeout.Client" Version="1.0.0-prerelease0014" />
     <PackageReference Include="Ism.Recorder.Client" Version="1.0.0-prerelease0040" />
     <PackageReference Include="Ism.Routing.Client" Version="1.0.0-prerelease0016" />
+    <PackageReference Include="Ism.PatientInfoEngine.Client" Version="1.0.0-prerelease0027" />
     <PackageReference Include="Ism.Storage.Configuration.Client" Version="1.0.0-prerelease0030" />
     <PackageReference Include="Ism.Streaming.Client" Version="1.0.0-prerelease0016" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="3.1.17" />
@@ -70,7 +71,6 @@
     <PackageReference Include="Ism.Storage.PatientList.Client" Version="99.99.*" />
     <PackageReference Include="Ism.Library.Client" Version="99.99.*" />
     <PackageReference Include="Ism.SystemState.Client" Version="99.99.*" />
-    <PackageReference Include="Ism.PatientInfoEngine.Client" Version="99.99.*" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(Configuration)'=='Debug' Or '$(Configuration)'=='Release'">
@@ -78,7 +78,6 @@
     <PackageReference Include="Ism.Library.Client" Version="1.0.0-prerelease0047" />
     <PackageReference Include="Ism.SystemState.Client" Version="1.0.0-prerelease0070" />
     <PackageReference Include="Ism.Storage.PatientList.Client" Version="1.0.0-prerelease0025" />
-    <PackageReference Include="Ism.PatientInfoEngine.Client" Version="1.0.0-prerelease0027" />
   </ItemGroup>
 
   <ItemGroup>
