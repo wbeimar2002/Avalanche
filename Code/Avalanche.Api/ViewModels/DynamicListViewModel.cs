@@ -17,7 +17,7 @@ namespace Avalanche.Api.ViewModels
         public bool SaveAsFile { get; set; }
         public List<DynamicExtendedPropertyViewModel>? ExtendedProperties { get; set; }
         public string? DefaultSortProperty { get; set; }
-        public List<LinkViewModel>? Links { get; set; }
+        public List<DynamicLinkViewModel>? Links { get; set; }
         public List<ErrorViewModel>? CustomErrorMessages { get; set; }
         public List<DynamicPropertyViewModel>? Properties { get; set; }
         public List<ExpandoObject>? Data { get; set; }

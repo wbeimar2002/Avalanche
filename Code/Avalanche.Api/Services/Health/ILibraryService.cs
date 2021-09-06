@@ -15,5 +15,6 @@ namespace Avalanche.Api.Services.Health
         Task<ReindexRepositoryResponse> ReindexRepository(string repositoryName);
         Task<GetFinishedProcedureResponse> GetFinishedProcedure(GetFinishedProcedureRequest getFinishedProcedureRequest);
         Task<GetFinishedProceduresResponse> GetFinishedProcedures(GetFinishedProceduresRequest getFinishedProceduresRequest);
+        Task<GetFinishedProceduresResponse> GetFinishedProceduresByPatient(GetFinishedProceduresRequestByPatient getFinishedProceduresRequestByPatient);
     }
 }

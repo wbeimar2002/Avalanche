@@ -192,6 +192,22 @@ namespace Avalanche.Api.Managers.Procedures
             };
         }
 
+        public async Task<ProceduresContainerViewModel> SearchByPatient(string patientId)
+        {
+            Preconditions.ThrowIfNull(nameof(patientId), patientId);
+
+            var response = await _libraryService.GetFinishedProceduresByPatient(new GetFinishedProceduresRequestByPatient()
+            {
+                PatientId = patientId
+            });
+
+            return new ProceduresContainerViewModel()
+            {
+                TotalCount = response.TotalCount,
+                Procedures = _mapper.Map<IList<ProcedureMessage>, IList<ProcedureViewModel>>(response.Procedures)
+            };
+        }
+
         public async Task<ProcedureViewModel> GetProcedureDetails(string libraryId)
         {
             Preconditions.ThrowIfNull(nameof(libraryId), libraryId);

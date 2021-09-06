@@ -13,6 +13,5 @@ namespace Avalanche.Api.ViewModels
 
         public List<DynamicSectionViewModel>? Sections { get; set; }
         public List<DynamicSettingViewModel>? Settings { get; set; }
-        
     }
 }

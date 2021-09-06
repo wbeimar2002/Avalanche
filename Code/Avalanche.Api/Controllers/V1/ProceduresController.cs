@@ -65,6 +65,31 @@ namespace Avalanche.Api.Controllers.V1
         }
 
         /// <summary>
+        /// Search procedures by patient
+        /// </summary>
+        /// <param name="patientId"></param>
+        [HttpPost("patients/{patientId}")]
+        [ProducesResponseType(typeof(ProceduresContainerViewModel), StatusCodes.Status200OK)]
+        public async Task<IActionResult> SearchByPatient(string patientId)
+        {
+            try
+            {
+                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
+                var result = await _proceduresManager.SearchByPatient(patientId);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, LoggerHelper.GetLogMessage(DebugLogType.Exception));
+                return new BadRequestObjectResult(ex.Get(_environment.IsDevelopment()));
+            }
+            finally
+            {
+                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
+            }
+        }
+
+        /// <summary>
         /// Get procedure
         /// </summary>
         [HttpGet("{id}")]
