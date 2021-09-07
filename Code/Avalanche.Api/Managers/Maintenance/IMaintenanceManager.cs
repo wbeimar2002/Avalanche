@@ -19,6 +19,8 @@ namespace Avalanche.Api.Managers.Maintenance
         Task<ReindexStatusViewModel> ReindexRepository(ReindexRepositoryRequestViewModel reindexRequest);
         Task UpdateAutoLabelsConfigurationByProcedureType(int procedureTypeId, List<AutoLabelAutoLabelsConfiguration> autoLabels);
 
+        Task<FeaturesConfiguration> GetFeatures();
+
         GeneralApiConfiguration GetGeneralApiConfigurationSettings();
         ProceduresSearchConfiguration GetProceduresSearchConfigurationSettings();
         AutoLabelsConfiguration GetAutoLabelsConfigurationSettings(int? procedureTypeId);
