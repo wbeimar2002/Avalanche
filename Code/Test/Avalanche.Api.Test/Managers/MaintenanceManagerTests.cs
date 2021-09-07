@@ -10,6 +10,7 @@ using Avalanche.Api.ViewModels;
 using Avalanche.Shared.Infrastructure.Configuration;
 using Ism.Common.Core.Configuration.Models;
 using Microsoft.AspNetCore.Http;
+using Microsoft.FeatureManagement;
 using Moq;
 using Newtonsoft.Json;
 using NUnit.Framework;
@@ -31,6 +32,7 @@ namespace Avalanche.Api.Test.Managers
         Mock<IDataManager> _dataManager;
         Mock<IHttpContextAccessor> _httpContextAccessor;
         Mock<IFilesService> _filesService;
+        Mock<IFeatureManager> _featureManager;
 
         Mock<GeneralApiConfiguration> _generalApiConfiguration;
         Mock<ProceduresSearchConfiguration> _proceduresSearchConfiguration;
@@ -58,6 +60,7 @@ namespace Avalanche.Api.Test.Managers
             _dataManager = new Mock<IDataManager>();
             _httpContextAccessor = new Mock<IHttpContextAccessor>();
             _filesService = new Mock<IFilesService>();
+            _featureManager = new Mock<IFeatureManager>();
 
             _generalApiConfiguration = new Mock<GeneralApiConfiguration>();
             _proceduresSearchConfiguration = new Mock<ProceduresSearchConfiguration>();
@@ -68,7 +71,7 @@ namespace Avalanche.Api.Test.Managers
             _recorderConfiguration = new Mock<RecorderConfiguration>();
 
             _manager = new MaintenanceManager(_storageService.Object, _dataManager.Object, _mapper, _httpContextAccessor.Object, _libraryService.Object,
-                _filesService.Object, _generalApiConfiguration.Object, _proceduresSearchConfiguration.Object, _autoLabelsConfiguration.Object,
+                _filesService.Object, _featureManager.Object, _generalApiConfiguration.Object, _proceduresSearchConfiguration.Object, _autoLabelsConfiguration.Object,
                 _labelsConfiguration.Object, _printingConfiguration.Object, _setupConfiguration.Object, _recorderConfiguration.Object);
         }
 
