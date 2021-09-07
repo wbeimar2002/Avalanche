@@ -46,7 +46,7 @@
       <TreatAsUsed>true</TreatAsUsed>
     </PackageReference>
     <PackageReference Include="Ism.Common.Core.Hosting" Version="1.0.0-prerelease041" />
-    <PackageReference Include="Ism.PgsTimeout.Client" Version="1.0.0-prerelease0014" />
+    <PackageReference Include="Ism.PgsTimeout.Client" Version="1.0.0-prerelease0015" />
     <PackageReference Include="Ism.Recorder.Client" Version="1.0.0-prerelease0040" />
     <PackageReference Include="Ism.Routing.Client" Version="1.0.0-prerelease0016" />
     <PackageReference Include="Ism.PatientInfoEngine.Client" Version="1.0.0-prerelease0027" />
