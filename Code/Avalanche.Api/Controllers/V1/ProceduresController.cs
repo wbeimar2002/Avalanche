@@ -68,7 +68,7 @@ namespace Avalanche.Api.Controllers.V1
         /// Search procedures by patient
         /// </summary>
         /// <param name="patientId"></param>
-        [HttpPost("patients/{patientId}")]
+        [HttpGet("patients/{patientId}")]
         [ProducesResponseType(typeof(ProceduresContainerViewModel), StatusCodes.Status200OK)]
         public async Task<IActionResult> SearchByPatient(string patientId)
         {
