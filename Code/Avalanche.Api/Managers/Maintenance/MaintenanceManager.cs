@@ -13,6 +13,7 @@ using Avalanche.Shared.Infrastructure.Extensions;
 using Ism.Common.Core.Configuration.Models;
 using Ism.Utility.Core;
 using Microsoft.AspNetCore.Http;
+using Microsoft.FeatureManagement;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
@@ -32,6 +33,7 @@ namespace Avalanche.Api.Managers.Maintenance
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly ILibraryService _libraryService;
         private readonly IFilesService _filesService;
+        private readonly IFeatureManager _featureManager;
 
         private readonly UserModel _user;
         private readonly ConfigurationContext _configurationContext;
@@ -49,6 +51,7 @@ namespace Avalanche.Api.Managers.Maintenance
             IHttpContextAccessor httpContextAccessor,
             ILibraryService libraryService,
             IFilesService filesService,
+            IFeatureManager featureManager,
             GeneralApiConfiguration generalApiConfiguration,
             ProceduresSearchConfiguration proceduresSearchConfiguration,
             AutoLabelsConfiguration autoLabelsConfiguration,
@@ -63,6 +66,7 @@ namespace Avalanche.Api.Managers.Maintenance
             _mapper = mapper;
             _libraryService = libraryService;
             _filesService = filesService;
+            _featureManager = featureManager;
 
             _user = HttpContextUtilities.GetUser(_httpContextAccessor.HttpContext);
             _configurationContext = _mapper.Map<UserModel, ConfigurationContext>(_user);
@@ -75,6 +79,10 @@ namespace Avalanche.Api.Managers.Maintenance
             _setupConfiguration = setupConfiguration;
             _recorderConfiguration = recorderConfiguration;
         }
+
+        #region Features
+        public async Task<FeaturesConfiguration> GetFeatures() => await FeaturesHelper.GetFeatures(_featureManager);
+        #endregion Features
 
         #region Settings
         public GeneralApiConfiguration GetGeneralApiConfigurationSettings() => _generalApiConfiguration;
