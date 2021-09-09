@@ -426,6 +426,7 @@ namespace Avalanche.Api.Controllers.V1
         #endregion Settings
 
         #region
+        [AllowAnonymous]
         [HttpGet("settings/Features")]
         [Produces(typeof(FeaturesConfiguration))]
         public async Task<IActionResult> GetFeatures()
