@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
@@ -46,6 +46,7 @@
       <TreatAsUsed>true</TreatAsUsed>
     </PackageReference>
     <PackageReference Include="Ism.Common.Core.Hosting" Version="1.0.0-prerelease041" />
+    <PackageReference Include="Ism.Medpresence.Client" Version="1.0.0-prerelease0002" />
     <PackageReference Include="Ism.PgsTimeout.Client" Version="1.0.0-prerelease0015" />
     <PackageReference Include="Ism.Recorder.Client" Version="1.0.0-prerelease0040" />
     <PackageReference Include="Ism.Routing.Client" Version="1.0.0-prerelease0016" />

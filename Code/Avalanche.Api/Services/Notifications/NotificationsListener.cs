@@ -18,6 +18,7 @@ using System.Threading.Tasks;
 using Ism.SystemState.Models.Library;
 using Ism.SystemState.Models.Recorder;
 using Ism.SystemState.Models.Notifications;
+using Ism.SystemState.Models.Medpresence;
 using Avalanche.Api.Managers.Media;
 
 namespace Avalanche.Api.Services.Notifications
@@ -86,6 +87,13 @@ namespace Avalanche.Api.Services.Notifications
             AddSubscription<ImageCaptureStartedEvent>(evt => _hubContext.Clients.All.OnImageCaptureStarted(evt));
 
             AddDataSubscription<SelectedSourceStateData>(data => _hubContext.Clients.All.OnSelectedSourceStateDataChanged(data));
+
+            AddSubscription<ServiceSessionCreatedEvent>(evt => _hubContext.Clients.All.OnServiceSessionStarted(evt));
+
+            AddSubscription<ServiceSessionEndedEvent>(evt => _hubContext.Clients.All.OnServiceSessionEnded(evt));
+
+            AddSubscription<ServiceSessionAttendeesChanged>(evt => _hubContext.Clients.All.OnServiceSessionAttendeesChanged(evt));
+
 
             return Task.CompletedTask;
         }

@@ -52,8 +52,12 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.FeatureManagement;
+
 using Serilog;
 using System.Diagnostics.CodeAnalysis;
+using Avalanche.Api.Services.Medpresence;
+using Ism.Medpresence.Client.V1.Extensions;
+using Avalanche.Api.Managers.Medpresence;
 
 namespace Avalanche.Api
 {
@@ -99,6 +103,7 @@ namespace Avalanche.Api
             services.AddTransient<IProceduresManager, ProceduresManager>();
             services.AddTransient<INotificationsManager, NotificationsManager>();
             services.AddTransient<ISecurityManager, SecurityManager>();
+            services.AddTransient<IMedpresenceManager, MedpresenceManager>();
 
             // Singleton
             services.AddSingleton<IPgsTimeoutManager, PgsTimeoutManager>();
@@ -125,6 +130,7 @@ namespace Avalanche.Api
             services.AddSingleton<IAccessInfoFactory, AccessInfoFactory>();
             services.AddSingleton<IFilesService, FilesService>();
             services.AddSingleton<IPresetManager, PresetManager>();
+            services.AddSingleton<IMedpresenceService, MedpresenceService>();
 
             // gRPC Infrastructure
             _ = services.AddConfigurationPoco<GrpcServiceRegistry>(_configuration, nameof(GrpcServiceRegistry));
@@ -146,6 +152,7 @@ namespace Avalanche.Api
             _ = services.AddRoutingSecureClient();
             _ = services.AddWebRtcStreamerSecureClient();
             _ = services.AddGrpcStateClient("AvalancheApi");
+            _ = services.AddMedpresenceSecureClient();
 
             // Hosted Services
             services.AddHostedService<NotificationsListener>();
