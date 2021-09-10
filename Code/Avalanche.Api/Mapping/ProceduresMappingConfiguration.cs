@@ -246,8 +246,9 @@ namespace Avalanche.Api.Mapping
 
         private List<ProcedureExportStatus> GetProcedureExportStatus()
         {
+            var rnd = new Random();
             var fixture = new Fixture();
-            return fixture.CreateMany<ProcedureExportStatus>(3).ToList();
+            return fixture.CreateMany<ProcedureExportStatus>(rnd.Next(1, 4)).ToList();
         }
     }
 }
