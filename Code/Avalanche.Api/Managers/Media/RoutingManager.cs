@@ -383,5 +383,17 @@ namespace Avalanche.Api.Managers.Media
             };
             _stateClient.PersistData(new VideoRoutingModels.SelectedSourceStateData(aliasIndexModel));
         }
+
+        public async Task<AliasIndexModel> GetSelectedSource()
+        {
+            var currentData = await _stateClient.GetData<VideoRoutingModels.SelectedSourceStateData>();
+            var selectedSource = new AliasIndexModel
+            {
+                Alias = currentData?.SelectedSource?.Alias ?? "",
+                Index = currentData?.SelectedSource?.Index ?? ""
+            };
+
+            return selectedSource;
+        }
     }
 }
