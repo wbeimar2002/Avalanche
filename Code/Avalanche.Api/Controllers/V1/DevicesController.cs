@@ -340,5 +340,26 @@ namespace Avalanche.Api.Controllers.V1
                 _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
             }
         }
+
+        [HttpPut("operating/sources/getselectedsource")]
+        [ProducesResponseType(typeof(AliasIndexModel), StatusCodes.Status200OK)]
+        public async Task<IActionResult> GetSelectedSource()
+        {
+            try
+            {
+                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
+                var result = await _routingManager.GetSelectedSource();
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, LoggerHelper.GetLogMessage(DebugLogType.Exception), ex);
+                return new BadRequestObjectResult(ex.Get(_environment.IsDevelopment()));
+            }
+            finally
+            {
+                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
+            }
+        }
     }
 }

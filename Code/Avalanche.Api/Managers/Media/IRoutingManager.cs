@@ -26,5 +26,6 @@ namespace Avalanche.Api.Managers.Media
         Task PublishDefaultDisplayRecordingState();
 
         Task SetSelectedSource(AliasIndexModel selectedSource);
+        Task<AliasIndexModel> GetSelectedSource();
     }
 }
