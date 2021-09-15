@@ -341,7 +341,7 @@ namespace Avalanche.Api.Controllers.V1
             }
         }
 
-        [HttpPut("operating/sources/selected")]
+        [HttpGet("operating/sources/selected")]
         [ProducesResponseType(typeof(AliasIndexModel), StatusCodes.Status200OK)]
         public async Task<IActionResult> GetSelectedSource()
         {
