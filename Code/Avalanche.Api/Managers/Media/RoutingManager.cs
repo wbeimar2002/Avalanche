@@ -201,7 +201,7 @@ namespace Avalanche.Api.Managers.Media
             return listResult;
         }
 
-        public async Task<IList<DisplayRecordingViewModel>> GetDisplayRecordingStates()
+        public async Task<IList<DisplayRecordingViewModel>> GetDisplayRecordingStatuses()
         {
             var currentData = await _stateClient.GetData<VideoRoutingModels.DisplayRecordStateData>();
             var recordChannels = await _recorderService.GetRecordingChannels();
@@ -221,7 +221,7 @@ namespace Avalanche.Api.Managers.Media
             })?.ToList();
         }
 
-        public async Task SetDisplayRecordingEnabled(DisplayRecordingRequestViewModel displayRecordingRequestModel)
+        public async Task SetDisplayRecordingStatus(DisplayRecordingRequestViewModel displayRecordingRequestModel)
         {
             if (displayRecordingRequestModel.Enabled)
             {

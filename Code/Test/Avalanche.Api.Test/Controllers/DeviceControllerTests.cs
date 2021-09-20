@@ -19,24 +19,24 @@ namespace Avalanche.Api.Tests.Controllers
     [TestFixture()]
     public class DeviceControllerTests
     {
-        Mock<ILogger<DevicesController>> _logger;
+        Mock<ILogger<DeviceController>> _logger;
         Mock<IWebHostEnvironment> _environment;
         Mock<IRoutingManager> _routingManager;
         Mock<IMapper> _autoMapper;
 
-        DevicesController _controller;
+        DeviceController _controller;
 
         bool _checkLogger = false;
 
         [SetUp]
         public void Setup()
         {
-            _logger = new Mock<ILogger<DevicesController>>();
+            _logger = new Mock<ILogger<DeviceController>>();
             _environment = new Mock<IWebHostEnvironment>();
             _routingManager = new Mock<IRoutingManager>();
             _routingManager = new Mock<IRoutingManager>();
             _autoMapper = new Mock<IMapper>();
-            _controller = new DevicesController(_logger.Object, _routingManager.Object, _autoMapper.Object, _environment.Object);
+            _controller = new DeviceController(_logger.Object, _routingManager.Object, _autoMapper.Object, _environment.Object);
 
             OperatingSystem os = Environment.OSVersion;
 
@@ -63,9 +63,9 @@ namespace Avalanche.Api.Tests.Controllers
 
             if (_checkLogger)
             {
-                _logger.Verify(LogLevel.Error, $"Exception {nameof(DevicesController)}.{nameof(DevicesController.ShowPreview)}", Times.Never());
-                _logger.Verify(LogLevel.Debug, $"Requested {nameof(DevicesController)}.{nameof(DevicesController.ShowPreview)}", Times.Once());
-                _logger.Verify(LogLevel.Debug, $"Completed {nameof(DevicesController)}.{nameof(DevicesController.ShowPreview)}", Times.Once());
+                _logger.Verify(LogLevel.Error, $"Exception {nameof(DeviceController)}.{nameof(DeviceController.ShowPreview)}", Times.Never());
+                _logger.Verify(LogLevel.Debug, $"Requested {nameof(DeviceController)}.{nameof(DeviceController.ShowPreview)}", Times.Once());
+                _logger.Verify(LogLevel.Debug, $"Completed {nameof(DeviceController)}.{nameof(DeviceController.ShowPreview)}", Times.Once());
             }
 
             Assert.IsInstanceOf<OkResult>(okResult);
@@ -90,9 +90,9 @@ namespace Avalanche.Api.Tests.Controllers
 
             if (_checkLogger)
             {
-                _logger.Verify(LogLevel.Error, $"Exception {nameof(DevicesController)}.{nameof(DevicesController.HidePreview)}", Times.Never());
-                _logger.Verify(LogLevel.Debug, $"Requested {nameof(DevicesController)}.{nameof(DevicesController.HidePreview)}", Times.Once());
-                _logger.Verify(LogLevel.Debug, $"Completed {nameof(DevicesController)}.{nameof(DevicesController.HidePreview)}", Times.Once());
+                _logger.Verify(LogLevel.Error, $"Exception {nameof(DeviceController)}.{nameof(DeviceController.HidePreview)}", Times.Never());
+                _logger.Verify(LogLevel.Debug, $"Requested {nameof(DeviceController)}.{nameof(DeviceController.HidePreview)}", Times.Once());
+                _logger.Verify(LogLevel.Debug, $"Completed {nameof(DeviceController)}.{nameof(DeviceController.HidePreview)}", Times.Once());
             }
 
             Assert.IsInstanceOf<OkResult>(okResult);

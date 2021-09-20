@@ -64,7 +64,7 @@ namespace Avalanche.Api.Test.Managers
 
             var manager = new RoutingManager(_routingService.Object, _recorderService.Object, _avidisService.Object, _storageService.Object, _mapper, _httpContextAccessor.Object, _stateClient.Object);
 
-            await manager.SetDisplayRecordingEnabled(new ViewModels.DisplayRecordingRequestViewModel
+            await manager.SetDisplayRecordingStatus(new ViewModels.DisplayRecordingRequestViewModel
             {
                 Display = new AliasIndexModel { Alias = "one", Index = "two" },
                 RecordChannel = new RecordingChannelModel { ChannelName = "channel", VideoSink = new AliasIndexModel { Alias = "three", Index = "four" } },
@@ -85,7 +85,7 @@ namespace Avalanche.Api.Test.Managers
 
             var manager = new RoutingManager(_routingService.Object, _recorderService.Object, _avidisService.Object, _storageService.Object, _mapper, _httpContextAccessor.Object, _stateClient.Object);
 
-            await manager.SetDisplayRecordingEnabled(new ViewModels.DisplayRecordingRequestViewModel
+            await manager.SetDisplayRecordingStatus(new ViewModels.DisplayRecordingRequestViewModel
             {
                 Display = new AliasIndexModel { Alias = "one", Index = "two" },
                 RecordChannel = new RecordingChannelModel { ChannelName = "channel", VideoSink = new AliasIndexModel { Alias = "three", Index = "four" } },
@@ -109,7 +109,7 @@ namespace Avalanche.Api.Test.Managers
 
             var manager = new RoutingManager(_routingService.Object, _recorderService.Object, _avidisService.Object, _storageService.Object, _mapper, _httpContextAccessor.Object, _stateClient.Object);
 
-            await manager.SetDisplayRecordingEnabled(new ViewModels.DisplayRecordingRequestViewModel
+            await manager.SetDisplayRecordingStatus(new ViewModels.DisplayRecordingRequestViewModel
             {
                 Display = new AliasIndexModel { Alias = "one", Index = "two" },
                 RecordChannel = new RecordingChannelModel { ChannelName = "channel", VideoSink = new AliasIndexModel { Alias = "three", Index = "four" } },
@@ -135,7 +135,7 @@ namespace Avalanche.Api.Test.Managers
 
             var manager = new RoutingManager(_routingService.Object, _recorderService.Object, _avidisService.Object, _storageService.Object, _mapper, _httpContextAccessor.Object, _stateClient.Object);
 
-            await manager.SetDisplayRecordingEnabled(new ViewModels.DisplayRecordingRequestViewModel
+            await manager.SetDisplayRecordingStatus(new ViewModels.DisplayRecordingRequestViewModel
             {
                 Display = new AliasIndexModel { Alias = "one", Index = "two" },
                 RecordChannel = new RecordingChannelModel { ChannelName = "channel", VideoSink = new AliasIndexModel { Alias = "three", Index = "four" } },
