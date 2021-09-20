@@ -119,14 +119,13 @@ namespace Avalanche.Api.Controllers.V1
         /// </summary>
         /// <param name="routesViewModel"></param>
         /// <returns></returns>
-        [HttpPut("videorouting/routes/{sink}")]
-        public async Task<IActionResult> RouteVideoSource([FromRoute] AliasIndexViewModel sink, [FromBody] AliasIndexViewModel source)
+        [HttpDelete("videorouting/routes/{sink}")]
+        public async Task<IActionResult> RouteVideoSource(RouteViewModel routesViewModel)
         {
             try
             {
                 _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
-                await _routingManager.RouteVideoSource(_mapper.Map<AliasIndexViewModel, AliasIndexModel>(sink),
-                    _mapper.Map<AliasIndexViewModel, AliasIndexModel>(source));
+                await _routingManager.RouteVideoSource(_mapper.Map<RouteViewModel, RouteModel>(routesViewModel));
                 return Ok();
             }
             catch (Exception ex)
