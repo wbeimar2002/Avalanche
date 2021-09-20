@@ -44,7 +44,7 @@ namespace Avalanche.Api.Controllers.V1
         /// </summary>
         /// <param name="routingActionViewModel"></param>
         /// <returns></returns>
-        [HttpPost("videorouting/fullscreen")]
+        [HttpPost("videorouting/mode/fullscreen")]
         public async Task<IActionResult> EnterFullScreen(FullScreenRequestViewModel routingActionViewModel)
         {
             try
@@ -69,7 +69,7 @@ namespace Avalanche.Api.Controllers.V1
         /// </summary>
         /// <param name="routingPreviewViewModel"></param>
         /// <returns></returns>
-        [HttpDelete("hardwarepreview")]
+        [HttpDelete("hardware/preview")]
         public async Task<IActionResult> HidePreview(RoutingPreviewViewModel routingPreviewViewModel)
         {
             try
@@ -94,7 +94,7 @@ namespace Avalanche.Api.Controllers.V1
         /// </summary>
         /// <param name="routingPreviewViewModel"></param>
         /// <returns></returns>
-        [HttpPost("hardwarepreview")]
+        [HttpPost("hardware/preview")]
         public async Task<IActionResult> ShowPreview(RoutingPreviewViewModel routingPreviewViewModel)
         {
             try
@@ -119,8 +119,8 @@ namespace Avalanche.Api.Controllers.V1
         /// </summary>
         /// <param name="routesViewModel"></param>
         /// <returns></returns>
-        [HttpDelete("videorouting/routes/{sink}")]
-        public async Task<IActionResult> RouteVideoSource(RouteViewModel routesViewModel)
+        [HttpPost("videorouting/routes")]
+        public async Task<IActionResult> RouteVideoSource([FromBody] RouteViewModel routesViewModel)
         {
             try
             {
@@ -144,8 +144,8 @@ namespace Avalanche.Api.Controllers.V1
         /// </summary>
         /// <param name="sink"></param>
         /// <returns></returns>
-        [HttpDelete("videorouting/routes/{sink}")]
-        public async Task<IActionResult> UnrouteVideo(AliasIndexViewModel sink)
+        [HttpDelete("videorouting/routes")]
+        public async Task<IActionResult> UnrouteVideo([FromQuery] AliasIndexViewModel sink)
         {
             try
             {
@@ -221,9 +221,9 @@ namespace Avalanche.Api.Controllers.V1
         /// <param name="alias"></param>
         /// <param name="index"></param>
         /// <returns></returns>
-        [HttpGet("videorouting/sources/{source}/alternative")]
+        [HttpGet("videorouting/sources/alternative")]
         [Produces(typeof(VideoSourceModel))]
-        public async Task<IActionResult> GetAlternativeSource([FromRoute] AliasIndexViewModel source)
+        public async Task<IActionResult> GetAlternativeSource([FromQuery] AliasIndexViewModel source)
         {
             try
             {
@@ -247,13 +247,13 @@ namespace Avalanche.Api.Controllers.V1
             }
         }
 
-        [HttpPut("videorouting/displayRecording")]
-        public async Task<IActionResult> SetDisplayRecordingEnabled([FromBody] DisplayRecordingRequestViewModel displayRecordingRequestModel)
+        [HttpPut("videorouting/displayRecording/status")]
+        public async Task<IActionResult> SetDisplayRecordingStatus([FromBody] DisplayRecordingRequestViewModel displayRecordingRequestModel)
         {
             try
             {
                 _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
-                await _routingManager.SetDisplayRecordingEnabled(displayRecordingRequestModel);
+                await _routingManager.SetDisplayRecordingStatus(displayRecordingRequestModel);
 
                 return Ok();
             }
@@ -268,14 +268,14 @@ namespace Avalanche.Api.Controllers.V1
             }
         }
 
-        [HttpGet("videorouting/displayRecording")]
+        [HttpGet("videorouting/displayRecording/statuses")]
         [Produces(typeof(IList<DisplayRecordingViewModel>))]
-        public async Task<IActionResult> GetDisplayRecordingStates()
+        public async Task<IActionResult> GetDisplayRecordingStatuses()
         {
             try
             {
                 _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
-                var result = await _routingManager.GetDisplayRecordingStates();
+                var result = await _routingManager.GetDisplayRecordingStatuses();
 
                 return Ok(result);
             }
