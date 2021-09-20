@@ -1,4 +1,4 @@
-using Avalanche.Shared.Domain.Enumerations;
+using System.Collections.Generic;
 using Ism.Common.Core.Configuration;
 using Ism.Common.Core.Configuration.Attributes;
 
@@ -9,11 +9,21 @@ namespace Avalanche.Shared.Infrastructure.Configuration
     {
         public GeneralSetupConfiguration General { get; set; }
         public RegistrationSetupConfiguration Registration { get; set; }
+        public List<PatientInfoSetupConfiguration> PatientInfo { get; set; }
 
         public bool Validate()
         {
             return true;
         }
+    }
+
+    public class PatientInfoSetupConfiguration
+    {
+        public string JsonKey { get; set; }
+        public string LabelTranslationKey { get; set; }
+        public string Format { get; set; }
+        public bool Display { get; set; }
+        public bool Required { get; set; }
     }
 
     public class GeneralSetupConfiguration

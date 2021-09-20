@@ -1,4 +1,4 @@
-﻿using Avalanche.Api.ViewModels;
+using Avalanche.Api.ViewModels;
 using Ism.SystemState.Models.VideoRouting;
 using Ism.SystemState.Models.PgsTimeout;
 using System.Threading.Tasks;
@@ -6,6 +6,7 @@ using Ism.SystemState.Models.Library;
 using Ism.SystemState.Models.Exceptions;
 using Ism.SystemState.Models.Recorder;
 using Ism.SystemState.Models.Notifications;
+using Ism.SystemState.Models.Medpresence;
 
 namespace Avalanche.Api.Hubs
 {
@@ -40,5 +41,13 @@ namespace Avalanche.Api.Hubs
         Task OnPgsTimeoutRoomStateChanged(PgsTimeoutRoomStateEvent evt);
 
         Task OnImageCaptureStarted(ImageCaptureStartedEvent evt);
+
+        Task OnSelectedSourceStateDataChanged(SelectedSourceStateData selectedSourceStateData);
+
+        Task OnServiceSessionStarted(ServiceSessionCreatedEvent evt);
+
+        Task OnServiceSessionEnded(ServiceSessionEndedEvent evt);
+
+        Task OnServiceSessionAttendeesChanged(ServiceSessionAttendeesChanged evt);
     }
 }

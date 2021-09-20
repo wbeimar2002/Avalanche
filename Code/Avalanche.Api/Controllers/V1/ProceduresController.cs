@@ -65,6 +65,31 @@ namespace Avalanche.Api.Controllers.V1
         }
 
         /// <summary>
+        /// Search procedures by patient
+        /// </summary>
+        /// <param name="patientId"></param>
+        [HttpGet("patients/{patientId}")]
+        [ProducesResponseType(typeof(ProceduresContainerViewModel), StatusCodes.Status200OK)]
+        public async Task<IActionResult> SearchByPatient(string patientId)
+        {
+            try
+            {
+                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
+                var result = await _proceduresManager.SearchByPatient(patientId);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, LoggerHelper.GetLogMessage(DebugLogType.Exception));
+                return new BadRequestObjectResult(ex.Get(_environment.IsDevelopment()));
+            }
+            finally
+            {
+                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
+            }
+        }
+
+        /// <summary>
         /// Get procedure
         /// </summary>
         [HttpGet("{id}")]
@@ -97,6 +122,32 @@ namespace Avalanche.Api.Controllers.V1
                 _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
                 await _proceduresManager.UpdateProcedure(procedureViewModel);
                 return Ok();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, LoggerHelper.GetLogMessage(DebugLogType.Exception));
+                return new BadRequestObjectResult(ex.Get(_environment.IsDevelopment()));
+            }
+            finally
+            {
+                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
+            }
+        }
+
+        /// <summary>
+        /// Load the active procedure (if exists)
+        /// </summary>
+        /// <returns>Active Procedure model or null</returns>
+        [HttpGet("current")]
+        [ProducesResponseType(typeof(ActiveProcedureViewModel), StatusCodes.Status200OK)]
+        public async Task<IActionResult> GetActive()
+        {
+            try
+            {
+                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
+
+                var result = await _proceduresManager.GetActiveProcedure();
+                return Ok(result);
             }
             catch (Exception ex)
             {

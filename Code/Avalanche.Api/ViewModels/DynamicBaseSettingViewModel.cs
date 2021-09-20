@@ -21,6 +21,7 @@ namespace Avalanche.Api.ViewModels
         public SettingTypes SettingType { get; set; }
         public VisualStyles VisualStyle { get; set; }
 
+        public string? Source { get; set; }
         public string? SourceKey { get; set; }
         public string? SourceKeyId { get; set; }
         public string? SourceKeyValue { get; set; }

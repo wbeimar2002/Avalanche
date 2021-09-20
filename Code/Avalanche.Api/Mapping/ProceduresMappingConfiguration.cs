@@ -11,6 +11,9 @@ using System;
 using System.Collections.Generic;
 using static Avalanche.Api.Mapping.MappingUtilities;
 
+using AutoFixture;
+using System.Linq;
+
 namespace Avalanche.Api.Mapping
 {
     public class ProceduresMappingConfiguration : Profile
@@ -52,22 +55,26 @@ namespace Avalanche.Api.Mapping
                 .ForMember(dest => dest.HasPendingEdits, opt => opt.MapFrom(src => src.HasPendingEdits));
 
             CreateMap<ProcedureImageMessage, ImageContentViewModel>()
+                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
                 .ForMember(dest => dest.Thumbnail, opt => opt.MapFrom(src => src.Thumbnail))
                 .ForMember(dest => dest.FileName, opt => opt.MapFrom(src => src.FileName))
                 .ForMember(dest => dest.CaptureTimeUtc, opt => opt.MapFrom(src => src.CaptureTimeUtc));
 
             CreateMap<ProcedureVideoMessage, VideoContentViewModel>()
-                .ForMember(dest => dest.Thumbnail, opt => opt.MapFrom(src => src.Thumbnail)) 
+                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
+                .ForMember(dest => dest.Thumbnail, opt => opt.MapFrom(src => src.Thumbnail))
                 .ForMember(dest => dest.FileName, opt => opt.MapFrom(src => src.FileName))
                 .ForMember(dest => dest.Length, opt => opt.MapFrom(src => src.Length))
                 .ForMember(dest => dest.CaptureTimeUtc, opt => opt.MapFrom(src => src.CaptureTimeUtc));
 
             CreateMap<ImageContentViewModel, ProcedureImageMessage>()
+                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
                 .ForMember(dest => dest.Thumbnail, opt => opt.MapFrom(src => src.Thumbnail))
                 .ForMember(dest => dest.FileName, opt => opt.MapFrom(src => src.FileName))
                 .ForMember(dest => dest.CaptureTimeUtc, opt => opt.MapFrom(src => src.CaptureTimeUtc));
 
             CreateMap<VideoContentViewModel, ProcedureVideoMessage>()
+                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
                 .ForMember(dest => dest.Thumbnail, opt => opt.MapFrom(src => src.Thumbnail))
                 .ForMember(dest => dest.FileName, opt => opt.MapFrom(src => src.FileName))
                 .ForMember(dest => dest.Length, opt => opt.MapFrom(src => src.Length))
@@ -94,7 +101,8 @@ namespace Avalanche.Api.Mapping
                 .ForPath(dest => dest.ProcedureType.Name, opt => opt.MapFrom(src => src.ProcedureType))
                 .ForMember(dest => dest.ProcedureStartTimeUtc, opt => opt.MapFrom(src => src.ProcedureStartTimeUtc))
                 .ForMember(dest => dest.Repository, opt => opt.MapFrom(src => src.Repository)) 
-                .ForMember(dest => dest.LibraryId, opt => opt.MapFrom(src => src.LibraryId));
+                .ForMember(dest => dest.LibraryId, opt => opt.MapFrom(src => src.LibraryId))
+                .ForMember(dest => dest.ExportStatus, opt => opt.MapFrom(src => GetProcedureExportStatus()));
 
             CreateMap<ProcedureViewModel, ProcedureMessage>()
                 .ForMember(dest => dest.Videos, opt => opt.MapFrom(src => src.Videos))
@@ -234,6 +242,13 @@ namespace Avalanche.Api.Mapping
                     Minute = dateTime.Value.Minute,
                     Second = dateTime.Value.Second,
                 };
+        }
+
+        private List<ProcedureExportStatus> GetProcedureExportStatus()
+        {
+            var rnd = new Random();
+            var fixture = new Fixture();
+            return fixture.CreateMany<ProcedureExportStatus>(rnd.Next(1, 4)).ToList();
         }
     }
 }

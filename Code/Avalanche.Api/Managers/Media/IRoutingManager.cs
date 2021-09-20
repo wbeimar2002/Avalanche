@@ -8,10 +8,11 @@ namespace Avalanche.Api.Managers.Media
     public interface IRoutingManager
     {
         Task EnterFullScreen(FullScreenRequestViewModel routingActionViewModel);
+        Task ExitFullScreen(FullScreenRequestViewModel routingActionViewModel);
         Task HidePreview(RoutingPreviewViewModel routingPreviewViewModel);
         Task ShowPreview(RoutingPreviewViewModel routingPreviewViewModel);
 
-        Task RouteVideoSource(AliasIndexModel sink, AliasIndexModel source);
+        Task RouteVideoSource(RouteModel routesViewModel);
         Task UnrouteVideoSource(AliasIndexModel sinkViewModel);
 
         Task<IList<VideoSourceModel>> GetRoutingSources();
@@ -25,7 +26,6 @@ namespace Avalanche.Api.Managers.Media
         Task PublishDefaultDisplayRecordingState();
 
         Task SetSelectedSource(AliasIndexModel selectedSource);
-
-        Task<AliasIndexViewModel> GetSelectedSource();
+        Task<AliasIndexModel> GetSelectedSource();
     }
 }

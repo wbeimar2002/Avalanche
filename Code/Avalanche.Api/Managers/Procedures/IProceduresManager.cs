@@ -19,6 +19,7 @@ namespace Avalanche.Api.Managers.Procedures
         Task<ProcedureAllocationViewModel> AllocateNewProcedure();
 
         Task<ProceduresContainerViewModel> Search(ProcedureSearchFilterViewModel filter);
+        Task<ProceduresContainerViewModel> SearchByPatient(string patientId);
         Task<ProcedureViewModel> GetProcedureDetails(string id);
 
         Task ApplyLabelToActiveProcedure(ContentViewModel labelContent);

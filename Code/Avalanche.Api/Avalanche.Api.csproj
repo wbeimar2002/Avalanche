@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
@@ -46,12 +46,12 @@
       <TreatAsUsed>true</TreatAsUsed>
     </PackageReference>
     <PackageReference Include="Ism.Common.Core.Hosting" Version="1.0.0-prerelease041" />
-    <PackageReference Include="Ism.PatientInfoEngine.Client" Version="1.0.0-prerelease0025" />
-    <PackageReference Include="Ism.PgsTimeout.Client" Version="1.0.0-prerelease0014" />
-    <PackageReference Include="Ism.Recorder.Client" Version="1.0.0-prerelease0038" />
+    <PackageReference Include="Ism.Medpresence.Client" Version="1.0.0-prerelease0002" />
+    <PackageReference Include="Ism.PgsTimeout.Client" Version="1.0.0-prerelease0015" />
+    <PackageReference Include="Ism.Recorder.Client" Version="1.0.0-prerelease0040" />
     <PackageReference Include="Ism.Routing.Client" Version="1.0.0-prerelease0016" />
-    <PackageReference Include="Ism.Storage.Configuration.Client" Version="1.0.0-prerelease0027" />
-    <PackageReference Include="Ism.Storage.PatientList.Client" Version="1.0.0-prerelease0022" />
+    <PackageReference Include="Ism.PatientInfoEngine.Client" Version="1.0.0-prerelease0027" />
+    <PackageReference Include="Ism.Storage.Configuration.Client" Version="1.0.0-prerelease0031" />
     <PackageReference Include="Ism.Streaming.Client" Version="1.0.0-prerelease0016" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="3.1.17" />
     <PackageReference Include="Microsoft.AspNetCore.JsonPatch" Version="5.0.8" />
@@ -66,17 +66,19 @@
     <PackageReference Include="System.Text.Json" Version="5.0.2" />
     <PackageReference Include="Polly" Version="7.2.2" />
   </ItemGroup>
-  
+
   <ItemGroup Condition="'$(Configuration)'=='DebugLocal'">
     <PackageReference Include="Ism.Storage.DataManagement.Client" Version="99.99.*" />
+    <PackageReference Include="Ism.Storage.PatientList.Client" Version="99.99.*" />
     <PackageReference Include="Ism.Library.Client" Version="99.99.*" />
     <PackageReference Include="Ism.SystemState.Client" Version="99.99.*" />
   </ItemGroup>
-  
-  <ItemGroup Condition="'$(Configuration)'=='Debug' Or '$(Configuration)'=='Release'">  
-    <PackageReference Include="Ism.Storage.DataManagement.Client" Version="1.0.0-prerelease0037" />
-    <PackageReference Include="Ism.Library.Client" Version="1.0.0-prerelease0044" />
-    <PackageReference Include="Ism.SystemState.Client" Version="1.0.0-prerelease0066" />
+
+  <ItemGroup Condition="'$(Configuration)'=='Debug' Or '$(Configuration)'=='Release'">
+    <PackageReference Include="Ism.Storage.DataManagement.Client" Version="1.0.0-prerelease0041" />
+    <PackageReference Include="Ism.Library.Client" Version="1.0.0-prerelease0048" />
+    <PackageReference Include="Ism.SystemState.Client" Version="1.0.0-prerelease0070" />
+    <PackageReference Include="Ism.Storage.PatientList.Client" Version="1.0.0-prerelease0026" />
   </ItemGroup>
 
   <ItemGroup>

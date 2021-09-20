@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+using AutoMapper;
 using Avalanche.Api.Helpers;
 using Avalanche.Api.Services.Health;
 using Avalanche.Api.Services.Maintenance;
@@ -166,7 +166,7 @@ namespace Avalanche.Api.Managers.Data
         {
             Preconditions.ThrowIfNull(nameof(label.Id), label.Id);
             Preconditions.ThrowIfNull(nameof(label.Name), label.Name);
-            
+
             await _dataManagementService.UpdateLabel(_mapper.Map<LabelModel, UpdateLabelRequest>(label));
         }
 
@@ -183,7 +183,7 @@ namespace Avalanche.Api.Managers.Data
                 procedureTypeId = null;
             }
 
-            var result = await _dataManagementService.GetLabelsByProcedureType(new Ism.Storage.DataManagement.Client.V1.Protos.GetLabelsByProcedureTypeRequest()
+            var result = await _dataManagementService.GetLabelsByProcedureType(new GetLabelsByProcedureTypeRequest()
             {
                 ProcedureTypeId = procedureTypeId
             });

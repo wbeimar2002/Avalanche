@@ -99,12 +99,12 @@ namespace Avalanche.Api.Managers.Media
             });
         }
 
-        public async Task RouteVideoSource(AliasIndexModel sink, AliasIndexModel source)
+        public async Task RouteVideoSource(RouteModel route)
         {
             await _routingService.RouteVideo(new RouteVideoRequest()
             {
-                Sink = _mapper.Map<AliasIndexModel, Ism.Routing.V1.Protos.AliasIndexMessage>(sink),
-                Source = _mapper.Map<AliasIndexModel, Ism.Routing.V1.Protos.AliasIndexMessage>(source),
+                Sink = _mapper.Map<AliasIndexModel, Ism.Routing.V1.Protos.AliasIndexMessage>(route.Sink),
+                Source = _mapper.Map<AliasIndexModel, Ism.Routing.V1.Protos.AliasIndexMessage>(route.Source),
             });
         }
 
@@ -384,14 +384,16 @@ namespace Avalanche.Api.Managers.Media
             _stateClient.PersistData(new VideoRoutingModels.SelectedSourceStateData(aliasIndexModel));
         }
 
-        public async Task<AliasIndexViewModel> GetSelectedSource()
+        public async Task<AliasIndexModel> GetSelectedSource()
         {
-            var selectedSourceFromState = await _stateClient.GetData<VideoRoutingModels.SelectedSourceStateData>();
-            return new AliasIndexViewModel()
+            var currentData = await _stateClient.GetData<VideoRoutingModels.SelectedSourceStateData>();
+            var selectedSource = new AliasIndexModel
             {
-                Alias = selectedSourceFromState?.SelectedSource?.Alias,
-                Index = selectedSourceFromState?.SelectedSource?.Index
+                Alias = currentData?.SelectedSource?.Alias ?? "",
+                Index = currentData?.SelectedSource?.Index ?? ""
             };
+
+            return selectedSource;
         }
     }
 }

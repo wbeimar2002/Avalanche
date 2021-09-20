@@ -1,7 +1,3 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
 namespace Avalanche.Shared.Infrastructure.Enumerations
 {
     public enum VisualStyles
@@ -20,6 +16,7 @@ namespace Avalanche.Shared.Infrastructure.Enumerations
         EmbeddedList,
         DropDownExternalList,
         DropDownEmbeddedList,
-        EmbeddedGenericList
+        EmbeddedGenericList,
+        DropDownExternalEmbeddedList
     }
 }

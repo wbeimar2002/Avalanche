@@ -35,15 +35,14 @@ namespace Avalanche.Api.Controllers.V1
         /// Register new patient
         /// </summary>
         /// <param name="newPatient"></param>
-        /// <returns></returns>
         [HttpPost("")]
         [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(PatientViewModel))]
-        public async Task<IActionResult> ManualPatientRegistration(PatientViewModel newPatient, BackgroundRecordingMode backgroundRecordingMode)
+        public async Task<IActionResult> ManualPatientRegistration(PatientViewModel newPatient)
         {
             try
             {
                 _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
-                var patientRegistered = await _patientsManager.RegisterPatient(newPatient, backgroundRecordingMode);
+                var patientRegistered = await _patientsManager.RegisterPatient(newPatient);
                 return new ObjectResult(patientRegistered) { StatusCode = StatusCodes.Status201Created };
             }
             catch (Exception ex)

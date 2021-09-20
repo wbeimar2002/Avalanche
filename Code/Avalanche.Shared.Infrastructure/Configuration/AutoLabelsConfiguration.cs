@@ -9,7 +9,8 @@ namespace Avalanche.Shared.Infrastructure.Configuration
     [ConfigurationRequest(nameof(AutoLabelsConfiguration), 1)]
     public class AutoLabelsConfiguration : IConfigurationPoco
     {
-        public List<AutoLabelAutoLabelsConfiguration> AutoLabels { get; set; }
+        public List<AutoLabelAutoLabelsConfiguration>? AutoLabels { get; set; }
+        public List<ColorAutoLabelsConfiguration>? Colors { get; set; }
 
         public bool Validate()
         {
@@ -29,5 +30,11 @@ namespace Avalanche.Shared.Infrastructure.Configuration
         public int LabelId { get; set; }
         public string Color { get; set; }
         public int Index { get; set; }
+    }
+
+    public class ColorAutoLabelsConfiguration
+    {
+        public string TranslationKey { get; set; }
+        public string HexadecimalCode { get; set; }
     }
 }

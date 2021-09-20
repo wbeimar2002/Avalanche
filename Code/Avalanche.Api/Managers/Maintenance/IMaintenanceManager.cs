@@ -15,13 +15,18 @@ namespace Avalanche.Api.Managers.Maintenance
         Task<List<dynamic>> GetListValues(string key);
         Task<dynamic> GetSettingValues(string key);
         Task SaveCategoryPolicies(DynamicSectionViewModel category);
+
         Task<ReindexStatusViewModel> ReindexRepository(ReindexRepositoryRequestViewModel reindexRequest);
+        Task UpdateAutoLabelsConfigurationByProcedureType(int procedureTypeId, List<AutoLabelAutoLabelsConfiguration> autoLabels);
+
+        Task<FeaturesConfiguration> GetFeatures();
 
         GeneralApiConfiguration GetGeneralApiConfigurationSettings();
         ProceduresSearchConfiguration GetProceduresSearchConfigurationSettings();
-        AutoLabelsConfiguration GetAutoLabelsConfigurationSettings();
+        AutoLabelsConfiguration GetAutoLabelsConfigurationSettings(int? procedureTypeId);
         LabelsConfiguration GetLabelsConfigurationSettings();
         SetupConfiguration GetSetupConfigurationSettings();
         PrintingConfiguration GetPrintingConfigurationSettings();
+        RecorderConfiguration GetRecorderConfigurationSettings();
     }
 }

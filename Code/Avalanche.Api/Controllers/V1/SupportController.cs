@@ -1,4 +1,4 @@
-using Avalanche.Api.Helpers;
+using Avalanche.Api.Managers.Medpresence;
 using Avalanche.Shared.Infrastructure.Enumerations;
 using Avalanche.Shared.Infrastructure.Extensions;
 using Avalanche.Shared.Infrastructure.Helpers;
@@ -8,43 +8,37 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using Microsoft.FeatureManagement;
 using System;
+using System.Threading.Tasks;
 
 namespace Avalanche.Api.Controllers.V1
 {
     [Route("[controller]")]
     [ApiController]
-    public class HealthController : ControllerBase
+    [Authorize]
+    public class SupportController : ControllerBase
     {
+
         private readonly ILogger _logger;
         private readonly IWebHostEnvironment _environment;
-        private readonly IFeatureManager _featureManager;
+        private readonly IMedpresenceManager _medpresence;
 
-        public HealthController(ILogger<HealthController> logger, IWebHostEnvironment environment, IFeatureManager featureManager)
+        public SupportController(ILogger<SupportController> logger, IWebHostEnvironment environment, IMedpresenceManager medpresence)
         {
-            _featureManager = featureManager;
-            _environment = environment;
             _logger = logger;
+            _environment = environment;
+            _medpresence = medpresence;
         }
 
-        /// <summary>
-        ///  Health check without secure
-        /// </summary>
-        [Route("check")]
-        [HttpGet]
-        public IActionResult HealthCheck()
+        [HttpPost("session")]
+        public async Task<IActionResult> StartServiceSession()
         {
             try
             {
                 _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
-                _logger.LogInformation("Avalanche Api is healthy.");
-                return new OkObjectResult(new
-                {
-                    UtcDateTime = DateTime.UtcNow,
-                    LocalDateTime = DateTime.UtcNow.ToLocalTime(),
-                    Features = FeaturesHelper.GetFeatures(_featureManager)
-                });
+
+                await _medpresence.StartServiceSession().ConfigureAwait(false);
+                return Ok();
             }
             catch (Exception ex)
             {
@@ -57,26 +51,15 @@ namespace Avalanche.Api.Controllers.V1
             }
         }
 
-        /// <summary>
-        /// Health check with secure
-        /// </summary>
-        [Authorize]
-        [Route("check/secure")]
-        [HttpGet]
-        public IActionResult HealthCheckSecure()
+        [HttpDelete("session")]
+        public async Task<IActionResult> StopServiceSession()
         {
             try
             {
                 _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
 
-                _logger.LogInformation("Avalanche Api is healthy.");
-
-                return new OkObjectResult(new
-                {
-                    UtcDateTime = DateTime.UtcNow,
-                    LocalDateTime = DateTime.UtcNow.ToLocalTime(),
-                    Features = FeaturesHelper.GetFeatures(_featureManager)
-                });
+                await _medpresence.StopServiceSession().ConfigureAwait(false);
+                return Ok();
             }
             catch (Exception ex)
             {
@@ -87,6 +70,6 @@ namespace Avalanche.Api.Controllers.V1
             {
                 _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
             }
-        }        
+        }
     }
 }

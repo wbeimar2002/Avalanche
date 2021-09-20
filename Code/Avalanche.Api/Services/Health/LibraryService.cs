@@ -67,5 +67,10 @@ namespace Avalanche.Api.Services.Health
         {
             return await _serviceSearchClient.GetFinishedProcedures(getFinishedProceduresRequest);
         }
+
+        public async Task<GetFinishedProceduresResponse> GetFinishedProceduresByPatient(GetFinishedProceduresRequestByPatient getFinishedProceduresRequestByPatient)
+        {
+            return await _serviceSearchClient.GetFinishedProceduresByPatient(getFinishedProceduresRequestByPatient);
+        }
     }
 }
