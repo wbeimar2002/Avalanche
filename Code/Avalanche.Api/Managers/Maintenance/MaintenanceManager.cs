@@ -38,12 +38,14 @@ namespace Avalanche.Api.Managers.Maintenance
         private readonly UserModel _user;
         private readonly ConfigurationContext _configurationContext;
         private readonly GeneralApiConfiguration _generalApiConfiguration;
-        private readonly ProceduresSearchConfiguration _proceduresSearchConfiguration;
         private readonly AutoLabelsConfiguration _autoLabelsConfiguration;
         private readonly LabelsConfiguration _labelsConfiguration;
         private readonly PrintingConfiguration _printingConfiguration;
-        private readonly SetupConfiguration _setupConfiguration;
         private readonly RecorderConfiguration _recorderConfiguration;
+
+        //These values can be changed in execution time
+        private ProceduresSearchConfiguration _proceduresSearchConfiguration;
+        private SetupConfiguration _setupConfiguration;
 
         public MaintenanceManager(IStorageService storageService,
             IDataManager dataManager,
@@ -146,17 +148,25 @@ namespace Avalanche.Api.Managers.Maintenance
                 await SaveCustomEntity(_user, category, action);
         }
 
-        private async Task SaveEmbeddedList(string settingsKey, string jsonKey, DynamicListViewModel customList)
+        private async Task SaveEmbeddedList(string settingsKey, string jsonKey, string json, string schema = null)
         {
-            var json = JsonConvert.SerializeObject(customList.Data);
-
-            if (await _storageService.ValidateSchema(customList.Schema, json, 1, _configurationContext))
+            if (string.IsNullOrEmpty(schema) || await _storageService.ValidateSchema(schema, json, 1, _configurationContext))
             {
                 await _storageService.UpdateJsonProperty(settingsKey, jsonKey, json, 1, _configurationContext, true);
+
+                switch (settingsKey)
+                {
+                    case "ProceduresSearchConfiguration":
+                        _proceduresSearchConfiguration.Columns = json.Get<List<ColumnProceduresSearchConfiguration>>();
+                        break;
+                    case "PatientInfoSetupConfiguration":
+                        _setupConfiguration.PatientInfo = json.Get<List<PatientInfoSetupConfiguration>>();
+                        break;
+                }
             }
             else
             {
-                throw new ValidationException("Json Schema Invalid for " + customList.SourceKey);
+                throw new ValidationException("Json Schema Invalid for " + jsonKey);
             }
         }
 
@@ -169,7 +179,7 @@ namespace Avalanche.Api.Managers.Maintenance
                 await _storageService.SaveJsonObject(customList.SourceKey, json, 1, _configurationContext, true);
             }
             else
-            {   
+            {
                 throw new ValidationException("Json Schema Invalid for " + customList.SourceKey);
             }
         }
@@ -608,14 +618,12 @@ namespace Avalanche.Api.Managers.Maintenance
                         }
                         else if (item.VisualStyle == VisualStyles.EmbeddedList)
                         {
-                            var embeddedList = item.CustomList;
-                            await SaveEmbeddedList(settingsKey, item.JsonKey, embeddedList);
+                            await SaveEmbeddedList(settingsKey, item.JsonKey, JsonConvert.SerializeObject(item.CustomList.Data), item.CustomList.Schema);
                         }
-                        //else
-                        //{
-                        //    await _storageService.SaveJsonObject(item.SourceKey, JsonConvert.SerializeObject(item.SourceValues), 1, _configurationContext);
-                        //    item.SourceValues = null;
-                        //}
+                        else if (item.VisualStyle == VisualStyles.EmbeddedGenericList)
+                        {
+                            await SaveEmbeddedList(settingsKey, item.SourceKey, JsonConvert.SerializeObject(item.SourceValues));
+                        }
                     }
                 }
             }
