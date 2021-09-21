@@ -19,9 +19,8 @@ namespace Avalanche.Shared.Infrastructure.Configuration
 
     public class PatientInfoSetupConfiguration
     {
-        public string JsonKey { get; set; }
+        public string Id { get; set; }
         public string LabelTranslationKey { get; set; }
-        public string Format { get; set; }
         public bool Display { get; set; }
         public bool Required { get; set; }
     }
