@@ -159,7 +159,7 @@ namespace Avalanche.Api.Managers.Maintenance
                     case "ProceduresSearchConfiguration":
                         _proceduresSearchConfiguration.Columns = json.Get<List<ColumnProceduresSearchConfiguration>>();
                         break;
-                    case "PatientInfoSetupConfiguration":
+                    case "SetupConfiguration":
                         _setupConfiguration.PatientInfo = json.Get<List<PatientInfoSetupConfiguration>>();
                         break;
                 }
