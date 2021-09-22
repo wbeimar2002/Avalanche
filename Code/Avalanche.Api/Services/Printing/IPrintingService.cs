@@ -1,5 +1,5 @@
 using System.Threading.Tasks;
-using Ism.PrintServer.Common.Core;
+using Ism.PrintServer.Client;
 
 namespace Avalanche.Api.Services.Printing
 {
