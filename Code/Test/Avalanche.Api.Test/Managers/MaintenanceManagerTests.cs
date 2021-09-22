@@ -1,3 +1,5 @@
+using System.ComponentModel.DataAnnotations;
+using System.Threading.Tasks;
 using AutoMapper;
 using Avalanche.Api.Helpers;
 using Avalanche.Api.Managers.Data;
@@ -6,6 +8,7 @@ using Avalanche.Api.Mapping;
 using Avalanche.Api.Services.Health;
 using Avalanche.Api.Services.Maintenance;
 using Avalanche.Api.Services.Media;
+using Avalanche.Api.Services.Printing;
 using Avalanche.Api.ViewModels;
 using Avalanche.Shared.Infrastructure.Configuration;
 using Ism.Common.Core.Configuration.Models;
@@ -14,11 +17,6 @@ using Microsoft.FeatureManagement;
 using Moq;
 using Newtonsoft.Json;
 using NUnit.Framework;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Avalanche.Api.Test.Managers
 {
@@ -33,6 +31,7 @@ namespace Avalanche.Api.Test.Managers
         Mock<IHttpContextAccessor> _httpContextAccessor;
         Mock<IFilesService> _filesService;
         Mock<IFeatureManager> _featureManager;
+        Mock<IPrintingService> _printingService;
 
         Mock<GeneralApiConfiguration> _generalApiConfiguration;
         Mock<ProceduresSearchConfiguration> _proceduresSearchConfiguration;
@@ -71,7 +70,7 @@ namespace Avalanche.Api.Test.Managers
             _recorderConfiguration = new Mock<RecorderConfiguration>();
 
             _manager = new MaintenanceManager(_storageService.Object, _dataManager.Object, _mapper, _httpContextAccessor.Object, _libraryService.Object,
-                _filesService.Object, _featureManager.Object, _generalApiConfiguration.Object, _proceduresSearchConfiguration.Object, _autoLabelsConfiguration.Object,
+                _filesService.Object, _featureManager.Object, _printingService.Object, _generalApiConfiguration.Object, _proceduresSearchConfiguration.Object, _autoLabelsConfiguration.Object,
                 _labelsConfiguration.Object, _printingConfiguration.Object, _setupConfiguration.Object, _recorderConfiguration.Object);
         }
 

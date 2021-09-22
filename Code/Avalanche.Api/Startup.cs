@@ -58,6 +58,8 @@ using System.Diagnostics.CodeAnalysis;
 using Avalanche.Api.Services.Medpresence;
 using Ism.Medpresence.Client.V1.Extensions;
 using Avalanche.Api.Managers.Medpresence;
+using Avalanche.Api.Services.Printing;
+using Ism.PrintServer.Client.V1.Extensions;
 
 namespace Avalanche.Api
 {
@@ -131,6 +133,7 @@ namespace Avalanche.Api
             services.AddSingleton<IFilesService, FilesService>();
             services.AddSingleton<IPresetManager, PresetManager>();
             services.AddSingleton<IMedpresenceService, MedpresenceService>();
+            services.AddSingleton<IPrintingService, PrintingService>();
 
             // gRPC Infrastructure
             _ = services.AddConfigurationPoco<GrpcServiceRegistry>(_configuration, nameof(GrpcServiceRegistry));
@@ -150,6 +153,7 @@ namespace Avalanche.Api
             _ = services.AddPgsTimeoutSecureClient();
             _ = services.AddRecorderSecureClient();
             _ = services.AddRoutingSecureClient();
+            _ = services.AddPrintingServerSecureClient();
             _ = services.AddWebRtcStreamerSecureClient();
             _ = services.AddGrpcStateClient("AvalancheApi");
             _ = services.AddMedpresenceSecureClient();

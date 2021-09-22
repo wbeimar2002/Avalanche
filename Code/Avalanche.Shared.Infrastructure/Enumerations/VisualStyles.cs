@@ -17,6 +17,7 @@ namespace Avalanche.Shared.Infrastructure.Enumerations
         DropDownExternalList,
         DropDownEmbeddedList,
         EmbeddedGenericList,
-        DropDownExternalEmbeddedList
+        DropDownExternalEmbeddedList,
+        DropDownCustomList
     }
 }
