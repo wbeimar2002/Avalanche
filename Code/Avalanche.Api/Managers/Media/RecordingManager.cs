@@ -31,6 +31,12 @@ namespace Avalanche.Api.Managers.Media
 
         public async Task CaptureImage() => await _stateClient.PublishEvent(new CaptureImageEvent()).ConfigureAwait(false);
 
+        public async Task CaptureImageFromVideo(Guid videoId, TimeSpan position)
+        {
+            var activeProcedure = await GetActiveProcedureState().ConfigureAwait(false);
+            await _stateClient.PublishEvent(new CaptureImageFromVideoEvent(activeProcedure.LibraryId, activeProcedure.RepositoryId, videoId, position)).ConfigureAwait(false);
+        }
+
         public string GetCapturePreview(string path, string procedureId, string repository)
         {
             Preconditions.ThrowIfNullOrEmpty(nameof(path), path);

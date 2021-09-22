@@ -14,6 +14,7 @@ using Microsoft.FeatureManagement.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using static Ism.Utility.Core.Preconditions;
 
 namespace Avalanche.Api.Controllers.V1
 {
@@ -30,22 +31,20 @@ namespace Avalanche.Api.Controllers.V1
         public RecordingController(ILogger<LicensesController> logger, IRecordingManager recordingManager, IWebHostEnvironment environment)
         {
             _environment = environment;
-            _logger = logger;
-            _recordingManager = recordingManager;
+            _logger = ThrowIfNullOrReturn(nameof(logger), logger);
+            _recordingManager = ThrowIfNullOrReturn(nameof(recordingManager), recordingManager);
         }
 
         /// <summary>
         /// Start recording
         /// </summary>
-        /// <returns></returns>
         [HttpPost("")]
         public async Task<IActionResult> StartRecording()
         {
             try
             {
-                
                 _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
-                await _recordingManager.StartRecording();
+                await _recordingManager.StartRecording().ConfigureAwait(false);
                 return Ok();
             }
             catch (Exception ex)
@@ -62,14 +61,13 @@ namespace Avalanche.Api.Controllers.V1
         /// <summary>
         /// Stop recording
         /// </summary>
-        /// <returns></returns>
         [HttpDelete("")]
         public async Task<IActionResult> StopRecording()
         {
             try
             {
                 _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
-                await _recordingManager.StopRecording();
+                await _recordingManager.StopRecording().ConfigureAwait(false);
                 return Ok();
             }
             catch (Exception ex)
@@ -86,14 +84,13 @@ namespace Avalanche.Api.Controllers.V1
         /// <summary>
         /// Add a capture
         /// </summary>
-        /// <returns></returns>
         [HttpPost("captures")]
         public async Task<IActionResult> CaptureImages()
         {
             try
             {
                 _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
-                await _recordingManager.CaptureImage();
+                await _recordingManager.CaptureImage().ConfigureAwait(false);
                 return Ok();
             }
             catch (Exception ex)
@@ -110,7 +107,6 @@ namespace Avalanche.Api.Controllers.V1
         /// <summary>
         /// Gets channels configured for recording
         /// </summary>
-        /// <returns></returns>
         [HttpGet("recordChannels")]
         [Produces(typeof(List<RecordingChannelModel>))]
         public async Task<IActionResult> GetRecordingChannels()
@@ -119,7 +115,7 @@ namespace Avalanche.Api.Controllers.V1
             {
                 _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
 
-                var channels = await _recordingManager.GetRecordingChannels();
+                var channels = await _recordingManager.GetRecordingChannels().ConfigureAwait(false);
                 return Ok(channels);
             }
             catch (Exception ex)
@@ -137,7 +133,6 @@ namespace Avalanche.Api.Controllers.V1
         /// Gets video id and offset timeline info for the image
         /// </summary>
         /// <param name="imageId"></param>
-        /// <returns></returns>
         [HttpGet("timeline/video")]
         [Produces(typeof(RecordingTimelineViewModel))]
         public async Task<IActionResult> GetTimelineVideo(Guid imageId)
@@ -146,11 +141,39 @@ namespace Avalanche.Api.Controllers.V1
             {
                 _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
 
-                var viewModel = await _recordingManager.GetRecordingTimelineByImageId(imageId);
+                var viewModel = await _recordingManager.GetRecordingTimelineByImageId(imageId).ConfigureAwait(false);
                 if (viewModel == null)
+                {
                     return NotFound(imageId);
+                }
 
                 return Ok(viewModel);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(LoggerHelper.GetLogMessage(DebugLogType.Exception), ex);
+                return new BadRequestObjectResult(ex.Get(_environment.IsDevelopment()));
+            }
+            finally
+            {
+                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
+            }
+        }
+
+        /// <summary>
+        /// Captures image from completed video at specified position 
+        /// </summary>
+        /// <param name="videoId"></param>
+        /// <param name="position"></param>
+        [HttpGet("video/image")]
+        public async Task<IActionResult> CaptureImageFromVideo(Guid videoId, TimeSpan position)
+        {
+            try
+            {
+                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
+
+                await _recordingManager.CaptureImageFromVideo(videoId, position).ConfigureAwait(false);
+                return Ok();
             }
             catch (Exception ex)
             {
