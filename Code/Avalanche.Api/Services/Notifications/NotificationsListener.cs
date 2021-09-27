@@ -94,6 +94,7 @@ namespace Avalanche.Api.Services.Notifications
 
             AddSubscription<ServiceSessionAttendeesChanged>(evt => _hubContext.Clients.All.OnServiceSessionAttendeesChanged(evt));
 
+            AddSubscription<ImageCaptureSucceededEvent>(evt => _hubContext.Clients.All.OnImageCaptureSucceeded(evt));
 
             return Task.CompletedTask;
         }
