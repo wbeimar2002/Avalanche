@@ -165,7 +165,7 @@ namespace Avalanche.Api.Controllers.V1
         /// </summary>
         /// <param name="videoId"></param>
         /// <param name="position"></param>
-        [HttpGet("video/image")]
+        [HttpPost("video/image")]
         public async Task<IActionResult> CaptureImageFromVideo(Guid videoId, TimeSpan position)
         {
             try
