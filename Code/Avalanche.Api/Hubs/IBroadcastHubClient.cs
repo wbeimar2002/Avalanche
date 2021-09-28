@@ -49,5 +49,7 @@ namespace Avalanche.Api.Hubs
         Task OnServiceSessionEnded(ServiceSessionEndedEvent evt);
 
         Task OnServiceSessionAttendeesChanged(ServiceSessionAttendeesChanged evt);
+
+        Task OnImageCaptureSucceeded(ImageCaptureSucceededEvent evt);
     }
 }
