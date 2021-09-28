@@ -58,6 +58,7 @@ using System.Diagnostics.CodeAnalysis;
 using Avalanche.Api.Services.Medpresence;
 using Ism.Medpresence.Client.V1.Extensions;
 using Avalanche.Api.Managers.Medpresence;
+using Avalanche.Shared.Infrastructure.Enumerations;
 
 namespace Avalanche.Api
 {
@@ -78,6 +79,8 @@ namespace Avalanche.Api
             services.AddFeatureManagement()
                 .UseDisabledFeaturesHandler(new DisabledFeatureHandler());
 
+            bool isDevice = IsDevice(services);
+
             services.AddControllers();
             services.AddSignalR();
             services.AddMvc().AddNewtonsoftJson();
@@ -93,11 +96,16 @@ namespace Avalanche.Api
             services.AddConfigurationLoggingOnStartup();
 
             // Transient
-            services.AddTransient<IRoutingManager, RoutingManager>();
-            services.AddTransient<IWebRTCManager, WebRTCManager>();
-            services.AddTransient<IRecordingManager, RecordingManager>();
+
+            if (isDevice)
+            {
+                services.AddTransient<IRoutingManager, RoutingManager>();
+                services.AddTransient<IWebRTCManager, WebRTCManager>();
+                services.AddTransient<IRecordingManager, RecordingManager>();
+                services.AddTransient<IPatientsManager, PatientsManager>();
+            }
+
             services.AddTransient<IMaintenanceManager, MaintenanceManager>();
-            services.AddTransient<IPatientsManager, PatientsManager>();
             services.AddTransient<IDataManager, DataManager>();
             services.AddTransient<ILicensingManager, LicensingManagerMock>();
             services.AddTransient<IProceduresManager, ProceduresManager>();
@@ -105,16 +113,38 @@ namespace Avalanche.Api
             services.AddTransient<ISecurityManager, SecurityManager>();
             services.AddTransient<IMedpresenceManager, MedpresenceManager>();
 
+
+            /*serviceCollection.AddSingleton<ICheckAccountResidual>(sp =>
+            {
+                var accountType = sp.GetService<IConfiguration>()["AccountType"];
+
+                switch (accountType)
+                {
+                    case "Saving":
+                        return sp.GetService<SavingAccount>();
+                    case "Checking":
+                        return sp.GetService<CheckingAccount>();
+                    case "CreditAccount":
+                        return sp.GetService<CreditAccount>();
+                    default:
+                        throw new NotImplementedException();
+                }
+            });*/
+
             // Singleton
-            services.AddSingleton<IPgsTimeoutManager, PgsTimeoutManager>();
-            services.AddConfigurationPoco<PgsApiConfiguration>(_configuration, nameof(PgsApiConfiguration));
-            services.AddConfigurationPoco<TimeoutApiConfiguration>(_configuration, nameof(TimeoutApiConfiguration));
+            //if (isDevice)
+            //{
+                services.AddSingleton<IPgsTimeoutManager, PgsTimeoutManager>();
+                services.AddConfigurationPoco<PgsApiConfiguration>(_configuration, nameof(PgsApiConfiguration));
+                services.AddConfigurationPoco<TimeoutApiConfiguration>(_configuration, nameof(TimeoutApiConfiguration));
+                services.AddConfigurationPoco<RecorderConfiguration>(_configuration, nameof(RecorderConfiguration));
+                services.AddConfigurationPoco<AutoLabelsConfiguration>(_configuration, nameof(AutoLabelsConfiguration));
+                services.AddConfigurationPoco<LabelsConfiguration>(_configuration, nameof(LabelsConfiguration));
+            //}
+
             services.AddConfigurationPoco<SetupConfiguration>(_configuration, nameof(SetupConfiguration));
             services.AddConfigurationPoco<GeneralApiConfiguration>(_configuration, nameof(GeneralApiConfiguration));
-            services.AddConfigurationPoco<RecorderConfiguration>(_configuration, nameof(RecorderConfiguration));
             services.AddConfigurationPoco<ProceduresSearchConfiguration>(_configuration, nameof(ProceduresSearchConfiguration));
-            services.AddConfigurationPoco<AutoLabelsConfiguration>(_configuration, nameof(AutoLabelsConfiguration));
-            services.AddConfigurationPoco<LabelsConfiguration>(_configuration, nameof(LabelsConfiguration));
             services.AddConfigurationPoco<PrintingConfiguration>(_configuration, nameof(PrintingConfiguration));
 
             services.AddSingleton<IWebRTCService, WebRtcService>();
@@ -139,23 +169,28 @@ namespace Avalanche.Api
             _ = services.AddSingleton<ICertificateProvider, FileSystemCertificateProvider>();
 
             // gRPC Clients
-            _ = services.AddAvidisSecureClient();
+
             _ = services.AddConfigurationServiceSecureClient();
             _ = services.AddDataManagementStorageSecureClient();
-            _ = services.AddLibraryManagerServiceSecureClient();
-            _ = services.AddLibrarySearchServiceSecureClient();
-            _ = services.AddLibraryActiveProcedureServiceSecureClient();
-            _ = services.AddPatientListSecureClient();
-            _ = services.AddPatientListStorageSecureClient();
-            _ = services.AddPgsTimeoutSecureClient();
-            _ = services.AddRecorderSecureClient();
-            _ = services.AddRoutingSecureClient();
             _ = services.AddWebRtcStreamerSecureClient();
-            _ = services.AddGrpcStateClient("AvalancheApi");
             _ = services.AddMedpresenceSecureClient();
+            _ = services.AddLibrarySearchServiceSecureClient();
+            _ = services.AddLibraryManagerServiceSecureClient();
 
-            // Hosted Services
-            services.AddHostedService<NotificationsListener>();
+            if (isDevice)
+            {
+                _ = services.AddGrpcStateClient("AvalancheApi");
+                _ = services.AddAvidisSecureClient();
+                _ = services.AddLibraryActiveProcedureServiceSecureClient();
+                _ = services.AddPatientListSecureClient();
+                _ = services.AddPatientListStorageSecureClient();
+                _ = services.AddPgsTimeoutSecureClient();
+                _ = services.AddRecorderSecureClient();
+                _ = services.AddRoutingSecureClient();
+
+                // Hosted Services
+                services.AddHostedService<NotificationsListener>();
+            }
         }
 
         private void ConfigureAuthorization(IServiceCollection services)
@@ -237,6 +272,14 @@ namespace Avalanche.Api
                 endpoints.MapHub<BroadcastHub>(BroadcastHub.BroadcastHubRoute);
                 endpoints.MapControllers();
             });
+        }
+
+        private bool IsDevice(IServiceCollection services)
+        {
+            using var provider = services.BuildServiceProvider();
+            var featureManager = provider.GetService<IFeatureManager>();
+
+            return featureManager.IsEnabledAsync(FeatureFlags.IsDevice).Result;
         }
     }
 }
