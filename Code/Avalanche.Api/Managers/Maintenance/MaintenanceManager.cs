@@ -4,6 +4,7 @@ using Avalanche.Api.Managers.Data;
 using Avalanche.Api.Services.Health;
 using Avalanche.Api.Services.Maintenance;
 using Avalanche.Api.Services.Media;
+using Avalanche.Api.Services.Printing;
 using Avalanche.Api.Utilities;
 using Avalanche.Api.ViewModels;
 using Avalanche.Shared.Domain.Models;
@@ -34,18 +35,19 @@ namespace Avalanche.Api.Managers.Maintenance
         private readonly ILibraryService _libraryService;
         private readonly IFilesService _filesService;
         private readonly IFeatureManager _featureManager;
+        private readonly IPrintingService _printingService;
 
         private readonly UserModel _user;
         private readonly ConfigurationContext _configurationContext;
         private readonly GeneralApiConfiguration _generalApiConfiguration;
         private readonly AutoLabelsConfiguration _autoLabelsConfiguration;
         private readonly LabelsConfiguration _labelsConfiguration;
-        private readonly PrintingConfiguration _printingConfiguration;
         private readonly RecorderConfiguration _recorderConfiguration;
+        private readonly ProceduresSearchConfiguration _proceduresSearchConfiguration;
+        private readonly SetupConfiguration _setupConfiguration;
 
         //These values can be changed in execution time
-        private ProceduresSearchConfiguration _proceduresSearchConfiguration;
-        private SetupConfiguration _setupConfiguration;
+        private PrintingConfiguration _printingConfiguration;
 
         public MaintenanceManager(IStorageService storageService,
             IDataManager dataManager,
@@ -54,6 +56,7 @@ namespace Avalanche.Api.Managers.Maintenance
             ILibraryService libraryService,
             IFilesService filesService,
             IFeatureManager featureManager,
+            IPrintingService printingService,
             GeneralApiConfiguration generalApiConfiguration,
             ProceduresSearchConfiguration proceduresSearchConfiguration,
             AutoLabelsConfiguration autoLabelsConfiguration,
@@ -69,6 +72,7 @@ namespace Avalanche.Api.Managers.Maintenance
             _libraryService = libraryService;
             _filesService = filesService;
             _featureManager = featureManager;
+            _printingService = printingService;
 
             _user = HttpContextUtilities.GetUser(_httpContextAccessor.HttpContext);
             _configurationContext = _mapper.Map<UserModel, ConfigurationContext>(_user);
@@ -513,10 +517,26 @@ namespace Avalanche.Api.Managers.Maintenance
                                 var values = await GetDynamicData(setting);
                                 setting.SourceValues = AddTypes(values, types);
                                 break;
+                            case VisualStyles.DropDownCustomList:
+                                var customValues = await GetCustomValues(setting);
+                                setting.SourceValues = GetDynamicList(setting, customValues);
+                                break;
                         }
                     }
                 }
             }
+        }
+
+        private async Task<List<dynamic>> GetCustomValues(DynamicSettingViewModel setting)
+        {
+            switch (setting.SourceKey)
+            {
+                case "Printers":
+                    var printersResponse = await _printingService.GetPrinters();
+                    return JsonConvert.DeserializeObject<List<dynamic>>(JsonConvert.SerializeObject(printersResponse.Printers.Select(p => new { Name = p })));
+            }
+
+            return new List<dynamic>();
         }
 
         private List<dynamic> AddTypes(List<dynamic> values, List<dynamic> types)
@@ -636,6 +656,13 @@ namespace Avalanche.Api.Managers.Maintenance
             if (await _storageService.ValidateSchema(category.Schema, json, 1, configurationContext))
             {
                 await _storageService.SaveJsonObject(category.JsonKey, json, 1, configurationContext);
+
+                switch (category.JsonKey)
+                {
+                    case "PrintingConfiguration":
+                        _printingConfiguration.UseVSSPrintingService = json.Get<PrintingConfiguration>().UseVSSPrintingService;
+                        break;
+                }
             }
             else
             {
