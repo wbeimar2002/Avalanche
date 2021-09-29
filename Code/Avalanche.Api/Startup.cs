@@ -110,6 +110,7 @@ namespace Avalanche.Api
 
             services.AddTransient<IRecordingManager, RecordingManager>();
             services.AddTransient<IDataManager, DataManager>();
+            services.AddTransient<IPrintingService, PrintingService>(); //This needs to be transient because the constructor has a runtime condition
 
             services.AddTransient<IMaintenanceManager, MaintenanceManager>();
             services.AddTransient<ILicensingManager, LicensingManagerMock>();
@@ -147,7 +148,6 @@ namespace Avalanche.Api
             services.AddSingleton<IFilesService, FilesService>();
             services.AddSingleton<IPresetManager, PresetManager>();
             services.AddSingleton<IMedpresenceService, MedpresenceService>();
-            services.AddSingleton<IPrintingService, PrintingService>();
 
             // gRPC Infrastructure
             _ = services.AddConfigurationPoco<GrpcServiceRegistry>(_configuration, nameof(GrpcServiceRegistry));

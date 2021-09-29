@@ -42,12 +42,12 @@ namespace Avalanche.Api.Managers.Maintenance
         private readonly GeneralApiConfiguration _generalApiConfiguration;
         private readonly AutoLabelsConfiguration _autoLabelsConfiguration;
         private readonly LabelsConfiguration _labelsConfiguration;
-        private readonly PrintingConfiguration _printingConfiguration;
         private readonly RecorderConfiguration _recorderConfiguration;
+        private readonly ProceduresSearchConfiguration _proceduresSearchConfiguration;
+        private readonly SetupConfiguration _setupConfiguration;
 
         //These values can be changed in execution time
-        private ProceduresSearchConfiguration _proceduresSearchConfiguration;
-        private SetupConfiguration _setupConfiguration;
+        private PrintingConfiguration _printingConfiguration;
 
         public MaintenanceManager(IStorageService storageService,
             IDataManager dataManager,
@@ -656,6 +656,13 @@ namespace Avalanche.Api.Managers.Maintenance
             if (await _storageService.ValidateSchema(category.Schema, json, 1, configurationContext))
             {
                 await _storageService.SaveJsonObject(category.JsonKey, json, 1, configurationContext);
+
+                switch (category.JsonKey)
+                {
+                    case "PrintingConfiguration":
+                        _printingConfiguration.UseVSSPrintingService = json.Get<PrintingConfiguration>().UseVSSPrintingService;
+                        break;
+                }
             }
             else
             {

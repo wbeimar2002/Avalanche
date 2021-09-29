@@ -38,7 +38,7 @@ namespace Avalanche.Api.Extensions
 
             var vssClient = (PrintingServerSecureClient)Activator.CreateInstance(typeof(PrintingServerSecureClient), grpcFactory, hostPortVSS, certProvider);
             namedPrintServers.Add(new NamedPrintServer(PRINT_SERVER_VSS_KEY, vssClient));
-            services.AddSingleton(deviceClient);
+            services.AddSingleton(vssClient);
 
             services.AddSingleton(sp => new PrintServerFactory(namedPrintServers));
 
