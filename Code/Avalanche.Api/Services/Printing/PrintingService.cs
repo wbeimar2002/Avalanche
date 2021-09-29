@@ -1,5 +1,6 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
+using Avalanche.Shared.Infrastructure.Configuration;
 using Ism.PrintServer.Client;
 using Ism.PrintServer.Client.V1;
 
@@ -10,9 +11,12 @@ namespace Avalanche.Api.Services.Printing
     {
         private readonly PrintingServerSecureClient _printingService;
 
-        public PrintingService(PrintingServerSecureClient printingService)
+        public PrintingService(PrintServerFactory printServerFactory, PrintingConfiguration printingConfiguration)
         {
-            _printingService = printingService;
+            if (printingConfiguration.UseVSSPrintingService)
+                _printingService = printServerFactory.GetClient("PrintServerVSS");
+            else
+                _printingService = printServerFactory.GetClient("PrintServer");
         }
 
         public async Task<PrintersResponse> GetPrinters()

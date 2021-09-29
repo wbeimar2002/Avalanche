@@ -59,8 +59,10 @@ using Avalanche.Api.Services.Medpresence;
 using Ism.Medpresence.Client.V1.Extensions;
 using Avalanche.Api.Managers.Medpresence;
 using Avalanche.Api.Services.Printing;
-using Ism.PrintServer.Client.V1.Extensions;
 using Avalanche.Shared.Infrastructure.Enumerations;
+using Ism.PrintServer.Client.V1;
+using static Ism.PrintServer.Client.PrintServer;
+using System;
 
 namespace Avalanche.Api
 {
@@ -116,6 +118,7 @@ namespace Avalanche.Api
             services.AddTransient<IMedpresenceManager, MedpresenceManager>();
 
             // Singleton
+            //Just For Device Mode - TODO: This should be loaded on VSS Mode
             services.AddSingleton<IPgsTimeoutManager, PgsTimeoutManager>();
             services.AddConfigurationPoco<PgsApiConfiguration>(_configuration, nameof(PgsApiConfiguration));
             services.AddConfigurationPoco<TimeoutApiConfiguration>(_configuration, nameof(TimeoutApiConfiguration));
@@ -123,6 +126,8 @@ namespace Avalanche.Api
             services.AddConfigurationPoco<AutoLabelsConfiguration>(_configuration, nameof(AutoLabelsConfiguration));
             services.AddConfigurationPoco<LabelsConfiguration>(_configuration, nameof(LabelsConfiguration));
             services.AddConfigurationPoco<SetupConfiguration>(_configuration, nameof(SetupConfiguration));
+
+            //Shared
             services.AddConfigurationPoco<GeneralApiConfiguration>(_configuration, nameof(GeneralApiConfiguration));
             services.AddConfigurationPoco<ProceduresSearchConfiguration>(_configuration, nameof(ProceduresSearchConfiguration));
             services.AddConfigurationPoco<PrintingConfiguration>(_configuration, nameof(PrintingConfiguration));
@@ -150,14 +155,19 @@ namespace Avalanche.Api
             _ = services.AddSingleton<ICertificateProvider, FileSystemCertificateProvider>();
 
             // gRPC Clients
-            _ = services.AddMedpresenceSecureClient();
+            _ = services.AddMedpresenceSecureClient(); //Shared
 
-            _ = services.AddDataManagementStorageSecureClient();
-            _ = services.AddLibraryActiveProcedureServiceSecureClient();
-            _ = services.AddLibraryManagerServiceSecureClient();
-            _ = services.AddPrintingServerSecureClient();
-            _ = services.AddGrpcStateClient("AvalancheApi");
-            _ = services.AddRecorderSecureClient();
+            services.AddTransient<PrintServerFactory>(); //Both Services can be used according to a configuration
+            services.AddTransient(sp => GetPrinterClient(sp, "PrinterServer"));
+            services.AddTransient(sp => GetPrinterClient(sp, "PrinterServerVSS"));
+
+            _ = services.AddDataManagementStorageSecureClient(); //Associated to Maintenance
+
+            _ = services.AddLibraryActiveProcedureServiceSecureClient(); //It is part of library
+            _ = services.AddLibraryManagerServiceSecureClient(); //It is part of library
+
+            _ = services.AddRecorderSecureClient(); //Associated to FilesController
+            _ = services.AddGrpcStateClient("AvalancheApi"); //Associated to RecorderManager
 
             if (isDevice)
             {
@@ -266,6 +276,17 @@ namespace Avalanche.Api
             var featureManager = provider.GetService<IFeatureManager>();
 
             return featureManager.IsEnabledAsync(FeatureFlags.IsDevice).Result;
+        }
+
+        private NamedPrintServer GetPrinterClient(IServiceProvider sp, string serviceName)
+        {
+            var grpcFactory = sp.GetRequiredService<IGrpcClientFactory<SecureClientBase<PrintServerClient>>>();
+            var certProvider = sp.GetRequiredService<ICertificateProvider>();
+            var serviceRegistry = sp.GetRequiredService<GrpcServiceRegistry>();
+
+            var hostPort = serviceRegistry.GetServiceAddress(serviceName);
+            var client = (PrintingServerSecureClient)Activator.CreateInstance(typeof(SecureClientBase<PrintServerClient>), grpcFactory, hostPort, certProvider);
+            return new NamedPrintServer(serviceName, client);
         }
     }
 }

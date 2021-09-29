@@ -1,6 +1,7 @@
 using Avalanche.Shared.Domain.Models.Media;
 using Ism.Common.Core.Configuration;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace Avalanche.Shared.Infrastructure.Configuration
 {
@@ -15,16 +16,23 @@ namespace Avalanche.Shared.Infrastructure.Configuration
 
         public virtual bool Validate()
         {
-            //TODO: Pending to Resolve. In VSS context this validations fails
-            //if (Source?.IsEmpty() ?? true)
-            //    throw new ValidationException("Source cannot be empty");
+            if (Source?.IsEmpty() ?? true)
+            {
+                throw new ValidationException("Source cannot be empty");
+            }
 
-            //if (Sinks == null)
-            //    throw new ValidationException("Sinks cannot be null");
+            if (Sinks == null)
+            {
+                throw new ValidationException("Sinks cannot be null");
+            }
 
-            //foreach (var sink in Sinks)
-            //    if (sink?.IsEmpty() ?? true)
-            //        throw new ValidationException("Sink cannot be empty");
+            foreach (var sink in Sinks)
+            {
+                if (sink?.IsEmpty() ?? true)
+                {
+                    throw new ValidationException("Sink cannot be empty");
+                }
+            }
 
             return true;
         }

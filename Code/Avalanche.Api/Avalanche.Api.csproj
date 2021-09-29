@@ -51,6 +51,7 @@
     <PackageReference Include="Ism.Recorder.Client" Version="1.0.0-prerelease0040" />
     <PackageReference Include="Ism.Routing.Client" Version="1.0.0-prerelease0016" />
     <PackageReference Include="Ism.PatientInfoEngine.Client" Version="1.0.0-prerelease0027" />
+    <PackageReference Include="Ism.Security.Grpc.Standard" Version="1.0.0-prerelease027" />
     <PackageReference Include="Ism.Storage.Configuration.Client" Version="1.0.0-prerelease0032" />
     <PackageReference Include="Ism.Streaming.Client" Version="1.0.0-prerelease0016" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="3.1.17" />
@@ -80,7 +81,7 @@
     <PackageReference Include="Ism.Library.Client" Version="1.0.0-prerelease0050" />
     <PackageReference Include="Ism.SystemState.Client" Version="1.0.0-prerelease0073" />
     <PackageReference Include="Ism.Storage.PatientList.Client" Version="1.0.0-prerelease0026" />
-    <PackageReference Include="Ism.PrintServer.Client" Version="1.0.0-prerelease0005" />
+    <PackageReference Include="Ism.PrintServer.Client" Version="1.0.0-prerelease0006" />
   </ItemGroup>
 
   <ItemGroup>
