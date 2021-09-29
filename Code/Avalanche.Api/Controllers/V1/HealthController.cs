@@ -20,11 +20,11 @@ namespace Avalanche.Api.Controllers.V1
     {
         private readonly ILogger _logger;
         private readonly IWebHostEnvironment _environment;
-        //private readonly IFeatureManager _featureManager;
+        private readonly IFeatureManager _featureManager;
 
         public HealthController(ILogger<HealthController> logger, IWebHostEnvironment environment, IFeatureManager featureManager)
         {
-            //_featureManager = featureManager;
+            _featureManager = featureManager;
             _environment = environment;
             _logger = logger;
         }
@@ -44,7 +44,7 @@ namespace Avalanche.Api.Controllers.V1
                 {
                     UtcDateTime = DateTime.UtcNow,
                     LocalDateTime = DateTime.UtcNow.ToLocalTime(),
-                    //Features = await FeaturesHelper.GetFeatures(_featureManager)
+                    Features = await FeaturesHelper.GetFeatures(_featureManager)
                 });
             }
             catch (Exception ex)
@@ -76,7 +76,7 @@ namespace Avalanche.Api.Controllers.V1
                 {
                     UtcDateTime = DateTime.UtcNow,
                     LocalDateTime = DateTime.UtcNow.ToLocalTime(),
-                    //Features = await FeaturesHelper.GetFeatures(_featureManager)
+                    Features = await FeaturesHelper.GetFeatures(_featureManager)
                 });
             }
             catch (Exception ex)
