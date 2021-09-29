@@ -63,6 +63,7 @@ using Avalanche.Shared.Infrastructure.Enumerations;
 using Ism.PrintServer.Client.V1;
 using static Ism.PrintServer.Client.PrintServer;
 using System;
+using System.Collections.Generic;
 
 namespace Avalanche.Api
 {
@@ -157,9 +158,8 @@ namespace Avalanche.Api
             // gRPC Clients
             _ = services.AddMedpresenceSecureClient(); //Shared
 
-            services.AddTransient<PrintServerFactory>(); //Both Services can be used according to a configuration
-            services.AddTransient(sp => GetPrinterClient(sp, "PrinterServer"));
-            services.AddTransient(sp => GetPrinterClient(sp, "PrinterServerVSS"));
+            //For printing both Services can be used according to a configuration
+            _ = services.AddPrintingServerSecureClients();
 
             _ = services.AddDataManagementStorageSecureClient(); //Associated to Maintenance
 
@@ -276,17 +276,6 @@ namespace Avalanche.Api
             var featureManager = provider.GetService<IFeatureManager>();
 
             return featureManager.IsEnabledAsync(FeatureFlags.IsDevice).Result;
-        }
-
-        private NamedPrintServer GetPrinterClient(IServiceProvider sp, string serviceName)
-        {
-            var grpcFactory = sp.GetRequiredService<IGrpcClientFactory<SecureClientBase<PrintServerClient>>>();
-            var certProvider = sp.GetRequiredService<ICertificateProvider>();
-            var serviceRegistry = sp.GetRequiredService<GrpcServiceRegistry>();
-
-            var hostPort = serviceRegistry.GetServiceAddress(serviceName);
-            var client = (PrintingServerSecureClient)Activator.CreateInstance(typeof(SecureClientBase<PrintServerClient>), grpcFactory, hostPort, certProvider);
-            return new NamedPrintServer(serviceName, client);
         }
     }
 }
