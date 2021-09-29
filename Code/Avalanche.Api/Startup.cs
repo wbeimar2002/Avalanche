@@ -98,52 +98,30 @@ namespace Avalanche.Api
             services.AddConfigurationLoggingOnStartup();
 
             // Transient
-
             if (isDevice)
             {
                 services.AddTransient<IRoutingManager, RoutingManager>();
                 services.AddTransient<IWebRTCManager, WebRTCManager>();
-                services.AddTransient<IRecordingManager, RecordingManager>();
                 services.AddTransient<IPatientsManager, PatientsManager>();
             }
 
-            services.AddTransient<IMaintenanceManager, MaintenanceManager>();
+            services.AddTransient<IRecordingManager, RecordingManager>();
             services.AddTransient<IDataManager, DataManager>();
+
+            services.AddTransient<IMaintenanceManager, MaintenanceManager>();
             services.AddTransient<ILicensingManager, LicensingManagerMock>();
             services.AddTransient<IProceduresManager, ProceduresManager>();
             services.AddTransient<INotificationsManager, NotificationsManager>();
             services.AddTransient<ISecurityManager, SecurityManager>();
             services.AddTransient<IMedpresenceManager, MedpresenceManager>();
 
-
-            /*serviceCollection.AddSingleton<ICheckAccountResidual>(sp =>
-            {
-                var accountType = sp.GetService<IConfiguration>()["AccountType"];
-
-                switch (accountType)
-                {
-                    case "Saving":
-                        return sp.GetService<SavingAccount>();
-                    case "Checking":
-                        return sp.GetService<CheckingAccount>();
-                    case "CreditAccount":
-                        return sp.GetService<CreditAccount>();
-                    default:
-                        throw new NotImplementedException();
-                }
-            });*/
-
             // Singleton
-            //if (isDevice)
-            //{
-                services.AddSingleton<IPgsTimeoutManager, PgsTimeoutManager>();
-                services.AddConfigurationPoco<PgsApiConfiguration>(_configuration, nameof(PgsApiConfiguration));
-                services.AddConfigurationPoco<TimeoutApiConfiguration>(_configuration, nameof(TimeoutApiConfiguration));
-                services.AddConfigurationPoco<RecorderConfiguration>(_configuration, nameof(RecorderConfiguration));
-                services.AddConfigurationPoco<AutoLabelsConfiguration>(_configuration, nameof(AutoLabelsConfiguration));
-                services.AddConfigurationPoco<LabelsConfiguration>(_configuration, nameof(LabelsConfiguration));
-            //}
-
+            services.AddSingleton<IPgsTimeoutManager, PgsTimeoutManager>();
+            services.AddConfigurationPoco<PgsApiConfiguration>(_configuration, nameof(PgsApiConfiguration));
+            services.AddConfigurationPoco<TimeoutApiConfiguration>(_configuration, nameof(TimeoutApiConfiguration));
+            services.AddConfigurationPoco<RecorderConfiguration>(_configuration, nameof(RecorderConfiguration));
+            services.AddConfigurationPoco<AutoLabelsConfiguration>(_configuration, nameof(AutoLabelsConfiguration));
+            services.AddConfigurationPoco<LabelsConfiguration>(_configuration, nameof(LabelsConfiguration));
             services.AddConfigurationPoco<SetupConfiguration>(_configuration, nameof(SetupConfiguration));
             services.AddConfigurationPoco<GeneralApiConfiguration>(_configuration, nameof(GeneralApiConfiguration));
             services.AddConfigurationPoco<ProceduresSearchConfiguration>(_configuration, nameof(ProceduresSearchConfiguration));
@@ -172,28 +150,34 @@ namespace Avalanche.Api
             _ = services.AddSingleton<ICertificateProvider, FileSystemCertificateProvider>();
 
             // gRPC Clients
-
-            _ = services.AddConfigurationServiceSecureClient();
-            _ = services.AddDataManagementStorageSecureClient();
-            _ = services.AddWebRtcStreamerSecureClient();
             _ = services.AddMedpresenceSecureClient();
-            _ = services.AddLibrarySearchServiceSecureClient();
+
+            _ = services.AddDataManagementStorageSecureClient();
+            _ = services.AddLibraryActiveProcedureServiceSecureClient();
+            _ = services.AddLibraryManagerServiceSecureClient();
             _ = services.AddPrintingServerSecureClient();
+            _ = services.AddGrpcStateClient("AvalancheApi");
+            _ = services.AddRecorderSecureClient();
 
             if (isDevice)
             {
-                _ = services.AddGrpcStateClient("AvalancheApi");
+                _ = services.AddConfigurationServiceSecureClient();
+                _ = services.AddLibrarySearchServiceSecureClient();
+
+                _ = services.AddWebRtcStreamerSecureClient();
                 _ = services.AddAvidisSecureClient();
-                _ = services.AddLibraryActiveProcedureServiceSecureClient();
-                _ = services.AddLibraryManagerServiceSecureClient();
                 _ = services.AddPatientListSecureClient();
                 _ = services.AddPatientListStorageSecureClient();
                 _ = services.AddPgsTimeoutSecureClient();
-                _ = services.AddRecorderSecureClient();
                 _ = services.AddRoutingSecureClient();
 
                 // Hosted Services
                 services.AddHostedService<NotificationsListener>();
+            }
+            else
+            {
+                _ = services.AddConfigurationServiceSecureClient("StorageVSS");
+                _ = services.AddLibrarySearchServiceSecureClient("LibraryVSS");
             }
         }
 
@@ -234,9 +218,7 @@ namespace Avalanche.Api
                 {
                     // TODO: this still is not correct for remote clients...not sure how to handle that if web is being served from separate endpoint to api, since we do not have a well-known address.
                     builder
-                        .WithOrigins("https://localhost:4200")
-                        //.WithHeaders(new[] { "authorization", "content-type", "accept" })
-                        //.WithMethods(new[] { "GET", "POST", "PUT", "DELETE", "OPTIONS" })
+                        .WithOrigins("https://localhost:4200", "http://localhost:4200", "http://localhost:8080", "http://localhost:8082")
                         .AllowAnyHeader()
                         //.AllowAnyOrigin()
                         .AllowAnyMethod()

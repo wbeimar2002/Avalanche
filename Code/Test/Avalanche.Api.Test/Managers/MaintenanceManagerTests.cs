@@ -60,6 +60,7 @@ namespace Avalanche.Api.Test.Managers
             _httpContextAccessor = new Mock<IHttpContextAccessor>();
             _filesService = new Mock<IFilesService>();
             _featureManager = new Mock<IFeatureManager>();
+            _printingService = new Mock<IPrintingService>();
 
             _generalApiConfiguration = new Mock<GeneralApiConfiguration>();
             _proceduresSearchConfiguration = new Mock<ProceduresSearchConfiguration>();

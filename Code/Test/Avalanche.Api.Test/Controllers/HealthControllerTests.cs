@@ -52,7 +52,7 @@ namespace Avalanche.Api.Tests.Controllers
                 _logger.Verify(LogLevel.Debug, $"Completed {_controller.GetType().Name}.HealthCheck", Times.Once());
             }
 
-            Assert.IsInstanceOf<OkObjectResult>(okResult);
+            Assert.IsInstanceOf<OkObjectResult>(okResult.Result);
         }
 
         [Test]
@@ -61,15 +61,15 @@ namespace Avalanche.Api.Tests.Controllers
             if (_checkLogger)
             {
                 _logger.Setup(LogLevel.Debug, "Requested HealthController.HealthCheck").Throws(It.IsAny<Exception>());
-            
+
                 var badResult = _controller.HealthCheck();
 
                 _logger.Verify(LogLevel.Error, $"Exception {_controller.GetType().Name}.HealthCheck", Times.Once());
                 _logger.Verify(LogLevel.Information, "Avalanche Api is healthy.", Times.Never());
                 _logger.Verify(LogLevel.Debug, $"Requested {_controller.GetType().Name}.HealthCheck", Times.Once());
                 _logger.Verify(LogLevel.Debug, $"Completed {_controller.GetType().Name}.HealthCheck", Times.Once());
-            
-                Assert.IsInstanceOf<BadRequestObjectResult>(badResult);
+
+                Assert.IsInstanceOf<BadRequestObjectResult>(badResult.Result);
             }
         }
 
@@ -86,7 +86,7 @@ namespace Avalanche.Api.Tests.Controllers
                 _logger.Verify(LogLevel.Debug, $"Completed {_controller.GetType().Name}.HealthCheckSecure", Times.Once());
             }
 
-            Assert.IsInstanceOf<OkObjectResult>(okResult);
+            Assert.IsInstanceOf<OkObjectResult>(okResult.Result);
         }
 
         [Test]
@@ -98,13 +98,12 @@ namespace Avalanche.Api.Tests.Controllers
 
                 var badResult = _controller.HealthCheckSecure();
 
-
                 _logger.Verify(LogLevel.Error, $"Exception {_controller.GetType().Name}.HealthCheckSecure", Times.Once());
                 _logger.Verify(LogLevel.Information, "Avalanche Api is healthy.", Times.Never());
                 _logger.Verify(LogLevel.Debug, $"Requested {_controller.GetType().Name}.HealthCheckSecure", Times.Once());
                 _logger.Verify(LogLevel.Debug, $"Completed {_controller.GetType().Name}.HealthCheckSecure", Times.Once());
 
-                Assert.IsInstanceOf<BadRequestObjectResult>(badResult);
+                Assert.IsInstanceOf<BadRequestObjectResult>(badResult.Result);
             }
         }
     }
