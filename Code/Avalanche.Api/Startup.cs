@@ -228,7 +228,7 @@ namespace Avalanche.Api
                 {
                     // TODO: this still is not correct for remote clients...not sure how to handle that if web is being served from separate endpoint to api, since we do not have a well-known address.
                     builder
-                        .WithOrigins("https://localhost:4200", "http://localhost:4200", "http://localhost:8080", "http://localhost:8082")
+                        .WithOrigins("https://localhost:4200", "http://localhost:4200", "http://localhost:8080", "http://localhost:8082", "http://host.docker.internal:8080")
                         .AllowAnyHeader()
                         //.AllowAnyOrigin()
                         .AllowAnyMethod()
