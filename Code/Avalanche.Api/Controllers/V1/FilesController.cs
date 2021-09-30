@@ -1,4 +1,4 @@
-﻿using Avalanche.Api.Managers.Media;
+using Avalanche.Api.Managers.Media;
 using Avalanche.Api.Managers.Security;
 using Avalanche.Api.Services.Security;
 using Avalanche.Shared.Infrastructure.Enumerations;
@@ -29,8 +29,8 @@ namespace Avalanche.Api.Controllers.V1
         private readonly IRecordingManager _recordingManager;
         private readonly IWebHostEnvironment _environment;
 
-        public FilesController(ILogger<FilesController> logger, 
-            ISecurityManager securityManager, 
+        public FilesController(ILogger<FilesController> logger,
+            ISecurityManager securityManager,
             ICookieValidationService cookieValidationService,
             IRecordingManager recordingManager, IWebHostEnvironment environment)
         {

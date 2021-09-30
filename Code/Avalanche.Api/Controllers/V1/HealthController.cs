@@ -10,6 +10,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.FeatureManagement;
 using System;
+using System.Threading.Tasks;
 
 namespace Avalanche.Api.Controllers.V1
 {
@@ -33,7 +34,7 @@ namespace Avalanche.Api.Controllers.V1
         /// </summary>
         [Route("check")]
         [HttpGet]
-        public IActionResult HealthCheck()
+        public async Task<IActionResult> HealthCheck()
         {
             try
             {
@@ -43,7 +44,7 @@ namespace Avalanche.Api.Controllers.V1
                 {
                     UtcDateTime = DateTime.UtcNow,
                     LocalDateTime = DateTime.UtcNow.ToLocalTime(),
-                    Features = FeaturesHelper.GetFeatures(_featureManager)
+                    Features = await FeaturesHelper.GetFeatures(_featureManager)
                 });
             }
             catch (Exception ex)
@@ -63,7 +64,7 @@ namespace Avalanche.Api.Controllers.V1
         [Authorize]
         [Route("check/secure")]
         [HttpGet]
-        public IActionResult HealthCheckSecure()
+        public async Task<IActionResult> HealthCheckSecure()
         {
             try
             {
@@ -75,7 +76,7 @@ namespace Avalanche.Api.Controllers.V1
                 {
                     UtcDateTime = DateTime.UtcNow,
                     LocalDateTime = DateTime.UtcNow.ToLocalTime(),
-                    Features = FeaturesHelper.GetFeatures(_featureManager)
+                    Features = await FeaturesHelper.GetFeatures(_featureManager)
                 });
             }
             catch (Exception ex)
@@ -87,6 +88,6 @@ namespace Avalanche.Api.Controllers.V1
             {
                 _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
             }
-        }        
+        }
     }
 }

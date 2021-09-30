@@ -1,18 +1,14 @@
-﻿using Avalanche.Shared.Infrastructure.Extensions;
-
+using System;
+using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
+using System.Linq;
+using System.Threading.Tasks;
+using Avalanche.Shared.Infrastructure.Extensions;
 using Ism.Common.Core.Configuration.Models;
 using Ism.Storage.Configuration.Client.V1;
-
-using Newtonsoft.Json.Linq;
-
-using System;
-using System.Diagnostics.CodeAnalysis;
-using System.Threading.Tasks;
-using Avalanche.Api.Extensions;
-using System.Collections.Generic;
-using System.Linq;
 using Microsoft.AspNetCore.JsonPatch;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using Newtonsoft.Json.Schema;
 
 namespace Avalanche.Api.Services.Maintenance
