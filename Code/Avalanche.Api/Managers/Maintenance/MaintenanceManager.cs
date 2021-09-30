@@ -42,6 +42,7 @@ namespace Avalanche.Api.Managers.Maintenance
         private readonly LabelsConfiguration _labelsConfiguration;
         private readonly PrintingConfiguration _printingConfiguration;
         private readonly RecorderConfiguration _recorderConfiguration;
+        private readonly MedPresenceConfiguration _medpresenceConfiguration;
 
         //These values can be changed in execution time
         private ProceduresSearchConfiguration _proceduresSearchConfiguration;
@@ -60,7 +61,8 @@ namespace Avalanche.Api.Managers.Maintenance
             LabelsConfiguration labelsConfiguration,
             PrintingConfiguration printingConfiguration,
             SetupConfiguration setupConfiguration,
-            RecorderConfiguration recorderConfiguration)
+            RecorderConfiguration recorderConfiguration,
+            MedPresenceConfiguration medpresenceConfiguration)
         {
             _storageService = storageService;
             _dataManager = dataManager;
@@ -80,6 +82,7 @@ namespace Avalanche.Api.Managers.Maintenance
             _printingConfiguration = printingConfiguration;
             _setupConfiguration = setupConfiguration;
             _recorderConfiguration = recorderConfiguration;
+            _medpresenceConfiguration = medpresenceConfiguration;
         }
 
         #region Features
@@ -104,6 +107,8 @@ namespace Avalanche.Api.Managers.Maintenance
         public SetupConfiguration GetSetupConfigurationSettings() => _setupConfiguration;
 
         public RecorderConfiguration GetRecorderConfigurationSettings() => _recorderConfiguration;
+
+        public MedPresenceConfiguration GetMedPresenceConfigurationSettings() => _medpresenceConfiguration;
 
         #endregion
 

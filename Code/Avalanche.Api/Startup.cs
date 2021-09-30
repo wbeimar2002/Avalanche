@@ -116,6 +116,7 @@ namespace Avalanche.Api
             services.AddConfigurationPoco<AutoLabelsConfiguration>(_configuration, nameof(AutoLabelsConfiguration));
             services.AddConfigurationPoco<LabelsConfiguration>(_configuration, nameof(LabelsConfiguration));
             services.AddConfigurationPoco<PrintingConfiguration>(_configuration, nameof(PrintingConfiguration));
+            services.AddConfigurationPoco<MedPresenceConfiguration>(_configuration, nameof(MedPresenceConfiguration));
 
             services.AddSingleton<IWebRTCService, WebRtcService>();
             services.AddSingleton<IRecorderService, RecorderService>();

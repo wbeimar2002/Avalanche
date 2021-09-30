@@ -41,6 +41,7 @@ namespace Avalanche.Api.Test.Managers
         Mock<PrintingConfiguration> _printingConfiguration;
         Mock<SetupConfiguration> _setupConfiguration;
         Mock<RecorderConfiguration> _recorderConfiguration;
+        Mock<MedPresenceConfiguration> _medpresenceConfiguration;
 
         MaintenanceManager _manager;
 
@@ -69,10 +70,11 @@ namespace Avalanche.Api.Test.Managers
             _printingConfiguration = new Mock<PrintingConfiguration>();
             _setupConfiguration = new Mock<SetupConfiguration>();
             _recorderConfiguration = new Mock<RecorderConfiguration>();
+            _medpresenceConfiguration = new Mock<MedPresenceConfiguration>();
 
             _manager = new MaintenanceManager(_storageService.Object, _dataManager.Object, _mapper, _httpContextAccessor.Object, _libraryService.Object,
                 _filesService.Object, _featureManager.Object, _generalApiConfiguration.Object, _proceduresSearchConfiguration.Object, _autoLabelsConfiguration.Object,
-                _labelsConfiguration.Object, _printingConfiguration.Object, _setupConfiguration.Object, _recorderConfiguration.Object);
+                _labelsConfiguration.Object, _printingConfiguration.Object, _setupConfiguration.Object, _recorderConfiguration.Object, _medpresenceConfiguration.Object);
         }
 
         [Test]

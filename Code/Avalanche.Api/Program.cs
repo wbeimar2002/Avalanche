@@ -70,6 +70,7 @@ namespace Avalanche.Api
                 ConfigurationServiceRequestFactory.CreateRequest<AutoLabelsConfiguration>(context),
                 ConfigurationServiceRequestFactory.CreateRequest<LabelsConfiguration>(context),
                 ConfigurationServiceRequestFactory.CreateRequest<PrintingConfiguration>(context),
+                ConfigurationServiceRequestFactory.CreateRequest<MedPresenceConfiguration>(context),
             };
 
             return requests;
