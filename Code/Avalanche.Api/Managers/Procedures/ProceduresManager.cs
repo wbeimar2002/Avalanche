@@ -167,6 +167,11 @@ namespace Avalanche.Api.Managers.Procedures
 
         public async Task UpdateProcedure(ProcedureViewModel procedureViewModel)
         {
+            Preconditions.ThrowIfNull(nameof(procedureViewModel), procedureViewModel);
+            Preconditions.ThrowIfNull(nameof(procedureViewModel.LibraryId), procedureViewModel.LibraryId);
+            Preconditions.ThrowIfNull(nameof(procedureViewModel.Patient.MRN), procedureViewModel.Patient.MRN);
+            Preconditions.ThrowIfNull(nameof(procedureViewModel.Patient.LastName), procedureViewModel.Patient.LastName);
+
             var procedure = _mapper.Map<ProcedureViewModel, ProcedureMessage>(procedureViewModel);
 
             await _libraryService.UpdateProcedure(new UpdateProcedureRequest
