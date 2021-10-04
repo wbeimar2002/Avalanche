@@ -31,5 +31,7 @@ namespace Avalanche.Api.ViewModels
 
         public string? Folder { get; set; }
         public string? Filter { get; set; }
+
+        public IList<DynamicDependencySettingViewModel>? Dependencies { get; set; }
     }
 }
