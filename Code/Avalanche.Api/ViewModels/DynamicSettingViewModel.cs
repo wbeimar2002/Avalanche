@@ -15,8 +15,6 @@ namespace Avalanche.Api.ViewModels
 
         public DynamicListViewModel? CustomList { get; set; }
 
-        public IList<DynamicDependencySettingViewModel>? Dependencies { get; set; }
-
         public string? Value { get; set; }
 
         public string? ActionEndPoint { get; set; }

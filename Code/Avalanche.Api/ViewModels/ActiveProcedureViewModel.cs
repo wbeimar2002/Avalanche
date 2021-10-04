@@ -7,7 +7,8 @@ namespace Avalanche.Api.ViewModels
     {
         public bool RequiresUserConfirmation { get; set; }
         public int? RecorderState { get; internal set; }
-
+        public bool IsRecording { get; set; }
+        public bool IsBackgroundRecording { get; set; }
         public ActiveProcedureViewModel()
         { }
 
