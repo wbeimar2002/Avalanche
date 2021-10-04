@@ -28,5 +28,7 @@ namespace Avalanche.Api.Managers.Maintenance
         SetupConfiguration GetSetupConfigurationSettings();
         PrintingConfiguration GetPrintingConfigurationSettings();
         RecorderConfiguration GetRecorderConfigurationSettings();
+
+        MedPresenceConfiguration GetMedPresenceConfigurationSettings();
     }
 }

@@ -133,6 +133,7 @@ namespace Avalanche.Api
             services.AddConfigurationPoco<GeneralApiConfiguration>(_configuration, nameof(GeneralApiConfiguration));
             services.AddConfigurationPoco<ProceduresSearchConfiguration>(_configuration, nameof(ProceduresSearchConfiguration));
             services.AddConfigurationPoco<PrintingConfiguration>(_configuration, nameof(PrintingConfiguration));
+            services.AddConfigurationPoco<MedPresenceConfiguration>(_configuration, nameof(MedPresenceConfiguration));
 
             services.AddSingleton<IWebRTCService, WebRtcService>();
             services.AddSingleton<IRecorderService, RecorderService>();
