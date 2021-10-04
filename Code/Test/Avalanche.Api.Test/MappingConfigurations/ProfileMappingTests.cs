@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+using AutoMapper;
 using Avalanche.Api.Mapping;
 using Avalanche.Api.ViewModels;
 using Ism.SystemState.Models.Procedure;
@@ -98,6 +98,44 @@ namespace Avalanche.Api.Tests.MappingConfigurations
             Assert.AreEqual(viewModel.LastName, stateModel.LastName);
             Assert.AreEqual(viewModel.MRN, stateModel.MRN);
             Assert.AreEqual(viewModel.Sex.Id, stateModel.Sex);
+        }
+
+        [Test]
+        public void TestActiveProcedureStateToActiveProcedureViewModel()
+        {
+            var activeProcedure = new ActiveProcedureState(
+                    new Patient() { LastName = "name" },
+                    new List<ProcedureImage>() { new ProcedureImage(Guid.NewGuid(), "source", "channel", false, "path", "path", null, DateTimeOffset.UtcNow, Guid.NewGuid()) },
+                    new List<ProcedureVideo>(),
+                    new List<ProcedureVideo>(),
+                    "libId",
+                    "repId",
+                    "path",
+                    null,
+                    new ProcedureType() { Id = 1, Name = "TestProceType" },
+                    null,
+                    false,
+                    DateTimeOffset.UtcNow,
+                    TimeZoneInfo.Local.Id,
+                    false,
+                    new List<ProcedureNote>(),
+                    null,
+                    null,
+                    null,
+                    new List<VideoRecordingEvent>(),
+                    BackgroundRecordingMode.StartImmediately)
+            {
+                IsRecording = true,
+                IsBackgroundRecording = true
+            };
+
+            var stateViewModel = _mapper.Map<ActiveProcedureViewModel>(activeProcedure);
+
+            Assert.AreEqual(activeProcedure.IsBackgroundRecording, stateViewModel.IsBackgroundRecording);
+            Assert.AreEqual(activeProcedure.IsRecording, stateViewModel.IsRecording);
+            Assert.AreEqual(activeProcedure.Videos.Count, stateViewModel.Videos.Count);
+            Assert.AreEqual(activeProcedure.Images.Count, stateViewModel.Images.Count);
+            Assert.AreEqual(activeProcedure.BackgroundVideos.Count, stateViewModel.BackgroundVideos.Count);
         }
 
         private void AssertProfileIsValid<TProfile>() where TProfile : Profile, new()
