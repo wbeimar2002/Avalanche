@@ -97,45 +97,11 @@ namespace Avalanche.Api.Tests.Managers
                 {
                     MRN = "Sample",
                     DateOfBirth = DateTime.Today,
-                    FirstName = null,
-                    LastName = "Sample",
-                    Sex = new KeyValuePairViewModel()
-                    {
-                        Id = "S",
-                        TranslationKey = "SampleKey",
-                        Value = "Sample"
-                    }
-                });
-                yield return new TestCaseData(new PatientViewModel()
-                {
-                    MRN = "Sample",
-                    DateOfBirth = DateTime.Today,
                     FirstName = "Sample",
                     LastName = null,
                     Sex = new KeyValuePairViewModel()
                     {
                         Id = "S",
-                        TranslationKey = "SampleKey",
-                        Value = "Sample"
-                    }
-                });
-                yield return new TestCaseData(new PatientViewModel()
-                {
-                    MRN = "Sample",
-                    DateOfBirth = DateTime.Today,
-                    FirstName = "Sample",
-                    LastName = "Sample",
-                    Sex = null
-                });
-                yield return new TestCaseData(new PatientViewModel()
-                {
-                    MRN = "Sample",
-                    DateOfBirth = DateTime.Today,
-                    FirstName = "Sample",
-                    LastName = "Sample",
-                    Sex = new KeyValuePairViewModel()
-                    {
-                        Id = null,
                         TranslationKey = "SampleKey",
                         Value = "Sample"
                     }
@@ -181,48 +147,11 @@ namespace Avalanche.Api.Tests.Managers
                     Id = 0,
                     MRN = "Sample",
                     DateOfBirth = DateTime.Today,
-                    FirstName = null,
-                    LastName = "Sample",
-                    Sex = new KeyValuePairViewModel()
-                    {
-                        Id = "S",
-                        TranslationKey = "SampleKey",
-                        Value = "Sample"
-                    }
-                });
-                yield return new TestCaseData(new PatientViewModel()
-                {
-                    Id = 0,
-                    MRN = "Sample",
-                    DateOfBirth = DateTime.Today,
                     FirstName = "Sample",
                     LastName = null,
                     Sex = new KeyValuePairViewModel()
                     {
                         Id = "S",
-                        TranslationKey = "SampleKey",
-                        Value = "Sample"
-                    }
-                });
-                yield return new TestCaseData(new PatientViewModel()
-                {
-                    Id = 0,
-                    MRN = "Sample",
-                    DateOfBirth = DateTime.Today,
-                    FirstName = "Sample",
-                    LastName = "Sample",
-                    Sex = null
-                });
-                yield return new TestCaseData(new PatientViewModel()
-                {
-                    Id = 0,
-                    MRN = "Sample",
-                    DateOfBirth = DateTime.Today,
-                    FirstName = "Sample",
-                    LastName = "Sample",
-                    Sex = new KeyValuePairViewModel()
-                    {
-                        Id = null,
                         TranslationKey = "SampleKey",
                         Value = "Sample"
                     }

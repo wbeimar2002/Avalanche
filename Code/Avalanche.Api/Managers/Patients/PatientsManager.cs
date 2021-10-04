@@ -71,12 +71,7 @@ namespace Avalanche.Api.Managers.Patients
         {
             Preconditions.ThrowIfNull(nameof(newPatient), newPatient);
             Preconditions.ThrowIfNull(nameof(newPatient.MRN), newPatient.MRN);
-            Preconditions.ThrowIfNull(nameof(newPatient.DateOfBirth), newPatient.DateOfBirth);
-            Preconditions.ThrowIfNull(nameof(newPatient.FirstName), newPatient.FirstName);
             Preconditions.ThrowIfNull(nameof(newPatient.LastName), newPatient.LastName);
-            Preconditions.ThrowIfNull(nameof(newPatient.Sex), newPatient.Sex);
-            Preconditions.ThrowIfNull(nameof(newPatient.Sex.Id), newPatient.Sex.Id);
-            Preconditions.ThrowIfNull(nameof(newPatient.ProcedureType.Name), newPatient.ProcedureType.Name);
 
             var accessInfo = _accessInfoFactory.GenerateAccessInfo();
             var setupSettings = await _storageService.GetJsonObject<SetupConfiguration>(nameof(SetupConfiguration), 1, configurationContext);
@@ -163,12 +158,7 @@ namespace Avalanche.Api.Managers.Patients
             Preconditions.ThrowIfNull(nameof(existingPatient), existingPatient);
             Preconditions.ThrowIfNull(nameof(existingPatient.Id), existingPatient.Id);
             Preconditions.ThrowIfNull(nameof(existingPatient.MRN), existingPatient.MRN);
-            Preconditions.ThrowIfNull(nameof(existingPatient.DateOfBirth), existingPatient.DateOfBirth);
-            Preconditions.ThrowIfNull(nameof(existingPatient.FirstName), existingPatient.FirstName);
             Preconditions.ThrowIfNull(nameof(existingPatient.LastName), existingPatient.LastName);
-            Preconditions.ThrowIfNull(nameof(existingPatient.Sex), existingPatient.Sex);
-            Preconditions.ThrowIfNull(nameof(existingPatient.Sex.Id), existingPatient.Sex.Id);
-            Preconditions.ThrowIfNull(nameof(existingPatient.ProcedureType.Name), existingPatient.ProcedureType.Name);
 
             var setupSettings = await _storageService.GetJsonObject<SetupConfiguration>(nameof(SetupConfiguration), 1, configurationContext);
 

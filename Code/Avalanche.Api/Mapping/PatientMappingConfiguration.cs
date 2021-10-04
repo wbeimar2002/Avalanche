@@ -300,11 +300,11 @@ namespace Avalanche.Api.Mapping
                     opt => opt.MapFrom(src => src.Sex.Id))
                 .ForPath(dest =>
                     dest.PatientRecord.Patient.Dob,
-                    opt => opt.MapFrom(src => new Ism.Storage.PatientList.Client.V1.Protos.FixedDateMessage
+                    opt => opt.MapFrom(src => src.DateOfBirth == null  ? new Ism.Storage.PatientList.Client.V1.Protos.FixedDateMessage() : new Ism.Storage.PatientList.Client.V1.Protos.FixedDateMessage
                     {
-                        Day = src.DateOfBirth.Day,
-                        Month = src.DateOfBirth.Month,
-                        Year = src.DateOfBirth.Year
+                        Day = src.DateOfBirth.Value.Day,
+                        Month = src.DateOfBirth.Value.Month,
+                        Year = src.DateOfBirth.Value.Year
                     }))
                 .ForPath(dest =>
                     dest.PatientRecord.PerformingPhysician.UserId,
@@ -380,11 +380,11 @@ namespace Avalanche.Api.Mapping
                     opt => opt.MapFrom(src => GetSex(src.Sex.Id)))
                 .ForPath(dest =>
                     dest.PatientRecord.Patient.Dob,
-                    opt => opt.MapFrom(src => new Ism.Storage.PatientList.Client.V1.Protos.FixedDateMessage
+                    opt => opt.MapFrom(src => src.DateOfBirth == null ? new Ism.Storage.PatientList.Client.V1.Protos.FixedDateMessage() : new Ism.Storage.PatientList.Client.V1.Protos.FixedDateMessage
                     {
-                        Day = src.DateOfBirth.Day,
-                        Month = src.DateOfBirth.Month,
-                        Year = src.DateOfBirth.Year
+                        Day = src.DateOfBirth.Value.Day,
+                        Month = src.DateOfBirth.Value.Month,
+                        Year = src.DateOfBirth.Value.Year
                     }))
                 .ForPath(dest =>
                     dest.PatientRecord.PerformingPhysician.UserId,
