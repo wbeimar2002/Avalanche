@@ -48,6 +48,7 @@ namespace Avalanche.Api.Managers.Maintenance
 
         //These values can be changed in execution time
         private PrintingConfiguration _printingConfiguration;
+        private readonly MedPresenceConfiguration _medPresenceConfiguration;
 
         public MaintenanceManager(IStorageService storageService,
             IDataManager dataManager,
@@ -63,7 +64,8 @@ namespace Avalanche.Api.Managers.Maintenance
             LabelsConfiguration labelsConfiguration,
             PrintingConfiguration printingConfiguration,
             SetupConfiguration setupConfiguration,
-            RecorderConfiguration recorderConfiguration)
+            RecorderConfiguration recorderConfiguration,
+            MedPresenceConfiguration medPresenceConfiguration)
         {
             _storageService = storageService;
             _dataManager = dataManager;
@@ -84,6 +86,7 @@ namespace Avalanche.Api.Managers.Maintenance
             _printingConfiguration = printingConfiguration;
             _setupConfiguration = setupConfiguration;
             _recorderConfiguration = recorderConfiguration;
+            _medPresenceConfiguration = medPresenceConfiguration;
         }
 
         #region Features
@@ -109,6 +112,7 @@ namespace Avalanche.Api.Managers.Maintenance
 
         public RecorderConfiguration GetRecorderConfigurationSettings() => _recorderConfiguration;
 
+        public MedPresenceConfiguration GetMedPresenceConfigurationSettings() => _medPresenceConfiguration;
         #endregion
 
         public async Task<ReindexStatusViewModel> ReindexRepository(ReindexRepositoryRequestViewModel reindexRequest)
