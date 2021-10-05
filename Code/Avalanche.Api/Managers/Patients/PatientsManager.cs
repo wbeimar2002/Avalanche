@@ -17,6 +17,7 @@ using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Avalanche.Api.Managers.Patients
@@ -111,9 +112,7 @@ namespace Avalanche.Api.Managers.Patients
 
         private void ValidateDynamicConditions(PatientViewModel patient)
         {
-            var dynamicFields = _setupConfiguration.PatientInfo;
-
-            foreach (var item in dynamicFields)
+            foreach (var item in _setupConfiguration.PatientInfo.Where(f => f.Required))
             {
                 switch (item.Id)
                 {
@@ -131,14 +130,17 @@ namespace Avalanche.Api.Managers.Patients
                         Preconditions.ThrowIfNull(nameof(patient.Physician), patient.Physician);
                         break;
                     case "department":
-                        Preconditions.ThrowIfNull(nameof(patient.Department), patient.Department); //Bussiness Rule, department can be disabled.
+                        if (_setupConfiguration.General.DepartmentsSupported)
+                        {
+                            Preconditions.ThrowIfNull(nameof(patient.Department), patient.Department);
+                        }
                         break;
                     case "procedureType":
                         Preconditions.ThrowIfNull(nameof(patient.ProcedureType), patient.ProcedureType);
                         break;
-                        //case "accessionNumber":
+                    //case "accessionNumber": TODO: Pending
                         //    Preconditions.ThrowIfNull(nameof(patient.Accession), patient.Accession);
-                        //    break; Check this value in registration
+                        //    break; 
                 }
             }
         }

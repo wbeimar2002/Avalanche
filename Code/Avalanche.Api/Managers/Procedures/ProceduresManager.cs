@@ -185,9 +185,7 @@ namespace Avalanche.Api.Managers.Procedures
 
         private void ValidateDynamicConditions(ProcedureViewModel procedure)
         {
-            var dynamicFields = _setupConfiguration.PatientInfo;
-
-            foreach (var item in dynamicFields)
+            foreach (var item in _setupConfiguration.PatientInfo.Where(f => f.Required))
             {
                 switch (item.Id)
                 {
@@ -200,7 +198,6 @@ namespace Avalanche.Api.Managers.Procedures
                     case "dateOfBirth":
                         Preconditions.ThrowIfNull(nameof(procedure.Patient.DateOfBirth), procedure.Patient.DateOfBirth);
                         break;
-
                     case "physician":
                         Preconditions.ThrowIfNull(nameof(procedure.Physician), procedure.Physician);
                         break;
@@ -213,9 +210,6 @@ namespace Avalanche.Api.Managers.Procedures
                     case "accessionNumber":
                         Preconditions.ThrowIfNull(nameof(procedure.Accession), procedure.Accession);
                         break;
-                    //case "procedureId":
-                    //    Preconditions.ThrowIfNull(nameof(procedure.ProcedureId), procedure.ProcedureId);???
-                    //    break;
                     case "scopeSerialNumber":
                         Preconditions.ThrowIfNull(nameof(procedure.ScopeSerialNumber), procedure.ScopeSerialNumber);
                         break;
@@ -225,6 +219,9 @@ namespace Avalanche.Api.Managers.Procedures
                     case "clinicalNotes":
                         Preconditions.ThrowIfNull(nameof(procedure.ClinicalNotes), procedure.ClinicalNotes);
                         break;
+                    //case "procedureId":
+                    //    Preconditions.ThrowIfNull(nameof(procedure.ProcedureId), procedure.ProcedureId);
+                    //    break;
                 }
             }
         }
