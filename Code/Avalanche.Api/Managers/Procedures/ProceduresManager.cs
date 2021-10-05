@@ -28,12 +28,13 @@ namespace Avalanche.Api.Managers.Procedures
 
         private readonly IDataManager _dataManager;
         private readonly GeneralApiConfiguration _generalApiConfig;
+        private readonly SetupConfiguration _setupConfiguration;
 
         public const int MinPageSize = 25;
         public const int MaxPageSize = 100;
 
         public ProceduresManager(IStateClient stateClient, ILibraryService libraryService, IAccessInfoFactory accessInfoFactory, IMapper mapper, IRecorderService recorderService,
-            IDataManager dataManager, GeneralApiConfiguration generalApiConfig) 
+            IDataManager dataManager, GeneralApiConfiguration generalApiConfig, SetupConfiguration setupConfiguration)
         {
             _stateClient = stateClient;
             _libraryService = libraryService;
@@ -44,6 +45,7 @@ namespace Avalanche.Api.Managers.Procedures
             _recorderService = recorderService;
             _dataManager = dataManager;
             _generalApiConfig = generalApiConfig;
+            _setupConfiguration = setupConfiguration;
         }
 
         /// <summary>
@@ -134,9 +136,8 @@ namespace Avalanche.Api.Managers.Procedures
             var request = _mapper.Map<ActiveProcedureState, DiscardActiveProcedureRequest>(activeProcedure);
 
             request.AccessInfo = _mapper.Map<AccessInfoMessage>(accessInfo);
-           
-            await _recorderService.FinishProcedure();
 
+            await _recorderService.FinishProcedure();
             await _libraryService.DiscardActiveProcedure(request);
         }
 
@@ -172,12 +173,60 @@ namespace Avalanche.Api.Managers.Procedures
             Preconditions.ThrowIfNull(nameof(procedureViewModel.Patient.MRN), procedureViewModel.Patient.MRN);
             Preconditions.ThrowIfNull(nameof(procedureViewModel.Patient.LastName), procedureViewModel.Patient.LastName);
 
+            ValidateDynamicConditions(procedureViewModel);
+
             var procedure = _mapper.Map<ProcedureViewModel, ProcedureMessage>(procedureViewModel);
 
             await _libraryService.UpdateProcedure(new UpdateProcedureRequest
             {
                 Procedure = procedure
             });
+        }
+
+        private void ValidateDynamicConditions(ProcedureViewModel procedure)
+        {
+            var dynamicFields = _setupConfiguration.PatientInfo;
+
+            foreach (var item in dynamicFields)
+            {
+                switch (item.Id)
+                {
+                    case "firstName":
+                        Preconditions.ThrowIfNull(nameof(procedure.Patient.FirstName), procedure.Patient.FirstName);
+                        break;
+                    case "sex":
+                        Preconditions.ThrowIfNull(nameof(procedure.Patient.Sex), procedure.Patient.Sex);
+                        break;
+                    case "dateOfBirth":
+                        Preconditions.ThrowIfNull(nameof(procedure.Patient.DateOfBirth), procedure.Patient.DateOfBirth);
+                        break;
+
+                    case "physician":
+                        Preconditions.ThrowIfNull(nameof(procedure.Physician), procedure.Physician);
+                        break;
+                    case "department":
+                        Preconditions.ThrowIfNull(nameof(procedure.Department), procedure.Department);
+                        break;
+                    case "procedureType":
+                        Preconditions.ThrowIfNull(nameof(procedure.ProcedureType), procedure.ProcedureType);
+                        break;
+                    case "accessionNumber":
+                        Preconditions.ThrowIfNull(nameof(procedure.Accession), procedure.Accession);
+                        break;
+                    //case "procedureId":
+                    //    Preconditions.ThrowIfNull(nameof(procedure.ProcedureId), procedure.ProcedureId);???
+                    //    break;
+                    case "scopeSerialNumber":
+                        Preconditions.ThrowIfNull(nameof(procedure.ScopeSerialNumber), procedure.ScopeSerialNumber);
+                        break;
+                    case "diagnosis":
+                        Preconditions.ThrowIfNull(nameof(procedure.Diagnosis), procedure.Diagnosis);
+                        break;
+                    case "clinicalNotes":
+                        Preconditions.ThrowIfNull(nameof(procedure.ClinicalNotes), procedure.ClinicalNotes);
+                        break;
+                }
+            }
         }
 
         public async Task<ProceduresContainerViewModel> Search(ProcedureSearchFilterViewModel filter)

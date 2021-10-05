@@ -43,6 +43,7 @@ namespace Avalanche.Api.Tests.Managers
         Mock<IHttpContextAccessor> _httpContextAccessor;
         Mock<IProceduresManager> _proceduresManager;
         Mock<IRoutingManager> _routingManager;
+        Mock<SetupConfiguration> _setupConfiguration;
 
         IMapper _mapper;
         PatientsManager _manager;
@@ -58,6 +59,7 @@ namespace Avalanche.Api.Tests.Managers
             _httpContextAccessor = new Mock<IHttpContextAccessor>();
             _proceduresManager = new Mock<IProceduresManager>();
             _routingManager = new Mock<IRoutingManager>();
+            _setupConfiguration = new Mock<SetupConfiguration>();
 
             var config = new MapperConfiguration(cfg =>
             {
@@ -72,7 +74,7 @@ namespace Avalanche.Api.Tests.Managers
                 .Returns(new Ism.IsmLogCommon.Core.AccessInfo("127.0.0.1", "tests", "unit-tests", "name", "none", false));
 
             _mapper = config.CreateMapper();
-            _manager = new PatientsManager(_pieService.Object, _accessInfoFactory.Object, _storageService.Object, _mapper, _dataManagementService.Object, _stateClient.Object, _proceduresManager.Object, _routingManager.Object, _httpContextAccessor.Object, recorderConfig);
+            _manager = new PatientsManager(_pieService.Object, _accessInfoFactory.Object, _storageService.Object, _mapper, _dataManagementService.Object, _stateClient.Object, _proceduresManager.Object, _routingManager.Object, _httpContextAccessor.Object, recorderConfig, _setupConfiguration.Object);
         }
 
         public static IEnumerable<TestCaseData> NewPatientViewModelWrongDataTestCases

@@ -84,8 +84,6 @@ namespace Avalanche.Api.Managers.Media
 
         public async Task ShowPreview(RoutingPreviewViewModel routingPreviewViewModel)
         {
-            var setupSettings = await _storageService.GetJsonObject<SetupConfiguration>(nameof(SetupConfiguration), 1, configurationContext);
-
             await _avidisService.ShowPreview(_mapper.Map<RegionModel, ShowPreviewRequest>(routingPreviewViewModel.Region));
 
             //TODO: Map this

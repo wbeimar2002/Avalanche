@@ -81,7 +81,7 @@
     <PackageReference Include="Ism.Library.Client" Version="1.0.0-prerelease0050" />
     <PackageReference Include="Ism.SystemState.Client" Version="1.0.0-prerelease0074" />
     <PackageReference Include="Ism.Storage.PatientList.Client" Version="1.0.0-prerelease0026" />
-    <PackageReference Include="Ism.PrintServer.Client" Version="1.0.0-prerelease0006" />
+    <PackageReference Include="Ism.PrintServer.Client" Version="1.0.0-prerelease0007" />
   </ItemGroup>
 
   <ItemGroup>

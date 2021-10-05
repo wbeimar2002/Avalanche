@@ -31,6 +31,7 @@ namespace Avalanche.Api.Test.Managers
         Mock<IStateClient> _stateClient;
         Mock<IDataManager> _dataManager;
         GeneralApiConfiguration _generalApiConfig;
+        Mock<SetupConfiguration> _setupConfiguration;
 
         ProceduresManager _manager;
 
@@ -51,7 +52,7 @@ namespace Avalanche.Api.Test.Managers
 
             _generalApiConfig = new GeneralApiConfiguration();
 
-            _manager = new ProceduresManager(_stateClient.Object, _libraryService.Object, _accessInfoFactory.Object, _mapper, _recorderService.Object, _dataManager.Object, _generalApiConfig);
+            _manager = new ProceduresManager(_stateClient.Object, _libraryService.Object, _accessInfoFactory.Object, _mapper, _recorderService.Object, _dataManager.Object, _generalApiConfig, _setupConfiguration.Object);
         }
 
         [Test]

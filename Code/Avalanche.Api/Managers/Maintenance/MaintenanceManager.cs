@@ -428,8 +428,7 @@ namespace Avalanche.Api.Managers.Maintenance
                     switch (item.JsonKey)
                     {
                         case "DepartmentId":
-                            var setupSettings = await _storageService.GetJsonObject<SetupConfiguration>(nameof(SetupConfiguration), 1, _configurationContext);
-                            bool departmentsSupported = setupSettings.General.DepartmentsSupported;
+                            bool departmentsSupported = _setupConfiguration.General.DepartmentsSupported;
 
                             item.Required = departmentsSupported;
                             item.IsHidden = !departmentsSupported;

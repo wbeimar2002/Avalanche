@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+using AutoMapper;
 
 using Avalanche.Api.Managers.Data;
 using Avalanche.Api.Mapping;
@@ -24,6 +24,7 @@ namespace Avalanche.Api.Tests.Managers
         Mock<IStorageService> _storageService;
         Mock<IDataManagementService> _dataManagementService;
         Mock<IHttpContextAccessor> _httpContextAccessor;
+        Mock<SetupConfiguration> _setupConfiguration;
 
         IMapper _mapper;
         DataManager _manager;
@@ -34,6 +35,7 @@ namespace Avalanche.Api.Tests.Managers
             _storageService = new Mock<IStorageService>();
             _dataManagementService = new Mock<IDataManagementService>();
             _httpContextAccessor = new Mock<IHttpContextAccessor>();
+            _setupConfiguration = new Mock<SetupConfiguration>();
 
             var config = new MapperConfiguration(cfg =>
             {
@@ -42,7 +44,7 @@ namespace Avalanche.Api.Tests.Managers
             });
 
             _mapper = config.CreateMapper();
-            _manager = new DataManager(_storageService.Object, _dataManagementService.Object, _mapper, _httpContextAccessor.Object);
+            _manager = new DataManager(_storageService.Object, _dataManagementService.Object, _mapper, _httpContextAccessor.Object, _setupConfiguration.Object);
         }
 
         [Test]
