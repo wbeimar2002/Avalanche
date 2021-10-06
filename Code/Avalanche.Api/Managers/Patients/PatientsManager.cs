@@ -147,8 +147,7 @@ namespace Avalanche.Api.Managers.Patients
 
         public async Task<PatientViewModel> QuickPatientRegistration()
         {
-            var setupSettings = await _storageService.GetJsonObject<SetupConfiguration>(nameof(SetupConfiguration), 1, configurationContext);
-            var quickRegistrationDateFormat = setupSettings.Registration.Quick.DateFormat;
+            var quickRegistrationDateFormat = _setupConfiguration.Registration.Quick.DateFormat;
             var formattedDate = DateTime.UtcNow.ToLocalTime().ToString(quickRegistrationDateFormat);
 
             //TODO: Pending check this default data
@@ -201,8 +200,6 @@ namespace Avalanche.Api.Managers.Patients
             Preconditions.ThrowIfNull(nameof(existingPatient.LastName), existingPatient.LastName);
 
             ValidateDynamicConditions(existingPatient);
-
-            var setupSettings = await _storageService.GetJsonObject<SetupConfiguration>(nameof(SetupConfiguration), 1, configurationContext);
 
             var accessInfo = _accessInfoFactory.GenerateAccessInfo();
 

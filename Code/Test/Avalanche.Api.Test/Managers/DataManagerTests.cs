@@ -6,7 +6,6 @@ using Avalanche.Api.Services.Health;
 using Avalanche.Api.Services.Maintenance;
 using Avalanche.Shared.Domain.Models;
 using Avalanche.Shared.Infrastructure.Configuration;
-using Ism.Common.Core.Configuration.Models;
 using Microsoft.AspNetCore.Http;
 
 using Moq;
@@ -24,7 +23,7 @@ namespace Avalanche.Api.Tests.Managers
         Mock<IStorageService> _storageService;
         Mock<IDataManagementService> _dataManagementService;
         Mock<IHttpContextAccessor> _httpContextAccessor;
-        Mock<SetupConfiguration> _setupConfiguration;
+        SetupConfiguration _setupConfiguration;
 
         IMapper _mapper;
         DataManager _manager;
@@ -35,7 +34,10 @@ namespace Avalanche.Api.Tests.Managers
             _storageService = new Mock<IStorageService>();
             _dataManagementService = new Mock<IDataManagementService>();
             _httpContextAccessor = new Mock<IHttpContextAccessor>();
-            _setupConfiguration = new Mock<SetupConfiguration>();
+            _setupConfiguration = new SetupConfiguration()
+            {
+                General = new GeneralSetupConfiguration()
+            };
 
             var config = new MapperConfiguration(cfg =>
             {
@@ -44,21 +46,13 @@ namespace Avalanche.Api.Tests.Managers
             });
 
             _mapper = config.CreateMapper();
-            _manager = new DataManager(_storageService.Object, _dataManagementService.Object, _mapper, _httpContextAccessor.Object, _setupConfiguration.Object);
+            _manager = new DataManager(_storageService.Object, _dataManagementService.Object, _mapper, _httpContextAccessor.Object, _setupConfiguration);
         }
 
         [Test]
         public void AddProcedureTypeShouldFailIfHasDepartmentAndDepartmentIsNotSupported()
         {
-            var setupConfiguration = new SetupConfiguration
-            {
-                General = new GeneralSetupConfiguration 
-                {
-                    DepartmentsSupported = false
-                }
-            };
-
-            _storageService.Setup(mock => mock.GetJsonObject<SetupConfiguration>(nameof(SetupConfiguration), 1,  It.IsAny<ConfigurationContext>())).ReturnsAsync(setupConfiguration);
+            _setupConfiguration.General.DepartmentsSupported = false;
 
             var newProcedureType = new ProcedureTypeModel()
             {
@@ -75,15 +69,7 @@ namespace Avalanche.Api.Tests.Managers
         [Test]
         public void AddProcedureTypeShouldFailIfDepartmentIsNullAndDepartmentIsSupported()
         {
-            var setupConfiguration = new SetupConfiguration
-            {
-                General = new GeneralSetupConfiguration
-                {
-                    DepartmentsSupported = true
-                }
-            };
-
-            _storageService.Setup(mock => mock.GetJsonObject<SetupConfiguration>(nameof(SetupConfiguration), 1, It.IsAny<ConfigurationContext>())).ReturnsAsync(setupConfiguration);
+            _setupConfiguration.General.DepartmentsSupported = true;
 
             var newProcedureType = new ProcedureTypeModel()
             {
@@ -100,15 +86,7 @@ namespace Avalanche.Api.Tests.Managers
         [Test]
         public void DeleteProcedureTypeShouldFailIfHasDepartmentAndDepartmentIsNotSupported()
         {
-            var setupConfiguration = new SetupConfiguration
-            {
-                General = new GeneralSetupConfiguration 
-                {
-                    DepartmentsSupported = false
-                }
-            };
-
-            _storageService.Setup(mock => mock.GetJsonObject<SetupConfiguration>(nameof(SetupConfiguration), 1, It.IsAny<ConfigurationContext>())).ReturnsAsync(setupConfiguration);
+            _setupConfiguration.General.DepartmentsSupported = false;
 
             var procedureType = new ProcedureTypeModel()
             {
@@ -125,15 +103,7 @@ namespace Avalanche.Api.Tests.Managers
         [Test]
         public void DeleteProcedureTypeShouldFailIfDepartmentIsNullAndDepartmentIsSupported()
         {
-            var setupConfiguration = new SetupConfiguration
-            {
-                General = new GeneralSetupConfiguration
-                {
-                    DepartmentsSupported = true
-                }
-            };
-
-            _storageService.Setup(mock => mock.GetJsonObject<SetupConfiguration>(nameof(SetupConfiguration), 1, It.IsAny<ConfigurationContext>())).ReturnsAsync(setupConfiguration);
+            _setupConfiguration.General.DepartmentsSupported = true;
 
             var procedureType = new ProcedureTypeModel()
             {
@@ -150,15 +120,7 @@ namespace Avalanche.Api.Tests.Managers
         [Test]
         public void GetProceduresByDepartmentShouldFailIfHasDepartmentAndDepartmentIsNotSupported()
         {
-            var setupConfiguration = new SetupConfiguration
-            {
-                General = new GeneralSetupConfiguration
-                {
-                    DepartmentsSupported = false
-                }
-            };
-
-            _storageService.Setup(mock => mock.GetJsonObject<SetupConfiguration>(nameof(SetupConfiguration), 1, It.IsAny<ConfigurationContext>())).ReturnsAsync(setupConfiguration);
+            _setupConfiguration.General.DepartmentsSupported = false;
 
             Task Act() => _manager.GetProcedureTypesByDepartment(1);
 
@@ -168,15 +130,7 @@ namespace Avalanche.Api.Tests.Managers
         [Test]
         public void GetProceduresByDepartmentShouldFailIfDepartmentIsNullAndDepartmentIsSupported()
         {
-            var setupConfiguration = new SetupConfiguration
-            {
-                General = new GeneralSetupConfiguration
-                {
-                    DepartmentsSupported = true
-                }
-            };
-
-            _storageService.Setup(mock => mock.GetJsonObject<SetupConfiguration>(nameof(SetupConfiguration), 1, It.IsAny<ConfigurationContext>())).ReturnsAsync(setupConfiguration);
+            _setupConfiguration.General.DepartmentsSupported = true;
 
             Task Act() => _manager.GetProcedureTypesByDepartment(null);
 
@@ -186,15 +140,7 @@ namespace Avalanche.Api.Tests.Managers
         [Test]
         public void AddDepartmentShouldFailIfDepartmentIsNotSupported()
         {
-            var setupConfiguration = new SetupConfiguration
-            {
-                General = new GeneralSetupConfiguration
-                {
-                    DepartmentsSupported = false
-                }
-            };
-
-            _storageService.Setup(mock => mock.GetJsonObject<SetupConfiguration>(nameof(SetupConfiguration), 1, It.IsAny<ConfigurationContext>())).ReturnsAsync(setupConfiguration);
+            _setupConfiguration.General.DepartmentsSupported = false;
 
             Task Act() => _manager.AddDepartment(It.IsAny<DepartmentModel>());
 
@@ -204,15 +150,7 @@ namespace Avalanche.Api.Tests.Managers
         [Test]
         public void DeleteDepartmentShouldFailIfDepartmentIsNotSupported()
         {
-            var setupConfiguration = new SetupConfiguration
-            {
-                General = new GeneralSetupConfiguration
-                {
-                    DepartmentsSupported = false
-                }
-            };
-
-            _storageService.Setup(mock => mock.GetJsonObject<SetupConfiguration>(nameof(SetupConfiguration), 1, It.IsAny<ConfigurationContext>())).ReturnsAsync(setupConfiguration);
+            _setupConfiguration.General.DepartmentsSupported = false;
 
             Task Act() => _manager.DeleteDepartment(1);
 
@@ -228,15 +166,8 @@ namespace Avalanche.Api.Tests.Managers
                 Name = "Sample",
                 ProcedureTypeId = 1
             };
-            var setupConfiguration = new SetupConfiguration
-            {
-                General = new GeneralSetupConfiguration
-                {
-                    DepartmentsSupported = false
-                }
-            };
 
-            _storageService.Setup(mock => mock.GetJsonObject<SetupConfiguration>(nameof(SetupConfiguration), 1, It.IsAny<ConfigurationContext>())).ReturnsAsync(setupConfiguration);
+            _setupConfiguration.General.DepartmentsSupported = false;
 
             _dataManagementService.Setup(mock => mock.AddLabel(It.IsAny<Ism.Storage.DataManagement.Client.V1.Protos.AddLabelRequest>()))
                 .ReturnsAsync(new Ism.Storage.DataManagement.Client.V1.Protos.AddLabelResponse()
@@ -262,15 +193,8 @@ namespace Avalanche.Api.Tests.Managers
                 Name = null,
                 ProcedureTypeId = 1
             };
-            var setupConfiguration = new SetupConfiguration
-            {
-                General = new GeneralSetupConfiguration
-                {
-                    DepartmentsSupported = false
-                }
-            };
 
-            _storageService.Setup(mock => mock.GetJsonObject<SetupConfiguration>(nameof(SetupConfiguration), 1, It.IsAny<ConfigurationContext>())).ReturnsAsync(setupConfiguration);
+            _setupConfiguration.General.DepartmentsSupported = false;
 
             Task Act = _manager.AddLabel(newLabel);
             Assert.AreEqual(Act.Exception.InnerException.Message, "Value cannot be null. (Parameter 'Name')");
@@ -285,15 +209,8 @@ namespace Avalanche.Api.Tests.Managers
                 Name = "Sample",
                 ProcedureTypeId = null
             };
-            var setupConfiguration = new SetupConfiguration
-            {
-                General = new GeneralSetupConfiguration
-                {
-                    DepartmentsSupported = false
-                }
-            };
 
-            _storageService.Setup(mock => mock.GetJsonObject<SetupConfiguration>(nameof(SetupConfiguration), 1, It.IsAny<ConfigurationContext>())).ReturnsAsync(setupConfiguration);
+            _setupConfiguration.General.DepartmentsSupported = false;
 
             _dataManagementService.Setup(mock => mock.AddLabel(It.IsAny<Ism.Storage.DataManagement.Client.V1.Protos.AddLabelRequest>()))
                 .ReturnsAsync(new Ism.Storage.DataManagement.Client.V1.Protos.AddLabelResponse()
