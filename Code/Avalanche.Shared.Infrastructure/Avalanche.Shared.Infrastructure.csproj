@@ -36,7 +36,7 @@
 
   <ItemGroup>
     <PackageReference Include="FluentValidation" Version="10.3.0" />
-    <PackageReference Include="Ism.CodeQuality" Version="1.0.0-prerelease0008">
+    <PackageReference Include="Ism.CodeQuality" Version="1.0.0-prerelease0009">
       <TreatAsUsed>true</TreatAsUsed>
     </PackageReference>
     <PackageReference Include="Ism.Common.Core" Version="1.0.0-prerelease047" />

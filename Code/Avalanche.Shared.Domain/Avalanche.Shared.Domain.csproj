@@ -12,7 +12,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Ism.CodeQuality" Version="1.0.0-prerelease0008">
+    <PackageReference Include="Ism.CodeQuality" Version="1.0.0-prerelease0009">
       <TreatAsUsed>true</TreatAsUsed>
     </PackageReference>
   </ItemGroup>

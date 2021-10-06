@@ -31,18 +31,22 @@ namespace Avalanche.Api.Managers.Data
         private readonly IDataManagementService _dataManagementService;
         private readonly IHttpContextAccessor _httpContextAccessor;
 
-        readonly UserModel user;
-        readonly ConfigurationContext configurationContext;
+        private readonly UserModel user;
+        private readonly ConfigurationContext configurationContext;
+
+        private readonly SetupConfiguration _setupConfiguration;
 
         public DataManager(IStorageService storageService,
             IDataManagementService dataManagementService,
             IMapper mapper,
-            IHttpContextAccessor httpContextAccessor)
+            IHttpContextAccessor httpContextAccessor,
+            SetupConfiguration setupConfiguration)
         {
             _httpContextAccessor = httpContextAccessor;
             _dataManagementService = dataManagementService;
             _storageService = storageService;
             _mapper = mapper;
+            _setupConfiguration = setupConfiguration;
 
             user = HttpContextUtilities.GetUser(_httpContextAccessor.HttpContext);
             configurationContext = _mapper.Map<Shared.Domain.Models.UserModel, ConfigurationContext>(user);
@@ -128,9 +132,7 @@ namespace Avalanche.Api.Managers.Data
 
         public async Task ValidateDepartmentsSupport()
         {
-            var setupSettings = await _storageService.GetJsonObject<SetupConfiguration>(nameof(SetupConfiguration), 1, configurationContext);
-
-            bool departmentSupported = setupSettings.General.DepartmentsSupported;
+            bool departmentSupported = _setupConfiguration.General.DepartmentsSupported;
             if (!departmentSupported)
             {
                 throw new System.InvalidOperationException("Departments are not supported");
@@ -139,10 +141,8 @@ namespace Avalanche.Api.Managers.Data
 
         public async Task ValidateDepartmentsSupport(int? departmentId)
         {
-            var setupSettings = await _storageService.GetJsonObject<SetupConfiguration>(nameof(SetupConfiguration), 1, configurationContext);
-
-            bool departmentSupported = setupSettings.General.DepartmentsSupported;
-#warning TODO: Check the strategy to throw business logic exceptions. Same exceptions in Patients Manager
+            bool departmentSupported = _setupConfiguration.General.DepartmentsSupported;
+            #warning TODO: Check the strategy to throw business logic exceptions. Same exceptions in Patients Manager
             if (departmentSupported)
             {
                 if (departmentId == null || departmentId == 0)

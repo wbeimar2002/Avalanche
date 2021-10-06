@@ -17,6 +17,7 @@ using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Avalanche.Api.Managers.Patients
@@ -38,6 +39,7 @@ namespace Avalanche.Api.Managers.Patients
         private readonly UserModel user;
         private readonly ConfigurationContext configurationContext;
         private readonly RecorderConfiguration _recorderConfiguration;
+        private readonly SetupConfiguration _setupConfiguration;
 
         public PatientsManager(IPieService pieService,
             IAccessInfoFactory accessInfoFactory,
@@ -48,7 +50,8 @@ namespace Avalanche.Api.Managers.Patients
             IProceduresManager proceduresManager,
             IRoutingManager routingManager,
             IHttpContextAccessor httpContextAccessor,
-            RecorderConfiguration recorderConfiguration
+            RecorderConfiguration recorderConfiguration,
+            SetupConfiguration setupConfiguration
             )
         {
             _pieService = pieService;
@@ -61,6 +64,7 @@ namespace Avalanche.Api.Managers.Patients
             _routingManager = routingManager;
             _httpContextAccessor = httpContextAccessor;
             _recorderConfiguration = recorderConfiguration;
+            _setupConfiguration = setupConfiguration;
 
             user = HttpContextUtilities.GetUser(_httpContextAccessor.HttpContext);
             configurationContext = _mapper.Map<UserModel, ConfigurationContext>(user);
@@ -73,13 +77,14 @@ namespace Avalanche.Api.Managers.Patients
             Preconditions.ThrowIfNull(nameof(newPatient.MRN), newPatient.MRN);
             Preconditions.ThrowIfNull(nameof(newPatient.LastName), newPatient.LastName);
 
-            var accessInfo = _accessInfoFactory.GenerateAccessInfo();
-            var setupSettings = await _storageService.GetJsonObject<SetupConfiguration>(nameof(SetupConfiguration), 1, configurationContext);
+            ValidateDynamicConditions(newPatient);
 
-            //TODO: Pending facility
+            var accessInfo = _accessInfoFactory.GenerateAccessInfo();
+
+
             if (newPatient.Physician == null)
             {
-                if (setupSettings.Registration.Manual.AutoFillPhysician)
+                if (_setupConfiguration.Registration.Manual.AutoFillPhysician)
                 {
                     newPatient.Physician = new PhysicianModel()
                     {
@@ -105,13 +110,46 @@ namespace Avalanche.Api.Managers.Patients
             return _mapper.Map<Ism.Storage.PatientList.Client.V1.Protos.AddPatientRecordResponse, PatientViewModel>(result);
         }
 
+        private void ValidateDynamicConditions(PatientViewModel patient)
+        {
+            foreach (var item in _setupConfiguration.PatientInfo.Where(f => f.Required))
+            {
+                switch (item.Id)
+                {
+                    case "firstName":
+                        Preconditions.ThrowIfNull(nameof(patient.FirstName), patient.FirstName);
+                        break;
+                    case "sex":
+                        Preconditions.ThrowIfNull(nameof(patient.Sex), patient.Sex);
+                        break;
+                    case "dateOfBirth":
+                        Preconditions.ThrowIfNull(nameof(patient.DateOfBirth), patient.DateOfBirth);
+                        break;
+
+                    case "physician":
+                        Preconditions.ThrowIfNull(nameof(patient.Physician), patient.Physician);
+                        break;
+                    case "department":
+                        if (_setupConfiguration.General.DepartmentsSupported)
+                        {
+                            Preconditions.ThrowIfNull(nameof(patient.Department), patient.Department);
+                        }
+                        break;
+                    case "procedureType":
+                        Preconditions.ThrowIfNull(nameof(patient.ProcedureType), patient.ProcedureType);
+                        break;
+                    //case "accessionNumber": TODO: Pending
+                        //    Preconditions.ThrowIfNull(nameof(patient.Accession), patient.Accession);
+                        //    break; 
+                }
+            }
+        }
+
         public async Task<PatientViewModel> QuickPatientRegistration()
         {
-            var setupSettings = await _storageService.GetJsonObject<SetupConfiguration>(nameof(SetupConfiguration), 1, configurationContext);
-            var quickRegistrationDateFormat = setupSettings.Registration.Quick.DateFormat;
+            var quickRegistrationDateFormat = _setupConfiguration.Registration.Quick.DateFormat;
             var formattedDate = DateTime.UtcNow.ToLocalTime().ToString(quickRegistrationDateFormat);
 
-            //TODO: Pending facility
             //TODO: Pending check this default data
             var newPatient = new PatientViewModel()
             {
@@ -133,6 +171,7 @@ namespace Avalanche.Api.Managers.Patients
                     Id = 0,
                     Name = "Unknown"
                 },
+
                 //TODO: Performing physician is administrator by default
                 //Which are theose values? Temporary I am assigning the user that made the request
                 Physician = new PhysicianModel()
@@ -160,7 +199,7 @@ namespace Avalanche.Api.Managers.Patients
             Preconditions.ThrowIfNull(nameof(existingPatient.MRN), existingPatient.MRN);
             Preconditions.ThrowIfNull(nameof(existingPatient.LastName), existingPatient.LastName);
 
-            var setupSettings = await _storageService.GetJsonObject<SetupConfiguration>(nameof(SetupConfiguration), 1, configurationContext);
+            ValidateDynamicConditions(existingPatient);
 
             var accessInfo = _accessInfoFactory.GenerateAccessInfo();
 
@@ -196,7 +235,6 @@ namespace Avalanche.Api.Managers.Patients
             var search = new Ism.PatientInfoEngine.V1.Protos.PatientSearchFieldsMessage();
             search.Keyword = filter.Term;
 
-            //TODO: Facility is internal??? just backend??? Un check box en configuraciones que dice si se filtra o no por facility
             // TODO - get valid culture (either system configuration or passed in via caller)
             var cultureName = CultureInfo.CurrentCulture.Name;
             cultureName = string.IsNullOrEmpty(cultureName) ? "en-US" : cultureName;
@@ -230,7 +268,6 @@ namespace Avalanche.Api.Managers.Patients
                 ProcedureId = filter.ProcedureId,
             };
 
-            //TODO: Facility is internal??? just backend??? Un check box en configuraciones que dice si se filtra o no por facility
             //TODO: This is the final implementation?
             var accessInfo = _accessInfoFactory.GenerateAccessInfo();
 
