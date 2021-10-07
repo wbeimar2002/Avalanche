@@ -1,6 +1,5 @@
 using Avalanche.Api.Extensions;
 using Avalanche.Api.Handlers;
-using Avalanche.Api.Helpers;
 using Avalanche.Api.Hubs;
 using Avalanche.Api.Managers.Data;
 using Avalanche.Api.Managers.Licensing;
@@ -64,6 +63,7 @@ using Ism.PrintServer.Client.V1;
 using static Ism.PrintServer.Client.PrintServer;
 using System;
 using System.Collections.Generic;
+using Ism.PrintServer.Client.V1.Extensions;
 
 namespace Avalanche.Api
 {
@@ -158,7 +158,7 @@ namespace Avalanche.Api
 
             // gRPC Clients
             _ = services.AddMedpresenceSecureClient(); //Shared
-
+            _ = services.AddPatientListSecureClient(); //Shared
             //For printing both Services can be used according to a configuration
             _ = services.AddPrintingServerSecureClients();
 
@@ -177,7 +177,6 @@ namespace Avalanche.Api
 
                 _ = services.AddWebRtcStreamerSecureClient();
                 _ = services.AddAvidisSecureClient();
-                _ = services.AddPatientListSecureClient();
                 _ = services.AddPatientListStorageSecureClient();
                 _ = services.AddPgsTimeoutSecureClient();
                 _ = services.AddRoutingSecureClient();
