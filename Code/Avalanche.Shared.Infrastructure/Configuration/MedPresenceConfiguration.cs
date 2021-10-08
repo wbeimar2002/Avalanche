@@ -22,20 +22,23 @@ namespace Avalanche.Shared.Infrastructure.Configuration
             {               
             }
         }
+    }
 
-        public class SessionMedPresenceConfiguration
-        {
-            public int Timeout { get; set; }
-            public int Duration { get; set; }
-        }
+    public class SessionMedPresenceConfiguration
+    {
+        public int Timeout { get; set; }
+        public int Duration { get; set; }
 
-        public class ServiceModeConfiguration
-        {
-            public string DisplayToShare { get; set; }
-        }
-        public class CollaborationModeConfiguration
-        {
-            public string DisplayToShare { get; set; }
-        }
+        public ServiceModeConfiguration ServiceMode { get; set; }
+        public CollaborationModeConfiguration CollaborationMode { get; set; }
+    }
+
+    public class ServiceModeConfiguration
+    {
+        public string DisplayToShare { get; set; }
+    }
+    public class CollaborationModeConfiguration
+    {
+        public string DisplayToShare { get; set; }
     }
 }
