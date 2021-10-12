@@ -60,7 +60,6 @@ namespace Avalanche.Api.Controllers.V1
         /// Update patient
         /// </summary>
         /// <param name="existing"></param>
-        /// <returns></returns>
         [HttpPut("{id}")]
         [Produces(typeof(PatientViewModel))]
         public async Task<IActionResult> UpdatePatient(PatientViewModel existing)
@@ -87,7 +86,6 @@ namespace Avalanche.Api.Controllers.V1
         /// Delete patient
         /// </summary>
         /// <param name="id"></param>
-        /// <returns></returns>
         [HttpDelete("{id}")]
         [Produces(typeof(PatientViewModel))]
         public async Task<IActionResult> DeletePatient(ulong id)
@@ -113,7 +111,6 @@ namespace Avalanche.Api.Controllers.V1
         /// <summary>
         /// Quick patient registration
         /// </summary>
-        /// <returns></returns>
         [HttpPost("quick")]
         [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(PatientViewModel))]
         public async Task<IActionResult> QuickPatientRegistration()
@@ -140,7 +137,6 @@ namespace Avalanche.Api.Controllers.V1
         /// Search patient using keyword and paging
         /// </summary>
         /// <param name="filter"></param>
-        /// <returns></returns>
         [HttpPost("filtered")]
         [Produces(typeof(PagedCollectionViewModel<PatientViewModel>))]
         public async Task<IActionResult> Search([FromBody]PatientKeywordSearchFilterViewModel filter)
@@ -172,7 +168,6 @@ namespace Avalanche.Api.Controllers.V1
         /// Search patient using criterias and paging
         /// </summary>
         /// <param name="filter"></param>
-        /// <returns></returns>
         [HttpPost("filteredDetailed")]
         [Produces(typeof(PagedCollectionViewModel<PatientViewModel>))]
         public async Task<IActionResult> SearchDetailed([FromBody]PatientDetailsSearchFilterViewModel filter)

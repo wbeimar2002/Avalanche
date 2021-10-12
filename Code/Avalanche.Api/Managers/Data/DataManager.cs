@@ -1,69 +1,45 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using AutoMapper;
-using Avalanche.Api.Helpers;
 using Avalanche.Api.Services.Health;
 using Avalanche.Api.Services.Maintenance;
 using Avalanche.Api.Utilities;
-using Avalanche.Api.ViewModels;
 using Avalanche.Shared.Domain.Models;
 using Avalanche.Shared.Infrastructure.Configuration;
-using Avalanche.Shared.Infrastructure.Enumerations;
-using Avalanche.Shared.Infrastructure.Helpers;
-
 using Ism.Common.Core.Configuration.Models;
 using Ism.Storage.DataManagement.Client.V1.Protos;
 using Ism.Utility.Core;
 using Microsoft.AspNetCore.Http;
 
-using Newtonsoft.Json;
-
-using System;
-using System.Collections.Generic;
-using System.Dynamic;
-using System.Linq;
-using System.Threading.Tasks;
-
 namespace Avalanche.Api.Managers.Data
 {
     public class DataManager : IDataManager
     {
-        private readonly IStorageService _storageService;
-        private readonly IMapper _mapper;
         private readonly IDataManagementService _dataManagementService;
-        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        private readonly UserModel user;
-        private readonly ConfigurationContext configurationContext;
+        private readonly IMapper _mapper;
+        private readonly UserModel _user;
+        private readonly ConfigurationContext _configurationContext;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
         private readonly SetupConfiguration _setupConfiguration;
 
-        public DataManager(IStorageService storageService,
-            IDataManagementService dataManagementService,
+        public DataManager(
             IMapper mapper,
+            IDataManagementService dataManagementService,
             IHttpContextAccessor httpContextAccessor,
             SetupConfiguration setupConfiguration)
         {
             _httpContextAccessor = httpContextAccessor;
             _dataManagementService = dataManagementService;
-            _storageService = storageService;
             _mapper = mapper;
             _setupConfiguration = setupConfiguration;
 
-            user = HttpContextUtilities.GetUser(_httpContextAccessor.HttpContext);
-            configurationContext = _mapper.Map<Shared.Domain.Models.UserModel, ConfigurationContext>(user);
-            configurationContext.IdnId = Guid.NewGuid().ToString();
-        }
-
-        public async Task<List<dynamic>> GetList(string sourceKey, string jsonKey = null)
-        {
-            if (jsonKey == null)
-            {
-                return await _storageService.GetJsonDynamicList(sourceKey, 1, configurationContext);
-            }
-            else
-            {
-                var settingValues = await _storageService.GetJson(sourceKey, 1, configurationContext);
-                return DynamicSettingsHelper.GetEmbeddedList(jsonKey, settingValues);
-            }
+            _user = HttpContextUtilities.GetUser(_httpContextAccessor.HttpContext);
+            _configurationContext = _mapper.Map<UserModel, ConfigurationContext>(_user);
+            _configurationContext.IdnId = Guid.NewGuid().ToString();
         }
 
         public async Task<DepartmentModel> AddDepartment(DepartmentModel department)

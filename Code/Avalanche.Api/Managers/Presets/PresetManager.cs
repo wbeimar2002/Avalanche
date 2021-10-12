@@ -1,18 +1,14 @@
-﻿using AutoMapper;
+using System;
+using System.Linq;
+using System.Threading.Tasks;
+using AutoMapper;
 using Avalanche.Api.Services.Maintenance;
 using Avalanche.Api.Services.Media;
-using Avalanche.Api.Utilities;
-using Avalanche.Shared.Domain.Models;
 using Avalanche.Shared.Domain.Models.Media;
 using Avalanche.Shared.Domain.Models.Presets;
 using Ism.Common.Core.Configuration.Models;
 using Ism.Routing.V1.Protos;
-using Ism.Utility.Core;
-using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
-using System;
-using System.Linq;
-using System.Threading.Tasks;
 using static Ism.Utility.Core.Preconditions;
 
 namespace Avalanche.Api.Managers.Presets
@@ -23,6 +19,7 @@ namespace Avalanche.Api.Managers.Presets
         private readonly IRoutingService _routingService;
         private readonly IStorageService _storageService;
         private readonly ConfigurationContext _configurationContext;
+
         private const string PRESETS = "presets";
         private const string SITEID = "Avalanche"; // TODO how to get Site Id
 
@@ -65,7 +62,7 @@ namespace Avalanche.Api.Managers.Presets
 
             // Route video batch
             await _routingService.RouteVideoBatch(request);
-        }        
+        }
 
         public async Task SavePreset(string userId, int index, string name)
         {

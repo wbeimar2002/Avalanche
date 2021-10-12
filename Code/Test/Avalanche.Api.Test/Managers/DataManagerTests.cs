@@ -46,7 +46,7 @@ namespace Avalanche.Api.Tests.Managers
             });
 
             _mapper = config.CreateMapper();
-            _manager = new DataManager(_storageService.Object, _dataManagementService.Object, _mapper, _httpContextAccessor.Object, _setupConfiguration);
+            _manager = new DataManager(_mapper, _dataManagementService.Object, _httpContextAccessor.Object, _setupConfiguration);
         }
 
         [Test]

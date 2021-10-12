@@ -10,10 +10,8 @@ using Avalanche.Api.Services.Maintenance;
 using Avalanche.Api.Services.Media;
 using Avalanche.Api.Services.Printing;
 using Avalanche.Api.ViewModels;
-using Avalanche.Shared.Infrastructure.Configuration;
 using Ism.Common.Core.Configuration.Models;
 using Microsoft.AspNetCore.Http;
-using Microsoft.FeatureManagement;
 using Moq;
 using Newtonsoft.Json;
 using NUnit.Framework;
@@ -30,17 +28,11 @@ namespace Avalanche.Api.Test.Managers
         Mock<IDataManager> _dataManager;
         Mock<IHttpContextAccessor> _httpContextAccessor;
         Mock<IFilesService> _filesService;
-        Mock<IFeatureManager> _featureManager;
         Mock<IPrintingService> _printingService;
 
-        Mock<GeneralApiConfiguration> _generalApiConfiguration;
-        Mock<ProceduresSearchConfiguration> _proceduresSearchConfiguration;
-        Mock<AutoLabelsConfiguration> _autoLabelsConfiguration;
-        Mock<LabelsConfiguration> _labelsConfiguration;
-        Mock<PrintingConfiguration> _printingConfiguration;
-        Mock<SetupConfiguration> _setupConfiguration;
-        Mock<RecorderConfiguration> _recorderConfiguration;
-        Mock<MedPresenceConfiguration> _medPresenceConfiguration;
+        Mock<ISharedConfigurationManager> _sharedConfigurationManager;
+        Mock<IServerConfigurationManager> _serverConfigurationManager;
+        Mock<IDeviceConfigurationManager> _deviceConfigurationManager;
 
         MaintenanceManager _manager;
 
@@ -60,21 +52,22 @@ namespace Avalanche.Api.Test.Managers
             _dataManager = new Mock<IDataManager>();
             _httpContextAccessor = new Mock<IHttpContextAccessor>();
             _filesService = new Mock<IFilesService>();
-            _featureManager = new Mock<IFeatureManager>();
             _printingService = new Mock<IPrintingService>();
+            _sharedConfigurationManager = new Mock<ISharedConfigurationManager>();
+            _serverConfigurationManager = new Mock<IServerConfigurationManager>();
+            _deviceConfigurationManager = new Mock<IDeviceConfigurationManager>();
 
-            _generalApiConfiguration = new Mock<GeneralApiConfiguration>();
-            _proceduresSearchConfiguration = new Mock<ProceduresSearchConfiguration>();
-            _autoLabelsConfiguration = new Mock<AutoLabelsConfiguration>();
-            _labelsConfiguration = new Mock<LabelsConfiguration>();
-            _printingConfiguration = new Mock<PrintingConfiguration>();
-            _setupConfiguration = new Mock<SetupConfiguration>();
-            _recorderConfiguration = new Mock<RecorderConfiguration>();
-            _medPresenceConfiguration = new Mock<MedPresenceConfiguration>();
-
-            _manager = new MaintenanceManager(_storageService.Object, _dataManager.Object, _mapper, _httpContextAccessor.Object, _libraryService.Object,
-                _filesService.Object, _featureManager.Object, _printingService.Object, _generalApiConfiguration.Object, _proceduresSearchConfiguration.Object, _autoLabelsConfiguration.Object,
-                _labelsConfiguration.Object, _printingConfiguration.Object, _setupConfiguration.Object, _recorderConfiguration.Object, _medPresenceConfiguration.Object);
+            _manager = new MaintenanceManager(
+                _storageService.Object,
+                _dataManager.Object,
+                _mapper,
+                _httpContextAccessor.Object,
+                _libraryService.Object,
+                _filesService.Object,
+                _printingService.Object,
+                _sharedConfigurationManager.Object,
+                _deviceConfigurationManager.Object,
+                _serverConfigurationManager.Object);
         }
 
         [Test]

@@ -1,5 +1,6 @@
 using System;
 using System.Threading.Tasks;
+using Avalanche.Api.Helpers;
 using Avalanche.Api.Managers.Maintenance;
 using Avalanche.Shared.Infrastructure.Configuration;
 using Avalanche.Shared.Infrastructure.Enumerations;
@@ -11,6 +12,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.FeatureManagement;
 
 namespace Avalanche.Api.Controllers.V1
 {
@@ -20,16 +22,16 @@ namespace Avalanche.Api.Controllers.V1
     public class FeaturesController : ControllerBase
     {
         private readonly ILogger _logger;
-        private readonly IMaintenanceManager _maintenanceManager;
+        private readonly IFeatureManager _featureManager;
         private readonly IWebHostEnvironment _environment;
 
-        public FeaturesController(IMaintenanceManager maintenanceManager,
+        public FeaturesController(IFeatureManager featureManager,
             ILogger<MaintenanceController> logger,
             IWebHostEnvironment environment)
         {
             _environment = environment;
             _logger = logger;
-            _maintenanceManager = maintenanceManager;
+            _featureManager = featureManager;
         }
 
         [HttpGet("")]
@@ -39,7 +41,7 @@ namespace Avalanche.Api.Controllers.V1
             try
             {
                 _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
-                var result = await _maintenanceManager.GetFeatures();
+                var result = FeaturesHelper.GetFeatures(_featureManager);
                 return Ok(result);
             }
             catch (Exception ex)

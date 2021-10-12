@@ -14,7 +14,6 @@ using Avalanche.Shared.Infrastructure.Extensions;
 using Ism.Common.Core.Configuration.Models;
 using Ism.Utility.Core;
 using Microsoft.AspNetCore.Http;
-using Microsoft.FeatureManagement;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
@@ -30,25 +29,18 @@ namespace Avalanche.Api.Managers.Maintenance
     {
         private readonly IStorageService _storageService;
         private readonly IDataManager _dataManager;
-        private readonly IMapper _mapper;
-        private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly ILibraryService _libraryService;
         private readonly IFilesService _filesService;
-        private readonly IFeatureManager _featureManager;
         private readonly IPrintingService _printingService;
 
+        private readonly IMapper _mapper;
         private readonly UserModel _user;
         private readonly ConfigurationContext _configurationContext;
-        private readonly GeneralApiConfiguration _generalApiConfiguration;
-        private readonly AutoLabelsConfiguration _autoLabelsConfiguration;
-        private readonly LabelsConfiguration _labelsConfiguration;
-        private readonly RecorderConfiguration _recorderConfiguration;
-        private readonly ProceduresSearchConfiguration _proceduresSearchConfiguration;
-        private readonly SetupConfiguration _setupConfiguration;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        //These values can be changed in execution time
-        private PrintingConfiguration _printingConfiguration;
-        private readonly MedPresenceConfiguration _medPresenceConfiguration;
+        private readonly ISharedConfigurationManager _sharedConfigurationManager;
+        private readonly IDeviceConfigurationManager _deviceConfigurationManager;
+        private readonly IServerConfigurationManager _serverConfigurationManager;
 
         public MaintenanceManager(IStorageService storageService,
             IDataManager dataManager,
@@ -56,16 +48,10 @@ namespace Avalanche.Api.Managers.Maintenance
             IHttpContextAccessor httpContextAccessor,
             ILibraryService libraryService,
             IFilesService filesService,
-            IFeatureManager featureManager,
             IPrintingService printingService,
-            GeneralApiConfiguration generalApiConfiguration,
-            ProceduresSearchConfiguration proceduresSearchConfiguration,
-            AutoLabelsConfiguration autoLabelsConfiguration,
-            LabelsConfiguration labelsConfiguration,
-            PrintingConfiguration printingConfiguration,
-            SetupConfiguration setupConfiguration,
-            RecorderConfiguration recorderConfiguration,
-            MedPresenceConfiguration medPresenceConfiguration)
+            ISharedConfigurationManager sharedConfigurationManager,
+            IDeviceConfigurationManager deviceConfigurationManager,
+            IServerConfigurationManager serverConfigurationManager)
         {
             _storageService = storageService;
             _dataManager = dataManager;
@@ -73,47 +59,16 @@ namespace Avalanche.Api.Managers.Maintenance
             _mapper = mapper;
             _libraryService = libraryService;
             _filesService = filesService;
-            _featureManager = featureManager;
             _printingService = printingService;
+
+            _sharedConfigurationManager = sharedConfigurationManager;
+            _deviceConfigurationManager = deviceConfigurationManager;
+            _serverConfigurationManager = serverConfigurationManager;
 
             _user = HttpContextUtilities.GetUser(_httpContextAccessor.HttpContext);
             _configurationContext = _mapper.Map<UserModel, ConfigurationContext>(_user);
             _configurationContext.IdnId = Guid.NewGuid().ToString();
-            _generalApiConfiguration = generalApiConfiguration;
-            _proceduresSearchConfiguration = proceduresSearchConfiguration;
-            _autoLabelsConfiguration = autoLabelsConfiguration;
-            _labelsConfiguration = labelsConfiguration;
-            _printingConfiguration = printingConfiguration;
-            _setupConfiguration = setupConfiguration;
-            _recorderConfiguration = recorderConfiguration;
-            _medPresenceConfiguration = medPresenceConfiguration;
         }
-
-        #region Features
-        public async Task<FeaturesConfiguration> GetFeatures() => await FeaturesHelper.GetFeatures(_featureManager);
-        #endregion Features
-
-        #region Settings
-        public GeneralApiConfiguration GetGeneralApiConfigurationSettings() => _generalApiConfiguration;
-
-        public ProceduresSearchConfiguration GetProceduresSearchConfigurationSettings() => _proceduresSearchConfiguration;
-
-        public AutoLabelsConfiguration GetAutoLabelsConfigurationSettings(int? procedureTypeId) => new AutoLabelsConfiguration()
-        {
-            AutoLabels = _autoLabelsConfiguration.AutoLabels?.Where(l => l.ProcedureTypeId == procedureTypeId).ToList(),
-            Colors = _autoLabelsConfiguration.Colors
-        };
-
-        public LabelsConfiguration GetLabelsConfigurationSettings() => _labelsConfiguration;
-
-        public PrintingConfiguration GetPrintingConfigurationSettings() => _printingConfiguration;
-
-        public SetupConfiguration GetSetupConfigurationSettings() => _setupConfiguration;
-
-        public RecorderConfiguration GetRecorderConfigurationSettings() => _recorderConfiguration;
-
-        public MedPresenceConfiguration GetMedPresenceConfigurationSettings() => _medPresenceConfiguration;
-        #endregion
 
         public async Task<ReindexStatusViewModel> ReindexRepository(ReindexRepositoryRequestViewModel reindexRequest)
         {
@@ -165,10 +120,10 @@ namespace Avalanche.Api.Managers.Maintenance
                 switch (settingsKey)
                 {
                     case "ProceduresSearchConfiguration":
-                        _proceduresSearchConfiguration.Columns = json.Get<List<ColumnProceduresSearchConfiguration>>();
+                        _serverConfigurationManager.UpdateProceduresSearchConfigurationColumns(json.Get<List<ColumnProceduresSearchConfiguration>>());
                         break;
                     case "SetupConfiguration":
-                        _setupConfiguration.PatientInfo = json.Get<List<PatientInfoSetupConfiguration>>();
+                        _deviceConfigurationManager.UpdatePatientInfo(json.Get<List<PatientInfoSetupConfiguration>>());
                         break;
                 }
             }
@@ -198,7 +153,7 @@ namespace Avalanche.Api.Managers.Maintenance
             var settingValues = await _storageService.GetJson(category.JsonKey, 1, _configurationContext);
 
             var policiesTypes = (await _storageService.GetJsonObject<List<KeyValuePairViewModel>>("SettingsPolicies", 1, _configurationContext));
-            var types = await _dataManager.GetList("SettingTypes");
+            var types = await GetList("SettingTypes");
 
             await SetCategorySources(category, settingValues, types);
 
@@ -274,7 +229,7 @@ namespace Avalanche.Api.Managers.Maintenance
                         switch (link.Key)
                         {
                             case "AutoLabels":
-                                if (!_labelsConfiguration.AutoLabelsEnabled)
+                                if (!_deviceConfigurationManager.GetLabelsConfigurationSettings().AutoLabelsEnabled)
                                 {
                                     category.Links.Remove(link);
                                 }
@@ -428,7 +383,7 @@ namespace Avalanche.Api.Managers.Maintenance
                     switch (item.JsonKey)
                     {
                         case "DepartmentId":
-                            bool departmentsSupported = _setupConfiguration.General.DepartmentsSupported;
+                            bool departmentsSupported = _deviceConfigurationManager.GetSetupConfigurationSettings().General.DepartmentsSupported;
 
                             item.Required = departmentsSupported;
                             item.IsHidden = !departmentsSupported;
@@ -454,12 +409,6 @@ namespace Avalanche.Api.Managers.Maintenance
                     await SetSettingsValues(section, settingValues, policiesTypes, types);
                 }
             }
-        }
-
-        public async Task<List<dynamic>> GetListValues(string key)
-        {
-            var configurationContext = _mapper.Map<Shared.Domain.Models.UserModel, ConfigurationContext>(_user);
-            return await _storageService.GetJsonDynamicList(key, 1, configurationContext);
         }
 
         public async Task<dynamic> GetSettingValues(string key)
@@ -663,7 +612,7 @@ namespace Avalanche.Api.Managers.Maintenance
                 switch (category.JsonKey)
                 {
                     case "PrintingConfiguration":
-                        _printingConfiguration.UseVSSPrintingService = json.Get<PrintingConfiguration>().UseVSSPrintingService;
+                        _sharedConfigurationManager.UseVSSPrintingService(json.Get<PrintingConfiguration>().UseVSSPrintingService);
                         break;
                 }
             }
@@ -787,20 +736,17 @@ namespace Avalanche.Api.Managers.Maintenance
             }
         }
 
-        public async Task UpdateAutoLabelsConfigurationByProcedureType(int procedureTypeId, List<AutoLabelAutoLabelsConfiguration> autoLabels)
+        public async Task<List<dynamic>> GetList(string sourceKey, string jsonKey = null)
         {
-            if (_autoLabelsConfiguration.AutoLabels == null)
+            if (jsonKey == null)
             {
-                _autoLabelsConfiguration.AutoLabels = new List<AutoLabelAutoLabelsConfiguration>();
+                return await _storageService.GetJsonDynamicList(sourceKey, 1, _configurationContext);
             }
             else
             {
-                _autoLabelsConfiguration.AutoLabels.RemoveAll(l => l.ProcedureTypeId == procedureTypeId);
+                var settingValues = await _storageService.GetJson(sourceKey, 1, _configurationContext);
+                return DynamicSettingsHelper.GetEmbeddedList(jsonKey, settingValues);
             }
-
-            _autoLabelsConfiguration.AutoLabels.AddRange(autoLabels);
-
-            await _storageService.SaveJsonObject(nameof(AutoLabelsConfiguration), _autoLabelsConfiguration.Json(), 1, _configurationContext);
         }
     }
 }

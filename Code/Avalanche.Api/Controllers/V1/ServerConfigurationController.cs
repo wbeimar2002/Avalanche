@@ -1,6 +1,7 @@
 using System;
 using System.Threading.Tasks;
-using Avalanche.Api.Managers.Data;
+using Avalanche.Api.Managers.Maintenance;
+using Avalanche.Shared.Infrastructure.Configuration;
 using Avalanche.Shared.Infrastructure.Enumerations;
 using Avalanche.Shared.Infrastructure.Extensions;
 using Avalanche.Shared.Infrastructure.Helpers;
@@ -16,31 +17,29 @@ namespace Avalanche.Api.Controllers.V1
     [Route("[controller]")]
     [ApiController]
     [Authorize]
-    public class PhysiciansController : ControllerBase
+    public class ServerConfigurationController : ControllerBase
     {
         private readonly ILogger _logger;
-        private readonly IPhysiciansManager _physiciansManager;
+        private readonly IServerConfigurationManager _maintenanceManager;
         private readonly IWebHostEnvironment _environment;
 
-        public PhysiciansController(ILogger<PhysiciansController> logger, IPhysiciansManager physiciansManager, IWebHostEnvironment environment)
+        public ServerConfigurationController(IServerConfigurationManager maintenanceManager, ILogger<ServerConfigurationController> logger, IWebHostEnvironment environment)
         {
             _environment = environment;
             _logger = logger;
-            _physiciansManager = physiciansManager;
+            _maintenanceManager = maintenanceManager;
         }
 
-        /// <summary>
-        /// Get all physicians
-        /// </summary>
-        [HttpGet("")]
-        public async Task<IActionResult> GetAllPhysicians()
+        [HttpGet("settings/ProceduresSearchConfiguration")]
+        [Produces(typeof(ProceduresSearchConfiguration))]
+        public async Task<IActionResult> GetProceduresSearchConfigurationSettings()
         {
             try
             {
                 _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
-
-                var result = await _physiciansManager.GetPhysicians();
+                var result = _maintenanceManager.GetProceduresSearchConfigurationSettings();
                 return Ok(result);
+
             }
             catch (Exception ex)
             {

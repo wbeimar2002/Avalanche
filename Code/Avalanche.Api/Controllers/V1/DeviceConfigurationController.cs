@@ -1,5 +1,8 @@
-using Avalanche.Api.Managers.Presets;
-using Avalanche.Shared.Domain.Models.Presets;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using Avalanche.Api.Managers.Maintenance;
+using Avalanche.Shared.Infrastructure.Configuration;
 using Avalanche.Shared.Infrastructure.Enumerations;
 using Avalanche.Shared.Infrastructure.Extensions;
 using Avalanche.Shared.Infrastructure.Helpers;
@@ -9,44 +12,75 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using Microsoft.FeatureManagement.Mvc;
-using System;
-using System.Threading.Tasks;
-using static Ism.Utility.Core.Preconditions;
 
 namespace Avalanche.Api.Controllers.V1
 {
     [Route("[controller]")]
     [ApiController]
     [Authorize]
-    [FeatureGate(FeatureFlags.Presets)]
-    public class PresetsController : ControllerBase
+    public class DeviceConfigurationController : ControllerBase
     {
         private readonly ILogger _logger;
+        private readonly IDeviceConfigurationManager _maintenanceManager;
         private readonly IWebHostEnvironment _environment;
-        private readonly IPresetManager _presetManager;
 
-        public PresetsController(ILogger<PresetsController> logger, IPresetManager presetManager, IWebHostEnvironment environment)
+        public DeviceConfigurationController(IDeviceConfigurationManager maintenanceManager, ILogger<DeviceConfigurationController> logger, IWebHostEnvironment environment)
         {
             _environment = environment;
-            _logger = ThrowIfNullOrReturn(nameof(logger), logger);
-            _presetManager = ThrowIfNullOrReturn(nameof(presetManager), presetManager);
+            _logger = logger;
+            _maintenanceManager = maintenanceManager;
         }
 
-        /// <summary>
-        /// Gets presets by user
-        /// </summary>
-        /// <param name="userId"></param>
-        [HttpGet]
-        [Produces(typeof(UserPresetsModel))]
-        public async Task<IActionResult> GetPresets(string userId)
+        [HttpPut("settings/AutoLabelsConfiguration/{procedureTypeId}")]
+        public async Task<IActionResult> UpdateAutoLabelsConfigurationByProcedureType(int procedureTypeId, [FromBody]List<AutoLabelAutoLabelsConfiguration> autoLabels)
         {
             try
             {
                 _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
+                await _maintenanceManager.UpdateAutoLabelsConfigurationByProcedureType(procedureTypeId, autoLabels);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, LoggerHelper.GetLogMessage(DebugLogType.Exception), ex);
+                return new BadRequestObjectResult(ex.Get(_environment.IsDevelopment()));
+            }
+            finally
+            {
+                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
+            }
+        }
 
-                var result = await _presetManager.GetPresets(userId);
+        [HttpGet("settings/AutoLabelsConfiguration/{procedureTypeId}")]
+        [Produces(typeof(AutoLabelsConfiguration))]
+        public async Task<IActionResult> GetAutoLabelsConfigurationSettingsByProcedureType(int procedureTypeId)
+        {
+            try
+            {
+                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
+                var result = _maintenanceManager.GetAutoLabelsConfigurationSettings(procedureTypeId);
+                return Ok(result);
 
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, LoggerHelper.GetLogMessage(DebugLogType.Exception), ex);
+                return new BadRequestObjectResult(ex.Get(_environment.IsDevelopment()));
+            }
+            finally
+            {
+                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
+            }
+        }
+
+        [HttpGet("settings/LabelsConfiguration")]
+        [Produces(typeof(LabelsConfiguration))]
+        public async Task<IActionResult> GetLabelsConfigurationSettings()
+        {
+            try
+            {
+                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
+                var result = _maintenanceManager.GetLabelsConfigurationSettings();
                 return Ok(result);
             }
             catch (Exception ex)
@@ -60,21 +94,15 @@ namespace Avalanche.Api.Controllers.V1
             }
         }
 
-        /// <summary>
-        /// Apply preset by index
-        /// </summary>
-        /// <param name="userId"></param>
-        /// <param name="index"></param>
-        [HttpPut("apply")]
-        public async Task<IActionResult> ApplyPreset(string userId, int index)
+        [HttpGet("settings/SetupConfiguration")]
+        [Produces(typeof(SetupConfiguration))]
+        public async Task<IActionResult> GetSetupConfigurationSettings()
         {
             try
             {
                 _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
-
-                await _presetManager.ApplyPreset(userId, index);
-
-                return Ok();
+                var result = _maintenanceManager.GetSetupConfigurationSettings();
+                return Ok(result);
             }
             catch (Exception ex)
             {
@@ -87,49 +115,15 @@ namespace Avalanche.Api.Controllers.V1
             }
         }
 
-        /// <summary>
-        /// Save preset by index
-        /// </summary>
-        /// <param name="userId"></param>
-        /// <param name="index"></param>
-        /// <param name="name"></param>
-        [HttpPut("save")]
-        public async Task<IActionResult> SavePreset(string userId, int index, string name)
+        [HttpGet("settings/RecorderConfiguration")]
+        [Produces(typeof(RecorderConfiguration))]
+        public async Task<IActionResult> GetRecorderConfigurationSettings()
         {
             try
             {
                 _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
-
-                await _presetManager.SavePreset(userId, index, name);
-
-                return Ok();
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, LoggerHelper.GetLogMessage(DebugLogType.Exception), ex);
-                return new BadRequestObjectResult(ex.Get(_environment.IsDevelopment()));
-            }
-            finally
-            {
-                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
-            }
-        }
-
-        /// <summary>
-        /// Remove preset by index
-        /// </summary>
-        /// <param name="userId"></param>
-        /// <param name="index"></param>
-        [HttpDelete("remove")]
-        public async Task<IActionResult> RemovePreset(string userId, int index)
-        {
-            try
-            {
-                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
-
-                await _presetManager.RemovePreset(userId, index);
-
-                return Ok();
+                var result = _maintenanceManager.GetRecorderConfigurationSettings();
+                return Ok(result);
             }
             catch (Exception ex)
             {
