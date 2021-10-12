@@ -1,12 +1,12 @@
 using AutoMapper;
 using Avalanche.Api.Mapping;
 using Avalanche.Api.ViewModels;
+using Avalanche.Shared.Domain.Models.Media;
+using Ism.Routing.V1.Protos;
 using Ism.SystemState.Models.Procedure;
-using Microsoft.Extensions.DependencyInjection;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace Avalanche.Api.Tests.MappingConfigurations
 {
@@ -136,6 +136,28 @@ namespace Avalanche.Api.Tests.MappingConfigurations
             Assert.AreEqual(activeProcedure.Videos.Count, stateViewModel.Videos.Count);
             Assert.AreEqual(activeProcedure.Images.Count, stateViewModel.Images.Count);
             Assert.AreEqual(activeProcedure.BackgroundVideos.Count, stateViewModel.BackgroundVideos.Count);
+        }
+
+        [Test]
+        public void TestTileLayoutMessageToTileLayoutModel()
+        {
+            var viewPorts = new Google.Protobuf.Collections.RepeatedField<TileViewportMessage>()
+            {
+                new TileViewportMessage { Layer = 1, Height = 10, Width = 10, X = 10, Y = 10 },
+                new TileViewportMessage { Layer = 1, Height = 100, Width = 100, X = 10, Y = 10 },
+            };
+
+            var layoutMessage = new TileLayoutMessage()
+            {
+                LayoutName = "Test",
+                NumViewports = viewPorts.Count
+            };
+            layoutMessage.Viewports.AddRange(viewPorts);
+
+            var tileLayoutModel = _mapper.Map<TileLayoutModel>(layoutMessage);
+
+            Assert.AreEqual(layoutMessage.LayoutName, tileLayoutModel.LayoutName);
+            Assert.AreEqual(layoutMessage.Viewports.Count, tileLayoutModel?.ViewPorts?.Count);
         }
 
         private void AssertProfileIsValid<TProfile>() where TProfile : Profile, new()

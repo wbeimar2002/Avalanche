@@ -27,5 +27,7 @@ namespace Avalanche.Api.Managers.Media
 
         Task SetSelectedSource(AliasIndexModel selectedSource);
         Task<AliasIndexModel> GetSelectedSource();
+
+        Task<IList<TileLayoutModel>?> GetLayoutsForSink(AliasIndexModel sinkModel);
     }
 }

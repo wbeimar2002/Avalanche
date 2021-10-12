@@ -276,5 +276,31 @@ namespace Avalanche.Api.Test.Managers
 
             Assert.ThrowsAsync<ArgumentNullException>(async () => await manager.SetSelectedSource(new AliasIndexModel { Alias = "alias4", Index = "" }));
         }
+
+        [Test]
+        public async Task RoutingManager_GetLayoutsForSink_Fails()
+        {
+            var manager = new RoutingManager(_routingService.Object, _recorderService.Object, _avidisService.Object, _storageService.Object, _mapper, _httpContextAccessor.Object, _stateClient.Object);
+            var layouts = await manager.GetLayoutsForSink(new AliasIndexModel { Alias = "test", Index = "test" }).ConfigureAwait(false);
+            Assert.Null(layouts);
+        }
+
+        [Test]
+        public async Task RoutingManager_GetLayoutsForSink_Succeedes()
+        {
+            var layoutResponse = new GetTileLayoutsForSinkResponse();
+            var tileLayout = new TileLayoutMessage
+            {
+                LayoutName = "test"
+            };
+            tileLayout.Viewports.Add(new TileViewportMessage { Layer = 1, X = 10, Y = 10, Width = 10, Height = 10 });
+            layoutResponse.Layouts.Add(tileLayout);
+
+            var manager = new RoutingManager(_routingService.Object, _recorderService.Object, _avidisService.Object, _storageService.Object, _mapper, _httpContextAccessor.Object, _stateClient.Object);
+            _routingService.Setup(x => x.GetLayoutsForSink(It.IsAny<GetTileLayoutsForSinkRequest>())).ReturnsAsync(layoutResponse);
+
+            var layouts = await manager.GetLayoutsForSink(new AliasIndexModel { Alias = "test", Index = "test" }).ConfigureAwait(false);
+            Assert.NotNull(layouts);
+        }
     }
 }

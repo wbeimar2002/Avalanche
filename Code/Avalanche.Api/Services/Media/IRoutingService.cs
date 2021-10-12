@@ -1,21 +1,22 @@
-﻿using System.Threading.Tasks;
+using System.Threading.Tasks;
+using Ism.Routing.V1.Protos;
 
 namespace Avalanche.Api.Services.Media
 {
     public interface IRoutingService
     {
-        Task<Ism.Routing.V1.Protos.GetVideoSourcesResponse> GetVideoSources();
-        Task<Ism.Routing.V1.Protos.GetAlternativeVideoSourceResponse> GetAlternativeVideoSource(Ism.Routing.V1.Protos.GetAlternativeVideoSourceRequest request);
-        Task<Ism.Routing.V1.Protos.GetVideoSinksResponse> GetVideoSinks();
+        Task<GetVideoSourcesResponse> GetVideoSources();
+        Task<GetAlternativeVideoSourceResponse> GetAlternativeVideoSource(GetAlternativeVideoSourceRequest request);
+        Task<GetVideoSinksResponse> GetVideoSinks();
 
-
-        Task<Ism.Routing.V1.Protos.GetCurrentRoutesResponse> GetCurrentRoutes();
-        Task<Ism.Routing.V1.Protos.GetVideoStateForSourceResponse> GetVideoStateForSource(Ism.Routing.V1.Protos.GetVideoStateForSourceRequest getVideoStateForSourceRequest);
-        Task<Ism.Routing.V1.Protos.GetRouteForSinkResponse> GetRouteForSink(Ism.Routing.V1.Protos.GetRouteForSinkRequest getRouteForSinkRequest);
-        Task EnterFullScreen(Ism.Routing.V1.Protos.EnterFullScreenRequest enterFullScreenRequest);
-        Task ExitFullScreen(Ism.Routing.V1.Protos.ExitFullScreenRequest exitFullScreenRequest);
-        Task RouteVideo(Ism.Routing.V1.Protos.RouteVideoRequest routeVideoRequest);
-        Task RouteVideoBatch(Ism.Routing.V1.Protos.RouteVideoBatchRequest routeVideoBatchRequest);
-        Task<Ism.Routing.V1.Protos.GetVideoStateForAllSourcesResponse> GetVideoStateForAllSources();
+        Task<GetCurrentRoutesResponse> GetCurrentRoutes();
+        Task<GetVideoStateForSourceResponse> GetVideoStateForSource(GetVideoStateForSourceRequest getVideoStateForSourceRequest);
+        Task<GetRouteForSinkResponse> GetRouteForSink(GetRouteForSinkRequest getRouteForSinkRequest);
+        Task EnterFullScreen(EnterFullScreenRequest enterFullScreenRequest);
+        Task ExitFullScreen(ExitFullScreenRequest exitFullScreenRequest);
+        Task RouteVideo(RouteVideoRequest routeVideoRequest);
+        Task RouteVideoBatch(RouteVideoBatchRequest routeVideoBatchRequest);
+        Task<GetVideoStateForAllSourcesResponse> GetVideoStateForAllSources();
+        Task<GetTileLayoutsForSinkResponse> GetLayoutsForSink(GetTileLayoutsForSinkRequest sink);
     }
 }

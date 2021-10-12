@@ -3,7 +3,6 @@ using Avalanche.Api.Services.Maintenance;
 using Avalanche.Api.Services.Media;
 using Avalanche.Api.Utilities;
 using Avalanche.Api.ViewModels;
-using Avalanche.Shared.Domain.Enumerations;
 using Avalanche.Shared.Domain.Models;
 using Avalanche.Shared.Domain.Models.Media;
 using AvidisDeviceInterface.V1.Protos;
@@ -16,7 +15,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Avalanche.Shared.Infrastructure.Configuration;
 using Ism.Utility.Core;
 
 namespace Avalanche.Api.Managers.Media
@@ -30,8 +28,8 @@ namespace Avalanche.Api.Managers.Media
         private readonly IMapper _mapper;
         private readonly IHttpContextAccessor _httpContextAccessor;
 
-        private readonly UserModel user;
-        private readonly ConfigurationContext configurationContext;
+        private readonly UserModel _user;
+        private readonly ConfigurationContext _configurationContext;
 
         private readonly IStateClient _stateClient;
 
@@ -52,39 +50,30 @@ namespace Avalanche.Api.Managers.Media
             _mapper = mapper;
             _stateClient = stateClient;
 
-            user = HttpContextUtilities.GetUser(_httpContextAccessor.HttpContext);
-            configurationContext = _mapper.Map<UserModel, ConfigurationContext>(user);
-            configurationContext.IdnId = Guid.NewGuid().ToString();
+            _user = HttpContextUtilities.GetUser(_httpContextAccessor.HttpContext);
+            _configurationContext = _mapper.Map<UserModel, ConfigurationContext>(_user);
+            _configurationContext.IdnId = Guid.NewGuid().ToString();
         }
 
-        public async Task EnterFullScreen(FullScreenRequestViewModel routingActionViewModel)
+        public async Task EnterFullScreen(FullScreenRequestViewModel routingActionViewModel) => await _routingService.EnterFullScreen(new EnterFullScreenRequest()
         {
-            await _routingService.EnterFullScreen(new EnterFullScreenRequest()
-            {
-                Source = _mapper.Map<AliasIndexViewModel, Ism.Routing.V1.Protos.AliasIndexMessage>(routingActionViewModel.Source),
-                UserInterfaceId = routingActionViewModel.UserInterfaceId
-            });
-        }
+            Source = _mapper.Map<AliasIndexViewModel, AliasIndexMessage>(routingActionViewModel.Source),
+            UserInterfaceId = routingActionViewModel.UserInterfaceId
+        }).ConfigureAwait(false);
 
-        public async Task ExitFullScreen(FullScreenRequestViewModel routingActionViewModel)
+        public async Task ExitFullScreen(FullScreenRequestViewModel routingActionViewModel) => await _routingService.ExitFullScreen(new ExitFullScreenRequest()
         {
-            await _routingService.ExitFullScreen(new ExitFullScreenRequest()
-            {
-                UserInterfaceId = Convert.ToInt32(routingActionViewModel.UserInterfaceId)
-            });
-        }
+            UserInterfaceId = Convert.ToInt32(routingActionViewModel.UserInterfaceId)
+        }).ConfigureAwait(false);
 
-        public async Task HidePreview(RoutingPreviewViewModel routingPreviewViewModel)
+        public async Task HidePreview(RoutingPreviewViewModel routingPreviewViewModel) => await _avidisService.HidePreview(new HidePreviewRequest()
         {
-            await _avidisService.HidePreview(new HidePreviewRequest()
-            {
-                PreviewIndex = routingPreviewViewModel.Index
-            });
-        }
+            PreviewIndex = routingPreviewViewModel.Index
+        }).ConfigureAwait(false);
 
         public async Task ShowPreview(RoutingPreviewViewModel routingPreviewViewModel)
         {
-            await _avidisService.ShowPreview(_mapper.Map<RegionModel, ShowPreviewRequest>(routingPreviewViewModel.Region));
+            await _avidisService.ShowPreview(_mapper.Map<RegionModel, ShowPreviewRequest>(routingPreviewViewModel.Region)).ConfigureAwait(false);
 
             //TODO: Map this
             await _avidisService.ShowPreview(new ShowPreviewRequest()
@@ -94,33 +83,27 @@ namespace Avalanche.Api.Managers.Media
                 Width = routingPreviewViewModel.Region.Width,
                 X = routingPreviewViewModel.Region.X,
                 Y = routingPreviewViewModel.Region.Y
-            });
+            }).ConfigureAwait(false);
         }
 
-        public async Task RouteVideoSource(RouteModel route)
+        public async Task RouteVideoSource(RouteModel route) => await _routingService.RouteVideo(new RouteVideoRequest()
         {
-            await _routingService.RouteVideo(new RouteVideoRequest()
-            {
-                Sink = _mapper.Map<AliasIndexModel, Ism.Routing.V1.Protos.AliasIndexMessage>(route.Sink),
-                Source = _mapper.Map<AliasIndexModel, Ism.Routing.V1.Protos.AliasIndexMessage>(route.Source),
-            });
-        }
+            Sink = _mapper.Map<AliasIndexModel, AliasIndexMessage>(route.Sink),
+            Source = _mapper.Map<AliasIndexModel, AliasIndexMessage>(route.Source),
+        }).ConfigureAwait(false);
 
-        public async Task UnrouteVideoSource(AliasIndexModel sink)
+        public async Task UnrouteVideoSource(AliasIndexModel sink) => await _routingService.RouteVideo(new RouteVideoRequest()
         {
-            await _routingService.RouteVideo(new RouteVideoRequest()
-            {
-                Sink = _mapper.Map<AliasIndexModel, Ism.Routing.V1.Protos.AliasIndexMessage>(sink),
-                Source = new Ism.Routing.V1.Protos.AliasIndexMessage { Alias = string.Empty, Index = string.Empty }
-            });
-        }
+            Sink = _mapper.Map<AliasIndexModel, AliasIndexMessage>(sink),
+            Source = new AliasIndexMessage { Alias = string.Empty, Index = string.Empty }
+        }).ConfigureAwait(false);
 
         public async Task<IList<VideoSourceModel>> GetRoutingSources()
         {
             // get video sources and their states
             // the state collection only contains the AliasIndex and a bool
-            var sources = await _routingService.GetVideoSources();
-            var states = await _routingService.GetVideoStateForAllSources();
+            var sources = await _routingService.GetVideoSources().ConfigureAwait(false);
+            var states = await _routingService.GetVideoStateForAllSources().ConfigureAwait(false);
 
             var listResult = _mapper.Map<IList<VideoSourceMessage>, IList<VideoSourceModel>>(sources.VideoSources);
 
@@ -142,22 +125,22 @@ namespace Avalanche.Api.Managers.Media
             var source = await _routingService.GetAlternativeVideoSource(
                 new GetAlternativeVideoSourceRequest
                 {
-                    Source = new Ism.Routing.V1.Protos.AliasIndexMessage
+                    Source = new AliasIndexMessage
                     {
                         Alias = sinkModel.Alias,
                         Index = sinkModel.Index
                     }
-                });
+                }).ConfigureAwait(false);
 
             var hasVideo = await _routingService.GetVideoStateForSource(
                 new GetVideoStateForSourceRequest
                 {
-                    Source = new Ism.Routing.V1.Protos.AliasIndexMessage
+                    Source = new AliasIndexMessage
                     {
                         Alias = sinkModel.Alias,
                         Index = sinkModel.Index
                     }
-                });
+                }).ConfigureAwait(false);
 
             var mappedSource = _mapper.Map<VideoSourceMessage, VideoSourceModel>(source.Source);
 
@@ -171,11 +154,11 @@ namespace Avalanche.Api.Managers.Media
 
         public async Task<IList<VideoSinkModel>> GetRoutingSinks()
         {
-            var sinks = await _routingService.GetVideoSinks();
-            var routes = await _routingService.GetCurrentRoutes();
+            var sinks = await _routingService.GetVideoSinks().ConfigureAwait(false);
+            var routes = await _routingService.GetCurrentRoutes().ConfigureAwait(false);
 
             // any display not in the will not have the record buttons next to it
-            var dbrSinks = await _storageService.GetJsonObject<List<AliasIndexModel>>("DisplayBasedRecordingSinks", 1, ConfigurationContext.FromEnvironment());
+            var dbrSinks = await _storageService.GetJsonObject<List<AliasIndexModel>>("DisplayBasedRecordingSinks", 1, ConfigurationContext.FromEnvironment()).ConfigureAwait(false);
 
             var listResult = _mapper.Map<IList<VideoSinkMessage>, IList<VideoSinkModel>>(sinks.VideoSinks);
             foreach (var sink in listResult)
@@ -201,8 +184,8 @@ namespace Avalanche.Api.Managers.Media
 
         public async Task<IList<DisplayRecordingViewModel>> GetDisplayRecordingStatuses()
         {
-            var currentData = await _stateClient.GetData<VideoRoutingModels.DisplayRecordStateData>();
-            var recordChannels = await _recorderService.GetRecordingChannels();
+            var currentData = await _stateClient.GetData<VideoRoutingModels.DisplayRecordStateData>().ConfigureAwait(false);
+            var recordChannels = await _recorderService.GetRecordingChannels().ConfigureAwait(false);
 
             return currentData?.DisplayState?.Select(d =>
             {
@@ -227,28 +210,28 @@ namespace Avalanche.Api.Managers.Media
                 var displayRoute = await _routingService.GetRouteForSink(
                     new GetRouteForSinkRequest
                     {
-                        Sink = _mapper.Map<AliasIndexModel, Ism.Routing.V1.Protos.AliasIndexMessage>(displayRecordingRequestModel.Display)
-                    });
+                        Sink = _mapper.Map<AliasIndexModel, AliasIndexMessage>(displayRecordingRequestModel.Display)
+                    }).ConfigureAwait(false);
 
-                var source = displayRoute?.Route?.Source ?? new Ism.Routing.V1.Protos.AliasIndexMessage(); // none/empty => route nothing. This is ok.
+                var source = displayRoute?.Route?.Source ?? new AliasIndexMessage(); // none/empty => route nothing. This is ok.
 
                 await _routingService.RouteVideo(new RouteVideoRequest()
                 {
-                    Sink = _mapper.Map<AliasIndexModel, Ism.Routing.V1.Protos.AliasIndexMessage>(displayRecordingRequestModel.RecordChannel.VideoSink),
+                    Sink = _mapper.Map<AliasIndexModel, AliasIndexMessage>(displayRecordingRequestModel.RecordChannel.VideoSink),
                     Source = source,
-                });
+                }).ConfigureAwait(false);
             }
             else
             {
                 // clear the route from to the record channel
                 await _routingService.RouteVideo(new RouteVideoRequest()
                 {
-                    Sink = _mapper.Map<AliasIndexModel, Ism.Routing.V1.Protos.AliasIndexMessage>(displayRecordingRequestModel.RecordChannel.VideoSink),
-                    Source = new Ism.Routing.V1.Protos.AliasIndexMessage(), // empty => clear route
-                });
+                    Sink = _mapper.Map<AliasIndexModel, AliasIndexMessage>(displayRecordingRequestModel.RecordChannel.VideoSink),
+                    Source = new AliasIndexMessage(), // empty => clear route
+                }).ConfigureAwait(false);
             }
 
-            await UpdateDisplayRecordingState(displayRecordingRequestModel);
+            await UpdateDisplayRecordingState(displayRecordingRequestModel).ConfigureAwait(false);
         }
 
         public async Task HandleSinkSourceChanged(AliasIndexModel sink, AliasIndexModel source)
@@ -256,7 +239,7 @@ namespace Avalanche.Api.Managers.Media
             if (!string.IsNullOrEmpty(sink?.Alias) && !string.IsNullOrEmpty(sink?.Index))
             {
                 // check if we have display-based-recording status for this sink (display)
-                var displayRecordState = await _stateClient.GetData<VideoRoutingModels.DisplayRecordStateData>();
+                var displayRecordState = await _stateClient.GetData<VideoRoutingModels.DisplayRecordStateData>().ConfigureAwait(false);
 
                 var display = displayRecordState?.DisplayState?.FirstOrDefault(d =>
                     string.Equals(d.DisplayAliasIndex?.Alias, sink.Alias, StringComparison.OrdinalIgnoreCase)
@@ -270,33 +253,33 @@ namespace Avalanche.Api.Managers.Media
                     {
                         var sinkModel = _mapper.Map<VideoRoutingModels.AliasIndexModel, AliasIndexModel>(recordChan);
                         // note: source can be null/empty - clearing the route
-                        var sourceModel = new Ism.Routing.V1.Protos.AliasIndexMessage();
-                        if (null != source)
+                        var sourceModel = new AliasIndexMessage();
+                        if (source != null)
                         {
-                            sourceModel = _mapper.Map<Ism.Routing.V1.Protos.AliasIndexMessage>(source);
+                            sourceModel = _mapper.Map<AliasIndexMessage>(source);
                         }
 
                         newRoutes.Add(new RouteVideoRequest()
                         {
-                            Sink = _mapper.Map<AliasIndexModel, Ism.Routing.V1.Protos.AliasIndexMessage>(sinkModel),
+                            Sink = _mapper.Map<AliasIndexModel, AliasIndexMessage>(sinkModel),
                             Source = sourceModel
                         });
                     }
                 });
 
-                if (newRoutes.Any())
+                if (newRoutes.Count > 0)
                 {
                     var batchRequest = new RouteVideoBatchRequest();
                     batchRequest.Routes.AddRange(newRoutes);
-                    await _routingService.RouteVideoBatch(batchRequest);
+                    await _routingService.RouteVideoBatch(batchRequest).ConfigureAwait(false);
                 }
             }
         }
 
         private async Task UpdateDisplayRecordingState(DisplayRecordingRequestViewModel displayRecordingRequestModel)
         {
-            var currentData = await _stateClient.GetData<VideoRoutingModels.DisplayRecordStateData>() ?? new VideoRoutingModels.DisplayRecordStateData();
-            if (null == currentData.DisplayState)
+            var currentData = await _stateClient.GetData<VideoRoutingModels.DisplayRecordStateData>().ConfigureAwait(false) ?? new VideoRoutingModels.DisplayRecordStateData();
+            if (currentData.DisplayState == null)
             {
                 currentData.DisplayState = new List<VideoRoutingModels.DisplayRecordState>();
             }
@@ -313,7 +296,7 @@ namespace Avalanche.Api.Managers.Media
             }
 
             // remove any empties that result from the above
-            currentData.DisplayState.RemoveAll(d => false == (d.RecordChannelAliasIndexes?.Any() ?? false));
+            currentData.DisplayState.RemoveAll(d => !(d.RecordChannelAliasIndexes?.Any() ?? false));
 
             if (displayRecordingRequestModel.Enabled)
             {
@@ -322,7 +305,7 @@ namespace Avalanche.Api.Managers.Media
                     && string.Equals(d?.DisplayAliasIndex?.Index, displayRecordingRequestModel.Display.Index, StringComparison.OrdinalIgnoreCase));
 
                 // add the new
-                if (null == existingState)
+                if (existingState == null)
                 {
                     currentData.DisplayState.Add(new VideoRoutingModels.DisplayRecordState
                     {
@@ -337,24 +320,23 @@ namespace Avalanche.Api.Managers.Media
             }
 
             // replace existing state data (this is too complex for json patch)
-            await _stateClient.PersistData(currentData);
+            await _stateClient.PersistData(currentData).ConfigureAwait(false);
         }
 
         /// <summary>
         /// Publishes the default display based recording state
         /// The state is simply the first X displays mapped to the first Y record channels
         /// </summary>
-        /// <returns></returns>
         public async Task PublishDefaultDisplayRecordingState()
         {
             // TODO: make this a private event handler for when a patient is registered
 
             // get displays and record channels and convert them to system state model aliasIndexes
-            var displays = (await _routingService.GetVideoSinks()).VideoSinks.Select(x => new VideoRoutingModels.AliasIndexModel(x.Sink.Alias, x.Sink.Index));
-            var recordChannels = (await _recorderService.GetRecordingChannels()).Select(x => new VideoRoutingModels.AliasIndexModel(x.VideoSink.Alias, x.VideoSink.Index));
+            var displays = (await _routingService.GetVideoSinks().ConfigureAwait(false)).VideoSinks.Select(x => new VideoRoutingModels.AliasIndexModel(x.Sink.Alias, x.Sink.Index));
+            var recordChannels = (await _recorderService.GetRecordingChannels().ConfigureAwait(false)).Select(x => new VideoRoutingModels.AliasIndexModel(x.VideoSink.Alias, x.VideoSink.Index));
 
             // filter down to the displays that actually have dbr enabled
-            var dbrSinks = await _storageService.GetJsonObject<List<AliasIndexModel>>("DisplayBasedRecordingSinks", 1, ConfigurationContext.FromEnvironment());
+            var dbrSinks = await _storageService.GetJsonObject<List<AliasIndexModel>>("DisplayBasedRecordingSinks", 1, ConfigurationContext.FromEnvironment()).ConfigureAwait(false);
             displays = displays.Where(sink => dbrSinks.Any(x =>
                     string.Equals(x.Alias, sink.Alias, StringComparison.OrdinalIgnoreCase) &&
                     string.Equals(x.Index, sink.Index, StringComparison.OrdinalIgnoreCase)));
@@ -365,33 +347,38 @@ namespace Avalanche.Api.Managers.Media
             var dbrStates = displays.Zip(recordChannels, (display, recordChannel) => new VideoRoutingModels.DisplayRecordState(display, new List<VideoRoutingModels.AliasIndexModel> { recordChannel })).ToList();
 
             // publish the new DBR state data
-            await _stateClient.PersistData(new VideoRoutingModels.DisplayRecordStateData(dbrStates));
+            await _stateClient.PersistData(new VideoRoutingModels.DisplayRecordStateData(dbrStates)).ConfigureAwait(false);
         }
 
-        public async Task SetSelectedSource(AliasIndexModel selectedSourceModel)
+        public async Task SetSelectedSource(AliasIndexModel selectedSource)
         {
-            Preconditions.ThrowIfNull(nameof(selectedSourceModel), selectedSourceModel);
-            Preconditions.ThrowIfNullOrEmptyOrWhiteSpace(nameof(selectedSourceModel.Alias), selectedSourceModel.Alias);
-            Preconditions.ThrowIfNullOrEmptyOrWhiteSpace(nameof(selectedSourceModel.Index), selectedSourceModel.Index);
+            Preconditions.ThrowIfNull(nameof(selectedSource), selectedSource);
+            Preconditions.ThrowIfNullOrEmptyOrWhiteSpace(nameof(selectedSource.Alias), selectedSource.Alias);
+            Preconditions.ThrowIfNullOrEmptyOrWhiteSpace(nameof(selectedSource.Index), selectedSource.Index);
 
             var aliasIndexModel = new VideoRoutingModels.AliasIndexModel
             {
-                Alias = selectedSourceModel.Alias,
-                Index = selectedSourceModel.Index
+                Alias = selectedSource.Alias,
+                Index = selectedSource.Index
             };
-            _stateClient.PersistData(new VideoRoutingModels.SelectedSourceStateData(aliasIndexModel));
+
+            await _stateClient.PersistData(new VideoRoutingModels.SelectedSourceStateData(aliasIndexModel)).ConfigureAwait(false);
         }
 
         public async Task<AliasIndexModel> GetSelectedSource()
         {
-            var currentData = await _stateClient.GetData<VideoRoutingModels.SelectedSourceStateData>();
-            var selectedSource = new AliasIndexModel
+            var currentData = await _stateClient.GetData<VideoRoutingModels.SelectedSourceStateData>().ConfigureAwait(false);
+            return new AliasIndexModel
             {
                 Alias = currentData?.SelectedSource?.Alias ?? "",
                 Index = currentData?.SelectedSource?.Index ?? ""
             };
+        }
 
-            return selectedSource;
+        public async Task<IList<TileLayoutModel>?> GetLayoutsForSink(AliasIndexModel sinkModel)
+        {
+            var layouts = await _routingService.GetLayoutsForSink(new GetTileLayoutsForSinkRequest { Sink = _mapper.Map<AliasIndexModel, AliasIndexMessage>(sinkModel) }).ConfigureAwait(false);
+            return layouts?.Layouts?.Select(layoutModel => _mapper.Map<TileLayoutModel>(layoutModel)).ToList();
         }
     }
 }
