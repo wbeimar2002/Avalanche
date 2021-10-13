@@ -371,6 +371,7 @@ namespace Avalanche.Api.Controllers.V1
         }
 
         [HttpPut("tiling/layout")]
+        [ProducesResponseType(typeof(void), StatusCodes.Status200OK)]
         public async Task<IActionResult> SetLayoutForSink([FromQuery] AliasIndexViewModel sinkModel, [FromQuery] string layoutName)
         {
             try
