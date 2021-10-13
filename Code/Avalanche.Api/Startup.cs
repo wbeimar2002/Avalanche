@@ -171,9 +171,6 @@ namespace Avalanche.Api
             _ = services.AddMedpresenceSecureClient(); //Shared
             _ = services.AddGrpcStateClient("AvalancheApi"); //Shared
 
-            //For printing both Services can be used according to a configuration
-            _ = services.AddPrintingServerSecureClients();
-
             if (isDevice)
             {
                 _ = services.AddConfigurationServiceSecureClient();
@@ -193,9 +190,12 @@ namespace Avalanche.Api
                 _ = services.AddLibraryActiveProcedureServiceSecureClient(); //It is part of library
                 _ = services.AddLibraryManagerServiceSecureClient(); //It is part of library
                 _ = services.AddRecorderSecureClient(); //Associated to FilesController
+
+                _ = services.AddPrintingServerSecureClients();
             }
             else
             {
+                //_ = services.AddPrintingServerSecureClient("PrintServerVSS");
                 _ = services.AddConfigurationServiceSecureClient("StorageVSS");
                 _ = services.AddLibrarySearchServiceSecureClient("LibraryVSS");
 
