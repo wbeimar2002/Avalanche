@@ -348,5 +348,46 @@ namespace Avalanche.Api.Controllers.V1
                 _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
             }
         }
+
+        [HttpGet("tiling/layout")]
+        [Produces(typeof(TileLayoutModel))]
+        public async Task<IActionResult> GetLayoutForSink([FromQuery] AliasIndexViewModel sinkModel)
+        {
+            try
+            {
+                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
+                var result = await _routingManager.GetLayoutForSink(_mapper.Map<AliasIndexModel>(sinkModel)).ConfigureAwait(false);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, LoggerHelper.GetLogMessage(DebugLogType.Exception), ex);
+                return new BadRequestObjectResult(ex.Get(_environment.IsDevelopment()));
+            }
+            finally
+            {
+                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
+            }
+        }
+
+        [HttpPut("tiling/layout")]
+        public async Task<IActionResult> SetLayoutForSink([FromQuery] AliasIndexViewModel sinkModel, [FromQuery] string layoutName)
+        {
+            try
+            {
+                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
+                await _routingManager.SetLayoutForSink(_mapper.Map<AliasIndexModel>(sinkModel), layoutName).ConfigureAwait(false);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, LoggerHelper.GetLogMessage(DebugLogType.Exception), ex);
+                return new BadRequestObjectResult(ex.Get(_environment.IsDevelopment()));
+            }
+            finally
+            {
+                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
+            }
+        }
     }
 }

@@ -46,5 +46,11 @@ namespace Avalanche.Api.Services.Media
 
         public async Task<GetTileLayoutsForSinkResponse> GetLayoutsForSink(GetTileLayoutsForSinkRequest sink) =>
             await _client.GetTileLayoutsForSink(sink).ConfigureAwait(false);
+
+        public async Task<GetTileLayoutResponse> GetLayoutForSink(GetTileLayoutRequest sink) =>
+            await _client.GetTileLayoutForSink(sink).ConfigureAwait(false);
+
+        public async Task SetLayoutForSink(SetTileLayoutRequest sink) =>
+            await _client.SetTileLayoutForSink(sink).ConfigureAwait(false);
     }
 }

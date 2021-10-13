@@ -18,5 +18,7 @@ namespace Avalanche.Api.Services.Media
         Task RouteVideoBatch(RouteVideoBatchRequest routeVideoBatchRequest);
         Task<GetVideoStateForAllSourcesResponse> GetVideoStateForAllSources();
         Task<GetTileLayoutsForSinkResponse> GetLayoutsForSink(GetTileLayoutsForSinkRequest sink);
+        Task<GetTileLayoutResponse> GetLayoutForSink(GetTileLayoutRequest sink);
+        Task SetLayoutForSink(SetTileLayoutRequest sink);
     }
 }

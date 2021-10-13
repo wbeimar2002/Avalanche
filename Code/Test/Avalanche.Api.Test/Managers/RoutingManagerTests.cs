@@ -302,5 +302,39 @@ namespace Avalanche.Api.Test.Managers
             var layouts = await manager.GetLayoutsForSink(new AliasIndexModel { Alias = "test", Index = "test" }).ConfigureAwait(false);
             Assert.NotNull(layouts);
         }
+
+        [Test]
+        public async Task RoutingManager_GetLayoutForSink_Fails()
+        {
+            var manager = new RoutingManager(_routingService.Object, _recorderService.Object, _avidisService.Object, _storageService.Object, _mapper, _httpContextAccessor.Object, _stateClient.Object);
+            Assert.ThrowsAsync<NullReferenceException>(async () => await manager.GetLayoutForSink(new AliasIndexModel { Alias = "test", Index = "test" }).ConfigureAwait(false));
+        }
+
+        [Test]
+        public async Task RoutingManager_GetLayoutForSink_Succeedes()
+        {
+            var layoutResponse = new GetTileLayoutResponse
+            {
+                Layout = new TileLayoutMessage
+                {
+                    LayoutName = "test",
+                }
+            };
+
+            layoutResponse.Layout.Viewports.Add(new TileViewportMessage { Layer = 1, X = 10, Y = 10, Width = 10, Height = 10 });
+
+            var manager = new RoutingManager(_routingService.Object, _recorderService.Object, _avidisService.Object, _storageService.Object, _mapper, _httpContextAccessor.Object, _stateClient.Object);
+            _routingService.Setup(x => x.GetLayoutForSink(It.IsAny<GetTileLayoutRequest>())).ReturnsAsync(layoutResponse);
+
+            var layout = await manager.GetLayoutForSink(new AliasIndexModel { Alias = "test", Index = "test" }).ConfigureAwait(false);
+            Assert.NotNull(layout);
+        }
+
+        [Test]
+        public async Task RoutingManager_SetLayoutForSink_DoesNotThrow()
+        {
+            var manager = new RoutingManager(_routingService.Object, _recorderService.Object, _avidisService.Object, _storageService.Object, _mapper, _httpContextAccessor.Object, _stateClient.Object);
+            await manager.SetLayoutForSink(new AliasIndexModel { Alias = "test", Index = "test" }, "Quad").ConfigureAwait(false);
+        }
     }
 }

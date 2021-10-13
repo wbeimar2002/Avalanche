@@ -380,5 +380,14 @@ namespace Avalanche.Api.Managers.Media
             var layouts = await _routingService.GetLayoutsForSink(new GetTileLayoutsForSinkRequest { Sink = _mapper.Map<AliasIndexModel, AliasIndexMessage>(sinkModel) }).ConfigureAwait(false);
             return layouts?.Layouts?.Select(layoutModel => _mapper.Map<TileLayoutModel>(layoutModel)).ToList();
         }
+
+        public async Task<TileLayoutModel> GetLayoutForSink(AliasIndexModel sinkModel)
+        {
+            var layout = await _routingService.GetLayoutForSink(new GetTileLayoutRequest { Sink = _mapper.Map<AliasIndexModel, AliasIndexMessage>(sinkModel) }).ConfigureAwait(false);
+            return _mapper.Map<TileLayoutModel>(layout.Layout);
+        }
+
+        public async Task SetLayoutForSink(AliasIndexModel sinkModel, string layoutName) =>
+            await _routingService.SetLayoutForSink(new SetTileLayoutRequest { Sink = _mapper.Map<AliasIndexModel, AliasIndexMessage>(sinkModel), LayoutName = layoutName }).ConfigureAwait(false);
     }
 }
