@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+using AutoMapper;
 using Avalanche.Api.Managers.Presets;
 using Avalanche.Api.Mapping;
 using Avalanche.Api.Services.Maintenance;
@@ -6,6 +6,7 @@ using Avalanche.Api.Services.Media;
 using Avalanche.Shared.Domain.Models.Presets;
 using Ism.Common.Core.Configuration.Models;
 using Ism.Routing.V1.Protos;
+using Microsoft.AspNetCore.Http;
 using Moq;
 using NUnit.Framework;
 using System;
@@ -19,6 +20,9 @@ namespace Avalanche.Api.Test.Managers
         IMapper _mapper;
         Mock<IRoutingService> _routingService;
         Mock<IStorageService> _storageService;
+        Mock<IHttpContextAccessor> __httpContextAccessor;
+
+        PresetManager manager;
 
         [SetUp]
         public void Setup()
@@ -31,6 +35,9 @@ namespace Avalanche.Api.Test.Managers
             _mapper = config.CreateMapper();
             _routingService = new Mock<IRoutingService>();
             _storageService = new Mock<IStorageService>();
+            __httpContextAccessor = new Mock<IHttpContextAccessor>();
+
+            manager = new PresetManager(_routingService.Object, _storageService.Object, _mapper, __httpContextAccessor.Object);
         }
 
         [Test]
@@ -42,7 +49,6 @@ namespace Avalanche.Api.Test.Managers
             _storageService.Setup(r => r.GetJsonObject<PresetsModel>(It.IsAny<string>(), It.IsAny<int>(), It.IsAny<ConfigurationContext>()))
                 .ReturnsAsync(samplePreset);
 
-            var manager = new PresetManager(_routingService.Object, _storageService.Object, _mapper);
             var presets = await manager.GetPresets("1");
 
             Assert.NotNull(presets);
@@ -57,8 +63,6 @@ namespace Avalanche.Api.Test.Managers
             _storageService.Setup(r => r.GetJsonObject<PresetsModel>(It.IsAny<string>(), It.IsAny<int>(), It.IsAny<ConfigurationContext>()))
                 .ReturnsAsync(samplePreset);
 
-            var manager = new PresetManager(_routingService.Object, _storageService.Object, _mapper);
-
             var ex = Assert.ThrowsAsync<ArgumentException>(async () => await manager.GetPresets("2"));
         }
 
@@ -67,11 +71,8 @@ namespace Avalanche.Api.Test.Managers
         public async Task TestSavePresets_SaveCalled()
         {
             _routingService.Setup(r => r.GetCurrentRoutes())
-                .ReturnsAsync(new Ism.Routing.V1.Protos.GetCurrentRoutesResponse { 
-                
-                });
+                .ReturnsAsync(new Ism.Routing.V1.Protos.GetCurrentRoutesResponse { });
 
-            var manager = new PresetManager(_routingService.Object, _storageService.Object, _mapper);
             await manager.SavePreset("1", 1, "TestPreset");
 
             _storageService.Verify(s => s.SaveJsonMetadata(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<int>(), It.IsAny<ConfigurationContext>()), Times.Once);
@@ -89,7 +90,6 @@ namespace Avalanche.Api.Test.Managers
             _storageService.Setup(r => r.GetJsonObject<PresetsModel>(It.IsAny<string>(), It.IsAny<int>(), It.IsAny<ConfigurationContext>()))
                 .ReturnsAsync(samplePreset);
 
-            var manager = new PresetManager(_routingService.Object, _storageService.Object, _mapper);
             await manager.ApplyPreset("1", 1);
 
             _routingService.Verify(s => s.RouteVideoBatch(It.IsAny<RouteVideoBatchRequest>()), Times.Once);
@@ -107,8 +107,6 @@ namespace Avalanche.Api.Test.Managers
             _storageService.Setup(r => r.GetJsonObject<PresetsModel>(It.IsAny<string>(), It.IsAny<int>(), It.IsAny<ConfigurationContext>()))
                 .ReturnsAsync(samplePreset);
 
-            var manager = new PresetManager(_routingService.Object, _storageService.Object, _mapper);
-
             var ex = Assert.ThrowsAsync<ArgumentException>(async () => await manager.ApplyPreset("2", 1));
         }
 
@@ -124,7 +122,6 @@ namespace Avalanche.Api.Test.Managers
             _storageService.Setup(r => r.GetJsonObject<PresetsModel>(It.IsAny<string>(), It.IsAny<int>(), It.IsAny<ConfigurationContext>()))
                 .ReturnsAsync(samplePreset);
 
-            var manager = new PresetManager(_routingService.Object, _storageService.Object, _mapper);
             await manager.RemovePreset("1", 1);
         }
 
@@ -139,8 +136,6 @@ namespace Avalanche.Api.Test.Managers
 
             _storageService.Setup(r => r.GetJsonObject<PresetsModel>(It.IsAny<string>(), It.IsAny<int>(), It.IsAny<ConfigurationContext>()))
                 .ReturnsAsync(samplePreset);
-
-            var manager = new PresetManager(_routingService.Object, _storageService.Object, _mapper);
 
             var ex = Assert.ThrowsAsync<ArgumentException>(async () => await manager.RemovePreset("2", 1));
         }
