@@ -1,4 +1,4 @@
-﻿using Ism.Common.Core.Aspects;
+using Ism.Common.Core.Aspects;
 using Ism.Medpresence.Client.V1;
 using Microsoft.Extensions.Logging;
 using System.Threading.Tasks;
@@ -19,14 +19,12 @@ namespace Avalanche.Api.Services.Medpresence
         [AspectLogger]
         public async Task StartServiceSession()
         {
-             await _medpresence.StartServiceModeAsync();
             _logger.LogInformation($"Starting a service session...");
         }
 
         [AspectLogger]
         public async Task StopServiceSession()
         {
-            await _medpresence.StopServiceModeAsync();
             _logger.LogInformation($"Stopping a service session...");
         }
     }
