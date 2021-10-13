@@ -199,8 +199,8 @@ namespace Avalanche.Api
                 _ = services.AddConfigurationServiceSecureClient("StorageVSS");
                 _ = services.AddLibrarySearchServiceSecureClient("LibraryVSS");
 
-                //_ = services.AddPatientListSecureClient("PatientInfoVSS");
-                //_ = services.AddPatientListStorageSecureClient("PatientInfoVSS");
+                _ = services.AddPatientListSecureClient("PatientInfoVSS");
+                _ = services.AddPatientListStorageSecureClient("PatientInfoVSS");
             }
 
             // Hosted Services - Shared

@@ -36,7 +36,6 @@ namespace Avalanche.Api.Tests.Managers
     public class PatientsManagerTests
     {
         Mock<IPieService> _pieService;
-        Mock<IStorageService> _storageService;
         Mock<IAccessInfoFactory> _accessInfoFactory;
         Mock<IDataManagementService> _dataManagementService;
         Mock<IStateClient> _stateClient;
@@ -52,7 +51,6 @@ namespace Avalanche.Api.Tests.Managers
         public void Setup()
         {
             _pieService = new Mock<IPieService>();
-            _storageService = new Mock<IStorageService>();
             _accessInfoFactory = new Mock<IAccessInfoFactory>();
             _dataManagementService = new Mock<IDataManagementService>();
             _stateClient = new Mock<IStateClient>();
