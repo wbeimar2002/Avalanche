@@ -88,11 +88,7 @@ namespace Avalanche.Api.Services.Notifications
 
             AddDataSubscription<SelectedSourceStateData>(data => _hubContext.Clients.All.OnSelectedSourceStateDataChanged(data));
 
-            AddSubscription<ServiceSessionCreatedEvent>(evt => _hubContext.Clients.All.OnServiceSessionStarted(evt));
-
-            AddSubscription<ServiceSessionEndedEvent>(evt => _hubContext.Clients.All.OnServiceSessionEnded(evt));
-
-            AddSubscription<ServiceSessionAttendeesChanged>(evt => _hubContext.Clients.All.OnServiceSessionAttendeesChanged(evt));
+            AddDataSubscription<MedpresenceState>(evt => _hubContext.Clients.All.OnMedpresenceStateDataChanged(evt));
 
             AddSubscription<ImageCaptureSucceededEvent>(evt => _hubContext.Clients.All.OnImageCaptureSucceeded(evt));
 

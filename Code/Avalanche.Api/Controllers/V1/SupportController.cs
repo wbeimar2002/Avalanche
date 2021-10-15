@@ -1,4 +1,5 @@
 using Avalanche.Api.Managers.Medpresence;
+using Avalanche.Api.ViewModels;
 using Avalanche.Shared.Infrastructure.Enumerations;
 using Avalanche.Shared.Infrastructure.Extensions;
 using Avalanche.Shared.Infrastructure.Helpers;
@@ -18,7 +19,6 @@ namespace Avalanche.Api.Controllers.V1
     [Authorize]
     public class SupportController : ControllerBase
     {
-
         private readonly ILogger _logger;
         private readonly IWebHostEnvironment _environment;
         private readonly IMedpresenceManager _medpresence;
@@ -30,14 +30,36 @@ namespace Avalanche.Api.Controllers.V1
             _medpresence = medpresence;
         }
 
-        [HttpPost("session")]
-        public async Task<IActionResult> StartServiceSession()
+        [HttpGet("state")]
+        [ProducesResponseType(typeof(MedpresenceStateViewModel), StatusCodes.Status200OK)]
+        public async Task<IActionResult> GetMedpresenceState()
         {
             try
             {
                 _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
 
-                await _medpresence.StartServiceSession().ConfigureAwait(false);
+                var result = await _medpresence.GetMedpresenceStateAsync().ConfigureAwait(false);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, LoggerHelper.GetLogMessage(DebugLogType.Exception));
+                return new BadRequestObjectResult(ex.Get(_environment.IsDevelopment()));
+            }
+            finally
+            {
+                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
+            }
+        }
+
+        [HttpPost("session")]
+        public async Task<IActionResult> StartService()
+        {
+            try
+            {
+                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
+
+                await _medpresence.StartServiceAsync().ConfigureAwait(false);
                 return Ok();
             }
             catch (Exception ex)
@@ -52,13 +74,76 @@ namespace Avalanche.Api.Controllers.V1
         }
 
         [HttpDelete("session")]
-        public async Task<IActionResult> StopServiceSession()
+        public async Task<IActionResult> StopService()
         {
             try
             {
                 _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
 
-                await _medpresence.StopServiceSession().ConfigureAwait(false);
+                await _medpresence.StopServiceAsync().ConfigureAwait(false);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, LoggerHelper.GetLogMessage(DebugLogType.Exception), ex);
+                return new BadRequestObjectResult(ex.Get(_environment.IsDevelopment()));
+            }
+            finally
+            {
+                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
+            }
+        }
+
+        [HttpPost("session/recordings")]
+        public async Task<IActionResult> StartServiceRecording()
+        {
+            try
+            {
+                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
+
+                await _medpresence.StartRecordingAsyc().ConfigureAwait(false);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, LoggerHelper.GetLogMessage(DebugLogType.Exception), ex);
+                return new BadRequestObjectResult(ex.Get(_environment.IsDevelopment()));
+            }
+            finally
+            {
+                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
+            }
+        }
+
+        [HttpDelete("session/recordings")]
+        public async Task<IActionResult> StopServiceRecording()
+        {
+            try
+            {
+                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
+
+                await _medpresence.StopRecordingAsync().ConfigureAwait(false);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, LoggerHelper.GetLogMessage(DebugLogType.Exception), ex);
+                return new BadRequestObjectResult(ex.Get(_environment.IsDevelopment()));
+            }
+            finally
+            {
+                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
+            }
+        }
+
+        [HttpPost("session/captures")]
+        public async Task<IActionResult> CapptureServiceImage()
+        {
+            try
+            {
+                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
+
+                await _medpresence.CaptureImageAsync().ConfigureAwait(false);
                 return Ok();
             }
             catch (Exception ex)

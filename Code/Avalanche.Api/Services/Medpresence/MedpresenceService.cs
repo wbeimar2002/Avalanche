@@ -1,4 +1,4 @@
-﻿using Ism.Common.Core.Aspects;
+using Ism.Common.Core.Aspects;
 using Ism.Medpresence.Client.V1;
 using Microsoft.Extensions.Logging;
 using System.Threading.Tasks;
@@ -7,8 +7,8 @@ namespace Avalanche.Api.Services.Medpresence
 {
     public class MedpresenceService : IMedpresenceService
     {
-        ILogger<MedpresenceService> _logger;
-        MedpresenceSecureClient _medpresence;
+        private readonly ILogger<MedpresenceService> _logger;
+        private readonly MedpresenceSecureClient _medpresence;
 
         public MedpresenceService(ILogger<MedpresenceService> logger, MedpresenceSecureClient medpresence)
         {
@@ -17,17 +17,52 @@ namespace Avalanche.Api.Services.Medpresence
         }
 
         [AspectLogger]
-        public async Task StartServiceSession()
+        public async Task StartServiceAsync()
         {
-             await _medpresence.StartServiceModeAsync();
-            _logger.LogInformation($"Starting a service session...");
+             await _medpresence.StartServiceAsync().ConfigureAwait(false);
+            _logger.LogInformation("Starting a service session...");
         }
 
         [AspectLogger]
-        public async Task StopServiceSession()
+        public async Task StopServiceAsync()
         {
-            await _medpresence.StopServiceModeAsync();
-            _logger.LogInformation($"Stopping a service session...");
+            await _medpresence.StopServiceAsync().ConfigureAwait(false);
+            _logger.LogInformation("Stopping a service session...");
+        }
+
+        [AspectLogger]
+        public async Task StartRecordingAsyc()
+        {
+            await _medpresence.StartRecordingAsync().ConfigureAwait(false);
+            _logger.LogInformation("Starting a recording....");
+        }
+
+        [AspectLogger]
+        public async Task StopRecordingAsync()
+        {
+            await _medpresence.StopRecordingAsync().ConfigureAwait(false);
+            _logger.LogInformation("Stopping a recording session...");
+        }
+
+        [AspectLogger]
+        public async Task CaptureImageAsync()
+        {
+            await _medpresence.CaptureImageAsync().ConfigureAwait(false);
+            _logger.LogInformation("Capturing an image...");
+        }
+
+        [AspectLogger]
+        public async Task DiscardSessionAsync(ulong sessionId)
+        {
+            await _medpresence.DiscardSessionAsync(sessionId).ConfigureAwait(false);
+            _logger.LogInformation($"Discarded session with id: {sessionId}");
+        }
+
+        [AspectLogger]
+        public async Task SaveSessionAsync(ulong sessionId, string title, string physician, string procedure, string? department)
+        {
+            await _medpresence.SaveSessionAsync(sessionId, title, physician, procedure, department).ConfigureAwait(false);
+            _logger.LogInformation($"Saved session with id: {sessionId}");
         }
     }
 }

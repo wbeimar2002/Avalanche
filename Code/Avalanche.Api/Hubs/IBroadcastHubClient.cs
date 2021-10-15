@@ -44,11 +44,7 @@ namespace Avalanche.Api.Hubs
 
         Task OnSelectedSourceStateDataChanged(SelectedSourceStateData selectedSourceStateData);
 
-        Task OnServiceSessionStarted(ServiceSessionCreatedEvent evt);
-
-        Task OnServiceSessionEnded(ServiceSessionEndedEvent evt);
-
-        Task OnServiceSessionAttendeesChanged(ServiceSessionAttendeesChanged evt);
+        Task OnMedpresenceStateDataChanged(MedpresenceState medpresenceState);
 
         Task OnImageCaptureSucceeded(ImageCaptureSucceededEvent evt);
     }
