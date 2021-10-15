@@ -336,5 +336,39 @@ namespace Avalanche.Api.Test.Managers
             var manager = new RoutingManager(_routingService.Object, _recorderService.Object, _avidisService.Object, _storageService.Object, _mapper, _httpContextAccessor.Object, _stateClient.Object);
             await manager.SetLayoutForSink(new AliasIndexModel { Alias = "test", Index = "test" }, "Quad").ConfigureAwait(false);
         }
+
+        [Test]
+        public async Task RoutingManager_GetTileRouteForSink_Succeedes()
+        {
+            var routeResponse = new GetTileRouteForSinkResponse
+            {
+                Route = new TileVideoRouteMessage { LayoutName = "test" }
+            };
+
+            var manager = new RoutingManager(_routingService.Object, _recorderService.Object, _avidisService.Object, _storageService.Object, _mapper, _httpContextAccessor.Object, _stateClient.Object);
+            _routingService.Setup(x => x.GetTileRouteForSink(It.IsAny<GetTileRouteForSinkRequest>())).ReturnsAsync(routeResponse);
+
+            var layout = await manager.GetTileRouteForSink(new AliasIndexModel { Alias = "test", Index = "test" }).ConfigureAwait(false);
+            Assert.NotNull(layout);
+        }
+
+        [Test]
+        public async Task RoutingManager_GetTileRouteForSink_Fails()
+        {
+            var manager = new RoutingManager(_routingService.Object, _recorderService.Object, _avidisService.Object, _storageService.Object, _mapper, _httpContextAccessor.Object, _stateClient.Object);
+            Assert.ThrowsAsync<NullReferenceException>(async () => await manager.GetTileRouteForSink(new AliasIndexModel { Alias = "test", Index = "test" }).ConfigureAwait(false));
+        }
+
+        [Test]
+        public async Task RoutingManager_RouteVideoTiling_DoesNotThrow()
+        {
+            var manager = new RoutingManager(_routingService.Object, _recorderService.Object, _avidisService.Object, _storageService.Object, _mapper, _httpContextAccessor.Object, _stateClient.Object);
+            await manager.RouteVideoTiling(new RouteVideoTilingModel
+            {
+                Sink = new AliasIndexModel { Alias = "test", Index = "test" },
+                ViewportIndex = 0,
+                Source = new AliasIndexModel { Alias = "test", Index = "test" }
+            }).ConfigureAwait(false);
+        }
     }
 }

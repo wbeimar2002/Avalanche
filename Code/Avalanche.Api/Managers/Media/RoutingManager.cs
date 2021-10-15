@@ -377,17 +377,47 @@ namespace Avalanche.Api.Managers.Media
 
         public async Task<IList<TileLayoutModel>?> GetLayoutsForSink(AliasIndexModel sinkModel)
         {
+            Preconditions.ThrowIfNull(nameof(sinkModel), sinkModel);
+
             var layouts = await _routingService.GetLayoutsForSink(new GetTileLayoutsForSinkRequest { Sink = _mapper.Map<AliasIndexModel, AliasIndexMessage>(sinkModel) }).ConfigureAwait(false);
             return layouts?.Layouts?.Select(layoutModel => _mapper.Map<TileLayoutModel>(layoutModel)).ToList();
         }
 
         public async Task<TileLayoutModel> GetLayoutForSink(AliasIndexModel sinkModel)
         {
+            Preconditions.ThrowIfNull(nameof(sinkModel), sinkModel);
+
             var layout = await _routingService.GetLayoutForSink(new GetTileLayoutRequest { Sink = _mapper.Map<AliasIndexModel, AliasIndexMessage>(sinkModel) }).ConfigureAwait(false);
             return _mapper.Map<TileLayoutModel>(layout.Layout);
         }
 
-        public async Task SetLayoutForSink(AliasIndexModel sinkModel, string layoutName) =>
+        public async Task SetLayoutForSink(AliasIndexModel sinkModel, string layoutName)
+        {
+            Preconditions.ThrowIfNull(nameof(sinkModel), sinkModel);
+
             await _routingService.SetLayoutForSink(new SetTileLayoutRequest { Sink = _mapper.Map<AliasIndexModel, AliasIndexMessage>(sinkModel), LayoutName = layoutName }).ConfigureAwait(false);
+        }
+
+        public async Task<TileVideoRouteModel> GetTileRouteForSink(AliasIndexModel sinkModel)
+        {
+            Preconditions.ThrowIfNull(nameof(sinkModel), sinkModel);
+
+            var route = await _routingService.GetTileRouteForSink(new GetTileRouteForSinkRequest { Sink = _mapper.Map<AliasIndexModel, AliasIndexMessage>(sinkModel) }).ConfigureAwait(false);
+            return _mapper.Map<TileVideoRouteModel>(route.Route);
+        }
+
+        public async Task RouteVideoTiling(RouteVideoTilingModel route)
+        {
+            Preconditions.ThrowIfNull(nameof(route), route);
+            Preconditions.ThrowIfNull(nameof(route.Source), route.Source);
+            Preconditions.ThrowIfNull(nameof(route.Sink), route.Sink);
+
+            await _routingService.RouteVideoTiling(new RouteVideoTilingRequest
+            {
+                Sink = _mapper.Map<AliasIndexModel, AliasIndexMessage>(route.Sink),
+                Source = _mapper.Map<AliasIndexModel, AliasIndexMessage>(route.Source),
+                ViewportIndex = route.ViewportIndex
+            }).ConfigureAwait(false);
+        }
     }
 }

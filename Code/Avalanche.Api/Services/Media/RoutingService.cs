@@ -52,5 +52,11 @@ namespace Avalanche.Api.Services.Media
 
         public async Task SetLayoutForSink(SetTileLayoutRequest sink) =>
             await _client.SetTileLayoutForSink(sink).ConfigureAwait(false);
+
+        public async Task<GetTileRouteForSinkResponse> GetTileRouteForSink(GetTileRouteForSinkRequest sink) =>
+            await _client.GetTileRouteForSink(sink).ConfigureAwait(false);
+
+        public async Task RouteVideoTiling(RouteVideoTilingRequest request) =>
+            await _client.RouteVideoTiling(request).ConfigureAwait(false);
     }
 }

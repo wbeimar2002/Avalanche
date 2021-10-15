@@ -229,6 +229,34 @@ namespace Avalanche.Api.Mapping
                    opt => opt.MapFrom(src => src.Height))
                .ReverseMap();
 
+            // domain model to view model
+            CreateMap<TileVideoRouteModel, Ism.Routing.V1.Protos.TileVideoRouteMessage>()
+               .ForMember(dest =>
+                   dest.LayoutName,
+                   opt => opt.MapFrom(src => src.LayoutName))
+               .ForMember(dest =>
+                   dest.Sources,
+                   opt => opt.MapFrom(src => src.Sources))
+               .ForMember(dest =>
+                   dest.Sink,
+                   opt => opt.MapFrom(src => src.Sink))
+               .ForMember(dest =>
+                   dest.SourceCount,
+                   opt => opt.MapFrom(src => src.SourceCount))
+               .ReverseMap();
+
+            // domain model to view model
+            CreateMap<RouteVideoTilingModel, Ism.Routing.V1.Protos.RouteVideoTilingRequest>()
+               .ForMember(dest =>
+                   dest.Sink,
+                   opt => opt.MapFrom(src => src.Sink))
+               .ForMember(dest =>
+                   dest.Source,
+                   opt => opt.MapFrom(src => src.Source))
+               .ForMember(dest =>
+                   dest.ViewportIndex,
+                   opt => opt.MapFrom(src => src.ViewportIndex))
+               .ReverseMap();
         }
     }
 }

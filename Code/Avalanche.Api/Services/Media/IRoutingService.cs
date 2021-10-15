@@ -20,5 +20,7 @@ namespace Avalanche.Api.Services.Media
         Task<GetTileLayoutsForSinkResponse> GetLayoutsForSink(GetTileLayoutsForSinkRequest sink);
         Task<GetTileLayoutResponse> GetLayoutForSink(GetTileLayoutRequest sink);
         Task SetLayoutForSink(SetTileLayoutRequest sink);
+        Task<GetTileRouteForSinkResponse> GetTileRouteForSink(GetTileRouteForSinkRequest sink);
+        Task RouteVideoTiling(RouteVideoTilingRequest request);
     }
 }

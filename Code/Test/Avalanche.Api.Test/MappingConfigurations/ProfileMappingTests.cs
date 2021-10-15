@@ -160,6 +160,33 @@ namespace Avalanche.Api.Tests.MappingConfigurations
             Assert.AreEqual(layoutMessage.Viewports.Count, tileLayoutModel?.ViewPorts?.Count);
         }
 
+        [Test]
+        public void TestTileVideoRouteMessageToTileVideoRouteModel()
+        {
+            var sources = new Google.Protobuf.Collections.RepeatedField<AliasIndexMessage>()
+            {
+                new AliasIndexMessage { Alias ="test1", Index = "test1"},
+                new AliasIndexMessage {Alias ="test2", Index = "test2"}
+            };
+
+            var route = new TileVideoRouteMessage()
+            {
+                LayoutName = "Test",
+                Sink = new AliasIndexMessage { Alias ="test", Index = "test"},
+                SourceCount = sources.Count
+            };
+
+            route.Sources.AddRange(sources);
+
+            var tileRouteModel = _mapper.Map<TileVideoRouteModel>(route);
+
+            Assert.AreEqual(route.LayoutName, tileRouteModel.LayoutName);
+            Assert.AreEqual(route.Sink.Alias, tileRouteModel.Sink?.Alias);
+            Assert.AreEqual(route.Sink.Index, tileRouteModel.Sink?.Index);
+            Assert.AreEqual(route.SourceCount, tileRouteModel.SourceCount);
+            Assert.AreEqual(route.Sources.Count, tileRouteModel.Sources.Count);
+        }
+
         private void AssertProfileIsValid<TProfile>() where TProfile : Profile, new()
         {
             _mapper.ConfigurationProvider.AssertConfigurationIsValid<TProfile>();
