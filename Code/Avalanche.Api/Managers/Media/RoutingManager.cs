@@ -362,16 +362,21 @@ namespace Avalanche.Api.Managers.Media
                 Index = selectedSource.Index
             };
 
-            await _stateClient.PersistData(new VideoRoutingModels.SelectedSourceStateData(aliasIndexModel)).ConfigureAwait(false);
+            var newData = new VideoRoutingModels.VideoRoutingStateData
+            {
+                SelectedSource = aliasIndexModel
+            };
+
+            await _stateClient.AddOrUpdateData(newData, x => x.Replace(data => data.SelectedSource, aliasIndexModel)).ConfigureAwait(false);
         }
 
         public async Task<AliasIndexModel> GetSelectedSource()
         {
-            var currentData = await _stateClient.GetData<VideoRoutingModels.SelectedSourceStateData>().ConfigureAwait(false);
+            var currentData = await _stateClient.GetData<VideoRoutingModels.VideoRoutingStateData>().ConfigureAwait(false);
             return new AliasIndexModel
             {
-                Alias = currentData?.SelectedSource?.Alias ?? "",
-                Index = currentData?.SelectedSource?.Index ?? ""
+                Alias = currentData?.SelectedSource?.Alias ?? string.Empty,
+                Index = currentData?.SelectedSource?.Index ?? string.Empty
             };
         }
 

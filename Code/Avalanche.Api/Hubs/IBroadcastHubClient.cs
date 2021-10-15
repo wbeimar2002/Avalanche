@@ -42,7 +42,7 @@ namespace Avalanche.Api.Hubs
 
         Task OnImageCaptureStarted(ImageCaptureStartedEvent evt);
 
-        Task OnSelectedSourceStateDataChanged(SelectedSourceStateData selectedSourceStateData);
+        Task OnVideoRoutingStateDataChanged(VideoRoutingStateData selectedSourceStateData);
 
         Task OnMedpresenceStateDataChanged(MedpresenceState medpresenceState);
 

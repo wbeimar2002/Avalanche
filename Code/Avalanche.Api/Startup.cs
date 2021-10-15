@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using Avalanche.Api.Extensions;
 using Avalanche.Api.Handlers;
 using Avalanche.Api.Hubs;
@@ -5,6 +6,7 @@ using Avalanche.Api.Managers.Data;
 using Avalanche.Api.Managers.Licensing;
 using Avalanche.Api.Managers.Maintenance;
 using Avalanche.Api.Managers.Media;
+using Avalanche.Api.Managers.Medpresence;
 using Avalanche.Api.Managers.Notifications;
 using Avalanche.Api.Managers.Patients;
 using Avalanche.Api.Managers.Presets;
@@ -14,22 +16,25 @@ using Avalanche.Api.Options;
 using Avalanche.Api.Services.Health;
 using Avalanche.Api.Services.Maintenance;
 using Avalanche.Api.Services.Media;
+using Avalanche.Api.Services.Medpresence;
 using Avalanche.Api.Services.Notifications;
+using Avalanche.Api.Services.Printing;
 using Avalanche.Api.Services.Security;
 using Avalanche.Api.Utilities;
 using Avalanche.Shared.Infrastructure.Configuration;
+using Avalanche.Shared.Infrastructure.Enumerations;
 using Avalanche.Shared.Infrastructure.Models;
 using Avalanche.Shared.Infrastructure.Options;
-
 using AvidisDeviceInterface.Client.V1;
-
 using Ism.Broadcaster.Services;
 using Ism.Common.Core.Configuration.Extensions;
 using Ism.Common.Core.Extensions;
 using Ism.Common.Core.Hosting.Configuration;
 using Ism.Library.Client.V1;
+using Ism.Medpresence.Client.V1.Extensions;
 using Ism.PatientInfoEngine.Client.V1.Extensions;
 using Ism.PgsTimeout.Client.V1;
+using Ism.PrintServer.Client.V1.Extensions;
 using Ism.Recorder.Client.V1;
 using Ism.Routing.Client.V1;
 using Ism.Security.Grpc;
@@ -40,7 +45,6 @@ using Ism.Storage.DataManagement.Client.V1.Extensions;
 using Ism.Storage.PatientList.Client.V1.Extensions;
 using Ism.Streaming.Client.V1;
 using Ism.SystemState.Client;
-
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -51,19 +55,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.FeatureManagement;
-
 using Serilog;
-using System.Diagnostics.CodeAnalysis;
-using Avalanche.Api.Services.Medpresence;
-using Ism.Medpresence.Client.V1.Extensions;
-using Avalanche.Api.Managers.Medpresence;
-using Avalanche.Api.Services.Printing;
-using Avalanche.Shared.Infrastructure.Enumerations;
-using Ism.PrintServer.Client.V1;
-using static Ism.PrintServer.Client.PrintServer;
-using System;
-using System.Collections.Generic;
-using Ism.PrintServer.Client.V1.Extensions;
 
 namespace Avalanche.Api
 {
