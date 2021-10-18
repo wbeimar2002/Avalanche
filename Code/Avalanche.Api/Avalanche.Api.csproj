@@ -71,7 +71,7 @@
     <PackageReference Include="Ism.Library.Client" Version="1.0.0-prerelease0050" />
     <PackageReference Include="Ism.SystemState.Client" Version="1.0.0-prerelease0076" />
     <PackageReference Include="Ism.Storage.PatientList.Client" Version="1.0.0-prerelease0027" />
-    <PackageReference Include="Ism.PrintServer.Client" Version="1.0.0-prerelease0008" />
+    <PackageReference Include="Ism.PrintServer.Client" Version="1.0.0-prerelease0007" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(Configuration)'=='DebugLocal'">
