@@ -2,12 +2,19 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Avalanche.Api.ViewModels;
 
 namespace Avalanche.Api.Managers.Medpresence
 {
     public interface IMedpresenceManager
     {
-        Task StartServiceSession();
-        Task StopServiceSession();
+        Task<MedpresenceStateViewModel> GetMedpresenceStateAsync();
+        Task StartServiceAsync();
+        Task StopServiceAsync();
+        Task StartRecordingAsyc();
+        Task StopRecordingAsync();
+        Task CaptureImageAsync();
+        Task DiscardSessionAsync(ulong sessionId);
+        Task SaveSessionAsync(ulong sessionId, string title, string physician, string procedure, string? department);
     }
 }

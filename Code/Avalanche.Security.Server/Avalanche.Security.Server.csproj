@@ -18,7 +18,7 @@
     <PackageReference Include="Ism.CodeQuality" Version="1.0.0-prerelease0009">
       <TreatAsUsed>true</TreatAsUsed>
     </PackageReference>
-    <PackageReference Include="Ism.Common.Core.Hosting" Version="1.0.0-prerelease042" />
+    <PackageReference Include="Ism.Common.Core.Hosting" Version="1.0.0-prerelease043" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="3.1.2" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="5.0.8" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="5.0.8" />

@@ -233,26 +233,32 @@ namespace Avalanche.Api.Test.Managers
         {
             var manager = new RoutingManager(_routingService.Object, _recorderService.Object, _avidisService.Object, _storageService.Object, _mapper, _httpContextAccessor.Object, _stateClient.Object);
             await manager.SetSelectedSource(new AliasIndexModel { Alias = "alias3", Index = "3" });
-            _stateClient.Verify(s => s.PersistData(It.Is<Ism.SystemState.Models.VideoRouting.SelectedSourceStateData>(req => (req.SelectedSource.Alias == "alias3" && req.SelectedSource.Index == "3"))), Times.Once);
+            _stateClient.Verify(s =>
+            s.AddOrUpdateData(
+                It.Is<Ism.SystemState.Models.VideoRouting.VideoRoutingStateData>(req => req.SelectedSource.Alias == "alias3" && req.SelectedSource.Index == "3"),
+                It.IsAny<Action<JsonPatchDocument<Ism.SystemState.Models.VideoRouting.VideoRoutingStateData>>>()), Times.Once);
         }
 
         [Test]
         public async Task RoutingManager_SetSelectedSource_Overrides_ExistingSource_Succeeds()
         {
             var manager = new RoutingManager(_routingService.Object, _recorderService.Object, _avidisService.Object, _storageService.Object, _mapper, _httpContextAccessor.Object, _stateClient.Object);
-            _stateClient.Setup(s => s.GetData<Ism.SystemState.Models.VideoRouting.SelectedSourceStateData>()).ReturnsAsync(
-                new Ism.SystemState.Models.VideoRouting.SelectedSourceStateData(new Ism.SystemState.Models.VideoRouting.AliasIndexModel { Alias = "alias3", Index = "3" }));
+            _stateClient.Setup(s => s.GetData<Ism.SystemState.Models.VideoRouting.VideoRoutingStateData>()).ReturnsAsync(
+                new Ism.SystemState.Models.VideoRouting.VideoRoutingStateData { SelectedSource = new Ism.SystemState.Models.VideoRouting.AliasIndexModel { Alias = "alias3", Index = "3" } });
 
-            await manager.SetSelectedSource(new AliasIndexModel { Alias = "alias4", Index = "4" });
-            _stateClient.Verify(s => s.PersistData(It.Is<Ism.SystemState.Models.VideoRouting.SelectedSourceStateData>(req => (req.SelectedSource.Alias == "alias4" && req.SelectedSource.Index == "4"))), Times.Once);
+            await manager.SetSelectedSource(new AliasIndexModel { Alias = "alias4", Index = "4" }).ConfigureAwait(false);
+            _stateClient.Verify(s =>
+            s.AddOrUpdateData(
+                It.Is<Ism.SystemState.Models.VideoRouting.VideoRoutingStateData>(req => req.SelectedSource.Alias == "alias4" && req.SelectedSource.Index == "4"),
+                It.IsAny<Action<JsonPatchDocument<Ism.SystemState.Models.VideoRouting.VideoRoutingStateData>>>()), Times.Once);
         }
 
         [Test]
         public async Task RoutingManager_SetSelectedSource_NoSelectedSource_Fails()
         {
             var manager = new RoutingManager(_routingService.Object, _recorderService.Object, _avidisService.Object, _storageService.Object, _mapper, _httpContextAccessor.Object, _stateClient.Object);
-            _stateClient.Setup(s => s.GetData<Ism.SystemState.Models.VideoRouting.SelectedSourceStateData>()).ReturnsAsync(
-                new Ism.SystemState.Models.VideoRouting.SelectedSourceStateData(new Ism.SystemState.Models.VideoRouting.AliasIndexModel { Alias = "alias3", Index = "3" }));
+            _stateClient.Setup(s => s.GetData<Ism.SystemState.Models.VideoRouting.VideoRoutingStateData>()).ReturnsAsync(
+                new Ism.SystemState.Models.VideoRouting.VideoRoutingStateData { SelectedSource = new Ism.SystemState.Models.VideoRouting.AliasIndexModel { Alias = "alias3", Index = "3" } });
 
             Assert.ThrowsAsync<ArgumentNullException>(async () => await manager.SetSelectedSource(null));
         }
@@ -261,8 +267,8 @@ namespace Avalanche.Api.Test.Managers
         public async Task RoutingManager_SetSelectedSource_EmptyAlias_Fails()
         {
             var manager = new RoutingManager(_routingService.Object, _recorderService.Object, _avidisService.Object, _storageService.Object, _mapper, _httpContextAccessor.Object, _stateClient.Object);
-            _stateClient.Setup(s => s.GetData<Ism.SystemState.Models.VideoRouting.SelectedSourceStateData>()).ReturnsAsync(
-                new Ism.SystemState.Models.VideoRouting.SelectedSourceStateData(new Ism.SystemState.Models.VideoRouting.AliasIndexModel { Alias = "alias3", Index = "3" }));
+            _stateClient.Setup(s => s.GetData<Ism.SystemState.Models.VideoRouting.VideoRoutingStateData>()).ReturnsAsync(
+                new Ism.SystemState.Models.VideoRouting.VideoRoutingStateData { SelectedSource = new Ism.SystemState.Models.VideoRouting.AliasIndexModel { Alias = "alias3", Index = "3" } });
 
             Assert.ThrowsAsync<ArgumentNullException>(async () => await manager.SetSelectedSource(new AliasIndexModel { Alias = "", Index = "4" }));
         }
@@ -271,10 +277,104 @@ namespace Avalanche.Api.Test.Managers
         public async Task RoutingManager_SetSelectedSource_EmptyIndex_Fails()
         {
             var manager = new RoutingManager(_routingService.Object, _recorderService.Object, _avidisService.Object, _storageService.Object, _mapper, _httpContextAccessor.Object, _stateClient.Object);
-            _stateClient.Setup(s => s.GetData<Ism.SystemState.Models.VideoRouting.SelectedSourceStateData>()).ReturnsAsync(
-                new Ism.SystemState.Models.VideoRouting.SelectedSourceStateData(new Ism.SystemState.Models.VideoRouting.AliasIndexModel { Alias = "alias3", Index = "3" }));
+            _stateClient.Setup(s => s.GetData<Ism.SystemState.Models.VideoRouting.VideoRoutingStateData>()).ReturnsAsync(
+                new Ism.SystemState.Models.VideoRouting.VideoRoutingStateData { SelectedSource = new Ism.SystemState.Models.VideoRouting.AliasIndexModel { Alias = "alias3", Index = "3" } });
 
             Assert.ThrowsAsync<ArgumentNullException>(async () => await manager.SetSelectedSource(new AliasIndexModel { Alias = "alias4", Index = "" }));
+        }
+
+        [Test]
+        public async Task RoutingManager_GetLayoutsForSink_Fails()
+        {
+            var manager = new RoutingManager(_routingService.Object, _recorderService.Object, _avidisService.Object, _storageService.Object, _mapper, _httpContextAccessor.Object, _stateClient.Object);
+            var layouts = await manager.GetLayoutsForSink(new AliasIndexModel { Alias = "test", Index = "test" }).ConfigureAwait(false);
+            Assert.Null(layouts);
+        }
+
+        [Test]
+        public async Task RoutingManager_GetLayoutsForSink_Succeedes()
+        {
+            var layoutResponse = new GetTileLayoutsForSinkResponse();
+            var tileLayout = new TileLayoutMessage
+            {
+                LayoutName = "test"
+            };
+            tileLayout.Viewports.Add(new TileViewportMessage { Layer = 1, X = 10, Y = 10, Width = 10, Height = 10 });
+            layoutResponse.Layouts.Add(tileLayout);
+
+            var manager = new RoutingManager(_routingService.Object, _recorderService.Object, _avidisService.Object, _storageService.Object, _mapper, _httpContextAccessor.Object, _stateClient.Object);
+            _routingService.Setup(x => x.GetLayoutsForSink(It.IsAny<GetTileLayoutsForSinkRequest>())).ReturnsAsync(layoutResponse);
+
+            var layouts = await manager.GetLayoutsForSink(new AliasIndexModel { Alias = "test", Index = "test" }).ConfigureAwait(false);
+            Assert.NotNull(layouts);
+        }
+
+        [Test]
+        public async Task RoutingManager_GetLayoutForSink_Fails()
+        {
+            var manager = new RoutingManager(_routingService.Object, _recorderService.Object, _avidisService.Object, _storageService.Object, _mapper, _httpContextAccessor.Object, _stateClient.Object);
+            Assert.ThrowsAsync<NullReferenceException>(async () => await manager.GetLayoutForSink(new AliasIndexModel { Alias = "test", Index = "test" }).ConfigureAwait(false));
+        }
+
+        [Test]
+        public async Task RoutingManager_GetLayoutForSink_Succeedes()
+        {
+            var layoutResponse = new GetTileLayoutResponse
+            {
+                Layout = new TileLayoutMessage
+                {
+                    LayoutName = "test",
+                }
+            };
+
+            layoutResponse.Layout.Viewports.Add(new TileViewportMessage { Layer = 1, X = 10, Y = 10, Width = 10, Height = 10 });
+
+            var manager = new RoutingManager(_routingService.Object, _recorderService.Object, _avidisService.Object, _storageService.Object, _mapper, _httpContextAccessor.Object, _stateClient.Object);
+            _routingService.Setup(x => x.GetLayoutForSink(It.IsAny<GetTileLayoutRequest>())).ReturnsAsync(layoutResponse);
+
+            var layout = await manager.GetLayoutForSink(new AliasIndexModel { Alias = "test", Index = "test" }).ConfigureAwait(false);
+            Assert.NotNull(layout);
+        }
+
+        [Test]
+        public async Task RoutingManager_SetLayoutForSink_DoesNotThrow()
+        {
+            var manager = new RoutingManager(_routingService.Object, _recorderService.Object, _avidisService.Object, _storageService.Object, _mapper, _httpContextAccessor.Object, _stateClient.Object);
+            await manager.SetLayoutForSink(new AliasIndexModel { Alias = "test", Index = "test" }, "Quad").ConfigureAwait(false);
+        }
+
+        [Test]
+        public async Task RoutingManager_GetTileRouteForSink_Succeedes()
+        {
+            var routeResponse = new GetTileRouteForSinkResponse
+            {
+                Route = new TileVideoRouteMessage { LayoutName = "test" }
+            };
+
+            var manager = new RoutingManager(_routingService.Object, _recorderService.Object, _avidisService.Object, _storageService.Object, _mapper, _httpContextAccessor.Object, _stateClient.Object);
+            _routingService.Setup(x => x.GetTileRouteForSink(It.IsAny<GetTileRouteForSinkRequest>())).ReturnsAsync(routeResponse);
+
+            var layout = await manager.GetTileRouteForSink(new AliasIndexModel { Alias = "test", Index = "test" }).ConfigureAwait(false);
+            Assert.NotNull(layout);
+        }
+
+        [Test]
+        public async Task RoutingManager_GetTileRouteForSink_Fails()
+        {
+            var manager = new RoutingManager(_routingService.Object, _recorderService.Object, _avidisService.Object, _storageService.Object, _mapper, _httpContextAccessor.Object, _stateClient.Object);
+            Assert.ThrowsAsync<NullReferenceException>(async () => await manager.GetTileRouteForSink(new AliasIndexModel { Alias = "test", Index = "test" }).ConfigureAwait(false));
+        }
+
+        [Test]
+        public async Task RoutingManager_RouteVideoTiling_DoesNotThrow()
+        {
+            var manager = new RoutingManager(_routingService.Object, _recorderService.Object, _avidisService.Object, _storageService.Object, _mapper, _httpContextAccessor.Object, _stateClient.Object);
+            await manager.RouteVideoTiling(new RouteVideoTilingModel
+            {
+                Sink = new AliasIndexModel { Alias = "test", Index = "test" },
+                ViewportIndex = 0,
+                Source = new AliasIndexModel { Alias = "test", Index = "test" }
+            }).ConfigureAwait(false);
         }
     }
 }

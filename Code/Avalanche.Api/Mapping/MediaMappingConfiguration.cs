@@ -197,6 +197,66 @@ namespace Avalanche.Api.Mapping
                     dest.SessionId,
                     opt => opt.MapFrom(src => src.SessionId))
                 .ReverseMap();
+
+            // domain model to view model
+            CreateMap<TileLayoutModel, Ism.Routing.V1.Protos.TileLayoutMessage>()
+               .ForMember(dest =>
+                   dest.LayoutName,
+                   opt => opt.MapFrom(src => src.LayoutName))
+               .ForMember(dest =>
+                   dest.NumViewports,
+                   opt => opt.Ignore())
+               .ForMember(dest =>
+                    dest.Viewports, opt => opt.MapFrom(src => src.ViewPorts))
+               .ReverseMap();
+
+            // domain model to view model
+            CreateMap<TileViewportModel, Ism.Routing.V1.Protos.TileViewportMessage>()
+               .ForMember(dest =>
+                   dest.Layer,
+                   opt => opt.MapFrom(src => src.Layer))
+               .ForMember(dest =>
+                   dest.X,
+                   opt => opt.MapFrom(src => src.X))
+               .ForMember(dest =>
+                   dest.Y,
+                   opt => opt.MapFrom(src => src.Y))
+               .ForMember(dest =>
+                   dest.Width,
+                   opt => opt.MapFrom(src => src.Width))
+               .ForMember(dest =>
+                   dest.Height,
+                   opt => opt.MapFrom(src => src.Height))
+               .ReverseMap();
+
+            // domain model to view model
+            CreateMap<TileVideoRouteModel, Ism.Routing.V1.Protos.TileVideoRouteMessage>()
+               .ForMember(dest =>
+                   dest.LayoutName,
+                   opt => opt.MapFrom(src => src.LayoutName))
+               .ForMember(dest =>
+                   dest.Sources,
+                   opt => opt.MapFrom(src => src.Sources))
+               .ForMember(dest =>
+                   dest.Sink,
+                   opt => opt.MapFrom(src => src.Sink))
+               .ForMember(dest =>
+                   dest.SourceCount,
+                   opt => opt.MapFrom(src => src.SourceCount))
+               .ReverseMap();
+
+            // domain model to view model
+            CreateMap<RouteVideoTilingModel, Ism.Routing.V1.Protos.RouteVideoTilingRequest>()
+               .ForMember(dest =>
+                   dest.Sink,
+                   opt => opt.MapFrom(src => src.Sink))
+               .ForMember(dest =>
+                   dest.Source,
+                   opt => opt.MapFrom(src => src.Source))
+               .ForMember(dest =>
+                   dest.ViewportIndex,
+                   opt => opt.MapFrom(src => src.ViewportIndex))
+               .ReverseMap();
         }
     }
 }
