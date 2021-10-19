@@ -90,6 +90,7 @@ namespace Avalanche.Api.Controllers.V1
         /// <param name="message"></param>
         /// <returns></returns>
         [HttpPut("")]
+        [ProducesResponseType(typeof(void), StatusCodes.Status200OK)]
         public async Task<IActionResult> HandleMessage(WebRTCMessaggeModel message)
         {
             try
@@ -115,6 +116,7 @@ namespace Avalanche.Api.Controllers.V1
         /// <param name="message"></param>
         /// <returns></returns>
         [HttpDelete("")]
+        [ProducesResponseType(typeof(void), StatusCodes.Status200OK)]
         public async Task<IActionResult> DeInitSession(WebRTCMessaggeModel message)
         {
             try
