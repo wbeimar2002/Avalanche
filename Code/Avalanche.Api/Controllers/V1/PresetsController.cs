@@ -71,6 +71,7 @@ namespace Avalanche.Api.Controllers.V1
         /// <param name="index"></param>
         /// <returns></returns>
         [HttpPut("apply")]
+        [ProducesResponseType(typeof(void), StatusCodes.Status200OK)]
         public async Task<IActionResult> ApplyPreset(string userId, int index)
         {
             try
@@ -100,6 +101,7 @@ namespace Avalanche.Api.Controllers.V1
         /// <param name="name"></param>
         /// <returns></returns>
         [HttpPut("save")]
+        [ProducesResponseType(typeof(void), StatusCodes.Status200OK)]
         public async Task<IActionResult> SavePreset(string userId, int index, string name)
         {
             try
@@ -128,6 +130,7 @@ namespace Avalanche.Api.Controllers.V1
         /// <param name="index"></param>
         /// <returns></returns>
         [HttpDelete("remove")]
+        [ProducesResponseType(typeof(void), StatusCodes.Status200OK)]
         public async Task<IActionResult> RemovePreset(string userId, int index)
         {
             try

@@ -1,4 +1,4 @@
-﻿using Avalanche.Api.Managers.Licensing;
+using Avalanche.Api.Managers.Licensing;
 using Avalanche.Shared.Domain.Models;
 using Avalanche.Shared.Infrastructure.Enumerations;
 using Avalanche.Shared.Infrastructure.Extensions;
@@ -37,6 +37,7 @@ namespace Avalanche.Api.Controllers.V1
         /// <param name="key"></param>
         /// <returns></returns>
         [HttpPost("{key}")]
+        [ProducesResponseType(typeof(void), StatusCodes.Status200OK)]
         public async Task<IActionResult> Validate(string key)
         {
             try

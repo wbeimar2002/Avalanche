@@ -44,6 +44,7 @@ namespace Avalanche.Api.Controllers.V1
         /// </summary>
         /// <param name="routingActionViewModel"></param>
         [HttpPost("videorouting/mode/fullscreen")]
+        [ProducesResponseType(typeof(void), StatusCodes.Status200OK)]
         public async Task<IActionResult> EnterFullScreen(FullScreenRequestViewModel routingActionViewModel)
         {
             try
@@ -68,6 +69,7 @@ namespace Avalanche.Api.Controllers.V1
         /// </summary>
         /// <param name="routingPreviewViewModel"></param>
         [HttpDelete("hardware/preview")]
+        [ProducesResponseType(typeof(void), StatusCodes.Status200OK)]
         public async Task<IActionResult> HidePreview(RoutingPreviewViewModel routingPreviewViewModel)
         {
             try
@@ -92,6 +94,7 @@ namespace Avalanche.Api.Controllers.V1
         /// </summary>
         /// <param name="routingPreviewViewModel"></param>
         [HttpPost("hardware/preview")]
+        [ProducesResponseType(typeof(void), StatusCodes.Status200OK)]
         public async Task<IActionResult> ShowPreview(RoutingPreviewViewModel routingPreviewViewModel)
         {
             try
@@ -116,6 +119,7 @@ namespace Avalanche.Api.Controllers.V1
         /// </summary>
         /// <param name="routesViewModel"></param>
         [HttpPost("videorouting/routes")]
+        [ProducesResponseType(typeof(void), StatusCodes.Status200OK)]
         public async Task<IActionResult> RouteVideoSource([FromBody] RouteViewModel routesViewModel)
         {
             try
@@ -140,6 +144,7 @@ namespace Avalanche.Api.Controllers.V1
         /// </summary>
         /// <param name="sink"></param>
         [HttpDelete("videorouting/routes")]
+        [ProducesResponseType(typeof(void), StatusCodes.Status200OK)]
         public async Task<IActionResult> UnrouteVideo([FromQuery] AliasIndexViewModel sink)
         {
             try
@@ -239,6 +244,7 @@ namespace Avalanche.Api.Controllers.V1
         }
 
         [HttpPut("videorouting/displayRecording/status")]
+        [ProducesResponseType(typeof(void), StatusCodes.Status200OK)]
         public async Task<IActionResult> SetDisplayRecordingStatus([FromBody] DisplayRecordingRequestViewModel displayRecordingRequestModel)
         {
             try

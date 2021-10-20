@@ -53,6 +53,7 @@ namespace Avalanche.Api.Controllers.V1
         }
 
         [HttpPost("session")]
+        [ProducesResponseType(typeof(void), StatusCodes.Status200OK)]
         public async Task<IActionResult> StartService()
         {
             try
@@ -74,6 +75,7 @@ namespace Avalanche.Api.Controllers.V1
         }
 
         [HttpDelete("session")]
+        [ProducesResponseType(typeof(void), StatusCodes.Status200OK)]
         public async Task<IActionResult> StopService()
         {
             try
@@ -95,6 +97,7 @@ namespace Avalanche.Api.Controllers.V1
         }
 
         [HttpPost("session/recordings")]
+        [ProducesResponseType(typeof(void), StatusCodes.Status200OK)]
         public async Task<IActionResult> StartServiceRecording()
         {
             try
@@ -116,6 +119,7 @@ namespace Avalanche.Api.Controllers.V1
         }
 
         [HttpDelete("session/recordings")]
+        [ProducesResponseType(typeof(void), StatusCodes.Status200OK)]
         public async Task<IActionResult> StopServiceRecording()
         {
             try
@@ -137,6 +141,7 @@ namespace Avalanche.Api.Controllers.V1
         }
 
         [HttpPost("session/captures")]
+        [ProducesResponseType(typeof(void), StatusCodes.Status200OK)]
         public async Task<IActionResult> CapptureServiceImage()
         {
             try

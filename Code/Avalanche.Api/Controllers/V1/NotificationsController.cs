@@ -1,4 +1,4 @@
-﻿using Avalanche.Api.Managers.Notifications;
+using Avalanche.Api.Managers.Notifications;
 using Avalanche.Shared.Infrastructure.Enumerations;
 using Avalanche.Shared.Infrastructure.Extensions;
 using Avalanche.Shared.Infrastructure.Helpers;
@@ -35,6 +35,7 @@ namespace Avalanche.Api.Controllers.V1
         /// <param name="messageRequest"></param>
         /// <returns></returns>
         [HttpPost("direct")]
+        [ProducesResponseType(typeof(void), StatusCodes.Status202Accepted)]
         public IActionResult SendDirectMessage([FromBody]Ism.Broadcaster.Models.MessageRequest messageRequest)
         {
             try
