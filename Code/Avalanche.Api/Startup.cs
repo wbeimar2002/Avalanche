@@ -20,6 +20,7 @@ using Avalanche.Api.Services.Medpresence;
 using Avalanche.Api.Services.Notifications;
 using Avalanche.Api.Services.Printing;
 using Avalanche.Api.Services.Security;
+using Avalanche.Api.TempExtensions;
 using Avalanche.Api.Utilities;
 using Avalanche.Shared.Infrastructure.Configuration;
 using Avalanche.Shared.Infrastructure.Enumerations;
@@ -34,6 +35,7 @@ using Ism.Library.Client.V1;
 using Ism.Medpresence.Client.V1.Extensions;
 using Ism.PatientInfoEngine.Client.V1.Extensions;
 using Ism.PgsTimeout.Client.V1;
+using Ism.PrintServer.Client.V1;
 using Ism.PrintServer.Client.V1.Extensions;
 using Ism.Recorder.Client.V1;
 using Ism.Routing.Client.V1;
@@ -56,6 +58,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.FeatureManagement;
 using Serilog;
+using static Ism.PrintServer.V1.Protos.PrintServer;
 
 namespace Avalanche.Api
 {
@@ -152,7 +155,10 @@ namespace Avalanche.Api
             _ = services.AddMedpresenceSecureClient(); //Shared
             _ = services.AddPatientListSecureClient(); //Shared
             //For printing both Services can be used according to a configuration
-            _ = services.AddPrintingServerSecureClients();
+            //_ = services.AddPrintingServerSecureClients();
+
+            // TEMP Fix until changes are moved back to Ism.Security and Print
+            _ = services.AddLocalAndRemoteSecureGrpcClient<PrintingServerSecureClient, PrintServerClient>("PrintServer", new HostPort() { Host = "localhost", Port = 4013 });
 
             _ = services.AddDataManagementStorageSecureClient(); //Associated to Maintenance
 
