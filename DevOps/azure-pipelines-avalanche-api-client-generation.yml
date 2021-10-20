@@ -13,7 +13,7 @@ resources:
   - repository: devops
     type: git
     name: devops
-    ref: dev
+    ref: nswag
 
   - repository: avalanche-resources
     type: git
