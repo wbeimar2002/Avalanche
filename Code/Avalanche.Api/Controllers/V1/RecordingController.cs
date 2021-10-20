@@ -39,6 +39,7 @@ namespace Avalanche.Api.Controllers.V1
         /// Start recording
         /// </summary>
         [HttpPost("")]
+        [ProducesResponseType(typeof(void), StatusCodes.Status200OK)]
         public async Task<IActionResult> StartRecording()
         {
             try
@@ -62,6 +63,7 @@ namespace Avalanche.Api.Controllers.V1
         /// Stop recording
         /// </summary>
         [HttpDelete("")]
+        [ProducesResponseType(typeof(void), StatusCodes.Status200OK)]
         public async Task<IActionResult> StopRecording()
         {
             try
@@ -85,6 +87,7 @@ namespace Avalanche.Api.Controllers.V1
         /// Add a capture
         /// </summary>
         [HttpPost("captures")]
+        [ProducesResponseType(typeof(void), StatusCodes.Status200OK)]
         public async Task<IActionResult> CaptureImages()
         {
             try
@@ -166,6 +169,7 @@ namespace Avalanche.Api.Controllers.V1
         /// <param name="videoId"></param>
         /// <param name="position"></param>
         [HttpPost("video/{videoId}/capture")]
+        [ProducesResponseType(typeof(void), StatusCodes.Status200OK)]
         public async Task<IActionResult> CaptureImageFromVideo(Guid videoId, [FromQuery]TimeSpan position)
         {
             try

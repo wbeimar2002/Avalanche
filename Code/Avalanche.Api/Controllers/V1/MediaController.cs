@@ -66,6 +66,7 @@ namespace Avalanche.Api.Controllers.V1
         /// <param name="mode"></param>
         /// <returns></returns>
         [HttpPut("pgsTimeoutPlayer/mode/{mode}")]
+        [ProducesResponseType(typeof(void), StatusCodes.Status200OK)]
         public async Task<IActionResult> SetPlayerMode(PgsTimeoutModes mode)
         {
             try
@@ -118,6 +119,7 @@ namespace Avalanche.Api.Controllers.V1
         /// <param name="sinkState"></param>
         /// <returns></returns>
         [HttpPut("pgs/sinks/state")]
+        [ProducesResponseType(typeof(void), StatusCodes.Status200OK)]
         public async Task<IActionResult> SetPgsStateForSink([FromBody] PgsSinkStateViewModel sinkState)
         {
             try
@@ -171,6 +173,7 @@ namespace Avalanche.Api.Controllers.V1
         /// <param name="level"></param>
         /// <returns></returns>
         [HttpPut("pgs/volume/level/{level}")]
+        [ProducesResponseType(typeof(void), StatusCodes.Status200OK)]
         public async Task<IActionResult> SetPgsVolume(double level)
         {
             try
@@ -219,6 +222,7 @@ namespace Avalanche.Api.Controllers.V1
         /// </summary>
         /// <returns></returns>
         [HttpPut("pgs/volume/mute/{muteState}")]
+        [ProducesResponseType(typeof(void), StatusCodes.Status200OK)]
         public async Task<IActionResult> SetPgsMute(bool muteState)
         {
             try
@@ -268,6 +272,7 @@ namespace Avalanche.Api.Controllers.V1
         /// <param name="greetingVideo"></param>
         /// <returns></returns>
         [HttpPut("pgs/files/videos")]
+        [ProducesResponseType(typeof(void), StatusCodes.Status200OK)]
         public async Task<IActionResult> SetPgsVideoFile([FromBody] GreetingVideoModel greetingVideo)
         {
             try
@@ -319,6 +324,7 @@ namespace Avalanche.Api.Controllers.V1
         /// <param name="position"></param>
         /// <returns></returns>
         [HttpPut("pgs/currentvideo/position/{position}")]
+        [ProducesResponseType(typeof(void), StatusCodes.Status200OK)]
         public async Task<IActionResult> SetPgsVideoPosition(double position)
         {
             try
@@ -344,6 +350,7 @@ namespace Avalanche.Api.Controllers.V1
         /// <param name="isPlaying"></param>
         /// <returns></returns>
         [HttpPut("pgs/playbackstate/{isPlaying}")]
+        [ProducesResponseType(typeof(void), StatusCodes.Status200OK)]
         public async Task<IActionResult> SetPgsPlaybackState(bool isPlaying)
         {
             try
@@ -392,6 +399,7 @@ namespace Avalanche.Api.Controllers.V1
         /// </summary>
         /// <returns></returns>
         [HttpPost("pgs")]
+        [ProducesResponseType(typeof(void), StatusCodes.Status200OK)]
         public async Task<IActionResult> StartPgs()
         {
             try
@@ -420,6 +428,7 @@ namespace Avalanche.Api.Controllers.V1
         /// </summary>
         /// <returns></returns>
         [HttpPut("timeout/pages/next")]
+        [ProducesResponseType(typeof(void), StatusCodes.Status200OK)]
         public async Task<IActionResult> NextPage()
         {
             try
@@ -444,6 +453,7 @@ namespace Avalanche.Api.Controllers.V1
         /// </summary>
         /// <returns></returns>
         [HttpPut("timeout/pages/previous")]
+        [ProducesResponseType(typeof(void), StatusCodes.Status200OK)]
         public async Task<IActionResult> PreviousPage()
         {
             try
@@ -469,6 +479,7 @@ namespace Avalanche.Api.Controllers.V1
         /// <param name="pageNumber"></param>
         /// <returns></returns>
         [HttpPut("timeout/pages/{pageNumber}")]
+        [ProducesResponseType(typeof(void), StatusCodes.Status200OK)]
         public async Task<IActionResult> SetCurrentPage(int pageNumber)
         {
             try
@@ -567,6 +578,7 @@ namespace Avalanche.Api.Controllers.V1
         /// </summary>
         /// <returns></returns>
         [HttpPost("timeout")]
+        [ProducesResponseType(typeof(void), StatusCodes.Status200OK)]
         public async Task<IActionResult> StartTimeout()
         {
             try
@@ -591,6 +603,7 @@ namespace Avalanche.Api.Controllers.V1
         /// </summary>
         /// <returns></returns>
         [HttpDelete("pgsTimeout")]
+        [ProducesResponseType(typeof(void), StatusCodes.Status200OK)]
         public async Task<IActionResult> StopPgsAndTimeout()
         {
             try

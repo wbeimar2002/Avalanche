@@ -1,4 +1,5 @@
 using Avalanche.Api.Helpers;
+using Avalanche.Api.ViewModels;
 using Avalanche.Shared.Infrastructure.Enumerations;
 using Avalanche.Shared.Infrastructure.Extensions;
 using Avalanche.Shared.Infrastructure.Helpers;
@@ -34,13 +35,14 @@ namespace Avalanche.Api.Controllers.V1
         /// </summary>
         [Route("check")]
         [HttpGet]
+        [Produces(typeof(HealthCheckViewModel))]
         public async Task<IActionResult> HealthCheck()
         {
             try
             {
                 _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
                 _logger.LogInformation("Avalanche Api is healthy.");
-                return new OkObjectResult(new
+                return new OkObjectResult(new HealthCheckViewModel
                 {
                     UtcDateTime = DateTime.UtcNow,
                     LocalDateTime = DateTime.UtcNow.ToLocalTime(),
@@ -64,6 +66,7 @@ namespace Avalanche.Api.Controllers.V1
         [Authorize]
         [Route("check/secure")]
         [HttpGet]
+        [Produces(typeof(HealthCheckViewModel))]
         public async Task<IActionResult> HealthCheckSecure()
         {
             try
@@ -72,7 +75,7 @@ namespace Avalanche.Api.Controllers.V1
 
                 _logger.LogInformation("Avalanche Api is healthy.");
 
-                return new OkObjectResult(new
+                return new OkObjectResult(new HealthCheckViewModel
                 {
                     UtcDateTime = DateTime.UtcNow,
                     LocalDateTime = DateTime.UtcNow.ToLocalTime(),
