@@ -39,6 +39,7 @@ namespace Avalanche.Api.Controllers.V1
         /// <param name="key"></param>
         /// <param name="section"></param>
         [HttpPut("categories/{key}/policies")]
+        [ProducesResponseType(typeof(void), StatusCodes.Status200OK)]
         public async Task<IActionResult> SaveCategoryPolicies(string key, [FromBody] DynamicSectionViewModel section)
         {
             try
@@ -65,6 +66,7 @@ namespace Avalanche.Api.Controllers.V1
         /// <param name="key"></param>
         /// <param name="section"></param>
         [HttpPut("categories/{key}")]
+        [ProducesResponseType(typeof(void), StatusCodes.Status200OK)]
         public async Task<IActionResult> SaveCategory(string key, [FromBody]DynamicSectionViewModel section)
         {
             try
@@ -91,6 +93,7 @@ namespace Avalanche.Api.Controllers.V1
         /// <param name="key"></param>
         /// <param name="list"></param>
         [HttpPost("categories/lists/{key}")]
+        [ProducesResponseType(typeof(void), StatusCodes.Status200OK)]
         public async Task<IActionResult> AddEntity(string key, [FromBody] DynamicListViewModel list)
         {
             try
@@ -126,6 +129,7 @@ namespace Avalanche.Api.Controllers.V1
         /// <param name="key"></param>
         /// <param name="list"></param>
         [HttpPut("categories/lists/{key}")]
+        [ProducesResponseType(typeof(void), StatusCodes.Status200OK)]
         public async Task<IActionResult> UpdateEntity(string key, [FromBody] DynamicListViewModel list)
         {
             try
@@ -162,6 +166,7 @@ namespace Avalanche.Api.Controllers.V1
         /// <param name="key"></param>
         /// <param name="list"></param>
         [HttpDelete("categories/lists/{key}")]
+        [ProducesResponseType(typeof(void), StatusCodes.Status200OK)]
         public async Task<IActionResult> DeleteEntity(string key, [FromBody] DynamicListViewModel list)
         {
             try
@@ -187,6 +192,7 @@ namespace Avalanche.Api.Controllers.V1
         /// </summary>
         /// <param name="key"></param>
         [HttpGet("categories/{key}")]
+        [Produces(typeof(DynamicSectionViewModel))]
         public async Task<IActionResult> GetCategoryByKey(string key)
         {
             try
@@ -213,6 +219,7 @@ namespace Avalanche.Api.Controllers.V1
         /// <param name="key"></param>
         /// <param name="parentId"></param>
         [HttpGet("categories/lists/{key}/{parentId}")]
+        [Produces(typeof(DynamicListViewModel))]
         public async Task<IActionResult> GetCategoryListByKey(string key, string parentId)
         {
             try
@@ -234,6 +241,7 @@ namespace Avalanche.Api.Controllers.V1
         }
 
         [HttpPut("operations/indexes")]
+        [ProducesResponseType(typeof(void), StatusCodes.Status200OK)]
         public async Task<IActionResult> ReindexRepository([FromBody] ReindexRepositoryRequestViewModel request)
         {
             try
@@ -255,6 +263,7 @@ namespace Avalanche.Api.Controllers.V1
         }
 
         [HttpPut("settings/AutoLabelsConfiguration/{procedureTypeId}")]
+        [ProducesResponseType(typeof(void), StatusCodes.Status200OK)]
         public async Task<IActionResult> UpdateAutoLabelsConfigurationByProcedureType(int procedureTypeId, [FromBody]List<AutoLabelAutoLabelsConfiguration> autoLabels)
         {
             try

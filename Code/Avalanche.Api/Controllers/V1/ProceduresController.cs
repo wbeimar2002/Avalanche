@@ -115,6 +115,7 @@ namespace Avalanche.Api.Controllers.V1
         }
 
         [HttpPut("{id}")]
+        [ProducesResponseType(typeof(void), StatusCodes.Status200OK)]
         public async Task<IActionResult> Update([FromBody] ProcedureViewModel procedureViewModel)
         {
             try
