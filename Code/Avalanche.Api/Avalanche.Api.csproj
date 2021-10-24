@@ -28,6 +28,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Remove="Helpers\ProceduresHelper.cs" />
     <Compile Remove="Services\Maintenance\ISettingsService.cs" />
     <Compile Remove="Services\Maintenance\SettingsService.cs" />
     <Compile Remove="ViewModels\DynamicSourceKeyValuePairViewModel.cs" />
