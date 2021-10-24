@@ -36,7 +36,7 @@ namespace Avalanche.Api.Controllers.V1
         }
 
         // NOTE: keeping cookie management on the same controller (route) as file access means we can easily scope both the cookie and authentication scheme to just this controller
-        [HttpPost("cookies")]
+        [HttpPost("")]
         [AllowAnonymous]
         public async Task<IActionResult> AcquireFileCookieNew([FromBody] string jwtToken)
         {
@@ -60,7 +60,7 @@ namespace Avalanche.Api.Controllers.V1
             }
         }
 
-        [HttpDelete("cookies")]
+        [HttpDelete("")]
         public async Task<IActionResult> RevokeFileCookieNew()
         {
             try

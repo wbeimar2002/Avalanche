@@ -1,7 +1,6 @@
 using System;
 using System.Threading.Tasks;
 using Avalanche.Api.Helpers;
-using Avalanche.Api.Managers.Maintenance;
 using Avalanche.Shared.Infrastructure.Configuration;
 using Avalanche.Shared.Infrastructure.Enumerations;
 using Avalanche.Shared.Infrastructure.Extensions;
@@ -41,7 +40,7 @@ namespace Avalanche.Api.Controllers.V1
             try
             {
                 _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
-                var result = FeaturesHelper.GetFeatures(_featureManager);
+                var result = FeaturesHelper.GetFeatures(_featureManager).Result;
                 return Ok(result);
             }
             catch (Exception ex)
