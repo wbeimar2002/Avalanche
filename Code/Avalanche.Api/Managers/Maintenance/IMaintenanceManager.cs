@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using Avalanche.Api.ViewModels;
 using Avalanche.Shared.Infrastructure.Enumerations;
@@ -13,7 +12,6 @@ namespace Avalanche.Api.Managers.Maintenance
         Task<DynamicListViewModel> GetCategoryListByKey(string key, string parentId);
         Task<dynamic> GetSettingValues(string key);
         Task SaveCategoryPolicies(DynamicSectionViewModel category);
-        Task<List<dynamic>> GetList(string sourceKey, string jsonKey = null);
 
         Task<ReindexStatusViewModel> ReindexRepository(ReindexRepositoryRequestViewModel reindexRequest);
     }

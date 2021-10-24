@@ -58,6 +58,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.FeatureManagement;
 using Serilog;
+
 using static Ism.PrintServer.V1.Protos.PrintServer;
 
 namespace Avalanche.Api
@@ -75,11 +76,11 @@ namespace Avalanche.Api
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            bool isDevice = IsDevice(services);
+
             //ASP.NET Features
             services.AddFeatureManagement()
                 .UseDisabledFeaturesHandler(new DisabledFeatureHandler());
-
-            bool isDevice = IsDevice(services);
 
             services.AddControllers();
             services.AddSignalR();
@@ -101,40 +102,51 @@ namespace Avalanche.Api
                 services.AddTransient<IRoutingManager, RoutingManager>();
                 services.AddTransient<IWebRTCManager, WebRTCManager>();
                 services.AddTransient<IPatientsManager, PatientsManager>();
+                services.AddTransient<IRecordingManager, RecordingManager>();
+                services.AddTransient<IActiveProcedureManager, ActiveProcedureManager>();
+                services.AddSingleton<IPgsTimeoutManager, PgsTimeoutManager>();
+                services.AddTransient<IMaintenanceManager, DeviceMaintenanceManager>();
+            }
+            else
+            {
+                services.AddTransient<IProceduresManager, ProceduresManager>();
+                services.AddTransient<IMaintenanceManager, ServerMaintenanceManager>();
             }
 
-            services.AddTransient<IRecordingManager, RecordingManager>();
             services.AddTransient<IDataManager, DataManager>();
-            services.AddTransient<IPrintingService, PrintingService>(); //This needs to be transient because the constructor has a runtime condition
-
-            services.AddTransient<IMaintenanceManager, MaintenanceManager>();
             services.AddTransient<ILicensingManager, LicensingManagerMock>();
-            services.AddTransient<IProceduresManager, ProceduresManager>();
             services.AddTransient<INotificationsManager, NotificationsManager>();
             services.AddTransient<ISecurityManager, SecurityManager>();
             services.AddTransient<IMedpresenceManager, MedpresenceManager>();
 
             // Singleton
-            //Just For Device Mode - TODO: This should be loaded on VSS Mode
-            services.AddSingleton<IPgsTimeoutManager, PgsTimeoutManager>();
-            services.AddConfigurationPoco<PgsApiConfiguration>(_configuration, nameof(PgsApiConfiguration));
-            services.AddConfigurationPoco<TimeoutApiConfiguration>(_configuration, nameof(TimeoutApiConfiguration));
-            services.AddConfigurationPoco<RecorderConfiguration>(_configuration, nameof(RecorderConfiguration));
-            services.AddConfigurationPoco<AutoLabelsConfiguration>(_configuration, nameof(AutoLabelsConfiguration));
-            services.AddConfigurationPoco<LabelsConfiguration>(_configuration, nameof(LabelsConfiguration));
-            services.AddConfigurationPoco<SetupConfiguration>(_configuration, nameof(SetupConfiguration));
+            if (isDevice)
+            {
+                services.AddConfigurationPoco<PgsApiConfiguration>(_configuration, nameof(PgsApiConfiguration));
+                services.AddConfigurationPoco<TimeoutApiConfiguration>(_configuration, nameof(TimeoutApiConfiguration));
+                services.AddConfigurationPoco<RecorderConfiguration>(_configuration, nameof(RecorderConfiguration));
+                services.AddConfigurationPoco<AutoLabelsConfiguration>(_configuration, nameof(AutoLabelsConfiguration));
+                services.AddConfigurationPoco<LabelsConfiguration>(_configuration, nameof(LabelsConfiguration));
+                services.AddConfigurationPoco<ProceduresSearchConfiguration>(_configuration, nameof(ProceduresSearchConfiguration));
+            }
 
             //Shared
+            services.AddConfigurationPoco<SetupConfiguration>(_configuration, nameof(SetupConfiguration));
             services.AddConfigurationPoco<GeneralApiConfiguration>(_configuration, nameof(GeneralApiConfiguration));
-            services.AddConfigurationPoco<ProceduresSearchConfiguration>(_configuration, nameof(ProceduresSearchConfiguration));
             services.AddConfigurationPoco<PrintingConfiguration>(_configuration, nameof(PrintingConfiguration));
             services.AddConfigurationPoco<MedPresenceConfiguration>(_configuration, nameof(MedPresenceConfiguration));
 
-            services.AddSingleton<IWebRTCService, WebRtcService>();
-            services.AddSingleton<IRecorderService, RecorderService>();
-            services.AddSingleton<IAvidisService, AvidisService>();
-            services.AddSingleton<IRoutingService, RoutingService>();
-            services.AddSingleton<IPgsTimeoutService, PgsTimeoutService>();
+            if (isDevice)
+            {
+                services.AddSingleton<IWebRTCService, WebRtcService>();
+                services.AddSingleton<IRecorderService, RecorderService>();
+                services.AddSingleton<IAvidisService, AvidisService>();
+                services.AddSingleton<IRoutingService, RoutingService>();
+                services.AddSingleton<IPgsTimeoutService, PgsTimeoutService>();
+            }
+
+            //Shared
+            services.AddTransient<IPrintingService, PrintingService>(); //This needs to be transient because the constructor has a runtime condition
             services.AddSingleton<IPieService, PieService>();
             services.AddSingleton<IBroadcastService, BroadcastService>();
             services.AddSingleton<IStorageService, StorageService>();
@@ -149,44 +161,49 @@ namespace Avalanche.Api
             _ = services.AddConfigurationPoco<GrpcServiceRegistry>(_configuration, nameof(GrpcServiceRegistry));
             _ = services.AddConfigurationPoco<HostingConfiguration>(_configuration, nameof(HostingConfiguration));
             _ = services.AddConfigurationPoco<ClientCertificateConfiguration>(_configuration, nameof(ClientCertificateConfiguration));
+
             _ = services.AddSingleton<ICertificateProvider, FileSystemCertificateProvider>();
 
             // gRPC Clients
-            _ = services.AddMedpresenceSecureClient(); //Shared
-            _ = services.AddPatientListSecureClient(); //Shared
-            //For printing both Services can be used according to a configuration
-            //_ = services.AddPrintingServerSecureClients();
+            _ = services.AddMedpresenceSecureClient();
 
-            // TEMP Fix until changes are moved back to Ism.Security and Print
-            _ = services.AddLocalAndRemoteSecureGrpcClient<PrintingServerSecureClient, PrintServerClient>("PrintServer", new HostPort() { Host = "localhost", Port = 4013 });
+            _ = services.AddDataManagementStorageSecureClient();
 
-            _ = services.AddDataManagementStorageSecureClient(); //Associated to Maintenance
+            _ = services.AddLibrarySearchServiceSecureClient();
+            _ = services.AddLibraryActiveProcedureServiceSecureClient();
+            _ = services.AddLibraryManagerServiceSecureClient();
 
-            _ = services.AddLibraryActiveProcedureServiceSecureClient(); //It is part of library
-            _ = services.AddLibraryManagerServiceSecureClient(); //It is part of library
+            _ = services.AddPatientListSecureClient();
+            _ = services.AddPatientListStorageSecureClient();
 
-            _ = services.AddRecorderSecureClient(); //Associated to FilesController
-            _ = services.AddGrpcStateClient("AvalancheApi"); //Associated to RecorderManager
+            _ = services.AddRecorderSecureClient();
+            _ = services.AddGrpcStateClient("AvalancheApi"); //TODO: This name should be configurable
+
+            _ = services.AddConfigurationServiceSecureClient();
 
             if (isDevice)
             {
-                _ = services.AddConfigurationServiceSecureClient();
-                _ = services.AddLibrarySearchServiceSecureClient();
-
                 _ = services.AddWebRtcStreamerSecureClient();
                 _ = services.AddAvidisSecureClient();
-                _ = services.AddPatientListStorageSecureClient();
+
                 _ = services.AddPgsTimeoutSecureClient();
                 _ = services.AddRoutingSecureClient();
 
-                // Hosted Services
-                services.AddHostedService<NotificationsListener>();
+                //For printing both Services can be used according to a configuration
+                //_ = services.AddPrintingServerSecureClients();
+
+                // TEMP Fix until changes are moved back to Ism.Security and Print
+                _ = services.AddLocalAndRemoteSecureGrpcClient<PrintingServerSecureClient, PrintServerClient>("PrintServer", new HostPort() { Host = "localhost", Port = 4013 });
             }
             else
             {
                 _ = services.AddConfigurationServiceSecureClient("StorageVSS");
                 _ = services.AddLibrarySearchServiceSecureClient("LibraryVSS");
+                _ = services.AddPrintingServerSecureClient("PrintServerVSS");
             }
+
+            // Hosted Services
+            services.AddHostedService<NotificationsListener>();
         }
 
         private void ConfigureAuthorization(IServiceCollection services)
@@ -201,6 +218,7 @@ namespace Avalanche.Api
             services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
                 .AddJwtBearer()
                 .AddCookie();
+
             services.ConfigureOptions<ConfigureJwtBearerOptions>();
             services.ConfigureOptions<ConfigureCookieAuthenticiationOptions>();
 

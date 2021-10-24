@@ -25,7 +25,7 @@ using System.Threading.Tasks;
 
 namespace Avalanche.Api.Managers.Maintenance
 {
-    public class MaintenanceManager : IMaintenanceManager
+    public abstract class MaintenanceManager : IMaintenanceManager
     {
         private readonly IStorageService _storageService;
         private readonly IDataManager _dataManager;
@@ -39,8 +39,6 @@ namespace Avalanche.Api.Managers.Maintenance
         private readonly IHttpContextAccessor _httpContextAccessor;
 
         private readonly ISharedConfigurationManager _sharedConfigurationManager;
-        private readonly IDeviceConfigurationManager _deviceConfigurationManager;
-        private readonly IServerConfigurationManager _serverConfigurationManager;
 
         public MaintenanceManager(IStorageService storageService,
             IDataManager dataManager,
@@ -49,9 +47,7 @@ namespace Avalanche.Api.Managers.Maintenance
             ILibraryService libraryService,
             IFilesService filesService,
             IPrintingService printingService,
-            ISharedConfigurationManager sharedConfigurationManager,
-            IDeviceConfigurationManager deviceConfigurationManager,
-            IServerConfigurationManager serverConfigurationManager)
+            ISharedConfigurationManager sharedConfigurationManager)
         {
             _storageService = storageService;
             _dataManager = dataManager;
@@ -62,13 +58,17 @@ namespace Avalanche.Api.Managers.Maintenance
             _printingService = printingService;
 
             _sharedConfigurationManager = sharedConfigurationManager;
-            _deviceConfigurationManager = deviceConfigurationManager;
-            _serverConfigurationManager = serverConfigurationManager;
 
             _user = HttpContextUtilities.GetUser(_httpContextAccessor.HttpContext);
             _configurationContext = _mapper.Map<UserModel, ConfigurationContext>(_user);
             _configurationContext.IdnId = Guid.NewGuid().ToString();
         }
+
+        protected abstract Task SaveEmbeddedList(string settingsKey, string jsonKey, string json, string schema = null);
+
+        protected abstract void CheckLinks(DynamicListViewModel category);
+
+        protected abstract Task SetIsRequired(string key, DynamicPropertyViewModel item);
 
         public async Task<ReindexStatusViewModel> ReindexRepository(ReindexRepositoryRequestViewModel reindexRequest)
         {
@@ -109,42 +109,6 @@ namespace Avalanche.Api.Managers.Maintenance
                 await SaveCustomListFile(category);
             else
                 await SaveCustomEntity(_user, category, action);
-        }
-
-        private async Task SaveEmbeddedList(string settingsKey, string jsonKey, string json, string schema = null)
-        {
-            if (string.IsNullOrEmpty(schema) || await _storageService.ValidateSchema(schema, json, 1, _configurationContext))
-            {
-                await _storageService.UpdateJsonProperty(settingsKey, jsonKey, json, 1, _configurationContext, true);
-
-                switch (settingsKey)
-                {
-                    case "ProceduresSearchConfiguration":
-                        _serverConfigurationManager.UpdateProceduresSearchConfigurationColumns(json.Get<List<ColumnProceduresSearchConfiguration>>());
-                        break;
-                    case "SetupConfiguration":
-                        _deviceConfigurationManager.UpdatePatientInfo(json.Get<List<PatientInfoSetupConfiguration>>());
-                        break;
-                }
-            }
-            else
-            {
-                throw new ValidationException("Json Schema Invalid for " + jsonKey);
-            }
-        }
-
-        private async Task SaveCustomListFile(DynamicListViewModel customList)
-        {
-            var json = JsonConvert.SerializeObject(customList.Data);
-
-            if (await _storageService.ValidateSchema(customList.Schema, json, 1, _configurationContext))
-            {
-                await _storageService.SaveJsonObject(customList.SourceKey, json, 1, _configurationContext, true);
-            }
-            else
-            {
-                throw new ValidationException("Json Schema Invalid for " + customList.SourceKey);
-            }
         }
 
         public async Task<DynamicSectionViewModel> GetCategoryByKey(string key)
@@ -218,32 +182,6 @@ namespace Avalanche.Api.Managers.Maintenance
             return values == null ? null : await BuildCategoryList(category, values);
         }
 
-        private void CheckLinks(DynamicListViewModel category)
-        {
-            switch (category.SourceKey)
-            {
-                case "ProcedureTypes":
-                    for (int i = 0; i < category.Links.Count; i++)
-                    {
-                        var link = category.Links[i];
-                        switch (link.Key)
-                        {
-                            case "AutoLabels":
-                                if (!_deviceConfigurationManager.GetLabelsConfigurationSettings().AutoLabelsEnabled)
-                                {
-                                    category.Links.Remove(link);
-                                }
-                                break;
-                            default:
-                                break;
-                        }
-                    }
-                    break;
-                default:
-                    break;
-            }
-        }
-
         public async Task<DynamicListViewModel> GetEmbeddedListByKey(string settingValues, string metadataKey, string listKey)
         {
             var category = await _storageService.GetJsonObject<DynamicListViewModel>(metadataKey, 1, _configurationContext);
@@ -287,7 +225,7 @@ namespace Avalanche.Api.Managers.Maintenance
             return category;
         }
 
-        private static void SetRelatedObject(DynamicPropertyViewModel property, ExpandoObject element)
+        private void SetRelatedObject(DynamicPropertyViewModel property, ExpandoObject element)
         {
             var serializedElement = JsonConvert.SerializeObject(element);
 
@@ -372,27 +310,6 @@ namespace Avalanche.Api.Managers.Maintenance
             }
 
             return null;
-        }
-
-        private async Task SetIsRequired(string key, DynamicPropertyViewModel item)
-        {
-            //It is a switch because this can grow on time
-            switch (key)
-            {
-                case "DepartmentsMetadata":
-                    switch (item.JsonKey)
-                    {
-                        case "DepartmentId":
-                            bool departmentsSupported = _deviceConfigurationManager.GetSetupConfigurationSettings().General.DepartmentsSupported;
-
-                            item.Required = departmentsSupported;
-                            item.IsHidden = !departmentsSupported;
-                            item.IsAutoGenerated = !departmentsSupported;
-
-                            break;
-                    }
-                    break;
-            }
         }
 
         private async Task SetSettingsValues(DynamicSectionViewModel rootSection, string settingValues,
@@ -736,7 +653,21 @@ namespace Avalanche.Api.Managers.Maintenance
             }
         }
 
-        public async Task<List<dynamic>> GetList(string sourceKey, string jsonKey = null)
+        private async Task SaveCustomListFile(DynamicListViewModel customList)
+        {
+            var json = JsonConvert.SerializeObject(customList.Data);
+
+            if (await _storageService.ValidateSchema(customList.Schema, json, 1, _configurationContext))
+            {
+                await _storageService.SaveJsonObject(customList.SourceKey, json, 1, _configurationContext, true);
+            }
+            else
+            {
+                throw new ValidationException("Json Schema Invalid for " + customList.SourceKey);
+            }
+        }
+
+        private async Task<List<dynamic>> GetList(string sourceKey, string jsonKey = null)
         {
             if (jsonKey == null)
             {
