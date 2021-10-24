@@ -1,4 +1,5 @@
 using Avalanche.Api.Managers.Media;
+using Avalanche.Api.Services.Security;
 using Avalanche.Api.ViewModels;
 using Avalanche.Shared.Domain.Models.Media;
 using Avalanche.Shared.Infrastructure.Enumerations;
@@ -28,7 +29,9 @@ namespace Avalanche.Api.Controllers.V1
         private readonly IRecordingManager _recordingManager;
         private readonly IWebHostEnvironment _environment;
 
-        public RecordingController(ILogger<LicensesController> logger, IRecordingManager recordingManager, IWebHostEnvironment environment)
+        public RecordingController(ILogger<LicensesController> logger,
+            IRecordingManager recordingManager,
+            IWebHostEnvironment environment)
         {
             _environment = environment;
             _logger = ThrowIfNullOrReturn(nameof(logger), logger);

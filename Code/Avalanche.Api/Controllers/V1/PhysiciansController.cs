@@ -1,8 +1,6 @@
-﻿using Avalanche.Api.Extensions;
-using Avalanche.Api.Managers.Patients;
+using System;
+using System.Threading.Tasks;
 using Avalanche.Api.Managers.Data;
-using Avalanche.Api.ViewModels;
-using Avalanche.Shared.Domain.Models;
 using Avalanche.Shared.Infrastructure.Enumerations;
 using Avalanche.Shared.Infrastructure.Extensions;
 using Avalanche.Shared.Infrastructure.Helpers;
@@ -12,11 +10,6 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
-using System.Threading.Tasks;
-using Avalanche.Api.Managers.Maintenance;
 
 namespace Avalanche.Api.Controllers.V1
 {
@@ -26,20 +19,19 @@ namespace Avalanche.Api.Controllers.V1
     public class PhysiciansController : ControllerBase
     {
         private readonly ILogger _logger;
-        private readonly IMaintenanceManager _maintenangeManager;
+        private readonly IPhysiciansManager _physiciansManager;
         private readonly IWebHostEnvironment _environment;
 
-        public PhysiciansController(ILogger<PhysiciansController> logger, IMaintenanceManager maintenanceManager, IWebHostEnvironment environment)
+        public PhysiciansController(ILogger<PhysiciansController> logger, IPhysiciansManager physiciansManager, IWebHostEnvironment environment)
         {
             _environment = environment;
             _logger = logger;
-            _maintenangeManager = maintenanceManager;
+            _physiciansManager = physiciansManager;
         }
 
         /// <summary>
         /// Get all physicians
         /// </summary>
-        /// <returns></returns>
         [HttpGet("")]
         public async Task<IActionResult> GetAllPhysicians()
         {
@@ -47,7 +39,7 @@ namespace Avalanche.Api.Controllers.V1
             {
                 _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
 
-                var result = await _maintenangeManager.GetListValues("Physicians");
+                var result = await _physiciansManager.GetPhysicians();
                 return Ok(result);
             }
             catch (Exception ex)

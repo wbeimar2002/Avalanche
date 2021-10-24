@@ -1,4 +1,7 @@
-﻿using AutoMapper;
+using System;
+using System.Linq;
+using System.Threading.Tasks;
+using AutoMapper;
 using Avalanche.Api.Services.Maintenance;
 using Avalanche.Api.Services.Media;
 using Avalanche.Api.Utilities;
@@ -7,32 +10,35 @@ using Avalanche.Shared.Domain.Models.Media;
 using Avalanche.Shared.Domain.Models.Presets;
 using Ism.Common.Core.Configuration.Models;
 using Ism.Routing.V1.Protos;
-using Ism.Utility.Core;
 using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
-using System;
-using System.Linq;
-using System.Threading.Tasks;
 using static Ism.Utility.Core.Preconditions;
 
 namespace Avalanche.Api.Managers.Presets
 {
     public class PresetManager : IPresetManager
     {
-        private readonly IMapper _mapper;
         private readonly IRoutingService _routingService;
         private readonly IStorageService _storageService;
-        private readonly ConfigurationContext _configurationContext;
-        private const string PRESETS = "presets";
-        private const string SITEID = "Avalanche"; // TODO how to get Site Id
 
-        public PresetManager(IRoutingService routingService, IStorageService storageService, IMapper mapper)
+        private readonly IMapper _mapper;
+        private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly UserModel user;
+        private readonly ConfigurationContext _configurationContext;
+
+
+        private const string PRESETS = "Presets";
+
+        public PresetManager(IRoutingService routingService, IStorageService storageService, IMapper mapper, IHttpContextAccessor httpContextAccessor)
         {
             _mapper = ThrowIfNullOrReturn(nameof(mapper), mapper);
             _routingService = ThrowIfNullOrReturn(nameof(routingService), routingService);
             _storageService = ThrowIfNullOrReturn(nameof(storageService), storageService);
+            _httpContextAccessor = httpContextAccessor;
 
-            _configurationContext = new ConfigurationContext { SiteId = SITEID, IdnId = Guid.NewGuid().ToString() };
+            user = HttpContextUtilities.GetUser(_httpContextAccessor.HttpContext);
+            _configurationContext = _mapper.Map<UserModel, ConfigurationContext>(user);
+            _configurationContext.IdnId = Guid.NewGuid().ToString();
         }
 
         public async Task<UserPresetsModel> GetPresets(string userId)
@@ -65,7 +71,7 @@ namespace Avalanche.Api.Managers.Presets
 
             // Route video batch
             await _routingService.RouteVideoBatch(request);
-        }        
+        }
 
         public async Task SavePreset(string userId, int index, string name)
         {

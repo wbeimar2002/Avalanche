@@ -1,4 +1,3 @@
-using AutoMapper;
 using Avalanche.Api.Managers.Presets;
 using Avalanche.Shared.Domain.Models.Presets;
 using Avalanche.Shared.Infrastructure.Enumerations;
@@ -25,14 +24,12 @@ namespace Avalanche.Api.Controllers.V1
     {
         private readonly ILogger _logger;
         private readonly IWebHostEnvironment _environment;
-        private readonly IMapper _mapper;
         private readonly IPresetManager _presetManager;
 
-        public PresetsController(ILogger<PresetsController> logger, IPresetManager presetManager, IMapper mapper, IWebHostEnvironment environment)
+        public PresetsController(ILogger<PresetsController> logger, IPresetManager presetManager, IWebHostEnvironment environment)
         {
             _environment = environment;
             _logger = ThrowIfNullOrReturn(nameof(logger), logger);
-            _mapper = ThrowIfNullOrReturn(nameof(mapper), mapper);
             _presetManager = ThrowIfNullOrReturn(nameof(presetManager), presetManager);
         }
 
@@ -40,7 +37,6 @@ namespace Avalanche.Api.Controllers.V1
         /// Gets presets by user
         /// </summary>
         /// <param name="userId"></param>
-        /// <returns></returns>
         [HttpGet]
         [Produces(typeof(UserPresetsModel))]
         public async Task<IActionResult> GetPresets(string userId)
@@ -69,7 +65,6 @@ namespace Avalanche.Api.Controllers.V1
         /// </summary>
         /// <param name="userId"></param>
         /// <param name="index"></param>
-        /// <returns></returns>
         [HttpPut("apply")]
         [ProducesResponseType(typeof(void), StatusCodes.Status200OK)]
         public async Task<IActionResult> ApplyPreset(string userId, int index)
@@ -99,7 +94,6 @@ namespace Avalanche.Api.Controllers.V1
         /// <param name="userId"></param>
         /// <param name="index"></param>
         /// <param name="name"></param>
-        /// <returns></returns>
         [HttpPut("save")]
         [ProducesResponseType(typeof(void), StatusCodes.Status200OK)]
         public async Task<IActionResult> SavePreset(string userId, int index, string name)
@@ -107,7 +101,7 @@ namespace Avalanche.Api.Controllers.V1
             try
             {
                 _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
-                               
+
                 await _presetManager.SavePreset(userId, index, name);
 
                 return Ok();
@@ -128,7 +122,6 @@ namespace Avalanche.Api.Controllers.V1
         /// </summary>
         /// <param name="userId"></param>
         /// <param name="index"></param>
-        /// <returns></returns>
         [HttpDelete("remove")]
         [ProducesResponseType(typeof(void), StatusCodes.Status200OK)]
         public async Task<IActionResult> RemovePreset(string userId, int index)

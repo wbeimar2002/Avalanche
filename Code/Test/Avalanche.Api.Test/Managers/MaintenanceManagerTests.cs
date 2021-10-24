@@ -10,10 +10,8 @@ using Avalanche.Api.Services.Maintenance;
 using Avalanche.Api.Services.Media;
 using Avalanche.Api.Services.Printing;
 using Avalanche.Api.ViewModels;
-using Avalanche.Shared.Infrastructure.Configuration;
 using Ism.Common.Core.Configuration.Models;
 using Microsoft.AspNetCore.Http;
-using Microsoft.FeatureManagement;
 using Moq;
 using Newtonsoft.Json;
 using NUnit.Framework;
@@ -30,17 +28,10 @@ namespace Avalanche.Api.Test.Managers
         Mock<IDataManager> _dataManager;
         Mock<IHttpContextAccessor> _httpContextAccessor;
         Mock<IFilesService> _filesService;
-        Mock<IFeatureManager> _featureManager;
         Mock<IPrintingService> _printingService;
 
-        Mock<GeneralApiConfiguration> _generalApiConfiguration;
-        Mock<ProceduresSearchConfiguration> _proceduresSearchConfiguration;
-        Mock<AutoLabelsConfiguration> _autoLabelsConfiguration;
-        Mock<LabelsConfiguration> _labelsConfiguration;
-        Mock<PrintingConfiguration> _printingConfiguration;
-        Mock<SetupConfiguration> _setupConfiguration;
-        Mock<RecorderConfiguration> _recorderConfiguration;
-        Mock<MedPresenceConfiguration> _medPresenceConfiguration;
+        Mock<ISharedConfigurationManager> _sharedConfigurationManager;
+        Mock<IConfigurationManager> _deviceConfigurationManager;
 
         MaintenanceManager _manager;
 
@@ -60,21 +51,19 @@ namespace Avalanche.Api.Test.Managers
             _dataManager = new Mock<IDataManager>();
             _httpContextAccessor = new Mock<IHttpContextAccessor>();
             _filesService = new Mock<IFilesService>();
-            _featureManager = new Mock<IFeatureManager>();
             _printingService = new Mock<IPrintingService>();
+            _sharedConfigurationManager = new Mock<ISharedConfigurationManager>();
+            _deviceConfigurationManager = new Mock<IConfigurationManager>();
 
-            _generalApiConfiguration = new Mock<GeneralApiConfiguration>();
-            _proceduresSearchConfiguration = new Mock<ProceduresSearchConfiguration>();
-            _autoLabelsConfiguration = new Mock<AutoLabelsConfiguration>();
-            _labelsConfiguration = new Mock<LabelsConfiguration>();
-            _printingConfiguration = new Mock<PrintingConfiguration>();
-            _setupConfiguration = new Mock<SetupConfiguration>();
-            _recorderConfiguration = new Mock<RecorderConfiguration>();
-            _medPresenceConfiguration = new Mock<MedPresenceConfiguration>();
-
-            _manager = new MaintenanceManager(_storageService.Object, _dataManager.Object, _mapper, _httpContextAccessor.Object, _libraryService.Object,
-                _filesService.Object, _featureManager.Object, _printingService.Object, _generalApiConfiguration.Object, _proceduresSearchConfiguration.Object, _autoLabelsConfiguration.Object,
-                _labelsConfiguration.Object, _printingConfiguration.Object, _setupConfiguration.Object, _recorderConfiguration.Object, _medPresenceConfiguration.Object);
+            _manager = new DeviceMaintenanceManager(
+                _storageService.Object,
+                _dataManager.Object,
+                _mapper,
+                _httpContextAccessor.Object,
+                _libraryService.Object,
+                _filesService.Object,
+                _printingService.Object,
+                _sharedConfigurationManager.Object, _deviceConfigurationManager.Object);
         }
 
         [Test]
@@ -83,7 +72,7 @@ namespace Avalanche.Api.Test.Managers
             var expected = new Ism.Library.V1.Protos.ReindexRepositoryResponse { ErrorCount = 2, SuccessCount = 4, TotalCount = 6 };
             _libraryService.Setup(m => m.ReindexRepository(It.IsAny<string>())).ReturnsAsync(expected);
 
-            var response = await _manager.ReindexRepository(new ViewModels.ReindexRepositoryRequestViewModel("repo"));
+            var response = await _manager.ReindexRepository(new ReindexRepositoryRequestViewModel("repo"));
 
             Assert.NotNull(response);
             Assert.AreEqual(expected.ErrorCount, response.ErrorCount);
@@ -200,7 +189,7 @@ namespace Avalanche.Api.Test.Managers
 
             var json = JsonConvert.SerializeObject(customList.Data);
             _storageService.Setup(mock => mock.ValidateSchema(customList.Schema, json, 1, It.IsAny<ConfigurationContext>())).ReturnsAsync(false);
-            
+
             var ex = Assert.ThrowsAsync<ValidationException>(() => _manager.SaveEntityChanges(customList, It.IsAny<Shared.Infrastructure.Enumerations.DynamicListActions>()));
 
             _storageService.Verify(mock => mock.ValidateSchema(customList.Schema, json, 1, It.IsAny<ConfigurationContext>()), Times.Once);

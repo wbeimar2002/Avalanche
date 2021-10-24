@@ -18,7 +18,7 @@ namespace Avalanche.Api.Test.Controllers
     {
         Mock<ILogger<ActiveProcedureController>> _logger;
         Mock<IWebHostEnvironment> _environment;
-        Mock<IProceduresManager> _proceduresManager;
+        Mock<IActiveProcedureManager> _activeProceduresManager;
 
         ActiveProcedureController _controller;
         bool _checkLogger = false;
@@ -28,9 +28,9 @@ namespace Avalanche.Api.Test.Controllers
         {
             _logger = new Mock<ILogger<ActiveProcedureController>>();
             _environment = new Mock<IWebHostEnvironment>();
-            _proceduresManager = new Mock<IProceduresManager>();
+            _activeProceduresManager = new Mock<IActiveProcedureManager>();
 
-            _controller = new ActiveProcedureController(_logger.Object, _proceduresManager.Object, _environment.Object);
+            _controller = new ActiveProcedureController(_logger.Object, _activeProceduresManager.Object, _environment.Object);
 
             var mockUrlHelper = new Mock<IUrlHelper>(MockBehavior.Strict);
             mockUrlHelper
@@ -59,7 +59,7 @@ namespace Avalanche.Api.Test.Controllers
             var fixture = new Fixture();
             ActiveProcedureViewModel result = fixture.Create<ActiveProcedureViewModel>();
 
-            _proceduresManager.Setup(mock => mock.GetActiveProcedure()).ReturnsAsync(result);
+            _activeProceduresManager.Setup(mock => mock.GetActiveProcedure()).ReturnsAsync(result);
 
             var okResult = _controller.GetActive();
 

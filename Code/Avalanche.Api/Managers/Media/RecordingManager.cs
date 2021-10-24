@@ -1,5 +1,4 @@
 using AutoMapper;
-using Avalanche.Api.Helpers;
 using Avalanche.Api.Services.Media;
 using Avalanche.Api.ViewModels;
 using Avalanche.Shared.Domain.Models;
@@ -35,24 +34,6 @@ namespace Avalanche.Api.Managers.Media
         {
             var activeProcedure = await GetActiveProcedureState().ConfigureAwait(false);
             await _stateClient.PublishEvent(new CaptureImageFromVideoEvent(activeProcedure.LibraryId, activeProcedure.RepositoryId, videoId, position)).ConfigureAwait(false);
-        }
-
-        public string GetCapturePreview(string path, string procedureId, string repository)
-        {
-            Preconditions.ThrowIfNullOrEmpty(nameof(path), path);
-            Preconditions.ThrowIfNullOrEmpty(nameof(procedureId), procedureId);
-            Preconditions.ThrowIfNullOrEmpty(nameof(repository), repository);
-
-            return ProceduresHelper.GetRelativePath(procedureId, repository, path);
-        }
-
-        public string GetCaptureVideo(string path, string procedureId, string repository)
-        {
-            Preconditions.ThrowIfNullOrEmpty(nameof(path), path);
-            Preconditions.ThrowIfNullOrEmpty(nameof(procedureId), procedureId);
-            Preconditions.ThrowIfNullOrEmpty(nameof(repository), repository);
-
-            return ProceduresHelper.GetRelativePath(procedureId, repository, path);
         }
 
         public async Task<IEnumerable<RecordingChannelModel>> GetRecordingChannels()

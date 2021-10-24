@@ -1,4 +1,4 @@
-﻿using Avalanche.Api.Controllers.V1;
+using Avalanche.Api.Controllers.V1;
 using Avalanche.Api.Managers.Data;
 using Avalanche.Api.Tests.Extensions;
 using Avalanche.Shared.Domain.Models;
@@ -36,38 +36,6 @@ namespace Avalanche.Api.Tests.Controllers
 
             if (os.Platform == PlatformID.Win32NT)
                 _checkLogger = true;
-        }
-
-        [Test]
-        public void GetSexesShouldReturnOkResult()
-        {
-            var okResult = _controller.GetSexes();
-
-            if (_checkLogger)
-            {
-                _logger.Verify(LogLevel.Error, $"Exception {_controller.GetType().Name}.GetSexes", Times.Never());
-                _logger.Verify(LogLevel.Debug, $"Requested {_controller.GetType().Name}.GetSexes", Times.Once());
-                _logger.Verify(LogLevel.Debug, $"Completed {_controller.GetType().Name}.GetSexes", Times.Once());
-            }
-
-            Assert.IsInstanceOf<OkObjectResult>(okResult.Result);
-        }
-
-        [Test]
-        public void GetSexesShouldReturnBadResultIfFails()
-        {
-            _metadataManager.Setup(mock => mock.GetList("Sexes", null)).Throws(It.IsAny<Exception>());
-
-            var badResult = _controller.GetSexes();
-
-            if (_checkLogger)
-            {
-                _logger.Verify(LogLevel.Error, $"Exception {_controller.GetType().Name}.GetSexes", Times.Once());
-                _logger.Verify(LogLevel.Debug, $"Requested {_controller.GetType().Name}.GetSexes", Times.Once());
-                _logger.Verify(LogLevel.Debug, $"Completed {_controller.GetType().Name}.GetSexes", Times.Once());
-            }
-
-            Assert.IsInstanceOf<BadRequestObjectResult>(badResult.Result);
         }
 
         [Test]
