@@ -20,7 +20,7 @@ namespace Avalanche.Api.Managers.Maintenance
         private readonly IStorageService _storageService;
         private readonly ConfigurationContext _configurationContext;
 
-        private readonly IServerConfigurationManager _serverConfigurationManager;
+        private readonly IConfigurationManager _serverConfigurationManager;
 
         public ServerMaintenanceManager(IStorageService storageService,
             IDataManager dataManager, IMapper mapper,
@@ -29,7 +29,7 @@ namespace Avalanche.Api.Managers.Maintenance
             IFilesService filesService,
             IPrintingService printingService,
             ISharedConfigurationManager sharedConfigurationManager,
-            IServerConfigurationManager serverConfigurationManager) : base(storageService, dataManager, mapper, httpContextAccessor, libraryService, filesService, printingService, sharedConfigurationManager)
+            IConfigurationManager serverConfigurationManager) : base(storageService, dataManager, mapper, httpContextAccessor, libraryService, filesService, printingService, sharedConfigurationManager)
         {
             _serverConfigurationManager = serverConfigurationManager;
         }

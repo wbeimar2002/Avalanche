@@ -20,7 +20,7 @@ namespace Avalanche.Api.Managers.Maintenance
         private readonly IStorageService _storageService;
         private readonly ConfigurationContext _configurationContext;
 
-        private readonly IDeviceConfigurationManager _deviceConfigurationManager;
+        private readonly IConfigurationManager _deviceConfigurationManager;
 
         public DeviceMaintenanceManager(IStorageService storageService,
             IDataManager dataManager, IMapper mapper,
@@ -29,7 +29,7 @@ namespace Avalanche.Api.Managers.Maintenance
             IFilesService filesService,
             IPrintingService printingService,
             ISharedConfigurationManager sharedConfigurationManager,
-            IDeviceConfigurationManager deviceConfigurationManager) : base(storageService, dataManager, mapper, httpContextAccessor, libraryService, filesService, printingService, sharedConfigurationManager)
+            IConfigurationManager deviceConfigurationManager) : base(storageService, dataManager, mapper, httpContextAccessor, libraryService, filesService, printingService, sharedConfigurationManager)
         {
             _deviceConfigurationManager = deviceConfigurationManager;
         }

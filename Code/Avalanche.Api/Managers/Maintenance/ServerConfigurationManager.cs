@@ -1,36 +1,30 @@
-using System;
 using System.Collections.Generic;
-using AutoMapper;
-using Avalanche.Api.Utilities;
-using Avalanche.Shared.Domain.Models;
+using System.Threading.Tasks;
 using Avalanche.Shared.Infrastructure.Configuration;
-using Ism.Common.Core.Configuration.Models;
-using Microsoft.AspNetCore.Http;
 
 namespace Avalanche.Api.Managers.Maintenance
 {
-    public class ServerConfigurationManager : IServerConfigurationManager
+    public class ServerConfigurationManager : IConfigurationManager
     {
-        private readonly IMapper _mapper;
-        private readonly UserModel _user;
-        private readonly ConfigurationContext _configurationContext;
-
         private readonly ProceduresSearchConfiguration _proceduresSearchConfiguration;
-        private readonly VaultStreamServerConfiguration _vaultStreamServerConfiguration;
+        private readonly SetupConfiguration _setupConfiguration;
 
         public ServerConfigurationManager(
             ProceduresSearchConfiguration proceduresSearchConfiguration,
-            VaultStreamServerConfiguration vaultStreamServerConfiguration,
-            IMapper mapper)
+            SetupConfiguration setupConfiguration)
         {
             _proceduresSearchConfiguration = proceduresSearchConfiguration;
-            _vaultStreamServerConfiguration = vaultStreamServerConfiguration;
-            _mapper = mapper;
+            _setupConfiguration = setupConfiguration;
         }
 
-        public ProceduresSearchConfiguration GetProceduresSearchConfigurationSettings() => _proceduresSearchConfiguration;
+        public AutoLabelsConfiguration GetAutoLabelsConfigurationSettings(int? procedureTypeId) => throw new System.InvalidOperationException();
+        public LabelsConfiguration GetLabelsConfigurationSettings() => throw new System.InvalidOperationException();
+        public RecorderConfiguration GetRecorderConfigurationSettings() => throw new System.InvalidOperationException();
+        public Task UpdateAutoLabelsConfigurationByProcedureType(int procedureTypeId, List<AutoLabelAutoLabelsConfiguration> autoLabels) => throw new System.InvalidOperationException();
+        public void UpdatePatientInfo(List<PatientInfoSetupConfiguration> patientInfoSetupConfigurations) => throw new System.InvalidOperationException();
 
-        public VaultStreamServerConfiguration GetVaultStreamServerConfigurationSettings() => _vaultStreamServerConfiguration;
+        public ProceduresSearchConfiguration GetProceduresSearchConfigurationSettings() => _proceduresSearchConfiguration;
+        public SetupConfiguration GetSetupConfigurationSettings() => _setupConfiguration;
 
         public void UpdateProceduresSearchConfigurationColumns(List<ColumnProceduresSearchConfiguration> columnProceduresSearchConfigurations)
         {

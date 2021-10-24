@@ -13,15 +13,15 @@ using Microsoft.AspNetCore.Http;
 
 namespace Avalanche.Api.Managers.Maintenance
 {
-    public class DeviceConfigurationManager : IDeviceConfigurationManager
+    public class DeviceConfigurationManager : IConfigurationManager
     {
-        private readonly IMapper _mapper;
         private readonly ConfigurationContext _configurationContext;
 
         private readonly AutoLabelsConfiguration _autoLabelsConfiguration;
         private readonly LabelsConfiguration _labelsConfiguration;
         private readonly RecorderConfiguration _recorderConfiguration;
         private readonly SetupConfiguration _setupConfiguration;
+        private readonly ProceduresSearchConfiguration _proceduresSearchConfiguration;
 
         private readonly IStorageService _storageService;
 
@@ -30,6 +30,7 @@ namespace Avalanche.Api.Managers.Maintenance
             LabelsConfiguration labelsConfiguration,
             SetupConfiguration setupConfiguration,
             RecorderConfiguration recorderConfiguration,
+            ProceduresSearchConfiguration proceduresSearchConfiguration,
             IStorageService storageService,
             IHttpContextAccessor httpContextAccessor,
             IMapper mapper)
@@ -38,11 +39,11 @@ namespace Avalanche.Api.Managers.Maintenance
             _labelsConfiguration = labelsConfiguration;
             _setupConfiguration = setupConfiguration;
             _recorderConfiguration = recorderConfiguration;
+            _proceduresSearchConfiguration = proceduresSearchConfiguration;
             _storageService = storageService;
-            _mapper = mapper;
 
             var user = HttpContextUtilities.GetUser(httpContextAccessor.HttpContext);
-            _configurationContext = _mapper.Map<UserModel, ConfigurationContext>(user);
+            _configurationContext = mapper.Map<UserModel, ConfigurationContext>(user);
             _configurationContext.IdnId = Guid.NewGuid().ToString();
         }
 
@@ -57,6 +58,13 @@ namespace Avalanche.Api.Managers.Maintenance
         public SetupConfiguration GetSetupConfigurationSettings() => _setupConfiguration;
 
         public RecorderConfiguration GetRecorderConfigurationSettings() => _recorderConfiguration;
+
+        public ProceduresSearchConfiguration GetProceduresSearchConfigurationSettings() => _proceduresSearchConfiguration;
+
+        public void UpdateProceduresSearchConfigurationColumns(List<ColumnProceduresSearchConfiguration> columnProceduresSearchConfigurations)
+        {
+            _proceduresSearchConfiguration.Columns = columnProceduresSearchConfigurations;
+        }
 
         public async Task UpdateAutoLabelsConfigurationByProcedureType(int procedureTypeId, List<AutoLabelAutoLabelsConfiguration> autoLabels)
         {

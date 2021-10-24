@@ -4,14 +4,15 @@ using Avalanche.Shared.Infrastructure.Configuration;
 
 namespace Avalanche.Api.Managers.Maintenance
 {
-    public interface IDeviceConfigurationManager
+    public interface IConfigurationManager
     {
         AutoLabelsConfiguration GetAutoLabelsConfigurationSettings(int? procedureTypeId);
         LabelsConfiguration GetLabelsConfigurationSettings();
         SetupConfiguration GetSetupConfigurationSettings();
         RecorderConfiguration GetRecorderConfigurationSettings();
-        void UpdatePatientInfo(List<PatientInfoSetupConfiguration> patientInfoSetupConfigurations);
-
+        ProceduresSearchConfiguration GetProceduresSearchConfigurationSettings();
         Task UpdateAutoLabelsConfigurationByProcedureType(int procedureTypeId, List<AutoLabelAutoLabelsConfiguration> autoLabels);
+        void UpdatePatientInfo(List<PatientInfoSetupConfiguration> patientInfoSetupConfigurations);
+        void UpdateProceduresSearchConfigurationColumns(List<ColumnProceduresSearchConfiguration> columnProceduresSearchConfigurations);
     }
 }

@@ -31,8 +31,7 @@ namespace Avalanche.Api.Test.Managers
         Mock<IPrintingService> _printingService;
 
         Mock<ISharedConfigurationManager> _sharedConfigurationManager;
-        Mock<IServerConfigurationManager> _serverConfigurationManager;
-        Mock<IDeviceConfigurationManager> _deviceConfigurationManager;
+        Mock<IConfigurationManager> _deviceConfigurationManager;
 
         MaintenanceManager _manager;
 
@@ -54,8 +53,7 @@ namespace Avalanche.Api.Test.Managers
             _filesService = new Mock<IFilesService>();
             _printingService = new Mock<IPrintingService>();
             _sharedConfigurationManager = new Mock<ISharedConfigurationManager>();
-            _serverConfigurationManager = new Mock<IServerConfigurationManager>();
-            _deviceConfigurationManager = new Mock<IDeviceConfigurationManager>();
+            _deviceConfigurationManager = new Mock<IConfigurationManager>();
 
             _manager = new DeviceMaintenanceManager(
                 _storageService.Object,

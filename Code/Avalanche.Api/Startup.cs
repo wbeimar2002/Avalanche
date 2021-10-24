@@ -105,10 +105,12 @@ namespace Avalanche.Api
                 services.AddSingleton<IPgsTimeoutManager, PgsTimeoutManager>();
                 services.AddTransient<IActiveProcedureManager, ActiveProcedureManager>();
 
+                services.AddTransient<IConfigurationManager, DeviceConfigurationManager>();
                 services.AddTransient<IMaintenanceManager, DeviceMaintenanceManager>();
             }
             else
             {
+                services.AddTransient<IConfigurationManager, ServerConfigurationManager>();
                 services.AddTransient<IMaintenanceManager, ServerMaintenanceManager>();
             }
 
