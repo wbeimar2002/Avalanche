@@ -16,9 +16,7 @@ namespace Avalanche.Api.Managers.Maintenance
     public class DeviceConfigurationManager : IDeviceConfigurationManager
     {
         private readonly IMapper _mapper;
-        private readonly UserModel _user;
         private readonly ConfigurationContext _configurationContext;
-        private readonly IHttpContextAccessor _httpContextAccessor;
 
         private readonly AutoLabelsConfiguration _autoLabelsConfiguration;
         private readonly LabelsConfiguration _labelsConfiguration;
@@ -33,6 +31,7 @@ namespace Avalanche.Api.Managers.Maintenance
             SetupConfiguration setupConfiguration,
             RecorderConfiguration recorderConfiguration,
             IStorageService storageService,
+            IHttpContextAccessor httpContextAccessor,
             IMapper mapper)
         {
             _autoLabelsConfiguration = autoLabelsConfiguration;
@@ -42,8 +41,8 @@ namespace Avalanche.Api.Managers.Maintenance
             _storageService = storageService;
             _mapper = mapper;
 
-            _user = HttpContextUtilities.GetUser(_httpContextAccessor.HttpContext);
-            _configurationContext = _mapper.Map<UserModel, ConfigurationContext>(_user);
+            var user = HttpContextUtilities.GetUser(httpContextAccessor.HttpContext);
+            _configurationContext = _mapper.Map<UserModel, ConfigurationContext>(user);
             _configurationContext.IdnId = Guid.NewGuid().ToString();
         }
 

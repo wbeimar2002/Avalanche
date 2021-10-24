@@ -34,9 +34,7 @@ namespace Avalanche.Api.Managers.Maintenance
         private readonly IPrintingService _printingService;
 
         private readonly IMapper _mapper;
-        private readonly UserModel _user;
         private readonly ConfigurationContext _configurationContext;
-        private readonly IHttpContextAccessor _httpContextAccessor;
 
         private readonly ISharedConfigurationManager _sharedConfigurationManager;
 
@@ -51,7 +49,6 @@ namespace Avalanche.Api.Managers.Maintenance
         {
             _storageService = storageService;
             _dataManager = dataManager;
-            _httpContextAccessor = httpContextAccessor;
             _mapper = mapper;
             _libraryService = libraryService;
             _filesService = filesService;
@@ -59,8 +56,8 @@ namespace Avalanche.Api.Managers.Maintenance
 
             _sharedConfigurationManager = sharedConfigurationManager;
 
-            _user = HttpContextUtilities.GetUser(_httpContextAccessor.HttpContext);
-            _configurationContext = _mapper.Map<UserModel, ConfigurationContext>(_user);
+            var user = HttpContextUtilities.GetUser(httpContextAccessor.HttpContext);
+            _configurationContext = _mapper.Map<UserModel, ConfigurationContext>(user);
             _configurationContext.IdnId = Guid.NewGuid().ToString();
         }
 
@@ -108,7 +105,7 @@ namespace Avalanche.Api.Managers.Maintenance
             if (category.SaveAsFile)
                 await SaveCustomListFile(category);
             else
-                await SaveCustomEntity(_user, category, action);
+                await SaveCustomEntity(category, action);
         }
 
         public async Task<DynamicSectionViewModel> GetCategoryByKey(string key)
@@ -330,8 +327,7 @@ namespace Avalanche.Api.Managers.Maintenance
 
         public async Task<dynamic> GetSettingValues(string key)
         {
-            var configurationContext = _mapper.Map<Shared.Domain.Models.UserModel, ConfigurationContext>(_user);
-            return await _storageService.GetJsonDynamic(key, 1, configurationContext);
+            return await _storageService.GetJsonDynamic(key, 1, _configurationContext);
         }
 
         private async Task SetCategorySources(DynamicSectionViewModel category, string settingValues, List<dynamic> types)
@@ -503,7 +499,7 @@ namespace Avalanche.Api.Managers.Maintenance
                             if (customList.SaveAsFile)
                                 await SaveCustomListFile(customList);
                             else
-                                await SaveCustomEntities(_user, customList);
+                                await SaveCustomEntities(customList);
                         }
                         else if (item.VisualStyle == VisualStyles.EmbeddedList)
                         {
@@ -539,7 +535,7 @@ namespace Avalanche.Api.Managers.Maintenance
             }
         }
 
-        private async Task SaveCustomEntity(UserModel user, DynamicListViewModel customList, DynamicListActions action)
+        private async Task SaveCustomEntity(DynamicListViewModel customList, DynamicListActions action)
         {
             switch (customList.SourceKey)
             {
@@ -557,7 +553,7 @@ namespace Avalanche.Api.Managers.Maintenance
             }
         }
 
-        private async Task SaveCustomEntities(UserModel user, DynamicListViewModel category)
+        private async Task SaveCustomEntities(DynamicListViewModel category)
         {
             switch (category.SourceKey)
             {
