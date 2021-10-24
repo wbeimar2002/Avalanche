@@ -115,6 +115,7 @@ namespace Avalanche.Api
             }
 
             //Shared
+            services.AddTransient<IFilesManager, FilesManager>();
             services.AddTransient<IPatientsManager, PatientsManager>();
             services.AddTransient<IProceduresManager, ProceduresManager>();
             services.AddTransient<IDataManager, DataManager>();
