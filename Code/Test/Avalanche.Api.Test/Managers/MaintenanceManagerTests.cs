@@ -57,7 +57,7 @@ namespace Avalanche.Api.Test.Managers
             _serverConfigurationManager = new Mock<IServerConfigurationManager>();
             _deviceConfigurationManager = new Mock<IDeviceConfigurationManager>();
 
-            _manager = new MaintenanceManager(
+            _manager = new DeviceMaintenanceManager(
                 _storageService.Object,
                 _dataManager.Object,
                 _mapper,
@@ -65,9 +65,7 @@ namespace Avalanche.Api.Test.Managers
                 _libraryService.Object,
                 _filesService.Object,
                 _printingService.Object,
-                _sharedConfigurationManager.Object,
-                _deviceConfigurationManager.Object,
-                _serverConfigurationManager.Object);
+                _sharedConfigurationManager.Object, _deviceConfigurationManager.Object);
         }
 
         [Test]
@@ -76,7 +74,7 @@ namespace Avalanche.Api.Test.Managers
             var expected = new Ism.Library.V1.Protos.ReindexRepositoryResponse { ErrorCount = 2, SuccessCount = 4, TotalCount = 6 };
             _libraryService.Setup(m => m.ReindexRepository(It.IsAny<string>())).ReturnsAsync(expected);
 
-            var response = await _manager.ReindexRepository(new ViewModels.ReindexRepositoryRequestViewModel("repo"));
+            var response = await _manager.ReindexRepository(new ReindexRepositoryRequestViewModel("repo"));
 
             Assert.NotNull(response);
             Assert.AreEqual(expected.ErrorCount, response.ErrorCount);
@@ -193,7 +191,7 @@ namespace Avalanche.Api.Test.Managers
 
             var json = JsonConvert.SerializeObject(customList.Data);
             _storageService.Setup(mock => mock.ValidateSchema(customList.Schema, json, 1, It.IsAny<ConfigurationContext>())).ReturnsAsync(false);
-            
+
             var ex = Assert.ThrowsAsync<ValidationException>(() => _manager.SaveEntityChanges(customList, It.IsAny<Shared.Infrastructure.Enumerations.DynamicListActions>()));
 
             _storageService.Verify(mock => mock.ValidateSchema(customList.Schema, json, 1, It.IsAny<ConfigurationContext>()), Times.Once);

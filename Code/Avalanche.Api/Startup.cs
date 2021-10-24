@@ -101,18 +101,20 @@ namespace Avalanche.Api
             {
                 services.AddTransient<IRoutingManager, RoutingManager>();
                 services.AddTransient<IWebRTCManager, WebRTCManager>();
-                services.AddTransient<IPatientsManager, PatientsManager>();
                 services.AddTransient<IRecordingManager, RecordingManager>();
-                services.AddTransient<IActiveProcedureManager, ActiveProcedureManager>();
                 services.AddSingleton<IPgsTimeoutManager, PgsTimeoutManager>();
+                services.AddTransient<IActiveProcedureManager, ActiveProcedureManager>();
+
                 services.AddTransient<IMaintenanceManager, DeviceMaintenanceManager>();
             }
             else
             {
-                services.AddTransient<IProceduresManager, ProceduresManager>();
                 services.AddTransient<IMaintenanceManager, ServerMaintenanceManager>();
             }
 
+            //Shared
+            services.AddTransient<IPatientsManager, PatientsManager>();
+            services.AddTransient<IProceduresManager, ProceduresManager>();
             services.AddTransient<IDataManager, DataManager>();
             services.AddTransient<ILicensingManager, LicensingManagerMock>();
             services.AddTransient<INotificationsManager, NotificationsManager>();
@@ -127,10 +129,11 @@ namespace Avalanche.Api
                 services.AddConfigurationPoco<RecorderConfiguration>(_configuration, nameof(RecorderConfiguration));
                 services.AddConfigurationPoco<AutoLabelsConfiguration>(_configuration, nameof(AutoLabelsConfiguration));
                 services.AddConfigurationPoco<LabelsConfiguration>(_configuration, nameof(LabelsConfiguration));
-                services.AddConfigurationPoco<ProceduresSearchConfiguration>(_configuration, nameof(ProceduresSearchConfiguration));
             }
 
             //Shared
+            services.AddConfigurationPoco<VaultStreamServerConfiguration>(_configuration, nameof(VaultStreamServerConfiguration));
+            services.AddConfigurationPoco<ProceduresSearchConfiguration>(_configuration, nameof(ProceduresSearchConfiguration));
             services.AddConfigurationPoco<SetupConfiguration>(_configuration, nameof(SetupConfiguration));
             services.AddConfigurationPoco<GeneralApiConfiguration>(_configuration, nameof(GeneralApiConfiguration));
             services.AddConfigurationPoco<PrintingConfiguration>(_configuration, nameof(PrintingConfiguration));
@@ -166,7 +169,6 @@ namespace Avalanche.Api
 
             // gRPC Clients
             _ = services.AddMedpresenceSecureClient();
-
             _ = services.AddDataManagementStorageSecureClient();
 
             _ = services.AddLibrarySearchServiceSecureClient();
@@ -193,7 +195,7 @@ namespace Avalanche.Api
                 //_ = services.AddPrintingServerSecureClients();
 
                 // TEMP Fix until changes are moved back to Ism.Security and Print
-                _ = services.AddLocalAndRemoteSecureGrpcClient<PrintingServerSecureClient, PrintServerClient>("PrintServer", new HostPort() { Host = "localhost", Port = 4013 });
+                _ = services.AddLocalAndRemoteSecureGrpcClient<PrintingServerSecureClient, PrintServerClient>("PrintServer", "PrintServerVSS");
             }
             else
             {
