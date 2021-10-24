@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
@@ -38,6 +39,7 @@ namespace Avalanche.Api.Controllers.V1
         // NOTE: keeping cookie management on the same controller (route) as file access means we can easily scope both the cookie and authentication scheme to just this controller
         [HttpPost("")]
         [AllowAnonymous]
+        [ProducesResponseType(typeof(void), StatusCodes.Status200OK)]
         public async Task<IActionResult> AcquireFileCookieNew([FromBody] string jwtToken)
         {
             try
@@ -61,6 +63,7 @@ namespace Avalanche.Api.Controllers.V1
         }
 
         [HttpDelete("")]
+        [ProducesResponseType(typeof(void), StatusCodes.Status200OK)]
         public async Task<IActionResult> RevokeFileCookieNew()
         {
             try
