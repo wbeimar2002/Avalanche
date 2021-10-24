@@ -13,43 +13,40 @@ using Microsoft.AspNetCore.Http;
 
 namespace Avalanche.Api.Managers.Maintenance
 {
-    public class DeviceConfigurationManager : IConfigurationManager
+    public class DeviceConfigurationManager : SharedConfigurationManager, IConfigurationManager
     {
         private readonly ConfigurationContext _configurationContext;
 
         private readonly AutoLabelsConfiguration _autoLabelsConfiguration;
         private readonly LabelsConfiguration _labelsConfiguration;
         private readonly RecorderConfiguration _recorderConfiguration;
-        private readonly SetupConfiguration _setupConfiguration;
-        private readonly ProceduresSearchConfiguration _proceduresSearchConfiguration;
-        private readonly GeneralApiConfiguration _generalApiConfiguration;
-        private readonly PrintingConfiguration _printingConfiguration;
-        private readonly MedPresenceConfiguration _medPresenceConfiguration;
 
         private readonly IStorageService _storageService;
 
         public DeviceConfigurationManager(
             AutoLabelsConfiguration autoLabelsConfiguration,
-            LabelsConfiguration labelsConfiguration,
-            SetupConfiguration setupConfiguration,
-            RecorderConfiguration recorderConfiguration,
-            ProceduresSearchConfiguration proceduresSearchConfiguration,
             GeneralApiConfiguration generalApiConfiguration,
             PrintingConfiguration printingConfiguration,
             MedPresenceConfiguration medPresenceConfiguration,
+            SetupConfiguration setupConfiguration,
+            ProceduresSearchConfiguration proceduresSearchConfiguration,
+            LabelsConfiguration labelsConfiguration,
+            RecorderConfiguration recorderConfiguration,
             IStorageService storageService,
             IHttpContextAccessor httpContextAccessor,
-            IMapper mapper)
+            IMapper mapper) : base(generalApiConfiguration,
+                printingConfiguration,
+                medPresenceConfiguration,
+                setupConfiguration,
+                proceduresSearchConfiguration,
+                httpContextAccessor,
+                mapper)
         {
             _autoLabelsConfiguration = autoLabelsConfiguration;
             _labelsConfiguration = labelsConfiguration;
-            _setupConfiguration = setupConfiguration;
             _recorderConfiguration = recorderConfiguration;
-            _proceduresSearchConfiguration = proceduresSearchConfiguration;
+
             _storageService = storageService;
-            _generalApiConfiguration = generalApiConfiguration;
-            _printingConfiguration = printingConfiguration;
-            _medPresenceConfiguration = medPresenceConfiguration;
 
             var user = HttpContextUtilities.GetUser(httpContextAccessor.HttpContext);
             _configurationContext = mapper.Map<UserModel, ConfigurationContext>(user);
@@ -64,22 +61,7 @@ namespace Avalanche.Api.Managers.Maintenance
 
         public LabelsConfiguration GetLabelsConfigurationSettings() => _labelsConfiguration;
 
-        public SetupConfiguration GetSetupConfigurationSettings() => _setupConfiguration;
-
         public RecorderConfiguration GetRecorderConfigurationSettings() => _recorderConfiguration;
-
-        public ProceduresSearchConfiguration GetProceduresSearchConfigurationSettings() => _proceduresSearchConfiguration;
-
-        public GeneralApiConfiguration GetGeneralApiConfigurationSettings() => _generalApiConfiguration;
-
-        public PrintingConfiguration GetPrintingConfigurationSettings() => _printingConfiguration;
-
-        public MedPresenceConfiguration GetMedPresenceConfigurationSettings() => _medPresenceConfiguration;
-
-        public void UpdateProceduresSearchConfigurationColumns(List<ColumnProceduresSearchConfiguration> columnProceduresSearchConfigurations)
-        {
-            _proceduresSearchConfiguration.Columns = columnProceduresSearchConfigurations;
-        }
 
         public async Task UpdateAutoLabelsConfigurationByProcedureType(int procedureTypeId, List<AutoLabelAutoLabelsConfiguration> autoLabels)
         {
@@ -95,11 +77,6 @@ namespace Avalanche.Api.Managers.Maintenance
             _autoLabelsConfiguration.AutoLabels.AddRange(autoLabels);
 
             await _storageService.SaveJsonObject(nameof(AutoLabelsConfiguration), _autoLabelsConfiguration.Json(), 1, _configurationContext);
-        }
-
-        public void UpdatePatientInfo(List<PatientInfoSetupConfiguration> patientInfoSetupConfigurations)
-        {
-            _setupConfiguration.PatientInfo = patientInfoSetupConfigurations;
         }
     }
 }

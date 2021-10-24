@@ -35,6 +35,7 @@ namespace Avalanche.Api.Managers.Maintenance
             IConfigurationManager serverConfigurationManager) : base(storageService, dataManager, mapper, httpContextAccessor, libraryService, filesService, printingService, sharedConfigurationManager)
         {
             _serverConfigurationManager = serverConfigurationManager;
+            _storageService = storageService;
 
             var user = HttpContextUtilities.GetUser(httpContextAccessor.HttpContext);
             _configurationContext = mapper.Map<UserModel, ConfigurationContext>(user);

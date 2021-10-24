@@ -25,7 +25,9 @@ namespace Avalanche.Api.Controllers.V1
         private readonly IMaintenanceManager _maintenanceManager;
         private readonly IWebHostEnvironment _environment;
 
-        public MaintenanceController(IMaintenanceManager maintenanceManager, ILogger<MaintenanceController> logger, GeneralApiConfiguration config, IWebHostEnvironment environment)
+        public MaintenanceController(IMaintenanceManager maintenanceManager,
+            ILogger<MaintenanceController> logger,
+            IWebHostEnvironment environment)
         {
             _environment = environment;
             _logger = logger;

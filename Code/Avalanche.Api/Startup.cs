@@ -115,6 +115,7 @@ namespace Avalanche.Api
             }
 
             //Shared
+            services.AddTransient<ISharedConfigurationManager, SharedConfigurationManager>();
             services.AddTransient<IFilesManager, FilesManager>();
             services.AddTransient<IPatientsManager, PatientsManager>();
             services.AddTransient<IProceduresManager, ProceduresManager>();
@@ -132,10 +133,10 @@ namespace Avalanche.Api
                 services.AddConfigurationPoco<RecorderConfiguration>(_configuration, nameof(RecorderConfiguration));
                 services.AddConfigurationPoco<AutoLabelsConfiguration>(_configuration, nameof(AutoLabelsConfiguration));
                 services.AddConfigurationPoco<LabelsConfiguration>(_configuration, nameof(LabelsConfiguration));
+                services.AddConfigurationPoco<VaultStreamServerConfiguration>(_configuration, nameof(VaultStreamServerConfiguration));
             }
 
             //Shared
-            services.AddConfigurationPoco<VaultStreamServerConfiguration>(_configuration, nameof(VaultStreamServerConfiguration));
             services.AddConfigurationPoco<ProceduresSearchConfiguration>(_configuration, nameof(ProceduresSearchConfiguration));
             services.AddConfigurationPoco<SetupConfiguration>(_configuration, nameof(SetupConfiguration));
             services.AddConfigurationPoco<GeneralApiConfiguration>(_configuration, nameof(GeneralApiConfiguration));
