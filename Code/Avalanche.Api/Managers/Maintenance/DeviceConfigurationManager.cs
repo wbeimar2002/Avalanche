@@ -22,6 +22,9 @@ namespace Avalanche.Api.Managers.Maintenance
         private readonly RecorderConfiguration _recorderConfiguration;
         private readonly SetupConfiguration _setupConfiguration;
         private readonly ProceduresSearchConfiguration _proceduresSearchConfiguration;
+        private readonly GeneralApiConfiguration _generalApiConfiguration;
+        private readonly PrintingConfiguration _printingConfiguration;
+        private readonly MedPresenceConfiguration _medPresenceConfiguration;
 
         private readonly IStorageService _storageService;
 
@@ -31,6 +34,9 @@ namespace Avalanche.Api.Managers.Maintenance
             SetupConfiguration setupConfiguration,
             RecorderConfiguration recorderConfiguration,
             ProceduresSearchConfiguration proceduresSearchConfiguration,
+            GeneralApiConfiguration generalApiConfiguration,
+            PrintingConfiguration printingConfiguration,
+            MedPresenceConfiguration medPresenceConfiguration,
             IStorageService storageService,
             IHttpContextAccessor httpContextAccessor,
             IMapper mapper)
@@ -41,6 +47,9 @@ namespace Avalanche.Api.Managers.Maintenance
             _recorderConfiguration = recorderConfiguration;
             _proceduresSearchConfiguration = proceduresSearchConfiguration;
             _storageService = storageService;
+            _generalApiConfiguration = generalApiConfiguration;
+            _printingConfiguration = printingConfiguration;
+            _medPresenceConfiguration = medPresenceConfiguration;
 
             var user = HttpContextUtilities.GetUser(httpContextAccessor.HttpContext);
             _configurationContext = mapper.Map<UserModel, ConfigurationContext>(user);
@@ -60,6 +69,12 @@ namespace Avalanche.Api.Managers.Maintenance
         public RecorderConfiguration GetRecorderConfigurationSettings() => _recorderConfiguration;
 
         public ProceduresSearchConfiguration GetProceduresSearchConfigurationSettings() => _proceduresSearchConfiguration;
+
+        public GeneralApiConfiguration GetGeneralApiConfigurationSettings() => _generalApiConfiguration;
+
+        public PrintingConfiguration GetPrintingConfigurationSettings() => _printingConfiguration;
+
+        public MedPresenceConfiguration GetMedPresenceConfigurationSettings() => _medPresenceConfiguration;
 
         public void UpdateProceduresSearchConfigurationColumns(List<ColumnProceduresSearchConfiguration> columnProceduresSearchConfigurations)
         {

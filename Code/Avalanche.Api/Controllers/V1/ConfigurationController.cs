@@ -31,8 +31,9 @@ namespace Avalanche.Api.Controllers.V1
             _maintenanceManager = maintenanceManager;
         }
 
-        [HttpPut("AutoLabelsConfiguration/{procedureTypeId}")]
-        public async Task<IActionResult> UpdateAutoLabelsConfigurationByProcedureType(int procedureTypeId, [FromBody]List<AutoLabelAutoLabelsConfiguration> autoLabels)
+        [HttpPut("settings/AutoLabelsConfiguration/{procedureTypeId}")]
+        [ProducesResponseType(typeof(void), StatusCodes.Status200OK)]
+        public async Task<IActionResult> UpdateAutoLabelsConfigurationByProcedureType(int procedureTypeId, [FromBody] List<AutoLabelAutoLabelsConfiguration> autoLabels)
         {
             try
             {
@@ -51,7 +52,51 @@ namespace Avalanche.Api.Controllers.V1
             }
         }
 
-        [HttpGet("AutoLabelsConfiguration/{procedureTypeId}")]
+        #region Settings
+        [HttpGet("settings/GeneralApiConfiguration")]
+        [Produces(typeof(GeneralApiConfiguration))]
+        public async Task<IActionResult> GetGeneralApiConfigurationSettings()
+        {
+            try
+            {
+                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
+                var result = _maintenanceManager.GetGeneralApiConfigurationSettings();
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, LoggerHelper.GetLogMessage(DebugLogType.Exception), ex);
+                return new BadRequestObjectResult(ex.Get(_environment.IsDevelopment()));
+            }
+            finally
+            {
+                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
+            }
+        }
+
+        [HttpGet("settings/ProceduresSearchConfiguration")]
+        [Produces(typeof(ProceduresSearchConfiguration))]
+        public async Task<IActionResult> GetProceduresSearchConfigurationSettings()
+        {
+            try
+            {
+                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
+                var result = _maintenanceManager.GetProceduresSearchConfigurationSettings();
+                return Ok(result);
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, LoggerHelper.GetLogMessage(DebugLogType.Exception), ex);
+                return new BadRequestObjectResult(ex.Get(_environment.IsDevelopment()));
+            }
+            finally
+            {
+                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
+            }
+        }
+
+        [HttpGet("settings/AutoLabelsConfiguration/{procedureTypeId}")]
         [Produces(typeof(AutoLabelsConfiguration))]
         public async Task<IActionResult> GetAutoLabelsConfigurationSettingsByProcedureType(int procedureTypeId)
         {
@@ -73,7 +118,7 @@ namespace Avalanche.Api.Controllers.V1
             }
         }
 
-        [HttpGet("LabelsConfiguration")]
+        [HttpGet("settings/LabelsConfiguration")]
         [Produces(typeof(LabelsConfiguration))]
         public async Task<IActionResult> GetLabelsConfigurationSettings()
         {
@@ -94,7 +139,28 @@ namespace Avalanche.Api.Controllers.V1
             }
         }
 
-        [HttpGet("SetupConfiguration")]
+        [HttpGet("settings/PrintingConfiguration")]
+        [Produces(typeof(PrintingConfiguration))]
+        public async Task<IActionResult> GetPrintingConfigurationSettings()
+        {
+            try
+            {
+                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
+                var result = _maintenanceManager.GetPrintingConfigurationSettings();
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, LoggerHelper.GetLogMessage(DebugLogType.Exception), ex);
+                return new BadRequestObjectResult(ex.Get(_environment.IsDevelopment()));
+            }
+            finally
+            {
+                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
+            }
+        }
+
+        [HttpGet("settings/SetupConfiguration")]
         [Produces(typeof(SetupConfiguration))]
         public async Task<IActionResult> GetSetupConfigurationSettings()
         {
@@ -115,7 +181,7 @@ namespace Avalanche.Api.Controllers.V1
             }
         }
 
-        [HttpGet("RecorderConfiguration")]
+        [HttpGet("settings/RecorderConfiguration")]
         [Produces(typeof(RecorderConfiguration))]
         public async Task<IActionResult> GetRecorderConfigurationSettings()
         {
@@ -136,16 +202,15 @@ namespace Avalanche.Api.Controllers.V1
             }
         }
 
-        [HttpGet("ProceduresSearchConfiguration")]
-        [Produces(typeof(ProceduresSearchConfiguration))]
-        public async Task<IActionResult> GetProceduresSearchConfigurationSettings()
+        [HttpGet("settings/MedPresenceConfiguration")]
+        [Produces(typeof(MedPresenceConfiguration))]
+        public async Task<IActionResult> GetMedPresenceConfigurationSettings()
         {
             try
             {
                 _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
-                var result = _maintenanceManager.GetProceduresSearchConfigurationSettings();
+                var result = _maintenanceManager.GetMedPresenceConfigurationSettings();
                 return Ok(result);
-
             }
             catch (Exception ex)
             {
@@ -157,5 +222,6 @@ namespace Avalanche.Api.Controllers.V1
                 _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
             }
         }
+        #endregion Settings
     }
 }

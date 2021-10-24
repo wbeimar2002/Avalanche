@@ -1,22 +1,17 @@
-using Avalanche.Api.Helpers;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 using Avalanche.Api.Managers.Data;
-using Avalanche.Api.ViewModels;
 using Avalanche.Shared.Domain.Models;
 using Avalanche.Shared.Infrastructure.Enumerations;
 using Avalanche.Shared.Infrastructure.Extensions;
 using Avalanche.Shared.Infrastructure.Helpers;
-
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-
 using static Ism.Utility.Core.Preconditions;
 
 namespace Avalanche.Api.Controllers.V1
@@ -35,6 +30,48 @@ namespace Avalanche.Api.Controllers.V1
             _environment = environment;
             _logger = ThrowIfNullOrReturn(nameof(logger), logger);
             _dataManager = ThrowIfNullOrReturn(nameof(metadataManager), metadataManager);
+        }
+
+        [HttpGet("{sourceKey}")]
+        public async Task<IActionResult> GetList(string sourceKey)
+        {
+            try
+            {
+                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
+
+                var result = await _dataManager.GetList(sourceKey);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, LoggerHelper.GetLogMessage(DebugLogType.Exception), ex);
+                return new BadRequestObjectResult(ex.Get(_environment.IsDevelopment()));
+            }
+            finally
+            {
+                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
+            }
+        }
+
+        [HttpGet("{sourceKey}/{jsonKey}")]
+        public async Task<IActionResult> GetNestedList(string sourceKey, string jsonKey)
+        {
+            try
+            {
+                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
+
+                var result = await _dataManager.GetList(sourceKey, jsonKey);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, LoggerHelper.GetLogMessage(DebugLogType.Exception), ex);
+                return new BadRequestObjectResult(ex.Get(_environment.IsDevelopment()));
+            }
+            finally
+            {
+                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
+            }
         }
 
         /// <summary>

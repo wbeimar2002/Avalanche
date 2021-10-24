@@ -6,6 +6,7 @@ namespace Avalanche.Api.Managers.Data
 {
     public interface IDataManager
     {
+        Task<List<dynamic>> GetList(string sourceKey, string jsonKey = null);
         Task<DepartmentModel> AddDepartment(DepartmentModel department);
         Task DeleteDepartment(int departmentId);
         Task<IList<DepartmentModel>> GetAllDepartments();

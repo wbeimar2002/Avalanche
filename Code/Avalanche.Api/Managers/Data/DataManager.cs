@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
+using Avalanche.Api.Helpers;
 using Avalanche.Api.Services.Health;
 using Avalanche.Api.Services.Maintenance;
 using Avalanche.Api.Utilities;
@@ -18,6 +19,7 @@ namespace Avalanche.Api.Managers.Data
     public class DataManager : IDataManager
     {
         private readonly IDataManagementService _dataManagementService;
+        private readonly IStorageService _storageService;
 
         private readonly IMapper _mapper;
         private readonly UserModel _user;
@@ -29,17 +31,32 @@ namespace Avalanche.Api.Managers.Data
         public DataManager(
             IMapper mapper,
             IDataManagementService dataManagementService,
+            IStorageService storageService,
             IHttpContextAccessor httpContextAccessor,
             SetupConfiguration setupConfiguration)
         {
             _httpContextAccessor = httpContextAccessor;
             _dataManagementService = dataManagementService;
+            _storageService = storageService;
             _mapper = mapper;
             _setupConfiguration = setupConfiguration;
 
             _user = HttpContextUtilities.GetUser(_httpContextAccessor.HttpContext);
             _configurationContext = _mapper.Map<UserModel, ConfigurationContext>(_user);
             _configurationContext.IdnId = Guid.NewGuid().ToString();
+        }
+
+        public async Task<List<dynamic>> GetList(string sourceKey, string jsonKey = null)
+        {
+            if (jsonKey == null)
+            {
+                return await _storageService.GetJsonDynamicList(sourceKey, 1, _configurationContext);
+            }
+            else
+            {
+                var settingValues = await _storageService.GetJson(sourceKey, 1, _configurationContext);
+                return DynamicSettingsHelper.GetEmbeddedList(jsonKey, settingValues);
+            }
         }
 
         public async Task<DepartmentModel> AddDepartment(DepartmentModel department)
