@@ -24,14 +24,14 @@ namespace Avalanche.Api.Controllers.V1
     public class ActiveProcedureController : ControllerBase
     {
         private readonly ILogger _logger;
-        private readonly IProceduresManager _proceduresManager;
+        private readonly IActiveProcedureManager _activeProcedureManager;
         private readonly IWebHostEnvironment _environment;
 
-        public ActiveProcedureController(ILogger<ActiveProcedureController> logger, IProceduresManager proceduresManager, IWebHostEnvironment environment)
+        public ActiveProcedureController(ILogger<ActiveProcedureController> logger, IActiveProcedureManager _activeProcedureManager, IWebHostEnvironment environment)
         {
             _environment = environment;
             _logger = logger;
-            _proceduresManager = proceduresManager;
+            this._activeProcedureManager = _activeProcedureManager;
         }
 
         /// <summary>
@@ -46,7 +46,7 @@ namespace Avalanche.Api.Controllers.V1
             {
                 _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
 
-                var result = await _proceduresManager.GetActiveProcedure();
+                var result = await _activeProcedureManager.GetActiveProcedure();
                 return Ok(result);
             }
             catch (Exception ex)
@@ -73,7 +73,7 @@ namespace Avalanche.Api.Controllers.V1
             {
                 _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
 
-                await _proceduresManager.DeleteActiveProcedureMediaItem(contentType, contentId);
+                await _activeProcedureManager.DeleteActiveProcedureMediaItem(contentType, contentId);
                 return Ok();
             }
             catch (Exception ex)
@@ -100,7 +100,7 @@ namespace Avalanche.Api.Controllers.V1
             {
                 _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
 
-                await _proceduresManager.DeleteActiveProcedureMediaItems(contentType, contentIds);
+                await _activeProcedureManager.DeleteActiveProcedureMediaItems(contentType, contentIds);
                 return Ok();
             }
             catch (Exception ex)
@@ -125,7 +125,7 @@ namespace Avalanche.Api.Controllers.V1
             {
                 _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
 
-                await _proceduresManager.DiscardActiveProcedure();
+                await _activeProcedureManager.DiscardActiveProcedure();
                 return Ok();
             }
             catch (Exception ex)
@@ -150,7 +150,7 @@ namespace Avalanche.Api.Controllers.V1
             {
                 _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
 
-                await _proceduresManager.FinishActiveProcedure();
+                await _activeProcedureManager.FinishActiveProcedure();
                 return Ok();
             }
             catch (Exception ex)
@@ -175,7 +175,7 @@ namespace Avalanche.Api.Controllers.V1
             {
                 _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
 
-                await _proceduresManager.ConfirmActiveProcedure();
+                await _activeProcedureManager.ConfirmActiveProcedure();
                 return Ok();
             }
             catch (Exception ex)
@@ -203,7 +203,7 @@ namespace Avalanche.Api.Controllers.V1
             {
                 _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
 
-                await _proceduresManager.ApplyLabelToActiveProcedure(new ContentViewModel()
+                await _activeProcedureManager.ApplyLabelToActiveProcedure(new ContentViewModel()
                 {
                     ContentId = new Guid(id),
                     Label = label,
@@ -237,7 +237,7 @@ namespace Avalanche.Api.Controllers.V1
             {
                 _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
 
-                await _proceduresManager.ApplyLabelToActiveProcedure(new ContentViewModel()
+                await _activeProcedureManager.ApplyLabelToActiveProcedure(new ContentViewModel()
                 {
                     ContentId = new Guid(id),
                     Label = label,
@@ -266,7 +266,7 @@ namespace Avalanche.Api.Controllers.V1
             {
                 _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
 
-                await _proceduresManager.ApplyLabelToLatestImages(label);
+                await _activeProcedureManager.ApplyLabelToLatestImages(label);
                 return Ok();
             }
             catch (Exception ex)

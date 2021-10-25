@@ -27,21 +27,21 @@ namespace Avalanche.Api.Controllers.V1
     {
         private readonly ILogger _logger;
         private readonly ISecurityManager _securityManager;
-        private readonly IRecordingManager _recordingManager;
+        private readonly IFilesManager _filesManager;
         private readonly IWebHostEnvironment _environment;
 
         public FilesController(ILogger<FilesController> logger,
             ISecurityManager securityManager,
+            IFilesManager filesManager,
             ICookieValidationService cookieValidationService,
-            IRecordingManager recordingManager, IWebHostEnvironment environment)
+            IWebHostEnvironment environment)
         {
             _environment = environment;
             _logger = logger;
             _securityManager = securityManager;
-            _recordingManager = recordingManager;
+            _filesManager = filesManager;
         }
 
-        // NOTE: keeping cookie management on the same controller (route) as file access means we can easily scope both the cookie and authentication scheme to just this controller
         [HttpPost("cookies")]
         [AllowAnonymous]
         [ProducesResponseType(typeof(void), StatusCodes.Status200OK)]
@@ -69,7 +69,7 @@ namespace Avalanche.Api.Controllers.V1
 
         [HttpDelete("cookies")]
         [ProducesResponseType(typeof(void), StatusCodes.Status200OK)]
-        public async Task<IActionResult> RevokeFileCookieNew()
+        public async Task<IActionResult> RevokeFileCookie()
         {
             try
             {
@@ -91,18 +91,23 @@ namespace Avalanche.Api.Controllers.V1
             }
         }
 
+
+
+        #region FileAccess
+
+
 #warning TODO: This is wrong and intended only for a workflow demo. Replace.
         // TODO: Need to define and implement correct image retrieval patterns. Not in scope of current work.  
         //      - Need some sort of "local" vs "vss" status so we know if we need to proxy the request to the vss.
         // NOTE: A separate endpoint is probably best for video files as well, since those need to support range headers / chunking
         [ResponseCache(Location = ResponseCacheLocation.Client, Duration = 60 * 60 * 24)]
         [HttpGet("captures/preview")]
-        public IActionResult GetCapturesPreview([FromQuery]string path, [FromQuery] string procedureId, [FromQuery] string repository)
+        public IActionResult GetCapturesPreview([FromQuery] string path, [FromQuery] string procedureId, [FromQuery] string repository)
         {
             try
             {
                 _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
-                var fullPath = _recordingManager.GetCapturePreview(path, procedureId, repository);
+                var fullPath = _filesManager.GetCapturePreview(path, procedureId, repository);
                 return PhysicalFile(fullPath, "image/jpeg");
             }
             catch (Exception ex)
@@ -127,7 +132,7 @@ namespace Avalanche.Api.Controllers.V1
             try
             {
                 _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
-                var fullPath = _recordingManager.GetCapturePreview(path, procedureId, repository);
+                var fullPath = _filesManager.GetCapturePreview(path, procedureId, repository);
                 return PhysicalFile(fullPath, "image/jpeg");
             }
             catch (Exception ex)
@@ -148,7 +153,7 @@ namespace Avalanche.Api.Controllers.V1
             try
             {
                 _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
-                var fullPath = _recordingManager.GetCaptureVideo(path, procedureId, repository);
+                var fullPath = _filesManager.GetCaptureVideo(path, procedureId, repository);
                 // for video, add range headers to support chunking / seek (and allow safari to work at all)
                 return PhysicalFile(fullPath, "video/mp4", true);
             }
@@ -162,5 +167,6 @@ namespace Avalanche.Api.Controllers.V1
                 _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
             }
         }
+        #endregion
     }
 }

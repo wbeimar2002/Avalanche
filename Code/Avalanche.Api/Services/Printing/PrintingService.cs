@@ -1,6 +1,7 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using Avalanche.Shared.Infrastructure.Configuration;
+using Google.Protobuf.WellKnownTypes;
 using Ism.PrintServer.Client.V1;
 using Ism.PrintServer.V1.Protos;
 using Ism.Security.Grpc;
@@ -16,14 +17,16 @@ namespace Avalanche.Api.Services.Printing
         public PrintingService(NamedServiceFactory<PrintingServerSecureClient, PrintServerClient> printServerFactory, PrintingConfiguration printingConfiguration)
         {
             if (printingConfiguration.UseVSSPrintingService)
-                _printingService = printServerFactory.GetClient("PrintServerVSS");
+            {
+                _printingService = printServerFactory.GetClient("Remote");
+            }
             else
-                _printingService = printServerFactory.GetClient("PrintServer");
+            {
+                _printingService = printServerFactory.GetClient("Local");
+            }
         }
 
-        public async Task<GetPrintersResponse> GetPrinters()
-        {
-            return await _printingService.GetPrinters(new Google.Protobuf.WellKnownTypes.Empty());
-        }
+        public async Task<GetPrintersResponse> GetPrinters() =>
+            await _printingService.GetPrinters(new Empty()).ConfigureAwait(false);
     }
 }

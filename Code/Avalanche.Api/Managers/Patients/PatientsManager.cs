@@ -2,7 +2,6 @@ using AutoMapper;
 using Avalanche.Api.Managers.Media;
 using Avalanche.Api.Managers.Procedures;
 using Avalanche.Api.Services.Health;
-using Avalanche.Api.Services.Maintenance;
 using Avalanche.Api.Utilities;
 using Avalanche.Api.ViewModels;
 using Avalanche.Shared.Domain.Models;
@@ -25,29 +24,28 @@ namespace Avalanche.Api.Managers.Patients
     public class PatientsManager : IPatientsManager
     {
         private readonly IPieService _pieService;
-        private readonly IAccessInfoFactory _accessInfoFactory;
-        private readonly IStorageService _storageService;
-        private readonly IMapper _mapper;
         private readonly IDataManagementService _dataManagementService;
         private readonly IStateClient _stateClient;
-        private readonly IHttpContextAccessor _httpContextAccessor;
-        private readonly IProceduresManager _proceduresManager;
+        private readonly IActiveProcedureManager _activeProcedureManager;
 
         // TODO: remove this when we figure out how to clean up dependencies
         private readonly IRoutingManager _routingManager;
 
+        private readonly IAccessInfoFactory _accessInfoFactory;
+        private readonly IMapper _mapper;
+        private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly UserModel user;
-        private readonly ConfigurationContext configurationContext;
+        private readonly ConfigurationContext _configurationContext;
+
         private readonly RecorderConfiguration _recorderConfiguration;
         private readonly SetupConfiguration _setupConfiguration;
 
         public PatientsManager(IPieService pieService,
             IAccessInfoFactory accessInfoFactory,
-            IStorageService storageService,
-            IMapper mapper, 
+            IMapper mapper,
             IDataManagementService dataManagementService,
             IStateClient stateClient,
-            IProceduresManager proceduresManager,
+            IActiveProcedureManager activeProcedureManager,
             IRoutingManager routingManager,
             IHttpContextAccessor httpContextAccessor,
             RecorderConfiguration recorderConfiguration,
@@ -55,20 +53,19 @@ namespace Avalanche.Api.Managers.Patients
             )
         {
             _pieService = pieService;
-            _storageService = storageService;
             _accessInfoFactory = accessInfoFactory;
             _dataManagementService = dataManagementService;
             _mapper = mapper;
             _stateClient = stateClient;
-            _proceduresManager = proceduresManager;
+            _activeProcedureManager = activeProcedureManager;
             _routingManager = routingManager;
             _httpContextAccessor = httpContextAccessor;
             _recorderConfiguration = recorderConfiguration;
             _setupConfiguration = setupConfiguration;
 
             user = HttpContextUtilities.GetUser(_httpContextAccessor.HttpContext);
-            configurationContext = _mapper.Map<UserModel, ConfigurationContext>(user);
-            configurationContext.IdnId = Guid.NewGuid().ToString();
+            _configurationContext = _mapper.Map<UserModel, ConfigurationContext>(user);
+            _configurationContext.IdnId = Guid.NewGuid().ToString();
         }
 
         public async Task<PatientViewModel> RegisterPatient(PatientViewModel newPatient)
@@ -358,7 +355,7 @@ namespace Avalanche.Api.Managers.Patients
 
         private async Task AllocateNewProcedure(PatientViewModel patient, bool useconfiguredBackgroundRecordingMode)
         {
-            var allocatedProcedure = await _proceduresManager.AllocateNewProcedure();
+            var allocatedProcedure = await _activeProcedureManager.AllocateNewProcedure();
 
             if (useconfiguredBackgroundRecordingMode)
             {

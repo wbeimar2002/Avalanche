@@ -59,7 +59,7 @@ namespace Avalanche.Api
         {
             // config types may be decorated with guid and version and other helper attributes
             var context = ConfigurationContext.FromEnvironment();
-            var requests = new List<ConfigurationServiceRequest>
+            return new List<ConfigurationServiceRequest>
             {
                 new ConfigurationServiceRequest(nameof(PgsApiConfiguration), 1, context),
                 new ConfigurationServiceRequest(nameof(TimeoutApiConfiguration), 1, context),
@@ -71,9 +71,8 @@ namespace Avalanche.Api
                 ConfigurationServiceRequestFactory.CreateRequest<LabelsConfiguration>(context),
                 ConfigurationServiceRequestFactory.CreateRequest<PrintingConfiguration>(context),
                 ConfigurationServiceRequestFactory.CreateRequest<MedPresenceConfiguration>(context),
+                ConfigurationServiceRequestFactory.CreateRequest<VaultStreamServerConfiguration>(context),
             };
-
-            return requests;
         }
     }
 }

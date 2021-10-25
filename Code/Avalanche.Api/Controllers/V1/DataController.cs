@@ -1,22 +1,17 @@
-using Avalanche.Api.Helpers;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 using Avalanche.Api.Managers.Data;
-using Avalanche.Api.ViewModels;
 using Avalanche.Shared.Domain.Models;
 using Avalanche.Shared.Infrastructure.Enumerations;
 using Avalanche.Shared.Infrastructure.Extensions;
 using Avalanche.Shared.Infrastructure.Helpers;
-
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-
 using static Ism.Utility.Core.Preconditions;
 
 namespace Avalanche.Api.Controllers.V1
@@ -59,7 +54,7 @@ namespace Avalanche.Api.Controllers.V1
         }
 
         [HttpGet("{sourceKey}/{jsonKey}")]
-        public async Task<IActionResult> GetList(string sourceKey, string jsonKey)
+        public async Task<IActionResult> GetNestedList(string sourceKey, string jsonKey)
         {
             try
             {
@@ -67,32 +62,6 @@ namespace Avalanche.Api.Controllers.V1
 
                 var result = await _dataManager.GetList(sourceKey, jsonKey);
                 return Ok(result);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, LoggerHelper.GetLogMessage(DebugLogType.Exception), ex);
-                return new BadRequestObjectResult(ex.Get(_environment.IsDevelopment()));
-            }
-            finally
-            {
-                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
-            }
-        }
-
-        /// <summary>
-        /// Get all departments
-        /// </summary>
-        [HttpGet("sexes")]
-        [Produces(typeof(List<KeyValuePairViewModel>))]
-        public async Task<IActionResult> GetSexes()
-        {
-            try
-            {
-                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
-
-                var list = await _dataManager.GetList("Sexes");
-                var result = SerializationHelper.Json(list);
-                return Ok(SerializationHelper.Get<List<KeyValuePairViewModel>>(result));
             }
             catch (Exception ex)
             {

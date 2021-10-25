@@ -1,4 +1,4 @@
-﻿using Avalanche.Shared.Domain.Models;
+using Avalanche.Shared.Domain.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Primitives;
 using System;
@@ -64,7 +64,7 @@ namespace Avalanche.Api.Utilities
                 Id = claimPrincipal.FindFirst("Id")?.Value,
                 FirstName = claimPrincipal.FindFirst("FirstName")?.Value,
                 LastName = claimPrincipal.FindFirst("LastName")?.Value,
-                SiteId = "Avalanche" //TODO: Temporary Hardcode until receive instructions from Craig
+                SiteId = Environment.GetEnvironmentVariable("AVALANCHE_SITE_ID")
             };
         }
 

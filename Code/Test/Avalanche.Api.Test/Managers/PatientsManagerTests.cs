@@ -36,12 +36,11 @@ namespace Avalanche.Api.Tests.Managers
     public class PatientsManagerTests
     {
         Mock<IPieService> _pieService;
-        Mock<IStorageService> _storageService;
         Mock<IAccessInfoFactory> _accessInfoFactory;
         Mock<IDataManagementService> _dataManagementService;
         Mock<IStateClient> _stateClient;
         Mock<IHttpContextAccessor> _httpContextAccessor;
-        Mock<IProceduresManager> _proceduresManager;
+        Mock<IActiveProcedureManager> _activeProcedureManager;
         Mock<IRoutingManager> _routingManager;
         SetupConfiguration _setupConfiguration;
 
@@ -52,12 +51,11 @@ namespace Avalanche.Api.Tests.Managers
         public void Setup()
         {
             _pieService = new Mock<IPieService>();
-            _storageService = new Mock<IStorageService>();
             _accessInfoFactory = new Mock<IAccessInfoFactory>();
             _dataManagementService = new Mock<IDataManagementService>();
             _stateClient = new Mock<IStateClient>();
             _httpContextAccessor = new Mock<IHttpContextAccessor>();
-            _proceduresManager = new Mock<IProceduresManager>();
+            _activeProcedureManager = new Mock<IActiveProcedureManager>();
             _routingManager = new Mock<IRoutingManager>();
 
             _setupConfiguration = new SetupConfiguration()
@@ -78,7 +76,16 @@ namespace Avalanche.Api.Tests.Managers
                 .Returns(new Ism.IsmLogCommon.Core.AccessInfo("127.0.0.1", "tests", "unit-tests", "name", "none", false));
 
             _mapper = config.CreateMapper();
-            _manager = new PatientsManager(_pieService.Object, _accessInfoFactory.Object, _storageService.Object, _mapper, _dataManagementService.Object, _stateClient.Object, _proceduresManager.Object, _routingManager.Object, _httpContextAccessor.Object, recorderConfig, _setupConfiguration);
+
+            _manager = new PatientsManager(_pieService.Object,
+                _accessInfoFactory.Object,
+                _mapper, _dataManagementService.Object,
+                _stateClient.Object,
+                _activeProcedureManager.Object,
+                _routingManager.Object,
+                _httpContextAccessor.Object,
+                recorderConfig,
+                _setupConfiguration);
         }
 
         public static IEnumerable<TestCaseData> NewPatientViewModelWrongDataTestCases
@@ -86,6 +93,7 @@ namespace Avalanche.Api.Tests.Managers
             get
             {
                 yield return new TestCaseData(null);
+
                 yield return new TestCaseData(new PatientViewModel()
                 {
                     MRN = null,
@@ -99,6 +107,7 @@ namespace Avalanche.Api.Tests.Managers
                         Value = "Sample"
                     }
                 });
+
                 yield return new TestCaseData(new PatientViewModel()
                 {
                     MRN = "Sample",
@@ -291,7 +300,7 @@ namespace Avalanche.Api.Tests.Managers
                 });
 
             var faker = new Faker();
-            _proceduresManager.Setup(m => m.AllocateNewProcedure())
+            _activeProcedureManager.Setup(m => m.AllocateNewProcedure())
                 .ReturnsAsync(new ProcedureAllocationViewModel(new ProcedureIdViewModel(Guid.NewGuid().ToString(), faker.Commerce.Department()), faker.System.FilePath()));
 
             _pieService.Setup(mock => mock.RegisterPatient(It.IsAny<AddPatientRecordRequest>())).ReturnsAsync(response);
@@ -317,7 +326,7 @@ namespace Avalanche.Api.Tests.Managers
             _setupConfiguration.PatientInfo = new List<PatientInfoSetupConfiguration>();
 
             var faker = new Faker();
-            _proceduresManager.Setup(m => m.AllocateNewProcedure())
+            _activeProcedureManager.Setup(m => m.AllocateNewProcedure())
                 .ReturnsAsync(new ProcedureAllocationViewModel(new ProcedureIdViewModel(Guid.NewGuid().ToString(), faker.Commerce.Department()), faker.System.FilePath()));
 
             _pieService.Setup(mock => mock.RegisterPatient(It.IsAny<AddPatientRecordRequest>()));

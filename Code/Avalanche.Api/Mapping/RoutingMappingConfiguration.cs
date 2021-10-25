@@ -1,10 +1,6 @@
 using AutoMapper;
-using Avalanche.Api.ViewModels;
 using Avalanche.Shared.Domain.Models.Media;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using Ism.Common.Core.Configuration.Models;
 
 namespace Avalanche.Api.Mapping
 {
@@ -12,6 +8,25 @@ namespace Avalanche.Api.Mapping
     {
         public RoutingMappingConfiguration()
         {
+            //Duplicated temporary
+            CreateMap<Avalanche.Shared.Domain.Models.UserModel, ConfigurationContext>()
+                .ForMember(dest =>
+                    dest.IdnId,
+                    opt => opt.MapFrom(src => src.IdnId))
+                .ForMember(dest =>
+                    dest.SiteId,
+                    opt => opt.MapFrom(src => src.SiteId))
+                .ForMember(dest =>
+                    dest.SystemId,
+                    opt => opt.MapFrom(src => src.SystemId))
+                .ForMember(dest =>
+                    dest.UserId,
+                    opt => opt.Ignore())
+                .ForMember(dest =>
+                    dest.DepartmentId,
+                    opt => opt.Ignore())
+                .ReverseMap();
+
             CreateMap<RegionModel, AvidisDeviceInterface.V1.Protos.ShowPreviewRequest>()
                 .ForMember(dest =>
                     dest.PreviewIndex, //TODO: Temporary value

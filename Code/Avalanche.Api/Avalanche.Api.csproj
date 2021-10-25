@@ -28,9 +28,18 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Remove="Helpers\ProceduresHelper.cs" />
     <Compile Remove="Services\Maintenance\ISettingsService.cs" />
     <Compile Remove="Services\Maintenance\SettingsService.cs" />
     <Compile Remove="ViewModels\DynamicSourceKeyValuePairViewModel.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Remove="appsettings.Development.json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="appsettings.Development.json" />
   </ItemGroup>
 
   <ItemGroup>
@@ -62,8 +71,8 @@
     <PackageReference Include="Microsoft.FeatureManagement.AspNetCore" Version="2.3.0" />
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.10.9" />
     <PackageReference Include="Newtonsoft.Json.Schema" Version="3.0.14" />
-    <PackageReference Include="NSwag.AspNetCore" Version="13.11.1" />
-    <PackageReference Include="NSwag.Generation.AspNetCore" Version="13.12.1" />
+    <PackageReference Include="NSwag.AspNetCore" Version="13.13.2" />
+    <PackageReference Include="NSwag.Generation.AspNetCore" Version="13.13.2" />
     <PackageReference Include="Serilog.AspNetCore" Version="4.1.0" />
     <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.12.0" />
     <PackageReference Include="System.Text.Json" Version="5.0.2" />

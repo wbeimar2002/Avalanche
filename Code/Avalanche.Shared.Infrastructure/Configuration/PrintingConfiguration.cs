@@ -2,7 +2,6 @@ using FluentValidation;
 using Ism.Common.Core.Configuration;
 using Ism.Common.Core.Configuration.Attributes;
 
-
 namespace Avalanche.Shared.Infrastructure.Configuration
 {
     [ConfigurationRequest(nameof(PrintingConfiguration), 1)]
