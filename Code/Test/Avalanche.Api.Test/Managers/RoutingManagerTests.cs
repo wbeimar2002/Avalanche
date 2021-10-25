@@ -341,6 +341,7 @@ namespace Avalanche.Api.Test.Managers
         {
             var manager = new RoutingManager(_routingService.Object, _recorderService.Object, _avidisService.Object, _storageService.Object, _mapper, _httpContextAccessor.Object, _stateClient.Object);
             await manager.SetLayoutForSink(new AliasIndexModel { Alias = "test", Index = "test" }, "Quad").ConfigureAwait(false);
+            _stateClient.Verify(r => r.AddOrUpdateData(It.IsAny<Ism.SystemState.Models.VideoRouting.TilingStateData>(), It.IsAny<Action<JsonPatchDocument<Ism.SystemState.Models.VideoRouting.TilingStateData>>>()), Times.Once);
         }
 
         [Test]
@@ -375,6 +376,7 @@ namespace Avalanche.Api.Test.Managers
                 ViewportIndex = 0,
                 Source = new AliasIndexModel { Alias = "test", Index = "test" }
             }).ConfigureAwait(false);
+            _stateClient.Verify(r => r.AddOrUpdateData(It.IsAny<Ism.SystemState.Models.VideoRouting.TilingStateData>(), It.IsAny<Action<JsonPatchDocument<Ism.SystemState.Models.VideoRouting.TilingStateData>>>()), Times.Once);
         }
     }
 }
