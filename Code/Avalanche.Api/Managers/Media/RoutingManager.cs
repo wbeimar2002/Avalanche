@@ -383,6 +383,8 @@ namespace Avalanche.Api.Managers.Media
         public async Task<IList<TileLayoutModel>?> GetLayoutsForSink(AliasIndexModel sinkModel)
         {
             Preconditions.ThrowIfNull(nameof(sinkModel), sinkModel);
+            Preconditions.ThrowIfNullOrEmptyOrWhiteSpace(nameof(sinkModel.Alias), sinkModel.Alias);
+            Preconditions.ThrowIfNullOrEmptyOrWhiteSpace(nameof(sinkModel.Index), sinkModel.Index);
 
             var layouts = await _routingService.GetLayoutsForSink(new GetTileLayoutsForSinkRequest { Sink = _mapper.Map<AliasIndexModel, AliasIndexMessage>(sinkModel) }).ConfigureAwait(false);
             return layouts?.Layouts?.Select(layoutModel => _mapper.Map<TileLayoutModel>(layoutModel)).ToList();
@@ -391,6 +393,8 @@ namespace Avalanche.Api.Managers.Media
         public async Task<TileLayoutModel> GetLayoutForSink(AliasIndexModel sinkModel)
         {
             Preconditions.ThrowIfNull(nameof(sinkModel), sinkModel);
+            Preconditions.ThrowIfNullOrEmptyOrWhiteSpace(nameof(sinkModel.Alias), sinkModel.Alias);
+            Preconditions.ThrowIfNullOrEmptyOrWhiteSpace(nameof(sinkModel.Index), sinkModel.Index);
 
             var layout = await _routingService.GetLayoutForSink(new GetTileLayoutRequest { Sink = _mapper.Map<AliasIndexModel, AliasIndexMessage>(sinkModel) }).ConfigureAwait(false);
             return _mapper.Map<TileLayoutModel>(layout.Layout);
@@ -399,13 +403,49 @@ namespace Avalanche.Api.Managers.Media
         public async Task SetLayoutForSink(AliasIndexModel sinkModel, string layoutName)
         {
             Preconditions.ThrowIfNull(nameof(sinkModel), sinkModel);
+            Preconditions.ThrowIfNullOrEmptyOrWhiteSpace(nameof(sinkModel.Alias), sinkModel.Alias);
+            Preconditions.ThrowIfNullOrEmptyOrWhiteSpace(nameof(sinkModel.Index), sinkModel.Index);
 
             await _routingService.SetLayoutForSink(new SetTileLayoutRequest { Sink = _mapper.Map<AliasIndexModel, AliasIndexMessage>(sinkModel), LayoutName = layoutName }).ConfigureAwait(false);
+
+            var sinkAliasIndexModel = new VideoRoutingModels.AliasIndexModel
+            {
+                Alias = sinkModel.Alias,
+                Index = sinkModel.Index
+            };
+
+            var currentData = await _stateClient.GetData<VideoRoutingModels.TilingStateData>().ConfigureAwait(false);
+            var sinkIndex = currentData?.TilingSinks.FindIndex(x => x.Sink.Alias.Equals(sinkModel.Alias, StringComparison.OrdinalIgnoreCase) && x.Sink.Index.Equals(sinkModel.Index, StringComparison.OrdinalIgnoreCase)) ?? -1;
+
+            if (sinkIndex >= 0)
+            {
+                _ = await _stateClient.UpdateData<VideoRoutingModels.TilingStateData>(patch =>
+                  {
+                      _ = patch.Replace(data => data.TilingSinks[sinkIndex].LayoutName, layoutName);
+                      _ = patch.Replace(data => data.TilingSinks[sinkIndex].Sink, sinkAliasIndexModel);
+                  }).ConfigureAwait(false);
+            }
+            else
+            {
+                var tilingSink = new VideoRoutingModels.TilingSink
+                {
+                    Sink = sinkAliasIndexModel,
+                    LayoutName = layoutName
+                };
+
+                await _stateClient.AddOrUpdateData(new VideoRoutingModels.TilingStateData
+                {
+                    TilingSinks = new List<VideoRoutingModels.TilingSink> { tilingSink }
+                },
+                patch => patch.Add(data => data.TilingSinks, tilingSink)).ConfigureAwait(false);
+            }
         }
 
         public async Task<TileVideoRouteModel> GetTileRouteForSink(AliasIndexModel sinkModel)
         {
             Preconditions.ThrowIfNull(nameof(sinkModel), sinkModel);
+            Preconditions.ThrowIfNullOrEmptyOrWhiteSpace(nameof(sinkModel.Alias), sinkModel.Alias);
+            Preconditions.ThrowIfNullOrEmptyOrWhiteSpace(nameof(sinkModel.Index), sinkModel.Index);
 
             var route = await _routingService.GetTileRouteForSink(new GetTileRouteForSinkRequest { Sink = _mapper.Map<AliasIndexModel, AliasIndexMessage>(sinkModel) }).ConfigureAwait(false);
             return _mapper.Map<TileVideoRouteModel>(route.Route);
@@ -416,6 +456,10 @@ namespace Avalanche.Api.Managers.Media
             Preconditions.ThrowIfNull(nameof(route), route);
             Preconditions.ThrowIfNull(nameof(route.Source), route.Source);
             Preconditions.ThrowIfNull(nameof(route.Sink), route.Sink);
+            Preconditions.ThrowIfNullOrEmptyOrWhiteSpace(nameof(route.Source.Alias), route.Source.Alias);
+            Preconditions.ThrowIfNullOrEmptyOrWhiteSpace(nameof(route.Source.Index), route.Source.Index);
+            Preconditions.ThrowIfNullOrEmptyOrWhiteSpace(nameof(route.Sink.Alias), route.Sink.Alias);
+            Preconditions.ThrowIfNullOrEmptyOrWhiteSpace(nameof(route.Sink.Index), route.Sink.Index);
 
             await _routingService.RouteVideoTiling(new RouteVideoTilingRequest
             {
@@ -423,6 +467,56 @@ namespace Avalanche.Api.Managers.Media
                 Source = _mapper.Map<AliasIndexModel, AliasIndexMessage>(route.Source),
                 ViewportIndex = route.ViewportIndex
             }).ConfigureAwait(false);
+
+            var viewportSource = new VideoRoutingModels.ViewportSource(
+                new VideoRoutingModels.AliasIndexModel { Alias = route.Source.Alias, Index = route.Source.Index },
+                route.ViewportIndex);
+
+            var currentData = await _stateClient.GetData<VideoRoutingModels.TilingStateData>().ConfigureAwait(false);
+            var sinkIndex = currentData?.TilingSinks.FindIndex(x => x.Sink.Alias.Equals(route.Sink.Alias, StringComparison.OrdinalIgnoreCase) && x.Sink.Index.Equals(route.Sink.Index, StringComparison.OrdinalIgnoreCase)) ?? -1;
+
+            if (sinkIndex >= 0)
+            {
+                var sourceIndex = currentData?.TilingSinks[sinkIndex].Sources.FindIndex(x => x.ViewportIndex == route.ViewportIndex) ?? -1;
+                if (sourceIndex >= 0)
+                {
+                    await _stateClient.UpdateData<VideoRoutingModels.TilingStateData>(patch => patch.Replace(data => data.TilingSinks[sinkIndex].Sources[sourceIndex], viewportSource)).ConfigureAwait(false);
+                }
+                else
+                {
+                    await _stateClient.UpdateData<VideoRoutingModels.TilingStateData>(patch => patch.Add(data => data.TilingSinks[sinkIndex].Sources, viewportSource)).ConfigureAwait(false);
+                }
+            }
+            else
+            {
+                var sinkAliasIndexModel = new VideoRoutingModels.AliasIndexModel
+                {
+                    Alias = route.Sink.Alias,
+                    Index = route.Sink.Index
+                };
+
+                await _stateClient.AddOrUpdateData(new VideoRoutingModels.TilingStateData
+                {
+                    TilingSinks = new List<VideoRoutingModels.TilingSink>
+                    {
+                        new VideoRoutingModels.TilingSink
+                        {
+                            Sink = sinkAliasIndexModel,
+                            Sources = new List<VideoRoutingModels.ViewportSource>()
+                            {
+                                viewportSource
+                            }
+                        }
+                    }
+                },
+                patch =>
+                    patch.Add(data => data.TilingSinks,
+                    new VideoRoutingModels.TilingSink
+                    {
+                        Sink = new VideoRoutingModels.AliasIndexModel { Alias = route.Sink.Alias, Index = route.Sink.Index },
+                        Sources = new List<VideoRoutingModels.ViewportSource>() { viewportSource }
+                    })).ConfigureAwait(false);
+            }
         }
     }
 }
