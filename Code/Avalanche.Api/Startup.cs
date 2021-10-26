@@ -200,16 +200,19 @@ namespace Avalanche.Api
 
                 // TEMP Fix until changes are moved back to Ism.Security and Print
                 _ = services.AddLocalAndRemoteSecureGrpcClient<PrintingServerSecureClient, PrintServerClient>("PrintServer", "PrintServerVSS");
+
+                // Hosted Services
+                services.AddHostedService<DeviceNotificationsListener>();
             }
             else
             {
                 _ = services.AddConfigurationServiceSecureClient("StorageVSS");
                 _ = services.AddLibrarySearchServiceSecureClient("LibraryVSS");
                 _ = services.AddPrintingServerSecureClient("PrintServerVSS");
-            }
 
-            // Hosted Services
-            services.AddHostedService<NotificationsListener>();
+                // Hosted Services
+                services.AddHostedService<ServerNotificationsListener>();
+            }
         }
 
         private void ConfigureAuthorization(IServiceCollection services)
