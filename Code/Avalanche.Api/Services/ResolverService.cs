@@ -7,14 +7,10 @@ namespace Avalanche.Api.Services
     {
         private ServiceProvider _serviceProvider { get; }
 
-        public ResolverService(IServiceCollection services)
-        {
+        public ResolverService(IServiceCollection services) =>
             _serviceProvider = services.BuildServiceProvider();
-        }
 
-        public T Resolve<T>()
-        {
-            return _serviceProvider.GetService<T>();
-        }
+        public T Resolve<T>() =>
+            _serviceProvider.GetService<T>();
     }
 }

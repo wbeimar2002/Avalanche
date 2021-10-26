@@ -46,19 +46,13 @@ namespace Avalanche.Api.Managers.Maintenance
         public ProceduresSearchConfiguration GetProceduresSearchConfigurationSettings() => _proceduresSearchConfiguration;
         public SetupConfiguration GetSetupConfigurationSettings() => _setupConfiguration;
 
-        public void UpdateProceduresSearchConfigurationColumns(List<ColumnProceduresSearchConfiguration> columnProceduresSearchConfigurations)
-        {
+        public void UpdateProceduresSearchConfigurationColumns(List<ColumnProceduresSearchConfiguration> columnProceduresSearchConfigurations) =>
             _proceduresSearchConfiguration.Columns = columnProceduresSearchConfigurations;
-        }
 
-        public void UpdatePatientInfo(List<PatientInfoSetupConfiguration> patientInfoSetupConfigurations)
-        {
+        public void UpdatePatientInfo(List<PatientInfoSetupConfiguration> patientInfoSetupConfigurations) =>
             _setupConfiguration.PatientInfo = patientInfoSetupConfigurations;
-        }
 
-        public void UseVSSPrintingService(bool useVSSPrintingService)
-        {
+        public void UseVSSPrintingService(bool useVSSPrintingService) =>
             _printingConfiguration.UseVSSPrintingService = useVSSPrintingService;
-        }
     }
 }

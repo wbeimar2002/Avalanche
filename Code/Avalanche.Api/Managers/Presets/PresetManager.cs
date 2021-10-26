@@ -43,20 +43,24 @@ namespace Avalanche.Api.Managers.Presets
 
         public async Task<UserPresetsModel> GetPresets(string userId)
         {
-            var userPresets = await _storageService.GetJsonObject<PresetsModel>(PRESETS, 1, _configurationContext);
+            var userPresets = await _storageService.GetJsonObject<PresetsModel>(PRESETS, 1, _configurationContext).ConfigureAwait(false);
 
             if (!userPresets.Users.ContainsKey(userId))
+            {
                 throw new ArgumentException($"user presets for {userId} does not exists");
+            }
 
             return userPresets.Users[userId];
         }
 
         public async Task ApplyPreset(string userId, int index)
         {
-            var presets = await GetPresets(userId);
+            var presets = await GetPresets(userId).ConfigureAwait(false);
 
             if (!presets.RoutingPresets.ContainsKey(index))
+            {
                 throw new ArgumentException($"index {index} not exists in list of presets");
+            }
 
             var routingPresetModel = presets.RoutingPresets[index];
             var request = new RouteVideoBatchRequest();
@@ -76,7 +80,7 @@ namespace Avalanche.Api.Managers.Presets
         public async Task SavePreset(string userId, int index, string name)
         {
             // Get current routes from routing service
-            var currentRoutes = await _routingService.GetCurrentRoutes();
+            var currentRoutes = await _routingService.GetCurrentRoutes().ConfigureAwait(false);
             var currentRouteModels = currentRoutes.Routes.Select(x => new RouteModel 
             { 
                 Sink = _mapper.Map<AliasIndexMessage,AliasIndexModel>(x.Sink), 
@@ -93,20 +97,22 @@ namespace Avalanche.Api.Managers.Presets
 
             var result = JsonConvert.SerializeObject(presetsModel);
 
-            await _storageService.SaveJsonMetadata(PRESETS, result, 1, _configurationContext);
+            await _storageService.SaveJsonMetadata(PRESETS, result, 1, _configurationContext).ConfigureAwait(false);
         }
 
         public async Task RemovePreset(string userId, int index)
         {
-            var userPresets = await GetPresets(userId);
+            var userPresets = await GetPresets(userId).ConfigureAwait(false);
 
             if (!userPresets.RoutingPresets.ContainsKey(index))
+            {
                 throw new ArgumentException($"index {index} not exists in list of presets");
+            }
 
             await _storageService.UpdateConfiguration<PresetsModel>(PRESETS, 1, _configurationContext, (update) =>
             {
                 update.Remove(config => config.Users[userId].RoutingPresets[index]);
-            });
+            }).ConfigureAwait(false);
         }
     }
 }

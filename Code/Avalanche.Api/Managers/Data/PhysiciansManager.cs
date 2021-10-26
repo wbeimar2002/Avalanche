@@ -32,7 +32,7 @@ namespace Avalanche.Api.Managers.Data
         public async Task<List<dynamic>> GetPhysicians()
         {
             var configurationContext = _mapper.Map<UserModel, ConfigurationContext>(_user);
-            return await _storageService.GetJsonDynamicList("Physicians", 1, configurationContext);
+            return await _storageService.GetJsonDynamicList("Physicians", 1, configurationContext).ConfigureAwait(false);
         }
     }
 }

@@ -44,15 +44,17 @@ namespace Avalanche.Api.Helpers
         public static bool PropertyExists(dynamic entity, string name)
         {
             if (entity is ExpandoObject)
+            {
                 return ((IDictionary<string, object>)entity).ContainsKey(name);
+            }
 
             return entity.GetType().GetProperty(name) != null;
         }
 
         public static string GetJsonValues(DynamicSectionViewModel category)
         {
-            string json = @"{}";
-            JObject jsonRoot = JObject.Parse(json);
+            var json = @"{}";
+            var jsonRoot = JObject.Parse(json);
 
             AddSettingValues(jsonRoot, category);
             return jsonRoot.ToString();
@@ -69,7 +71,7 @@ namespace Avalanche.Api.Helpers
                         var jObject = jsonRoot;
                         var keys = setting.JsonKey.Split('.');
 
-                        for (int i = 0; i < keys.Length; i++)
+                        for (var i = 0; i < keys.Length; i++)
                         {
                             if (i == keys.Length - 1)
                             {
@@ -162,11 +164,15 @@ namespace Avalanche.Api.Helpers
                         setting.PoliciesValues = policiesValues;
 
                         if (settingsValues == null)
+                        {
                             setting.Value = setting.DefaultValue;
+                        }
                         else
                         {
                             if (string.IsNullOrEmpty(setting.JsonKey))
+                            {
                                 setting.Value = null;
+                            }
                             else
                             {
                                 var keys = setting.JsonKey.Split('.');
@@ -179,9 +185,13 @@ namespace Avalanche.Api.Helpers
                                     var jValue = jObject[key];
 
                                     if (jValue is JValue finalValue)
+                                    {
                                         value = finalValue.ToString();
+                                    }
                                     else
+                                    {
                                         jObject = (JObject)jObject[key];
+                                    }
                                 }
 
                                 setting.Value = setting.SettingType == SettingTypes.Boolean ? value.ToLower() : value;

@@ -20,57 +20,37 @@ namespace Avalanche.Api.Services.Health
             _serviceSearchClient = serviceSearchClient;
         }
 
-        public async Task DiscardActiveProcedure(DiscardActiveProcedureRequest discardActiveProcedureRequest)
-        {
-            await _activeClient.DiscardActiveProcedure(discardActiveProcedureRequest);
-        }
+        public async Task DiscardActiveProcedure(DiscardActiveProcedureRequest discardActiveProcedureRequest) =>
+            await _activeClient.DiscardActiveProcedure(discardActiveProcedureRequest).ConfigureAwait(false);
 
-        public async Task CommitActiveProcedure(CommitActiveProcedureRequest commitActiveProcedureRequest)
-        {
-            await _activeClient.CommitActiveProcedure(commitActiveProcedureRequest);
-        }
+        public async Task CommitActiveProcedure(CommitActiveProcedureRequest commitActiveProcedureRequest) =>
+            await _activeClient.CommitActiveProcedure(commitActiveProcedureRequest).ConfigureAwait(false);
 
-        public async Task<AllocateNewProcedureResponse> AllocateNewProcedure(AllocateNewProcedureRequest allocateNewProcedureRequest)
-        {
-            return await _activeClient.AllocateNewProcedure(allocateNewProcedureRequest);
-        }
+        public async Task<AllocateNewProcedureResponse> AllocateNewProcedure(AllocateNewProcedureRequest allocateNewProcedureRequest) =>
+            await _activeClient.AllocateNewProcedure(allocateNewProcedureRequest).ConfigureAwait(false);
 
-        public async Task UpdateProcedure(UpdateProcedureRequest updateProcedureRequest)
-        {
-            await _managerServiceClient.UpdateProcedure(updateProcedureRequest);
-        }
+        public async Task UpdateProcedure(UpdateProcedureRequest updateProcedureRequest) =>
+            await _managerServiceClient.UpdateProcedure(updateProcedureRequest).ConfigureAwait(false);
 
-        public async Task DeleteActiveProcedureMediaItem(DeleteActiveProcedureMediaItemRequest deleteActiveProcedureMediaItemRequest)
-        {
-            await _activeClient.DeleteActiveProcedureMediaItem(deleteActiveProcedureMediaItemRequest);
-        }
+        public async Task DeleteActiveProcedureMediaItem(DeleteActiveProcedureMediaItemRequest deleteActiveProcedureMediaItemRequest) =>
+            await _activeClient.DeleteActiveProcedureMediaItem(deleteActiveProcedureMediaItemRequest).ConfigureAwait(false);
 
-        public async Task DeleteActiveProcedureMediaItems(DeleteActiveProcedureMediaItemsRequest deleteActiveProcedureMediaItemsRequest)
-        {
-            await _activeClient.DeleteActiveProcedureMediaItems(deleteActiveProcedureMediaItemsRequest);
-        }
+        public async Task DeleteActiveProcedureMediaItems(DeleteActiveProcedureMediaItemsRequest deleteActiveProcedureMediaItemsRequest) =>
+            await _activeClient.DeleteActiveProcedureMediaItems(deleteActiveProcedureMediaItemsRequest).ConfigureAwait(false);
 
-        public async Task<ReindexRepositoryResponse> ReindexRepository(string repositoryName)
-        {
-            return await _managerServiceClient.ReindexRepository(new ReindexRepositoryRequest()
+        public async Task<ReindexRepositoryResponse> ReindexRepository(string repositoryName) =>
+            await _managerServiceClient.ReindexRepository(new ReindexRepositoryRequest()
             {
                 RepositoryName = repositoryName
-            });
-        }
+            }).ConfigureAwait(false);
 
-        public async Task<GetFinishedProcedureResponse> GetFinishedProcedure(GetFinishedProcedureRequest getFinishedProcedureRequest)
-        {
-            return await _serviceSearchClient.GetFinishedProcedure(getFinishedProcedureRequest);
-        }
+        public async Task<GetFinishedProcedureResponse> GetFinishedProcedure(GetFinishedProcedureRequest getFinishedProcedureRequest) =>
+            await _serviceSearchClient.GetFinishedProcedure(getFinishedProcedureRequest).ConfigureAwait(false);
 
-        public async Task<GetFinishedProceduresResponse> GetFinishedProcedures(GetFinishedProceduresRequest getFinishedProceduresRequest)
-        {
-            return await _serviceSearchClient.GetFinishedProcedures(getFinishedProceduresRequest);
-        }
+        public async Task<GetFinishedProceduresResponse> GetFinishedProcedures(GetFinishedProceduresRequest getFinishedProceduresRequest) =>
+            await _serviceSearchClient.GetFinishedProcedures(getFinishedProceduresRequest).ConfigureAwait(false);
 
-        public async Task<GetFinishedProceduresResponse> GetFinishedProceduresByPatient(GetFinishedProceduresRequestByPatient getFinishedProceduresRequestByPatient)
-        {
-            return await _serviceSearchClient.GetFinishedProceduresByPatient(getFinishedProceduresRequestByPatient);
-        }
+        public async Task<GetFinishedProceduresResponse> GetFinishedProceduresByPatient(GetFinishedProceduresRequestByPatient getFinishedProceduresRequestByPatient) =>
+            await _serviceSearchClient.GetFinishedProceduresByPatient(getFinishedProceduresRequestByPatient).ConfigureAwait(false);
     }
 }

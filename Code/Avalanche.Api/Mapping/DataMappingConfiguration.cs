@@ -1,10 +1,6 @@
-﻿using AutoMapper;
-using Avalanche.Api.ViewModels;
+using AutoMapper;
 using Avalanche.Shared.Domain.Models;
-using Google.Protobuf.WellKnownTypes;
-using Ism.Common.Core.Configuration.Models;
 using Ism.Storage.DataManagement.Client.V1.Protos;
-using System;
 
 namespace Avalanche.Api.Mapping
 {

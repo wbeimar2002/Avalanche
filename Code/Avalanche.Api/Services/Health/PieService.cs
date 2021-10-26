@@ -1,6 +1,7 @@
-﻿using Ism.PatientInfoEngine.Grpc;
+using Ism.PatientInfoEngine.Grpc;
+using Ism.PatientInfoEngine.V1.Protos;
 using Ism.Storage.PatientList.Client.V1;
-
+using Ism.Storage.PatientList.Client.V1.Protos;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 
@@ -18,24 +19,16 @@ namespace Avalanche.Api.Services.Health
             _storageClient = storageClient;
         }
 
-        public async Task<Ism.Storage.PatientList.Client.V1.Protos.DeletePatientRecordResponse> DeletePatient(Ism.Storage.PatientList.Client.V1.Protos.DeletePatientRecordRequest deletePatientRecordRequest)
-        {
-            return await _storageClient.DeletePatientRecord(deletePatientRecordRequest);
-        }
+        public async Task<DeletePatientRecordResponse> DeletePatient(DeletePatientRecordRequest deletePatientRecordRequest) =>
+            await _storageClient.DeletePatientRecord(deletePatientRecordRequest).ConfigureAwait(false);
 
-        public async Task<Ism.Storage.PatientList.Client.V1.Protos.AddPatientRecordResponse> RegisterPatient(Ism.Storage.PatientList.Client.V1.Protos.AddPatientRecordRequest addPatientRecordRequest)
-        {
-            return await _storageClient.AddPatientRecord(addPatientRecordRequest);
-        }
+        public async Task<AddPatientRecordResponse> RegisterPatient(AddPatientRecordRequest addPatientRecordRequest) =>
+            await _storageClient.AddPatientRecord(addPatientRecordRequest).ConfigureAwait(false);
 
-        public async Task<Ism.PatientInfoEngine.V1.Protos.SearchResponse> Search(Ism.PatientInfoEngine.V1.Protos.SearchRequest searchRequest)
-        {
-            return await _patientListClient.Search(searchRequest);
-        }
+        public async Task<SearchResponse> Search(SearchRequest searchRequest) =>
+            await _patientListClient.Search(searchRequest).ConfigureAwait(false);
 
-        public async Task UpdatePatient(Ism.Storage.PatientList.Client.V1.Protos.UpdatePatientRecordRequest updatePatientRecordRequest)
-        {
-            await _storageClient.UpdatePatientRecord(updatePatientRecordRequest);
-        }
+        public async Task UpdatePatient(UpdatePatientRecordRequest updatePatientRecordRequest) =>
+            await _storageClient.UpdatePatientRecord(updatePatientRecordRequest).ConfigureAwait(false);
     }
 }

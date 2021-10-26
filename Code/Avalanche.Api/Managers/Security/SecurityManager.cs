@@ -1,15 +1,12 @@
-﻿using Avalanche.Api.Services.Security;
+using Avalanche.Api.Services.Security;
 using Avalanche.Api.Utilities;
 using Avalanche.Shared.Infrastructure.Constants;
-using Avalanche.Shared.Infrastructure.Models;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Options;
 using System;
 using Avalanche.Shared.Infrastructure.Options;
 
 using System.Security.Claims;
-using System.Threading.Tasks;
 
 namespace Avalanche.Api.Managers.Security
 {

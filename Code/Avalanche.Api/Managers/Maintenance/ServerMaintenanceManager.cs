@@ -44,9 +44,9 @@ namespace Avalanche.Api.Managers.Maintenance
 
         protected override async Task SaveEmbeddedList(string settingsKey, string jsonKey, string json, string schema = null)
         {
-            if (string.IsNullOrEmpty(schema) || await _storageService.ValidateSchema(schema, json, 1, _configurationContext))
+            if (string.IsNullOrEmpty(schema) || await _storageService.ValidateSchema(schema, json, 1, _configurationContext).ConfigureAwait(false))
             {
-                await _storageService.UpdateJsonProperty(settingsKey, jsonKey, json, 1, _configurationContext, true);
+                await _storageService.UpdateJsonProperty(settingsKey, jsonKey, json, 1, _configurationContext, true).ConfigureAwait(false);
 
                 switch (settingsKey)
                 {

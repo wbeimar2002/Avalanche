@@ -1,10 +1,7 @@
-﻿using AutoMapper;
+using AutoMapper;
 using Avalanche.Api.ViewModels;
 using Google.Protobuf.Collections;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Avalanche.Api.Mapping
 {
@@ -55,13 +52,11 @@ namespace Avalanche.Api.Mapping
             }
         }
 
-        public static KeyValuePairViewModel GetSexViewModel(string stringValue)
-        {
-            return new KeyValuePairViewModel()
+        public static KeyValuePairViewModel GetSexViewModel(string stringValue) =>
+            new KeyValuePairViewModel()
             {
                 Id = stringValue,
                 TranslationKey = GetSexTranslationKey(stringValue)
             };
-        }
     }
 }

@@ -18,15 +18,14 @@ namespace Avalanche.Api.Services.Maintenance
     {
         private readonly ConfigurationServiceSecureClient _client;
 
-        public StorageService(ConfigurationServiceSecureClient client)
-        {
-            _client = client;
-        }
+        public StorageService(ConfigurationServiceSecureClient client) => _client = client;
 
         public async Task<bool> ValidateSchema(string schemaKey, string json, int version, ConfigurationContext configurationContext)
         {
             if (string.IsNullOrEmpty(schemaKey))
+            {
                 return true;
+            }
             else
             {
                 dynamic dynamicSchema = await GetJsonFullDynamic(schemaKey, version, configurationContext);
@@ -49,20 +48,24 @@ namespace Avalanche.Api.Services.Maintenance
         {
             var json = await _client.GetConfiguration(configurationKey, Convert.ToUInt32(version), context);
 
-            JObject jsonRoot = JObject.Parse(json);
+            var jsonRoot = JObject.Parse(json);
             jsonRoot = (JObject)jsonRoot[configurationKey];
 
             var jObject = jsonRoot;
             var keys = jsonKey.Split('.');
 
-            for (int i = 0; i < keys.Length; i++)
+            for (var i = 0; i < keys.Length; i++)
             {
                 if (i == keys.Length - 1)
                 {
                     if (isList)
+                    {
                         jObject[keys[i]] = JArray.Parse(jsonValue);
+                    }
                     else
+                    {
                         jObject[keys[i]] = JObject.Parse(jsonValue);
+                    }
                 }
                 else
                 {
@@ -97,7 +100,9 @@ namespace Avalanche.Api.Services.Maintenance
             var json = await _client.GetConfiguration(configurationKey, Convert.ToUInt32(version), context);
 
             if (string.IsNullOrEmpty(json))
+            {
                 return null;
+            }
             else
             {
                 var jObject = JObject.Parse(json);
@@ -123,7 +128,9 @@ namespace Avalanche.Api.Services.Maintenance
             var json = await _client.GetConfiguration(configurationKey, Convert.ToUInt32(version), context);
 
             if (string.IsNullOrEmpty(json))
+            {
                 return null;
+            }
             else
             {
                 var jObject = JObject.Parse(json);
@@ -149,15 +156,19 @@ namespace Avalanche.Api.Services.Maintenance
             var kind = await _client.GetConfigurationKinds();
             var kindId = context.SiteId;
 
-            string jsonWrapper = @"{}";
-            JObject jsonRoot = JObject.Parse(jsonWrapper);
+            var jsonWrapper = @"{}";
+            var jsonRoot = JObject.Parse(jsonWrapper);
 
             if (isList)
+            {
                 jsonRoot.Add(new JProperty(configurationKey, JArray.Parse(json)));
+            }
             else
+            {
                 jsonRoot.Add(new JProperty(configurationKey, JObject.Parse(json)));
+            }
 
-            string finalJson = jsonRoot.ToString(Newtonsoft.Json.Formatting.None);
+            var finalJson = jsonRoot.ToString(Formatting.None);
             await _client.SaveConfiguration(configurationKey, Convert.ToUInt32(version), finalJson, "Site", kindId);
         }
 
@@ -213,6 +224,6 @@ namespace Avalanche.Api.Services.Maintenance
         // json patch deserialize requires newtonsoft; no current plan for system.text.json support: https://github.com/dotnet/aspnetcore/issues/16968
         private string SerializeJsonPatch<TData>(JsonPatchDocument<TData> patch)
             where TData : class, new()
-            => Newtonsoft.Json.JsonConvert.SerializeObject(patch);
+            => JsonConvert.SerializeObject(patch);
     }
 }
