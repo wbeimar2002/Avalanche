@@ -33,6 +33,7 @@ namespace Avalanche.Api.Managers.Patients
 
         private readonly IAccessInfoFactory _accessInfoFactory;
         private readonly IMapper _mapper;
+
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly UserModel user;
         private readonly ConfigurationContext _configurationContext;
@@ -78,7 +79,6 @@ namespace Avalanche.Api.Managers.Patients
 
             var accessInfo = _accessInfoFactory.GenerateAccessInfo();
 
-
             if (newPatient.Physician == null)
             {
                 if (_setupConfiguration.Registration.Manual.AutoFillPhysician)
@@ -89,10 +89,6 @@ namespace Avalanche.Api.Managers.Patients
                         FirstName = user.FirstName,
                         LastName = user.LastName
                     };
-                }
-                else
-                {
-                    newPatient.Physician = newPatient.Physician;
                 }
             }
 
@@ -135,7 +131,7 @@ namespace Avalanche.Api.Managers.Patients
                     case "procedureType":
                         Preconditions.ThrowIfNull(nameof(patient.ProcedureType), patient.ProcedureType);
                         break;
-                    //case "accessionNumber": TODO: Pending
+                    //case "accessionNumber": TODO: Pending send the value from Register and Update
                         //    Preconditions.ThrowIfNull(nameof(patient.Accession), patient.Accession);
                         //    break; 
                 }
@@ -158,19 +154,6 @@ namespace Avalanche.Api.Managers.Patients
                 {
                     Id = "U"
                 },
-                Department = new DepartmentModel()
-                {
-                    Id = 0,
-                    Name = "Unknown"
-                },
-                ProcedureType = new ProcedureTypeModel() //TODO: What should be this value
-                {
-                    Id = 0,
-                    Name = "Unknown"
-                },
-
-                //TODO: Performing physician is administrator by default
-                //Which are theose values? Temporary I am assigning the user that made the request
                 Physician = new PhysicianModel()
                 {
                     Id = user.Id,
