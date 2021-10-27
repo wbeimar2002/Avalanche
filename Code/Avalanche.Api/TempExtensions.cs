@@ -7,7 +7,6 @@ using Ism.Security.Grpc.Configuration;
 using Ism.Security.Grpc.Configuration.Models;
 using Ism.Security.Grpc.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
-using static Ism.Utility.Core.Preconditions;
 
 namespace Avalanche.Api.TempExtensions
 {
@@ -20,14 +19,7 @@ namespace Avalanche.Api.TempExtensions
         {
             var namedServices = new List<NamedService<TSecureClient, TGrpcClient>>();
 
-            // Do we need to add client's directly or just to the named service factory, unclear
-            _ = services.AddSecureGrpcClient<TSecureClient, TGrpcClient>(localServiceName);
-
-            _ = services.AddSingleton(sp => CreateSecureClient<TSecureClient, TGrpcClient>(sp, remoteServiceName,
-                new HostPort()
-                {
-                    Host = sp.GetRequiredService<VaultStreamServerConfiguration>().ServerHost,
-                }));
+            _ = services.AddSingleton<IGrpcClientFactory<TGrpcClient>, GrpcClientFactory<TGrpcClient>>();
 
             _ = services.AddSingleton(sp =>
             {
@@ -45,21 +37,33 @@ namespace Avalanche.Api.TempExtensions
                 namedServices.Add(new NamedService<TSecureClient, TGrpcClient>("Local", deviceClient));
                 namedServices.Add(new NamedService<TSecureClient, TGrpcClient>("Remote", remoteClient));
 
+                _ = services.AddSingleton(deviceClient);
+                _ = services.AddSingleton(remoteClient);
+
                 return new NamedServiceFactory<TSecureClient, TGrpcClient>(namedServices);
             });
 
             return services;
         }
 
-        public static IServiceCollection AddSecureGrpcClient<TSecureClient, TGrpcClient>(this IServiceCollection services, string serviceName)
+        public static IServiceCollection AddNamedSecureGrpcClient<TSecureClient, TGrpcClient>(this IServiceCollection services, string serviceName, string key)
             where TSecureClient : SecureClientBase<TGrpcClient>
             where TGrpcClient : ClientBase
         {
-            ThrowIfNull(nameof(services), services);
-            ThrowIfNullOrEmptyOrWhiteSpace(nameof(serviceName), serviceName);
+            var namedServices = new List<NamedService<TSecureClient, TGrpcClient>>();
 
             _ = services.AddSingleton<IGrpcClientFactory<TGrpcClient>, GrpcClientFactory<TGrpcClient>>();
-            _ = services.AddSingleton(sp => CreateSecureClient<TSecureClient, TGrpcClient>(sp, serviceName));
+
+            _ = services.AddSingleton(sp =>
+            {
+                var deviceClient = CreateSecureClient<TSecureClient, TGrpcClient>(sp, serviceName);
+
+                namedServices.Add(new NamedService<TSecureClient, TGrpcClient>(key, deviceClient));
+
+                _ = services.AddSingleton(deviceClient);
+
+                return new NamedServiceFactory<TSecureClient, TGrpcClient>(namedServices);
+            });
 
             return services;
         }

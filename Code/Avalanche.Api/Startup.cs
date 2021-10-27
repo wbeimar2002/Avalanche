@@ -206,9 +206,7 @@ namespace Avalanche.Api
             }
             else
             {
-                _ = services.AddConfigurationServiceSecureClient("StorageVSS");
-                _ = services.AddLibrarySearchServiceSecureClient("LibraryVSS");
-                _ = services.AddPrintingServerSecureClient("PrintServerVSS");
+                _ = services.AddNamedSecureGrpcClient<PrintingServerSecureClient, PrintServerClient>("PrintServer", "Local");
 
                 // Hosted Services
                 services.AddHostedService<ServerNotificationsListener>();
