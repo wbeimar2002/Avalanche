@@ -52,11 +52,13 @@ namespace Avalanche.Api.Managers.Procedures
         /// </summary>
         public async Task<ActiveProcedureViewModel> GetActiveProcedure()
         {
-            var activeProcedure = await _stateClient.GetData<ActiveProcedureState>();
+            var activeProcedure = await _stateClient.GetData<ActiveProcedureState>().ConfigureAwait(false);
             var result = _mapper.Map<ActiveProcedureViewModel>(activeProcedure);
 
             if (result != null)
+            {
                 result.RecorderState = (int?)(await _recorderService.GetRecorderState().ConfigureAwait(false)).State;
+            }
 
             return result;
         }
@@ -66,16 +68,16 @@ namespace Avalanche.Api.Managers.Procedures
         /// </summary>
         public async Task ConfirmActiveProcedure()
         {
-            var activeProcedure = await _stateClient.GetData<ActiveProcedureState>();
+            var activeProcedure = await _stateClient.GetData<ActiveProcedureState>().ConfigureAwait(false);
 
             activeProcedure.RequiresUserConfirmation = false;
-            await _stateClient.PersistData(activeProcedure);
+            await _stateClient.PersistData(activeProcedure).ConfigureAwait(false);
         }
 
         public async Task DeleteActiveProcedureMediaItem(ProcedureContentType procedureContentType, Guid contentId)
         {
             var accessInfo = _accessInfoFactory.GenerateAccessInfo();
-            var activeProcedure = await _stateClient.GetData<ActiveProcedureState>();
+            var activeProcedure = await _stateClient.GetData<ActiveProcedureState>().ConfigureAwait(false);
 
             if (procedureContentType == ProcedureContentType.Video)
             {
@@ -90,14 +92,14 @@ namespace Avalanche.Api.Managers.Procedures
                 AccessInfo = _mapper.Map<AccessInfoMessage>(accessInfo)
             };
 
-            await _libraryService.DeleteActiveProcedureMediaItem(request);
+            await _libraryService.DeleteActiveProcedureMediaItem(request).ConfigureAwait(false);
         }
 
 
         public async Task DeleteActiveProcedureMediaItems(ProcedureContentType procedureContentType, IEnumerable<Guid> contentIds)
         {
             var accessInfo = _accessInfoFactory.GenerateAccessInfo();
-            var activeProcedure = await _stateClient.GetData<ActiveProcedureState>();
+            var activeProcedure = await _stateClient.GetData<ActiveProcedureState>().ConfigureAwait(false);
 
             if (procedureContentType == ProcedureContentType.Video)
             {
@@ -115,33 +117,33 @@ namespace Avalanche.Api.Managers.Procedures
             };
             request.ContentIds.AddRange(contentIds.Select(x => x.ToString()));
 
-            await _libraryService.DeleteActiveProcedureMediaItems(request);
+            await _libraryService.DeleteActiveProcedureMediaItems(request).ConfigureAwait(false);
         }
 
         public async Task DiscardActiveProcedure()
         {
             var accessInfo = _accessInfoFactory.GenerateAccessInfo();
 
-            var activeProcedure = await _stateClient.GetData<ActiveProcedureState>();
+            var activeProcedure = await _stateClient.GetData<ActiveProcedureState>().ConfigureAwait(false);
             var request = _mapper.Map<ActiveProcedureState, DiscardActiveProcedureRequest>(activeProcedure);
 
             request.AccessInfo = _mapper.Map<AccessInfoMessage>(accessInfo);
 
-            await _recorderService.FinishProcedure();
-            await _libraryService.DiscardActiveProcedure(request);
+            await _recorderService.FinishProcedure().ConfigureAwait(false);
+            await _libraryService.DiscardActiveProcedure(request).ConfigureAwait(false);
         }
 
         public async Task FinishActiveProcedure()
         {
-            var activeProcedure = await _stateClient.GetData<ActiveProcedureState>();
+            var activeProcedure = await _stateClient.GetData<ActiveProcedureState>().ConfigureAwait(false);
             var request = _mapper.Map<ActiveProcedureState, CommitActiveProcedureRequest>(activeProcedure);
 
             var accessInfo = _accessInfoFactory.GenerateAccessInfo();
             request.AccessInfo = _mapper.Map<AccessInfoMessage>(accessInfo);
 
-            await _recorderService.FinishProcedure();
+            await _recorderService.FinishProcedure().ConfigureAwait(false);
 
-            await _libraryService.CommitActiveProcedure(request);
+            await _libraryService.CommitActiveProcedure(request).ConfigureAwait(false);
         }
 
         public async Task<ProcedureAllocationViewModel> AllocateNewProcedure()
@@ -151,7 +153,7 @@ namespace Avalanche.Api.Managers.Procedures
             {
                 AccessInfo = _mapper.Map<AccessInfoMessage>(accessInfo),
                 Clinical = true
-            });
+            }).ConfigureAwait(false);
 
             return _mapper.Map<ProcedureAllocationViewModel>(response);
         }
@@ -160,24 +162,24 @@ namespace Avalanche.Api.Managers.Procedures
         {
             Preconditions.ThrowIfNullOrEmptyOrWhiteSpace(nameof(labelContent.Label), labelContent.Label);
 
-            var activeProcedure = await _stateClient.GetData<ActiveProcedureState>();
+            var activeProcedure = await _stateClient.GetData<ActiveProcedureState>().ConfigureAwait(false);
 
             // If adhoc labels allowed option enabled, add label to store
             if (_generalApiConfig.AdHocLabelsAllowed)
             {
-                var newLabel = await _dataManager.GetLabel(labelContent.Label, activeProcedure.ProcedureType?.Id);
+                var newLabel = await _dataManager.GetLabel(labelContent.Label, activeProcedure.ProcedureType?.Id).ConfigureAwait(false);
                 if (newLabel == null || newLabel?.Id == 0)
                 {
                     await _dataManager.AddLabel(new LabelModel
                     {
                         Name = labelContent.Label,
                         ProcedureTypeId = activeProcedure.ProcedureType?.Id
-                    });
+                    }).ConfigureAwait(false);
                 }
             }
 
             //check label exist in store before associating the label to active procedure
-            var labelModel = await _dataManager.GetLabel(labelContent.Label, activeProcedure.ProcedureType?.Id);
+            var labelModel = await _dataManager.GetLabel(labelContent.Label, activeProcedure.ProcedureType?.Id).ConfigureAwait(false);
             if (labelModel == null || labelModel?.Id == 0)
             {
                 throw new ArgumentException($"{nameof(labelContent.Label)} '{labelContent.Label}' does not exist and cannot be added", labelContent.Label);
@@ -211,7 +213,7 @@ namespace Avalanche.Api.Managers.Procedures
                 {
                     x.Replace(data => data.Videos, activeProcedure.Videos);
                 }
-            });
+            }).ConfigureAwait(false);
         }
 
         public async Task ApplyLabelToLatestImages(string label)
@@ -219,7 +221,7 @@ namespace Avalanche.Api.Managers.Procedures
             Preconditions.ThrowIfNullOrEmptyOrWhiteSpace(nameof(label), label);
 
             //get active procedure state
-            var activeProcedure = await _stateClient.GetData<ActiveProcedureState>();
+            var activeProcedure = await _stateClient.GetData<ActiveProcedureState>().ConfigureAwait(false);
 
             if (activeProcedure == null)
             {
@@ -241,7 +243,7 @@ namespace Avalanche.Api.Managers.Procedures
             listOfImagesWithCorrelationId.ToList().ForEach(x => x.Label = label);
 
             //update active procedure state with latest changes to the images collection
-            _ = await _stateClient.AddOrUpdateData(activeProcedure, x => x.Replace(data => data.Images, activeProcedure.Images));
+            _ = await _stateClient.AddOrUpdateData(activeProcedure, x => x.Replace(data => data.Images, activeProcedure.Images)).ConfigureAwait(false);
         }
 
         private void ThrowIfVideoCannotBeDeleted(ActiveProcedureState activeProcedure, Guid videoContent)

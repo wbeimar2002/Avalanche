@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+using AutoMapper;
 using Avalanche.Api.Services.Media;
 using Avalanche.Api.ViewModels;
 using Avalanche.Shared.Domain.Enumerations;
@@ -95,7 +95,7 @@ namespace Avalanche.Api.Managers.Media
         public async Task<IList<PgsSinkStateModel>> GetPgsStateForSinks()
         {
             // get current pgs state data
-            var pgsData = await _stateClient.GetData<PgsDisplayStateData>();
+            var pgsData = await _stateClient.GetData<PgsDisplayStateData>().ConfigureAwait(false);
 
             // generate a list of pgs sink state models
             var displayStates = _pgsConfig.Sinks.Select(x =>
@@ -113,8 +113,8 @@ namespace Avalanche.Api.Managers.Media
         {
             // this needs to return the same data that routing does
             // the displays ui component is used here
-            var routingSinks = await _routingService.GetVideoSinks();
-            var routes = await _routingService.GetCurrentRoutes();
+            var routingSinks = await _routingService.GetVideoSinks().ConfigureAwait(false);
+            var routes = await _routingService.GetCurrentRoutes().ConfigureAwait(false);
 
             // PGS sinks are typically a subset of routing sinks
             // typically, they would be all of the displays without the record channels
@@ -144,7 +144,7 @@ namespace Avalanche.Api.Managers.Media
 
         public async Task SetPgsStateForSink(PgsSinkStateViewModel sinkState)
         {
-            bool enabled = sinkState.Enabled;
+            var enabled = sinkState.Enabled;
             // pgs checkbox state must persist reboots
             // state client should handle this
             // if pgs is activated, video route for that display needs to be restored
@@ -154,13 +154,17 @@ namespace Avalanche.Api.Managers.Media
             var sinkExists = _pgsConfig.Sinks.Any(x => AliasIndexEquals((x.Alias, x.Index), (sinkState.Sink.Alias, sinkState.Sink.Index)));
 
             if (!sinkExists)
+            {
                 throw new InvalidOperationException($"No pgs sink exists for: {sinkState.Sink.Alias}:{sinkState.Sink.Index}");
+            }
 
             // pgs is active, restore save/restore pgs for this display
             if (_currentPgsTimeoutState == PgsTimeoutRoomState.Pgs)
-                await UpdatePgsOnOneSink(sinkState.Sink, enabled, _pgsConfig.Source);
+            {
+                await UpdatePgsOnOneSink(sinkState.Sink, enabled, _pgsConfig.Source).ConfigureAwait(false);
+            }
 
-            var currentData = await _stateClient.GetData<PgsDisplayStateData>();
+            var currentData = await _stateClient.GetData<PgsDisplayStateData>().ConfigureAwait(false);
             var displayIndex = currentData?.DisplayStates.FindIndex(x => AliasIndexEquals((x.AliasIndex.Alias, x.AliasIndex.Index), (sinkState.Sink.Alias, sinkState.Sink.Index))) ?? -1;
 
             // need to prepare the initial state
@@ -188,13 +192,11 @@ namespace Avalanche.Api.Managers.Media
                 {
                     x.Replace(data => data.DisplayStates[displayIndex].Enabled, enabled);
                 }
-            });
+            }).ConfigureAwait(false);
         }
 
-        public async Task<TimeoutModes> GetTimeoutMode()
-        {
-            return await Task.FromResult(_timeoutConfig.Mode);
-        }
+        public async Task<TimeoutModes> GetTimeoutMode() =>
+            await Task.FromResult(_timeoutConfig.Mode).ConfigureAwait(false);
 
         #region PgsTimeout player pass through
 
@@ -203,114 +205,101 @@ namespace Avalanche.Api.Managers.Media
         /// </summary>
         /// <param name="mode"></param>
         /// <returns></returns>
-        public async Task SetPgsTimeoutPlayerMode(PgsTimeoutModes mode)
-        {
+        public async Task SetPgsTimeoutPlayerMode(PgsTimeoutModes mode) =>
             await _pgsTimeoutService.SetPgsTimeoutMode(new SetPgsTimeoutModeRequest()
             {
                 Mode = (PgsTimeoutModeEnum)mode
-            });
-        }
+            }).ConfigureAwait(false);
 
         public async Task<PgsTimeoutModes> GetPgsTimeoutPlayerMode()
         {
-            var res = await _pgsTimeoutService.GetPgsTimeoutMode();
+            var res = await _pgsTimeoutService.GetPgsTimeoutMode().ConfigureAwait(false);
             return (PgsTimeoutModes)res.Mode;
         }
 
         // pgs methods
         public async Task<bool> GetPgsMute()
         {
-            var result = await _pgsTimeoutService.GetPgsMute();
+            var result = await _pgsTimeoutService.GetPgsMute().ConfigureAwait(false);
             return result.IsMuted;
         }
 
-        public async Task SetPgsVideoPlaybackState(bool isPlaying)
-        {
+        public async Task SetPgsVideoPlaybackState(bool isPlaying) =>
             await _pgsTimeoutService.SetPgsPlaybackState(new SetPgsPlaybackStateRequest()
             {
                 IsPlaying = isPlaying
-            });
-        }
+            }).ConfigureAwait(false);
 
         public async Task<bool> GetPgsVideoPlaybackState()
         {
-            var result = await _pgsTimeoutService.GetPgsPlaybackState();
+            var result = await _pgsTimeoutService.GetPgsPlaybackState().ConfigureAwait(false);
             return result.IsPlaying;
         }
 
         public async Task SetPgsVideoFile(GreetingVideoModel video)
         {
             var request = _mapper.Map<GreetingVideoModel, SetPgsVideoFileRequest>(video);
-            await _pgsTimeoutService.SetPgsVideoFile(request);
+            await _pgsTimeoutService.SetPgsVideoFile(request).ConfigureAwait(false);
         }
 
         public async Task<GreetingVideoModel> GetPgsVideoFile()
         {
-            var result = await _pgsTimeoutService.GetPgsVideoFile();
+            var result = await _pgsTimeoutService.GetPgsVideoFile().ConfigureAwait(false);
             return _mapper.Map<GetPgsVideoFileResponse, GreetingVideoModel>(result);
         }
 
         public async Task<List<GreetingVideoModel>> GetPgsVideoFileList()
         {
-            var result = await _pgsTimeoutService.GetPgsVideoFileList();
+            var result = await _pgsTimeoutService.GetPgsVideoFileList().ConfigureAwait(false);
             return _mapper.Map<IList<PgsVideoFileMessage>, IList<GreetingVideoModel>>(result.VideoFiles).ToList();
         }
 
         public async Task<double> GetPgsVolume()
         {
-            var result = await _pgsTimeoutService.GetPgsVolume();
+            var result = await _pgsTimeoutService.GetPgsVolume().ConfigureAwait(false);
             return result.Volume;
         }
 
-        public async Task SetPgsMute(bool isMuted)
-        {
+        public async Task SetPgsMute(bool isMuted) =>
             await _pgsTimeoutService.SetPgsMute(new SetPgsMuteRequest()
             {
                 IsMuted = isMuted
-            });
-        }
+            }).ConfigureAwait(false);
 
-        public async Task SetPgsVideoPosition(double position)
-        {
+        public async Task SetPgsVideoPosition(double position) =>
             await _pgsTimeoutService.SetPgsVideoPosition(new SetPgsVideoPositionRequest()
             {
                 Position = position
-            });
-        }
+            }).ConfigureAwait(false);
 
-        public async Task SetPgsVolume(double volume)
+        public async Task SetPgsVolume(double volume) => await _pgsTimeoutService.SetPgsVolume(new SetPgsVolumeRequest()
         {
-            await _pgsTimeoutService.SetPgsVolume(new SetPgsVolumeRequest()
-            {
-                Volume = volume
-            });
-        }
+            Volume = volume
+        }).ConfigureAwait(false);
 
         // timeout methods
-        public async Task SetTimeoutPage(int pageNumber)
-        {
+        public async Task SetTimeoutPage(int pageNumber) =>
             await _pgsTimeoutService.SetTimeoutPage(new SetTimeoutPageRequest()
             {
                 PageNumber = pageNumber
-            });
-        }
+            }).ConfigureAwait(false);
 
         public async Task<int> GetTimeoutPage()
         {
-            var result = await _pgsTimeoutService.GetTimeoutPage();
+            var result = await _pgsTimeoutService.GetTimeoutPage().ConfigureAwait(false);
             return result.PageNumber;
         }
 
         public async Task<int> GetTimeoutPageCount()
         {
-            var result = await _pgsTimeoutService.GetTimeoutPageCount();
+            var result = await _pgsTimeoutService.GetTimeoutPageCount().ConfigureAwait(false);
             return result.PageCount;
         }
 
         public async Task<string> GetTimeoutPdfFileName()
         {
             // returns something like "timeout.pdf"
-            var result = await _pgsTimeoutService.GetTimeoutPdfFileName();
+            var result = await _pgsTimeoutService.GetTimeoutPdfFileName().ConfigureAwait(false);
 
             // return a path to the mapped directory
             var timeoutRoot = Environment.GetEnvironmentVariable("TimeoutDataRoot");
@@ -321,15 +310,11 @@ namespace Avalanche.Api.Managers.Media
             return "/" + translated;
         }
 
-        public async Task NextPage()
-        {
-            await _pgsTimeoutService.NextPage();
-        }
+        public async Task NextPage() =>
+            await _pgsTimeoutService.NextPage().ConfigureAwait(false);
 
-        public async Task PreviousPage()
-        {
-            await _pgsTimeoutService.PreviousPage();
-        }
+        public async Task PreviousPage() =>
+            await _pgsTimeoutService.PreviousPage().ConfigureAwait(false);
 
         #endregion
 
@@ -350,10 +335,10 @@ namespace Avalanche.Api.Managers.Media
             {
                 // save what is currently routed to all of the displays
                 // does nothing if the mode is not idle
-                await SaveCurrentRoutes();
+                await SaveCurrentRoutes().ConfigureAwait(false);
 
                 // get the collection of pgs displays and their checked state
-                var displays = await GetPgsStateForSinks();
+                var displays = await GetPgsStateForSinks().ConfigureAwait(false);
 
                 var request = new RouteVideoBatchRequest();
                 // create route message for all enabled displays
@@ -361,7 +346,9 @@ namespace Avalanche.Api.Managers.Media
                 {
                     // display is unchecked, skip this one
                     if (!sink.Enabled)
+                    {
                         continue;
+                    }
 
                     request.Routes.Add(new RouteVideoRequest
                     {
@@ -374,20 +361,22 @@ namespace Avalanche.Api.Managers.Media
                 // it is possible to uncheck all of the displays before starting pgs
                 // we don't want to batch route "nothing"
                 if (request.Routes.Any())
-                    await _routingService.RouteVideoBatch(request);
+                {
+                    await _routingService.RouteVideoBatch(request).ConfigureAwait(false);
+                }
 
                 // tell the player to go to pgs mode
                 // note that the player's idle mode is different than api's idle mode
-                await SetPgsTimeoutPlayerMode(PgsTimeoutModes.Pgs);
+                await SetPgsTimeoutPlayerMode(PgsTimeoutModes.Pgs).ConfigureAwait(false);
 
                 // tell the player to play video if it isn't
-                await SetPgsVideoPlaybackState(true);
+                await SetPgsVideoPlaybackState(true).ConfigureAwait(false);
 
                 // unmute the player
-                await SetPgsMute(false);
+                await SetPgsMute(false).ConfigureAwait(false);
 
                 // set the room mode to pgs which ends up publishing the event
-                await SetRoomMode(PgsTimeoutRoomState.Pgs);
+                await SetRoomMode(PgsTimeoutRoomState.Pgs).ConfigureAwait(false);
             }
             finally
             {
@@ -402,14 +391,14 @@ namespace Avalanche.Api.Managers.Media
             try
             {
                 // this won't save routes if the current mode is pgs or timeout
-                await SaveCurrentRoutes();
+                await SaveCurrentRoutes().ConfigureAwait(false);
 
                 // tell the player to activate timeout mode
                 // TODO: this behavior will need to be revisited when we implement external video source timeout
-                await SetPgsTimeoutPlayerMode(PgsTimeoutModes.Timeout);
+                await SetPgsTimeoutPlayerMode(PgsTimeoutModes.Timeout).ConfigureAwait(false);
 
                 // go to the first page when starting timeout
-                await SetTimeoutPage(0);
+                await SetTimeoutPage(0).ConfigureAwait(false);
 
                 // route timeout to all displays
                 var request = new RouteVideoBatchRequest();
@@ -423,7 +412,9 @@ namespace Avalanche.Api.Managers.Media
                 }
 
                 if (request.Routes.Any())
-                    await _routingService.RouteVideoBatch(request);
+                {
+                    await _routingService.RouteVideoBatch(request).ConfigureAwait(false);
+                }
 
                 if (_timeoutConfig.Mode == TimeoutModes.VideoSource)
                 {
@@ -436,7 +427,7 @@ namespace Avalanche.Api.Managers.Media
                 }
 
                 // room is now in timeout mode
-                await SetRoomMode(PgsTimeoutRoomState.Timeout);
+                await SetRoomMode(PgsTimeoutRoomState.Timeout).ConfigureAwait(false);
             }
             finally
             {
@@ -456,22 +447,24 @@ namespace Avalanche.Api.Managers.Media
             {
                 // no pgs or timeout, do nothing
                 if (_currentPgsTimeoutState == PgsTimeoutRoomState.Idle)
+                {
                     return;
+                }
 
                 // tell the player to go back to looping the video
-                await SetPgsTimeoutPlayerMode(PgsTimeoutModes.Pgs);
+                await SetPgsTimeoutPlayerMode(PgsTimeoutModes.Pgs).ConfigureAwait(false);
 
                 // ensure the video is playing
-                await SetPgsVideoPlaybackState(true);
+                await SetPgsVideoPlaybackState(true).ConfigureAwait(false);
 
                 // mute the audio as this stops pgs
-                await SetPgsMute(true);
+                await SetPgsMute(true).ConfigureAwait(false);
 
                 // load the pre pgs/timeout routes
-                await LoadSavedRoutes();
+                await LoadSavedRoutes().ConfigureAwait(false);
 
                 // room mode is now idle
-                await SetRoomMode(PgsTimeoutRoomState.Idle);
+                await SetRoomMode(PgsTimeoutRoomState.Idle).ConfigureAwait(false);
             }
             finally
             {
@@ -496,15 +489,19 @@ namespace Avalanche.Api.Managers.Media
 
             // only save routes if we're not in pgs/timeout
             if (_currentPgsTimeoutState != PgsTimeoutRoomState.Idle)
+            {
                 return;
+            }
 
-            _currentRoutes = await _routingService.GetCurrentRoutes();
+            _currentRoutes = await _routingService.GetCurrentRoutes().ConfigureAwait(false);
         }
 
         private async Task LoadSavedRoutes()
         {
             if (_currentPgsTimeoutState == PgsTimeoutRoomState.Idle)
+            {
                 return;
+            }
 
             // only restore displays that are pgs or timeout displays
             var request = new RouteVideoBatchRequest();
@@ -512,7 +509,7 @@ namespace Avalanche.Api.Managers.Media
                 _pgsConfig.Sinks.Any(y => AliasIndexEquals((x.Sink.Alias, x.Sink.Index), (y.Alias, y.Index))) ||
                 _timeoutConfig.Sinks.Any(y => AliasIndexEquals((x.Sink.Alias, x.Sink.Index), (y.Alias, y.Index))))
                 .Select(x => new RouteVideoRequest { Sink = x.Sink, Source = x.Source }));
-            await _routingService.RouteVideoBatch(request);
+            await _routingService.RouteVideoBatch(request).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -534,7 +531,7 @@ namespace Avalanche.Api.Managers.Media
                 {
                     Source = _mapper.Map<AliasIndexModel, AliasIndexMessage>(pgsSource),
                     Sink = _mapper.Map<AliasIndexViewModel, AliasIndexMessage>(sink)
-                });
+                }).ConfigureAwait(false);
             }
             else
             {
@@ -545,7 +542,7 @@ namespace Avalanche.Api.Managers.Media
                     {
                         Source = route.Source,
                         Sink = _mapper.Map<AliasIndexViewModel, AliasIndexMessage>(sink)
-                    });
+                    }).ConfigureAwait(false);
                 }
             }
         }
@@ -585,11 +582,9 @@ namespace Avalanche.Api.Managers.Media
         /// <param name="left"></param>
         /// <param name="right"></param>
         /// <returns></returns>
-        private bool AliasIndexEquals((string Alias, string Index) left, (string Alias, string Index) right)
-        {
-            return string.Equals(left.Alias, right.Alias, StringComparison.OrdinalIgnoreCase) &&
+        private bool AliasIndexEquals((string Alias, string Index) left, (string Alias, string Index) right) =>
+            string.Equals(left.Alias, right.Alias, StringComparison.OrdinalIgnoreCase) &&
                    string.Equals(left.Index, right.Index, StringComparison.OrdinalIgnoreCase);
-        }
 
         #endregion
 

@@ -72,57 +72,61 @@ namespace Avalanche.Api.Managers.Maintenance
             Preconditions.ThrowIfNull(nameof(reindexRequest), reindexRequest);
             Preconditions.ThrowIfNullOrEmpty(nameof(reindexRequest.RepositoryName), reindexRequest.RepositoryName);
 
-            var response = await _libraryService.ReindexRepository(reindexRequest.RepositoryName);
+            var response = await _libraryService.ReindexRepository(reindexRequest.RepositoryName).ConfigureAwait(false);
             return _mapper.Map<ReindexStatusViewModel>(response);
         }
 
         public async Task SaveCategoryPolicies(DynamicSectionViewModel category)
         {
-            await SaveJsonValues(category, _configurationContext);
+            await SaveJsonValues(category, _configurationContext).ConfigureAwait(false);
 
             DynamicSettingsHelper.CleanSettings(category);
 
-            await _storageService.SaveJsonMetadata(category.Metadata, JsonConvert.SerializeObject(category), 1, _configurationContext);
+            await _storageService.SaveJsonMetadata(category.Metadata, JsonConvert.SerializeObject(category), 1, _configurationContext).ConfigureAwait(false);
         }
 
         public async Task SaveCategory(DynamicSectionViewModel category)
         {
-            await SaveSources(category, category.JsonKey);
+            await SaveSources(category, category.JsonKey).ConfigureAwait(false);
 
             if (category.Sections != null)
             {
                 foreach (var section in category.Sections)
                 {
-                    await SaveSources(section, category.JsonKey);
+                    await SaveSources(section, category.JsonKey).ConfigureAwait(false);
                 }
             }
 
-            await SaveJsonValues(category, _configurationContext);
+            await SaveJsonValues(category, _configurationContext).ConfigureAwait(false);
         }
 
         public async Task SaveEntityChanges(DynamicListViewModel category, DynamicListActions action)
         {
             if (category.SaveAsFile)
-                await SaveCustomListFile(category);
+            {
+                await SaveCustomListFile(category).ConfigureAwait(false);
+            }
             else
-                await SaveCustomEntity(category, action);
+            {
+                await SaveCustomEntity(category, action).ConfigureAwait(false);
+            }
         }
 
         public async Task<DynamicSectionViewModel> GetCategoryByKey(string key)
         {
-            var category = await _storageService.GetJsonObject<DynamicSectionViewModel>(key, 1, _configurationContext);
-            var settingValues = await _storageService.GetJson(category.JsonKey, 1, _configurationContext);
+            var category = await _storageService.GetJsonObject<DynamicSectionViewModel>(key, 1, _configurationContext).ConfigureAwait(false);
+            var settingValues = await _storageService.GetJson(category.JsonKey, 1, _configurationContext).ConfigureAwait(false);
 
-            var policiesTypes = (await _storageService.GetJsonObject<List<KeyValuePairViewModel>>("SettingsPolicies", 1, _configurationContext));
-            var types = await GetList("SettingTypes");
+            var policiesTypes = await _storageService.GetJsonObject<List<KeyValuePairViewModel>>("SettingsPolicies", 1, _configurationContext).ConfigureAwait(false);
+            var types = await GetList("SettingTypes").ConfigureAwait(false);
 
-            await SetCategorySources(category, settingValues, types);
+            await SetCategorySources(category, settingValues, types).ConfigureAwait(false);
 
             DynamicSettingsHelper.SetSettingValues(category, settingValues, policiesTypes);
 
             if (category.Sections != null)
             {
-                await SetSettingsValues(category, settingValues, policiesTypes, types);
+                await SetSettingsValues(category, settingValues, policiesTypes, types).ConfigureAwait(false);
             }
 
             return category;
@@ -130,7 +134,7 @@ namespace Avalanche.Api.Managers.Maintenance
 
         public async Task<DynamicListViewModel> GetCategoryListByKey(string key, string parentId)
         {
-            var category = await _storageService.GetJsonObject<DynamicListViewModel>(key, 1, _configurationContext);
+            var category = await _storageService.GetJsonObject<DynamicListViewModel>(key, 1, _configurationContext).ConfigureAwait(false);
 
             CheckLinks(category);
 
@@ -139,12 +143,12 @@ namespace Avalanche.Api.Managers.Maintenance
             switch (category.SourceKey)
             {
                 case "Departments":
-                    var departments = await _dataManager.GetAllDepartments();
+                    var departments = await _dataManager.GetAllDepartments().ConfigureAwait(false);
                     values = JsonConvert.DeserializeObject<List<dynamic>>(JsonConvert.SerializeObject(departments));
                     break;
 
                 case "ProcedureTypesWithEmpty":
-                    var procedureTypesWithEmpty = await _dataManager.GetAllProcedureTypes();
+                    var procedureTypesWithEmpty = await _dataManager.GetAllProcedureTypes().ConfigureAwait(false);
                     //Added to follow business rule. This represents empty procedure type, used just in dropdown of labels
                     procedureTypesWithEmpty.Insert(0, new ProcedureTypeModel
                     {
@@ -155,7 +159,7 @@ namespace Avalanche.Api.Managers.Maintenance
                     break;
 
                 case "ProcedureTypes":
-                    var procedureTypes = await _dataManager.GetAllProcedureTypes();
+                    var procedureTypes = await _dataManager.GetAllProcedureTypes().ConfigureAwait(false);
                     values = JsonConvert.DeserializeObject<List<dynamic>>(JsonConvert.SerializeObject(procedureTypes));
                     break;
 
@@ -163,28 +167,32 @@ namespace Avalanche.Api.Managers.Maintenance
                     List<LabelModel> labels = null;
 
                     if (parentId == null)
-                        labels = await _dataManager.GetAllLabels();
+                    {
+                        labels = await _dataManager.GetAllLabels().ConfigureAwait(false);
+                    }
                     else
-                        labels = await _dataManager.GetLabelsByProcedureType(Convert.ToInt32(parentId));
+                    {
+                        labels = await _dataManager.GetLabelsByProcedureType(Convert.ToInt32(parentId)).ConfigureAwait(false);
+                    }
 
                     values = JsonConvert.DeserializeObject<List<dynamic>>(JsonConvert.SerializeObject(labels));
                     break;
 
                 default:
-                    values = await _storageService.GetJsonDynamicList(category.SourceKey, 1, _configurationContext);
+                    values = await _storageService.GetJsonDynamicList(category.SourceKey, 1, _configurationContext).ConfigureAwait(false);
                     break;
 
             }
 
-            return values == null ? null : await BuildCategoryList(category, values);
+            return values == null ? null : await BuildCategoryList(category, values).ConfigureAwait(false);
         }
 
         public async Task<DynamicListViewModel> GetEmbeddedListByKey(string settingValues, string metadataKey, string listKey)
         {
-            var category = await _storageService.GetJsonObject<DynamicListViewModel>(metadataKey, 1, _configurationContext);
+            var category = await _storageService.GetJsonObject<DynamicListViewModel>(metadataKey, 1, _configurationContext).ConfigureAwait(false);
             var values = DynamicSettingsHelper.GetEmbeddedList(listKey, settingValues);
 
-            return await BuildCategoryList(category, values);
+            return await BuildCategoryList(category, values).ConfigureAwait(false);
         }
 
         private async Task<DynamicListViewModel> BuildCategoryList(DynamicListViewModel category, List<dynamic> values) 
@@ -195,18 +203,18 @@ namespace Avalanche.Api.Managers.Maintenance
             {
                 foreach (var property in category.Properties)
                 {
-                    property.SourceValues = await GetPropertySources(property);
+                    property.SourceValues = await GetPropertySources(property).ConfigureAwait(false);
                 }
             }
             else
             {
                 foreach (var property in category.Properties)
                 {
-                    await SetIsRequired(category.SourceKey, property);
+                    await SetIsRequired(category.SourceKey, property).ConfigureAwait(false);
 
                     if (!string.IsNullOrEmpty(property.SourceKey))
                     {
-                        property.SourceValues = await GetPropertySources(property);
+                        property.SourceValues = await GetPropertySources(property).ConfigureAwait(false);
 
                         if (property.SourceValues != null)
                         {
@@ -226,11 +234,11 @@ namespace Avalanche.Api.Managers.Maintenance
         {
             var serializedElement = JsonConvert.SerializeObject(element);
 
-            JObject jsonElement = JObject.Parse(serializedElement);
+            var jsonElement = JObject.Parse(serializedElement);
 
             var id = jsonElement[property.JsonKey];
 
-            var found = property.SourceValues.Where(s => s.Id == id).FirstOrDefault();
+            var found = property.SourceValues.FirstOrDefault(s => s.Id == id);
 
             if (found == null)
             {
@@ -244,11 +252,13 @@ namespace Avalanche.Api.Managers.Maintenance
 
                 dynamic jsonElementObject = JsonConvert.DeserializeObject<ExpandoObject>(JsonConvert.SerializeObject(jsonElement));
 
-                var _original = (IDictionary<string, object>)jsonElementObject;
-                var _clone = (IDictionary<string, object>)element;
+                var original = (IDictionary<string, object>)jsonElementObject;
+                var clone = (IDictionary<string, object>)element;
 
-                foreach (var propertyKey in _original)
-                    _clone[propertyKey.Key] = propertyKey.Value;
+                foreach (var propertyKey in original)
+                {
+                    clone[propertyKey.Key] = propertyKey.Value;
+                }
             }
         }
 
@@ -285,13 +295,13 @@ namespace Avalanche.Api.Managers.Maintenance
                         return JsonConvert.DeserializeObject<List<dynamic>>(JsonConvert.SerializeObject(dynamicVideoSinks));
 
                     case "Departments":
-                        var departments = await _dataManager.GetAllDepartments();
+                        var departments = await _dataManager.GetAllDepartments().ConfigureAwait(false);
                         var dynamicDepartments = JsonConvert.DeserializeObject<List<dynamic>>(JsonConvert.SerializeObject(departments));
                         return GetDynamicList(property, dynamicDepartments);
 
                     case "ProcedureTypesWithEmpty":
                     case "ProcedureTypes":
-                        var procedureTypes = await _dataManager.GetAllProcedureTypes();
+                        var procedureTypes = await _dataManager.GetAllProcedureTypes().ConfigureAwait(false);
                         //Added to follow business rule. This represents empty procedure type, used just in dropdown of labels
                         procedureTypes.Insert(0, new ProcedureTypeModel
                         {
@@ -302,7 +312,7 @@ namespace Avalanche.Api.Managers.Maintenance
                         return GetDynamicList(property, dynamicProcedureTypes);
 
                     default:
-                        return await GetDynamicData(property);
+                        return await GetDynamicData(property).ConfigureAwait(false);
                 }
             }
 
@@ -314,21 +324,19 @@ namespace Avalanche.Api.Managers.Maintenance
         {
             foreach (var section in rootSection.Sections)
             {
-                await SetCategorySources(section, settingValues, types);
+                await SetCategorySources(section, settingValues, types).ConfigureAwait(false);
 
                 DynamicSettingsHelper.SetSettingValues(section, settingValues, policiesTypes);
 
                 if (section.Sections != null)
                 {
-                    await SetSettingsValues(section, settingValues, policiesTypes, types);
+                    await SetSettingsValues(section, settingValues, policiesTypes, types).ConfigureAwait(false);
                 }
             }
         }
 
-        public async Task<dynamic> GetSettingValues(string key)
-        {
-            return await _storageService.GetJsonDynamic(key, 1, _configurationContext);
-        }
+        public async Task<dynamic> GetSettingValues(string key) =>
+            await _storageService.GetJsonDynamic(key, 1, _configurationContext).ConfigureAwait(false);
 
         private async Task SetCategorySources(DynamicSectionViewModel category, string settingValues, List<dynamic> types)
         {
@@ -354,11 +362,11 @@ namespace Avalanche.Api.Managers.Maintenance
                         switch (setting.VisualStyle)
                         {
                             case VisualStyles.ExternalList:
-                                setting.CustomList = await GetCategoryListByKey(setting.SourceKey, null);
+                                setting.CustomList = await GetCategoryListByKey(setting.SourceKey, null).ConfigureAwait(false);
                                 break;
 
                             case VisualStyles.EmbeddedList:
-                                setting.CustomList = await GetEmbeddedListByKey(settingValues, setting.SourceKey, setting.JsonKey);
+                                setting.CustomList = await GetEmbeddedListByKey(settingValues, setting.SourceKey, setting.JsonKey).ConfigureAwait(false);
                                 break;
 
                             case VisualStyles.EmbeddedGenericList:
@@ -367,23 +375,23 @@ namespace Avalanche.Api.Managers.Maintenance
 
                             case VisualStyles.DropDownExternalEmbeddedList:
                                 var externalKey = setting.Source;
-                                var externalSettingValues = await _storageService.GetJson(externalKey, 1, _configurationContext);
+                                var externalSettingValues = await _storageService.GetJson(externalKey, 1, _configurationContext).ConfigureAwait(false);
                                 var externalValues = DynamicSettingsHelper.GetEmbeddedList(setting.SourceKey, externalSettingValues);
                                 setting.SourceValues = GetDynamicList(setting, externalValues);
                                 break;
 
                             case VisualStyles.DropDownEmbeddedList:
                             case VisualStyles.DropDownExternalList:
-                                setting.SourceValues = await GetDynamicData(setting, settingValues);
+                                setting.SourceValues = await GetDynamicData(setting, settingValues).ConfigureAwait(false);
                                 break;
 
                             case VisualStyles.DropDownGenericList:
                             case VisualStyles.ExternalGenericList:
-                                var values = await GetDynamicData(setting);
+                                var values = await GetDynamicData(setting).ConfigureAwait(false);
                                 setting.SourceValues = AddTypes(values, types);
                                 break;
                             case VisualStyles.DropDownCustomList:
-                                var customValues = await GetCustomValues(setting);
+                                var customValues = await GetCustomValues(setting).ConfigureAwait(false);
                                 setting.SourceValues = GetDynamicList(setting, customValues);
                                 break;
                         }
@@ -397,8 +405,10 @@ namespace Avalanche.Api.Managers.Maintenance
             switch (setting.SourceKey)
             {
                 case "Printers":
-                    var printersResponse = await _printingService.GetPrinters();
+                    var printersResponse = await _printingService.GetPrinters().ConfigureAwait(false);
                     return JsonConvert.DeserializeObject<List<dynamic>>(JsonConvert.SerializeObject(printersResponse.Printers.Select(p => new { Name = p })));
+                default:
+                    break;
             }
 
             return new List<dynamic>();
@@ -459,7 +469,7 @@ namespace Avalanche.Api.Managers.Maintenance
                 return GetDynamicList(setting, values);
             }
 
-            var list = await _storageService.GetJsonDynamicList(setting.SourceKey, 1, _configurationContext);
+            var list = await _storageService.GetJsonDynamicList(setting.SourceKey, 1, _configurationContext).ConfigureAwait(false);
 
             return GetDynamicList(setting, list);
         }
@@ -474,7 +484,9 @@ namespace Avalanche.Api.Managers.Maintenance
                     expandoObj.Value = item[setting.SourceKeyValue];
 
                     if (!string.IsNullOrEmpty(setting.SourceKeyTranslationKey))
+                    {
                         expandoObj.TranslationKey = item[setting.SourceKeyTranslationKey];
+                    }
 
                     expandoObj.RelatedObject = item;
                     return (ExpandoObject)expandoObj;
@@ -497,17 +509,21 @@ namespace Avalanche.Api.Managers.Maintenance
                             var customList = item.CustomList;
 
                             if (customList.SaveAsFile)
-                                await SaveCustomListFile(customList);
+                            {
+                                await SaveCustomListFile(customList).ConfigureAwait(false);
+                            }
                             else
-                                await SaveCustomEntities(customList);
+                            {
+                                await SaveCustomEntities(customList).ConfigureAwait(false);
+                            }
                         }
                         else if (item.VisualStyle == VisualStyles.EmbeddedList)
                         {
-                            await SaveEmbeddedList(settingsKey, item.JsonKey, JsonConvert.SerializeObject(item.CustomList.Data), item.CustomList.Schema);
+                            await SaveEmbeddedList(settingsKey, item.JsonKey, JsonConvert.SerializeObject(item.CustomList.Data), item.CustomList.Schema).ConfigureAwait(false);
                         }
                         else if (item.VisualStyle == VisualStyles.EmbeddedGenericList)
                         {
-                            await SaveEmbeddedList(settingsKey, item.SourceKey, JsonConvert.SerializeObject(item.SourceValues));
+                            await SaveEmbeddedList(settingsKey, item.SourceKey, JsonConvert.SerializeObject(item.SourceValues)).ConfigureAwait(false);
                         }
                     }
                 }
@@ -516,16 +532,18 @@ namespace Avalanche.Api.Managers.Maintenance
 
         private async Task SaveJsonValues(DynamicSectionViewModel category, ConfigurationContext configurationContext)
         {
-            string json = DynamicSettingsHelper.GetJsonValues(category);
+            var json = DynamicSettingsHelper.GetJsonValues(category);
 
-            if (await _storageService.ValidateSchema(category.Schema, json, 1, configurationContext))
+            if (await _storageService.ValidateSchema(category.Schema, json, 1, configurationContext).ConfigureAwait(false))
             {
-                await _storageService.SaveJsonObject(category.JsonKey, json, 1, configurationContext);
+                await _storageService.SaveJsonObject(category.JsonKey, json, 1, configurationContext).ConfigureAwait(false);
 
                 switch (category.JsonKey)
                 {
                     case "PrintingConfiguration":
                         _sharedConfigurationManager.UseVSSPrintingService(json.Get<PrintingConfiguration>().UseVSSPrintingService);
+                        break;
+                    default:
                         break;
                 }
             }
@@ -540,13 +558,13 @@ namespace Avalanche.Api.Managers.Maintenance
             switch (customList.SourceKey)
             {
                 case "Departments":
-                    await SaveDepartment(action, customList.Entity);
+                    await SaveDepartment(action, customList.Entity).ConfigureAwait(false);
                     break;
                 case "ProcedureTypes":
-                    await SaveProcedureType(action, customList.Entity);
+                    await SaveProcedureType(action, customList.Entity).ConfigureAwait(false);
                     break;
                 case "Labels":
-                    await SaveLabel(action, customList.Entity);
+                    await SaveLabel(action, customList.Entity).ConfigureAwait(false);
                     break;
                 default:
                     throw new ValidationException("Method Not Allowed");
@@ -560,19 +578,19 @@ namespace Avalanche.Api.Managers.Maintenance
                 case "Departments":
                     foreach (var item in category.NewData)
                     {
-                        await SaveDepartment(DynamicListActions.Insert, item);
+                        await SaveDepartment(DynamicListActions.Insert, item).ConfigureAwait(false);
                     }
                     break;
                 case "ProcedureTypes":
                     foreach (var item in category.DeletedData)
                     {
-                        await SaveDepartment(DynamicListActions.Delete, item);
+                        await SaveDepartment(DynamicListActions.Delete, item).ConfigureAwait(false);
                     }
                     break;
                 case "Labels":
                     foreach (var item in category.DeletedData)
                     {
-                        await SaveLabel(DynamicListActions.Delete, item);
+                        await SaveLabel(DynamicListActions.Delete, item).ConfigureAwait(false);
                     }
                     break;
             }
@@ -595,13 +613,13 @@ namespace Avalanche.Api.Managers.Maintenance
             switch (action)
             {
                 case DynamicListActions.Insert:
-                    await _dataManager.AddLabel(label);
+                    await _dataManager.AddLabel(label).ConfigureAwait(false);
                     break;
                 case DynamicListActions.Update:
-                    await _dataManager.UpdateLabel(label);
+                    await _dataManager.UpdateLabel(label).ConfigureAwait(false);
                     break;
                 case DynamicListActions.Delete:
-                    await _dataManager.DeleteLabel(label);
+                    await _dataManager.DeleteLabel(label).ConfigureAwait(false);
                     break;
                 default:
                     throw new ValidationException("Method Not Allowed");
@@ -620,10 +638,10 @@ namespace Avalanche.Api.Managers.Maintenance
             switch (action)
             {
                 case DynamicListActions.Insert:
-                    await _dataManager.AddProcedureType(procedureType);
+                    await _dataManager.AddProcedureType(procedureType).ConfigureAwait(false);
                     break;
                 case DynamicListActions.Delete:
-                    await _dataManager.DeleteProcedureType(procedureType);
+                    await _dataManager.DeleteProcedureType(procedureType).ConfigureAwait(false);
                     break;
                 default:
                     throw new ValidationException("Method Not Allowed");
@@ -639,10 +657,10 @@ namespace Avalanche.Api.Managers.Maintenance
             switch (action)
             {
                 case DynamicListActions.Insert:
-                    await _dataManager.AddDepartment(department);
+                    await _dataManager.AddDepartment(department).ConfigureAwait(false);
                     break;
                 case DynamicListActions.Delete:
-                    await _dataManager.DeleteDepartment(department.Id);
+                    await _dataManager.DeleteDepartment(department.Id).ConfigureAwait(false);
                     break;
                 default:
                     throw new ValidationException("Method Not Allowed");
@@ -653,9 +671,9 @@ namespace Avalanche.Api.Managers.Maintenance
         {
             var json = JsonConvert.SerializeObject(customList.Data);
 
-            if (await _storageService.ValidateSchema(customList.Schema, json, 1, _configurationContext))
+            if (await _storageService.ValidateSchema(customList.Schema, json, 1, _configurationContext).ConfigureAwait(false))
             {
-                await _storageService.SaveJsonObject(customList.SourceKey, json, 1, _configurationContext, true);
+                await _storageService.SaveJsonObject(customList.SourceKey, json, 1, _configurationContext, true).ConfigureAwait(false);
             }
             else
             {
@@ -667,13 +685,11 @@ namespace Avalanche.Api.Managers.Maintenance
         {
             if (jsonKey == null)
             {
-                return await _storageService.GetJsonDynamicList(sourceKey, 1, _configurationContext);
+                return await _storageService.GetJsonDynamicList(sourceKey, 1, _configurationContext).ConfigureAwait(false);
             }
-            else
-            {
-                var settingValues = await _storageService.GetJson(sourceKey, 1, _configurationContext);
-                return DynamicSettingsHelper.GetEmbeddedList(jsonKey, settingValues);
-            }
+
+            var settingValues = await _storageService.GetJson(sourceKey, 1, _configurationContext).ConfigureAwait(false);
+            return DynamicSettingsHelper.GetEmbeddedList(jsonKey, settingValues);
         }
     }
 }

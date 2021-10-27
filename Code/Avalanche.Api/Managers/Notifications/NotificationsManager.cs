@@ -1,9 +1,7 @@
-﻿using Avalanche.Api.Hubs;
-using Avalanche.Shared.Infrastructure.Extensions;
+using Avalanche.Api.Hubs;
 using Ism.Broadcaster.Services;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 
 namespace Avalanche.Api.Managers.Notifications
 {
@@ -22,9 +20,7 @@ namespace Avalanche.Api.Managers.Notifications
             _logger = logger;
         }
 
-        public void SendDirectMessage(Ism.Broadcaster.Models.MessageRequest messageRequest)
-        {
+        public void SendDirectMessage(Ism.Broadcaster.Models.MessageRequest messageRequest) =>
             _broadcastService.Broadcast(messageRequest);
-        }
     }
 }

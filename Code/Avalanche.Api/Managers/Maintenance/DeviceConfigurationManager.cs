@@ -76,7 +76,7 @@ namespace Avalanche.Api.Managers.Maintenance
 
             _autoLabelsConfiguration.AutoLabels.AddRange(autoLabels);
 
-            await _storageService.SaveJsonObject(nameof(AutoLabelsConfiguration), _autoLabelsConfiguration.Json(), 1, _configurationContext);
+            await _storageService.SaveJsonObject(nameof(AutoLabelsConfiguration), _autoLabelsConfiguration.Json(), 1, _configurationContext).ConfigureAwait(false);
         }
     }
 }

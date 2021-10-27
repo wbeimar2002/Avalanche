@@ -172,16 +172,16 @@ namespace Avalanche.Api.Mapping
                 .ForMember(dest => dest.DateOfBirth, opt => opt.MapFrom(src => src.DateOfBirth))
                 .ForMember(dest => dest.Sex, opt => opt.MapFrom(src => src.Sex.Id));
 
-            CreateMap<Avalanche.Shared.Domain.Models.DepartmentModel, Department>()
+            CreateMap<DepartmentModel, Department>()
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
                 .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name));
 
-            CreateMap<Avalanche.Shared.Domain.Models.ProcedureTypeModel, ProcedureType>()
+            CreateMap<ProcedureTypeModel, ProcedureType>()
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
                 .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name));
 
 
-            CreateMap<Avalanche.Shared.Domain.Models.PhysicianModel, Physician>()
+            CreateMap<PhysicianModel, Physician>()
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
                 .ForMember(dest => dest.FirstName, opt => opt.MapFrom(src => src.FirstName))
                 .ForMember(dest => dest.LastName, opt => opt.MapFrom(src => src.LastName));
@@ -221,7 +221,7 @@ namespace Avalanche.Api.Mapping
             CreateMap<Ism.IsmLogCommon.Core.AccessInfo, Ism.Library.V1.Protos.AccessInfoMessage>()
                 .ReverseMap();
 
-            CreateMap<Ism.Library.V1.Protos.ProcedureIdMessage, ProcedureIdViewModel>()
+            CreateMap<ProcedureIdMessage, ProcedureIdViewModel>()
                 .ReverseMap();
 
             CreateMap<Ism.Library.V1.Protos.AllocateNewProcedureResponse, ProcedureAllocationViewModel>()
@@ -233,10 +233,13 @@ namespace Avalanche.Api.Mapping
         private FixedDateTimeMessage GetFixedDateTime(DateTime? dateTime)
         {
             if (dateTime == null)
+            {
                 return null;
+            }
             else
+            {
                 return new FixedDateTimeMessage()
-                { 
+                {
                     Year = dateTime.Value.Year,
                     Month = dateTime.Value.Month,
                     Day = dateTime.Value.Day,
@@ -244,6 +247,7 @@ namespace Avalanche.Api.Mapping
                     Minute = dateTime.Value.Minute,
                     Second = dateTime.Value.Second,
                 };
+            }
         }
 
         private List<ProcedureExportStatus> GetProcedureExportStatus()

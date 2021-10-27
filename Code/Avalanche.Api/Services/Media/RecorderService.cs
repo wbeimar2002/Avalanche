@@ -14,12 +14,12 @@ namespace Avalanche.Api.Services.Media
 
         public async Task<bool> IsRecording()
         {
-            switch ((Avalanche.Shared.Domain.Enumerations.RecorderState)(await _client.GetRecorderState().ConfigureAwait(false)).State)
+            switch ((Shared.Domain.Enumerations.RecorderState)(await _client.GetRecorderState().ConfigureAwait(false)).State)
             {
-                case Avalanche.Shared.Domain.Enumerations.RecorderState.proc_recording_mov:
-                case Avalanche.Shared.Domain.Enumerations.RecorderState.proc_recording_mov_and_pm:
-                case Avalanche.Shared.Domain.Enumerations.RecorderState.proc_recording_pm:
-                case Avalanche.Shared.Domain.Enumerations.RecorderState.proc_saving:
+                case Shared.Domain.Enumerations.RecorderState.proc_recording_mov:
+                case Shared.Domain.Enumerations.RecorderState.proc_recording_mov_and_pm:
+                case Shared.Domain.Enumerations.RecorderState.proc_recording_pm:
+                case Shared.Domain.Enumerations.RecorderState.proc_saving:
                     return true;
                 default:
                     return false;

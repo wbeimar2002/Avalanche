@@ -16,13 +16,13 @@ namespace Avalanche.Api.Helpers
 
             return new FeaturesConfiguration
             {
-                IsDevice = await featureManager.IsEnabledAsync(FeatureFlags.IsDevice),
-                ActiveProcedure = await featureManager.IsEnabledAsync(FeatureFlags.ActiveProcedure),
-                Devices = await featureManager.IsEnabledAsync(FeatureFlags.Devices),
-                Media = await featureManager.IsEnabledAsync(FeatureFlags.Media),
-                Presets = await featureManager.IsEnabledAsync(FeatureFlags.Presets),
-                Recording = await featureManager.IsEnabledAsync(FeatureFlags.Recording),
-                StreamSessions = await featureManager.IsEnabledAsync(FeatureFlags.StreamSessions),
+                IsDevice = await featureManager.IsEnabledAsync(FeatureFlags.IsDevice).ConfigureAwait(false),
+                ActiveProcedure = await featureManager.IsEnabledAsync(FeatureFlags.ActiveProcedure).ConfigureAwait(false),
+                Devices = await featureManager.IsEnabledAsync(FeatureFlags.Devices).ConfigureAwait(false),
+                Media = await featureManager.IsEnabledAsync(FeatureFlags.Media).ConfigureAwait(false),
+                Presets = await featureManager.IsEnabledAsync(FeatureFlags.Presets).ConfigureAwait(false),
+                Recording = await featureManager.IsEnabledAsync(FeatureFlags.Recording).ConfigureAwait(false),
+                StreamSessions = await featureManager.IsEnabledAsync(FeatureFlags.StreamSessions).ConfigureAwait(false),
             };
         }
     }

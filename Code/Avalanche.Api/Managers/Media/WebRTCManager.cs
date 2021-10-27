@@ -1,15 +1,11 @@
-﻿using AutoMapper;
+using AutoMapper;
 using Avalanche.Api.Services.Media;
 using Avalanche.Api.Utilities;
-using Avalanche.Shared.Domain.Models;
 using Avalanche.Shared.Domain.Models.Media;
-using Avalanche.Shared.Infrastructure.Helpers;
 using Ism.Streaming.V1.Protos;
 using Ism.Utility.Core;
 using Microsoft.AspNetCore.Http;
-using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace Avalanche.Api.Managers.Media
@@ -34,8 +30,8 @@ namespace Avalanche.Api.Managers.Media
 
         public async Task<IList<VideoDeviceModel>> GetSourceStreams()
         {
-            var result = await _webRTCService.GetSourceStreamsAsync();
-            IList<VideoDeviceModel> listResult = _mapper.Map<IList<Ism.Streaming.V1.Protos.WebRtcSourceMessage>, IList<VideoDeviceModel>>(result.Sources);
+            var result = await _webRTCService.GetSourceStreamsAsync().ConfigureAwait(false);
+            var listResult = _mapper.Map<IList<WebRtcSourceMessage>, IList<VideoDeviceModel>>(result.Sources);
             return listResult;
         }
 
@@ -63,7 +59,7 @@ namespace Avalanche.Api.Managers.Media
 
             SetInitRequestIpInfo(initRequest);
 
-            var actionResponse = await _webRTCService.InitSessionAsync(initRequest);
+            var actionResponse = await _webRTCService.InitSessionAsync(initRequest).ConfigureAwait(false);
 
             var messages = new List<string>();
 
@@ -78,7 +74,7 @@ namespace Avalanche.Api.Managers.Media
         public async Task DeInitSessionAsync(WebRTCMessaggeModel message)
         {
             Preconditions.ThrowIfNull(nameof(message.SessionId), message.SessionId);
-            await _webRTCService.DeInitSessionAsync(_mapper.Map<WebRTCMessaggeModel, DeInitSessionRequest>(message));
+            await _webRTCService.DeInitSessionAsync(_mapper.Map<WebRTCMessaggeModel, DeInitSessionRequest>(message)).ConfigureAwait(false);
         }
 
         private void SetInitRequestIpInfo(InitSessionRequest initRequest)

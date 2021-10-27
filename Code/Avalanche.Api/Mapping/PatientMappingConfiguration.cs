@@ -1,9 +1,7 @@
 using AutoMapper;
 using Avalanche.Api.ViewModels;
-using Avalanche.Shared.Domain.Models;
 using Google.Protobuf.WellKnownTypes;
 using Ism.Common.Core.Configuration.Models;
-using Ism.Storage.DataManagement.Client.V1.Protos;
 using System;
 
 namespace Avalanche.Api.Mapping
@@ -405,9 +403,7 @@ namespace Avalanche.Api.Mapping
 
         }
 
-        private KeyValuePairViewModel GetSex(string sex)
-        {
-            return MappingUtilities.GetSexViewModel(sex);
-        }
+        private KeyValuePairViewModel GetSex(string sex) =>
+            MappingUtilities.GetSexViewModel(sex);
     }
 }

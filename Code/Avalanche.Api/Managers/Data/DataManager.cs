@@ -50,36 +50,36 @@ namespace Avalanche.Api.Managers.Data
         {
             if (jsonKey == null)
             {
-                return await _storageService.GetJsonDynamicList(sourceKey, 1, _configurationContext);
+                return await _storageService.GetJsonDynamicList(sourceKey, 1, _configurationContext).ConfigureAwait(false);
             }
             else
             {
-                var settingValues = await _storageService.GetJson(sourceKey, 1, _configurationContext);
+                var settingValues = await _storageService.GetJson(sourceKey, 1, _configurationContext).ConfigureAwait(false);
                 return DynamicSettingsHelper.GetEmbeddedList(jsonKey, settingValues);
             }
         }
 
         public async Task<DepartmentModel> AddDepartment(DepartmentModel department)
         {
-            await ValidateDepartmentsSupport();
+            await ValidateDepartmentsSupport().ConfigureAwait(false);
             Preconditions.ThrowIfNull(nameof(department.Name), department.Name);
 
-            var result = await _dataManagementService.AddDepartment(_mapper.Map<DepartmentModel, AddDepartmentRequest>(department));
+            var result = await _dataManagementService.AddDepartment(_mapper.Map<DepartmentModel, AddDepartmentRequest>(department)).ConfigureAwait(false);
             return _mapper.Map<AddDepartmentResponse, DepartmentModel>(result);
         }
 
         public async Task DeleteDepartment(int departmentId)
         {
-            await ValidateDepartmentsSupport();
+            await ValidateDepartmentsSupport().ConfigureAwait(false);
 
-            await _dataManagementService.DeleteDepartment(new DeleteDepartmentRequest() { DepartmentId = departmentId });
+            await _dataManagementService.DeleteDepartment(new DeleteDepartmentRequest() { DepartmentId = departmentId }).ConfigureAwait(false);
         }
 
         public async Task<IList<DepartmentModel>> GetAllDepartments()
         {
-            await ValidateDepartmentsSupport();
+            await ValidateDepartmentsSupport().ConfigureAwait(false);
 
-            var result = await _dataManagementService.GetAllDepartments();
+            var result = await _dataManagementService.GetAllDepartments().ConfigureAwait(false);
 
             return _mapper.Map<IList<DepartmentMessage>, IList<DepartmentModel>>(result.DepartmentList)
                 .OrderBy(d => d.Name).ToList();
@@ -87,10 +87,10 @@ namespace Avalanche.Api.Managers.Data
 
         public async Task<ProcedureTypeModel> AddProcedureType(ProcedureTypeModel procedureType)
         {
-            await ValidateDepartmentsSupport(procedureType.DepartmentId);
+            await ValidateDepartmentsSupport(procedureType.DepartmentId).ConfigureAwait(false);
             Preconditions.ThrowIfNull(nameof(procedureType.Name), procedureType.Name);
 
-            var result = await _dataManagementService.AddProcedureType(_mapper.Map<ProcedureTypeModel, AddProcedureTypeRequest>(procedureType));
+            var result = await _dataManagementService.AddProcedureType(_mapper.Map<ProcedureTypeModel, AddProcedureTypeRequest>(procedureType)).ConfigureAwait(false);
             return _mapper.Map<AddProcedureTypeResponse, ProcedureTypeModel>(result);
         }
 
@@ -98,60 +98,62 @@ namespace Avalanche.Api.Managers.Data
         {
             Preconditions.ThrowIfNull(nameof(procedureType.Name), procedureType.Name);
 
-            await ValidateDepartmentsSupport(procedureType.DepartmentId);
+            await ValidateDepartmentsSupport(procedureType.DepartmentId).ConfigureAwait(false);
 
-            await _dataManagementService.DeleteProcedureType(_mapper.Map<ProcedureTypeModel, DeleteProcedureTypeRequest>(procedureType));
+            await _dataManagementService.DeleteProcedureType(_mapper.Map<ProcedureTypeModel, DeleteProcedureTypeRequest>(procedureType)).ConfigureAwait(false);
         }
 
         public async Task<List<ProcedureTypeModel>> GetProcedureTypesByDepartment(int? departmentId)
         {
             await ValidateDepartmentsSupport(departmentId);
 
-            var result = await _dataManagementService.GetProcedureTypesByDepartment(new Ism.Storage.DataManagement.Client.V1.Protos.GetProcedureTypesByDepartmentRequest()
+            var result = await _dataManagementService.GetProcedureTypesByDepartment(new GetProcedureTypesByDepartmentRequest()
             {
                 DepartmentId = departmentId
-            });
+            }).ConfigureAwait(false);
 
             return _mapper.Map<IList<ProcedureTypeMessage>, IList<ProcedureTypeModel>>(result.ProcedureTypeList).ToList();
         }
 
         public async Task<List<ProcedureTypeModel>> GetAllProcedureTypes()
         {
-            var result = await _dataManagementService.GetAllProcedureTypes();
-            var list = _mapper.Map<IList<ProcedureTypeMessage>, IList<ProcedureTypeModel>>(result.ProcedureTypeList).ToList();
-
-            return list;
+            var result = await _dataManagementService.GetAllProcedureTypes().ConfigureAwait(false);
+            return _mapper.Map<IList<ProcedureTypeMessage>, IList<ProcedureTypeModel>>(result.ProcedureTypeList).ToList();
         }
 
         public async Task ValidateDepartmentsSupport()
         {
-            bool departmentSupported = _setupConfiguration.General.DepartmentsSupported;
+            var departmentSupported = _setupConfiguration.General.DepartmentsSupported;
             if (!departmentSupported)
             {
-                throw new System.InvalidOperationException("Departments are not supported");
+                throw new InvalidOperationException("Departments are not supported");
             }
         }
 
         public async Task ValidateDepartmentsSupport(int? departmentId)
         {
-            bool departmentSupported = _setupConfiguration.General.DepartmentsSupported;
-            #warning TODO: Check the strategy to throw business logic exceptions. Same exceptions in Patients Manager
+            var departmentSupported = _setupConfiguration.General.DepartmentsSupported;
+#warning TODO: Check the strategy to throw business logic exceptions. Same exceptions in Patients Manager
             if (departmentSupported)
             {
                 if (departmentId == null || departmentId == 0)
-                    throw new System.ArgumentNullException("Department value is invalid. It should not be null. Departments are supported.");
+                {
+                    throw new ArgumentNullException("Department value is invalid. It should not be null. Departments are supported.");
+                }
             }
             else
             {
                 if (departmentId != null && departmentId != 0)
-                    throw new System.ArgumentException("Department value is invalid. Departments are not supported.");
+                {
+                    throw new ArgumentException("Department value is invalid. Departments are not supported.");
+                }
             }
         }
 
         public async Task<LabelModel> AddLabel(LabelModel label)
         {
             Preconditions.ThrowIfNull(nameof(label.Name), label.Name);
-            var result = await _dataManagementService.AddLabel(_mapper.Map<LabelModel, AddLabelRequest>(label));
+            var result = await _dataManagementService.AddLabel(_mapper.Map<LabelModel, AddLabelRequest>(label)).ConfigureAwait(false);
             return _mapper.Map<AddLabelResponse, LabelModel>(result);
         }
 
@@ -160,13 +162,13 @@ namespace Avalanche.Api.Managers.Data
             Preconditions.ThrowIfNull(nameof(label.Id), label.Id);
             Preconditions.ThrowIfNull(nameof(label.Name), label.Name);
 
-            await _dataManagementService.UpdateLabel(_mapper.Map<LabelModel, UpdateLabelRequest>(label));
+            await _dataManagementService.UpdateLabel(_mapper.Map<LabelModel, UpdateLabelRequest>(label)).ConfigureAwait(false);
         }
 
         public async Task DeleteLabel(LabelModel label)
         {
             Preconditions.ThrowIfNull(nameof(label.Name), label.Name);
-            await _dataManagementService.DeleteLabel(_mapper.Map<LabelModel, DeleteLabelRequest>(label));
+            await _dataManagementService.DeleteLabel(_mapper.Map<LabelModel, DeleteLabelRequest>(label)).ConfigureAwait(false);
         }
 
         public async Task<List<LabelModel>> GetLabelsByProcedureType(int? procedureTypeId)
@@ -179,14 +181,14 @@ namespace Avalanche.Api.Managers.Data
             var result = await _dataManagementService.GetLabelsByProcedureType(new GetLabelsByProcedureTypeRequest()
             {
                 ProcedureTypeId = procedureTypeId
-            });
+            }).ConfigureAwait(false);
 
             return _mapper.Map<IList<LabelMessage>, IList<LabelModel>>(result.LabelList).ToList();
         }
 
         public async Task<List<LabelModel>> GetAllLabels()
         {
-            var result = await _dataManagementService.GetAllLabels();
+            var result = await _dataManagementService.GetAllLabels().ConfigureAwait(false);
 
             return _mapper.Map<IList<LabelMessage>, IList<LabelModel>>(result.LabelList).ToList();
         }
@@ -198,12 +200,12 @@ namespace Avalanche.Api.Managers.Data
                 procedureTypeId = null;
             }
 
-            var result = await _dataManagementService.GetLabel(new Ism.Storage.DataManagement.Client.V1.Protos.GetLabelRequest()
+            var result = await _dataManagementService.GetLabel(new GetLabelRequest()
             {
                 LabelName = labelName,
-                ProcedureTypeId = procedureTypeId,                
+                ProcedureTypeId = procedureTypeId,
                 IgnoreCustomExceptions = true
-            });
+            }).ConfigureAwait(false);
 
             return _mapper.Map<LabelMessage, LabelModel>(result);
         }

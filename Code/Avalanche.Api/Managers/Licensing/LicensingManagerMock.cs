@@ -1,4 +1,4 @@
-﻿using AutoFixture;
+using AutoFixture;
 using Avalanche.Shared.Domain.Models;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
@@ -16,9 +16,6 @@ namespace Avalanche.Api.Managers.Licensing
             return Task.FromResult(fixture.CreateMany<LicenseModel>(10).ToList());
         }
 
-        public Task<bool> Validate(string key)
-        {
-            return Task.FromResult(true);
-        }
+        public Task<bool> Validate(string key) => Task.FromResult(true);
     }
 }
