@@ -123,6 +123,7 @@ namespace Avalanche.Api
             services.AddTransient<ILicensingManager, LicensingManagerMock>();
             services.AddTransient<INotificationsManager, NotificationsManager>();
             services.AddTransient<ISecurityManager, SecurityManager>();
+            services.AddTransient<IPhysiciansManager, PhysiciansManager>();
             services.AddTransient<IMedpresenceManager, MedpresenceManager>();
 
             // Singleton
@@ -296,7 +297,7 @@ namespace Avalanche.Api
         private bool IsDevice(IServiceCollection services)
         {
             using var provider = services.BuildServiceProvider();
-            var featureManager = provider.GetService<IFeatureManager>();
+            var featureManager = provider.GetRequiredService<IFeatureManager>();
 
             return featureManager.IsEnabledAsync(FeatureFlags.IsDevice).Result;
         }
