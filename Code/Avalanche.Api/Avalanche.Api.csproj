@@ -45,7 +45,7 @@
   <ItemGroup>
     <PackageReference Include="AutoFixture" Version="4.17.0" />
     <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="8.1.1" />
-    <PackageReference Include="AvidisDeviceInterface.Client" Version="1.0.0-prerelease0017" />
+    <PackageReference Include="AvidisDeviceInterface.Client" Version="1.0.0-prerelease0018" />
     <PackageReference Include="Grpc.Tools" Version="2.38.1">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -55,11 +55,12 @@
       <TreatAsUsed>true</TreatAsUsed>
     </PackageReference>
     <PackageReference Include="Ism.Common.Core.Hosting" Version="1.0.0-prerelease048" />
+    <PackageReference Include="Ism.Log.Common.Core" Version="1.0.0-prerelease18" />
     <PackageReference Include="Ism.Medpresence.Client" Version="1.0.0-prerelease0004" />
     
     <PackageReference Include="Ism.PgsTimeout.Client" Version="1.0.0-prerelease0016" />
     
-    <PackageReference Include="Ism.Recorder.Client" Version="1.0.0-prerelease0041" />
+    <PackageReference Include="Ism.Recorder.Client" Version="1.0.0-prerelease0043" />
     <PackageReference Include="Ism.Routing.Client" Version="1.0.0-prerelease0018" />
     <PackageReference Include="Ism.PatientInfoEngine.Client" Version="1.0.0-prerelease0029" />
     <PackageReference Include="Ism.Security.Grpc.Standard" Version="1.0.0-prerelease033" />
