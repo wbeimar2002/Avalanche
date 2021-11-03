@@ -1,4 +1,3 @@
-using JetBrains.Annotations;
 using Avalanche.Security.Server.Core.Models;
 using Microsoft.EntityFrameworkCore;
 
@@ -10,7 +9,7 @@ namespace Avalanche.Security.Server.Persistence
         public DbSet<Role> Roles { get; set; }
 
         public SecurityDbContext(DbContextOptions<SecurityDbContext> options) : base(options)
-        {}
+        { }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

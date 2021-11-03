@@ -21,16 +21,16 @@ namespace Avalanche.Security.Server.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateUserAsync([FromBody] UserCredentialsResource userCredentials)
+        public async Task<IActionResult> CreateUserAsync([FromBody] CreateUserResource createUserResource)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            var user = _mapper.Map<UserCredentialsResource, User>(userCredentials);
-            
-            var response = await _userService.CreateUserAsync(user, ERole.Common);
+            var user = _mapper.Map<CreateUserResource, User>(createUserResource);
+
+            var response = await _userService.CreateUserAsync(user, ERole.Common).ConfigureAwait(false);
             if(!response.Success)
             {
                 return BadRequest(response.Message);

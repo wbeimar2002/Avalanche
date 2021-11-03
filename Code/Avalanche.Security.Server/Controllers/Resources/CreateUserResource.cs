@@ -2,7 +2,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Avalanche.Security.Server.Controllers.Resources
 {
-    public class UserCredentialsResource
+    public class CreateUserResource
     {
         [Required]
         [StringLength(128)]
@@ -11,5 +11,11 @@ namespace Avalanche.Security.Server.Controllers.Resources
         [Required]
         [StringLength(64)]
         public string Password { get; set; }
+
+        [StringLength(64)]
+        public string FirstName { get; set; }
+
+        [StringLength(64)]
+        public string LastName { get; set; }
     }
 }

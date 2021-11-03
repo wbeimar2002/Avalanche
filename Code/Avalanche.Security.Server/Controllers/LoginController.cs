@@ -31,7 +31,7 @@ namespace Avalanche.Security.Server.Controllers
                 return BadRequest(ModelState);
             }
 
-            var response = await _authenticationService.CreateAccessTokenAsync(userCredentials.Email, userCredentials.Password);
+            var response = await _authenticationService.CreateAccessTokenAsync(userCredentials.LoginName, userCredentials.Password).ConfigureAwait(false);
             if(!response.Success)
             {
                 return BadRequest(response.Message);
@@ -50,12 +50,12 @@ namespace Avalanche.Security.Server.Controllers
                 return BadRequest(ModelState);
             }
 
-            var response = await _authenticationService.RefreshTokenAsync(refreshTokenResource.Token, refreshTokenResource.UserEmail);
+            var response = await _authenticationService.RefreshTokenAsync(refreshTokenResource.Token, refreshTokenResource.LoginName).ConfigureAwait(false);
             if(!response.Success)
             {
                 return BadRequest(response.Message);
             }
-           
+
             var tokenResource = _mapper.Map<AccessToken, AccessTokenResource>(response.Token);
             return Ok(tokenResource);
         }

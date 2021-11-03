@@ -10,29 +10,25 @@ namespace Avalanche.Security.Server.Persistence
     {
         private readonly SecurityDbContext _context;
 
-        public UserRepository(SecurityDbContext context)
-        {
-            _context = context;
-        }
+        public UserRepository(SecurityDbContext context) => _context = context;
 
         public async Task AddAsync(User user, ERole[] userRoles)
         {
             var roleNames = userRoles.Select(r => r.ToString()).ToList();
-            var roles = await _context.Roles.Where(r => roleNames.Contains(r.Name)).ToListAsync();
+            var roles = await _context.Roles.Where(r => roleNames.Contains(r.Name)).ToListAsync().ConfigureAwait(false);
 
             foreach(var role in roles)
             {
                 user.UserRoles.Add(new UserRole { RoleId = role.Id });
             }
-               
+
             _context.Users.Add(user);
+
+            await _context.SaveChangesAsync().ConfigureAwait(false);
         }
 
-        public async Task<User> FindByEmailAsync(string email)
-        {
-            return await _context.Users.Include(u => u.UserRoles)
+        public async Task<User> FindByLoginAsync(string loginName) => await _context.Users.Include(u => u.UserRoles)
                                        .ThenInclude(ur => ur.Role)
-                                       .SingleOrDefaultAsync(u => u.Email == email);
-        }
+                                       .SingleOrDefaultAsync(u => u.LoginName == loginName).ConfigureAwait(false);
     }
 }

@@ -16,7 +16,7 @@ namespace Avalanche.Security.Tests.Services
         private Mock<IUserRepository> _userRepository;
         private Mock<IUnitOfWork> _unitOfWork;
 
-        private IUserService _userService;
+        private readonly IUserService _userService;
 
         public UserServiceTests()
         {
@@ -30,10 +30,10 @@ namespace Avalanche.Security.Tests.Services
             _passwordHasher.Setup(ph => ph.HashPassword(It.IsAny<string>())).Returns("123");
 
             _userRepository = new Mock<IUserRepository>();
-            _userRepository.Setup(r => r.FindByEmailAsync("test@test.com"))
-                .ReturnsAsync(new User { Id = 1, Email = "test@test.com", UserRoles = new Collection<UserRole>() });
+            _userRepository.Setup(r => r.FindByLoginAsync("test@test.com"))
+                .ReturnsAsync(new User { Id = 1, LoginName = "test@test.com", UserRoles = new Collection<UserRole>() });
 
-            _userRepository.Setup(r => r.FindByEmailAsync("secondtest@secondtest.com"))
+            _userRepository.Setup(r => r.FindByLoginAsync("secondtest@secondtest.com"))
                 .Returns(Task.FromResult<User>(null));
 
             _userRepository.Setup(r => r.AddAsync(It.IsAny<User>(), It.IsAny<ERole[]>())).Returns(Task.CompletedTask);
@@ -45,39 +45,39 @@ namespace Avalanche.Security.Tests.Services
         [Fact]
         public async Task Should_Create_Non_Existing_User()
         {
-            var user = new User { Email = "mytestuser@mytestuser.com", Password = "123", UserRoles = new Collection<UserRole>() };
-            
-            var response = await _userService.CreateUserAsync(user, ERole.Common);
+            var user = new User { LoginName = "mytestuser@mytestuser.com", Password = "123", UserRoles = new Collection<UserRole>() };
+
+            var response = await _userService.CreateUserAsync(user, ERole.Common).ConfigureAwait(false);
 
             Assert.NotNull(response);
             Assert.True(response.Success);
-            Assert.Equal(user.Email, response.User.Email);
+            Assert.Equal(user.LoginName, response.User.LoginName);
             Assert.Equal(user.Password, response.User.Password);
         }
 
         [Fact]
-        public async Task Should_Not_Create_User_When_Email_Is_Alreary_In_Use()
+        public async Task Should_Not_Create_User_When_LoginName_Is_Alreary_In_Use()
         {
-            var user = new User { Email = "test@test.com", Password = "123", UserRoles = new Collection<UserRole>() };
-        
-            var response = await _userService.CreateUserAsync(user, ERole.Common);
+            var user = new User { LoginName = "test@test.com", Password = "123", UserRoles = new Collection<UserRole>() };
+
+            var response = await _userService.CreateUserAsync(user, ERole.Common).ConfigureAwait(false);
 
             Assert.False(response.Success);
-            Assert.Equal("Email already in use.", response.Message);
+            Assert.Equal("Login name already in use.", response.Message);
         }
 
         [Fact]
-        public async Task Should_Find_Existing_User_By_Email()
+        public async Task Should_Find_Existing_User_By_LoginName()
         {
-            var user = await _userService.FindByEmailAsync("test@test.com");
+            var user = await _userService.FindByLoginAsync("test@test.com").ConfigureAwait(false);
             Assert.NotNull(user);
-            Assert.Equal("test@test.com", user.Email);
+            Assert.Equal("test@test.com", user.LoginName);
         }
 
         [Fact]
-        public async Task Should_Return_Null_When_Trying_To_Find_User_By_Invalid_Email()
+        public async Task Should_Return_Null_When_Trying_To_Find_User_By_Invalid_LoginName()
         {
-            var user = await _userService.FindByEmailAsync("secondtest@secondtest.com");
+            var user = await _userService.FindByLoginAsync("secondtest@secondtest.com").ConfigureAwait(false);
             Assert.Null(user);
         }
     }

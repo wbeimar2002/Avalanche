@@ -11,7 +11,7 @@ namespace Avalanche.Security.Server.Services
         private readonly IUserService _userService;
         private readonly IPasswordHasher _passwordHasher;
         private readonly ITokenHandler _tokenHandler;
-        
+
         public AuthenticationService(IUserService userService, IPasswordHasher passwordHasher, ITokenHandler tokenHandler)
         {
             _tokenHandler = tokenHandler;
@@ -19,9 +19,9 @@ namespace Avalanche.Security.Server.Services
             _userService = userService;
         }
 
-        public async Task<TokenResponse> CreateAccessTokenAsync(string email, string password)
+        public async Task<TokenResponse> CreateAccessTokenAsync(string loginName, string password)
         {
-            var user = await _userService.FindByEmailAsync(email);
+            var user = await _userService.FindByLoginAsync(loginName).ConfigureAwait(false);
 
             if (user == null || !_passwordHasher.PasswordMatches(password, user.Password))
             {
@@ -33,7 +33,7 @@ namespace Avalanche.Security.Server.Services
             return new TokenResponse(true, null, token);
         }
 
-        public async Task<TokenResponse> RefreshTokenAsync(string refreshToken, string userEmail)
+        public async Task<TokenResponse> RefreshTokenAsync(string refreshToken, string loginName)
         {
             var token = _tokenHandler.TakeRefreshToken(refreshToken);
 
@@ -47,7 +47,7 @@ namespace Avalanche.Security.Server.Services
                 return new TokenResponse(false, "Expired refresh token.", null);
             }
 
-            var user = await _userService.FindByEmailAsync(userEmail);
+            var user = await _userService.FindByLoginAsync(loginName).ConfigureAwait(false);
             if (user == null)
             {
                 return new TokenResponse(false, "Invalid refresh token.", null);
@@ -57,9 +57,6 @@ namespace Avalanche.Security.Server.Services
             return new TokenResponse(true, null, accessToken);
         }
 
-        public void RevokeRefreshToken(string refreshToken)
-        {
-            _tokenHandler.RevokeRefreshToken(refreshToken);
-        }
+        public void RevokeRefreshToken(string refreshToken) => _tokenHandler.RevokeRefreshToken(refreshToken);
     }
 }

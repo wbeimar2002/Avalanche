@@ -9,6 +9,7 @@ namespace Avalanche.Security.Server.Mapping
         public ResourceToModelProfile()
         {
             CreateMap<UserCredentialsResource, User>();
+            CreateMap<CreateUserResource, User>();
         }
     }
 }

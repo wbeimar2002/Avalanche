@@ -18,7 +18,7 @@ namespace Avalanche.Security.Tests.Security.Tokens
         private SigningOptions _signingOptions;
         private User _user;
 
-        private ITokenHandler _tokenHandler;
+        private readonly ITokenHandler _tokenHandler;
 
         public TokenHandlerTests()
         {
@@ -44,7 +44,7 @@ namespace Avalanche.Security.Tests.Security.Tokens
             _user = new User
             {
                 Id = 1,
-                Email = "test@test.com",
+                LoginName = "test@test.com",
                 Password = "123",
                 FirstName = "Some",
                 LastName = "User",

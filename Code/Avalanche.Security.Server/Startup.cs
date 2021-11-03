@@ -1,4 +1,4 @@
-﻿using Avalanche.Security.Server.Core.Repositories;
+using Avalanche.Security.Server.Core.Repositories;
 using Avalanche.Security.Server.Core.Security.Hashing;
 using Avalanche.Security.Server.Core.Security.Tokens;
 using Avalanche.Security.Server.Core.Services;
@@ -30,16 +30,16 @@ namespace Avalanche.Security.Server
 {
     [ExcludeFromCodeCoverage]
     public class Startup
-	{
+    {
         private readonly IConfiguration _configuration;
 
         private readonly IWebHostEnvironment _environment;
 
         public Startup(IConfiguration configuration, IWebHostEnvironment environment)
         {
-			_configuration = configuration;
-			_environment = environment;
-		}
+            _configuration = configuration;
+            _environment = environment;
+        }
 
         public void ConfigureServices(IServiceCollection services)
         {
@@ -117,5 +117,5 @@ namespace Avalanche.Security.Server
         private static string MakeConnectionString(string databasePath) => $"Data Source={databasePath}";
 
         private string GetDatabaseLocation(string database, string subDirectory = "database") => Path.Combine(Path.GetDirectoryName(typeof(Startup).Assembly.Location) ?? _environment.ContentRootPath, subDirectory, database);
-	}
+    }
 }

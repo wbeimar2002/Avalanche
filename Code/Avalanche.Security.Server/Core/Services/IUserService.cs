@@ -7,6 +7,6 @@ namespace Avalanche.Security.Server.Core.Services
     public interface IUserService
     {
          Task<CreateUserResponse> CreateUserAsync(User user, params ERole[] userRoles);
-         Task<User> FindByEmailAsync(string email);
+         Task<User> FindByLoginAsync(string loginName);
     }
 }
