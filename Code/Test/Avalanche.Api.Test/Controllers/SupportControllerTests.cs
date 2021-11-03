@@ -204,13 +204,13 @@ namespace Avalanche.Api.Test.Controllers
         [Test]
         public async Task CaptureServiceImageShouldReturnOkResults()
         {
-            var okResult = await _controller!.CapptureServiceImage().ConfigureAwait(false);
+            var okResult = await _controller!.CaptureServiceImage().ConfigureAwait(false);
 
             if (_checkLogger)
             {
-                _logger!.Verify(LogLevel.Error, $"Exception {_controller.GetType().Name}.CapptureServiceImage", Times.Never());
-                _logger!.Verify(LogLevel.Debug, $"Requested {_controller.GetType().Name}.CapptureServiceImage", Times.Once());
-                _logger!.Verify(LogLevel.Debug, $"Completed {_controller.GetType().Name}.CapptureServiceImage", Times.Once());
+                _logger!.Verify(LogLevel.Error, $"Exception {_controller.GetType().Name}.CaptureServiceImage", Times.Never());
+                _logger!.Verify(LogLevel.Debug, $"Requested {_controller.GetType().Name}.CaptureServiceImage", Times.Once());
+                _logger!.Verify(LogLevel.Debug, $"Completed {_controller.GetType().Name}.CaptureServiceImage", Times.Once());
             }
 
             Assert.IsInstanceOf<OkResult>(okResult);
@@ -220,13 +220,75 @@ namespace Avalanche.Api.Test.Controllers
         public async Task CaptureServiceImageShouldReturnBadResultIfFails()
         {
             _ = _medpresenceManager!.Setup(s => s.CaptureImageAsync()).Throws(It.IsAny<Exception>());
-            var badResult = await _controller!.CapptureServiceImage().ConfigureAwait(false);
+            var badResult = await _controller!.CaptureServiceImage().ConfigureAwait(false);
 
             if (_checkLogger)
             {
-                _logger!.Verify(LogLevel.Error, $"Exception {_controller.GetType().Name}.CapptureServiceImage", Times.Once());
-                _logger!.Verify(LogLevel.Debug, $"Requested {_controller.GetType().Name}.CapptureServiceImage", Times.Once());
-                _logger!.Verify(LogLevel.Debug, $"Completed {_controller.GetType().Name}.CapptureServiceImage", Times.Once());
+                _logger!.Verify(LogLevel.Error, $"Exception {_controller.GetType().Name}.CaptureServiceImage", Times.Once());
+                _logger!.Verify(LogLevel.Debug, $"Requested {_controller.GetType().Name}.CaptureServiceImage", Times.Once());
+                _logger!.Verify(LogLevel.Debug, $"Completed {_controller.GetType().Name}.CaptureServiceImage", Times.Once());
+            }
+
+            Assert.IsInstanceOf<BadRequestObjectResult>(badResult);
+        }
+
+        [Test]
+        public async Task DiscardServiceShouldReturnOkResults()
+        {
+            var okResult = await _controller!.DiscardServiceSession(1234).ConfigureAwait(false);
+
+            if (_checkLogger)
+            {
+                _logger!.Verify(LogLevel.Error, $"Exception {_controller.GetType().Name}.DiscardServiceSession", Times.Never());
+                _logger!.Verify(LogLevel.Debug, $"Requested {_controller.GetType().Name}.DiscardServiceSession", Times.Once());
+                _logger!.Verify(LogLevel.Debug, $"Completed {_controller.GetType().Name}.DiscardServiceSession", Times.Once());
+            }
+
+            Assert.IsInstanceOf<OkResult>(okResult);
+        }
+
+        [Test]
+        public async Task DiscardServiceSessionShouldReturnBadResultIfFails()
+        {
+            _ = _medpresenceManager!.Setup(s => s.DiscardSessionAsync(It.IsAny<ulong>())).Throws(It.IsAny<Exception>());
+            var badResult = await _controller!.DiscardServiceSession(1234).ConfigureAwait(false);
+
+            if (_checkLogger)
+            {
+                _logger!.Verify(LogLevel.Error, $"Exception {_controller.GetType().Name}.DiscardServiceSession", Times.Once());
+                _logger!.Verify(LogLevel.Debug, $"Requested {_controller.GetType().Name}.DiscardServiceSession", Times.Once());
+                _logger!.Verify(LogLevel.Debug, $"Completed {_controller.GetType().Name}.DiscardServiceSession", Times.Once());
+            }
+
+            Assert.IsInstanceOf<BadRequestObjectResult>(badResult);
+        }
+
+        [Test]
+        public async Task ArchiveServiceSessionShouldReturnOkResults()
+        {
+            var okResult = await _controller!.ArchiveServiceSession(new ArchiveServiceViewModel()).ConfigureAwait(false);
+
+            if (_checkLogger)
+            {
+                _logger!.Verify(LogLevel.Error, $"Exception {_controller.GetType().Name}.ArchiveServiceSession", Times.Never());
+                _logger!.Verify(LogLevel.Debug, $"Requested {_controller.GetType().Name}.ArchiveServiceSession", Times.Once());
+                _logger!.Verify(LogLevel.Debug, $"Completed {_controller.GetType().Name}.ArchiveServiceSession", Times.Once());
+            }
+
+            Assert.IsInstanceOf<OkResult>(okResult);
+        }
+
+        [Test]
+        public async Task ArchiveServiceSessionShouldReturnBadResultIfFails()
+        {
+            _ = _medpresenceManager!.Setup(s => s.ArchiveSessionAsync(It.IsAny<ArchiveServiceViewModel>())).Throws(It.IsAny<Exception>());
+            var badResult = await _controller!.ArchiveServiceSession(new ArchiveServiceViewModel()).ConfigureAwait(false);
+
+            if (_checkLogger)
+            {
+                _logger!.Verify(LogLevel.Error, $"Exception {_controller.GetType().Name}.ArchiveServiceSession", Times.Once());
+                _logger!.Verify(LogLevel.Debug, $"Requested {_controller.GetType().Name}.ArchiveServiceSession", Times.Once());
+                _logger!.Verify(LogLevel.Debug, $"Completed {_controller.GetType().Name}.ArchiveServiceSession", Times.Once());
             }
 
             Assert.IsInstanceOf<BadRequestObjectResult>(badResult);
