@@ -109,13 +109,13 @@ namespace Avalanche.Api.Mapping
                 .ForPath(dest => dest.Patient.FirstName, opt => opt.MapFrom(src => src.Patient.FirstName))
                 .ForPath(dest => dest.Patient.LastName, opt => opt.MapFrom(src => src.Patient.LastName))
                 .ForPath(dest => dest.Patient.Sex, opt => opt.MapFrom(src => src.Patient.Sex))
-                .ForPath(dest => dest.Patient.DateOfBirth, opt => opt.MapFrom(src => src.Patient.DateOfBirth))
+                .ForPath(dest => dest.Patient.DateOfBirth, opt => opt.MapFrom(src => GetFixedDateTime(src.Patient.DateOfBirth)))
                 .ForPath(dest => dest.Physician.Id, opt => opt.MapFrom(src => src.Physician.Id))
                 .ForPath(dest => dest.Physician.FirstName, opt => opt.MapFrom(src => src.Physician.FirstName))
                 .ForPath(dest => dest.Physician.LastName, opt => opt.MapFrom(src => src.Physician.LastName))
                 .ForMember(dest => dest.Department, opt => opt.MapFrom(src => src.Department == null ? null : src.Department.Name))
                 .ForMember(dest => dest.ProcedureType, opt => opt.MapFrom(src => src.ProcedureType == null ? null : src.ProcedureType.Name))
-                .ForMember(dest => dest.ProcedureStartTimeUtc, opt => opt.MapFrom(src => GetFixedDateTimeTemp(src.ProcedureStartTimeUtc)))
+                .ForMember(dest => dest.ProcedureStartTimeUtc, opt => opt.MapFrom(src => GetFixedDateTime(src.ProcedureStartTimeUtc)))
                 .ForMember(dest => dest.Repository, opt => opt.MapFrom(src => src.Repository))
                 .ForMember(dest => dest.LibraryId, opt => opt.MapFrom(src => src.LibraryId));
 
@@ -241,7 +241,7 @@ namespace Avalanche.Api.Mapping
             }
         }
 
-        private FixedDateTimeMessage GetFixedDateTimeTemp(DateTime dateTime) => new FixedDateTimeMessage()
+        private FixedDateTimeMessage GetFixedDateTime(DateTime dateTime) => new FixedDateTimeMessage()
         {
             Year = dateTime.Year,
             Month = dateTime.Month,
