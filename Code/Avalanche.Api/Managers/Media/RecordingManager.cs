@@ -60,7 +60,7 @@ namespace Avalanche.Api.Managers.Media
 
         public async Task StartRecording() => await _stateClient.PublishEvent(new StartRecordingEvent()).ConfigureAwait(false);
 
-        public async Task StopRecording() => await _recorderService.StopRecording().ConfigureAwait(false);
+        public async Task StopRecording() => await _stateClient.PublishEvent(new StopRecordingEvent()).ConfigureAwait(false);
 
         private async Task<ActiveProcedureState> GetActiveProcedureState()
         {
