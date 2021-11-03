@@ -32,6 +32,8 @@ namespace Avalanche.Api.Managers.Media
 
         public async Task CaptureImageFromVideo(Guid videoId, TimeSpan position)
         {
+            Preconditions.ThrowIfNullOrDefault(nameof(videoId), videoId);
+
             var activeProcedure = await GetActiveProcedureState().ConfigureAwait(false);
             await _stateClient.PublishEvent(new CaptureImageFromVideoEvent(activeProcedure.LibraryId, activeProcedure.RepositoryId, videoId, position)).ConfigureAwait(false);
         }
@@ -42,7 +44,7 @@ namespace Avalanche.Api.Managers.Media
             return _mapper.Map<IEnumerable<RecordChannelMessage>, IEnumerable<RecordingChannelModel>>(channels).ToList();
         }
 
-        public async Task<RecordingTimelineViewModel> GetRecordingTimelineByImageId(Guid imageId)
+        public async Task<RecordingTimelineViewModel?> GetRecordingTimelineByImageId(Guid imageId)
         {
             Preconditions.ThrowIfNullOrDefault(nameof(imageId), imageId);
 
