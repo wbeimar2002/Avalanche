@@ -26,5 +26,6 @@ namespace Avalanche.Api.ViewModels
 
         public List<ImageContentViewModel> Images { get; set; }
         public List<VideoContentViewModel> Videos { get; set; }
+        public List<VideoContentViewModel> BackgroundVideos { get; set; }
     }
 }
