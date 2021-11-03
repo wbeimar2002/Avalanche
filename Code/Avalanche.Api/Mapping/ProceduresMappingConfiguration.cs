@@ -106,6 +106,7 @@ namespace Avalanche.Api.Mapping
 
             CreateMap<ProcedureViewModel, ProcedureMessage>()
                 .ForMember(dest => dest.Videos, opt => opt.MapFrom(src => src.Videos))
+                .ForMember(dest => dest.BackgroundVideos, opt => opt.Ignore())
                 .ForMember(dest => dest.Images, opt => opt.MapFrom(src => src.Images))
                 .ForMember(dest => dest.Notes, opt => opt.MapFrom(src => src.Notes))
                 .ForMember(dest => dest.IsClinical, opt => opt.MapFrom(src => src.IsClinical))
@@ -125,7 +126,7 @@ namespace Avalanche.Api.Mapping
                 .ForMember(dest => dest.Department, opt => opt.MapFrom(src => src.Department == null ? null : src.Department.Name))
                 .ForMember(dest => dest.ProcedureType, opt => opt.MapFrom(src => src.ProcedureType == null ? null : src.ProcedureType.Name))
                 .ForMember(dest => dest.ProcedureStartTimeUtc, opt => opt.MapFrom(src => src.ProcedureStartTimeUtc))
-                .ForMember(dest => dest.Repository, opt => opt.MapFrom(src => src.Repository))
+                .ForMember(dest => dest.Repository, opt => opt.MapFrom(src => src.Repository))                
                 .ForMember(dest => dest.LibraryId, opt => opt.MapFrom(src => src.LibraryId));
 
             CreateMap<ActiveProcedureState, DiscardActiveProcedureRequest>()
