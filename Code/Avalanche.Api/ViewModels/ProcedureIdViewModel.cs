@@ -1,4 +1,4 @@
-﻿namespace Avalanche.Api.ViewModels
+namespace Avalanche.Api.ViewModels
 {
     public class ProcedureIdViewModel
     {

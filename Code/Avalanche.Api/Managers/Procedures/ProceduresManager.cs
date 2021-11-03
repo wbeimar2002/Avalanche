@@ -23,7 +23,6 @@ namespace Avalanche.Api.Managers.Procedures
         private readonly IStateClient _stateClient;
         private readonly ILibraryService _libraryService;
         private readonly IMapper _mapper;
-        private readonly IAccessInfoFactory _accessInfoFactory;
 
         private readonly IDataManager _dataManager;
         private readonly GeneralApiConfiguration _generalApiConfig;
@@ -42,10 +41,8 @@ namespace Avalanche.Api.Managers.Procedures
         {
             _stateClient = stateClient;
             _libraryService = libraryService;
-            _accessInfoFactory = accessInfoFactory;
             _mapper = mapper;
             _libraryService = libraryService;
-            _accessInfoFactory = accessInfoFactory;
             _dataManager = dataManager;
             _generalApiConfig = generalApiConfig;
             _setupConfiguration = setupConfiguration;
@@ -104,6 +101,7 @@ namespace Avalanche.Api.Managers.Procedures
                     case "clinicalNotes":
                         Preconditions.ThrowIfNull(nameof(procedure.ClinicalNotes), procedure.ClinicalNotes);
                         break;
+                    //TODO: This is not comming from UI for Update
                     //case "procedureId":
                     //    Preconditions.ThrowIfNull(nameof(procedure.ProcedureId), procedure.ProcedureId);
                     //    break;
@@ -144,15 +142,16 @@ namespace Avalanche.Api.Managers.Procedures
             };
         }
 
-        public async Task<ProcedureViewModel> GetProcedureDetails(string libraryId, string repositoryName)
+        public async Task<ProcedureViewModel> GetProcedureDetails(ProcedureIdViewModel procedureIdViewModel)
         {
-            Preconditions.ThrowIfNull(nameof(libraryId), libraryId);
-            Preconditions.ThrowIfNullOrEmptyOrWhiteSpace(nameof(libraryId), libraryId);
+            Preconditions.ThrowIfNull(nameof(procedureIdViewModel), procedureIdViewModel);
+            Preconditions.ThrowIfNullOrEmptyOrWhiteSpace(nameof(procedureIdViewModel.Id), procedureIdViewModel.Id);
+            Preconditions.ThrowIfNullOrEmptyOrWhiteSpace(nameof(procedureIdViewModel.RepositoryName), procedureIdViewModel.RepositoryName);
 
             var response = await _libraryService.GetFinishedProcedure(new GetFinishedProcedureRequest()
             {
-                LibraryId = libraryId,
-                RepositoryName = repositoryName
+                LibraryId = procedureIdViewModel.Id,
+                RepositoryName = procedureIdViewModel.RepositoryName
             }).ConfigureAwait(false);
 
             return _mapper.Map<ProcedureMessage, ProcedureViewModel>(response.Procedure);

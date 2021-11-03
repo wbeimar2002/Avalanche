@@ -100,7 +100,7 @@ namespace Avalanche.Api.Controllers.V1
             {
                 _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
 
-                var result = await _proceduresManager.GetProcedureDetails(id, repository);
+                var result = await _proceduresManager.GetProcedureDetails(new ProcedureIdViewModel(id, repository));
                 return Ok(result);
             }
             catch (Exception ex)

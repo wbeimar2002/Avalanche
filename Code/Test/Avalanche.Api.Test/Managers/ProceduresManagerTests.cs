@@ -52,22 +52,24 @@ namespace Avalanche.Api.Test.Managers
         [Test]
         public async Task GetProcedureDetails_VerifyCalls()
         {
-            var libraryId = "2021_06_18T19_52_44_TODO";
-            var repositoryName = "cache";
+            var procedureId = new ProcedureIdViewModel("2021_06_18T19_52_44_TODO", "cache");
 
             var response = new GetFinishedProcedureResponse();
             { };
 
             _libraryService.Setup(mock => mock.GetFinishedProcedure(new GetFinishedProcedureRequest()
             {
-                LibraryId = libraryId
+                LibraryId = procedureId.Id,
+                RepositoryName = procedureId.RepositoryName
+
             })).ReturnsAsync(response);
 
-            await _manager.GetProcedureDetails(libraryId, repositoryName);
+            await _manager.GetProcedureDetails(procedureId);
 
             _libraryService.Verify(mock => mock.GetFinishedProcedure(new GetFinishedProcedureRequest()
             {
-                LibraryId = libraryId
+                LibraryId = procedureId.Id,
+                RepositoryName = procedureId.RepositoryName
             }), Times.Once);
         }
 
@@ -77,23 +79,24 @@ namespace Avalanche.Api.Test.Managers
         [TestCase(null)]
         public async Task GetProcedureDetails_FailsWithEmptyOrWhiteSpaceLibraryId(string libraryId)
         {
-            var repositoryName = "cache";
+            var procedureId = new ProcedureIdViewModel(libraryId, "cache");
 
             var response = new GetFinishedProcedureResponse();
-            { };
 
             _libraryService.Setup(mock => mock.GetFinishedProcedure(new GetFinishedProcedureRequest()
             {
-                LibraryId = string.Empty
+                LibraryId = string.Empty,
+                RepositoryName = procedureId.RepositoryName
             })).ReturnsAsync(response);
 
-            Task Act() => _manager.GetProcedureDetails(libraryId, repositoryName);
+            Task Act() => _manager.GetProcedureDetails(procedureId);
 
             Assert.That(Act, Throws.TypeOf<ArgumentNullException>());
 
             _libraryService.Verify(mock => mock.GetFinishedProcedure(new GetFinishedProcedureRequest()
             {
-                LibraryId = string.Empty
+                LibraryId = string.Empty,
+                RepositoryName = procedureId.RepositoryName
             }), Times.Never);
         }
 
