@@ -53,6 +53,7 @@ namespace Avalanche.Api.Test.Managers
         public async Task GetProcedureDetails_VerifyCalls()
         {
             var libraryId = "2021_06_18T19_52_44_TODO";
+            var repositoryName = "cache";
 
             var response = new GetFinishedProcedureResponse();
             { };
@@ -62,7 +63,7 @@ namespace Avalanche.Api.Test.Managers
                 LibraryId = libraryId
             })).ReturnsAsync(response);
 
-            await _manager.GetProcedureDetails(libraryId);
+            await _manager.GetProcedureDetails(libraryId, repositoryName);
 
             _libraryService.Verify(mock => mock.GetFinishedProcedure(new GetFinishedProcedureRequest()
             {
@@ -76,6 +77,8 @@ namespace Avalanche.Api.Test.Managers
         [TestCase(null)]
         public async Task GetProcedureDetails_FailsWithEmptyOrWhiteSpaceLibraryId(string libraryId)
         {
+            var repositoryName = "cache";
+
             var response = new GetFinishedProcedureResponse();
             { };
 
@@ -84,7 +87,8 @@ namespace Avalanche.Api.Test.Managers
                 LibraryId = string.Empty
             })).ReturnsAsync(response);
 
-            Task Act() => _manager.GetProcedureDetails(libraryId); 
+            Task Act() => _manager.GetProcedureDetails(libraryId, repositoryName);
+
             Assert.That(Act, Throws.TypeOf<ArgumentNullException>());
 
             _libraryService.Verify(mock => mock.GetFinishedProcedure(new GetFinishedProcedureRequest()

@@ -92,15 +92,15 @@ namespace Avalanche.Api.Controllers.V1
         /// <summary>
         /// Get procedure
         /// </summary>
-        [HttpGet("{id}")]
+        [HttpGet("{repository}/{id}")]
         [ProducesResponseType(typeof(ProcedureViewModel), StatusCodes.Status200OK)]
-        public async Task<IActionResult> Get(string id)
+        public async Task<IActionResult> Get(string id, string repository)
         {
             try
             {
                 _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
 
-                var result = await _proceduresManager.GetProcedureDetails(id);
+                var result = await _proceduresManager.GetProcedureDetails(id, repository);
                 return Ok(result);
             }
             catch (Exception ex)

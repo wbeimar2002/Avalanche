@@ -144,14 +144,15 @@ namespace Avalanche.Api.Managers.Procedures
             };
         }
 
-        public async Task<ProcedureViewModel> GetProcedureDetails(string libraryId)
+        public async Task<ProcedureViewModel> GetProcedureDetails(string libraryId, string repositoryName)
         {
             Preconditions.ThrowIfNull(nameof(libraryId), libraryId);
             Preconditions.ThrowIfNullOrEmptyOrWhiteSpace(nameof(libraryId), libraryId);
 
             var response = await _libraryService.GetFinishedProcedure(new GetFinishedProcedureRequest()
             {
-                LibraryId = libraryId
+                LibraryId = libraryId,
+                RepositoryName = repositoryName
             }).ConfigureAwait(false);
 
             return _mapper.Map<ProcedureMessage, ProcedureViewModel>(response.Procedure);
