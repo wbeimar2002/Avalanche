@@ -56,7 +56,6 @@
     </PackageReference>
     <PackageReference Include="Ism.Common.Core.Hosting" Version="1.0.0-prerelease048" />
     <PackageReference Include="Ism.Log.Common.Core" Version="1.0.0-prerelease18" />
-    <PackageReference Include="Ism.Medpresence.Client" Version="1.0.0-prerelease0004" />
     
     <PackageReference Include="Ism.PgsTimeout.Client" Version="1.0.0-prerelease0016" />
     
@@ -83,6 +82,7 @@
     <PackageReference Include="Ism.SystemState.Client" Version="1.0.0-prerelease0080" />
     <PackageReference Include="Ism.Storage.PatientList.Client" Version="1.0.0-prerelease0028" />
     <PackageReference Include="Ism.PrintServer.Client" Version="1.0.0-prerelease0009" />
+    <PackageReference Include="Ism.Medpresence.Client" Version="1.0.0-prerelease0005" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(Configuration)'=='DebugLocal'">

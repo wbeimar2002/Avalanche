@@ -1,5 +1,7 @@
+using Avalanche.Api.ViewModels;
 using Ism.Common.Core.Aspects;
 using Ism.Medpresence.Client.V1;
+using Ism.MP.V1.Protos;
 using Microsoft.Extensions.Logging;
 using System.Threading.Tasks;
 
@@ -52,17 +54,17 @@ namespace Avalanche.Api.Services.Medpresence
         }
 
         [AspectLogger]
-        public async Task DiscardSessionAsync(ulong sessionId)
+        public async Task DiscardSessionAsync(DiscardSessionRequest request)
         {
-            await _medpresence.DiscardSessionAsync(sessionId).ConfigureAwait(false);
-            _logger.LogInformation($"Discarded session with id: {sessionId}");
+            await _medpresence.DiscardSessionAsync(request).ConfigureAwait(false);
+            _logger.LogInformation($"Discarded session with id: {request.SessionId}");
         }
 
         [AspectLogger]
-        public async Task SaveSessionAsync(ulong sessionId, string title, string physician, string procedure, string? department)
+        public async Task ArchiveSessionAsync(ArchiveSessionRequest request)
         {
-            await _medpresence.SaveSessionAsync(sessionId, title, physician, procedure, department).ConfigureAwait(false);
-            _logger.LogInformation($"Saved session with id: {sessionId}");
+            await _medpresence.ArchiveSession(request).ConfigureAwait(false);
+            _logger.LogInformation($"Saved session with id: {request.SessionId}");
         }
     }
 }
