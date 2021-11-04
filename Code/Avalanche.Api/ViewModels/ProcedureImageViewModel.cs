@@ -14,7 +14,7 @@ namespace Avalanche.Api.ViewModels
         public TimeSpan? CaptureOffsetFromVideoStart { get; set; }
         public DateTimeOffset CaptureTimeUtc { get; set; }
 
-        public ProcedureImageViewModel() 
+        public ProcedureImageViewModel()
         { }
 
         public ProcedureImageViewModel(Guid imageId, string sourceName, string channelName, bool is4k, string relativePath, TimeSpan? captureOffsetFromVideoStart,

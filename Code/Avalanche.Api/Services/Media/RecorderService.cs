@@ -30,8 +30,6 @@ namespace Avalanche.Api.Services.Media
 
         public async Task<RecorderState> GetRecorderState() => await _client.GetRecorderState().ConfigureAwait(false);
 
-        public async Task StopRecording() => await _client.StopRecording().ConfigureAwait(false);
-
         public async Task<IEnumerable<RecordChannelMessage>> GetRecordingChannels()
         {
             var response = await _client.GetRecordingChannels().ConfigureAwait(false);
