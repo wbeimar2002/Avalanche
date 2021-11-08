@@ -8,6 +8,7 @@ using Avalanche.Shared.Domain.Models.Media;
 using Avalanche.Shared.Infrastructure.Enumerations;
 using Avalanche.Shared.Infrastructure.Extensions;
 using Avalanche.Shared.Infrastructure.Helpers;
+using Ism.SystemState.Models.PgsTimeout;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -41,13 +42,14 @@ namespace Avalanche.Api.Controllers.V1
         /// </summary>
         /// <returns></returns>
         [HttpGet("timeout/mode")]
+        [Produces(typeof(TimeoutModes))]
         public async Task<IActionResult> GetTimeoutMode()
         {
             try
             {
                 _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
                 var result = await _pgsTimeoutManager.GetTimeoutMode();
-                return Ok(new { Value = result });
+                return Ok(result);
             }
             catch (Exception ex)
             {
@@ -100,7 +102,7 @@ namespace Avalanche.Api.Controllers.V1
             {
                 _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
                 var result = await _pgsTimeoutManager.GetPgsSinks();
-                return Ok(new { Value = result });
+                return Ok(result);
             }
             catch (Exception ex)
             {
@@ -144,13 +146,14 @@ namespace Avalanche.Api.Controllers.V1
         /// </summary>
         /// <returns></returns>
         [HttpGet("pgs/sinks/state")]
+        [Produces(typeof(List<PgsSinkStateModel>))]
         public async Task<IActionResult> GetPgsStateForSinks()
         {
             try
             {
                 _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
                 var result = await _pgsTimeoutManager.GetPgsStateForSinks();
-                return Ok(new { Value = result });
+                return Ok(result);
             }
             catch (Exception ex)
             {
@@ -198,13 +201,14 @@ namespace Avalanche.Api.Controllers.V1
         /// </summary>
         /// <returns></returns>
         [HttpGet("pgs/volume/level")]
+        [Produces(typeof(double))]
         public async Task<IActionResult> GetPgsVolume()
         {
             try
             {
                 _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
                 var result = await _pgsTimeoutManager.GetPgsVolume();
-                return Ok(new { Value = result });
+                return Ok(result);
             }
             catch (Exception ex)
             {
@@ -247,13 +251,14 @@ namespace Avalanche.Api.Controllers.V1
         /// </summary>
         /// <returns></returns>
         [HttpGet("pgs/volume/mute")]
+        [Produces(typeof(bool))]
         public async Task<IActionResult> GetPgsMute()
         {
             try
             {
                 _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
                 var result = await _pgsTimeoutManager.GetPgsMute();
-                return Ok(new { Value = result });
+                return Ok(result);
             }
             catch (Exception ex)
             {
@@ -304,7 +309,7 @@ namespace Avalanche.Api.Controllers.V1
             {
                 _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
                 var result = await _pgsTimeoutManager.GetPgsVideoFileList();
-                return Ok(new { Value = result });
+                return Ok(result);
             }
             catch (Exception ex)
             {
@@ -375,13 +380,14 @@ namespace Avalanche.Api.Controllers.V1
         /// </summary>
         /// <returns></returns>
         [HttpGet("pgs/playbackstate")]
+        [Produces(typeof(bool))]
         public async Task<IActionResult> GetPgsPlaybackState()
         {
             try
             {
                 _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
                 var result = await _pgsTimeoutManager.GetPgsVideoPlaybackState();
-                return Ok(new { Value = result });
+                return Ok(result);
             }
             catch (Exception ex)
             {
@@ -504,13 +510,14 @@ namespace Avalanche.Api.Controllers.V1
         /// </summary>
         /// <returns></returns>
         [HttpGet("timeout/pages/current")]
+        [Produces(typeof(int))]
         public async Task<IActionResult> GetCurrentPage()
         {
             try
             {
                 _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
                 var result = await _pgsTimeoutManager.GetTimeoutPage();
-                return Ok(new { Value = result });
+                return Ok(result);
             }
             catch (Exception ex)
             {
@@ -528,13 +535,14 @@ namespace Avalanche.Api.Controllers.V1
         /// </summary>
         /// <returns></returns>
         [HttpGet("timeout/pages/count")]
+        [Produces(typeof(int))]
         public async Task<IActionResult> GetPagesCount()
         {
             try
             {
                 _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
                 var result = await _pgsTimeoutManager.GetTimeoutPageCount();
-                return Ok(new { Value = result });
+                return Ok(result);
             }
             catch (Exception ex)
             {
@@ -553,6 +561,7 @@ namespace Avalanche.Api.Controllers.V1
         /// <returns></returns>
         [ResponseCache(Location = ResponseCacheLocation.Client, Duration = 60 * 60 * 24)]
         [HttpGet("timeout/pdfFile")]
+        [Produces(typeof(PhysicalFileResult))]
         public async Task<IActionResult> GetTimeoutPdf()
         {
             try
@@ -628,13 +637,14 @@ namespace Avalanche.Api.Controllers.V1
         /// </summary>
         /// <returns></returns>
         [HttpGet("pgsTimeout/roomState")]
+        [Produces(typeof(PgsTimeoutRoomState))]
         public async Task<IActionResult> GetPgsTimeoutRoomState()
         {
             try
             {
                 _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
                 var roomState = await _pgsTimeoutManager.GetRoomState();
-                return Ok(new { Value = roomState });
+                return Ok(roomState);
             }
             catch (Exception ex)
             {

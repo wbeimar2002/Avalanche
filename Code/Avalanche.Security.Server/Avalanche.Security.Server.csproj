@@ -15,7 +15,7 @@
 
   <ItemGroup>
     <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="8.1.1" />
-    <PackageReference Include="Ism.CodeQuality" Version="1.0.0-prerelease0009">
+    <PackageReference Include="Ism.CodeQuality" Version="1.0.0-prerelease0010">
       <TreatAsUsed>true</TreatAsUsed>
     </PackageReference>
     <PackageReference Include="Ism.Common.Core.Hosting" Version="1.0.0-prerelease048" />
