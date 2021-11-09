@@ -52,5 +52,8 @@ namespace Avalanche.Api.Services.Health
 
         public async Task<GetFinishedProceduresResponse> GetFinishedProceduresByPatient(GetFinishedProceduresRequestByPatient getFinishedProceduresRequestByPatient) =>
             await _serviceSearchClient.GetFinishedProceduresByPatient(getFinishedProceduresRequestByPatient).ConfigureAwait(false);
+
+        public async Task GenerateMediaZip(MediaDownloadRequest mediaRequest) =>
+            await _managerServiceClient.GenerateMediaZip(mediaRequest).ConfigureAwait(false);
     }
 }

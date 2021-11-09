@@ -245,5 +245,19 @@ namespace Avalanche.Api.Managers.Procedures
             _ = await _stateClient.AddOrUpdateData(activeProcedure, x => x.Replace(data => data.Images, activeProcedure.Images)).ConfigureAwait(false);
 
         }
+
+        public async Task GenerateMediaZip(MediaRequestViewModel mediaRequest)
+        {
+            Preconditions.ThrowIfNull(nameof(mediaRequest), mediaRequest);
+            Preconditions.ThrowIfNull(nameof(mediaRequest.procedureId), mediaRequest.procedureId);
+            Preconditions.ThrowIfNull(nameof(mediaRequest.mediaFileNameList), mediaRequest.mediaFileNameList);
+            Preconditions.ThrowIfTrue<ArgumentException>($"{nameof(mediaRequest.mediaFileNameList.Count)} cannot be empty", mediaRequest.mediaFileNameList.Count == 0);
+
+
+            var mediaDownloadRequest = _mapper.Map<MediaRequestViewModel, MediaDownloadRequest>(mediaRequest);
+            await _libraryService.GenerateMediaZip(mediaDownloadRequest).ConfigureAwait(false);
+
+            
+        }
     }
 }

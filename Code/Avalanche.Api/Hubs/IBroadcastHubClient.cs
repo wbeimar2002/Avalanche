@@ -7,6 +7,7 @@ using Ism.SystemState.Models.Exceptions;
 using Ism.SystemState.Models.Recorder;
 using Ism.SystemState.Models.Notifications;
 using Ism.SystemState.Models.Medpresence;
+using Ism.SystemState.Models.Procedure;
 
 namespace Avalanche.Api.Hubs
 {
@@ -47,5 +48,7 @@ namespace Avalanche.Api.Hubs
         Task OnMedpresenceStateDataChanged(MedpresenceState medpresenceState);
 
         Task OnImageCaptureSucceeded(ImageCaptureSucceededEvent evt);
+
+        Task OnDownloadReady(DownloadReadyEvent evt);
     }
 }

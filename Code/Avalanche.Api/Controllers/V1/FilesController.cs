@@ -167,6 +167,28 @@ namespace Avalanche.Api.Controllers.V1
                 _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
             }
         }
+
+        [ResponseCache(Location = ResponseCacheLocation.Client, Duration = 60 * 60 * 24)]
+        [HttpGet("download/media")]
+        public IActionResult DownloadMediaZip([FromQuery] string path, [FromQuery] string filename)
+        {
+            try
+            {
+                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
+                var fullPath = path + filename;
+                
+                return PhysicalFile(fullPath, "application/zip", true);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(LoggerHelper.GetLogMessage(DebugLogType.Exception), ex);
+                return BadRequest();
+            }
+            finally
+            {
+                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
+            }
+        }
         #endregion
     }
 }
