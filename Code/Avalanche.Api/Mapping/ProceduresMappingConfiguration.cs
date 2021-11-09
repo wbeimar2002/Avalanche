@@ -225,8 +225,8 @@ namespace Avalanche.Api.Mapping
             CreateMap<RecordingTimelineModel, RecordingTimelineViewModel>();
 
             CreateMap<MediaRequestViewModel, MediaDownloadRequest>()
-                .ForMember(dest => dest.ProcedureId.Id, opt => opt.MapFrom(src => src.procedureId.Id))
-                .ForMember(dest => dest.ProcedureId.RepositoryName, opt => opt.MapFrom(src => src.procedureId.RepositoryName))
+                .ForPath(dest => dest.ProcedureId.Id, opt => opt.MapFrom(src => src.procedureId.Id))
+                .ForPath(dest => dest.ProcedureId.RepositoryName, opt => opt.MapFrom(src => src.procedureId.RepositoryName))
                 .ForMember(dest => dest.MediaFileNameList, opt => opt.MapFrom(src => src.mediaFileNameList))
                 .ForMember(dest => dest.RequestId, opt => opt.MapFrom(src => src.RequestId));
         }
