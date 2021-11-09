@@ -32,7 +32,7 @@ namespace Avalanche.Api.Services.Notifications
             AddSubscription<SystemErrorRaisedEvent>(evt => _hubContext.Clients.All.OnSystemErrorRaised(evt));
             AddSubscription<SystemPersistantNotificationRaisedEvent>(evt => _hubContext.Clients.All.OnSystemSystemPersistantNotificationRaised(evt));
             AddDataSubscription<MedpresenceState>(evt => _hubContext.Clients.All.OnMedpresenceStateDataChanged(evt));
-
+            AddSubscription<DownloadReadyEvent>(evt => _hubContext.Clients.All.OnDownloadReady(evt));
             return Task.CompletedTask;
         }
     }
