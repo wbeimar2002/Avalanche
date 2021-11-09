@@ -10,6 +10,7 @@ namespace Avalanche.Security.Server.Mapping
         {
             CreateMap<UserCredentialsResource, User>();
             CreateMap<CreateUserResource, User>();
+            CreateMap<UserFilterViewModel, UserFilterModel>();
         }
     }
 }

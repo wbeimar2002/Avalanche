@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Avalanche.Security.Server.Core.Models;
 using Avalanche.Security.Server.Core.Repositories;
@@ -37,5 +38,7 @@ namespace Avalanche.Security.Server.Services
         }
 
         public async Task<User> FindByLoginAsync(string loginName) => await _userRepository.FindByLoginAsync(loginName).ConfigureAwait(false);
+
+        public async Task<List<User>> GetUsers(UserFilterModel filter) => await _userRepository.GetUsers(filter).ConfigureAwait(false);
     }
 }

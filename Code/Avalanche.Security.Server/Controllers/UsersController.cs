@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using AutoMapper;
 using Avalanche.Security.Server.Controllers.Resources;
@@ -38,6 +39,21 @@ namespace Avalanche.Security.Server.Controllers
 
             var userResource = _mapper.Map<User, UserResource>(response.User);
             return Ok(userResource);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetUsers([FromQuery] UserFilterViewModel filter)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var filterModel = _mapper.Map<UserFilterViewModel, UserFilterModel>(filter);
+
+            var users = _mapper.Map<IList<User>, IList<UserResource>>(await _userService.GetUsers(filterModel).ConfigureAwait(false));
+
+            return Ok(users);
         }
     }
 }

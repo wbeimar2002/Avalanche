@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Avalanche.Security.Server.Core.Models;
 
@@ -7,5 +8,6 @@ namespace Avalanche.Security.Server.Core.Repositories
     {
         Task AddAsync(User user, ERole[] userRoles);
         Task<User> FindByLoginAsync(string loginName);
+        Task<List<User>> GetUsers(UserFilterModel filter);
     }
 }

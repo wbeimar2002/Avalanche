@@ -17,6 +17,8 @@ namespace Avalanche.Security.Server.Mapping
                 .ForMember(a => a.AccessToken, opt => opt.MapFrom(a => a.Token))
                 .ForMember(a => a.RefreshToken, opt => opt.MapFrom(a => a.RefreshToken.Token))
                 .ForMember(a => a.Expiration, opt => opt.MapFrom(a => a.Expiration));
+
+            CreateMap<UserFilterModel, UserFilterViewModel>();
         }
     }
 }
