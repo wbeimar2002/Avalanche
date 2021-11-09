@@ -1,4 +1,6 @@
 using System.Threading.Tasks;
+using Avalanche.Api.ViewModels;
+using Ism.MP.V1.Protos;
 
 namespace Avalanche.Api.Services.Medpresence
 {
@@ -9,7 +11,7 @@ namespace Avalanche.Api.Services.Medpresence
         Task StartRecordingAsyc();
         Task StopRecordingAsync();
         Task CaptureImageAsync();
-        Task DiscardSessionAsync(ulong sessionId);
-        Task SaveSessionAsync(ulong sessionId, string title, string physician, string procedure, string? department);
+        Task DiscardSessionAsync(DiscardSessionRequest request);
+        Task ArchiveSessionAsync(ArchiveSessionRequest request);
     }
 }

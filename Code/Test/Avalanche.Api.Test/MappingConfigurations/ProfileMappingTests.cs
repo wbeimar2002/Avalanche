@@ -1,7 +1,9 @@
 using AutoMapper;
 using Avalanche.Api.Mapping;
 using Avalanche.Api.ViewModels;
+using Avalanche.Shared.Domain.Models;
 using Avalanche.Shared.Domain.Models.Media;
+using Ism.MP.V1.Protos;
 using Ism.Routing.V1.Protos;
 using Ism.SystemState.Models.Procedure;
 using NUnit.Framework;
@@ -27,6 +29,7 @@ namespace Avalanche.Api.Tests.MappingConfigurations
                 cfg.AddProfile(new ProceduresMappingConfiguration());
                 cfg.AddProfile(new RecorderMappingConfiguration());
                 cfg.AddProfile(new RoutingMappingConfiguration());
+                cfg.AddProfile(new MedpresenceMappingConfiguration());
             });
 
             _mapper = config.CreateMapper();
@@ -72,6 +75,12 @@ namespace Avalanche.Api.Tests.MappingConfigurations
         public void RoutingMappingConfiguration_IsValid()
         {
             AssertProfileIsValid<RoutingMappingConfiguration>();
+        }
+
+        [Test]
+        public void MedpresenceMappingConfiguration_IsValid()
+        {
+            AssertProfileIsValid<MedpresenceMappingConfiguration>();
         }
 
         [Test]
@@ -187,6 +196,32 @@ namespace Avalanche.Api.Tests.MappingConfigurations
             Assert.AreEqual(route.Sources.Count, tileRouteModel.Sources.Count);
         }
 
+        [Test]
+        public void TestArchiveSessionViewModelToArchiveSessionMessage()
+        {
+            var vm = new ArchiveServiceViewModel
+            {
+                SessionId = 1234,
+                Title = "Hello",
+                Description = "World!",
+                Physician = null,
+                Department = new DepartmentModel
+                {
+                    Id = 1,
+                    Name = "Cardiology"
+                },
+                ProcedureType = null
+            };
+
+            var message = _mapper.Map<ArchiveSessionRequest>(vm);
+            Assert.AreEqual(1234, message.SessionId);
+            Assert.AreEqual("Hello", message.Title);
+            Assert.AreEqual("World!", message.Description);
+            Assert.AreEqual(null, message.Physician);
+            Assert.AreEqual("Cardiology", message.Department.Name);
+            Assert.AreEqual(null, message.ProcedureType);
+        }
+
         private void AssertProfileIsValid<TProfile>() where TProfile : Profile, new()
         {
             _mapper.ConfigurationProvider.AssertConfigurationIsValid<TProfile>();
@@ -195,7 +230,6 @@ namespace Avalanche.Api.Tests.MappingConfigurations
         [TearDown]
         public void TearDown()
         {
-
         }
     }
 }

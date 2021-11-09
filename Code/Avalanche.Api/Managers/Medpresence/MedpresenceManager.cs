@@ -1,7 +1,9 @@
 using System.Threading.Tasks;
 using AutoMapper;
+using Avalanche.Api.Mapping;
 using Avalanche.Api.Services.Medpresence;
 using Avalanche.Api.ViewModels;
+using Ism.MP.V1.Protos;
 using Ism.SystemState.Client;
 using Ism.SystemState.Models.Medpresence;
 
@@ -17,6 +19,9 @@ namespace Avalanche.Api.Managers.Medpresence
             _medpresenceService = medpresenceService;
             _stateClient = stateClient;
             _mapper = mapper;
+
+            var config = new MapperConfiguration(cfg => cfg.AddProfile(new MedpresenceMappingConfiguration()));
+            _mapper = config.CreateMapper();
         }
 
         public async Task<MedpresenceStateViewModel> GetMedpresenceStateAsync()
@@ -30,8 +35,12 @@ namespace Avalanche.Api.Managers.Medpresence
         public async Task StartRecordingAsyc() => await _medpresenceService.StartRecordingAsyc().ConfigureAwait(false);
         public async Task StopRecordingAsync() => await _medpresenceService.StopRecordingAsync().ConfigureAwait(false);
         public async Task CaptureImageAsync() => await _medpresenceService.CaptureImageAsync().ConfigureAwait(false);
-        public async Task DiscardSessionAsync(ulong sessionId) => await _medpresenceService.DiscardSessionAsync(sessionId).ConfigureAwait(false);
-        public async Task SaveSessionAsync(ulong sessionId, string title, string physician, string procedure, string? department) =>
-            await _medpresenceService.SaveSessionAsync(sessionId, title, physician, procedure, department).ConfigureAwait(false);
+
+        public async Task DiscardSessionAsync(ulong sessionId) => await _medpresenceService.DiscardSessionAsync(new DiscardSessionRequest {
+            SessionId = sessionId
+        }).ConfigureAwait(false);
+
+        public async Task ArchiveSessionAsync(ArchiveServiceViewModel request) =>
+            await _medpresenceService.ArchiveSessionAsync(_mapper.Map<ArchiveSessionRequest>(request)).ConfigureAwait(false);
     }
 }
