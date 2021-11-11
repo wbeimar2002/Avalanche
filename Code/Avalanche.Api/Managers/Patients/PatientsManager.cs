@@ -159,11 +159,6 @@ namespace Avalanche.Api.Managers.Patients
                     Id = user.Id,
                     FirstName = user.FirstName,
                     LastName = user.LastName
-                },
-                ProcedureType = new ProcedureTypeModel() //TODO: This required in db but it is not required in quick according to meeting conversations
-                {
-                    Id = 0,
-                    Name = "Unknown"
                 }
             };
 
