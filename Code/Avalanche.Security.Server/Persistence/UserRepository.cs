@@ -7,6 +7,7 @@ using Avalanche.Security.Server.Core.Repositories;
 using Ism.Utility.Core;
 using Microsoft.EntityFrameworkCore;
 using static Avalanche.Security.Server.Extensions.DynamicSortingExtensions;
+using static Ism.Utility.Core.Preconditions;
 
 namespace Avalanche.Security.Server.Persistence
 {
@@ -39,20 +40,26 @@ namespace Avalanche.Security.Server.Persistence
 
         public async Task<List<User>> GetUsers(UserFilterModel filter)
         {
+            ThrowIfNull(nameof(filter.SearchTerms), filter.SearchTerms);
+            ThrowIfNullOrDefault(nameof(filter.PageSize), filter.PageSize);
+
+            // Not using uints for these because Skip & Take apis take integers, so then you have to convert uint -> int and think about handling overflows.  Not that overflow would ever happen here, but this is simpler.
+            ThrowIfTrue<ArgumentException>($"{nameof(filter.Page)} must be a positive integer", filter.Page < 0);
+            ThrowIfTrue<ArgumentException>($"{nameof(filter.PageSize)} must be a positive integer greater than 0", filter.PageSize <= 0);
+            ThrowIfTrue<ArgumentException>($"{nameof(filter.PageSize)} cannot be larger than {MaxPageSize}", filter.PageSize > MaxPageSize);
+
             var validatedSearchTerms = ValidateSearchTerms(filter.SearchTerms);
             var searchExpression = validatedSearchTerms.Any() ? FormatAsMatchExpression(validatedSearchTerms) : "<None>";
 
-            var baseFtsQuery = _context.Users;
+            var baseFtsQuery = _context.UserFts;
             IQueryable<User> userQuery;
 
             if (validatedSearchTerms.Any())
             {
-                // TODO search with filter logic here
                 // Define query for FTS keyword search
-                //userQuery = baseFtsQuery
-                //    .Where(x => x.Match == searchExpression)
-                //    .Select(x => x.User);
-                userQuery = _context.Users;
+                userQuery = baseFtsQuery
+                    .Where(x => x.Match == searchExpression)
+                    .Select(x => x.User);
             }
             else
             {

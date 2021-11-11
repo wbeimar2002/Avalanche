@@ -1,4 +1,4 @@
-﻿using Avalanche.Security.Server.Core.Security.Hashing;
+using Avalanche.Security.Server.Core.Security.Hashing;
 using Avalanche.Security.Server.Persistence;
 
 using Microsoft.AspNetCore.Hosting;
@@ -37,14 +37,6 @@ namespace Avalanche.Security.Server
 
                 // Overwrite the default hostLogger with one from DI so we can get better logging if there is a failure calling host.Run()
                 hostLogger = loggerFactory.CreateLogger(nameof(Program));
-
-                using (var scope = host.Services.CreateScope())
-                {
-                    var services = scope.ServiceProvider;
-                    var context = services.GetService<SecurityDbContext>();
-                    var passwordHasher = services.GetService<IPasswordHasher>();
-                    DatabaseSeed.Seed(context, passwordHasher);
-                }
 
                 host.Run();
             }

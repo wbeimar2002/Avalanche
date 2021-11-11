@@ -32,6 +32,7 @@ namespace Avalanche.Security.Server
     public class Startup
     {
         private readonly IConfiguration _configuration;
+        private const string SecurityDatabaseName = "security.db";
 
         private readonly IWebHostEnvironment _environment;
 
@@ -45,7 +46,7 @@ namespace Avalanche.Security.Server
         {
             // Libraries
             services.AddDbContext<SecurityDbContext>(options =>
-                  options.UseSqlite(MakeConnectionString(GetDatabaseLocation("security.db"))));
+                  options.UseSqlite(MakeConnectionString(GetDatabaseLocation(SecurityDatabaseName))));
             services.AddAutoMapper(GetType().Assembly);
             services.AddCustomSwagger();
 
@@ -91,6 +92,13 @@ namespace Avalanche.Security.Server
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            var dbManager = new DatabaseMigrationManager();
+            _ = dbManager.UpgradeDatabase(GetDatabaseLocation(SecurityDatabaseName), typeof(SecurityDbContext).Assembly);
+
+            var context = app.ApplicationServices.GetService<SecurityDbContext>();
+            var passwordHasher = app.ApplicationServices.GetService<IPasswordHasher>();
+            DatabaseSeed.Seed(context, passwordHasher);
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -108,10 +116,7 @@ namespace Avalanche.Security.Server
 
             app.UseAuthentication();
             app.UseAuthorization();
-            app.UseEndpoints(endpoints =>
-            {
-                endpoints.MapControllers();
-            });
+            app.UseEndpoints(endpoints => endpoints.MapControllers());
         }
 
         private static string MakeConnectionString(string databasePath) => $"Data Source={databasePath}";
