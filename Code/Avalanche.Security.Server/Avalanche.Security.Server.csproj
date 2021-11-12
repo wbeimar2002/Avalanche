@@ -14,7 +14,19 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Remove="Migrations\001 - Initial Database.sql" />
+    <None Remove="Migrations\002 - FTS Table.sql" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Migrations\001 - Initial Database.sql" />
+    <EmbeddedResource Include="Migrations\002 - FTS Table.sql" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="8.1.1" />
+    <PackageReference Include="dbup-core" Version="4.5.0" />
+    <PackageReference Include="dbup-sqlite" Version="4.5.0" />
     <PackageReference Include="Ism.CodeQuality" Version="1.0.0-prerelease0010">
       <TreatAsUsed>true</TreatAsUsed>
     </PackageReference>

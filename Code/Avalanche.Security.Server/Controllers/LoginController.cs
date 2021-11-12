@@ -1,9 +1,7 @@
 using AutoMapper;
-
-using Avalanche.Security.Server.Controllers.Resources;
 using Avalanche.Security.Server.Core.Security.Tokens;
 using Avalanche.Security.Server.Core.Services;
-
+using Avalanche.Security.Server.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 
 using System.Threading.Tasks;
@@ -24,45 +22,45 @@ namespace Avalanche.Security.Server.Controllers
 
         [Route("/api/login")]
         [HttpPost]
-        public async Task<IActionResult> LoginAsync([FromBody] UserCredentialsResource userCredentials)
+        public async Task<IActionResult> LoginAsync([FromBody] UserCredentialsViewModel userCredentials)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            var response = await _authenticationService.CreateAccessTokenAsync(userCredentials.Email, userCredentials.Password);
+            var response = await _authenticationService.CreateAccessTokenAsync(userCredentials.LoginName, userCredentials.Password).ConfigureAwait(false);
             if(!response.Success)
             {
                 return BadRequest(response.Message);
             }
 
-            var accessTokenResource = _mapper.Map<AccessToken, AccessTokenResource>(response.Token);
+            var accessTokenResource = _mapper.Map<AccessToken, AccessTokenViewModel>(response.Token);
             return Ok(accessTokenResource);
         }
 
         [Route("/api/token/refresh")]
         [HttpPost]
-        public async Task<IActionResult> RefreshTokenAsync([FromBody] RefreshTokenResource refreshTokenResource)
+        public async Task<IActionResult> RefreshTokenAsync([FromBody] RefreshTokenViewModel refreshTokenResource)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            var response = await _authenticationService.RefreshTokenAsync(refreshTokenResource.Token, refreshTokenResource.UserEmail);
+            var response = await _authenticationService.RefreshTokenAsync(refreshTokenResource.Token, refreshTokenResource.LoginName).ConfigureAwait(false);
             if(!response.Success)
             {
                 return BadRequest(response.Message);
             }
-           
-            var tokenResource = _mapper.Map<AccessToken, AccessTokenResource>(response.Token);
+
+            var tokenResource = _mapper.Map<AccessToken, AccessTokenViewModel>(response.Token);
             return Ok(tokenResource);
         }
 
         [Route("/api/token/revoke")]
         [HttpPost]
-        public IActionResult RevokeToken([FromBody] RevokeTokenResource revokeTokenResource)
+        public IActionResult RevokeToken([FromBody] RevokeTokenViewModel revokeTokenResource)
         {
             if (!ModelState.IsValid)
             {

@@ -1,6 +1,6 @@
-using Avalanche.Security.Server.Core.Models;
 using Avalanche.Security.Server.Core.Security.Hashing;
 using Avalanche.Security.Server.Core.Security.Tokens;
+using Avalanche.Security.Server.Entities;
 using Avalanche.Shared.Infrastructure.Options;
 
 using System;
@@ -26,7 +26,7 @@ namespace Avalanche.Security.Server.Security.Tokens
             _signingConfigurations = signingConfigurations;
         }
 
-        public AccessToken CreateAccessToken(User user)
+        public AccessToken CreateAccessToken(UserEntity user)
         {
             var refreshToken = BuildRefreshToken();
             var accessToken = BuildAccessToken(user, refreshToken);
@@ -63,7 +63,7 @@ namespace Avalanche.Security.Server.Security.Tokens
             return refreshToken;
         }
 
-        private AccessToken BuildAccessToken(User user, RefreshToken refreshToken)
+        private AccessToken BuildAccessToken(UserEntity user, RefreshToken refreshToken)
         {
             var accessTokenExpiration = DateTime.UtcNow.AddSeconds(_tokenConfiguration.ExpirationSeconds);
 
@@ -83,12 +83,12 @@ namespace Avalanche.Security.Server.Security.Tokens
             return new AccessToken(accessToken, accessTokenExpiration.Ticks, refreshToken);
         }
 
-        private IEnumerable<Claim> GetClaims(User user)
+        private IEnumerable<Claim> GetClaims(UserEntity user)
         {
             var claims = new List<Claim>
             {
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-                new Claim(JwtRegisteredClaimNames.Sub, user.Email),
+                new Claim(JwtRegisteredClaimNames.Sub, user.LoginName),
                 new Claim("Id", user.Id.ToString()),
                 new Claim("FirstName", user.FirstName),
                 new Claim("LastName", user.LastName),

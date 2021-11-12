@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Avalanche.Security.Server.Core.Models;
 using Avalanche.Security.Server.Core.Security.Hashing;
+using Avalanche.Security.Server.Entities;
 
 namespace Avalanche.Security.Server.Persistence
 {
@@ -15,8 +16,8 @@ namespace Avalanche.Security.Server.Persistence
         public static void Seed(SecurityDbContext context, IPasswordHasher passwordHasher)
         {
             context.Database.EnsureCreated();
-            
-            if (context.Roles.Count() == 0)
+
+            if (!context.Roles.Any())
             {
 
                 var roles = new List<Role>
@@ -29,12 +30,12 @@ namespace Avalanche.Security.Server.Persistence
                 context.SaveChanges();
             }
 
-            if (context.Users.Count() == 0)
+            if (!context.Users.Any())
             {
-                var users = new List<User>
+                var users = new List<UserEntity>
                 {
-                    new User { FirstName = "Main", LastName ="Administrator", Email = "admin@admin.com", Password = passwordHasher.HashPassword("12345678") },
-                    new User { FirstName = "Common", LastName ="User", Email = "common@common.com", Password = passwordHasher.HashPassword("12345678") },
+                    new UserEntity { FirstName = "Main", LastName ="Administrator", LoginName = "admin@admin.com", Password = passwordHasher.HashPassword("12345678") },
+                    new UserEntity { FirstName = "Common", LastName ="User", LoginName = "common@common.com", Password = passwordHasher.HashPassword("12345678") },
                 };
 
                 users[0].UserRoles.Add(new UserRole

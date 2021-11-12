@@ -3,9 +3,9 @@ using System.Collections.ObjectModel;
 using Avalanche.Security.Server.Core.Models;
 using Avalanche.Security.Server.Core.Security.Hashing;
 using Avalanche.Security.Server.Core.Security.Tokens;
+using Avalanche.Security.Server.Entities;
 using Avalanche.Security.Server.Security.Tokens;
 using Avalanche.Shared.Infrastructure.Options;
-using Microsoft.Extensions.Options;
 using Moq;
 using Xunit;
 
@@ -16,9 +16,9 @@ namespace Avalanche.Security.Tests.Security.Tokens
         private TokenAuthConfiguration _tokenConfig;
         private Mock<IPasswordHasher> _passwordHasher;
         private SigningOptions _signingOptions;
-        private User _user;
+        private UserEntity _user;
 
-        private ITokenHandler _tokenHandler;
+        private readonly ITokenHandler _tokenHandler;
 
         public TokenHandlerTests()
         {
@@ -41,10 +41,10 @@ namespace Avalanche.Security.Tests.Security.Tokens
 
             _signingOptions = new SigningOptions();
 
-            _user = new User
+            _user = new UserEntity
             {
                 Id = 1,
-                Email = "test@test.com",
+                LoginName = "test@test.com",
                 Password = "123",
                 FirstName = "Some",
                 LastName = "User",

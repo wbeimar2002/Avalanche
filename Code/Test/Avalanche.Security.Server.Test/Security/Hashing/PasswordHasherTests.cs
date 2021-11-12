@@ -7,7 +7,7 @@ namespace Avalanche.Security.Tests.Security.Hashing
 {
     public class PasswordHasherTests
     {
-        private IPasswordHasher _passwordHasher = new PasswordHasher();
+        private readonly IPasswordHasher _passwordHasher = new PasswordHasher();
 
         [Fact]
         public void Should_Throw_Exception_For_Empty_Password_When_Hashing()
