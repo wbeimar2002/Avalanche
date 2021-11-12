@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations.Schema;
+using Avalanche.Security.Server.Entities;
 
 namespace Avalanche.Security.Server.Core.Models
 {
@@ -6,7 +7,7 @@ namespace Avalanche.Security.Server.Core.Models
     public class UserRole
     {
         public int UserId { get; set; }
-        public User User { get; set; }
+        public UserEntity User { get; set; }
 
         public int RoleId { get; set; }
         public Role Role { get; set; }

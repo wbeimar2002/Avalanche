@@ -5,6 +5,7 @@ using Avalanche.Security.Server.Core.Models;
 using Avalanche.Security.Server.Core.Security.Hashing;
 using Avalanche.Security.Server.Core.Security.Tokens;
 using Avalanche.Security.Server.Core.Services;
+using Avalanche.Security.Server.Entities;
 using Avalanche.Security.Server.Services;
 using Moq;
 using Xunit;
@@ -31,10 +32,10 @@ namespace Avalanche.Security.Tests.Services
         {
             _userService = new Mock<IUserService>();
             _userService.Setup(u => u.FindByLoginAsync("invalid@invalid.com"))
-                       .Returns(Task.FromResult<User>(null));
+                       .Returns(Task.FromResult<UserEntity>(null));
 
             _userService.Setup(u => u.FindByLoginAsync("test@test.com"))
-                        .ReturnsAsync(new User
+                        .ReturnsAsync(new UserEntity
                         {
                             Id = 1,
                             LoginName = "test@test.com",
@@ -59,7 +60,7 @@ namespace Avalanche.Security.Tests.Services
                            .Returns<string, string>((password, hash) => password == hash);
 
             _tokenHandler = new Mock<ITokenHandler>();
-            _tokenHandler.Setup(h => h.CreateAccessToken(It.IsAny<User>()))
+            _tokenHandler.Setup(h => h.CreateAccessToken(It.IsAny<UserEntity>()))
                          .Returns(new AccessToken
                                      (
                                         token: "abc",

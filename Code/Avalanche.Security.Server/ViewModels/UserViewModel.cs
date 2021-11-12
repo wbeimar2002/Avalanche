@@ -1,8 +1,8 @@
 using System.Collections.Generic;
 
-namespace Avalanche.Security.Server.Controllers.Resources
+namespace Avalanche.Security.Server.ViewModels
 {
-    public class UserResource
+    public class UserViewModel
     {
         public int Id { get; set; }
         public string LoginName { get; set; }

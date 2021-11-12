@@ -5,6 +5,7 @@ using Avalanche.Security.Server.Core.Repositories;
 using Avalanche.Security.Server.Core.Security.Hashing;
 using Avalanche.Security.Server.Core.Services;
 using Avalanche.Security.Server.Core.Services.Communication;
+using Avalanche.Security.Server.Entities;
 
 namespace Avalanche.Security.Server.Services
 {
@@ -21,7 +22,7 @@ namespace Avalanche.Security.Server.Services
             _userRepository = userRepository;
         }
 
-        public async Task<CreateUserResponse> CreateUserAsync(User user, params ERole[] userRoles)
+        public async Task<CreateUserResponse> CreateUserAsync(UserEntity user, params ERole[] userRoles)
         {
             var existingUser = await _userRepository.FindByLoginAsync(user.LoginName).ConfigureAwait(false);
             if(existingUser != null)
@@ -37,8 +38,8 @@ namespace Avalanche.Security.Server.Services
             return new CreateUserResponse(true, null, user);
         }
 
-        public async Task<User> FindByLoginAsync(string loginName) => await _userRepository.FindByLoginAsync(loginName).ConfigureAwait(false);
+        public async Task<UserEntity> FindByLoginAsync(string loginName) => await _userRepository.FindByLoginAsync(loginName).ConfigureAwait(false);
 
-        public async Task<List<User>> GetUsers(UserFilterModel filter) => await _userRepository.GetUsers(filter).ConfigureAwait(false);
+        public async Task<List<UserEntity>> GetUsers(UserFilterModel filter) => await _userRepository.GetUsers(filter).ConfigureAwait(false);
     }
 }

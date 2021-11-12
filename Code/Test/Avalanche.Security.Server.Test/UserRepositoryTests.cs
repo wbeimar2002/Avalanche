@@ -1,4 +1,5 @@
 using System.Threading.Tasks;
+using Avalanche.Security.Server.Entities;
 using Avalanche.Security.Server.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Xunit;
@@ -18,7 +19,7 @@ namespace Avalanche.Security.Server.Test
             var repository = GetRepository(_options);
 
             // Act
-            await repository.AddAsync(new Core.Models.User
+            await repository.AddAsync(new UserEntity
             {
                 LoginName = "test@test.com",
                 Password = "test123",
@@ -43,7 +44,7 @@ namespace Avalanche.Security.Server.Test
             var repository = GetRepository(_options);
 
             // Act
-            var exception = await Record.ExceptionAsync(async () => await repository.AddAsync(new Core.Models.User
+            var exception = await Record.ExceptionAsync(async () => await repository.AddAsync(new UserEntity
             {
                 LoginName = "test@test.com",
                 FirstName = "test",
@@ -61,7 +62,7 @@ namespace Avalanche.Security.Server.Test
             var repository = GetRepository(_options);
 
             // Act
-            var exception = await Record.ExceptionAsync(async () => await repository.AddAsync(new Core.Models.User
+            var exception = await Record.ExceptionAsync(async () => await repository.AddAsync(new UserEntity
             {
                 Password = "test123",
                 FirstName = "test",
@@ -91,7 +92,7 @@ namespace Avalanche.Security.Server.Test
             var repository = GetRepository(_options);
 
             // Act
-            await repository.AddAsync(new Core.Models.User { LoginName = "test@test.com", Password = "test123", FirstName = "test", LastName = "test" }, System.Array.Empty<Core.Models.ERole>()).ConfigureAwait(false);
+            await repository.AddAsync(new UserEntity { LoginName = "test@test.com", Password = "test123", FirstName = "test", LastName = "test" }, System.Array.Empty<Core.Models.ERole>()).ConfigureAwait(false);
             var user = await repository.FindByLoginAsync("test@test.com").ConfigureAwait(false);
 
             // Assert

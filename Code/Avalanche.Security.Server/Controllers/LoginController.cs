@@ -1,9 +1,7 @@
 using AutoMapper;
-
-using Avalanche.Security.Server.Controllers.Resources;
 using Avalanche.Security.Server.Core.Security.Tokens;
 using Avalanche.Security.Server.Core.Services;
-
+using Avalanche.Security.Server.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 
 using System.Threading.Tasks;
@@ -24,7 +22,7 @@ namespace Avalanche.Security.Server.Controllers
 
         [Route("/api/login")]
         [HttpPost]
-        public async Task<IActionResult> LoginAsync([FromBody] UserCredentialsResource userCredentials)
+        public async Task<IActionResult> LoginAsync([FromBody] UserCredentialsViewModel userCredentials)
         {
             if (!ModelState.IsValid)
             {
@@ -37,13 +35,13 @@ namespace Avalanche.Security.Server.Controllers
                 return BadRequest(response.Message);
             }
 
-            var accessTokenResource = _mapper.Map<AccessToken, AccessTokenResource>(response.Token);
+            var accessTokenResource = _mapper.Map<AccessToken, AccessTokenViewModel>(response.Token);
             return Ok(accessTokenResource);
         }
 
         [Route("/api/token/refresh")]
         [HttpPost]
-        public async Task<IActionResult> RefreshTokenAsync([FromBody] RefreshTokenResource refreshTokenResource)
+        public async Task<IActionResult> RefreshTokenAsync([FromBody] RefreshTokenViewModel refreshTokenResource)
         {
             if (!ModelState.IsValid)
             {
@@ -56,13 +54,13 @@ namespace Avalanche.Security.Server.Controllers
                 return BadRequest(response.Message);
             }
 
-            var tokenResource = _mapper.Map<AccessToken, AccessTokenResource>(response.Token);
+            var tokenResource = _mapper.Map<AccessToken, AccessTokenViewModel>(response.Token);
             return Ok(tokenResource);
         }
 
         [Route("/api/token/revoke")]
         [HttpPost]
-        public IActionResult RevokeToken([FromBody] RevokeTokenResource revokeTokenResource)
+        public IActionResult RevokeToken([FromBody] RevokeTokenViewModel revokeTokenResource)
         {
             if (!ModelState.IsValid)
             {

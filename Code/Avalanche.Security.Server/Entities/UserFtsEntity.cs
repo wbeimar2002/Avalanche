@@ -16,7 +16,7 @@ namespace Avalanche.Security.Server.Entities
             Rank = rank;
         }
 
-        public User User { get; set; }
+        public UserEntity User { get; set; }
 
         public int RowId { get; set; }
         public string Match { get; set; }

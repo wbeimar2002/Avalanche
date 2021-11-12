@@ -7,7 +7,7 @@ namespace Avalanche.Security.Server.Persistence
 {
     public class SecurityDbContext : DbContext
     {
-        public DbSet<User> Users { get; set; }
+        public DbSet<UserEntity> Users { get; set; }
         public DbSet<Role> Roles { get; set; }
         public DbSet<UserFtsEntity> UserFts { get; set; }
 

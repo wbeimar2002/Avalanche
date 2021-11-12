@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Avalanche.Security.Server.Core.Models;
 using Avalanche.Security.Server.Core.Repositories;
+using Avalanche.Security.Server.Entities;
 using Ism.Utility.Core;
 using Microsoft.EntityFrameworkCore;
 using static Avalanche.Security.Server.Extensions.DynamicSortingExtensions;
@@ -19,7 +20,7 @@ namespace Avalanche.Security.Server.Persistence
 
         public UserRepository(SecurityDbContext context) => _context = context;
 
-        public async Task AddAsync(User user, ERole[] userRoles)
+        public async Task AddAsync(UserEntity user, ERole[] userRoles)
         {
             var roleNames = userRoles.Select(r => r.ToString()).ToList();
             var roles = await _context.Roles.Where(r => roleNames.Contains(r.Name)).ToListAsync().ConfigureAwait(false);
@@ -34,11 +35,11 @@ namespace Avalanche.Security.Server.Persistence
             await _context.SaveChangesAsync().ConfigureAwait(false);
         }
 
-        public async Task<User> FindByLoginAsync(string loginName) => await _context.Users.Include(u => u.UserRoles)
+        public async Task<UserEntity> FindByLoginAsync(string loginName) => await _context.Users.Include(u => u.UserRoles)
                                        .ThenInclude(ur => ur.Role)
                                        .SingleOrDefaultAsync(u => u.LoginName == loginName).ConfigureAwait(false);
 
-        public async Task<List<User>> GetUsers(UserFilterModel filter)
+        public async Task<List<UserEntity>> GetUsers(UserFilterModel filter)
         {
             ThrowIfNull(nameof(filter.SearchTerms), filter.SearchTerms);
             ThrowIfNullOrDefault(nameof(filter.PageSize), filter.PageSize);
@@ -52,7 +53,7 @@ namespace Avalanche.Security.Server.Persistence
             var searchExpression = validatedSearchTerms.Any() ? FormatAsMatchExpression(validatedSearchTerms) : "<None>";
 
             var baseFtsQuery = _context.UserFts;
-            IQueryable<User> userQuery;
+            IQueryable<UserEntity> userQuery;
 
             if (validatedSearchTerms.Any())
             {

@@ -4,6 +4,7 @@ using Avalanche.Security.Server.Core.Models;
 using Avalanche.Security.Server.Core.Repositories;
 using Avalanche.Security.Server.Core.Security.Hashing;
 using Avalanche.Security.Server.Core.Services;
+using Avalanche.Security.Server.Entities;
 using Avalanche.Security.Server.Services;
 using Moq;
 using Xunit;
@@ -31,12 +32,12 @@ namespace Avalanche.Security.Tests.Services
 
             _userRepository = new Mock<IUserRepository>();
             _userRepository.Setup(r => r.FindByLoginAsync("test@test.com"))
-                .ReturnsAsync(new User { Id = 1, LoginName = "test@test.com", UserRoles = new Collection<UserRole>() });
+                .ReturnsAsync(new UserEntity { Id = 1, LoginName = "test@test.com", UserRoles = new Collection<UserRole>() });
 
             _userRepository.Setup(r => r.FindByLoginAsync("secondtest@secondtest.com"))
-                .Returns(Task.FromResult<User>(null));
+                .Returns(Task.FromResult<UserEntity>(null));
 
-            _userRepository.Setup(r => r.AddAsync(It.IsAny<User>(), It.IsAny<ERole[]>())).Returns(Task.CompletedTask);
+            _userRepository.Setup(r => r.AddAsync(It.IsAny<UserEntity>(), It.IsAny<ERole[]>())).Returns(Task.CompletedTask);
 
             _unitOfWork = new Mock<IUnitOfWork>();
             _unitOfWork.Setup(u => u.CompleteAsync()).Returns(Task.CompletedTask);
@@ -45,7 +46,7 @@ namespace Avalanche.Security.Tests.Services
         [Fact]
         public async Task Should_Create_Non_Existing_User()
         {
-            var user = new User { LoginName = "mytestuser@mytestuser.com", Password = "123", UserRoles = new Collection<UserRole>() };
+            var user = new UserEntity { LoginName = "mytestuser@mytestuser.com", Password = "123", UserRoles = new Collection<UserRole>() };
 
             var response = await _userService.CreateUserAsync(user, ERole.Common).ConfigureAwait(false);
 
@@ -58,7 +59,7 @@ namespace Avalanche.Security.Tests.Services
         [Fact]
         public async Task Should_Not_Create_User_When_LoginName_Is_Alreary_In_Use()
         {
-            var user = new User { LoginName = "test@test.com", Password = "123", UserRoles = new Collection<UserRole>() };
+            var user = new UserEntity { LoginName = "test@test.com", Password = "123", UserRoles = new Collection<UserRole>() };
 
             var response = await _userService.CreateUserAsync(user, ERole.Common).ConfigureAwait(false);
 

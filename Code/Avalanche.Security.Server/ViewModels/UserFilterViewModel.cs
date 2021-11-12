@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Avalanche.Security.Server.Core.Models;
 
-namespace Avalanche.Security.Server.Controllers.Resources
+namespace Avalanche.Security.Server.ViewModels
 {
     public class UserFilterViewModel
     {

@@ -1,9 +1,10 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using AutoMapper;
-using Avalanche.Security.Server.Controllers.Resources;
 using Avalanche.Security.Server.Core.Models;
 using Avalanche.Security.Server.Core.Services;
+using Avalanche.Security.Server.Entities;
+using Avalanche.Security.Server.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Avalanche.Security.Server.Controllers
@@ -22,14 +23,14 @@ namespace Avalanche.Security.Server.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateUserAsync([FromBody] CreateUserResource createUserResource)
+        public async Task<IActionResult> CreateUserAsync([FromBody] CreateUserViewModel createUserViewModel)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            var user = _mapper.Map<CreateUserResource, User>(createUserResource);
+            var user = _mapper.Map<CreateUserViewModel, UserEntity>(createUserViewModel);
 
             var response = await _userService.CreateUserAsync(user, ERole.Common).ConfigureAwait(false);
             if(!response.Success)
@@ -37,8 +38,8 @@ namespace Avalanche.Security.Server.Controllers
                 return BadRequest(response.Message);
             }
 
-            var userResource = _mapper.Map<User, UserResource>(response.User);
-            return Ok(userResource);
+            var userModel = _mapper.Map<UserEntity, UserViewModel>(response.User);
+            return Ok(userModel);
         }
 
         [HttpGet]
@@ -51,7 +52,7 @@ namespace Avalanche.Security.Server.Controllers
 
             var filterModel = _mapper.Map<UserFilterViewModel, UserFilterModel>(filter);
 
-            var users = _mapper.Map<IList<User>, IList<UserResource>>(await _userService.GetUsers(filterModel).ConfigureAwait(false));
+            var users = _mapper.Map<IList<UserEntity>, IList<UserViewModel>>(await _userService.GetUsers(filterModel).ConfigureAwait(false));
 
             return Ok(users);
         }

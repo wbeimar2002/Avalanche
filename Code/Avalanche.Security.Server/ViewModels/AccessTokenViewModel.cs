@@ -1,6 +1,6 @@
-namespace Avalanche.Security.Server.Controllers.Resources
+namespace Avalanche.Security.Server.ViewModels
 {
-    public class AccessTokenResource
+    public class AccessTokenViewModel
     {
         public string AccessToken { get; set; }
         public string RefreshToken { get; set; }

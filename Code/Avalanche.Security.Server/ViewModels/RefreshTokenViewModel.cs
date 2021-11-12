@@ -1,8 +1,8 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace Avalanche.Security.Server.Controllers.Resources
+namespace Avalanche.Security.Server.ViewModels
 {
-    public class RefreshTokenResource
+    public class RefreshTokenViewModel
     {
         [Required]
         public string Token { get; set; }
