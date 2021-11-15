@@ -1,4 +1,6 @@
 using System;
+using System.Reflection;
+using AutoMapper;
 using Avalanche.Security.Server.Persistence;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
@@ -27,5 +29,19 @@ namespace Avalanche.Security.Server.Test
         }
 
         public static SecurityDbContext GetDatabaseWriter(DbContextOptions<SecurityDbContext> options) => new SecurityDbContext(options);
+
+        public static Mapper GetMapper(Type type)
+        {
+            var mapperConfig = GetMapperConfiguration(type);
+            return new Mapper(mapperConfig);
+        }
+
+        public static MapperConfiguration GetMapperConfiguration(Type type) =>
+            new MapperConfiguration(cfg =>
+            {
+                var assembly = Assembly.GetAssembly(type);
+                cfg.AddMaps(assembly);
+            }
+        );
     }
 }

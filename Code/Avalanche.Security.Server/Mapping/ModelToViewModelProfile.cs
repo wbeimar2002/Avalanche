@@ -7,9 +7,9 @@ using Avalanche.Security.Server.ViewModels;
 
 namespace Avalanche.Security.Server.Mapping
 {
-    public class ModelToResourceProfile : Profile
+    public class ModelToViewModelProfile : Profile
     {
-        public ModelToResourceProfile()
+        public ModelToViewModelProfile()
         {
             CreateMap<UserEntity, UserViewModel>()
                 .ForMember(u => u.Roles, opt => opt.MapFrom(u => u.UserRoles.Select(ur => ur.Role.Name)));
