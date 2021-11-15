@@ -135,8 +135,10 @@ stages:
 
      - powershell: |
             $buildnumber_postfix=""
+            $tag =""
+
             $buildnumber = $Env:BUILD_BUILDNUMBER
-            #write-host "buildnumber_postfix="$buildnumber_postfix 
+            
             $tempString=$buildnumber.split("_")
             $buildnumber_postfix = $tempString[1]
             
@@ -150,30 +152,23 @@ stages:
             {
             Throw("buildnumber_postfix variable is empty")
             }
-       displayName: "set/print buildnumber_postfix"
+
+            $tag = $tempString[2]
+
+            if($tag)
+            {
+            write-host "tag="$tag
+            Write-Host "##vso[task.setvariable variable=tag;]$tag"
+            
+            }
+            else
+            {
+            Throw("tag variable is empty")
+            }
+
+       displayName: "set/print tag buildnumber_postfix"
        condition: and(succeeded(),  ne(variables['Build.Reason'], 'PullRequest'))
 
-     - powershell: |
-            $buildnumber_postfix=""
-            $buildnumber = $Env:BUILD_BUILDNUMBER
-            #write-host "buildnumber_postfix="$buildnumber_postfix 
-            $tempString=$buildnumber.split("_")
-            $buildnumber_postfix = $tempString[1]
-            
-            if($buildnumber_postfix)
-            {
-            write-host "buildnumber_postfix="$buildnumber_postfix 
-            Write-Host "##vso[task.setvariable variable=buildnumber_postfix;]$buildnumber_postfix"
-            
-            }
-            else
-            {
-            Throw("buildnumber_postfix variable is empty")
-            }
-      displayName: "set/print buildnumber_postfix"
-      condition: and(succeeded(),  ne(variables['Build.Reason'], 'PullRequest'))
-
-     
      - task: Docker@2
        inputs:
           command: 'tag'
