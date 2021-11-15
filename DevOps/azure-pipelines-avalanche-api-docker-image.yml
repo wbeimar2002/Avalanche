@@ -154,23 +154,24 @@ stages:
        condition: and(succeeded(),  ne(variables['Build.Reason'], 'PullRequest'))
 
      - powershell: |
-            $tag =""
-            write-host "buildnumber_postfix="$(buildnumber_postfix)
-            if("$(buildnumber_postfix)")
+            $buildnumber_postfix=""
+            $buildnumber = $Env:BUILD_BUILDNUMBER
+            #write-host "buildnumber_postfix="$buildnumber_postfix 
+            $tempString=$buildnumber.split("_")
+            $buildnumber_postfix = $tempString[1]
+            
+            if($buildnumber_postfix)
             {
-            #$tag="$(acrname).azurecr.io/$(ImageNameLowercase):"+"$(buildnumber_postfix)"
-            #$Tag = "{0}/{1}:{2}" -f "$(acrname).azurecr.io", "$(ImageNameLowercase)", $(Get-Date -UFormat '+%Y%m%dT%H%M%S')
-            $Tag = "{0}" -f $(Get-Date -UFormat '+%Y%m%dT%H%M%S')
-            Write-host "tag="$tag
-            Write-Host "##vso[task.setvariable variable=tag;]$tag"
+            write-host "buildnumber_postfix="$buildnumber_postfix 
+            Write-Host "##vso[task.setvariable variable=buildnumber_postfix;]$buildnumber_postfix"
             
             }
             else
             {
             Throw("buildnumber_postfix variable is empty")
             }
-       displayName: "Set/Print Tag"
-       condition: and(succeeded(),  ne(variables['Build.Reason'], 'PullRequest'))
+      displayName: "set/print buildnumber_postfix"
+      condition: and(succeeded(),  ne(variables['Build.Reason'], 'PullRequest'))
 
      
      - task: Docker@2
