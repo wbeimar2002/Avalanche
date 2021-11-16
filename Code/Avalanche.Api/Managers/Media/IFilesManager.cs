@@ -4,5 +4,6 @@ namespace Avalanche.Api.Managers.Media
     {
         string GetCapturePreview(string path, string procedureId, string repository);
         string GetCaptureVideo(string path, string procedureId, string repository);
+        string GetDownloadPath(string repository, string fileName);
     }
 }

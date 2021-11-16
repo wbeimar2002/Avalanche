@@ -42,7 +42,6 @@ namespace Avalanche.Api.Managers.Procedures
             _stateClient = stateClient;
             _libraryService = libraryService;
             _mapper = mapper;
-            _libraryService = libraryService;
             _dataManager = dataManager;
             _generalApiConfig = generalApiConfig;
             _setupConfiguration = setupConfiguration;
@@ -246,18 +245,14 @@ namespace Avalanche.Api.Managers.Procedures
 
         }
 
-        public async Task GenerateMediaZip(MediaRequestViewModel mediaRequest)
+        public async Task GenerateProcedureZip(ProcedureZipRequestViewModel procedureZipRequest)
         {
-            Preconditions.ThrowIfNull(nameof(mediaRequest), mediaRequest);
-            Preconditions.ThrowIfNull(nameof(mediaRequest.procedureId), mediaRequest.procedureId);
-            Preconditions.ThrowIfNull(nameof(mediaRequest.mediaFileNameList), mediaRequest.mediaFileNameList);
-            Preconditions.ThrowIfTrue<ArgumentException>($"{nameof(mediaRequest.mediaFileNameList.Count)} cannot be empty", mediaRequest.mediaFileNameList.Count == 0);
-
-
-            var mediaDownloadRequest = _mapper.Map<MediaRequestViewModel, MediaDownloadRequest>(mediaRequest);
-            await _libraryService.GenerateMediaZip(mediaDownloadRequest).ConfigureAwait(false);
-
-            
+            Preconditions.ThrowIfNull(nameof(procedureZipRequest), procedureZipRequest);
+            Preconditions.ThrowIfNull(nameof(procedureZipRequest.ProcedureId), procedureZipRequest.ProcedureId);
+            Preconditions.ThrowIfNull(nameof(procedureZipRequest.MediaFileNameList), procedureZipRequest.MediaFileNameList);
+            Preconditions.ThrowIfTrue<ArgumentException>($"{nameof(procedureZipRequest.MediaFileNameList.Count)} cannot be empty", procedureZipRequest.MediaFileNameList.Count == 0);
+            var procedureDownloadRequest = _mapper.Map<ProcedureZipRequestViewModel, GenerateProcedureZipRequest>(procedureZipRequest);
+            await _libraryService.GenerateProcedureZip(procedureDownloadRequest).ConfigureAwait(false);
         }
     }
 }
