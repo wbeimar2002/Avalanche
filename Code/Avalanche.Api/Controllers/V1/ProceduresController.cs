@@ -135,14 +135,15 @@ namespace Avalanche.Api.Controllers.V1
             }
         }
 
-        [HttpPost("generatezip")]
+
+        [HttpPost("downloadRequest")]
         [ProducesResponseType(typeof(void), StatusCodes.Status200OK)]
-        public async Task<IActionResult> GenerateMediaZip(MediaRequestViewModel mediaRequest)
+        public async Task<IActionResult> CreateDownloadRequest(ProcedureZipRequestViewModel procedureZipRequest)
         {
             try
             {
                 _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
-                await _proceduresManager.GenerateMediaZip(mediaRequest);
+                await _proceduresManager.GenerateProcedureZip(procedureZipRequest).ConfigureAwait(false);
 
                 return Ok();
             }

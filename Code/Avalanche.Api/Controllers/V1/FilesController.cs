@@ -14,7 +14,6 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Diagnostics.CodeAnalysis;
-using System.IO;
 using System.Security.Claims;
 using System.Threading.Tasks;
 
@@ -169,17 +168,15 @@ namespace Avalanche.Api.Controllers.V1
             }
         }
 
-        [ResponseCache(Location = ResponseCacheLocation.Client, Duration = 60 * 60 * 24)]
-        [HttpGet("downloadzip")]
-        public IActionResult DownloadMediaZip([FromQuery] string path, [FromQuery] string fileName)
+        [HttpGet("download")]
+        public IActionResult DownloadProcedureZip([FromQuery] string repositoryName, [FromQuery] string fileName)
         {
             try
             {
-               
                 _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
-                var fullPath = Path.Combine(path, fileName);
-
-                return PhysicalFile(fullPath, "application/zip", true);
+                var fullPath = _filesManager.GetDownloadPath(repositoryName, fileName);
+                //Download zip file from the repository download path
+                return PhysicalFile(fullPath, "application/zip", false);
             }
             catch (Exception ex)
             {
