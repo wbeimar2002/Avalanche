@@ -1,51 +1,47 @@
 <Project Sdk="Microsoft.NET.Sdk">
-
-  <PropertyGroup>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
-    <Configurations>Debug;Release;DebugLocal</Configurations>
-  </PropertyGroup>
-
-  <ItemGroup>
-    <Compile Remove="Services\Logger\**" />
-    <EmbeddedResource Remove="Services\Logger\**" />
-    <None Remove="Services\Logger\**" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Compile Remove="Configuration\PgsTimeoutConfig.cs" />
-    <Compile Remove="Helpers\Preconditions.cs" />
-    <Compile Remove="Models\AdministratorSettings.cs" />
-    <Compile Remove="Models\ApiSettings.cs" />
-    <Compile Remove="Models\ConfigSettings.cs" />
-    <Compile Remove="Models\GeneralSetupSettings.cs" />
-    <Compile Remove="Models\JwtIssuerOptions.cs" />
-    <Compile Remove="Models\LoggerSettings.cs" />
-    <Compile Remove="Models\ManualRegistrationSettings.cs" />
-    <Compile Remove="Models\PgsSettings.cs" />
-    <Compile Remove="Models\QuickRegistrationSettings.cs" />
-    <Compile Remove="Models\RegistrationSettings.cs" />
-    <Compile Remove="Models\SetupSettings.cs" />
-    <Compile Remove="Models\SurgerySettings.cs" />
-    <Compile Remove="Models\TimeoutSettings.cs" />
-    <Compile Remove="Models\Token.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Include="..\.editorconfig" Link=".editorconfig" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <PackageReference Include="FluentValidation" Version="10.3.0" />
-    <PackageReference Include="Ism.CodeQuality" Version="1.0.0-prerelease0009">
-      <TreatAsUsed>true</TreatAsUsed>
-    </PackageReference>
-    <PackageReference Include="Ism.Common.Core" Version="1.0.0-prerelease048" />
-    <PackageReference Include="Microsoft.IdentityModel.Tokens" Version="6.12.0" />
-    <PackageReference Include="Serilog" Version="2.10.0" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\Avalanche.Shared.Domain\Avalanche.Shared.Domain.csproj" />
-  </ItemGroup>
-
+	<PropertyGroup>
+		<TargetFramework>netcoreapp3.1</TargetFramework>
+		<Configurations>Debug;Release;DebugLocal</Configurations>
+	</PropertyGroup>
+	<ItemGroup>
+		<Compile Remove="Services\Logger\**" />
+		<EmbeddedResource Remove="Services\Logger\**" />
+		<None Remove="Services\Logger\**" />
+	</ItemGroup>
+	<ItemGroup>
+		<Compile Remove="Configuration\PgsTimeoutConfig.cs" />
+		<Compile Remove="Helpers\Preconditions.cs" />
+		<Compile Remove="Models\AdministratorSettings.cs" />
+		<Compile Remove="Models\ApiSettings.cs" />
+		<Compile Remove="Models\ConfigSettings.cs" />
+		<Compile Remove="Models\GeneralSetupSettings.cs" />
+		<Compile Remove="Models\JwtIssuerOptions.cs" />
+		<Compile Remove="Models\LoggerSettings.cs" />
+		<Compile Remove="Models\ManualRegistrationSettings.cs" />
+		<Compile Remove="Models\PgsSettings.cs" />
+		<Compile Remove="Models\QuickRegistrationSettings.cs" />
+		<Compile Remove="Models\RegistrationSettings.cs" />
+		<Compile Remove="Models\SetupSettings.cs" />
+		<Compile Remove="Models\SurgerySettings.cs" />
+		<Compile Remove="Models\TimeoutSettings.cs" />
+		<Compile Remove="Models\Token.cs" />
+	</ItemGroup>
+	<ItemGroup>
+		<None Include="..\.editorconfig" Link=".editorconfig" />
+	</ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="FluentValidation" Version="10.3.0" />
+		<PackageReference Include="Ism.CodeQuality" Version="1.0.0-prerelease0009">
+			<TreatAsUsed>true</TreatAsUsed>
+		</PackageReference>
+		<PackageReference Include="Ism.Common.Core" Version="1.0.0-prerelease048" />
+		<PackageReference Include="Microsoft.IdentityModel.Tokens" Version="6.12.0" />
+		<PackageReference Include="Serilog" Version="2.10.0" />
+	</ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\Avalanche.Shared.Domain\Avalanche.Shared.Domain.csproj" />
+	</ItemGroup>
+	<PropertyGroup>
+		<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+	</PropertyGroup>
 </Project>
