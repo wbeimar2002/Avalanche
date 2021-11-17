@@ -36,11 +36,18 @@ stages:
       inputs:
         targetType: inline
         script: Get-ChildItem -Path Env:\
+
+    - powershell: |
+          set-location $(Build.SourcesDirectory)\avalanche-api\Code\Avalanche.Api
+          $exe = $ENV:SYSTEM_DEFAULTWORKINGDIRECTORY + "\devops\utils\NSwag\NetCore31\dotnet-nswag.exe"
+          & $exe run nswag.json /variables:Configuration=Release,OutDir=bin\Release\netcoreapp3.1\ /runtime:NetCore3
+      displayName: 'Run dotnet-nswag.exe'
+
     - task: PowerShell@1
       displayName: Apply Version To Application
       inputs:
         scriptName: devops/misc-scripts/ApplyVersionToAssemblies.ps1
-
+    
     - template: pipeline\templates\restore-build-test-msbuild9.yml@devops
       parameters:
         adoInstanceurl: AdoInstanceUrl
