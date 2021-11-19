@@ -15,5 +15,9 @@ namespace Avalanche.Api.ViewModels
             MediaFileNameList = mediaFileNames;
             RequestId = requestId;
         }
+
+        public ProcedureZipRequestViewModel()
+        {
+        }
     }
 }

@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using AutoMapper;
 using Avalanche.Api.Managers.Data;
@@ -234,6 +235,23 @@ namespace Avalanche.Api.Test.Managers
                 IsDescending = filter.IsDescending,
                 ProcedureIndexSortingColumn = (ProcedureIndexSortingColumns)filter.ProcedureIndexSortingColumn
             }), Times.Never);
+        }
+
+
+        [Test]
+        public async Task GenerateProcedureZipTest()
+        {
+            var procedureId = new ProcedureIdViewModel("2021_06_18T19_52_44_TODO", "cache");
+            var procedureZipRequest = new ProcedureZipRequestViewModel()
+            {
+                ProcedureId = procedureId,
+                MediaFileNameList = new List<string> { "BX4RecA_2021_10_26T14_28_25_184.jpg", "BX4RecA_2021_10_26T14_28_25_184_t.jpg" },
+                RequestId = "test"
+            };
+
+            _libraryService.Setup(mock => mock.GenerateProcedureZip(It.IsAny<GenerateProcedureZipRequest>()));
+            await _manager.GenerateProcedureZip(procedureZipRequest).ConfigureAwait(true);
+            _libraryService.Verify(mock => mock.GenerateProcedureZip(It.IsAny<GenerateProcedureZipRequest>()), Times.Once);
         }
     }
 }
