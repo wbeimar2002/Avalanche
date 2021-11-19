@@ -10,7 +10,7 @@ namespace Avalanche.Api.Managers.Procedures
         Task<ProcedureViewModel> GetProcedureDetails(ProcedureIdViewModel procedureIdViewModel);
         Task UpdateProcedure(ProcedureViewModel procedureViewModel);
 
-        Task GenerateProcedureZip(ProcedureZipRequestViewModel mediaRequest);
+        Task GenerateProcedureZip(ProcedureZipRequestViewModel procedureZipRequest);
 
     }
 }

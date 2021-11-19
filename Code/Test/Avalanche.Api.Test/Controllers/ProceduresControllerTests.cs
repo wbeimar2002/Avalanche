@@ -77,5 +77,21 @@ namespace Avalanche.Api.Test.Controllers
 
             Assert.IsInstanceOf<OkObjectResult>(okResult.Result);
         }
+
+        [Test]
+        public void CreateDownloadRequestControllerTest()
+        {
+            var request = new ProcedureZipRequestViewModel();
+            _proceduresManager.Setup(mock => mock.GenerateProcedureZip(request));
+            var result = _controller.CreateDownloadRequest(request);
+            if (_checkLogger)
+            {
+                _logger.Verify(LogLevel.Error, $"Exception {nameof(ProceduresController)}.{nameof(ProceduresController.CreateDownloadRequest)}", Times.Never());
+                _logger.Verify(LogLevel.Debug, $"Requested {nameof(ProceduresController)}.{nameof(ProceduresController.CreateDownloadRequest)}", Times.Once());
+                _logger.Verify(LogLevel.Debug, $"Completed {nameof(ProceduresController)}.{nameof(ProceduresController.CreateDownloadRequest)}", Times.Once());
+            }
+
+            Assert.IsInstanceOf<OkResult>(result.Result);
+        }
     }
 }
