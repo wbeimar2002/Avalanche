@@ -51,23 +51,27 @@ namespace Avalanche.Api.Mapping
             CreateMap<ProcedureImageMessage, ImageContentViewModel>()
                 .ForMember(dest => dest.Thumbnail, opt => opt.MapFrom(src => src.Thumbnail))
                 .ForMember(dest => dest.FileName, opt => opt.MapFrom(src => src.FileName))
+                .ForMember(dest => dest.Stream, opt => opt.MapFrom(src => src.Stream))
                 .ForMember(dest => dest.CaptureTimeUtc, opt => opt.MapFrom(src => GetDateTime(src.CaptureTimeUtc)));
 
             CreateMap<ProcedureVideoMessage, VideoContentViewModel>()
                 .ForMember(dest => dest.Thumbnail, opt => opt.MapFrom(src => src.Thumbnail))
                 .ForMember(dest => dest.FileName, opt => opt.MapFrom(src => src.FileName))
                 .ForMember(dest => dest.Length, opt => opt.MapFrom(src => src.Length))
+                .ForMember(dest => dest.Stream, opt => opt.MapFrom(src => src.Stream))
                 .ForMember(dest => dest.CaptureTimeUtc, opt => opt.MapFrom(src => GetDateTime(src.CaptureTimeUtc)));
 
             CreateMap<ImageContentViewModel, ProcedureImageMessage>()
                 .ForMember(dest => dest.Thumbnail, opt => opt.MapFrom(src => src.Thumbnail))
                 .ForMember(dest => dest.FileName, opt => opt.MapFrom(src => src.FileName))
+                .ForMember(dest => dest.Stream, opt => opt.MapFrom(src => src.Stream))
                 .ForMember(dest => dest.CaptureTimeUtc, opt => opt.MapFrom(src => GetFixedDateTime(src.CaptureTimeUtc)));
 
             CreateMap<VideoContentViewModel, ProcedureVideoMessage>()
                 .ForMember(dest => dest.Thumbnail, opt => opt.MapFrom(src => src.Thumbnail))
                 .ForMember(dest => dest.FileName, opt => opt.MapFrom(src => src.FileName))
                 .ForMember(dest => dest.Length, opt => opt.MapFrom(src => src.Length))
+                .ForMember(dest => dest.Stream, opt => opt.MapFrom(src => src.Stream))
                 .ForMember(dest => dest.CaptureTimeUtc, opt => opt.MapFrom(src => GetFixedDateTime(src.CaptureTimeUtc)));
 
             CreateMap<ProcedureMessage, ProcedureViewModel>()
