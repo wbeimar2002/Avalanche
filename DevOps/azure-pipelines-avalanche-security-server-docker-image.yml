@@ -219,7 +219,7 @@ stages:
        inputs:
          targetType: 'inline'
          script: |
-          az pipelines build queue --definition-id 657 --detect --branch  $(BranchForMainBuild) --org $(AdoInstanceUrl) -p $(AdoProject)
+          az pipelines build queue --definition-id $(CIBuildId) --detect --branch  $(BranchForMainBuild) --org $(AdoInstanceUrl) -p $(AdoProject)
        displayName: "Run Avalanche build"
      
      
