@@ -97,10 +97,9 @@ namespace Avalanche.Api.Managers.Patients
             var request = _mapper.Map<PatientViewModel, Ism.Storage.PatientList.Client.V1.Protos.AddPatientRecordRequest>(newPatient);
             request.AccessInfo = _mapper.Map<Ism.Storage.PatientList.Client.V1.Protos.AccessInfoMessage>(accessInfo);
 
-            var result = await _pieService.RegisterPatient(request).ConfigureAwait(false);
             await AllocateNewProcedure(newPatient, false).ConfigureAwait(false);
 
-            return _mapper.Map<Ism.Storage.PatientList.Client.V1.Protos.AddPatientRecordResponse, PatientViewModel>(result);
+            return newPatient;
         }
 
         private void ValidateDynamicConditions(PatientViewModel patient)
@@ -165,11 +164,10 @@ namespace Avalanche.Api.Managers.Patients
             var accessInfo = _accessInfoFactory.GenerateAccessInfo();
             var request = _mapper.Map<PatientViewModel, Ism.Storage.PatientList.Client.V1.Protos.AddPatientRecordRequest>(newPatient);
             request.AccessInfo = _mapper.Map<Ism.Storage.PatientList.Client.V1.Protos.AccessInfoMessage>(accessInfo);
-            var result = await _pieService.RegisterPatient(request).ConfigureAwait(false);
 
             await AllocateNewProcedure(newPatient, true).ConfigureAwait(false);
 
-            return _mapper.Map<Ism.Storage.PatientList.Client.V1.Protos.AddPatientRecordResponse, PatientViewModel>(result);
+            return newPatient;
         }
 
         public async Task UpdatePatient(PatientViewModel existingPatient)

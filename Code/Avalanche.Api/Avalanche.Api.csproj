@@ -79,7 +79,7 @@
     <PackageReference Include="Polly" Version="7.2.2" />
     <PackageReference Include="Ism.Storage.DataManagement.Client" Version="1.0.0-prerelease0044" />
     <PackageReference Include="Ism.Library.Client" Version="1.0.0-prerelease0066" />
-    <PackageReference Include="Ism.SystemState.Client" Version="1.0.0-prerelease0083" />
+    <PackageReference Include="Ism.SystemState.Client" Version="1.0.0-prerelease0084" />
     <PackageReference Include="Ism.Storage.PatientList.Client" Version="1.0.0-prerelease0029" />
     <PackageReference Include="Ism.PrintServer.Client" Version="1.0.0-prerelease0009" />
     <PackageReference Include="Ism.Medpresence.Client" Version="1.0.0-prerelease0005" />
