@@ -131,6 +131,8 @@ namespace Avalanche.Api.Managers.Procedures
 
             await _recorderService.FinishProcedure().ConfigureAwait(false);
             await _libraryService.DiscardActiveProcedure(request).ConfigureAwait(false);
+
+            await _stateClient.PublishEvent(new ProcedureDiscardedEvent()).ConfigureAwait(false);
         }
 
         public async Task FinishActiveProcedure()
@@ -144,6 +146,12 @@ namespace Avalanche.Api.Managers.Procedures
             await _recorderService.FinishProcedure().ConfigureAwait(false);
 
             await _libraryService.CommitActiveProcedure(request).ConfigureAwait(false);
+
+            var procedureFinished = new ProcedureFinishedEvent
+            {
+                PatientInfo = activeProcedure.Patient
+            };
+            await _stateClient.PublishEvent(procedureFinished).ConfigureAwait(false);
         }
 
         public async Task<ProcedureAllocationViewModel> AllocateNewProcedure()
