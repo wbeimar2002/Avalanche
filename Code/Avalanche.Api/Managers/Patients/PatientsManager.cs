@@ -94,9 +94,6 @@ namespace Avalanche.Api.Managers.Patients
 
             await CheckProcedureType(newPatient.ProcedureType, newPatient.Department).ConfigureAwait(false);
 
-            var request = _mapper.Map<PatientViewModel, Ism.Storage.PatientList.Client.V1.Protos.AddPatientRecordRequest>(newPatient);
-            request.AccessInfo = _mapper.Map<Ism.Storage.PatientList.Client.V1.Protos.AccessInfoMessage>(accessInfo);
-
             await AllocateNewProcedure(newPatient, false).ConfigureAwait(false);
 
             return newPatient;
@@ -160,10 +157,6 @@ namespace Avalanche.Api.Managers.Patients
                     LastName = user.LastName
                 }
             };
-
-            var accessInfo = _accessInfoFactory.GenerateAccessInfo();
-            var request = _mapper.Map<PatientViewModel, Ism.Storage.PatientList.Client.V1.Protos.AddPatientRecordRequest>(newPatient);
-            request.AccessInfo = _mapper.Map<Ism.Storage.PatientList.Client.V1.Protos.AccessInfoMessage>(accessInfo);
 
             await AllocateNewProcedure(newPatient, true).ConfigureAwait(false);
 

@@ -237,15 +237,13 @@ namespace Avalanche.Api.Tests.Managers
                     Name = ""
                 });
 
-            _pieService.Setup(mock => mock.RegisterPatient(It.IsAny<AddPatientRecordRequest>())).ReturnsAsync(response);
-
             // Act
             var result = _manager.RegisterPatient(newPatient);
 
             // Assert
             _dataManagementService.Verify(mock => mock.GetProcedureType(It.IsAny<Ism.Storage.DataManagement.Client.V1.Protos.GetProcedureTypeRequest>()), Times.Once);
             _dataManagementService.Verify(mock => mock.AddProcedureType(It.IsAny<Ism.Storage.DataManagement.Client.V1.Protos.AddProcedureTypeRequest>()), Times.Once);
-            _pieService.Verify(mock => mock.RegisterPatient(It.IsAny<AddPatientRecordRequest>()), Times.Once);
+            _activeProcedureManager.Verify(m => m.AllocateNewProcedure(), Times.Once);
         }
 
         [Test]
@@ -303,13 +301,11 @@ namespace Avalanche.Api.Tests.Managers
             _activeProcedureManager.Setup(m => m.AllocateNewProcedure())
                 .ReturnsAsync(new ProcedureAllocationViewModel(new ProcedureIdViewModel(Guid.NewGuid().ToString(), faker.Commerce.Department()), faker.System.FilePath()));
 
-            _pieService.Setup(mock => mock.RegisterPatient(It.IsAny<AddPatientRecordRequest>())).ReturnsAsync(response);
-
             var result = _manager.RegisterPatient(newPatient);
 
             _dataManagementService.Verify(mock => mock.GetProcedureType(It.IsAny<Ism.Storage.DataManagement.Client.V1.Protos.GetProcedureTypeRequest>()), Times.Once);
             _dataManagementService.Verify(mock => mock.AddProcedureType(It.IsAny<Ism.Storage.DataManagement.Client.V1.Protos.AddProcedureTypeRequest>()), Times.Never);
-            _pieService.Verify(mock => mock.RegisterPatient(It.IsAny<AddPatientRecordRequest>()), Times.Once);
+            _activeProcedureManager.Verify(m => m.AllocateNewProcedure(), Times.Once);
         }
 
         [Test]
@@ -329,11 +325,9 @@ namespace Avalanche.Api.Tests.Managers
             _activeProcedureManager.Setup(m => m.AllocateNewProcedure())
                 .ReturnsAsync(new ProcedureAllocationViewModel(new ProcedureIdViewModel(Guid.NewGuid().ToString(), faker.Commerce.Department()), faker.System.FilePath()));
 
-            _pieService.Setup(mock => mock.RegisterPatient(It.IsAny<AddPatientRecordRequest>()));
-
             var result = await _manager.QuickPatientRegistration();
 
-            _pieService.Verify(mock => mock.RegisterPatient(It.IsAny<AddPatientRecordRequest>()), Times.Once);
+            _activeProcedureManager.Verify(m => m.AllocateNewProcedure(), Times.Once);
         }
 
         [Test, TestCaseSource(nameof(PatientUpdateViewModelWrongDataTestCases))]
