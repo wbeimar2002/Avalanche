@@ -81,7 +81,17 @@ namespace Avalanche.Api.Test.Controllers
         [Test]
         public void CreateDownloadRequestControllerTest()
         {
-            var request = new ProcedureZipRequestViewModel();
+            var request = new ProcedureZipRequestViewModel
+            {
+                ProcedureId = new ProcedureIdViewModel("2021_11_08T21_51_25_TODO", "cache"),
+                MediaFileNameList = new System.Collections.Generic.List<string>
+                {
+                    "BX4RecB_2021_11_08T16_53_32_619.jpg",
+                    "BX4RecB_2021_11_08T16_53_59_395.jpg"
+                },
+                RequestId = "123"
+            };
+
             _proceduresManager.Setup(mock => mock.GenerateProcedureZip(request));
 
             var result = _controller.CreateDownloadRequest(
