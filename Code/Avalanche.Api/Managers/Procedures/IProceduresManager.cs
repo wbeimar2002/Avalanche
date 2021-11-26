@@ -9,5 +9,8 @@ namespace Avalanche.Api.Managers.Procedures
         Task<ProceduresContainerViewModel> SearchByPatient(string patientId);
         Task<ProcedureViewModel> GetProcedureDetails(ProcedureIdViewModel procedureIdViewModel);
         Task UpdateProcedure(ProcedureViewModel procedureViewModel);
+
+        Task GenerateProcedureZip(ProcedureZipRequestViewModel procedureZipRequest);
+
     }
 }

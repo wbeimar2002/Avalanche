@@ -167,6 +167,27 @@ namespace Avalanche.Api.Controllers.V1
                 _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
             }
         }
+
+        [HttpGet("procedures/{repository}/downloads/{filename}")]
+        public IActionResult DownloadProcedureZip(string repository, string filename)
+        {
+            try
+            {
+                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
+                var fullPath = _filesManager.GetDownloadPath(repository, filename);
+                //Download zip file from the repository download path
+                return PhysicalFile(fullPath, "application/zip", false);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(LoggerHelper.GetLogMessage(DebugLogType.Exception), ex);
+                return BadRequest();
+            }
+            finally
+            {
+                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
+            }
+        }
         #endregion
     }
 }

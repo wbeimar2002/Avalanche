@@ -223,6 +223,12 @@ namespace Avalanche.Api.Mapping
                 .ReverseMap();
 
             CreateMap<RecordingTimelineModel, RecordingTimelineViewModel>();
+
+            CreateMap<ProcedureZipRequestViewModel, GenerateProcedureZipRequest>()
+                .ForPath(dest => dest.ProcedureId.Id, opt => opt.MapFrom(src => src.ProcedureId.Id))
+                .ForPath(dest => dest.ProcedureId.RepositoryName, opt => opt.MapFrom(src => src.ProcedureId.RepositoryName))
+                .ForMember(dest => dest.MediaFileNameList, opt => opt.MapFrom(src => src.MediaFileNameList.ToList()))
+                .ForMember(dest => dest.RequestId, opt => opt.MapFrom(src => src.RequestId));
         }
 
         private FixedDateTimeMessage GetFixedDateTime(DateTime? dateTime)

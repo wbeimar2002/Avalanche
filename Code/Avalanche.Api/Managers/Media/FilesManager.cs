@@ -40,5 +40,14 @@ namespace Avalanche.Api.Managers.Media
             var translated = itemRelative.Replace('\\', '/').TrimStart('/');
             return Path.Combine(libraryRoot, translated);
         }
+
+        public string GetDownloadPath(string repository, string fileName)
+        {
+            Preconditions.ThrowIfNullOrEmpty(nameof(fileName), fileName);
+            Preconditions.ThrowIfNullOrEmpty(nameof(repository), repository);
+
+            var libraryRoot = Environment.GetEnvironmentVariable("LibraryDataRoot");
+            return Path.Combine(libraryRoot, repository, "downloads", fileName);
+        }
     }
 }
