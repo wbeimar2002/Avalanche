@@ -168,13 +168,13 @@ namespace Avalanche.Api.Controllers.V1
             }
         }
 
-        [HttpGet("download")]
-        public IActionResult DownloadProcedureZip([FromQuery] string repositoryName, [FromQuery] string fileName)
+        [HttpGet("procedures/{repository}/downloads/{filename}")]
+        public IActionResult DownloadProcedureZip(string repository, string filename)
         {
             try
             {
                 _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
-                var fullPath = _filesManager.GetDownloadPath(repositoryName, fileName);
+                var fullPath = _filesManager.GetDownloadPath(repository, filename);
                 //Download zip file from the repository download path
                 return PhysicalFile(fullPath, "application/zip", false);
             }

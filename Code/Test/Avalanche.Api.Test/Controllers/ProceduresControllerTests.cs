@@ -83,7 +83,14 @@ namespace Avalanche.Api.Test.Controllers
         {
             var request = new ProcedureZipRequestViewModel();
             _proceduresManager.Setup(mock => mock.GenerateProcedureZip(request));
-            var result = _controller.CreateDownloadRequest(request);
+
+            var result = _controller.CreateDownloadRequest(
+                request.ProcedureId.Id,
+                request.ProcedureId.RepositoryName,
+                request.RequestId,
+                request.MediaFileNameList
+            );
+
             if (_checkLogger)
             {
                 _logger.Verify(LogLevel.Error, $"Exception {nameof(ProceduresController)}.{nameof(ProceduresController.CreateDownloadRequest)}", Times.Never());
