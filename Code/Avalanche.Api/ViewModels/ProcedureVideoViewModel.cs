@@ -13,6 +13,7 @@ namespace Avalanche.Api.ViewModels
         public DateTimeOffset VideoStartTimeUtc { get; set; }
         public DateTimeOffset? VideoStopTimeUtc { get; set; }
         public TimeSpan VideoDuration { get; set; }
+        public VideoReferenceViewModel? BackgroundVideoReference { get; set; }
 
         public ProcedureVideoViewModel()
         { }

@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Generic;
 using AutoMapper;
 using Avalanche.Api.Mapping;
 using Avalanche.Api.ViewModels;
@@ -7,8 +9,6 @@ using Ism.MP.V1.Protos;
 using Ism.Routing.V1.Protos;
 using Ism.SystemState.Models.Procedure;
 using NUnit.Framework;
-using System;
-using System.Collections.Generic;
 
 namespace Avalanche.Api.Tests.MappingConfigurations
 {
@@ -38,7 +38,7 @@ namespace Avalanche.Api.Tests.MappingConfigurations
         [Test]
         public void PatientMappingConfiguration_IsValid()
         {
-            AssertProfileIsValid<PatientMappingConfiguration>();      
+            AssertProfileIsValid<PatientMappingConfiguration>();
         }
 
         [Test]
@@ -181,7 +181,7 @@ namespace Avalanche.Api.Tests.MappingConfigurations
             var route = new TileVideoRouteMessage()
             {
                 LayoutName = "Test",
-                Sink = new AliasIndexMessage { Alias ="test", Index = "test"},
+                Sink = new AliasIndexMessage { Alias = "test", Index = "test" },
                 SourceCount = sources.Count
             };
 
