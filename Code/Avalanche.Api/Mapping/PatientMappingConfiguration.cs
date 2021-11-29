@@ -34,7 +34,7 @@ namespace Avalanche.Api.Mapping
                     opt => opt.MapFrom(src => src.UserName))
                 .ReverseMap();
 
-            CreateMap <Avalanche.Shared.Domain.Models.UserModel, ConfigurationContext>()
+            CreateMap<Avalanche.Shared.Domain.Models.UserModel, ConfigurationContext>()
                 .ForMember(dest =>
                     dest.IdnId,
                     opt => opt.MapFrom(src => src.IdnId))
@@ -298,7 +298,7 @@ namespace Avalanche.Api.Mapping
                     opt => opt.MapFrom(src => src.Sex.Id))
                 .ForPath(dest =>
                     dest.PatientRecord.Patient.Dob,
-                    opt => opt.MapFrom(src => src.DateOfBirth == null  ? new Ism.Storage.PatientList.Client.V1.Protos.FixedDateMessage() : new Ism.Storage.PatientList.Client.V1.Protos.FixedDateMessage
+                    opt => opt.MapFrom(src => src.DateOfBirth == null ? new Ism.Storage.PatientList.Client.V1.Protos.FixedDateMessage() : new Ism.Storage.PatientList.Client.V1.Protos.FixedDateMessage
                     {
                         Day = src.DateOfBirth.Value.Day,
                         Month = src.DateOfBirth.Value.Month,
@@ -318,6 +318,9 @@ namespace Avalanche.Api.Mapping
                     opt => opt.Ignore())
                 .ForPath(dest =>
                     dest.PatientRecord.Properties,
+                    opt => opt.Ignore())
+                .ForPath(dest =>
+                    dest.PatientListType,
                     opt => opt.Ignore())
                 .ReverseMap();
 
@@ -398,6 +401,9 @@ namespace Avalanche.Api.Mapping
                     opt => opt.Ignore())
                 .ForPath(dest =>
                     dest.PatientRecord.Properties,
+                    opt => opt.Ignore())
+                .ForPath(dest =>
+                    dest.PatientListType,
                     opt => opt.Ignore())
                 .ReverseMap();
 

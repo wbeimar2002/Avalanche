@@ -1,25 +1,17 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using AutoMapper;
 using Avalanche.Api.Managers.Media;
 using Avalanche.Api.Mapping;
-using Avalanche.Api.Services.Maintenance;
 using Avalanche.Api.Services.Media;
-using Avalanche.Api.Utilities;
-using Avalanche.Shared.Domain.Models.Media;
-using Ism.Common.Core.Configuration.Models;
 using Ism.Recorder.Core.V1.Protos;
-using Ism.Routing.V1.Protos;
 using Ism.SystemState.Client;
+using Ism.SystemState.Models.Procedure;
 using Ism.SystemState.Models.Recorder;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.JsonPatch;
 using Moq;
 using NUnit.Framework;
-using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Linq;
-using System.Threading.Tasks;
-using Ism.SystemState.Models.Procedure;
 
 namespace Avalanche.Api.Test.Managers
 {
@@ -179,7 +171,7 @@ namespace Avalanche.Api.Test.Managers
                     new ProcedureImage
                     {
                         ImageId = imageId,
-                        CaptureOffsetFromVideoStart = timestamp
+                        VideoReference = new VideoReference(timestamp, videoId)
                     }
                 }
             };
@@ -212,7 +204,7 @@ namespace Avalanche.Api.Test.Managers
                     new ProcedureImage
                     {
                          ImageId = imageId,
-                         CaptureOffsetFromVideoStart = null
+                         VideoReference = null
                     }
                 }
             };
