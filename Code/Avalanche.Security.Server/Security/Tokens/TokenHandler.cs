@@ -1,6 +1,5 @@
 using Avalanche.Security.Server.Core.Security.Hashing;
 using Avalanche.Security.Server.Core.Security.Tokens;
-using Avalanche.Security.Server.Entities;
 using Avalanche.Shared.Infrastructure.Options;
 
 using System;
@@ -8,6 +7,7 @@ using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
+using Avalanche.Security.Server.Core.Models;
 
 namespace Avalanche.Security.Server.Security.Tokens
 {

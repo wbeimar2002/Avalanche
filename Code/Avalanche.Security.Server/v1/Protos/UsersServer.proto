@@ -1,0 +1,22 @@
+syntax = "proto3";
+import "google/protobuf/empty.proto";  
+
+option csharp_namespace = "Avalanche.Security.Server.v1.Protos";
+
+package users;
+
+service UserServer{
+    rpc LoginUser (LoginUserRequest) returns (LoginUserResponse);
+}
+
+message LoginUserRequest {
+    string UserName = 1;
+    string UserPassword = 2;
+}
+
+message LoginUserResponse{
+    string AccessToken = 1;
+    string RefreshToken = 2;
+    int64 Expiration = 3;
+    bool IsSuccess = 4;
+}

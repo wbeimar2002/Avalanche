@@ -1,4 +1,4 @@
-using Avalanche.Security.Server.Entities;
+﻿using Avalanche.Security.Server.Core.Models;
 
 namespace Avalanche.Security.Server.Core.Services.Communication
 {

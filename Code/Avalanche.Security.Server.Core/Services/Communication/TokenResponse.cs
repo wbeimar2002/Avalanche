@@ -1,4 +1,4 @@
-using Avalanche.Security.Server.Core.Security.Tokens;
+﻿using Avalanche.Security.Server.Core.Security.Tokens;
 
 namespace Avalanche.Security.Server.Core.Services.Communication
 {

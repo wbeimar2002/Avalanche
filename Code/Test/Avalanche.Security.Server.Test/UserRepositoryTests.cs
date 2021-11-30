@@ -1,4 +1,5 @@
 using System.Threading.Tasks;
+using Avalanche.Security.Server.Core.Models;
 using Avalanche.Security.Server.Entities;
 using Avalanche.Security.Server.Persistence;
 using Microsoft.EntityFrameworkCore;

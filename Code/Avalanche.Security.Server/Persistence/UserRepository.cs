@@ -4,7 +4,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using Avalanche.Security.Server.Core.Models;
 using Avalanche.Security.Server.Core.Repositories;
-using Avalanche.Security.Server.Entities;
 using Ism.Utility.Core;
 using Microsoft.EntityFrameworkCore;
 using static Avalanche.Security.Server.Extensions.DynamicSortingExtensions;

@@ -1,4 +1,4 @@
-namespace Avalanche.Security.Server.Core.Models
+﻿namespace Avalanche.Security.Server.Core.Models
 {
     public enum UserSortingColumn
     {

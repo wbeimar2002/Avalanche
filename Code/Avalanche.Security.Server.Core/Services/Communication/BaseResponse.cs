@@ -1,4 +1,4 @@
-namespace Avalanche.Security.Server.Core.Services.Communication
+﻿namespace Avalanche.Security.Server.Core.Services.Communication
 {
     public abstract class BaseResponse
     {

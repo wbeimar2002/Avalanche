@@ -1,9 +1,8 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
-using Avalanche.Security.Server.Core.Models;
 
-namespace Avalanche.Security.Server.Entities
+namespace Avalanche.Security.Server.Core.Models
 {
     public class UserEntity
     {

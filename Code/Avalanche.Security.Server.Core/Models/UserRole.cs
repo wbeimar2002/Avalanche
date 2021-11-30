@@ -1,5 +1,4 @@
-using System.ComponentModel.DataAnnotations.Schema;
-using Avalanche.Security.Server.Entities;
+﻿using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Avalanche.Security.Server.Core.Models
 {

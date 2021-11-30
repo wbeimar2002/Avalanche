@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 
 namespace Avalanche.Security.Server.Core.Security.Tokens
 {
@@ -9,10 +9,10 @@ namespace Avalanche.Security.Server.Core.Security.Tokens
 
         public JsonWebToken(string token, long expiration)
         {
-            if(string.IsNullOrWhiteSpace(token))
+            if (string.IsNullOrWhiteSpace(token))
                 throw new ArgumentException("Invalid token.");
 
-            if(expiration <= 0)
+            if (expiration <= 0)
                 throw new ArgumentException("Invalid expiration.");
 
             Token = token;
