@@ -61,8 +61,6 @@ namespace Avalanche.Api.Managers.Maintenance
             _configurationContext.IdnId = Guid.NewGuid().ToString();
         }
 
-        protected abstract Task SaveEmbeddedList(string settingsKey, string jsonKey, string json, string schema = null);
-
         protected abstract void CheckLinks(DynamicListViewModel category);
 
         protected abstract Task SetIsRequired(string key, DynamicPropertyViewModel item);
@@ -690,6 +688,30 @@ namespace Avalanche.Api.Managers.Maintenance
 
             var settingValues = await _storageService.GetJson(sourceKey, 1, _configurationContext).ConfigureAwait(false);
             return DynamicSettingsHelper.GetEmbeddedList(jsonKey, settingValues);
+        }
+
+        private async Task SaveEmbeddedList(string settingsKey, string jsonKey, string json, string schema = null)
+        {
+            if (string.IsNullOrEmpty(schema) || await _storageService.ValidateSchema(schema, json, 1, _configurationContext).ConfigureAwait(false))
+            {
+                await _storageService.UpdateJsonProperty(settingsKey, jsonKey, json, 1, _configurationContext, true).ConfigureAwait(false);
+
+                switch (settingsKey)
+                {
+                    case "ProceduresSearchConfiguration":
+                        _sharedConfigurationManager.UpdateProceduresSearchConfigurationColumns(json.Get<List<ColumnProceduresSearchConfiguration>>());
+                        break;
+                    case "SetupConfiguration":
+                        _sharedConfigurationManager.UpdatePatientInfo(json.Get<List<PatientInfoSetupConfiguration>>());
+                        break;
+                    default:
+                        break;
+                }
+            }
+            else
+            {
+                throw new ValidationException("Json Schema Invalid for " + jsonKey);
+            }
         }
     }
 }
