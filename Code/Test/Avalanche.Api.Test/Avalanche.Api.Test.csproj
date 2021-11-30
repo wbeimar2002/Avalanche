@@ -28,7 +28,7 @@
 
   <ItemGroup>
     <PackageReference Include="Bogus" Version="33.0.2" />
-    <PackageReference Include="Ism.CodeQuality" Version="1.0.0-prerelease0010">
+    <PackageReference Include="Ism.CodeQuality" Version="1.0.0-prerelease0011">
       <TreatAsUsed>true</TreatAsUsed>
     </PackageReference>
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="5.0.0" />

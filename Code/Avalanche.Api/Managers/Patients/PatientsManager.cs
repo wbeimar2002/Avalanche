@@ -297,12 +297,10 @@ namespace Avalanche.Api.Managers.Patients
                     repositoryId: procedure.ProcedureId.RepositoryName,
 
                     procedureRelativePath: procedure.RelativePath,
-                    recordingEvents: new List<Ism.SystemState.Models.Procedure.VideoRecordingEvent>(),
                     department: _mapper.Map<Ism.SystemState.Models.Procedure.Department>(patient.Department),
                     procedureType: _mapper.Map<Ism.SystemState.Models.Procedure.ProcedureType>(patient.ProcedureType),
                     physician: _mapper.Map<Ism.SystemState.Models.Procedure.Physician>(patient.Physician),
                     requiresUserConfirmation: false,
-                    recordingMode: _mapper.Map<Ism.SystemState.Models.Procedure.BackgroundRecordingMode>(patient.BackgroundRecordingMode),
 
                     // TODO:
                     procedureStartTimeUtc: DateTimeOffset.UtcNow,
@@ -310,11 +308,11 @@ namespace Avalanche.Api.Managers.Patients
                     // TODO:
                     procedureTimezoneId: TimeZoneInfo.Local.Id,
                     isClinical: true,
+                    notes: new List<Ism.SystemState.Models.Procedure.ProcedureNote>()
+,
                     accession: null,
-                    notes: new List<Ism.SystemState.Models.Procedure.ProcedureNote>(),
-                    externalProcedureId: null,
-                    scheduleId: null
-                )).ConfigureAwait(false);
+                    recordingEvents: new List<Ism.SystemState.Models.Procedure.VideoRecordingEvent>(),
+                    recordingMode: _mapper.Map<Ism.SystemState.Models.Procedure.BackgroundRecordingMode>(patient.BackgroundRecordingMode))).ConfigureAwait(false);
             }
             else
             {

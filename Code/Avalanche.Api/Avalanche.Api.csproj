@@ -51,7 +51,7 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Ism.Broadcaster.Standard" Version="1.0.0-prerelease0003" />
-    <PackageReference Include="Ism.CodeQuality" Version="1.0.0-prerelease0010">
+    <PackageReference Include="Ism.CodeQuality" Version="1.0.0-prerelease0011">
       <TreatAsUsed>true</TreatAsUsed>
     </PackageReference>
     <PackageReference Include="Ism.Common.Core.Hosting" Version="1.0.0-prerelease048" />
@@ -79,7 +79,7 @@
     <PackageReference Include="Polly" Version="7.2.2" />
     <PackageReference Include="Ism.Storage.DataManagement.Client" Version="1.0.0-prerelease0045" />
     <PackageReference Include="Ism.Library.Client" Version="1.0.0-prerelease0067" />
-    <PackageReference Include="Ism.SystemState.Client" Version="1.0.0-prerelease0086" />
+    <PackageReference Include="Ism.SystemState.Client" Version="1.0.0-prerelease0087" />
     <PackageReference Include="Ism.Storage.PatientList.Client" Version="1.0.0-prerelease0030" />
     <PackageReference Include="Ism.PrintServer.Client" Version="1.0.0-prerelease0009" />
     <PackageReference Include="Ism.Medpresence.Client" Version="1.0.0-prerelease0005" />

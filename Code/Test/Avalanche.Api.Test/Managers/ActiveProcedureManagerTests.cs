@@ -72,12 +72,8 @@ namespace Avalanche.Api.Test.Managers
                     false,
                     new List<ProcedureNote>(),
                     null,
-                    null,
-                    null,
                     new List<VideoRecordingEvent>(),
                     BackgroundRecordingMode.StartImmediately));
-
-
 
             _recorderService.Setup(mock => mock.GetRecorderState()).ReturnsAsync(new Ism.Recorder.Core.V1.Protos.RecorderState() { State = 0 });
 
@@ -109,8 +105,6 @@ namespace Avalanche.Api.Test.Managers
                     false,
                     new List<ProcedureNote>(),
                     null,
-                    null,
-                    null,
                     new List<VideoRecordingEvent>(),
                     BackgroundRecordingMode.StartImmediately));
 
@@ -138,8 +132,6 @@ namespace Avalanche.Api.Test.Managers
                     TimeZoneInfo.Local.Id,
                     false,
                     new List<ProcedureNote>(),
-                    null,
-                    null,
                     null,
                     new List<VideoRecordingEvent>(),
                     BackgroundRecordingMode.StartImmediately));
@@ -170,8 +162,6 @@ namespace Avalanche.Api.Test.Managers
                     false,
                     new List<ProcedureNote>(),
                     null,
-                    null,
-                    null,
                     new List<VideoRecordingEvent>(),
                     BackgroundRecordingMode.StartImmediately));
 
@@ -199,8 +189,6 @@ namespace Avalanche.Api.Test.Managers
                     TimeZoneInfo.Local.Id,
                     false,
                     new List<ProcedureNote>(),
-                    null,
-                    null,
                     null,
                     new List<VideoRecordingEvent>(),
                     BackgroundRecordingMode.StartImmediately));
@@ -244,8 +232,6 @@ namespace Avalanche.Api.Test.Managers
                     TimeZoneInfo.Local.Id,
                     false,
                     new List<ProcedureNote>(),
-                    null,
-                    null,
                     null,
                     new List<VideoRecordingEvent>(),
                     BackgroundRecordingMode.StartImmediately);
@@ -308,8 +294,6 @@ namespace Avalanche.Api.Test.Managers
                     false,
                     new List<ProcedureNote>(),
                     null,
-                    null,
-                    null,
                     new List<VideoRecordingEvent>(),
                     BackgroundRecordingMode.StartImmediately);
 
@@ -370,8 +354,6 @@ namespace Avalanche.Api.Test.Managers
                     false,
                     new List<ProcedureNote>(),
                     null,
-                    null,
-                    null,
                     new List<VideoRecordingEvent>(),
                     BackgroundRecordingMode.StartImmediately);
 
@@ -430,8 +412,6 @@ namespace Avalanche.Api.Test.Managers
                     TimeZoneInfo.Local.Id,
                     false,
                     new List<ProcedureNote>(),
-                    null,
-                    null,
                     null,
                     new List<VideoRecordingEvent>(),
                     BackgroundRecordingMode.StartImmediately);
@@ -493,8 +473,6 @@ namespace Avalanche.Api.Test.Managers
                     false,
                     new List<ProcedureNote>(),
                     null,
-                    null,
-                    null,
                     new List<VideoRecordingEvent>(),
                     BackgroundRecordingMode.StartImmediately);
 
@@ -547,8 +525,6 @@ namespace Avalanche.Api.Test.Managers
                     false,
                     new List<ProcedureNote>(),
                     null,
-                    null,
-                    null,
                     new List<VideoRecordingEvent>(),
                     BackgroundRecordingMode.StartImmediately);
 
@@ -597,8 +573,6 @@ namespace Avalanche.Api.Test.Managers
                     false,
                     new List<ProcedureNote>(),
                     null,
-                    null,
-                    null,
                     new List<VideoRecordingEvent>(),
                     BackgroundRecordingMode.StartImmediately);
 
@@ -634,8 +608,6 @@ namespace Avalanche.Api.Test.Managers
                     TimeZoneInfo.Local.Id,
                     false,
                     new List<ProcedureNote>(),
-                    null,
-                    null,
                     null,
                     new List<VideoRecordingEvent>(),
                     BackgroundRecordingMode.StartImmediately);
@@ -676,8 +648,6 @@ namespace Avalanche.Api.Test.Managers
                     TimeZoneInfo.Local.Id,
                     false,
                     new List<ProcedureNote>(),
-                    null,
-                    null,
                     null,
                     new List<VideoRecordingEvent>(),
                     BackgroundRecordingMode.StartImmediately);
