@@ -105,7 +105,7 @@ namespace Avalanche.Api.Tests.MappingConfigurations
             Assert.AreEqual(viewModel.FirstName, stateModel.FirstName);
             Assert.AreEqual(viewModel.Id, stateModel.Id);
             Assert.AreEqual(viewModel.LastName, stateModel.LastName);
-            Assert.AreEqual(viewModel.MRN, stateModel.MRN);
+            Assert.AreEqual(viewModel.MRN, stateModel.PatientId);
             Assert.AreEqual(viewModel.Sex.Id, stateModel.Sex);
         }
 
@@ -128,8 +128,6 @@ namespace Avalanche.Api.Tests.MappingConfigurations
                     TimeZoneInfo.Local.Id,
                     false,
                     new List<ProcedureNote>(),
-                    null,
-                    null,
                     null,
                     new List<VideoRecordingEvent>(),
                     BackgroundRecordingMode.StartImmediately)
