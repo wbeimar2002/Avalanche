@@ -292,7 +292,24 @@ namespace Avalanche.Api.Managers.Maintenance
                                 return (ExpandoObject)expandoObj;
                             })
                             .ToList();
+
                         return JsonConvert.DeserializeObject<List<dynamic>>(JsonConvert.SerializeObject(dynamicVideoSinks));
+
+                    case "GpioPins":
+                        var gpioPins = await _storageService.GetJsonDynamicList(property.SourceKey, 1, _configurationContext);
+
+                        var dynamicGpioPins = gpioPins
+                            .Select(item =>
+                            {
+                                dynamic expandoObj = new ExpandoObject();
+                                expandoObj.Id = item.Index;
+                                expandoObj.Value = $"{item.Alias} ({item.Index})";
+                                expandoObj.RelatedObject = item;
+                                return (ExpandoObject)expandoObj;
+                            })
+                            .ToList();
+
+                        return JsonConvert.DeserializeObject<List<dynamic>>(JsonConvert.SerializeObject(dynamicGpioPins));
 
                     case "Departments":
                         var departments = await _dataManager.GetAllDepartments().ConfigureAwait(false);
