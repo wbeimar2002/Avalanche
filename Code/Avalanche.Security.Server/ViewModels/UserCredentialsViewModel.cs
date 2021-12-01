@@ -5,11 +5,12 @@ namespace Avalanche.Security.Server.ViewModels
     public class UserCredentialsViewModel
     {
         [Required]
-        [StringLength(128)]
-        public string LoginName { get; set; }
+        [DataType(DataType.EmailAddress)]
+        [StringLength(255)]
+        public string Email { get; set; }
 
         [Required]
-        [StringLength(64)]
+        [StringLength(32)]
         public string Password { get; set; }
     }
 }

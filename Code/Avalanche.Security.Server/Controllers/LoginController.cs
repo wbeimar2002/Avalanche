@@ -1,7 +1,9 @@
 using AutoMapper;
+
+using Avalanche.Security.Server.ViewModels;
 using Avalanche.Security.Server.Core.Security.Tokens;
 using Avalanche.Security.Server.Core.Services;
-using Avalanche.Security.Server.ViewModels;
+
 using Microsoft.AspNetCore.Mvc;
 
 using System.Threading.Tasks;
@@ -29,13 +31,13 @@ namespace Avalanche.Security.Server.Controllers
                 return BadRequest(ModelState);
             }
 
-            var response = await _authenticationService.CreateAccessTokenAsync(userCredentials.LoginName, userCredentials.Password).ConfigureAwait(false);
+            var response = await _authenticationService.CreateAccessTokenAsync(userCredentials.Email, userCredentials.Password);
             if(!response.Success)
             {
                 return BadRequest(response.Message);
             }
 
-            var accessTokenResource = _mapper.Map<AccessToken, AccessTokenViewModel>(response.Token);
+            var accessTokenResource = _mapper.Map<AccessToken, AccessTokenResource>(response.Token);
             return Ok(accessTokenResource);
         }
 
@@ -48,13 +50,13 @@ namespace Avalanche.Security.Server.Controllers
                 return BadRequest(ModelState);
             }
 
-            var response = await _authenticationService.RefreshTokenAsync(refreshTokenResource.Token, refreshTokenResource.LoginName).ConfigureAwait(false);
+            var response = await _authenticationService.RefreshTokenAsync(refreshTokenResource.Token, refreshTokenResource.UserEmail);
             if(!response.Success)
             {
                 return BadRequest(response.Message);
             }
-
-            var tokenResource = _mapper.Map<AccessToken, AccessTokenViewModel>(response.Token);
+           
+            var tokenResource = _mapper.Map<AccessToken, AccessTokenResource>(response.Token);
             return Ok(tokenResource);
         }
 

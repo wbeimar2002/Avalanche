@@ -4,7 +4,6 @@ using Avalanche.Security.Server.Core.Models;
 using Avalanche.Security.Server.Core.Repositories;
 using Avalanche.Security.Server.Core.Security.Hashing;
 using Avalanche.Security.Server.Core.Services;
-using Avalanche.Security.Server.Entities;
 using Avalanche.Security.Server.Services;
 using Moq;
 using Xunit;
@@ -17,7 +16,7 @@ namespace Avalanche.Security.Tests.Services
         private Mock<IUserRepository> _userRepository;
         private Mock<IUnitOfWork> _unitOfWork;
 
-        private readonly IUserService _userService;
+        private IUserService _userService;
 
         public UserServiceTests()
         {
@@ -31,13 +30,13 @@ namespace Avalanche.Security.Tests.Services
             _passwordHasher.Setup(ph => ph.HashPassword(It.IsAny<string>())).Returns("123");
 
             _userRepository = new Mock<IUserRepository>();
-            _userRepository.Setup(r => r.FindByLoginAsync("test@test.com"))
-                .ReturnsAsync(new UserEntity { Id = 1, LoginName = "test@test.com", UserRoles = new Collection<UserRole>() });
+            _userRepository.Setup(r => r.FindByEmailAsync("test@test.com"))
+                .ReturnsAsync(new User { Id = 1, Email = "test@test.com", UserRoles = new Collection<UserRole>() });
 
-            _userRepository.Setup(r => r.FindByLoginAsync("secondtest@secondtest.com"))
-                .Returns(Task.FromResult<UserEntity>(null));
+            _userRepository.Setup(r => r.FindByEmailAsync("secondtest@secondtest.com"))
+                .Returns(Task.FromResult<User>(null));
 
-            _userRepository.Setup(r => r.AddAsync(It.IsAny<UserEntity>(), It.IsAny<ERole[]>())).Returns(Task.CompletedTask);
+            _userRepository.Setup(r => r.AddAsync(It.IsAny<User>(), It.IsAny<ERole[]>())).Returns(Task.CompletedTask);
 
             _unitOfWork = new Mock<IUnitOfWork>();
             _unitOfWork.Setup(u => u.CompleteAsync()).Returns(Task.CompletedTask);
@@ -46,39 +45,39 @@ namespace Avalanche.Security.Tests.Services
         [Fact]
         public async Task Should_Create_Non_Existing_User()
         {
-            var user = new UserEntity { LoginName = "mytestuser@mytestuser.com", Password = "123", UserRoles = new Collection<UserRole>() };
-
-            var response = await _userService.CreateUserAsync(user, ERole.Common).ConfigureAwait(false);
+            var user = new User { Email = "mytestuser@mytestuser.com", Password = "123", UserRoles = new Collection<UserRole>() };
+            
+            var response = await _userService.CreateUserAsync(user, ERole.Common);
 
             Assert.NotNull(response);
             Assert.True(response.Success);
-            Assert.Equal(user.LoginName, response.User.LoginName);
+            Assert.Equal(user.Email, response.User.Email);
             Assert.Equal(user.Password, response.User.Password);
         }
 
         [Fact]
-        public async Task Should_Not_Create_User_When_LoginName_Is_Alreary_In_Use()
+        public async Task Should_Not_Create_User_When_Email_Is_Alreary_In_Use()
         {
-            var user = new UserEntity { LoginName = "test@test.com", Password = "123", UserRoles = new Collection<UserRole>() };
-
-            var response = await _userService.CreateUserAsync(user, ERole.Common).ConfigureAwait(false);
+            var user = new User { Email = "test@test.com", Password = "123", UserRoles = new Collection<UserRole>() };
+        
+            var response = await _userService.CreateUserAsync(user, ERole.Common);
 
             Assert.False(response.Success);
-            Assert.Equal("Login name already in use.", response.Message);
+            Assert.Equal("Email already in use.", response.Message);
         }
 
         [Fact]
-        public async Task Should_Find_Existing_User_By_LoginName()
+        public async Task Should_Find_Existing_User_By_Email()
         {
-            var user = await _userService.FindByLoginAsync("test@test.com").ConfigureAwait(false);
+            var user = await _userService.FindByEmailAsync("test@test.com");
             Assert.NotNull(user);
-            Assert.Equal("test@test.com", user.LoginName);
+            Assert.Equal("test@test.com", user.Email);
         }
 
         [Fact]
-        public async Task Should_Return_Null_When_Trying_To_Find_User_By_Invalid_LoginName()
+        public async Task Should_Return_Null_When_Trying_To_Find_User_By_Invalid_Email()
         {
-            var user = await _userService.FindByLoginAsync("secondtest@secondtest.com").ConfigureAwait(false);
+            var user = await _userService.FindByEmailAsync("secondtest@secondtest.com");
             Assert.Null(user);
         }
     }

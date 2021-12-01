@@ -8,7 +8,8 @@ namespace Avalanche.Security.Server.ViewModels
         public string Token { get; set; }
 
         [Required]
-        [StringLength(128)]
-        public string LoginName { get; set; }
+        [DataType(DataType.EmailAddress)]
+        [StringLength(255)]
+        public string UserEmail { get; set; }
     }
 }
