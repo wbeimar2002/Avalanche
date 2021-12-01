@@ -5,6 +5,7 @@ using Avalanche.Api.Services.Health;
 using Avalanche.Api.Services.Maintenance;
 using Avalanche.Api.Services.Media;
 using Avalanche.Api.Services.Printing;
+using Avalanche.Api.Services.Security;
 using Avalanche.Api.Utilities;
 using Avalanche.Api.ViewModels;
 using Avalanche.Shared.Domain.Models;
@@ -142,6 +143,11 @@ namespace Avalanche.Api.Managers.Maintenance
 
             switch (category.SourceKey)
             {
+                case "Users":
+                    var users = await _dataManager.GetAllUsers().ConfigureAwait(false);
+                    values = JsonConvert.DeserializeObject<List<dynamic>>(JsonConvert.SerializeObject(users));
+                    break;
+
                 case "Departments":
                     var departments = await _dataManager.GetAllDepartments().ConfigureAwait(false);
                     values = JsonConvert.DeserializeObject<List<dynamic>>(JsonConvert.SerializeObject(departments));
@@ -566,6 +572,9 @@ namespace Avalanche.Api.Managers.Maintenance
                 case "Labels":
                     await SaveLabel(action, customList.Entity).ConfigureAwait(false);
                     break;
+                case "Users":
+                    await SaveUser(action, customList.Entity).ConfigureAwait(false);
+                    break;
                 default:
                     throw new ValidationException("Method Not Allowed");
             }
@@ -593,6 +602,28 @@ namespace Avalanche.Api.Managers.Maintenance
                         await SaveLabel(DynamicListActions.Delete, item).ConfigureAwait(false);
                     }
                     break;
+            }
+        }
+
+        private async Task SaveUser(DynamicListActions action, dynamic source)
+        {
+            var user = new UserModel();
+
+            DynamicSettingsHelper.Map(source, user);
+
+            switch (action)
+            {
+                case DynamicListActions.Insert:
+                    await _dataManager.AddUser(user).ConfigureAwait(false);
+                    break;
+                case DynamicListActions.Update:
+                    await _dataManager.UpdateUser(user).ConfigureAwait(false);
+                    break;
+                case DynamicListActions.Delete:
+                    await _dataManager.DeleteUser(user.Id.Value).ConfigureAwait(false);
+                    break;
+                default:
+                    throw new ValidationException("Method Not Allowed");
             }
         }
 

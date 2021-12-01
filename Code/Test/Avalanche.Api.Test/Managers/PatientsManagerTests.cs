@@ -204,7 +204,7 @@ namespace Avalanche.Api.Tests.Managers
                 Department = new DepartmentModel() { Id = 1, Name = "SampleDepartment" },
                 Physician = new PhysicianModel()
                 {
-                    Id = "SampleId",
+                    Id = 1,
                     FirstName = "SampleFirstName",
                     LastName = "SampleLastName"
                 },
@@ -264,7 +264,7 @@ namespace Avalanche.Api.Tests.Managers
                 Department = new DepartmentModel() { Id = 1, Name = "SampleDepartment" },
                 Physician = new PhysicianModel()
                 {
-                    Id = "SampleId",
+                    Id = 1,
                     FirstName = "SampleFirstName",
                     LastName = "SampleLastName"
                 },
@@ -373,7 +373,7 @@ namespace Avalanche.Api.Tests.Managers
                 Department = new DepartmentModel() { Id = 1, Name = "SampleDepartment" },
                 Physician = new PhysicianModel()
                 {
-                    Id = "SampleId",
+                    Id = 1,
                     FirstName = "SampleFirstName",
                     LastName = "SampleLastName"
                 },
@@ -431,7 +431,7 @@ namespace Avalanche.Api.Tests.Managers
                 },
                 Physician = new PhysicianModel()
                 {
-                    Id = "SampleId",
+                    Id = 1,
                     FirstName = "SampleFirstName",
                     LastName = "SampleLastName"
                 },

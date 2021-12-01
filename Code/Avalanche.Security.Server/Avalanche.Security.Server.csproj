@@ -13,6 +13,11 @@
 
   <ItemGroup>
     <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="8.1.1" />
+    <PackageReference Include="Grpc.AspNetCore" Version="2.40.0" />
+    <PackageReference Include="Grpc.Tools" Version="2.42.0">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
     <PackageReference Include="Ism.CodeQuality" Version="1.0.0-prerelease0011">
       <TreatAsUsed>true</TreatAsUsed>
     </PackageReference>
@@ -30,5 +35,16 @@
     <ProjectReference Include="..\Avalanche.Shared.Infrastructure\Avalanche.Shared.Infrastructure.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="V1\Extensions\" />
+    <Folder Include="V1\Mappings\" />
+    <Folder Include="V1\Protos\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Protobuf Include="..\Protos\Protos\UsersManagement.proto" GrpcServices="server">
+      <Link>V1\Protos\UsersManagement.proto</Link>
+    </Protobuf>
+  </ItemGroup>
 
 </Project>

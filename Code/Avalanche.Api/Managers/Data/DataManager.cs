@@ -6,7 +6,9 @@ using AutoMapper;
 using Avalanche.Api.Helpers;
 using Avalanche.Api.Services.Health;
 using Avalanche.Api.Services.Maintenance;
+using Avalanche.Api.Services.Security;
 using Avalanche.Api.Utilities;
+using Avalanche.Security.Server.Client.V1.Protos;
 using Avalanche.Shared.Domain.Models;
 using Avalanche.Shared.Infrastructure.Configuration;
 using Ism.Common.Core.Configuration.Models;
@@ -20,11 +22,11 @@ namespace Avalanche.Api.Managers.Data
     {
         private readonly IDataManagementService _dataManagementService;
         private readonly IStorageService _storageService;
+        private readonly IUsersManagementService _usersManagementService;
 
         private readonly IMapper _mapper;
         private readonly UserModel _user;
         private readonly ConfigurationContext _configurationContext;
-        private readonly IHttpContextAccessor _httpContextAccessor;
 
         private readonly SetupConfiguration _setupConfiguration;
 
@@ -33,15 +35,16 @@ namespace Avalanche.Api.Managers.Data
             IDataManagementService dataManagementService,
             IStorageService storageService,
             IHttpContextAccessor httpContextAccessor,
-            SetupConfiguration setupConfiguration)
+            SetupConfiguration setupConfiguration,
+            IUsersManagementService usersManagementService)
         {
-            _httpContextAccessor = httpContextAccessor;
             _dataManagementService = dataManagementService;
             _storageService = storageService;
             _mapper = mapper;
             _setupConfiguration = setupConfiguration;
+            _usersManagementService = usersManagementService;
 
-            _user = HttpContextUtilities.GetUser(_httpContextAccessor.HttpContext);
+            _user = HttpContextUtilities.GetUser(httpContextAccessor.HttpContext);
             _configurationContext = _mapper.Map<UserModel, ConfigurationContext>(_user);
             _configurationContext.IdnId = Guid.NewGuid().ToString();
         }
@@ -57,6 +60,44 @@ namespace Avalanche.Api.Managers.Data
                 var settingValues = await _storageService.GetJson(sourceKey, 1, _configurationContext).ConfigureAwait(false);
                 return DynamicSettingsHelper.GetEmbeddedList(jsonKey, settingValues);
             }
+        }
+
+        public async Task<UserModel> AddUser(UserModel user)
+        {
+            Preconditions.ThrowIfNull(nameof(user.FirstName), user.FirstName);
+            Preconditions.ThrowIfNull(nameof(user.FirstName), user.LastName);
+            Preconditions.ThrowIfNull(nameof(user.FirstName), user.UserName);
+            Preconditions.ThrowIfNull(nameof(user.FirstName), user.Email);
+            Preconditions.ThrowIfNull(nameof(user.FirstName), user.Password);
+
+            var result = await _usersManagementService.AddUserAsync(_mapper.Map<UserModel, AddUserRequest>(user)).ConfigureAwait(false);
+            return _mapper.Map<AddUserResponse, UserModel>(result);
+        }
+
+        public async Task UpdateUser(UserModel user)
+        {
+            Preconditions.ThrowIfNull(nameof(user.Id), user.Id);
+            Preconditions.ThrowIfNull(nameof(user.FirstName), user.FirstName);
+            Preconditions.ThrowIfNull(nameof(user.FirstName), user.LastName);
+            Preconditions.ThrowIfNull(nameof(user.FirstName), user.UserName);
+            Preconditions.ThrowIfNull(nameof(user.FirstName), user.Email);
+            Preconditions.ThrowIfNull(nameof(user.FirstName), user.Password);
+
+            await _usersManagementService.UpdateUserAsync(_mapper.Map<UserModel, UpdateUserRequest>(user)).ConfigureAwait(false);
+        }
+
+        public async Task DeleteUser(int userId)
+        {
+            Preconditions.ThrowIfNull(nameof(userId), userId);
+            await _usersManagementService.DeleteUserAsync(new DeleteUserRequest() { UserId = userId }).ConfigureAwait(false);
+        }
+
+        public async Task<IList<UserModel>> GetAllUsers()
+        {
+            var result = await _usersManagementService.GetAllUsers().ConfigureAwait(false);
+
+            return _mapper.Map<IList<UserMessage>, IList<UserModel>>(result.Users)
+                .OrderBy(d => d.LastName).ToList();
         }
 
         public async Task<DepartmentModel> AddDepartment(DepartmentModel department)

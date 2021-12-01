@@ -13,6 +13,8 @@ namespace Avalanche.Security.Server.Core.Models
         [StringLength(255)]
         public string Email { get; set; }
         [StringLength(255)]
+        public string UserName { get; set; }
+        [StringLength(255)]
         public string FirstName { get; set; }
         [StringLength(255)]
         public string LastName { get; set; }

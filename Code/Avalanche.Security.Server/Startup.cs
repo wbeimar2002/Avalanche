@@ -1,4 +1,4 @@
-﻿using Avalanche.Security.Server.Core.Repositories;
+using Avalanche.Security.Server.Core.Repositories;
 using Avalanche.Security.Server.Core.Security.Hashing;
 using Avalanche.Security.Server.Core.Security.Tokens;
 using Avalanche.Security.Server.Core.Services;
@@ -7,6 +7,7 @@ using Avalanche.Security.Server.Options;
 using Avalanche.Security.Server.Persistence;
 using Avalanche.Security.Server.Security.Hashing;
 using Avalanche.Security.Server.Services;
+using Avalanche.Security.Server.V1.Handlers;
 using Avalanche.Shared.Infrastructure.Models;
 using Avalanche.Shared.Infrastructure.Options;
 
@@ -44,8 +45,11 @@ namespace Avalanche.Security.Server
         public void ConfigureServices(IServiceCollection services)
         {
             // Libraries
+            _ = services.AddGrpc();
+
             services.AddDbContext<SecurityDbContext>(options =>
                   options.UseSqlite(MakeConnectionString(GetDatabaseLocation("security.db"))));
+
             services.AddAutoMapper(GetType().Assembly);
             services.AddCustomSwagger();
 
@@ -108,9 +112,12 @@ namespace Avalanche.Security.Server
 
             app.UseAuthentication();
             app.UseAuthorization();
+
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
+
+                _ = endpoints.MapGrpcService<UsersManagementServiceHandler>();
             });
         }
 

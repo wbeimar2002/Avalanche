@@ -187,16 +187,16 @@ namespace Avalanche.Api.Mapping
                 .ConstructUsing(m => new ActiveProcedureViewModel())
                 .ForMember(
                     dest => dest.Patient,
-                    opt => opt.MapFrom((src, dst) => 
-                        null != src ? 
-                        new PatientViewModel() { 
+                    opt => opt.MapFrom((src, dst) =>
+                        null != src ?
+                        new PatientViewModel(){
                             LastName = src.Patient?.LastName,
                             FirstName = src.Patient?.FirstName,
                             DateOfBirth = src.Patient?.DateOfBirth ?? DateTime.MinValue,
                             Department = null != src.Department ? new Shared.Domain.Models.DepartmentModel { Id = src.Department.Id, Name = src.Department.Name } : null,
                             Id = src.Patient?.Id,
                             MRN = src.Patient?.PatientId,
-                            Physician = null != src.Physician ? new Shared.Domain.Models.PhysicianModel {  Id= src.Physician.Id, FirstName = src.Physician.FirstName, LastName = src.Physician.LastName } : null,
+                            Physician = null != src.Physician ? new Shared.Domain.Models.PhysicianModel {  Id = Convert.ToInt32(src.Physician.Id), FirstName = src.Physician.FirstName, LastName = src.Physician.LastName } : null,
                             ProcedureType = null != src.ProcedureType ? new Shared.Domain.Models.ProcedureTypeModel { Id = src.ProcedureType.Id, DepartmentId = src.Department?.Id, Name = src.ProcedureType.Name}: null,
                             Sex = null != src.Patient?.Sex ? MappingUtilities.GetSexViewModel(src.Patient.Sex) : null
                         }: null

@@ -95,7 +95,7 @@ namespace Avalanche.Api.Tests.MappingConfigurations
                 Id = 2,
                 LastName = "Last",
                 MRN = "1234",
-                Physician = new Shared.Domain.Models.PhysicianModel { Id = "3", FirstName = "f", LastName = "l" },
+                Physician = new Shared.Domain.Models.PhysicianModel { Id = 3, FirstName = "f", LastName = "l" },
                 ProcedureType = new Shared.Domain.Models.ProcedureTypeModel { Id = 4, DepartmentId = 1, Name = "proc" },
                 Sex = new KeyValuePairViewModel { Id = "M", TranslationKey = "key", Value = "M" }
             };
