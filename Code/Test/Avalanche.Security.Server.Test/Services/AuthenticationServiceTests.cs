@@ -31,7 +31,7 @@ namespace Avalanche.Security.Tests.Services
         {
             _userService = new Mock<IUserService>();
             _userService.Setup(u => u.FindByEmailAsync("invalid@invalid.com"))
-                       .Returns(Task.FromResult<User>(null));
+                       .Returns(Task.FromResult<UserModel>(null));
 
             _userService.Setup(u => u.FindByEmailAsync("test@test.com"))
                         .ReturnsAsync(new User
@@ -59,7 +59,7 @@ namespace Avalanche.Security.Tests.Services
                            .Returns<string, string>((password, hash) => password == hash);
 
             _tokenHandler = new Mock<ITokenHandler>();
-            _tokenHandler.Setup(h => h.CreateAccessToken(It.IsAny<User>()))
+            _tokenHandler.Setup(h => h.CreateAccessToken(It.IsAny<UserModel>()))
                          .Returns(new AccessToken
                                      (
                                         token: "abc",

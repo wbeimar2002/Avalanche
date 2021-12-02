@@ -26,7 +26,7 @@ namespace Avalanche.Security.Server.Security.Tokens
             _signingConfigurations = signingConfigurations;
         }
 
-        public AccessToken CreateAccessToken(User user)
+        public AccessToken CreateAccessToken(UserModel user)
         {
             var refreshToken = BuildRefreshToken();
             var accessToken = BuildAccessToken(user, refreshToken);
@@ -63,7 +63,7 @@ namespace Avalanche.Security.Server.Security.Tokens
             return refreshToken;
         }
 
-        private AccessToken BuildAccessToken(User user, RefreshToken refreshToken)
+        private AccessToken BuildAccessToken(UserModel user, RefreshToken refreshToken)
         {
             var accessTokenExpiration = DateTime.UtcNow.AddSeconds(_tokenConfiguration.ExpirationSeconds);
 
@@ -83,7 +83,7 @@ namespace Avalanche.Security.Server.Security.Tokens
             return new AccessToken(accessToken, accessTokenExpiration.Ticks, refreshToken);
         }
 
-        private IEnumerable<Claim> GetClaims(User user)
+        private IEnumerable<Claim> GetClaims(UserModel user)
         {
             var claims = new List<Claim>
             {

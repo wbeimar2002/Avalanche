@@ -1,10 +1,10 @@
-using Avalanche.Security.Server.Core.Repositories;
+using Avalanche.Security.Server.Core;
+using Avalanche.Security.Server.Core.Interfaces;
 using Avalanche.Security.Server.Core.Security.Hashing;
 using Avalanche.Security.Server.Core.Security.Tokens;
 using Avalanche.Security.Server.Core.Services;
 using Avalanche.Security.Server.Extensions;
 using Avalanche.Security.Server.Options;
-using Avalanche.Security.Server.Persistence;
 using Avalanche.Security.Server.Security.Hashing;
 using Avalanche.Security.Server.Services;
 using Avalanche.Security.Server.V1.Handlers;
@@ -17,7 +17,6 @@ using Ism.Common.Core.Extensions;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -47,16 +46,14 @@ namespace Avalanche.Security.Server
             // Libraries
             _ = services.AddGrpc();
 
-            services.AddDbContext<SecurityDbContext>(options =>
-                  options.UseSqlite(MakeConnectionString(GetDatabaseLocation("security.db"))));
+            //services.AddDbContext<SecurityDbContext>(options =>
+            //      options.UseSqlite(MakeConnectionString(GetDatabaseLocation("security.db"))));
 
             services.AddAutoMapper(GetType().Assembly);
             services.AddCustomSwagger();
 
             // Scoped
             services.AddScoped<IUserRepository, UserRepository>();
-            services.AddScoped<IUnitOfWork, UnitOfWork>();
-            services.AddScoped<IUserService, UserService>();
             services.AddScoped<IAuthenticationService, AuthenticationService>();
 
             // Singleton

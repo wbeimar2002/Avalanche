@@ -10,7 +10,7 @@ namespace Avalanche.Security.Server.Mapping
     {
         public ModelToResourceProfile()
         {
-            CreateMap<User, UserViewModel>()
+            CreateMap<UserModel, UserViewModel>()
                 .ForMember(u => u.Roles, opt => opt.MapFrom(u => u.UserRoles.Select(ur => ur.Role.Name)));
 
             CreateMap<AccessToken, AccessTokenResource>()

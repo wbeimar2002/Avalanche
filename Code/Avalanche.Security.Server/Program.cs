@@ -1,5 +1,4 @@
-﻿using Avalanche.Security.Server.Core.Security.Hashing;
-using Avalanche.Security.Server.Persistence;
+using Avalanche.Security.Server.Core.Security.Hashing;
 
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
@@ -41,9 +40,9 @@ namespace Avalanche.Security.Server
                 using (var scope = host.Services.CreateScope())
                 {
                     var services = scope.ServiceProvider;
-                    var context = services.GetService<SecurityDbContext>();
+                    //var context = services.GetService<SecurityDbContext>();
                     var passwordHasher = services.GetService<IPasswordHasher>();
-                    DatabaseSeed.Seed(context, passwordHasher);
+                    //DatabaseSeed.Seed(context, passwordHasher);
                 }
 
                 host.Run();

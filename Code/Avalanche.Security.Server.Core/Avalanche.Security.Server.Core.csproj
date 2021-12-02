@@ -2,11 +2,23 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.1</TargetFramework>
+    <Configurations>Debug;Release;DebugLocal</Configurations>
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="AutoMapper" Version="10.1.1" />
+    <PackageReference Include="EFCore.BulkExtensions" Version="5.4.1" />
+    <PackageReference Include="FluentValidation" Version="10.3.5" />
+    <PackageReference Include="Ism.CodeQuality" Version="1.0.0-prerelease0011" />
+    <PackageReference Include="Ism.Common.Core" Version="1.0.0-prerelease057" />
+    <PackageReference Include="Ism.Utility.Core" Version="1.0.1-prerelease31" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="5.0.12" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="5.0.12" />
+    <PackageReference Include="Z.EntityFramework.Plus.EFCore" Version="5.13.2" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(Configuration)'=='DebugLocal'">
+    <PackageReference Include="Ism.Storage.Core.Infrastructure" Version="99.99.*" />
   </ItemGroup>
 
 </Project>

@@ -34,9 +34,9 @@ namespace Avalanche.Security.Tests.Services
                 .ReturnsAsync(new User { Id = 1, Email = "test@test.com", UserRoles = new Collection<UserRole>() });
 
             _userRepository.Setup(r => r.FindByEmailAsync("secondtest@secondtest.com"))
-                .Returns(Task.FromResult<User>(null));
+                .Returns(Task.FromResult<UserModel>(null));
 
-            _userRepository.Setup(r => r.AddAsync(It.IsAny<User>(), It.IsAny<ERole[]>())).Returns(Task.CompletedTask);
+            _userRepository.Setup(r => r.AddAsync(It.IsAny<UserModel>(), It.IsAny<ERole[]>())).Returns(Task.CompletedTask);
 
             _unitOfWork = new Mock<IUnitOfWork>();
             _unitOfWork.Setup(u => u.CompleteAsync()).Returns(Task.CompletedTask);

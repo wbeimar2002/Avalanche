@@ -16,7 +16,7 @@ namespace Avalanche.Security.Tests.Security.Tokens
         private TokenAuthConfiguration _tokenConfig;
         private Mock<IPasswordHasher> _passwordHasher;
         private SigningOptions _signingOptions;
-        private User _user;
+        private UserModel _user;
 
         private ITokenHandler _tokenHandler;
 

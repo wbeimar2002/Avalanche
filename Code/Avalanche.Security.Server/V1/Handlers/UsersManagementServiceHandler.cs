@@ -1,7 +1,7 @@
 using System.Threading.Tasks;
 using AutoMapper;
 using Avalanche.Security.Server.Client.V1.Protos;
-using Avalanche.Security.Server.Core.Repositories;
+using Avalanche.Security.Server.Core.Interfaces;
 using Google.Protobuf.WellKnownTypes;
 using Grpc.Core;
 using Microsoft.Extensions.Logging;
@@ -14,13 +14,13 @@ namespace Avalanche.Security.Server.V1.Handlers
     {
         private readonly ILogger<UsersManagementServiceHandler> _logger;
         private readonly IMapper _mapper;
-        private readonly IUserRepository _userRepository;
+        private readonly IUserRepository _UserRepository;
 
-        public UsersManagementServiceHandler(ILogger<UsersManagementServiceHandler> logger, IMapper mapper, IUserRepository userRepository)
+        public UsersManagementServiceHandler(ILogger<UsersManagementServiceHandler> logger, IMapper mapper, IUserRepository UserRepository)
         {
             _logger = logger;
             _mapper = mapper;
-            _userRepository = userRepository;
+            _UserRepository = UserRepository;
         }
 
         public override async Task<AddUserResponse> AddUser(AddUserRequest request, ServerCallContext context)
