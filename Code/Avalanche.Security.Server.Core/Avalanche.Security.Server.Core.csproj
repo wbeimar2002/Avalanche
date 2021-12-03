@@ -11,6 +11,7 @@
     <PackageReference Include="FluentValidation" Version="10.3.5" />
     <PackageReference Include="Ism.CodeQuality" Version="1.0.0-prerelease0011" />
     <PackageReference Include="Ism.Common.Core" Version="1.0.0-prerelease057" />
+    <PackageReference Include="Ism.Storage.Core.Infrastructure" Version="99.99.1638434496.47706" />
     <PackageReference Include="Ism.Utility.Core" Version="1.0.1-prerelease31" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="5.0.12" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="5.0.12" />
