@@ -27,11 +27,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Avalanche.Security.Server",
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Avalanche.Api.Test", "Test\Avalanche.Api.Test\Avalanche.Api.Test.csproj", "{45B87C4C-1C93-4490-98E3-C0E8BA6D2128}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Avalanche.Security.Server.Client", "Avalanche.Security.Server.Client\Avalanche.Security.Server.Client.csproj", "{D6B5BFBE-6927-46D9-878C-A373F5197D39}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Avalanche.Security.Server.Client", "Avalanche.Security.Server.Client\Avalanche.Security.Server.Client.csproj", "{D6B5BFBE-6927-46D9-878C-A373F5197D39}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Security", "Security", "{5EEB0664-22A7-4D6A-B5FC-A411D92B55F5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Avalanche.Security.Server.Core", "Avalanche.Security.Server.Core\Avalanche.Security.Server.Core.csproj", "{3989606E-75CD-4F51-A9B6-620685C9DCF5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Avalanche.Security.Server.Core", "Avalanche.Security.Server.Core\Avalanche.Security.Server.Core.csproj", "{3989606E-75CD-4F51-A9B6-620685C9DCF5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

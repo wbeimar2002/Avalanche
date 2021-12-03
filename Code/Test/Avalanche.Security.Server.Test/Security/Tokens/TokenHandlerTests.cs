@@ -41,24 +41,24 @@ namespace Avalanche.Security.Tests.Security.Tokens
 
             _signingOptions = new SigningOptions();
 
-            _user = new User
+            _user = new UserModel
             {
                 Id = 1,
-                Email = "test@test.com",
+                UserName = "test@test.com",
                 Password = "123",
                 FirstName = "Some",
                 LastName = "User",
-                UserRoles = new Collection<UserRole>
-                {
-                    new UserRole
-                    {
-                        Role = new Role
-                        {
-                            Id = 1,
-                            Name = nameof(ERole.Common)
-                        }
-                    }
-                }
+                //UserRoles = new Collection<UserRole>
+                //{
+                //    new UserRole
+                //    {
+                //        Role = new Role
+                //        {
+                //            Id = 1,
+                //            Name = nameof(ERole.Common)
+                //        }
+                //    }
+                //}
             };
         }
 
