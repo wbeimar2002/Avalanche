@@ -3,10 +3,13 @@ using System.Threading.Tasks;
 using Avalanche.Security.Server.Core.Interfaces;
 using Avalanche.Security.Server.Core.Models;
 
+using static Ism.Utility.Core.Preconditions;
+
 namespace Avalanche.Security.Server.Managers
 {
     public class UsersManager : IUsersManager
     {
+        //TODO: Finish the preconditions
         private readonly IUserRepository _userRepository;
 
         public UsersManager(IUserRepository userRepository)
@@ -14,7 +17,7 @@ namespace Avalanche.Security.Server.Managers
             _userRepository = userRepository;
         }
 
-        public async Task AddOrUpdateUser(UserModel user)
+        public async Task UpdateUser(UserModel user)
         {
             await _userRepository.AddOrUpdateUser(user);
         }

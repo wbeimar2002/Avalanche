@@ -7,7 +7,7 @@ namespace Avalanche.Security.Server.Managers
     public interface IUsersManager
     {
         Task<UserModel> AddUser(UserModel user);
-        Task AddOrUpdateUser(UserModel user);
+        Task UpdateUser(UserModel user);
         Task<int> DeleteUser(int userId);
         Task<IEnumerable<UserModel>> GetAllUsers();
     }

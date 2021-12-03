@@ -1,12 +1,11 @@
 using System.Threading.Tasks;
 using AutoMapper;
 using Avalanche.Security.Server.Client.V1.Protos;
-using Avalanche.Security.Server.Core.Interfaces;
+using Avalanche.Security.Server.Core.Models;
+using Avalanche.Security.Server.Managers;
 using Google.Protobuf.WellKnownTypes;
 using Grpc.Core;
 using Microsoft.Extensions.Logging;
-
-using static Ism.Utility.Core.Preconditions;
 
 namespace Avalanche.Security.Server.V1.Handlers
 {
@@ -14,33 +13,37 @@ namespace Avalanche.Security.Server.V1.Handlers
     {
         private readonly ILogger<UsersManagementServiceHandler> _logger;
         private readonly IMapper _mapper;
-        private readonly IUserRepository _UserRepository;
+        private readonly IUsersManager _usersManager;
 
-        public UsersManagementServiceHandler(ILogger<UsersManagementServiceHandler> logger, IMapper mapper, IUserRepository UserRepository)
+        public UsersManagementServiceHandler(ILogger<UsersManagementServiceHandler> logger, IMapper mapper, IUsersManager usersManager)
         {
             _logger = logger;
             _mapper = mapper;
-            _UserRepository = UserRepository;
+            _usersManager = usersManager;
         }
 
         public override async Task<AddUserResponse> AddUser(AddUserRequest request, ServerCallContext context)
         {
-            return null;
+            var response = await _usersManager.AddUser(_mapper.Map<UserModel>(request));
+            return _mapper.Map<AddUserResponse>(response);
         }
 
         public override async Task<Empty> DeleteUser(DeleteUserRequest request, ServerCallContext context)
         {
-            return null;
+            var response = await _usersManager.DeleteUser(request.UserId);
+            return new Empty();
         }
 
         public override async Task<GetUsersResponse> GetUsers(Empty request, ServerCallContext context)
         {
-            return null;
+            var response = await _usersManager.GetAllUsers();
+            return _mapper.Map<GetUsersResponse>(response);
         }
 
         public override async Task<Empty> UpdateUser(UpdateUserRequest request, ServerCallContext context)
         {
-            return null;
+            await _usersManager.UpdateUser(_mapper.Map<UserModel>(request));
+            return new Empty();
         }
     }
 }
