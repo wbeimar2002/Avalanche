@@ -9,6 +9,7 @@ using Avalanche.Shared.Infrastructure.Configuration;
 using Google.Protobuf.WellKnownTypes;
 
 using Ism.Common.Core.Configuration.Models;
+using Ism.PatientInfoEngine.V1.Protos;
 using Ism.SystemState.Client;
 using Ism.Utility.Core;
 using Microsoft.AspNetCore.Http;
@@ -176,8 +177,8 @@ namespace Avalanche.Api.Managers.Patients
 
             await CheckProcedureType(existingPatient.ProcedureType, existingPatient.Department).ConfigureAwait(false);
 
-            var request = _mapper.Map<PatientViewModel, Ism.Storage.PatientList.Client.V1.Protos.UpdatePatientRecordRequest>(existingPatient);
-            request.AccessInfo = _mapper.Map<Ism.Storage.PatientList.Client.V1.Protos.AccessInfoMessage>(accessInfo);
+            var request = _mapper.Map<PatientViewModel, UpdatePatientRecordRequest>(existingPatient);
+            request.AccessInfo = _mapper.Map<AccessInfoMessage>(accessInfo);
 
             await AllocateNewProcedure(existingPatient, false).ConfigureAwait(false);
 
@@ -189,9 +190,9 @@ namespace Avalanche.Api.Managers.Patients
             Preconditions.ThrowIfNull(nameof(id), id);
 
             var accessInfo = _accessInfoFactory.GenerateAccessInfo();
-            var accessInfoMessage = _mapper.Map<Ism.Storage.PatientList.Client.V1.Protos.AccessInfoMessage>(accessInfo);
+            var accessInfoMessage = _mapper.Map<AccessInfoMessage>(accessInfo);
 
-            await _pieService.DeletePatient(new Ism.Storage.PatientList.Client.V1.Protos.DeletePatientRecordRequest()
+            await _pieService.DeletePatient(new DeletePatientRecordRequest()
             {
                 AccessInfo = accessInfoMessage,
                 PatientRecordId = id
@@ -203,7 +204,7 @@ namespace Avalanche.Api.Managers.Patients
             Preconditions.ThrowIfNull(nameof(filter), filter);
             Preconditions.ThrowIfNull(nameof(filter.Term), filter.Term);
 
-            var search = new Ism.PatientInfoEngine.V1.Protos.PatientSearchFieldsMessage();
+            var search = new PatientSearchFieldsMessage();
             search.Keyword = filter.Term;
 
             // TODO - get valid culture (either system configuration or passed in via caller)
@@ -213,20 +214,20 @@ namespace Avalanche.Api.Managers.Patients
             //TODO: This is the final implementation?
             var accessInfo = _accessInfoFactory.GenerateAccessInfo();
 
-            var request = _mapper.Map<Ism.PatientInfoEngine.V1.Protos.SearchRequest>(filter);
+            var request = _mapper.Map<SearchRequest>(filter);
             request.SearchCultureName = cultureName;
-            request.AccessInfo = _mapper.Map<Ism.PatientInfoEngine.V1.Protos.AccessInfoMessage>(accessInfo);
+            request.AccessInfo = _mapper.Map<AccessInfoMessage>(accessInfo);
 
             var queryResult = await _pieService.Search(request).ConfigureAwait(false);
 
-            return _mapper.Map<IList<Ism.PatientInfoEngine.V1.Protos.PatientRecordMessage>, IList<PatientViewModel>>(queryResult.UpdatedPatList);
+            return _mapper.Map<IList<PatientRecordMessage>, IList<PatientViewModel>>(queryResult.UpdatedPatList);
         }
 
         public async Task<IList<PatientViewModel>> Search(PatientDetailsSearchFilterViewModel filter)
         {
             Preconditions.ThrowIfNull(nameof(filter), filter);
 
-            var search = new Ism.PatientInfoEngine.V1.Protos.PatientSearchFieldsMessage()
+            var search = new PatientSearchFieldsMessage()
             {
                 RoomName = filter.RoomName,
                 LastName = filter.LastName,
@@ -246,13 +247,13 @@ namespace Avalanche.Api.Managers.Patients
             var cultureName = CultureInfo.CurrentCulture.Name;
             cultureName = string.IsNullOrEmpty(cultureName) ? "en-US" : cultureName;
 
-            var request = _mapper.Map<Ism.PatientInfoEngine.V1.Protos.SearchRequest>(filter);
+            var request = _mapper.Map<SearchRequest>(filter);
             request.SearchCultureName = cultureName;
-            request.AccessInfo = _mapper.Map<Ism.PatientInfoEngine.V1.Protos.AccessInfoMessage>(accessInfo);
+            request.AccessInfo = _mapper.Map<AccessInfoMessage>(accessInfo);
 
             var queryResult = await _pieService.Search(request).ConfigureAwait(false);
 
-            return _mapper.Map<IList<Ism.PatientInfoEngine.V1.Protos.PatientRecordMessage>, IList<PatientViewModel>>(queryResult.UpdatedPatList);
+            return _mapper.Map<IList<PatientRecordMessage>, IList<PatientViewModel>>(queryResult.UpdatedPatList);
 
         }
 

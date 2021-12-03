@@ -92,6 +92,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\..\avalanche-pie\Ism.PatientInfoEngine.Client\Ism.PatientInfoEngine.Client.csproj" />
     <ProjectReference Include="..\Avalanche.Shared.Domain\Avalanche.Shared.Domain.csproj" />
     <ProjectReference Include="..\Avalanche.Shared.Infrastructure\Avalanche.Shared.Infrastructure.csproj" />
   </ItemGroup>

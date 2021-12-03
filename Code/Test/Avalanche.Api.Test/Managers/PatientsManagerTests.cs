@@ -6,16 +6,13 @@ using Avalanche.Api.Managers.Patients;
 using Avalanche.Api.Managers.Procedures;
 using Avalanche.Api.Mapping;
 using Avalanche.Api.Services.Health;
-using Avalanche.Api.Services.Maintenance;
 using Avalanche.Api.Utilities;
 using Avalanche.Api.ViewModels;
 using Avalanche.Shared.Domain.Models;
 using Avalanche.Shared.Infrastructure.Configuration;
 using Avalanche.Shared.Infrastructure.Enumerations;
 using Bogus;
-
-using Ism.Common.Core.Configuration.Models;
-using Ism.Storage.PatientList.Client.V1.Protos;
+using Ism.PatientInfoEngine.V1.Protos;
 using Ism.SystemState.Client;
 
 using Microsoft.AspNetCore.Http;
