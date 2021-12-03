@@ -18,13 +18,13 @@ namespace Avalanche.Security.Tests.Services
         private Mock<IPasswordHasher> _passwordHasher;
         private Mock<ITokenHandler> _tokenHandler;
 
-        private IAuthenticationService _authenticationService;
+        private IAuthenticationManager _authenticationService;
 
         public AuthenticationServiceTests()
         {
             SetupMocks();
             //Temporary: Working in refactor
-            _authenticationService = new AuthenticationService(null, _passwordHasher.Object, _tokenHandler.Object);
+            _authenticationService = new AuthenticationManager(null, _passwordHasher.Object, _tokenHandler.Object);
         }
 
         private void SetupMocks()

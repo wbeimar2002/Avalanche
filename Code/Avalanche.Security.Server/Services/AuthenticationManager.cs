@@ -7,13 +7,13 @@ using Avalanche.Security.Server.Managers;
 
 namespace Avalanche.Security.Server.Services
 {
-    public class AuthenticationService : IAuthenticationService
+    public class AuthenticationManager : IAuthenticationManager
     {
         private readonly IUsersManager _userService;
         private readonly IPasswordHasher _passwordHasher;
         private readonly ITokenHandler _tokenHandler;
 
-        public AuthenticationService(IUsersManager userService, IPasswordHasher passwordHasher, ITokenHandler tokenHandler)
+        public AuthenticationManager(IUsersManager userService, IPasswordHasher passwordHasher, ITokenHandler tokenHandler)
         {
             _tokenHandler = tokenHandler;
             _passwordHasher = passwordHasher;
@@ -29,11 +29,9 @@ namespace Avalanche.Security.Server.Services
                 return new TokenResponse(false, "Invalid credentials.", null);
             }
 
-            //var token = _tokenHandler.CreateAccessToken(user);
+            var token = _tokenHandler.CreateAccessToken(user);
 
-            //return new TokenResponse(true, null, token);
-
-            return null;
+            return new TokenResponse(true, null, token);
         }
 
         public async Task<TokenResponse> RefreshTokenAsync(string refreshToken, string userEmail)
@@ -56,10 +54,8 @@ namespace Avalanche.Security.Server.Services
                 return new TokenResponse(false, "Invalid refresh token.", null);
             }
 
-            //var accessToken = _tokenHandler.CreateAccessToken(user);
-            //return new TokenResponse(true, null, accessToken);
-
-            return null;
+            var accessToken = _tokenHandler.CreateAccessToken(user);
+            return new TokenResponse(true, null, accessToken);
         }
 
         public void RevokeRefreshToken(string refreshToken)

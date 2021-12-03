@@ -14,9 +14,9 @@ namespace Avalanche.Security.Server.Controllers
     public class AuthController : Controller
     {
         private readonly IMapper _mapper;
-        private readonly IAuthenticationService _authenticationService;
+        private readonly IAuthenticationManager _authenticationService;
 
-        public AuthController(IMapper mapper, IAuthenticationService authenticationService)
+        public AuthController(IMapper mapper, IAuthenticationManager authenticationService)
         {
             _authenticationService = authenticationService;
             _mapper = mapper;

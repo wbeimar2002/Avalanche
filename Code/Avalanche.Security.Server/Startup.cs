@@ -52,7 +52,7 @@ namespace Avalanche.Security.Server
 
             // Scoped
             _ = services.AddScoped<IUserRepository, UserRepository>();
-            _ = services.AddScoped<IAuthenticationService, AuthenticationService>();
+            _ = services.AddScoped<IAuthenticationManager, AuthenticationManager>();
 
             // Singleton
             _ = services.AddSingleton<IPasswordHasher, PasswordHasher>();
