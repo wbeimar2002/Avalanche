@@ -42,25 +42,6 @@ namespace Avalanche.Api.Managers.Maintenance
             _configurationContext.IdnId = Guid.NewGuid().ToString();
         }
 
-        protected override async Task SaveEmbeddedList(string settingsKey, string jsonKey, string json, string schema = null)
-        {
-            if (string.IsNullOrEmpty(schema) || await _storageService.ValidateSchema(schema, json, 1, _configurationContext).ConfigureAwait(false))
-            {
-                await _storageService.UpdateJsonProperty(settingsKey, jsonKey, json, 1, _configurationContext, true).ConfigureAwait(false);
-
-                switch (settingsKey)
-                {
-                    case "ProceduresSearchConfiguration":
-                        _serverConfigurationManager.UpdateProceduresSearchConfigurationColumns(json.Get<List<ColumnProceduresSearchConfiguration>>());
-                        break;
-                }
-            }
-            else
-            {
-                throw new ValidationException("Json Schema Invalid for " + jsonKey);
-            }
-        }
-
         protected override void CheckLinks(DynamicListViewModel category)
         {
             switch (category.SourceKey)
