@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Avalanche.Shared.Domain.Models;
+using Avalanche.Shared.Domain.Models.Media;
 
 namespace Avalanche.Api.Managers.Data
 {
@@ -22,5 +23,6 @@ namespace Avalanche.Api.Managers.Data
         Task<List<LabelModel>> GetLabelsByProcedureType(int? procedureTypeId);
         Task<List<LabelModel>> GetAllLabels();
         Task<LabelModel> GetLabel(string labelName, int? procedureTypeId);
+        Task<IList<AliasIndexModel>> GetGpioPins();
     }
 }

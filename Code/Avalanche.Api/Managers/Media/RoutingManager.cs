@@ -5,7 +5,6 @@ using Avalanche.Api.Utilities;
 using Avalanche.Api.ViewModels;
 using Avalanche.Shared.Domain.Models;
 using Avalanche.Shared.Domain.Models.Media;
-using AvidisDeviceInterface.V1.Protos;
 using Ism.Common.Core.Configuration.Models;
 using Ism.Routing.V1.Protos;
 using Ism.SystemState.Client;
@@ -66,17 +65,17 @@ namespace Avalanche.Api.Managers.Media
             UserInterfaceId = Convert.ToInt32(routingActionViewModel.UserInterfaceId)
         }).ConfigureAwait(false);
 
-        public async Task HidePreview(RoutingPreviewViewModel routingPreviewViewModel) => await _avidisService.HidePreview(new HidePreviewRequest()
+        public async Task HidePreview(RoutingPreviewViewModel routingPreviewViewModel) => await _avidisService.HidePreview(new AvidisDeviceInterface.V1.Protos.HidePreviewRequest()
         {
             PreviewIndex = routingPreviewViewModel.Index
         }).ConfigureAwait(false);
 
         public async Task ShowPreview(RoutingPreviewViewModel routingPreviewViewModel)
         {
-            await _avidisService.ShowPreview(_mapper.Map<RegionModel, ShowPreviewRequest>(routingPreviewViewModel.Region)).ConfigureAwait(false);
+            await _avidisService.ShowPreview(_mapper.Map<RegionModel, AvidisDeviceInterface.V1.Protos.ShowPreviewRequest>(routingPreviewViewModel.Region)).ConfigureAwait(false);
 
             //TODO: Map this
-            await _avidisService.ShowPreview(new ShowPreviewRequest()
+            await _avidisService.ShowPreview(new AvidisDeviceInterface.V1.Protos.ShowPreviewRequest()
             {
                 PreviewIndex = routingPreviewViewModel.Index,
                 Height = routingPreviewViewModel.Region.Height,

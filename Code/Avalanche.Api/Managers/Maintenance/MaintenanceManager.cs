@@ -7,6 +7,7 @@ using Avalanche.Api.Services.Media;
 using Avalanche.Api.Services.Printing;
 using Avalanche.Api.Utilities;
 using Avalanche.Api.ViewModels;
+using Avalanche.Shared.Domain.Enumerations.Media;
 using Avalanche.Shared.Domain.Models;
 using Avalanche.Shared.Infrastructure.Configuration;
 using Avalanche.Shared.Infrastructure.Enumerations;
@@ -38,7 +39,7 @@ namespace Avalanche.Api.Managers.Maintenance
 
         private readonly ISharedConfigurationManager _sharedConfigurationManager;
 
-        public MaintenanceManager(IStorageService storageService,
+        protected MaintenanceManager(IStorageService storageService,
             IDataManager dataManager,
             IMapper mapper,
             IHttpContextAccessor httpContextAccessor,
@@ -181,7 +182,6 @@ namespace Avalanche.Api.Managers.Maintenance
                 default:
                     values = await _storageService.GetJsonDynamicList(category.SourceKey, 1, _configurationContext).ConfigureAwait(false);
                     break;
-
             }
 
             return values == null ? null : await BuildCategoryList(category, values).ConfigureAwait(false);
@@ -295,8 +295,24 @@ namespace Avalanche.Api.Managers.Maintenance
 
                         return JsonConvert.DeserializeObject<List<dynamic>>(JsonConvert.SerializeObject(dynamicVideoSinks));
 
+                    case "MediaActions":
+                        var dynamicMediaActions = Enum.GetValues(typeof(GpioAction))
+                            .Cast<GpioAction>()
+                            .Select(item =>
+                            {
+                                dynamic expandoObj = new ExpandoObject();
+                                expandoObj.Id = ((int)item).ToString();
+                                expandoObj.Value = item.ToString();
+                                expandoObj.TranslationKey = "mediaActions." + item.ToString();
+                                expandoObj.RelatedObject = item;
+                                return (ExpandoObject)expandoObj;
+                            })
+                            .ToList();
+
+                        return JsonConvert.DeserializeObject<List<dynamic>>(JsonConvert.SerializeObject(dynamicMediaActions));
+
                     case "GpioPins":
-                        var gpioPins = await _storageService.GetJsonDynamicList(property.SourceKey, 1, _configurationContext);
+                        var gpioPins = await _dataManager.GetGpioPins().ConfigureAwait(false);
 
                         var dynamicGpioPins = gpioPins
                             .Select(item =>

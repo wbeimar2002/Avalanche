@@ -1,6 +1,6 @@
 using AvidisDeviceInterface.Client.V1;
 using AvidisDeviceInterface.V1.Protos;
-
+using Google.Protobuf.WellKnownTypes;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 
@@ -18,5 +18,7 @@ namespace Avalanche.Api.Services.Media
         public async Task HidePreview(HidePreviewRequest hidePreviewRequest) => await _client.HidePreview(hidePreviewRequest).ConfigureAwait(false);
 
         public async Task ShowPreview(ShowPreviewRequest showPreviewRequest) => await _client.ShowPreview(showPreviewRequest).ConfigureAwait(false);
+
+        public async Task<GetGpioPinsResponse> GetGpioPins() => await _client.GetGpioPins(new Empty()).ConfigureAwait(false);        
     }
 }
