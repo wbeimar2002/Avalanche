@@ -40,12 +40,6 @@ namespace Avalanche.Security.Server.Core.EntityConfigurations
                 .HasColumnType("TEXT COLLATE NOCASE");
 
             // Indexes
-            _ = builder.HasIndex(n => n.FirstName)
-                .IsUnique(true);
-
-            _ = builder.HasIndex(n => n.LastName)
-                .IsUnique(true);
-
             _ = builder.HasIndex(n => n.UserName)
                 .IsUnique(true);
         }
