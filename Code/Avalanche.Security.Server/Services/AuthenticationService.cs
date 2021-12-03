@@ -9,11 +9,11 @@ namespace Avalanche.Security.Server.Services
 {
     public class AuthenticationService : IAuthenticationService
     {
-        private readonly IUserService _userService;
+        private readonly IUsersManager _userService;
         private readonly IPasswordHasher _passwordHasher;
         private readonly ITokenHandler _tokenHandler;
 
-        public AuthenticationService(IUserService userService, IPasswordHasher passwordHasher, ITokenHandler tokenHandler)
+        public AuthenticationService(IUsersManager userService, IPasswordHasher passwordHasher, ITokenHandler tokenHandler)
         {
             _tokenHandler = tokenHandler;
             _passwordHasher = passwordHasher;

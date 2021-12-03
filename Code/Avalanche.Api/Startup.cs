@@ -36,7 +36,6 @@ using Ism.Medpresence.Client.V1.Extensions;
 using Ism.PatientInfoEngine.Client.V1.Extensions;
 using Ism.PgsTimeout.Client.V1;
 using Ism.PrintServer.Client.V1;
-using Ism.PrintServer.Client.V1.Extensions;
 using Ism.Recorder.Client.V1;
 using Ism.Routing.Client.V1;
 using Ism.Security.Grpc;

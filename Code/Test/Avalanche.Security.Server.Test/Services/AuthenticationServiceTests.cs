@@ -15,7 +15,6 @@ namespace Avalanche.Security.Tests.Services
     {
         private bool _calledRefreshToken = false;
 
-        private Mock<IUserService> _userService;
         private Mock<IPasswordHasher> _passwordHasher;
         private Mock<ITokenHandler> _tokenHandler;
 
@@ -24,35 +23,36 @@ namespace Avalanche.Security.Tests.Services
         public AuthenticationServiceTests()
         {
             SetupMocks();
-            _authenticationService = new AuthenticationService(_userService.Object, _passwordHasher.Object, _tokenHandler.Object);
+            //Temporary: Working in refactor
+            _authenticationService = new AuthenticationService(null, _passwordHasher.Object, _tokenHandler.Object);
         }
 
         private void SetupMocks()
         {
-            _userService = new Mock<IUserService>();
-            _userService.Setup(u => u.FindByEmailAsync("invalid@invalid.com"))
-                       .Returns(Task.FromResult<UserModel>(null));
+            //_userService = new Mock<IUserService>();
+            //_userService.Setup(u => u.FindByEmailAsync("invalid@invalid.com"))
+            //           .Returns(Task.FromResult<UserModel>(null));
 
-            _userService.Setup(u => u.FindByEmailAsync("test@test.com"))
-                        .ReturnsAsync(new User
-                        {
-                            Id = 1,
-                            Email = "test@test.com",
-                            Password = "123",
-                            UserRoles = new Collection<UserRole>
-                            {
-                                new UserRole
-                                {
-                                    UserId = 1,
-                                    RoleId = 1,
-                                    Role = new Role
-                                    {
-                                        Id = 1,
-                                        Name = ERole.Common.ToString()
-                                    }
-                                }
-                            }
-                        });
+            //_userService.Setup(u => u.FindByEmailAsync("test@test.com"))
+            //            .ReturnsAsync(new User
+            //            {
+            //                Id = 1,
+            //                Email = "test@test.com",
+            //                Password = "123",
+            //                UserRoles = new Collection<UserRole>
+            //                {
+            //                    new UserRole
+            //                    {
+            //                        UserId = 1,
+            //                        RoleId = 1,
+            //                        Role = new Role
+            //                        {
+            //                            Id = 1,
+            //                            Name = ERole.Common.ToString()
+            //                        }
+            //                    }
+            //                }
+            //            });
 
             _passwordHasher = new Mock<IPasswordHasher>();
             _passwordHasher.Setup(ph => ph.PasswordMatches(It.IsAny<string>(), It.IsAny<string>()))

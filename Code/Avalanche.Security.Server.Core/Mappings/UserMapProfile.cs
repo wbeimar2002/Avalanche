@@ -18,7 +18,11 @@ namespace Avalanche.Security.Server.Core.Mappings
 
                 return new UserModel()
                 {
-                    Id = source.Id
+                    Id = source.Id,
+                    FirstName = source.FirstName,
+                    LastName = source.LastName,
+                    UserName = source.UserName,
+                    Password = source.Password
                 };
             }
         }
@@ -32,7 +36,11 @@ namespace Avalanche.Security.Server.Core.Mappings
 
                 return new UserEntity()
                 {
-                    Id = source.Id
+                    Id = source.Id,
+                    FirstName = source.FirstName,
+                    LastName = source.LastName,
+                    UserName = source.UserName,
+                    Password = source.Password
                 };
             }
         }

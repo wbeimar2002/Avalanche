@@ -2,10 +2,11 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Avalanche.Security.Server.Core.Models;
 
-namespace Avalanche.Security.Server.Core.Interfaces
+namespace Avalanche.Security.Server.Managers
 {
-    public interface IUserRepository
+    public interface IUsersManager
     {
+        Task<UserModel> FindByUserNameAsync(string userName);
         Task<UserModel> AddUser(UserModel user);
         Task AddOrUpdateUser(UserModel user);
         Task<int> DeleteUser(int userId);

@@ -38,9 +38,7 @@ namespace Avalanche.Api.Managers.Maintenance
                 printingConfiguration,
                 medPresenceConfiguration,
                 setupConfiguration,
-                proceduresSearchConfiguration,
-                httpContextAccessor,
-                mapper)
+                proceduresSearchConfiguration)
         {
             _autoLabelsConfiguration = autoLabelsConfiguration;
             _labelsConfiguration = labelsConfiguration;

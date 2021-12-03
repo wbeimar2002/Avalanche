@@ -88,16 +88,16 @@ namespace Avalanche.Security.Server.Security.Tokens
             var claims = new List<Claim>
             {
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-                new Claim(JwtRegisteredClaimNames.Sub, user.Email),
+                new Claim(JwtRegisteredClaimNames.Sub, user.UserName),
                 new Claim("Id", user.Id.ToString()),
                 new Claim("FirstName", user.FirstName),
                 new Claim("LastName", user.LastName),
             };
 
-            foreach (var userRole in user.UserRoles)
-            {
-                claims.Add(new Claim(ClaimTypes.Role, userRole.Role.Name));
-            }
+            //foreach (var userRole in user.UserRoles)
+            //{
+            //    claims.Add(new Claim(ClaimTypes.Role, userRole.Role.Name));
+            //}
 
             return claims;
         }
