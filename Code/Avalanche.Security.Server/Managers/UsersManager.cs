@@ -16,7 +16,7 @@ namespace Avalanche.Security.Server.Managers
 
         public async Task AddOrUpdateUser(UserModel user)
         {
-            return await _userRepository.AddOrUpdateUser(user);
+            await _userRepository.AddOrUpdateUser(user);
         }
 
         public async Task<UserModel> AddUser(UserModel user)
