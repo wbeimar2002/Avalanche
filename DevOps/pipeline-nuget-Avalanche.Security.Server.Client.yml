@@ -4,11 +4,11 @@ trigger:
       - dev
    paths:
     include:
-      - Ism.Storage.Core.Infrastructure/*
+      - Code/Avalanche.Security.Server.Client/*
       - Protos/*
 
 variables:
-  - group: 'rg-nuget-ism-storage-core-infrastructure'
+  - group: 'rg-nuget-avalanche-security-server-client'
   
 resources:
   repositories:
