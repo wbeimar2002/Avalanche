@@ -6,7 +6,6 @@ namespace Avalanche.Security.Server.Managers
 {
     public interface IUsersManager
     {
-        Task<UserModel> FindByUserNameAsync(string userName);
         Task<UserModel> AddUser(UserModel user);
         Task AddOrUpdateUser(UserModel user);
         Task<int> DeleteUser(int userId);

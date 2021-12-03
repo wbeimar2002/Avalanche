@@ -5,7 +5,7 @@ using Avalanche.Security.Server.Core.Models;
 using Avalanche.Security.Server.Core.Security.Hashing;
 using Avalanche.Security.Server.Core.Security.Tokens;
 using Avalanche.Security.Server.Core.Services;
-using Avalanche.Security.Server.Services;
+using Avalanche.Security.Server.Managers;
 using Moq;
 using Xunit;
 

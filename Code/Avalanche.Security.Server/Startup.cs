@@ -6,7 +6,7 @@ using Avalanche.Security.Server.Core.Services;
 using Avalanche.Security.Server.Extensions;
 using Avalanche.Security.Server.Options;
 using Avalanche.Security.Server.Security.Hashing;
-using Avalanche.Security.Server.Services;
+using Avalanche.Security.Server.Managers;
 using Avalanche.Security.Server.V1.Handlers;
 using Avalanche.Shared.Infrastructure.Models;
 using Avalanche.Shared.Infrastructure.Options;

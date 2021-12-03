@@ -1,28 +1,29 @@
 using System.Threading.Tasks;
+using Avalanche.Security.Server.Core.Interfaces;
 using Avalanche.Security.Server.Core.Security.Hashing;
 using Avalanche.Security.Server.Core.Security.Tokens;
 using Avalanche.Security.Server.Core.Services;
 using Avalanche.Security.Server.Core.Services.Communication;
-using Avalanche.Security.Server.Managers;
 
-namespace Avalanche.Security.Server.Services
+namespace Avalanche.Security.Server.Managers
 {
+    //TODO: Review this, is a little bit different to the API controllers/managers but chaange this in this moment can affect the demo
     public class AuthenticationManager : IAuthenticationManager
     {
-        private readonly IUsersManager _userService;
+        private readonly IUserRepository _userRepository;
         private readonly IPasswordHasher _passwordHasher;
         private readonly ITokenHandler _tokenHandler;
 
-        public AuthenticationManager(IUsersManager userService, IPasswordHasher passwordHasher, ITokenHandler tokenHandler)
+        public AuthenticationManager(IUserRepository userRepository, IPasswordHasher passwordHasher, ITokenHandler tokenHandler)
         {
             _tokenHandler = tokenHandler;
             _passwordHasher = passwordHasher;
-            _userService = userService;
+            _userRepository = userRepository;
         }
 
         public async Task<TokenResponse> CreateAccessTokenAsync(string email, string password)
         {
-            var user = await _userService.FindByUserNameAsync(email);
+            var user = await _userRepository.FindByUserNameAsync(email);
 
             if (user == null || !_passwordHasher.PasswordMatches(password, user.Password))
             {
@@ -48,7 +49,7 @@ namespace Avalanche.Security.Server.Services
                 return new TokenResponse(false, "Expired refresh token.", null);
             }
 
-            var user = await _userService.FindByUserNameAsync(userEmail);
+            var user = await _userRepository.FindByUserNameAsync(userEmail);
             if (user == null)
             {
                 return new TokenResponse(false, "Invalid refresh token.", null);

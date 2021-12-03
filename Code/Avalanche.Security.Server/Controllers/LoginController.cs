@@ -10,15 +10,16 @@ using System.Threading.Tasks;
 
 namespace Avalanche.Security.Server.Controllers
 {
+    //TODO: Review this, is a little bit different to the API controllers but chaange this in this moment can affect the demo
     [ApiController]
     public class AuthController : Controller
     {
         private readonly IMapper _mapper;
-        private readonly IAuthenticationManager _authenticationService;
+        private readonly IAuthenticationManager _authenticationManager;
 
         public AuthController(IMapper mapper, IAuthenticationManager authenticationService)
         {
-            _authenticationService = authenticationService;
+            _authenticationManager = authenticationService;
             _mapper = mapper;
         }
 
@@ -31,7 +32,7 @@ namespace Avalanche.Security.Server.Controllers
                 return BadRequest(ModelState);
             }
 
-            var response = await _authenticationService.CreateAccessTokenAsync(userCredentials.Email, userCredentials.Password);
+            var response = await _authenticationManager.CreateAccessTokenAsync(userCredentials.Email, userCredentials.Password);
             if(!response.Success)
             {
                 return BadRequest(response.Message);
@@ -50,12 +51,13 @@ namespace Avalanche.Security.Server.Controllers
                 return BadRequest(ModelState);
             }
 
-            var response = await _authenticationService.RefreshTokenAsync(refreshTokenResource.Token, refreshTokenResource.UserEmail);
+            var response = await _authenticationManager.RefreshTokenAsync(refreshTokenResource.Token, refreshTokenResource.UserEmail);
             if(!response.Success)
             {
                 return BadRequest(response.Message);
             }
-           
+
+            //TODO: Check the location of this mapping
             var tokenResource = _mapper.Map<AccessToken, AccessTokenResource>(response.Token);
             return Ok(tokenResource);
         }
@@ -69,7 +71,7 @@ namespace Avalanche.Security.Server.Controllers
                 return BadRequest(ModelState);
             }
 
-            _authenticationService.RevokeRefreshToken(revokeTokenResource.Token);
+            _authenticationManager.RevokeRefreshToken(revokeTokenResource.Token);
             return NoContent();
         }
     }

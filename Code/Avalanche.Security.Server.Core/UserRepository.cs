@@ -236,6 +236,24 @@ namespace Avalanche.Security.Server.Core
                 _disposedValue = true;
             }
         }
+
+        [AspectLogger]
+        public async Task<UserModel> FindByUserNameAsync(string userName)
+        {
+            var query = _context.Users.Where(x => x.UserName == userName);
+
+            var entity = await query
+                .FirstOrDefaultAsync()
+                .ConfigureAwait(false);
+
+            if (entity != null)
+            {
+                return _mapper.Map<UserModel>(entity);
+            }
+
+            _logger.LogWarning($"{nameof(FindByUserNameAsync)} failed to retrieve a {nameof(UserEntity)} with {nameof(UserEntity.UserName)} {userName}");
+            return null;
+        }
         #endregion Disposable
     }
 }
