@@ -143,6 +143,40 @@ namespace Avalanche.Api.Managers.Maintenance
 
             switch (category.SourceKey)
             {
+                case "MediaActions":
+                    var dynamicMediaActions = Enum.GetValues(typeof(GpioAction))
+                        .Cast<GpioAction>()
+                        .Select(item =>
+                        {
+                            dynamic expandoObj = new ExpandoObject();
+                            expandoObj.Id = ((int)item).ToString();
+                            expandoObj.Value = item.ToString();
+                            expandoObj.TranslationKey = "mediaActions." + item.ToString();
+                            expandoObj.RelatedObject = item;
+                            return (ExpandoObject)expandoObj;
+                        })
+                        .ToList();
+
+                    values = JsonConvert.DeserializeObject<List<dynamic>>(JsonConvert.SerializeObject(dynamicMediaActions));
+                    break;
+
+                case "GpioPins":
+                    var gpioPins = await _dataManager.GetGpioPins().ConfigureAwait(false);
+
+                    var dynamicGpioPins = gpioPins
+                        .Select(item =>
+                        {
+                            dynamic expandoObj = new ExpandoObject();
+                            expandoObj.Id = item.Index;
+                            expandoObj.Value = $"{item.Alias} ({item.Index})";
+                            expandoObj.RelatedObject = item;
+                            return (ExpandoObject)expandoObj;
+                        })
+                        .ToList();
+
+                    values = JsonConvert.DeserializeObject<List<dynamic>>(JsonConvert.SerializeObject(dynamicGpioPins));
+                    break;
+
                 case "Departments":
                     var departments = await _dataManager.GetAllDepartments().ConfigureAwait(false);
                     values = JsonConvert.DeserializeObject<List<dynamic>>(JsonConvert.SerializeObject(departments));
