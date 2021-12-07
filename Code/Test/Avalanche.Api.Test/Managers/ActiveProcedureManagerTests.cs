@@ -21,12 +21,12 @@ namespace Avalanche.Api.Test.Managers
     [TestFixture()]
     public class ActiveProcedureManagerTests
     {
-        IMapper _mapper;
-        Mock<IAccessInfoFactory> _accessInfoFactory;
-        Mock<ILibraryService> _libraryService;
-        Mock<IRecorderService> _recorderService;
-        Mock<IStateClient> _stateClient;
-        Mock<IDataManager> _dataManager;
+        private IMapper _mapper;
+        private Mock<IAccessInfoFactory> _accessInfoFactory;
+        private Mock<ILibraryService> _libraryService;
+        private Mock<IRecorderService> _recorderService;
+        private Mock<IStateClient> _stateClient;
+        private Mock<IDataManager> _dataManager;
         GeneralApiConfiguration _generalApiConfig;
 
         ActiveProcedureManager _manager;
@@ -34,10 +34,7 @@ namespace Avalanche.Api.Test.Managers
         [SetUp]
         public void Setup()
         {
-            var config = new MapperConfiguration(cfg =>
-            {
-                cfg.AddProfile(new ProceduresMappingConfiguration());
-            });
+            var config = new MapperConfiguration(cfg => cfg.AddProfile(new ProceduresMappingConfiguration()));
 
             _mapper = config.CreateMapper();
             _accessInfoFactory = new Mock<IAccessInfoFactory>();
@@ -77,7 +74,7 @@ namespace Avalanche.Api.Test.Managers
 
             _recorderService.Setup(mock => mock.GetRecorderState()).ReturnsAsync(new Ism.Recorder.Core.V1.Protos.RecorderState() { State = 0 });
 
-            var result = await _manager.GetActiveProcedure();
+            var result = await _manager.GetActiveProcedure().ConfigureAwait(false);
 
             Assert.NotNull(result);
             Assert.AreEqual("name", result.Patient?.LastName);
@@ -108,7 +105,7 @@ namespace Avalanche.Api.Test.Managers
                     new List<VideoRecordingEvent>(),
                     BackgroundRecordingMode.StartImmediately));
 
-            await _manager.DeleteActiveProcedureMediaItem(Shared.Domain.Enumerations.ProcedureContentType.Image, id);
+            await _manager.DeleteActiveProcedureMediaItem(Shared.Domain.Enumerations.ProcedureContentType.Image, id).ConfigureAwait(false);
         }
 
         [Test]
@@ -165,7 +162,7 @@ namespace Avalanche.Api.Test.Managers
                     new List<VideoRecordingEvent>(),
                     BackgroundRecordingMode.StartImmediately));
 
-            await _manager.DeleteActiveProcedureMediaItems(Shared.Domain.Enumerations.ProcedureContentType.Image, new List<Guid>() { imageId });
+            await _manager.DeleteActiveProcedureMediaItems(Shared.Domain.Enumerations.ProcedureContentType.Image, new List<Guid>() { imageId }).ConfigureAwait(false);
         }
 
         [Test]
@@ -250,8 +247,8 @@ namespace Avalanche.Api.Test.Managers
             _recorderService.Setup(mock => mock.GetRecorderState()).ReturnsAsync(new Ism.Recorder.Core.V1.Protos.RecorderState() { State = 0 });
 
             //act
-            await _manager.ApplyLabelToActiveProcedure(labelContent);
-            var result = await _manager.GetActiveProcedure();
+            await _manager.ApplyLabelToActiveProcedure(labelContent).ConfigureAwait(false);
+            var result = await _manager.GetActiveProcedure().ConfigureAwait(false);
 
             //assert
             Assert.NotNull(result);
@@ -311,8 +308,8 @@ namespace Avalanche.Api.Test.Managers
             _recorderService.Setup(mock => mock.GetRecorderState()).ReturnsAsync(new Ism.Recorder.Core.V1.Protos.RecorderState() { State = 0 });
 
             //act
-            await _manager.ApplyLabelToActiveProcedure(labelContent);
-            var result = await _manager.GetActiveProcedure();
+            await _manager.ApplyLabelToActiveProcedure(labelContent).ConfigureAwait(false);
+            var result = await _manager.GetActiveProcedure().ConfigureAwait(false);
 
             //assert
             Assert.NotNull(result);
@@ -429,8 +426,8 @@ namespace Avalanche.Api.Test.Managers
             _recorderService.Setup(mock => mock.GetRecorderState()).ReturnsAsync(new Ism.Recorder.Core.V1.Protos.RecorderState() { State = 0 });
 
             //act
-            await _manager.ApplyLabelToActiveProcedure(labelContent);
-            var result = await _manager.GetActiveProcedure();
+            await _manager.ApplyLabelToActiveProcedure(labelContent).ConfigureAwait(false);
+            var result = await _manager.GetActiveProcedure().ConfigureAwait(false);
 
             //assert
             Assert.NotNull(result);
@@ -488,8 +485,8 @@ namespace Avalanche.Api.Test.Managers
             _recorderService.Setup(mock => mock.GetRecorderState()).ReturnsAsync(new Ism.Recorder.Core.V1.Protos.RecorderState() { State = 0 });
 
             //act
-            await _manager.ApplyLabelToActiveProcedure(labelContent);
-            var result = await _manager.GetActiveProcedure();
+            await _manager.ApplyLabelToActiveProcedure(labelContent).ConfigureAwait(false);
+            var result = await _manager.GetActiveProcedure().ConfigureAwait(false);
 
             //assert
             Assert.NotNull(result);
@@ -532,8 +529,8 @@ namespace Avalanche.Api.Test.Managers
             _recorderService.Setup(mock => mock.GetRecorderState()).ReturnsAsync(new Ism.Recorder.Core.V1.Protos.RecorderState() { State = 0 });
 
             //act
-            await _manager.ApplyLabelToLatestImages(autolabel);
-            var result = await _manager.GetActiveProcedure();
+            await _manager.ApplyLabelToLatestImages(autolabel).ConfigureAwait(false);
+            var result = await _manager.GetActiveProcedure().ConfigureAwait(false);
 
             //assert
             Assert.NotNull(result);
@@ -656,14 +653,81 @@ namespace Avalanche.Api.Test.Managers
             _recorderService.Setup(mock => mock.GetRecorderState()).ReturnsAsync(new Ism.Recorder.Core.V1.Protos.RecorderState() { State = 0 });
 
             //act
-            await _manager.ApplyLabelToLatestImages(autolabel);
-            var result = await _manager.GetActiveProcedure();
+            await _manager.ApplyLabelToLatestImages(autolabel).ConfigureAwait(false);
+            var result = await _manager.GetActiveProcedure().ConfigureAwait(false);
 
             //assert
             Assert.NotNull(result);
             Assert.AreNotEqual(autolabel, result.Images[0].Label);
             Assert.AreNotEqual(autolabel, result.Images[1].Label);
             Assert.AreEqual(autolabel, result.Images[2].Label);
+        }
+
+
+        [Test]
+        public async Task ProcedureManagerFinishPublishesFinishEvent()
+        {
+            var activeProcedure = new ActiveProcedureState(
+                    new Patient() { LastName = "name" },
+                    new List<ProcedureImage>(),
+                    new List<ProcedureVideo>(),
+                    new List<ProcedureVideo>(),
+                    "libId",
+                    "repId",
+                    "path",
+                    null,
+                    new ProcedureType() { Id = 1, Name = "TestProceType" },
+                    null,
+                    false,
+                    DateTimeOffset.UtcNow,
+                    TimeZoneInfo.Local.Id,
+                    false,
+                    new List<ProcedureNote>(),
+                    null,
+                    new List<VideoRecordingEvent>(),
+                    BackgroundRecordingMode.StartImmediately);
+
+            //arrange
+            _stateClient.Setup(s => s.GetData<ActiveProcedureState>()).ReturnsAsync(activeProcedure);
+
+            //act
+            await _manager.FinishActiveProcedure().ConfigureAwait(false);
+
+            //assert
+            _stateClient.Verify(x => x.PublishEvent(It.IsAny<ProcedureFinishedEvent>()), Times.Once);
+        }
+
+        [Test]
+        public async Task ProcedureManagerDiscardDoesNotPublishesFinishEvent()
+        {
+            var activeProcedure = new ActiveProcedureState(
+                    new Patient() { LastName = "name" },
+                    new List<ProcedureImage>(),
+                    new List<ProcedureVideo>(),
+                    new List<ProcedureVideo>(),
+                    "libId",
+                    "repId",
+                    "path",
+                    null,
+                    new ProcedureType() { Id = 1, Name = "TestProceType" },
+                    null,
+                    false,
+                    DateTimeOffset.UtcNow,
+                    TimeZoneInfo.Local.Id,
+                    false,
+                    new List<ProcedureNote>(),
+                    null,
+                    new List<VideoRecordingEvent>(),
+                    BackgroundRecordingMode.StartImmediately);
+
+            //arrange
+            _stateClient.Setup(s => s.GetData<ActiveProcedureState>()).ReturnsAsync(activeProcedure);
+
+            //act
+            await _manager.DiscardActiveProcedure().ConfigureAwait(false);
+
+            //assert
+            _stateClient.Verify(x => x.PublishEvent(It.IsAny<ProcedureFinishedEvent>()), Times.Never);
         }
     }
 }
