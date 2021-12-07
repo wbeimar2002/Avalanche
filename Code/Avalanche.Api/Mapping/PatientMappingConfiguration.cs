@@ -2,6 +2,7 @@ using AutoMapper;
 using Avalanche.Api.ViewModels;
 using Google.Protobuf.WellKnownTypes;
 using Ism.Common.Core.Configuration.Models;
+using Ism.PatientInfoEngine.V1.Protos;
 using System;
 
 namespace Avalanche.Api.Mapping
@@ -9,11 +10,10 @@ namespace Avalanche.Api.Mapping
     public class PatientMappingConfiguration : Profile
     {
         public PatientMappingConfiguration()
-        {
-            CreateMap<Ism.IsmLogCommon.Core.AccessInfo, Ism.Storage.PatientList.Client.V1.Protos.AccessInfoMessage>();
-            CreateMap<Ism.IsmLogCommon.Core.AccessInfo, Ism.PatientInfoEngine.V1.Protos.AccessInfoMessage>();
+        {            
+            CreateMap<Ism.IsmLogCommon.Core.AccessInfo, AccessInfoMessage>();
 
-            CreateMap<Ism.IsmLogCommon.Core.AccessInfo, Ism.Storage.PatientList.Client.V1.Protos.AccessInfoMessage>()
+            CreateMap<Ism.IsmLogCommon.Core.AccessInfo, AccessInfoMessage>()
                 .ForPath(dest =>
                     dest.ApplicationName,
                     opt => opt.MapFrom(src => src.ApplicationName))
@@ -52,7 +52,7 @@ namespace Avalanche.Api.Mapping
                     opt => opt.Ignore())
                 .ReverseMap();
 
-            CreateMap<PatientDetailsSearchFilterViewModel, Ism.PatientInfoEngine.V1.Protos.SearchRequest>()
+            CreateMap<PatientDetailsSearchFilterViewModel, SearchRequest>()
                .ForPath(dest =>
                    dest.SearchFields.Accession,
                    opt => opt.MapFrom(src => src.AccessionNumber))
@@ -109,7 +109,7 @@ namespace Avalanche.Api.Mapping
                    opt => opt.Ignore())
                .ReverseMap();
 
-            CreateMap<PatientKeywordSearchFilterViewModel, Ism.PatientInfoEngine.V1.Protos.SearchRequest>()
+            CreateMap<PatientKeywordSearchFilterViewModel, SearchRequest>()
                 .ForPath(dest =>
                     dest.SearchFields.Accession,
                     opt => opt.Ignore())
@@ -163,7 +163,7 @@ namespace Avalanche.Api.Mapping
                     opt => opt.Ignore())
                 .ReverseMap();
 
-            CreateMap<Ism.Storage.PatientList.Client.V1.Protos.AddPatientRecordResponse, PatientViewModel>()
+            CreateMap<AddPatientRecordResponse, PatientViewModel>()
                 .ForMember(dest =>
                     dest.FirstName,
                     opt => opt.MapFrom(src => src.PatientRecord.Patient.FirstName))
@@ -193,7 +193,7 @@ namespace Avalanche.Api.Mapping
                     opt => opt.MapFrom(src => new DateTime(src.PatientRecord.Patient.Dob.Year, src.PatientRecord.Patient.Dob.Month, src.PatientRecord.Patient.Dob.Day)))
                 .ForMember(dest =>
                     dest.MRN,
-                    opt => opt.MapFrom(src => src.PatientRecord.Mrn))
+                    opt => opt.MapFrom(src => src.PatientRecord.MRN))
                 .ForMember(dest =>
                     dest.Sex,
                     opt => opt.MapFrom(src => GetSex(src.PatientRecord.Patient.Sex)))
@@ -202,7 +202,7 @@ namespace Avalanche.Api.Mapping
                     opt => opt.Ignore())
                 .ReverseMap();
 
-            CreateMap<Ism.PatientInfoEngine.V1.Protos.PatientRecordMessage, PatientViewModel>()
+            CreateMap<PatientRecordMessage, PatientViewModel>()
                 .ForMember(dest =>
                     dest.FirstName,
                     opt => opt.MapFrom(src => src.Patient.FirstName))
@@ -241,7 +241,7 @@ namespace Avalanche.Api.Mapping
                     opt => opt.Ignore())
                 .ReverseMap();
 
-            CreateMap<PatientViewModel, Ism.Storage.PatientList.Client.V1.Protos.AddPatientRecordRequest>()
+            CreateMap<PatientViewModel, AddPatientRecordRequest>()
                 .ForPath(dest =>
                     dest.AccessInfo.ApplicationName,
                     opt => opt.Ignore())
@@ -268,7 +268,7 @@ namespace Avalanche.Api.Mapping
                     opt => opt.MapFrom(src => src.Department.Name))
                 .ForPath(dest =>
                     dest.PatientRecord.AdmissionStatus,
-                    opt => opt.MapFrom(src => new Ism.Storage.PatientList.Client.V1.Protos.AdmissionStatusMessage()))
+                    opt => opt.MapFrom(src => new AdmissionStatusMessage()))
                 .ForPath(dest =>
                     dest.PatientRecord.InternalId,
                     opt => opt.MapFrom(src => 0))
@@ -285,7 +285,7 @@ namespace Avalanche.Api.Mapping
                     dest.PatientRecord.ProcedureId,
                     opt => opt.MapFrom(src => "Unknown"))
                 .ForPath(dest =>
-                    dest.PatientRecord.Mrn,
+                    dest.PatientRecord.MRN,
                     opt => opt.MapFrom(src => src.MRN))
                 .ForPath(dest =>
                     dest.PatientRecord.Patient.FirstName,
@@ -298,7 +298,7 @@ namespace Avalanche.Api.Mapping
                     opt => opt.MapFrom(src => src.Sex.Id))
                 .ForPath(dest =>
                     dest.PatientRecord.Patient.Dob,
-                    opt => opt.MapFrom(src => src.DateOfBirth == null ? new Ism.Storage.PatientList.Client.V1.Protos.FixedDateMessage() : new Ism.Storage.PatientList.Client.V1.Protos.FixedDateMessage
+                    opt => opt.MapFrom(src => src.DateOfBirth == null ? new FixedDateMessage() : new FixedDateMessage
                     {
                         Day = src.DateOfBirth.Value.Day,
                         Month = src.DateOfBirth.Value.Month,
@@ -319,12 +319,9 @@ namespace Avalanche.Api.Mapping
                 .ForPath(dest =>
                     dest.PatientRecord.Properties,
                     opt => opt.Ignore())
-                .ForPath(dest =>
-                    dest.PatientListType,
-                    opt => opt.Ignore())
                 .ReverseMap();
 
-            CreateMap<PatientViewModel, Ism.Storage.PatientList.Client.V1.Protos.UpdatePatientRecordRequest>()
+            CreateMap<PatientViewModel, UpdatePatientRecordRequest>()
                 .ForPath(dest =>
                     dest.AccessInfo.ApplicationName,
                     opt => opt.Ignore())
@@ -351,7 +348,7 @@ namespace Avalanche.Api.Mapping
                     opt => opt.MapFrom(src => src.Department.Name))
                 .ForPath(dest =>
                     dest.PatientRecord.AdmissionStatus,
-                    opt => opt.MapFrom(src => new Ism.Storage.PatientList.Client.V1.Protos.AdmissionStatusMessage()))
+                    opt => opt.MapFrom(src => new AdmissionStatusMessage()))
                 .ForPath(dest =>
                     dest.PatientRecord.InternalId,
                     opt => opt.MapFrom(src => src.Id))
@@ -368,7 +365,7 @@ namespace Avalanche.Api.Mapping
                     dest.PatientRecord.ProcedureId,
                     opt => opt.MapFrom(src => "Unknown"))
                 .ForPath(dest =>
-                    dest.PatientRecord.Mrn,
+                    dest.PatientRecord.MRN,
                     opt => opt.MapFrom(src => src.MRN))
                 .ForPath(dest =>
                     dest.PatientRecord.Patient.FirstName,
@@ -381,7 +378,7 @@ namespace Avalanche.Api.Mapping
                     opt => opt.MapFrom(src => GetSex(src.Sex.Id)))
                 .ForPath(dest =>
                     dest.PatientRecord.Patient.Dob,
-                    opt => opt.MapFrom(src => src.DateOfBirth == null ? new Ism.Storage.PatientList.Client.V1.Protos.FixedDateMessage() : new Ism.Storage.PatientList.Client.V1.Protos.FixedDateMessage
+                    opt => opt.MapFrom(src => src.DateOfBirth == null ? new FixedDateMessage() : new FixedDateMessage
                     {
                         Day = src.DateOfBirth.Value.Day,
                         Month = src.DateOfBirth.Value.Month,
@@ -401,9 +398,6 @@ namespace Avalanche.Api.Mapping
                     opt => opt.Ignore())
                 .ForPath(dest =>
                     dest.PatientRecord.Properties,
-                    opt => opt.Ignore())
-                .ForPath(dest =>
-                    dest.PatientListType,
                     opt => opt.Ignore())
                 .ReverseMap();
 
