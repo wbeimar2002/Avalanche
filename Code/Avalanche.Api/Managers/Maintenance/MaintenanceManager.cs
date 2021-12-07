@@ -143,40 +143,6 @@ namespace Avalanche.Api.Managers.Maintenance
 
             switch (category.SourceKey)
             {
-                case "MediaActions":
-                    var dynamicMediaActions = Enum.GetValues(typeof(GpioAction))
-                        .Cast<GpioAction>()
-                        .Select(item =>
-                        {
-                            dynamic expandoObj = new ExpandoObject();
-                            expandoObj.Id = ((int)item).ToString();
-                            expandoObj.Value = item.ToString();
-                            expandoObj.TranslationKey = "mediaActions." + item.ToString();
-                            expandoObj.RelatedObject = item;
-                            return (ExpandoObject)expandoObj;
-                        })
-                        .ToList();
-
-                    values = JsonConvert.DeserializeObject<List<dynamic>>(JsonConvert.SerializeObject(dynamicMediaActions));
-                    break;
-
-                case "GpioPins":
-                    var gpioPins = await _dataManager.GetGpioPins().ConfigureAwait(false);
-
-                    var dynamicGpioPins = gpioPins
-                        .Select(item =>
-                        {
-                            dynamic expandoObj = new ExpandoObject();
-                            expandoObj.Id = item.Index;
-                            expandoObj.Value = $"{item.Alias} ({item.Index})";
-                            expandoObj.RelatedObject = item;
-                            return (ExpandoObject)expandoObj;
-                        })
-                        .ToList();
-
-                    values = JsonConvert.DeserializeObject<List<dynamic>>(JsonConvert.SerializeObject(dynamicGpioPins));
-                    break;
-
                 case "Departments":
                     var departments = await _dataManager.GetAllDepartments().ConfigureAwait(false);
                     values = JsonConvert.DeserializeObject<List<dynamic>>(JsonConvert.SerializeObject(departments));
@@ -313,6 +279,22 @@ namespace Avalanche.Api.Managers.Maintenance
             {
                 switch (property.SourceKey)
                 {
+                    case "GpioPins":
+                        var gpioPins = await _dataManager.GetGpioPins().ConfigureAwait(false);
+
+                        var dynamicGpioPins = gpioPins
+                            .Select(item =>
+                            {
+                                dynamic expandoObj = new ExpandoObject();
+                                expandoObj.Id = item.Index;
+                                expandoObj.Value = $"{item.Alias} ({item.Index})";
+                                expandoObj.RelatedObject = item;
+                                return (ExpandoObject)expandoObj;
+                            })
+                            .ToList();
+
+                        return JsonConvert.DeserializeObject<List<dynamic>>(JsonConvert.SerializeObject(dynamicGpioPins));
+
                     case "VideoSinks":
                         var videoSinks = await _storageService.GetJsonDynamicList(property.SourceKey, 1, _configurationContext);
 
@@ -335,7 +317,7 @@ namespace Avalanche.Api.Managers.Maintenance
                             .Select(item =>
                             {
                                 dynamic expandoObj = new ExpandoObject();
-                                expandoObj.Id = ((int)item).ToString();
+                                expandoObj.Id = item.ToString();
                                 expandoObj.Value = item.ToString();
                                 expandoObj.TranslationKey = "mediaActions." + item.ToString();
                                 expandoObj.RelatedObject = item;
@@ -345,21 +327,7 @@ namespace Avalanche.Api.Managers.Maintenance
 
                         return JsonConvert.DeserializeObject<List<dynamic>>(JsonConvert.SerializeObject(dynamicMediaActions));
 
-                    case "GpioPins":
-                        var gpioPins = await _dataManager.GetGpioPins().ConfigureAwait(false);
 
-                        var dynamicGpioPins = gpioPins
-                            .Select(item =>
-                            {
-                                dynamic expandoObj = new ExpandoObject();
-                                expandoObj.Id = item.Index;
-                                expandoObj.Value = $"{item.Alias} ({item.Index})";
-                                expandoObj.RelatedObject = item;
-                                return (ExpandoObject)expandoObj;
-                            })
-                            .ToList();
-
-                        return JsonConvert.DeserializeObject<List<dynamic>>(JsonConvert.SerializeObject(dynamicGpioPins));
 
                     case "Departments":
                         var departments = await _dataManager.GetAllDepartments().ConfigureAwait(false);
@@ -474,6 +442,7 @@ namespace Avalanche.Api.Managers.Maintenance
                 case "Printers":
                     var printersResponse = await _printingService.GetPrinters().ConfigureAwait(false);
                     return JsonConvert.DeserializeObject<List<dynamic>>(JsonConvert.SerializeObject(printersResponse.Printers.Select(p => new { Name = p })));
+
                 default:
                     break;
             }
