@@ -16,6 +16,7 @@ using Microsoft.Extensions.Logging;
 using Z.EntityFramework.Plus;
 using static Ism.Utility.Core.Preconditions;
 using EFCore.BulkExtensions;
+using Avalanche.Security.Server.Core.Security.Hashing;
 
 namespace Avalanche.Security.Server.Core
 {
@@ -34,6 +35,7 @@ namespace Avalanche.Security.Server.Core
         private readonly IMapper _mapper;
         private readonly IValidator<UserModel> _validator;
         private readonly IDatabaseWriter<SecurityManagementContext> _writer;
+        private readonly IPasswordHasher _passwordHasher;
         private bool _disposedValue;
 
         public UserRepository(
@@ -41,7 +43,8 @@ namespace Avalanche.Security.Server.Core
             IMapper mapper,
             SecurityManagementContext context,
             IDatabaseWriter<SecurityManagementContext> writer,
-            IValidator<UserModel> validator
+            IValidator<UserModel> validator,
+            IPasswordHasher passwordHasher
         )
         {
             _logger = ThrowIfNullOrReturn(nameof(logger), logger);
@@ -49,6 +52,7 @@ namespace Avalanche.Security.Server.Core
             _context = ThrowIfNullOrReturn(nameof(context), context);
             _writer = ThrowIfNullOrReturn(nameof(writer), writer);
             _validator = ThrowIfNullOrReturn(nameof(validator), validator);
+            _passwordHasher = ThrowIfNullOrReturn(nameof(passwordHasher), passwordHasher);
         }
 
         [AspectLogger]
@@ -59,8 +63,11 @@ namespace Avalanche.Security.Server.Core
 
             try
             {
+                user.Password = _passwordHasher.HashPassword(user.Password);
+
                 var entity = _mapper.Map<UserEntity>(user);
                 var added = await AddUserEntity(entity).ConfigureAwait(false);
+
                 return _mapper.Map<UserModel>(added);
             }
             catch (DbUpdateException ex) when (ex.InnerException.Message.Contains("UNIQUE Constraint Failed", StringComparison.OrdinalIgnoreCase))
@@ -93,14 +100,16 @@ namespace Avalanche.Security.Server.Core
         }
 
         [AspectLogger]
-        public async Task AddOrUpdateUser(UserModel User)
+        public async Task AddOrUpdateUser(UserModel user)
         {
-            ThrowIfNull(nameof(User), User);
-            _validator.ValidateAndThrow(User);
+            ThrowIfNull(nameof(user), user);
+            _validator.ValidateAndThrow(user);
+
+            user.Password = _passwordHasher.HashPassword(user.Password);
 
             try
             {
-                var entity = _mapper.Map<UserEntity>(User);
+                var entity = _mapper.Map<UserEntity>(user);
 
                 await ThrowIfDuplicate(entity, true).ConfigureAwait(false);
 
@@ -109,7 +118,7 @@ namespace Avalanche.Security.Server.Core
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, $"{nameof(AddOrUpdateUser)} failed for {nameof(User)} with {nameof(User.UserName)} = {User.UserName}{Environment.NewLine}Error: {ex.Message}");
+                _logger.LogError(ex, $"{nameof(AddOrUpdateUser)} failed for {nameof(user)} with {nameof(user.UserName)} = {user.UserName}{Environment.NewLine}Error: {ex.Message}");
                 throw;
             }
         }
@@ -252,6 +261,7 @@ namespace Avalanche.Security.Server.Core
             }
 
             _logger.LogWarning($"{nameof(FindByUserNameAsync)} failed to retrieve a {nameof(UserEntity)} with {nameof(UserEntity.UserName)} {userName}");
+
             return null;
         }
         #endregion Disposable

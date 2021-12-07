@@ -1,14 +1,14 @@
 using Avalanche.Security.Server.Core.Security.Tokens;
 
-namespace Avalanche.Security.Server.Core.Services.Communication
+namespace Avalanche.Security.Server.ViewModels
 {
-    public class TokenResponse 
+    public class TokenResponseViewModel
     {
         public AccessToken Token { get; set; }
         public bool Success { get; set; }
         public string Message { get; set; }
 
-        public TokenResponse(bool success, string message, AccessToken token)
+        public TokenResponseViewModel(bool success, string message, AccessToken token)
         {
             Token = token;
             Success = success;
