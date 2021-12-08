@@ -32,7 +32,7 @@ namespace Avalanche.Security.Server.Controllers
                 return BadRequest(ModelState);
             }
 
-            var response = await _authenticationManager.CreateAccessTokenAsync(userCredentials.Email, userCredentials.Password);
+            var response = await _authenticationManager.CreateAccessTokenAsync(userCredentials.UserName, userCredentials.Password);
             if(!response.Success)
             {
                 return BadRequest(response.Message);

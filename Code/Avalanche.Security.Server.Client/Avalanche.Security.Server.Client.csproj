@@ -24,8 +24,4 @@
     </Protobuf>
   </ItemGroup>
 
-  <Target Name="PostBuild" AfterTargets="PostBuildEvent" Condition="'$(Configuration)'=='DebugLocal'">
-    <Exec Command="powershell.exe -file &quot;$(SolutionDir)build.local.package.ps1&quot; -Project &quot;$(ProjectPath)&quot;" />
-  </Target>
-
 </Project>
