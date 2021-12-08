@@ -64,9 +64,9 @@ namespace Avalanche.Api.Managers.Data
         public async Task<UserModel> AddUser(UserModel user)
         {
             Preconditions.ThrowIfNull(nameof(user.FirstName), user.FirstName);
-            Preconditions.ThrowIfNull(nameof(user.FirstName), user.LastName);
-            Preconditions.ThrowIfNull(nameof(user.FirstName), user.UserName);
-            Preconditions.ThrowIfNull(nameof(user.FirstName), user.Password);
+            Preconditions.ThrowIfNull(nameof(user.LastName), user.LastName);
+            Preconditions.ThrowIfNull(nameof(user.UserName), user.UserName);
+            Preconditions.ThrowIfNull(nameof(user.Password), user.Password);
 
             var request = new AddUserRequest()
             {
@@ -82,9 +82,8 @@ namespace Avalanche.Api.Managers.Data
         {
             Preconditions.ThrowIfNull(nameof(user.Id), user.Id);
             Preconditions.ThrowIfNull(nameof(user.FirstName), user.FirstName);
-            Preconditions.ThrowIfNull(nameof(user.FirstName), user.LastName);
-            Preconditions.ThrowIfNull(nameof(user.FirstName), user.UserName);
-            Preconditions.ThrowIfNull(nameof(user.FirstName), user.Password);
+            Preconditions.ThrowIfNull(nameof(user.LastName), user.LastName);
+            Preconditions.ThrowIfNull(nameof(user.UserName), user.UserName);
 
             var request = new UpdateUserRequest()
             {
