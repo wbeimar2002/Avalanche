@@ -68,7 +68,12 @@ namespace Avalanche.Api.Managers.Data
             Preconditions.ThrowIfNull(nameof(user.FirstName), user.UserName);
             Preconditions.ThrowIfNull(nameof(user.FirstName), user.Password);
 
-            var result = await _securityService.AddUserAsync(_mapper.Map<UserModel, AddUserRequest>(user)).ConfigureAwait(false);
+            var request = new AddUserRequest()
+            {
+                User = _mapper.Map<UserMessage>(user)
+            };
+
+            var result = await _securityService.AddUserAsync(request).ConfigureAwait(false);
             return _mapper.Map<AddUserResponse, UserModel>(result);
         }
 
@@ -80,7 +85,12 @@ namespace Avalanche.Api.Managers.Data
             Preconditions.ThrowIfNull(nameof(user.FirstName), user.UserName);
             Preconditions.ThrowIfNull(nameof(user.FirstName), user.Password);
 
-            await _securityService.UpdateUserAsync(_mapper.Map<UserModel, UpdateUserRequest>(user)).ConfigureAwait(false);
+            var request = new UpdateUserRequest()
+            {
+                User = _mapper.Map<UserMessage>(user)
+            };
+
+            await _securityService.UpdateUserAsync(request).ConfigureAwait(false);
         }
 
         public async Task DeleteUser(int userId)

@@ -10,6 +10,24 @@ namespace Avalanche.Api.Mapping
     {
         public DataMappingConfiguration()
         {
+            CreateMap<UserMessage, UserModel>()
+                .ForMember(dest =>
+                    dest.Id,
+                    opt => opt.MapFrom(src => src.Id))
+                .ForMember(dest =>
+                    dest.FirstName,
+                    opt => opt.MapFrom(src => src.FirstName))
+                .ForMember(dest =>
+                    dest.LastName,
+                    opt => opt.MapFrom(src => src.LastName))
+                .ForMember(dest =>
+                    dest.UserName,
+                    opt => opt.MapFrom(src => src.UserName))
+                .ForMember(dest =>
+                    dest.Password,
+                    opt => opt.MapFrom(src => src.Password))
+                .ReverseMap();
+
             CreateMap<UserMessage, PhysicianViewModel>()
                 .ForMember(dest =>
                     dest.Id,
