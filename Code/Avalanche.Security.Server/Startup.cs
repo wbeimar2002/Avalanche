@@ -50,8 +50,6 @@ namespace Avalanche.Security.Server
             _ = services.AddAutoMapper(GetType().Assembly);
             _ = services.AddCustomSwagger();
 
-            
-
             // Singleton
             _ = services.AddSingleton<IDatabaseWriter<SecurityDbContext>, DatabaseWriter<SecurityDbContext>>();
             _ = services.AddSingleton<IPasswordHasher, PasswordHasher>();
@@ -139,6 +137,6 @@ namespace Avalanche.Security.Server
 
         private string GetDatabaseLocation(string database) => Path.Combine(Path.GetDirectoryName(typeof(Startup).Assembly.Location) ?? _environment.ContentRootPath, "database", database);
 
-        private string GetSecurityManagementDatabaseLocation() => GetDatabaseLocation(SecurityDatabaseName);
+        private string GetSecurityDatabaseLocation() => GetDatabaseLocation(SecurityDatabaseName);
     }
 }
