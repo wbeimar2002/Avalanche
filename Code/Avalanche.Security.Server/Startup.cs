@@ -26,6 +26,7 @@ using Serilog;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using Ism.Storage.Core.Infrastructure.Interfaces;
+using Microsoft.EntityFrameworkCore;
 
 namespace Avalanche.Security.Server
 {
@@ -49,6 +50,7 @@ namespace Avalanche.Security.Server
             _ = services.AddControllers();
             _ = services.AddAutoMapper(GetType().Assembly);
             _ = services.AddCustomSwagger();
+            _ = services.AddDbContext<SecurityDbContext>(options => options.UseSqlite(DatabaseMigrationManager.MakeConnectionString(GetSecurityDatabaseLocation())));
 
             // Singleton
             _ = services.AddSingleton<IDatabaseWriter<SecurityDbContext>, DatabaseWriter<SecurityDbContext>>();
@@ -85,7 +87,7 @@ namespace Avalanche.Security.Server
                 app.ApplicationServices.GetRequiredService<ILogger<DatabaseMigrationManager>>()
             );
 
-            _ = dbManager.UpgradeDatabase(GetDatabaseLocation(SecurityDatabaseName), typeof(SecurityDbContext).Assembly);
+            _ = dbManager.UpgradeDatabase(GetSecurityDatabaseLocation(), typeof(SecurityDbContext).Assembly);
 
             var context = app.ApplicationServices.GetService<SecurityDbContext>();
             var passwordHasher = app.ApplicationServices.GetService<IPasswordHasher>();
@@ -137,6 +139,10 @@ namespace Avalanche.Security.Server
 
         private string GetDatabaseLocation(string database) => Path.Combine(Path.GetDirectoryName(typeof(Startup).Assembly.Location) ?? _environment.ContentRootPath, "database", database);
 
-        private string GetSecurityDatabaseLocation() => GetDatabaseLocation(SecurityDatabaseName);
+        private string GetSecurityDatabaseLocation()
+        {
+            var path = GetDatabaseLocation(SecurityDatabaseName);
+            return path;
+        }
     }
 }
