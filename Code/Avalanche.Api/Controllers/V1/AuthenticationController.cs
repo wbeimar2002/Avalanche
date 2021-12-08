@@ -3,6 +3,7 @@ using AutoMapper;
 using Avalanche.Api.Managers;
 using Avalanche.Api.ViewModels;
 using Avalanche.Api.ViewModels.Security;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Avalanche.Api.Controllers.V1
@@ -22,6 +23,7 @@ namespace Avalanche.Api.Controllers.V1
 
         [Route("token")]
         [HttpPost]
+        [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(AccessTokenViewModel))]
         public async Task<IActionResult> LoginAsync([FromBody] UserCredentialsViewModel userCredentials)
         {
             if (!ModelState.IsValid)
@@ -41,6 +43,7 @@ namespace Avalanche.Api.Controllers.V1
 
         [Route("token")]
         [HttpPut]
+        [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(AccessTokenViewModel))]
         public async Task<IActionResult> RefreshTokenAsync([FromBody] RefreshTokenViewModel refreshTokenResource)
         {
             if (!ModelState.IsValid)
@@ -61,6 +64,7 @@ namespace Avalanche.Api.Controllers.V1
 
         [Route("token")]
         [HttpDelete]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
         public IActionResult RevokeToken([FromBody] RevokeTokenViewModel revokeTokenResource)
         {
             if (!ModelState.IsValid)
