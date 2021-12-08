@@ -22,10 +22,9 @@ namespace Avalanche.Api.Managers.Data
     {
         private readonly IDataManagementService _dataManagementService;
         private readonly IStorageService _storageService;
-        private readonly ISecurityService _usersManagementService;
+        private readonly ISecurityService _securityService;
 
         private readonly IMapper _mapper;
-        private readonly UserModel _user;
         private readonly ConfigurationContext _configurationContext;
 
         private readonly SetupConfiguration _setupConfiguration;
@@ -36,16 +35,16 @@ namespace Avalanche.Api.Managers.Data
             IStorageService storageService,
             IHttpContextAccessor httpContextAccessor,
             SetupConfiguration setupConfiguration,
-            ISecurityService usersManagementService)
+            ISecurityService securityService)
         {
             _dataManagementService = dataManagementService;
             _storageService = storageService;
             _mapper = mapper;
             _setupConfiguration = setupConfiguration;
-            _usersManagementService = usersManagementService;
+            _securityService = securityService;
 
-            _user = HttpContextUtilities.GetUser(httpContextAccessor.HttpContext);
-            _configurationContext = _mapper.Map<UserModel, ConfigurationContext>(_user);
+            var user = HttpContextUtilities.GetUser(httpContextAccessor.HttpContext);
+            _configurationContext = _mapper.Map<UserModel, ConfigurationContext>(user);
             _configurationContext.IdnId = Guid.NewGuid().ToString();
         }
 
@@ -69,7 +68,7 @@ namespace Avalanche.Api.Managers.Data
             Preconditions.ThrowIfNull(nameof(user.FirstName), user.UserName);
             Preconditions.ThrowIfNull(nameof(user.FirstName), user.Password);
 
-            var result = await _usersManagementService.AddUserAsync(_mapper.Map<UserModel, AddUserRequest>(user)).ConfigureAwait(false);
+            var result = await _securityService.AddUserAsync(_mapper.Map<UserModel, AddUserRequest>(user)).ConfigureAwait(false);
             return _mapper.Map<AddUserResponse, UserModel>(result);
         }
 
@@ -81,18 +80,18 @@ namespace Avalanche.Api.Managers.Data
             Preconditions.ThrowIfNull(nameof(user.FirstName), user.UserName);
             Preconditions.ThrowIfNull(nameof(user.FirstName), user.Password);
 
-            await _usersManagementService.UpdateUserAsync(_mapper.Map<UserModel, UpdateUserRequest>(user)).ConfigureAwait(false);
+            await _securityService.UpdateUserAsync(_mapper.Map<UserModel, UpdateUserRequest>(user)).ConfigureAwait(false);
         }
 
         public async Task DeleteUser(int userId)
         {
             Preconditions.ThrowIfNull(nameof(userId), userId);
-            await _usersManagementService.DeleteUserAsync(new DeleteUserRequest() { UserId = userId }).ConfigureAwait(false);
+            await _securityService.DeleteUserAsync(new DeleteUserRequest() { UserId = userId }).ConfigureAwait(false);
         }
 
         public async Task<IList<UserModel>> GetAllUsers()
         {
-            var result = await _usersManagementService.GetAllUsers().ConfigureAwait(false);
+            var result = await _securityService.GetAllUsers().ConfigureAwait(false);
 
             return _mapper.Map<IList<UserMessage>, IList<UserModel>>(result.Users)
                 .OrderBy(d => d.LastName).ToList();

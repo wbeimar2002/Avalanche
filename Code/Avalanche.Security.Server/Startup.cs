@@ -2,12 +2,15 @@ using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using Avalanche.Security.Server.Core;
 using Avalanche.Security.Server.Core.Interfaces;
+using Avalanche.Security.Server.Core.Models;
 using Avalanche.Security.Server.Core.Security.Hashing;
+using Avalanche.Security.Server.Core.Validators;
 using Avalanche.Security.Server.Managers;
 using Avalanche.Security.Server.Security.Hashing;
 using Avalanche.Security.Server.V1.Handlers;
 using Avalanche.Shared.Infrastructure.Models;
 using Avalanche.Shared.Infrastructure.Options;
+using FluentValidation;
 using Ism.Common.Core.Configuration.Extensions;
 using Ism.Common.Core.Extensions;
 using Ism.Storage.Core.Infrastructure;
@@ -42,6 +45,7 @@ namespace Avalanche.Security.Server
             _ = services.AddGrpc();
             _ = services.AddControllers();
             _ = services.AddAutoMapper(GetType().Assembly);
+            _ = services.AddAutoMapper(typeof(Core.Mappings.UserMapProfile).Assembly);
             _ = services.AddDbContext<SecurityDbContext>(options => options.UseSqlite(DatabaseMigrationManager.MakeConnectionString(GetSecurityDatabaseLocation())));
 
             // Singleton
@@ -58,6 +62,9 @@ namespace Avalanche.Security.Server
 
             // Transient
             _ = services.AddTransient<IUserRepository, UserRepository>();
+
+            // Validation
+            _ = services.AddTransient<IValidator<UserModel>, UserValidator>();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

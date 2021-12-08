@@ -7,29 +7,29 @@ namespace Avalanche.Api.Services.Security
 {
     public class SecurityService : ISecurityService
     {
-        private readonly UsersManagementServiceClient _usersManagementServiceClient;
+        private readonly SecurityServiceClient _SecurityServiceClient;
 
-        public SecurityService(UsersManagementServiceClient usersManagementServiceClient)
+        public SecurityService(SecurityServiceClient SecurityServiceClient)
         {
-            _usersManagementServiceClient = usersManagementServiceClient;
+            _SecurityServiceClient = SecurityServiceClient;
         }
 
         public async Task<GetUsersResponse> GetAllUsers() =>
-            await _usersManagementServiceClient.GetUsersAsync(new Empty()).ConfigureAwait(false);
+            await _SecurityServiceClient.GetUsersAsync(new Empty()).ConfigureAwait(false);
 
         public async Task<FindByUserNameResponse> FindByUserName(string userName) =>
-            await _usersManagementServiceClient.FindByUserNameAsync(new FindByUserNameRequest()
+            await _SecurityServiceClient.FindByUserNameAsync(new FindByUserNameRequest()
             {
                 UserName = userName
             }).ConfigureAwait(false);
 
         public async Task<AddUserResponse> AddUserAsync(AddUserRequest request) =>
-           await _usersManagementServiceClient.AddUserAsync(request);
+           await _SecurityServiceClient.AddUserAsync(request);
 
         public async Task<Empty> UpdateUserAsync(UpdateUserRequest request) =>
-           await _usersManagementServiceClient.UpdateUserAsync(request);
+           await _SecurityServiceClient.UpdateUserAsync(request);
 
         public async Task<Empty> DeleteUserAsync(DeleteUserRequest request) =>
-           await _usersManagementServiceClient.DeleteUserAsync(request);
+           await _SecurityServiceClient.DeleteUserAsync(request);
     }
 }

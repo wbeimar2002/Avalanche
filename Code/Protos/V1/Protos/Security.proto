@@ -45,9 +45,8 @@ message GetUsersResponse {
 
 message UserMessage {
     int32 Id = 1;
-    string Email = 2;
-    string UserName = 3;
-    string FirstName = 4;
-    string LastName = 5;
-    string Password = 6;
+    string UserName = 2;
+    string FirstName = 3;
+    string LastName = 4;
+    string Password = 5;
 }

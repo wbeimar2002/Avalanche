@@ -20,7 +20,7 @@ namespace Avalanche.Security.Server
             var hostLogger = CreateDefaultHostLogger(typeof(Program));
             try
             {
-                var host = CreateSecureIsmHostBuilder<Startup>(
+                var host = CreateInsecureIsmHostBuilder<Startup>(
                     args,
                     hostLogger,
                     typeof(Program).Assembly,

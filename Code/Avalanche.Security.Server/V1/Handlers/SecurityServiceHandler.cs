@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using Avalanche.Security.Server.Client.V1.Protos;
@@ -24,8 +26,13 @@ namespace Avalanche.Security.Server.V1.Handlers
 
         public override async Task<AddUserResponse> AddUser(AddUserRequest request, ServerCallContext context)
         {
-            var response = await _usersManager.AddUser(_mapper.Map<UserModel>(request));
-            return _mapper.Map<AddUserResponse>(response);
+            var response = await _usersManager.AddUser(_mapper.Map<UserModel>(request.User));
+
+            var user = _mapper.Map<UserMessage>(response);
+
+            var result = new AddUserResponse();
+            result.User = user;
+            return result;
         }
 
         public override async Task<Empty> DeleteUser(DeleteUserRequest request, ServerCallContext context)
@@ -37,7 +44,12 @@ namespace Avalanche.Security.Server.V1.Handlers
         public override async Task<GetUsersResponse> GetUsers(Empty request, ServerCallContext context)
         {
             var response = await _usersManager.GetAllUsers();
-            return _mapper.Map<GetUsersResponse>(response);
+
+            var resultList = _mapper.Map<IList<UserMessage>>(response.ToList());
+
+            var result = new GetUsersResponse();
+            result.Users.Add(resultList);
+            return result;
         }
 
         public override async Task<Empty> UpdateUser(UpdateUserRequest request, ServerCallContext context)

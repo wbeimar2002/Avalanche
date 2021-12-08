@@ -10,17 +10,17 @@ namespace Avalanche.Api.Managers.Data
     public class PhysiciansManager : IPhysiciansManager
     {
         private readonly IMapper _mapper;
-        private readonly ISecurityService _usersManagementService;
+        private readonly ISecurityService _SecurityService;
 
-        public PhysiciansManager(IMapper mapper, ISecurityService usersManagementService)
+        public PhysiciansManager(IMapper mapper, ISecurityService SecurityService)
         {
             _mapper = mapper;
-            _usersManagementService = usersManagementService;
+            _SecurityService = SecurityService;
         }
 
         public async Task<IList<PhysicianViewModel>> GetPhysicians()
         {
-            var response = await _usersManagementService.GetAllUsers();
+            var response = await _SecurityService.GetAllUsers();
             return _mapper.Map<IList<UserMessage>, IList<PhysicianViewModel>>(response.Users);
         }
     }

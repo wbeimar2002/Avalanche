@@ -130,6 +130,7 @@ namespace Avalanche.Security.Server.Core
                 .AsNoTracking()
                 .ToListAsync()
                 .ConfigureAwait(false);
+
             return _mapper.Map<IList<UserEntity>, IList<UserModel>>(result);
         }
 

@@ -15,6 +15,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Remove=".editorconfig" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="8.1.1" />
     <PackageReference Include="Grpc.AspNetCore" Version="2.40.0" />
     <PackageReference Include="Grpc.Tools" Version="2.42.0">
@@ -50,6 +54,10 @@
     <Protobuf Include="..\Protos\V1\Protos\Security.proto" GrpcServices="server">
       <Link>V1\Protos\Security.proto</Link>
     </Protobuf>
+  </ItemGroup>
+
+  <ItemGroup>
+    <EditorConfigFiles Remove="C:\Repos\avalanche-api\Code\Avalanche.Security.Server\.editorconfig" />
   </ItemGroup>
 
 </Project>

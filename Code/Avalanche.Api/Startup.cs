@@ -187,7 +187,7 @@ namespace Avalanche.Api
             _ = services.AddLibraryActiveProcedureServiceSecureClient();
             _ = services.AddLibraryManagerServiceSecureClient();
 
-            _ = services.AddUsersManagementServiceClient();
+            _ = services.AddSecurityServiceClient();
             _ = services.AddPatientListStorageSecureClient();
 
             _ = services.AddRecorderSecureClient();
