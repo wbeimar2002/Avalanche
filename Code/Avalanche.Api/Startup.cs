@@ -165,7 +165,7 @@ namespace Avalanche.Api
             services.AddSingleton<IFilesService, FilesService>();
             services.AddSingleton<IPresetManager, PresetManager>();
             services.AddSingleton<IMedpresenceService, MedpresenceService>();
-            services.AddSingleton<IUsersManagementService, UsersManagementService>();
+            services.AddSingleton<ISecurityService, SecurityService>();
             services.AddSingleton<IPasswordHasher, PasswordHasher>();
             services.AddSingleton<ITokenHandler, TokenHandler>();
 

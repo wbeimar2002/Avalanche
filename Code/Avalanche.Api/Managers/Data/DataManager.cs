@@ -22,7 +22,7 @@ namespace Avalanche.Api.Managers.Data
     {
         private readonly IDataManagementService _dataManagementService;
         private readonly IStorageService _storageService;
-        private readonly IUsersManagementService _usersManagementService;
+        private readonly ISecurityService _usersManagementService;
 
         private readonly IMapper _mapper;
         private readonly UserModel _user;
@@ -36,7 +36,7 @@ namespace Avalanche.Api.Managers.Data
             IStorageService storageService,
             IHttpContextAccessor httpContextAccessor,
             SetupConfiguration setupConfiguration,
-            IUsersManagementService usersManagementService)
+            ISecurityService usersManagementService)
         {
             _dataManagementService = dataManagementService;
             _storageService = storageService;

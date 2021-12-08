@@ -23,7 +23,7 @@ namespace Avalanche.Api.Tests.Managers
     {
         Mock<IStorageService> _storageService;
         Mock<IDataManagementService> _dataManagementService;
-        Mock<IUsersManagementService> _usersManagementService;
+        Mock<ISecurityService> _usersManagementService;
         Mock<IHttpContextAccessor> _httpContextAccessor;
         SetupConfiguration _setupConfiguration;
 
@@ -35,7 +35,7 @@ namespace Avalanche.Api.Tests.Managers
         {
             _storageService = new Mock<IStorageService>();
             _dataManagementService = new Mock<IDataManagementService>();
-            _usersManagementService = new Mock<IUsersManagementService>();
+            _usersManagementService = new Mock<ISecurityService>();
 
             _httpContextAccessor = new Mock<IHttpContextAccessor>();
             _setupConfiguration = new SetupConfiguration()

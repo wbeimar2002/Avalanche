@@ -4,7 +4,7 @@ using Google.Protobuf.WellKnownTypes;
 
 namespace Avalanche.Api.Services.Security
 {
-    public interface IUsersManagementService
+    public interface ISecurityService
     {
         Task<GetUsersResponse> GetAllUsers();
         Task<AddUserResponse> AddUserAsync(AddUserRequest request);

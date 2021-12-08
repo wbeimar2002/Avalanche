@@ -10,9 +10,9 @@ namespace Avalanche.Api.Managers.Data
     public class PhysiciansManager : IPhysiciansManager
     {
         private readonly IMapper _mapper;
-        private readonly IUsersManagementService _usersManagementService;
+        private readonly ISecurityService _usersManagementService;
 
-        public PhysiciansManager(IMapper mapper, IUsersManagementService usersManagementService)
+        public PhysiciansManager(IMapper mapper, ISecurityService usersManagementService)
         {
             _mapper = mapper;
             _usersManagementService = usersManagementService;

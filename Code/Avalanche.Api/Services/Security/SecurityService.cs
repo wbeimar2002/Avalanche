@@ -5,11 +5,11 @@ using Google.Protobuf.WellKnownTypes;
 
 namespace Avalanche.Api.Services.Security
 {
-    public class UsersManagementService : IUsersManagementService
+    public class SecurityService : ISecurityService
     {
         private readonly UsersManagementServiceClient _usersManagementServiceClient;
 
-        public UsersManagementService(UsersManagementServiceClient usersManagementServiceClient)
+        public SecurityService(UsersManagementServiceClient usersManagementServiceClient)
         {
             _usersManagementServiceClient = usersManagementServiceClient;
         }

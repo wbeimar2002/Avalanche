@@ -12,12 +12,12 @@ namespace Avalanche.Api.Managers
     //TODO: Review this, is a little bit different to the API controllers/managers but chaange this in this moment can affect the demo
     public class AuthenticationManager : IAuthenticationManager
     {
-        private readonly IUsersManagementService _usersService;
+        private readonly ISecurityService _usersService;
         private readonly IPasswordHasher _passwordHasher;
         private readonly ITokenHandler _tokenHandler;
         private readonly IMapper _mapper;
 
-        public AuthenticationManager(IUsersManagementService usersService, IPasswordHasher passwordHasher, ITokenHandler tokenHandler, IMapper mapper)
+        public AuthenticationManager(ISecurityService usersService, IPasswordHasher passwordHasher, ITokenHandler tokenHandler, IMapper mapper)
         {
             _tokenHandler = tokenHandler;
             _passwordHasher = passwordHasher;

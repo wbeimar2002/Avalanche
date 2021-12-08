@@ -20,7 +20,7 @@ namespace Avalanche.Api.Controllers.V1
             _mapper = mapper;
         }
 
-        [Route("login")]
+        [Route("token")]
         [HttpPost]
         public async Task<IActionResult> LoginAsync([FromBody] UserCredentialsViewModel userCredentials)
         {
@@ -35,7 +35,7 @@ namespace Avalanche.Api.Controllers.V1
                 return BadRequest(response.Message);
             }
 
-            var accessTokenResource = _mapper.Map<AccessToken, AccessTokenResource>(response.Token);
+            var accessTokenResource = _mapper.Map<AccessToken, AccessTokenViewModel>(response.Token);
             return Ok(accessTokenResource);
         }
 
@@ -55,7 +55,7 @@ namespace Avalanche.Api.Controllers.V1
             }
 
             //TODO: Check the location of this mapping
-            var tokenResource = _mapper.Map<AccessToken, AccessTokenResource>(response.Token);
+            var tokenResource = _mapper.Map<AccessToken, AccessTokenViewModel>(response.Token);
             return Ok(tokenResource);
         }
 
