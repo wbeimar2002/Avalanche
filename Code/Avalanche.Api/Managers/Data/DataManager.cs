@@ -74,7 +74,8 @@ namespace Avalanche.Api.Managers.Data
             };
 
             var result = await _securityService.AddUserAsync(request).ConfigureAwait(false);
-            return _mapper.Map<AddUserResponse, UserModel>(result);
+
+            return _mapper.Map<UserModel>(result.User);
         }
 
         public async Task UpdateUser(UserModel user)
