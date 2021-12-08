@@ -1,4 +1,6 @@
 using AutoMapper;
+using Avalanche.Api.ViewModels;
+using Avalanche.Security.Server.Client.V1.Protos;
 using Avalanche.Shared.Domain.Models;
 using Ism.Storage.DataManagement.Client.V1.Protos;
 
@@ -8,6 +10,21 @@ namespace Avalanche.Api.Mapping
     {
         public DataMappingConfiguration()
         {
+            CreateMap<UserMessage, PhysicianViewModel>()
+                .ForMember(dest =>
+                    dest.Id,
+                    opt => opt.MapFrom(src => src.Id))
+                .ForMember(dest =>
+                    dest.FirstName,
+                    opt => opt.MapFrom(src => src.FirstName))
+                .ForMember(dest =>
+                    dest.LastName,
+                    opt => opt.MapFrom(src => src.LastName))
+                .ForMember(dest =>
+                    dest.UserName,
+                    opt => opt.MapFrom(src => src.UserName))
+                .ReverseMap();
+
             CreateMap<ProcedureTypeModel, DeleteProcedureTypeRequest>()
                 .ForMember(dest =>
                     dest.ProcedureTypeId,
