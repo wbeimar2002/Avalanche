@@ -4,6 +4,7 @@ using Avalanche.Api.Handlers;
 using Avalanche.Api.Handlers.Security.Hashing;
 using Avalanche.Api.Handlers.Security.Tokens;
 using Avalanche.Api.Hubs;
+using Avalanche.Api.Managers;
 using Avalanche.Api.Managers.Data;
 using Avalanche.Api.Managers.Licensing;
 using Avalanche.Api.Managers.Maintenance;
@@ -24,6 +25,7 @@ using Avalanche.Api.Services.Printing;
 using Avalanche.Api.Services.Security;
 using Avalanche.Api.TempExtensions;
 using Avalanche.Api.Utilities;
+using Avalanche.Security.Server.Client.V1.Extensions;
 using Avalanche.Shared.Infrastructure.Configuration;
 using Avalanche.Shared.Infrastructure.Enumerations;
 using Avalanche.Shared.Infrastructure.Models;
@@ -116,6 +118,7 @@ namespace Avalanche.Api
             }
 
             //Shared
+            services.AddTransient<IAuthenticationManager, AuthenticationManager>();
             services.AddTransient<ISharedConfigurationManager, SharedConfigurationManager>();
             services.AddTransient<IFilesManager, FilesManager>();
             services.AddTransient<IPatientsManager, PatientsManager>();
@@ -184,7 +187,7 @@ namespace Avalanche.Api
             _ = services.AddLibraryActiveProcedureServiceSecureClient();
             _ = services.AddLibraryManagerServiceSecureClient();
 
-            _ = services.AddPatientListSecureClient();
+            _ = services.AddUsersManagementServiceClient();
             _ = services.AddPatientListStorageSecureClient();
 
             _ = services.AddRecorderSecureClient();
@@ -227,9 +230,15 @@ namespace Avalanche.Api
             services.AddSingleton(sp => new SigningOptions(sp.GetRequiredService<AuthConfiguration>().SecretKey));
 
             // Configure
-            services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
-                .AddJwtBearer()
-                .AddCookie();
+            _ = services.AddAuthentication(options =>
+            {
+                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+                //CookieAuthenticationDefaults.AuthenticationScheme; ??? This will affect?
+            })
+            .AddJwtBearer()
+            .AddCookie();
 
             services.ConfigureOptions<ConfigureJwtBearerOptions>();
             services.ConfigureOptions<ConfigureCookieAuthenticiationOptions>();

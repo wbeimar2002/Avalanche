@@ -9,13 +9,13 @@ using Microsoft.Extensions.Logging;
 
 namespace Avalanche.Security.Server.V1.Handlers
 {
-    public class UsersManagementServiceHandler : UsersManagement.UsersManagementBase
+    public class SecurityServiceHandler : Client.V1.Protos.Security.SecurityBase
     {
-        private readonly ILogger<UsersManagementServiceHandler> _logger;
+        private readonly ILogger<SecurityServiceHandler> _logger;
         private readonly IMapper _mapper;
         private readonly IUsersManager _usersManager;
 
-        public UsersManagementServiceHandler(ILogger<UsersManagementServiceHandler> logger, IMapper mapper, IUsersManager usersManager)
+        public SecurityServiceHandler(ILogger<SecurityServiceHandler> logger, IMapper mapper, IUsersManager usersManager)
         {
             _logger = logger;
             _mapper = mapper;

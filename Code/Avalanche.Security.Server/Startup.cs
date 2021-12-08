@@ -3,9 +3,7 @@ using System.IO;
 using Avalanche.Security.Server.Core;
 using Avalanche.Security.Server.Core.Interfaces;
 using Avalanche.Security.Server.Core.Security.Hashing;
-using Avalanche.Security.Server.Extensions;
 using Avalanche.Security.Server.Managers;
-using Avalanche.Security.Server.Options;
 using Avalanche.Security.Server.Security.Hashing;
 using Avalanche.Security.Server.V1.Handlers;
 using Avalanche.Shared.Infrastructure.Models;
@@ -14,7 +12,6 @@ using Ism.Common.Core.Configuration.Extensions;
 using Ism.Common.Core.Extensions;
 using Ism.Storage.Core.Infrastructure;
 using Ism.Storage.Core.Infrastructure.Interfaces;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
@@ -45,7 +42,6 @@ namespace Avalanche.Security.Server
             _ = services.AddGrpc();
             _ = services.AddControllers();
             _ = services.AddAutoMapper(GetType().Assembly);
-            _ = services.AddCustomSwagger();
             _ = services.AddDbContext<SecurityDbContext>(options => options.UseSqlite(DatabaseMigrationManager.MakeConnectionString(GetSecurityDatabaseLocation())));
 
             // Singleton
@@ -62,16 +58,6 @@ namespace Avalanche.Security.Server
 
             // Transient
             _ = services.AddTransient<IUserRepository, UserRepository>();
-
-            _ = services.AddAuthentication(options =>
-            {
-                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-                options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
-            })
-            .AddJwtBearer();
-
-            _ = services.ConfigureOptions<ConfigureJwtBearerOptions>();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -95,16 +81,11 @@ namespace Avalanche.Security.Server
             app.UseSerilogRequestLogging();
             app.UseRouting();
 
-            app.UseCustomSwagger();
-
-            app.UseAuthentication();
-            app.UseAuthorization();
-
             app.UseEndpoints(endpoints =>
             {
                 _ = endpoints.MapControllers();
 
-                _ = endpoints.MapGrpcService<UsersManagementServiceHandler>();
+                _ = endpoints.MapGrpcService<SecurityServiceHandler>();
             });
         }
 

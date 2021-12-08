@@ -3,9 +3,9 @@ import "google/protobuf/empty.proto";
 
 option csharp_namespace = "Avalanche.Security.Server.Client.V1.Protos";
 
-package usersManagement;
+package security;
 
-service UsersManagement {
+service Security {
     rpc GetUsers (google.protobuf.Empty) returns (GetUsersResponse);
     rpc AddUser (AddUserRequest) returns (AddUserResponse);
     rpc UpdateUser (UpdateUserRequest) returns (google.protobuf.Empty);

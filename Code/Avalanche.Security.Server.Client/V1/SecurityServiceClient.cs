@@ -4,25 +4,25 @@ using Ism.Security.Grpc;
 using Ism.Security.Grpc.Configuration;
 using Ism.Security.Grpc.Interfaces;
 using System.Threading.Tasks;
-using static Avalanche.Security.Server.Client.V1.Protos.UsersManagement;
+using static Avalanche.Security.Server.Client.V1.Protos.Security;
 
 namespace Avalanche.Security.Server.Client.V1
 {
-    public class UsersManagementServiceClient : SecureClientBase<UsersManagementClient>
+    public class SecurityServiceClient : SecureClientBase<SecurityClient>
     {
-        public const string ServiceName = "UsersManagement";
+        public const string ServiceName = "Security";
 
-        public UsersManagementServiceClient(IGrpcClientFactory<UsersManagementClient> factory, string host, uint port, ICertificateProvider certificateProvider)
+        public SecurityServiceClient(IGrpcClientFactory<SecurityClient> factory, string host, uint port, ICertificateProvider certificateProvider)
         : base(factory, host, port, certificateProvider)
         {
         }
 
-        public UsersManagementServiceClient(IGrpcClientFactory<UsersManagementClient> factory, string host, string port, ICertificateProvider certificateProvider)
+        public SecurityServiceClient(IGrpcClientFactory<SecurityClient> factory, string host, string port, ICertificateProvider certificateProvider)
             : base(factory, host, port, certificateProvider)
         {
         }
 
-        public UsersManagementServiceClient(IGrpcClientFactory<UsersManagementClient> factory, HostPort hostPort, ICertificateProvider certificateProvider)
+        public SecurityServiceClient(IGrpcClientFactory<SecurityClient> factory, HostPort hostPort, ICertificateProvider certificateProvider)
             : base(factory, hostPort, certificateProvider)
         {
         }

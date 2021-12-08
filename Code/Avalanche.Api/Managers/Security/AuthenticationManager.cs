@@ -1,6 +1,5 @@
 using System.Threading.Tasks;
 using AutoMapper;
-using Avalanche.Api.Core.Services;
 using Avalanche.Api.Handlers.Security.Hashing;
 using Avalanche.Api.Handlers.Security.Tokens;
 using Avalanche.Api.Services.Security;

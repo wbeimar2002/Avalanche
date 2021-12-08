@@ -1,6 +1,6 @@
 using System.Threading.Tasks;
 using AutoMapper;
-using Avalanche.Api.Core.Services;
+using Avalanche.Api.Managers;
 using Avalanche.Api.ViewModels;
 using Avalanche.Api.ViewModels.Security;
 using Microsoft.AspNetCore.Mvc;
