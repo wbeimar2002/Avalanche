@@ -45,5 +45,11 @@ namespace Avalanche.Security.Server.V1.Handlers
             await _usersManager.UpdateUser(_mapper.Map<UserModel>(request));
             return new Empty();
         }
+
+        public override async Task<FindByUserNameResponse> FindByUserName(FindByUserNameRequest request, ServerCallContext context)
+        {
+            var response = _usersManager.FindByUserNameAsync(request.UserName);
+            return _mapper.Map<FindByUserNameResponse>(response);
+        }
     }
 }

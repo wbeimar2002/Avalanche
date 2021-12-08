@@ -1,32 +1,28 @@
+using System.Diagnostics.CodeAnalysis;
+using System.IO;
 using Avalanche.Security.Server.Core;
 using Avalanche.Security.Server.Core.Interfaces;
 using Avalanche.Security.Server.Core.Security.Hashing;
-using Avalanche.Security.Server.Core.Security.Tokens;
-using Avalanche.Security.Server.Core.Services;
 using Avalanche.Security.Server.Extensions;
+using Avalanche.Security.Server.Managers;
 using Avalanche.Security.Server.Options;
 using Avalanche.Security.Server.Security.Hashing;
-using Avalanche.Security.Server.Managers;
 using Avalanche.Security.Server.V1.Handlers;
 using Avalanche.Shared.Infrastructure.Models;
 using Avalanche.Shared.Infrastructure.Options;
-
 using Ism.Common.Core.Configuration.Extensions;
 using Ism.Common.Core.Extensions;
 using Ism.Storage.Core.Infrastructure;
+using Ism.Storage.Core.Infrastructure.Interfaces;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Serilog;
-
-using System.Diagnostics.CodeAnalysis;
-using System.IO;
-using Ism.Storage.Core.Infrastructure.Interfaces;
-using Microsoft.EntityFrameworkCore;
 
 namespace Avalanche.Security.Server
 {
@@ -55,8 +51,8 @@ namespace Avalanche.Security.Server
             // Singleton
             _ = services.AddSingleton<IDatabaseWriter<SecurityDbContext>, DatabaseWriter<SecurityDbContext>>();
             _ = services.AddSingleton<IPasswordHasher, PasswordHasher>();
+            _ = services.AddSingleton<IUsersManager, UsersManager>();
 
-            _ = services.AddSingleton<ITokenHandler, Security.Tokens.TokenHandler>();
             _ = services.AddSingleton(sp => new SigningOptions(sp.GetRequiredService<AuthConfiguration>().SecretKey));
 
             // Configuration
@@ -66,7 +62,6 @@ namespace Avalanche.Security.Server
 
             // Transient
             _ = services.AddTransient<IUserRepository, UserRepository>();
-            _ = services.AddTransient<IAuthenticationManager, AuthenticationManager>();
 
             _ = services.AddAuthentication(options =>
             {
@@ -77,8 +72,6 @@ namespace Avalanche.Security.Server
             .AddJwtBearer();
 
             _ = services.ConfigureOptions<ConfigureJwtBearerOptions>();
-
-            ConfigureCorsPolicy(services);
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -99,8 +92,6 @@ namespace Avalanche.Security.Server
                 app.UseDeveloperExceptionPage();
             }
 
-            app.UseCors("CorsApiPolicy"); // NOTE: cors must come before Authorization in the request pipeline
-
             app.UseSerilogRequestLogging();
             app.UseRouting();
 
@@ -114,26 +105,6 @@ namespace Avalanche.Security.Server
                 _ = endpoints.MapControllers();
 
                 _ = endpoints.MapGrpcService<UsersManagementServiceHandler>();
-            });
-        }
-
-        private static void ConfigureCorsPolicy(IServiceCollection services)
-        {
-            // Add Cors
-            // https://docs.microsoft.com/en-us/aspnet/core/security/cors?view=aspnetcore-3.1
-            services.AddCors(options =>
-            {
-                options.AddPolicy("CorsApiPolicy",
-                builder =>
-                {
-                    // TODO: this still is not correct for remote clients...not sure how to handle that if web is being served from separate endpoint to api, since we do not have a well-known address.
-                    builder
-                        .WithOrigins("https://localhost:4200", "http://localhost:4200", "http://localhost:8080", "http://localhost:8082")
-                        .AllowAnyHeader()
-                        //.AllowAnyOrigin()
-                        .AllowAnyMethod()
-                        .AllowCredentials();
-                });
             });
         }
 

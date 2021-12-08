@@ -1,15 +1,14 @@
-using Avalanche.Security.Server.Core.Models;
-using Avalanche.Security.Server.Core.Security.Hashing;
-using Avalanche.Security.Server.Core.Security.Tokens;
-using Avalanche.Shared.Infrastructure.Options;
-
 using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
+using Avalanche.Api.Handlers.Security.Hashing;
+using Avalanche.Api.ViewModels.Security;
+using Avalanche.Shared.Domain.Models;
+using Avalanche.Shared.Infrastructure.Options;
 
-namespace Avalanche.Security.Server.Security.Tokens
+namespace Avalanche.Api.Handlers.Security.Tokens
 {
     public class TokenHandler : ITokenHandler
     {
@@ -94,6 +93,7 @@ namespace Avalanche.Security.Server.Security.Tokens
                 new Claim("LastName", user.LastName),
             };
 
+            //TODO: Don't delete this need to be added in the future
             //foreach (var userRole in user.UserRoles)
             //{
             //    claims.Add(new Claim(ClaimTypes.Role, userRole.Role.Name));

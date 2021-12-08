@@ -10,5 +10,6 @@ namespace Avalanche.Security.Server.Managers
         Task UpdateUser(UserModel user);
         Task<int> DeleteUser(int userId);
         Task<IEnumerable<UserModel>> GetAllUsers();
+        Task<UserModel> FindByUserNameAsync(string userName);
     }
 }

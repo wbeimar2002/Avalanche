@@ -10,9 +10,14 @@ service UsersManagement {
     rpc AddUser (AddUserRequest) returns (AddUserResponse);
     rpc UpdateUser (UpdateUserRequest) returns (google.protobuf.Empty);
     rpc DeleteUser (DeleteUserRequest) returns (google.protobuf.Empty);
+    rpc FindByUserName (FindByUserNameRequest) returns (FindByUserNameResponse);
 }
 
 //Requests
+message FindByUserNameRequest {
+    string userName = 1;
+}
+
 message AddUserRequest {
     UserMessage user = 1;
 }
@@ -26,6 +31,10 @@ message DeleteUserRequest {
 }
 
 //Responses
+message FindByUserNameResponse {
+    UserMessage user = 1;
+}
+
 message AddUserResponse {
     UserMessage user = 1;
 }

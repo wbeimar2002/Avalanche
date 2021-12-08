@@ -1,6 +1,6 @@
 using System;
 
-namespace Avalanche.Security.Server.Core.Security.Tokens
+namespace Avalanche.Api.ViewModels.Security
 {
     public class AccessToken : JsonWebToken
     {

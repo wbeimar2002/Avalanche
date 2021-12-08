@@ -10,5 +10,6 @@ namespace Avalanche.Api.Services.Security
         Task<AddUserResponse> AddUserAsync(AddUserRequest request);
         Task<Empty> UpdateUserAsync(UpdateUserRequest request);
         Task<Empty> DeleteUserAsync(DeleteUserRequest request);
+        Task<FindByUserNameResponse> FindByUserName(string userName);
     }
 }

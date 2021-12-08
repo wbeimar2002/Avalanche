@@ -67,7 +67,6 @@ namespace Avalanche.Api.Managers.Data
             Preconditions.ThrowIfNull(nameof(user.FirstName), user.FirstName);
             Preconditions.ThrowIfNull(nameof(user.FirstName), user.LastName);
             Preconditions.ThrowIfNull(nameof(user.FirstName), user.UserName);
-            Preconditions.ThrowIfNull(nameof(user.FirstName), user.Email);
             Preconditions.ThrowIfNull(nameof(user.FirstName), user.Password);
 
             var result = await _usersManagementService.AddUserAsync(_mapper.Map<UserModel, AddUserRequest>(user)).ConfigureAwait(false);
@@ -80,7 +79,6 @@ namespace Avalanche.Api.Managers.Data
             Preconditions.ThrowIfNull(nameof(user.FirstName), user.FirstName);
             Preconditions.ThrowIfNull(nameof(user.FirstName), user.LastName);
             Preconditions.ThrowIfNull(nameof(user.FirstName), user.UserName);
-            Preconditions.ThrowIfNull(nameof(user.FirstName), user.Email);
             Preconditions.ThrowIfNull(nameof(user.FirstName), user.Password);
 
             await _usersManagementService.UpdateUserAsync(_mapper.Map<UserModel, UpdateUserRequest>(user)).ConfigureAwait(false);

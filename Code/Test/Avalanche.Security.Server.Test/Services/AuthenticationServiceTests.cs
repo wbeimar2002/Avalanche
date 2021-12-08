@@ -1,11 +1,11 @@
 using System;
-using System.Collections.ObjectModel;
 using System.Threading.Tasks;
+using Avalanche.Api.Core.Security.Tokens;
+using Avalanche.Api.Core.Services;
+using Avalanche.Api.Managers;
+using Avalanche.Security.Server.Core.Interfaces;
 using Avalanche.Security.Server.Core.Models;
 using Avalanche.Security.Server.Core.Security.Hashing;
-using Avalanche.Security.Server.Core.Security.Tokens;
-using Avalanche.Security.Server.Core.Services;
-using Avalanche.Security.Server.Managers;
 using Moq;
 using Xunit;
 
@@ -15,6 +15,7 @@ namespace Avalanche.Security.Tests.Services
     {
         private bool _calledRefreshToken = false;
 
+        private Mock<IUsersService> _userRepository;
         private Mock<IPasswordHasher> _passwordHasher;
         private Mock<ITokenHandler> _tokenHandler;
 
@@ -24,12 +25,13 @@ namespace Avalanche.Security.Tests.Services
         {
             SetupMocks();
             //Temporary: Working in refactor
-            _authenticationService = new AuthenticationManager(null, _passwordHasher.Object, _tokenHandler.Object);
+            _authenticationService = new Api.Managers.AuthenticationManager(_userRepository.Object, _passwordHasher.Object, _tokenHandler.Object);
         }
 
         private void SetupMocks()
         {
-            //_userService = new Mock<IUserService>();
+            _userRepository = new Mock<IUserRepository>();
+
             //_userService.Setup(u => u.FindByEmailAsync("invalid@invalid.com"))
             //           .Returns(Task.FromResult<UserModel>(null));
 

@@ -1,4 +1,4 @@
-namespace Avalanche.Security.Server.Core.Security.Tokens
+namespace Avalanche.Api.ViewModels.Security
 {
     public class RefreshToken : JsonWebToken
     {

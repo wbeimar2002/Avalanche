@@ -8,8 +8,10 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Controllers\HealthController.cs" />
-    <Compile Remove="ViewModels\UserViewModel.cs" />
+    <Compile Remove="logs\**" />
+    <Content Remove="logs\**" />
+    <EmbeddedResource Remove="logs\**" />
+    <None Remove="logs\**" />
   </ItemGroup>
 
   <ItemGroup>

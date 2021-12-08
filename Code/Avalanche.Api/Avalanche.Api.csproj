@@ -45,7 +45,7 @@
   <ItemGroup>
     <PackageReference Include="AutoFixture" Version="4.17.0" />
     <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="8.1.1" />
-    <PackageReference Include="Avalanche.Security.Server.Client" Version="1.0.0-prerelease0001" />
+    <PackageReference Include="Avalanche.Security.Server.Client" Version="99.99.1638964765.15528" />
     <PackageReference Include="AvidisDeviceInterface.Client" Version="1.0.0-prerelease0020" />
     <PackageReference Include="Grpc.Tools" Version="2.42.0">
       <PrivateAssets>all</PrivateAssets>

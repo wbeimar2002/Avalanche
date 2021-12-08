@@ -1,6 +1,8 @@
-using Avalanche.Security.Server.Core.Models;
 
-namespace Avalanche.Security.Server.Core.Security.Tokens
+using Avalanche.Api.ViewModels.Security;
+using Avalanche.Shared.Domain.Models;
+
+namespace Avalanche.Api.Handlers.Security.Tokens
 {
     public interface ITokenHandler
     {

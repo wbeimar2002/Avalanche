@@ -1,29 +1,26 @@
+using System.Threading.Tasks;
 using AutoMapper;
-
-using Avalanche.Security.Server.ViewModels;
-using Avalanche.Security.Server.Core.Security.Tokens;
-using Avalanche.Security.Server.Core.Services;
-
+using Avalanche.Api.Core.Services;
+using Avalanche.Api.ViewModels;
+using Avalanche.Api.ViewModels.Security;
 using Microsoft.AspNetCore.Mvc;
 
-using System.Threading.Tasks;
-
-namespace Avalanche.Security.Server.Controllers
+namespace Avalanche.Api.Controllers.V1
 {
-    //TODO: Review this, is a little bit different to the API controllers but chaange this in this moment can affect the demo
+    [Route("[controller]")]
     [ApiController]
-    public class AuthController : Controller
+    public class AuthenticationController : Controller
     {
         private readonly IMapper _mapper;
         private readonly IAuthenticationManager _authenticationManager;
 
-        public AuthController(IMapper mapper, IAuthenticationManager authenticationService)
+        public AuthenticationController(IMapper mapper, IAuthenticationManager authenticationService)
         {
             _authenticationManager = authenticationService;
             _mapper = mapper;
         }
 
-        [Route("/api/login")]
+        [Route("login")]
         [HttpPost]
         public async Task<IActionResult> LoginAsync([FromBody] UserCredentialsViewModel userCredentials)
         {
@@ -42,8 +39,8 @@ namespace Avalanche.Security.Server.Controllers
             return Ok(accessTokenResource);
         }
 
-        [Route("/api/token/refresh")]
-        [HttpPost]
+        [Route("token")]
+        [HttpPut]
         public async Task<IActionResult> RefreshTokenAsync([FromBody] RefreshTokenViewModel refreshTokenResource)
         {
             if (!ModelState.IsValid)
@@ -62,8 +59,8 @@ namespace Avalanche.Security.Server.Controllers
             return Ok(tokenResource);
         }
 
-        [Route("/api/token/revoke")]
-        [HttpPost]
+        [Route("token")]
+        [HttpDelete]
         public IActionResult RevokeToken([FromBody] RevokeTokenViewModel revokeTokenResource)
         {
             if (!ModelState.IsValid)

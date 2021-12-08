@@ -1,7 +1,7 @@
 using System.Threading.Tasks;
-using Avalanche.Security.Server.ViewModels;
+using Avalanche.Api.ViewModels;
 
-namespace Avalanche.Security.Server.Core.Services
+namespace Avalanche.Api.Core.Services
 {
     public interface IAuthenticationManager
     {

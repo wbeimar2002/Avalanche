@@ -1,6 +1,6 @@
-using Avalanche.Security.Server.Core.Security.Tokens;
+using Avalanche.Api.ViewModels.Security;
 
-namespace Avalanche.Security.Server.ViewModels
+namespace Avalanche.Api.ViewModels
 {
     public class TokenResponseViewModel
     {

@@ -1,6 +1,8 @@
 using System.Diagnostics.CodeAnalysis;
 using Avalanche.Api.Extensions;
 using Avalanche.Api.Handlers;
+using Avalanche.Api.Handlers.Security.Hashing;
+using Avalanche.Api.Handlers.Security.Tokens;
 using Avalanche.Api.Hubs;
 using Avalanche.Api.Managers.Data;
 using Avalanche.Api.Managers.Licensing;
@@ -101,7 +103,7 @@ namespace Avalanche.Api
                 services.AddTransient<IRoutingManager, RoutingManager>();
                 services.AddTransient<IWebRTCManager, WebRTCManager>();
                 services.AddTransient<IRecordingManager, RecordingManager>();
-                services.AddSingleton<IPgsTimeoutManager, PgsTimeoutManager>();
+                services.AddSingleton<IPgsTimeoutManager, PgsTimeoutManager>(); //We need this as singleton
                 services.AddTransient<IActiveProcedureManager, ActiveProcedureManager>();
 
                 services.AddTransient<IConfigurationManager, DeviceConfigurationManager>();
@@ -164,9 +166,11 @@ namespace Avalanche.Api
             services.AddSingleton<IPresetManager, PresetManager>();
             services.AddSingleton<IMedpresenceService, MedpresenceService>();
             services.AddSingleton<IUsersManagementService, UsersManagementService>();
+            services.AddSingleton<IPasswordHasher, PasswordHasher>();
+            services.AddSingleton<ITokenHandler, TokenHandler>();
 
-            // gRPC Infrastructure
-            _ = services.AddConfigurationPoco<GrpcServiceRegistry>(_configuration, nameof(GrpcServiceRegistry));
+        // gRPC Infrastructure
+        _ = services.AddConfigurationPoco<GrpcServiceRegistry>(_configuration, nameof(GrpcServiceRegistry));
             _ = services.AddConfigurationPoco<HostingConfiguration>(_configuration, nameof(HostingConfiguration));
             _ = services.AddConfigurationPoco<ClientCertificateConfiguration>(_configuration, nameof(ClientCertificateConfiguration));
 

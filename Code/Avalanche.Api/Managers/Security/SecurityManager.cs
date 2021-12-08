@@ -17,8 +17,8 @@ namespace Avalanche.Api.Managers.Security
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly ICookieValidationService _cookieValidationService;
 
-        public SecurityManager(SigningOptions signingConfigurations, 
-            TokenAuthConfiguration tokenConfiguration, 
+        public SecurityManager(SigningOptions signingConfigurations,
+            TokenAuthConfiguration tokenConfiguration,
             IHttpContextAccessor httpContextAccessor,
             ICookieValidationService cookieValidationService)
         {

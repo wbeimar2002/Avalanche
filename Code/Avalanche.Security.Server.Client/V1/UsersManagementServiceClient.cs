@@ -38,5 +38,8 @@ namespace Avalanche.Security.Server.Client.V1
 
         public async Task<Empty> DeleteUserAsync(DeleteUserRequest request) =>
            await Client.DeleteUserAsync(request);
+
+        public async Task<FindByUserNameResponse> FindByUserNameAsync(FindByUserNameRequest request) =>
+           await Client.FindByUserNameAsync(request);
     }
 }

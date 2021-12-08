@@ -1,41 +1,45 @@
 using System.Threading.Tasks;
-using Avalanche.Security.Server.Core.Interfaces;
-using Avalanche.Security.Server.Core.Security.Hashing;
-using Avalanche.Security.Server.Core.Security.Tokens;
-using Avalanche.Security.Server.Core.Services;
-using Avalanche.Security.Server.ViewModels;
+using AutoMapper;
+using Avalanche.Api.Core.Services;
+using Avalanche.Api.Handlers.Security.Hashing;
+using Avalanche.Api.Handlers.Security.Tokens;
+using Avalanche.Api.Services.Security;
+using Avalanche.Api.ViewModels;
+using Avalanche.Shared.Domain.Models;
 
-namespace Avalanche.Security.Server.Managers
+namespace Avalanche.Api.Managers
 {
     //TODO: Review this, is a little bit different to the API controllers/managers but chaange this in this moment can affect the demo
     public class AuthenticationManager : IAuthenticationManager
     {
-        private readonly IUserRepository _userRepository;
+        private readonly IUsersManagementService _usersService;
         private readonly IPasswordHasher _passwordHasher;
         private readonly ITokenHandler _tokenHandler;
+        private readonly IMapper _mapper;
 
-        public AuthenticationManager(IUserRepository userRepository, IPasswordHasher passwordHasher, ITokenHandler tokenHandler)
+        public AuthenticationManager(IUsersManagementService usersService, IPasswordHasher passwordHasher, ITokenHandler tokenHandler, IMapper mapper)
         {
             _tokenHandler = tokenHandler;
             _passwordHasher = passwordHasher;
-            _userRepository = userRepository;
+            _usersService = usersService;
+            _mapper = mapper;
         }
 
         public async Task<TokenResponseViewModel> CreateAccessTokenAsync(string userName, string password)
         {
-            var user = await _userRepository.FindByUserNameAsync(userName);
+            var response = await _usersService.FindByUserName(userName);
 
-            if (user == null || !_passwordHasher.PasswordMatches(password, user.Password))
+            if (response.User == null || !_passwordHasher.PasswordMatches(password, response.User.Password))
             {
                 return new TokenResponseViewModel(false, "Invalid credentials.", null);
             }
 
-            var token = _tokenHandler.CreateAccessToken(user);
+            var token = _tokenHandler.CreateAccessToken(_mapper.Map<UserModel>(response.User));
 
             return new TokenResponseViewModel(true, null, token);
         }
 
-        public async Task<TokenResponseViewModel> RefreshTokenAsync(string refreshToken, string userEmail)
+        public async Task<TokenResponseViewModel> RefreshTokenAsync(string refreshToken, string userName)
         {
             var token = _tokenHandler.TakeRefreshToken(refreshToken);
 
@@ -49,13 +53,13 @@ namespace Avalanche.Security.Server.Managers
                 return new TokenResponseViewModel(false, "Expired refresh token.", null);
             }
 
-            var user = await _userRepository.FindByUserNameAsync(userEmail);
-            if (user == null)
+            var response = await _usersService.FindByUserName(userName);
+            if (response.User == null)
             {
                 return new TokenResponseViewModel(false, "Invalid refresh token.", null);
             }
 
-            var accessToken = _tokenHandler.CreateAccessToken(user);
+            var accessToken = _tokenHandler.CreateAccessToken(_mapper.Map<UserModel>(response.User));
             return new TokenResponseViewModel(true, null, accessToken);
         }
 

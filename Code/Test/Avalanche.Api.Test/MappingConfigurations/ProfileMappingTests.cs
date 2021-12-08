@@ -30,9 +30,16 @@ namespace Avalanche.Api.Tests.MappingConfigurations
                 cfg.AddProfile(new RecorderMappingConfiguration());
                 cfg.AddProfile(new RoutingMappingConfiguration());
                 cfg.AddProfile(new MedpresenceMappingConfiguration());
+                cfg.AddProfile(new SecurityMappingConfiguration());
             });
 
             _mapper = config.CreateMapper();
+        }
+
+        [Test]
+        public void SecurityMappingConfiguration_IsValid()
+        {
+            AssertProfileIsValid<SecurityMappingConfiguration>();
         }
 
         [Test]

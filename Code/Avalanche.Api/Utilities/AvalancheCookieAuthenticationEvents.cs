@@ -1,11 +1,11 @@
-﻿using Avalanche.Api.Services.Security;
+using Avalanche.Api.Services.Security;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using System.Threading.Tasks;
 
 namespace Avalanche.Api.Utilities
 {
-    public class AvalancheCookieAuthenticationEvents: CookieAuthenticationEvents
+    public class AvalancheCookieAuthenticationEvents : CookieAuthenticationEvents
     {
         private readonly ICookieValidationService _cookieValidationService;
 

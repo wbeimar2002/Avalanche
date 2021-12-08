@@ -1,4 +1,4 @@
-namespace Avalanche.Security.Server.ViewModels
+namespace Avalanche.Api.ViewModels
 {
     public class AccessTokenResource
     {

@@ -17,6 +17,12 @@ namespace Avalanche.Api.Services.Security
         public async Task<GetUsersResponse> GetAllUsers() =>
             await _usersManagementServiceClient.GetUsersAsync(new Empty()).ConfigureAwait(false);
 
+        public async Task<FindByUserNameResponse> FindByUserName(string userName) =>
+            await _usersManagementServiceClient.FindByUserNameAsync(new FindByUserNameRequest()
+            {
+                UserName = userName
+            }).ConfigureAwait(false);
+
         public async Task<AddUserResponse> AddUserAsync(AddUserRequest request) =>
            await _usersManagementServiceClient.AddUserAsync(request);
 

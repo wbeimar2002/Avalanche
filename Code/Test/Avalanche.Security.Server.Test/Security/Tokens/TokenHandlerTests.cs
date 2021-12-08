@@ -1,8 +1,7 @@
 using System;
+using Avalanche.Api.Handlers.Security.Tokens;
 using Avalanche.Security.Server.Core.Models;
 using Avalanche.Security.Server.Core.Security.Hashing;
-using Avalanche.Security.Server.Core.Security.Tokens;
-using Avalanche.Security.Server.Security.Tokens;
 using Avalanche.Shared.Infrastructure.Options;
 using Moq;
 using Xunit;
