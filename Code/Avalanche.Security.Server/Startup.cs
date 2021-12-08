@@ -139,10 +139,6 @@ namespace Avalanche.Security.Server
 
         private string GetDatabaseLocation(string database) => Path.Combine(Path.GetDirectoryName(typeof(Startup).Assembly.Location) ?? _environment.ContentRootPath, "database", database);
 
-        private string GetSecurityDatabaseLocation()
-        {
-            var path = GetDatabaseLocation(SecurityDatabaseName);
-            return path;
-        }
+        private string GetSecurityDatabaseLocation() => GetDatabaseLocation(SecurityDatabaseName);
     }
 }
