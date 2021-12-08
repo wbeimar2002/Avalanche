@@ -30,19 +30,19 @@ namespace Avalanche.Security.Server.Core
 
     public class UserRepository : IUserRepository, IDisposable
     {
-        private readonly SecurityManagementContext _context;
+        private readonly SecurityDbContext _context;
         private readonly ILogger<UserRepository> _logger;
         private readonly IMapper _mapper;
         private readonly IValidator<UserModel> _validator;
-        private readonly IDatabaseWriter<SecurityManagementContext> _writer;
+        private readonly IDatabaseWriter<SecurityDbContext> _writer;
         private readonly IPasswordHasher _passwordHasher;
         private bool _disposedValue;
 
         public UserRepository(
             ILogger<UserRepository> logger,
             IMapper mapper,
-            SecurityManagementContext context,
-            IDatabaseWriter<SecurityManagementContext> writer,
+            SecurityDbContext context,
+            IDatabaseWriter<SecurityDbContext> writer,
             IValidator<UserModel> validator,
             IPasswordHasher passwordHasher
         )
@@ -87,7 +87,7 @@ namespace Avalanche.Security.Server.Core
         {
             try
             {
-                Task<int> writerFunction(SecurityManagementContext context) =>
+                Task<int> writerFunction(SecurityDbContext context) =>
                     DeleteUserWriter(userId, context);
 
                 return await _writer.Write(writerFunction).ConfigureAwait(false);
@@ -147,7 +147,7 @@ namespace Avalanche.Security.Server.Core
             return null;
         }
 
-        private static async Task<UserEntity> AddUserWriter(UserEntity userEntity, SecurityManagementContext context)
+        private static async Task<UserEntity> AddUserWriter(UserEntity userEntity, SecurityDbContext context)
         {
             var result = await context.Users
                 .AddAsync(userEntity)
@@ -157,7 +157,7 @@ namespace Avalanche.Security.Server.Core
             return result.Entity;
         }
 
-        private static async Task<int> DeleteUserWriter(int id, SecurityManagementContext context) =>
+        private static async Task<int> DeleteUserWriter(int id, SecurityDbContext context) =>
             _ = await context.Users
                 .Where(x => x.Id == id)
                 .AsNoTracking()
@@ -165,7 +165,7 @@ namespace Avalanche.Security.Server.Core
 
         private Task<UserEntity> AddUserEntity(UserEntity userEntity)
         {
-            Task<UserEntity> writerFunction(SecurityManagementContext context) => AddUserWriter(userEntity, context);
+            Task<UserEntity> writerFunction(SecurityDbContext context) => AddUserWriter(userEntity, context);
             return _writer.Write(writerFunction);
         }
 
@@ -179,7 +179,7 @@ namespace Avalanche.Security.Server.Core
 
         private Task<UserEntity> UpdateUserEntity(UserEntity UserEntity)
         {
-            Task<UserEntity> writerFunction(SecurityManagementContext context) => AddOrUpdateWriter(UserEntity, context);
+            Task<UserEntity> writerFunction(SecurityDbContext context) => AddOrUpdateWriter(UserEntity, context);
             return _writer.Write(writerFunction);
         }
 
@@ -205,7 +205,7 @@ namespace Avalanche.Security.Server.Core
             }
         }
 
-        private static async Task<UserEntity> AddOrUpdateWriter(UserEntity User, SecurityManagementContext context)
+        private static async Task<UserEntity> AddOrUpdateWriter(UserEntity User, SecurityDbContext context)
         {
             // Normally we would have to lock around dependent operations
             // But because this class orchestrates it's writes through a single threaded DatabaseWriter we can skip that overhead

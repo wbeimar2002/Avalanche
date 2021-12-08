@@ -9,6 +9,7 @@
 
   <ItemGroup>
     <Compile Remove="Controllers\HealthController.cs" />
+    <Compile Remove="ViewModels\UserViewModel.cs" />
   </ItemGroup>
 
   <ItemGroup>

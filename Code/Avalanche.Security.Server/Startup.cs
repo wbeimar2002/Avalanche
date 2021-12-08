@@ -32,7 +32,7 @@ namespace Avalanche.Security.Server
     [ExcludeFromCodeCoverage]
     public class Startup
     {
-        private const string SecurityManagementDatabaseName = "security.db";
+        private const string SecurityDatabaseName = "security.db";
 
         private readonly IConfiguration _configuration;
         private readonly IWebHostEnvironment _environment;
@@ -45,29 +45,29 @@ namespace Avalanche.Security.Server
 
         public void ConfigureServices(IServiceCollection services)
         {
-            // Libraries
             _ = services.AddGrpc();
-
+            _ = services.AddControllers();
             _ = services.AddAutoMapper(GetType().Assembly);
             _ = services.AddCustomSwagger();
 
-            // Scoped
-            _ = services.AddScoped<IUserRepository, UserRepository>();
-            _ = services.AddScoped<IAuthenticationManager, AuthenticationManager>();
+            
 
             // Singleton
-            _ = services.AddSingleton<IDatabaseWriter<SecurityManagementContext>, DatabaseWriter<SecurityManagementContext>>();
+            _ = services.AddSingleton<IDatabaseWriter<SecurityDbContext>, DatabaseWriter<SecurityDbContext>>();
             _ = services.AddSingleton<IPasswordHasher, PasswordHasher>();
+
             _ = services.AddSingleton<ITokenHandler, Security.Tokens.TokenHandler>();
+            _ = services.AddSingleton(sp => new SigningOptions(sp.GetRequiredService<AuthConfiguration>().SecretKey));
 
             // Configuration
             _ = services.AddConfigurationPoco<TokenAuthConfiguration>(_configuration, nameof(TokenAuthConfiguration));
             _ = services.AddConfigurationPoco<AuthConfiguration>(_configuration, nameof(AuthConfiguration));
-            _ = services.AddSingleton(sp => new SigningOptions(sp.GetRequiredService<AuthConfiguration>().SecretKey));
             _ = services.AddConfigurationLoggingOnStartup();
 
-            // ASP.NET Features
-            _ = services.AddControllers();
+            // Transient
+            _ = services.AddTransient<IUserRepository, UserRepository>();
+            _ = services.AddTransient<IAuthenticationManager, AuthenticationManager>();
+
             _ = services.AddAuthentication(options =>
             {
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -87,18 +87,20 @@ namespace Avalanche.Security.Server
                 app.ApplicationServices.GetRequiredService<ILogger<DatabaseMigrationManager>>()
             );
 
-            _ = dbManager.UpgradeDatabase(GetSecurityManagementDatabaseLocation(), typeof(SecurityManagementContext).Assembly);
+            _ = dbManager.UpgradeDatabase(GetDatabaseLocation(SecurityDatabaseName), typeof(SecurityDbContext).Assembly);
+
+            var context = app.ApplicationServices.GetService<SecurityDbContext>();
+            var passwordHasher = app.ApplicationServices.GetService<IPasswordHasher>();
+
+            DatabaseSeed.Seed(context, passwordHasher);
 
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
             }
-            else
-            {
-                app.UseHsts();
-            } // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts
 
             app.UseCors("CorsApiPolicy"); // NOTE: cors must come before Authorization in the request pipeline
+
             app.UseSerilogRequestLogging();
             app.UseRouting();
 
@@ -109,7 +111,7 @@ namespace Avalanche.Security.Server
 
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapControllers();
+                _ = endpoints.MapControllers();
 
                 _ = endpoints.MapGrpcService<UsersManagementServiceHandler>();
             });
@@ -137,6 +139,6 @@ namespace Avalanche.Security.Server
 
         private string GetDatabaseLocation(string database) => Path.Combine(Path.GetDirectoryName(typeof(Startup).Assembly.Location) ?? _environment.ContentRootPath, "database", database);
 
-        private string GetSecurityManagementDatabaseLocation() => GetDatabaseLocation(SecurityManagementDatabaseName);
+        private string GetSecurityManagementDatabaseLocation() => GetDatabaseLocation(SecurityDatabaseName);
     }
 }

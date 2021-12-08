@@ -8,8 +8,7 @@ namespace Avalanche.Security.Server.ViewModels
         public string Token { get; set; }
 
         [Required]
-        [DataType(DataType.EmailAddress)]
         [StringLength(255)]
-        public string UserEmail { get; set; }
+        public string UserName { get; set; }
     }
 }

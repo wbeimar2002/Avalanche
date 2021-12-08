@@ -51,7 +51,7 @@ namespace Avalanche.Security.Server.Controllers
                 return BadRequest(ModelState);
             }
 
-            var response = await _authenticationManager.RefreshTokenAsync(refreshTokenResource.Token, refreshTokenResource.UserEmail);
+            var response = await _authenticationManager.RefreshTokenAsync(refreshTokenResource.Token, refreshTokenResource.UserName);
             if(!response.Success)
             {
                 return BadRequest(response.Message);

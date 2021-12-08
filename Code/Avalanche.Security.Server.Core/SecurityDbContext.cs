@@ -8,14 +8,14 @@ using Microsoft.Extensions.Logging;
 
 namespace Avalanche.Security.Server.Core
 {
-    public class SecurityManagementContext : DbContext
+    public class SecurityDbContext : DbContext
     {
-        public SecurityManagementContext(DbContextOptions<SecurityManagementContext> options)
+        public SecurityDbContext(DbContextOptions<SecurityDbContext> options)
             : base(options)
         {
         }
 
-        public SecurityManagementContext()
+        public SecurityDbContext()
         {
         }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
