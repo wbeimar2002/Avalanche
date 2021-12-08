@@ -1,15 +1,13 @@
-using Avalanche.Security.Server.Core.Security.Hashing;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Server.Kestrel.Core;
-using Microsoft.Extensions.DependencyInjection;
+using Ism.Common.Core.Configuration.Models;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
-using System;
-using System.Diagnostics.CodeAnalysis;
-
 using static Ism.Common.Core.Hosting.HostingUtilities;
+
 
 namespace Avalanche.Security.Server
 {
@@ -22,36 +20,32 @@ namespace Avalanche.Security.Server
             var hostLogger = CreateDefaultHostLogger(typeof(Program));
             try
             {
-                var host = CreateInsecureIsmHostBuilder<Startup>(
+                var host = CreateSecureIsmHostBuilder<Startup>(
                     args,
                     hostLogger,
                     typeof(Program).Assembly,
-                    null,
-                    null,
-                    HttpProtocols.Http1AndHttp2
-                )
-                .Build();
+                    GetConfigurationServiceRequests(),
+                    null
+                ).Build();
 
                 var loggerFactory = InitializeApplicationLoggerFactory(host);
 
                 // Overwrite the default hostLogger with one from DI so we can get better logging if there is a failure calling host.Run()
                 hostLogger = loggerFactory.CreateLogger(nameof(Program));
-
-                using (var scope = host.Services.CreateScope())
-                {
-                    var services = scope.ServiceProvider;
-                    //var context = services.GetService<SecurityDbContext>();
-                    var passwordHasher = services.GetService<IPasswordHasher>();
-                    //DatabaseSeed.Seed(context, passwordHasher);
-                }
-
                 host.Run();
             }
             catch (Exception ex)
             {
-                hostLogger.LogError(ex, $"{nameof(Avalanche.Security)}.{nameof(Server)} host terminated unexpectedly");
+                hostLogger.LogError(ex, "ServiceHost host terminated unexpectedly");
                 throw;
             }
         }
+
+        private static IEnumerable<ConfigurationServiceRequest> GetConfigurationServiceRequests()
+        {
+            var context = ConfigurationContext.FromEnvironment();
+            return new List<ConfigurationServiceRequest>();
+        }
     }
 }
+

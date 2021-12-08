@@ -1,7 +1,6 @@
 using System;
 using System.Runtime.CompilerServices;
 using System.Security.Cryptography;
-using System.Text;
 using Avalanche.Security.Server.Core.Security.Hashing;
 
 namespace Avalanche.Security.Server.Security.Hashing

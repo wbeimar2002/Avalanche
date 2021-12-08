@@ -25,6 +25,7 @@ using Serilog;
 
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
+using Ism.Storage.Core.Infrastructure.Interfaces;
 
 namespace Avalanche.Security.Server
 {
@@ -55,6 +56,7 @@ namespace Avalanche.Security.Server
             _ = services.AddScoped<IAuthenticationManager, AuthenticationManager>();
 
             // Singleton
+            _ = services.AddSingleton<IDatabaseWriter<SecurityManagementContext>, DatabaseWriter<SecurityManagementContext>>();
             _ = services.AddSingleton<IPasswordHasher, PasswordHasher>();
             _ = services.AddSingleton<ITokenHandler, Security.Tokens.TokenHandler>();
 

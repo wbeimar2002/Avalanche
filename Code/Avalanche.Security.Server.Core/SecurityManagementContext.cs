@@ -35,7 +35,7 @@ namespace Avalanche.Security.Server.Core
         }
 
         public DbSet<UserEntity> Users { get; set; } = default!;
-        
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             _ = modelBuilder.ApplyConfiguration(new UserEntityConfiguration());

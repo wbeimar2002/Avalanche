@@ -7,4 +7,4 @@ CREATE TABLE "Users" (
     UNIQUE("UserName")
 );
 
-CREATE UNIQUE INDEX "IX_Users_FirstName" ON "Users" ("FirstName");
+CREATE UNIQUE INDEX "IX_Users_UserName" ON "Users" ("UserName");
