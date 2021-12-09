@@ -189,6 +189,7 @@ namespace Avalanche.Api
 
             _ = services.AddSecurityServiceClient();
             _ = services.AddPatientListStorageSecureClient();
+            _ = services.AddPatientListSecureClient();
 
             _ = services.AddRecorderSecureClient();
             _ = services.AddGrpcStateClient("AvalancheApi"); //TODO: This name should be configurable
