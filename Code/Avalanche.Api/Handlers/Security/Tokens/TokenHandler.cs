@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
-using Avalanche.Api.Handlers.Security.Hashing;
 using Avalanche.Api.ViewModels.Security;
 using Avalanche.Shared.Domain.Models;
 using Avalanche.Shared.Infrastructure.Options;
@@ -16,11 +15,13 @@ namespace Avalanche.Api.Handlers.Security.Tokens
 
         private readonly TokenAuthConfiguration _tokenConfiguration;
         private readonly SigningOptions _signingConfigurations;
-        private readonly IPasswordHasher _passwordHaser;
+        //private readonly IPasswordHasher _passwordHasher;
 
-        public TokenHandler(TokenAuthConfiguration tokenConfiguration, SigningOptions signingConfigurations, IPasswordHasher passwordHaser)
+        public TokenHandler(TokenAuthConfiguration tokenConfiguration,
+            SigningOptions signingConfigurations)
+            //IPasswordHasher passwordHaser)
         {
-            _passwordHaser = passwordHaser;
+            //_passwordHaser = passwordHaser;
             _tokenConfiguration = tokenConfiguration;
             _signingConfigurations = signingConfigurations;
         }
@@ -53,9 +54,15 @@ namespace Avalanche.Api.Handlers.Security.Tokens
 
         private RefreshToken BuildRefreshToken()
         {
+            //var refreshToken = new RefreshToken
+            //(
+            //    token: _passwordHaser.HashPassword(Guid.NewGuid().ToString()),
+            //    expiration: DateTime.UtcNow.AddSeconds(_tokenConfiguration.RefreshExpirationSeconds).Ticks
+            //);
+
             var refreshToken = new RefreshToken
             (
-                token: _passwordHaser.HashPassword(Guid.NewGuid().ToString()),
+                token: Guid.NewGuid().ToString(),
                 expiration: DateTime.UtcNow.AddSeconds(_tokenConfiguration.RefreshExpirationSeconds).Ticks
             );
 

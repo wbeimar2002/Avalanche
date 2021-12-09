@@ -3,10 +3,8 @@ using System.IO;
 using Avalanche.Security.Server.Core;
 using Avalanche.Security.Server.Core.Interfaces;
 using Avalanche.Security.Server.Core.Models;
-using Avalanche.Security.Server.Core.Security.Hashing;
 using Avalanche.Security.Server.Core.Validators;
 using Avalanche.Security.Server.Managers;
-using Avalanche.Security.Server.Security.Hashing;
 using Avalanche.Security.Server.V1.Handlers;
 using Avalanche.Shared.Infrastructure.Models;
 using Avalanche.Shared.Infrastructure.Options;
@@ -50,7 +48,7 @@ namespace Avalanche.Security.Server
 
             // Singleton
             _ = services.AddSingleton<IDatabaseWriter<SecurityDbContext>, DatabaseWriter<SecurityDbContext>>();
-            _ = services.AddSingleton<IPasswordHasher, PasswordHasher>();
+            //_ = services.AddSingleton<IPasswordHasher, PasswordHasher>();
             _ = services.AddSingleton<IUsersManager, UsersManager>();
 
             _ = services.AddSingleton(sp => new SigningOptions(sp.GetRequiredService<AuthConfiguration>().SecretKey));
@@ -76,9 +74,10 @@ namespace Avalanche.Security.Server
             _ = dbManager.UpgradeDatabase(GetSecurityDatabaseLocation(), typeof(SecurityDbContext).Assembly);
 
             var context = app.ApplicationServices.GetService<SecurityDbContext>();
-            var passwordHasher = app.ApplicationServices.GetService<IPasswordHasher>();
+            //var passwordHasher = app.ApplicationServices.GetService<IPasswordHasher>();
 
-            DatabaseSeed.Seed(context, passwordHasher);
+            //DatabaseSeed.Seed(context, passwordHasher);
+            DatabaseSeed.Seed(context);
 
             if (env.IsDevelopment())
             {

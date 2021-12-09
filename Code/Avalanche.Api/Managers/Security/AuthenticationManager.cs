@@ -1,6 +1,5 @@
 using System.Threading.Tasks;
 using AutoMapper;
-using Avalanche.Api.Handlers.Security.Hashing;
 using Avalanche.Api.Handlers.Security.Tokens;
 using Avalanche.Api.Services.Security;
 using Avalanche.Api.ViewModels;
@@ -12,14 +11,16 @@ namespace Avalanche.Api.Managers
     public class AuthenticationManager : IAuthenticationManager
     {
         private readonly ISecurityService _usersService;
-        private readonly IPasswordHasher _passwordHasher;
+        //private readonly IPasswordHasher _passwordHasher;
         private readonly ITokenHandler _tokenHandler;
         private readonly IMapper _mapper;
 
-        public AuthenticationManager(ISecurityService usersService, IPasswordHasher passwordHasher, ITokenHandler tokenHandler, IMapper mapper)
+        public AuthenticationManager(ISecurityService usersService,
+            //IPasswordHasher passwordHasher,
+            ITokenHandler tokenHandler, IMapper mapper)
         {
             _tokenHandler = tokenHandler;
-            _passwordHasher = passwordHasher;
+            //_passwordHasher = passwordHasher;
             _usersService = usersService;
             _mapper = mapper;
         }
@@ -28,7 +29,12 @@ namespace Avalanche.Api.Managers
         {
             var response = await _usersService.FindByUserName(userName);
 
-            if (response.User == null || !_passwordHasher.PasswordMatches(password, response.User.Password))
+            //if (response.User == null || !_passwordHasher.PasswordMatches(password, response.User.Password))
+            //{
+            //    return new TokenResponseViewModel(false, "Invalid credentials.", null);
+            //}
+
+            if (response.User == null || (password != response.User.Password))
             {
                 return new TokenResponseViewModel(false, "Invalid credentials.", null);
             }

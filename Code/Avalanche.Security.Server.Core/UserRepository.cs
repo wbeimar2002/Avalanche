@@ -16,7 +16,6 @@ using Microsoft.Extensions.Logging;
 using Z.EntityFramework.Plus;
 using static Ism.Utility.Core.Preconditions;
 using EFCore.BulkExtensions;
-using Avalanche.Security.Server.Core.Security.Hashing;
 
 namespace Avalanche.Security.Server.Core
 {
@@ -35,7 +34,7 @@ namespace Avalanche.Security.Server.Core
         private readonly IMapper _mapper;
         private readonly IValidator<UserModel> _validator;
         private readonly IDatabaseWriter<SecurityDbContext> _writer;
-        private readonly IPasswordHasher _passwordHasher;
+        //private readonly IPasswordHasher _passwordHasher;
         private bool _disposedValue;
 
         public UserRepository(
@@ -43,8 +42,8 @@ namespace Avalanche.Security.Server.Core
             IMapper mapper,
             SecurityDbContext context,
             IDatabaseWriter<SecurityDbContext> writer,
-            IValidator<UserModel> validator,
-            IPasswordHasher passwordHasher
+            IValidator<UserModel> validator
+            //IPasswordHasher passwordHasher
         )
         {
             _logger = ThrowIfNullOrReturn(nameof(logger), logger);
@@ -52,7 +51,7 @@ namespace Avalanche.Security.Server.Core
             _context = ThrowIfNullOrReturn(nameof(context), context);
             _writer = ThrowIfNullOrReturn(nameof(writer), writer);
             _validator = ThrowIfNullOrReturn(nameof(validator), validator);
-            _passwordHasher = ThrowIfNullOrReturn(nameof(passwordHasher), passwordHasher);
+            //_passwordHasher = ThrowIfNullOrReturn(nameof(passwordHasher), passwordHasher);
         }
 
         [AspectLogger]
@@ -63,7 +62,7 @@ namespace Avalanche.Security.Server.Core
 
             try
             {
-                user.Password = _passwordHasher.HashPassword(user.Password);
+                //user.Password = _passwordHasher.HashPassword(user.Password);
 
                 var entity = _mapper.Map<UserEntity>(user);
                 var added = await AddUserEntity(entity).ConfigureAwait(false);
@@ -105,13 +104,18 @@ namespace Avalanche.Security.Server.Core
             ThrowIfNull(nameof(user), user);
             _validator.ValidateAndThrow(user);
 
-            user.Password = _passwordHasher.HashPassword(user.Password);
-
             try
             {
                 var entity = _mapper.Map<UserEntity>(user);
 
                 await ThrowIfDuplicate(entity, true).ConfigureAwait(false);
+
+                //var existingUser = await GetUser(user.UserName).ConfigureAwait(false);
+
+                //if (user.Password != existingUser.Password)
+                //{
+                //    entity.Password = _passwordHasher.HashPassword(user.Password);
+                //}
 
                 // perform update
                 _ = await UpdateUserEntity(entity).ConfigureAwait(false);

@@ -17,12 +17,16 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Handlers\Security\Hashing\**" />
     <Compile Remove="Repositories\**" />
     <Compile Remove="Services\Data\**" />
+    <Content Remove="Handlers\Security\Hashing\**" />
     <Content Remove="Repositories\**" />
     <Content Remove="Services\Data\**" />
+    <EmbeddedResource Remove="Handlers\Security\Hashing\**" />
     <EmbeddedResource Remove="Repositories\**" />
     <EmbeddedResource Remove="Services\Data\**" />
+    <None Remove="Handlers\Security\Hashing\**" />
     <None Remove="Repositories\**" />
     <None Remove="Services\Data\**" />
   </ItemGroup>

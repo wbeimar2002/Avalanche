@@ -1,7 +1,6 @@
 using System.Diagnostics.CodeAnalysis;
 using Avalanche.Api.Extensions;
 using Avalanche.Api.Handlers;
-using Avalanche.Api.Handlers.Security.Hashing;
 using Avalanche.Api.Handlers.Security.Tokens;
 using Avalanche.Api.Hubs;
 using Avalanche.Api.Managers;
@@ -169,7 +168,7 @@ namespace Avalanche.Api
             services.AddSingleton<IPresetManager, PresetManager>();
             services.AddSingleton<IMedpresenceService, MedpresenceService>();
             services.AddSingleton<ISecurityService, SecurityService>();
-            services.AddSingleton<IPasswordHasher, PasswordHasher>();
+            //services.AddSingleton<IPasswordHasher, PasswordHasher>();
             services.AddSingleton<ITokenHandler, TokenHandler>();
 
         // gRPC Infrastructure

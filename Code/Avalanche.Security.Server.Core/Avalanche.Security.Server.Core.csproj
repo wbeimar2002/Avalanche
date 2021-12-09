@@ -6,6 +6,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Security\**" />
+    <EmbeddedResource Remove="Security\**" />
+    <None Remove="Security\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="AutoMapper" Version="10.1.1" />
     <PackageReference Include="EFCore.BulkExtensions" Version="5.4.1" />
     <PackageReference Include="FluentValidation" Version="10.3.5" />
