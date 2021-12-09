@@ -10,6 +10,7 @@ using Avalanche.Api.Services.Security;
 using Avalanche.Api.Utilities;
 using Avalanche.Security.Server.Client.V1.Protos;
 using Avalanche.Shared.Domain.Models;
+using Avalanche.Shared.Domain.Models.Media;
 using Avalanche.Shared.Infrastructure.Configuration;
 using Ism.Common.Core.Configuration.Models;
 using Ism.Storage.DataManagement.Client.V1.Protos;
@@ -18,7 +19,7 @@ using Microsoft.AspNetCore.Http;
 
 namespace Avalanche.Api.Managers.Data
 {
-    public class DataManager : IDataManager
+    public abstract class DataManager : IDataManager
     {
         private readonly IDataManagementService _dataManagementService;
         private readonly IStorageService _storageService;
@@ -257,5 +258,7 @@ namespace Avalanche.Api.Managers.Data
 
             return _mapper.Map<LabelMessage, LabelModel>(result);
         }
+
+        public abstract Task<IList<AliasIndexModel>> GetGpioPins();
     }
 }

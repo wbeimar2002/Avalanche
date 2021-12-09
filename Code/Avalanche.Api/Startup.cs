@@ -102,6 +102,7 @@ namespace Avalanche.Api
             // Transient
             if (isDevice)
             {
+                services.AddTransient<IDataManager, DeviceDataManager>();
                 services.AddTransient<IRoutingManager, RoutingManager>();
                 services.AddTransient<IWebRTCManager, WebRTCManager>();
                 services.AddTransient<IRecordingManager, RecordingManager>();
@@ -113,6 +114,7 @@ namespace Avalanche.Api
             }
             else
             {
+                services.AddTransient<IDataManager, ServerDataManager>();
                 services.AddTransient<IConfigurationManager, ServerConfigurationManager>();
                 services.AddTransient<IMaintenanceManager, ServerMaintenanceManager>();
             }
@@ -123,7 +125,6 @@ namespace Avalanche.Api
             services.AddTransient<IFilesManager, FilesManager>();
             services.AddTransient<IPatientsManager, PatientsManager>();
             services.AddTransient<IProceduresManager, ProceduresManager>();
-            services.AddTransient<IDataManager, DataManager>();
             services.AddTransient<ILicensingManager, LicensingManagerMock>();
             services.AddTransient<INotificationsManager, NotificationsManager>();
             services.AddTransient<ISecurityManager, SecurityManager>();

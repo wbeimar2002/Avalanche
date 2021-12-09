@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Avalanche.Shared.Domain.Models;
+using Avalanche.Shared.Domain.Models.Media;
 
 namespace Avalanche.Api.Managers.Data
 {
@@ -26,5 +27,6 @@ namespace Avalanche.Api.Managers.Data
         Task UpdateUser(UserModel user);
         Task DeleteUser(int userId);
         Task<IList<UserModel>> GetAllUsers();
+        Task<IList<AliasIndexModel>> GetGpioPins();
     }
 }
