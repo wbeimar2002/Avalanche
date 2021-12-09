@@ -15,8 +15,9 @@ namespace Avalanche.Security.Server.Core
             {
                 var users = new List<UserEntity>
                 {
-                    new UserEntity { FirstName = "Main", LastName ="Administrator", UserName = "admin@admin.com", Password = passwordHasher.HashPassword("12345678") },
-                    new UserEntity { FirstName = "Common", LastName ="User", UserName = "common@common.com", Password = passwordHasher.HashPassword("12345678") },
+                    new UserEntity { FirstName = "Main", LastName ="ism_user", UserName = "ism_user", Password = passwordHasher.HashPassword("1234") },
+                    new UserEntity { FirstName = "Main", LastName ="ism_admin", UserName = "ism_admin", Password = passwordHasher.HashPassword("admin") },
+                    new UserEntity { FirstName = "Main", LastName ="Administrator", UserName = "Administrator", Password = passwordHasher.HashPassword("Groove@net.com") }
                 };
 
                 context.Users.AddRange(users);
