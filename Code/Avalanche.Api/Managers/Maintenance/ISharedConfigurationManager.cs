@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Avalanche.Shared.Infrastructure.Configuration;
 
 namespace Avalanche.Api.Managers.Maintenance
@@ -8,6 +9,8 @@ namespace Avalanche.Api.Managers.Maintenance
         PrintingConfiguration GetPrintingConfigurationSettings();
         MedPresenceConfiguration GetMedPresenceConfigurationSettings();
 
+        void UpdateProceduresSearchConfigurationColumns(List<ColumnProceduresSearchConfiguration> columnProceduresSearchConfigurations);
+        void UpdatePatientInfo(List<PatientInfoSetupConfiguration> patientInfoSetupConfigurations);
         void UseVSSPrintingService(bool useVSSPrintingService);
     }
 }

@@ -9,5 +9,6 @@ namespace Avalanche.Api.Services.Media
 
         Task HidePreview(HidePreviewRequest hidePreviewRequest);
 
+        Task<GetGpioPinsResponse> GetGpioPins();
     }
 }

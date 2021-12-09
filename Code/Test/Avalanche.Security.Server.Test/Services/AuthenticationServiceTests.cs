@@ -1,12 +1,11 @@
 using System;
-using System.Collections.ObjectModel;
 using System.Threading.Tasks;
+using Avalanche.Api.Core.Security.Tokens;
+using Avalanche.Api.Core.Services;
+using Avalanche.Api.Managers;
+using Avalanche.Security.Server.Core.Interfaces;
 using Avalanche.Security.Server.Core.Models;
 using Avalanche.Security.Server.Core.Security.Hashing;
-using Avalanche.Security.Server.Core.Security.Tokens;
-using Avalanche.Security.Server.Core.Services;
-using Avalanche.Security.Server.Entities;
-using Avalanche.Security.Server.Services;
 using Moq;
 using Xunit;
 
@@ -14,53 +13,55 @@ namespace Avalanche.Security.Tests.Services
 {
     public class AuthenticationServiceTests
     {
-        private bool _calledRefreshToken;
+        private bool _calledRefreshToken = false;
 
-        private Mock<IUserService> _userService;
+        private Mock<IUsersService> _userRepository;
         private Mock<IPasswordHasher> _passwordHasher;
         private Mock<ITokenHandler> _tokenHandler;
 
-        private readonly IAuthenticationService _authenticationService;
+        private IAuthenticationManager _authenticationService;
 
         public AuthenticationServiceTests()
         {
             SetupMocks();
-            _authenticationService = new AuthenticationService(_userService.Object, _passwordHasher.Object, _tokenHandler.Object);
+            //Temporary: Working in refactor
+            _authenticationService = new Api.Managers.AuthenticationManager(_userRepository.Object, _passwordHasher.Object, _tokenHandler.Object);
         }
 
         private void SetupMocks()
         {
-            _userService = new Mock<IUserService>();
-            _userService.Setup(u => u.FindByLoginAsync("invalid@invalid.com"))
-                       .Returns(Task.FromResult<UserEntity>(null));
+            _userRepository = new Mock<IUserRepository>();
 
-            _userService.Setup(u => u.FindByLoginAsync("test@test.com"))
-                        .ReturnsAsync(new UserEntity
-                        {
-                            Id = 1,
-                            LoginName = "test@test.com",
-                            Password = "123",
-                            UserRoles = new Collection<UserRole>
-                            {
-                                new UserRole
-                                {
-                                    UserId = 1,
-                                    RoleId = 1,
-                                    Role = new Role
-                                    {
-                                        Id = 1,
-                                        Name = ERole.Common.ToString()
-                                    }
-                                }
-                            }
-                        });
+            //_userService.Setup(u => u.FindByEmailAsync("invalid@invalid.com"))
+            //           .Returns(Task.FromResult<UserModel>(null));
+
+            //_userService.Setup(u => u.FindByEmailAsync("test@test.com"))
+            //            .ReturnsAsync(new User
+            //            {
+            //                Id = 1,
+            //                Email = "test@test.com",
+            //                Password = "123",
+            //                UserRoles = new Collection<UserRole>
+            //                {
+            //                    new UserRole
+            //                    {
+            //                        UserId = 1,
+            //                        RoleId = 1,
+            //                        Role = new Role
+            //                        {
+            //                            Id = 1,
+            //                            Name = ERole.Common.ToString()
+            //                        }
+            //                    }
+            //                }
+            //            });
 
             _passwordHasher = new Mock<IPasswordHasher>();
             _passwordHasher.Setup(ph => ph.PasswordMatches(It.IsAny<string>(), It.IsAny<string>()))
                            .Returns<string, string>((password, hash) => password == hash);
 
             _tokenHandler = new Mock<ITokenHandler>();
-            _tokenHandler.Setup(h => h.CreateAccessToken(It.IsAny<UserEntity>()))
+            _tokenHandler.Setup(h => h.CreateAccessToken(It.IsAny<UserModel>()))
                          .Returns(new AccessToken
                                      (
                                         token: "abc",
@@ -89,7 +90,7 @@ namespace Avalanche.Security.Tests.Services
         [Fact]
         public async Task Should_Create_Access_Token_For_Valid_Credentials()
         {
-            var response = await _authenticationService.CreateAccessTokenAsync("test@test.com", "123").ConfigureAwait(false);
+            var response = await _authenticationService.CreateAccessTokenAsync("test@test.com", "123");
 
             Assert.NotNull(response);
             Assert.True(response.Success);
@@ -104,7 +105,7 @@ namespace Avalanche.Security.Tests.Services
         [Fact]
         public async Task Should_Not_Create_Access_Token_For_Non_Existing_User()
         {
-            var response = await _authenticationService.CreateAccessTokenAsync("invalid@invalid.com", "123").ConfigureAwait(false);
+            var response = await _authenticationService.CreateAccessTokenAsync("invalid@invalid.com", "123");
 
             Assert.NotNull(response);
             Assert.False(response.Success);
@@ -114,7 +115,7 @@ namespace Avalanche.Security.Tests.Services
         [Fact]
         public async Task Should_Not_Create_Access_Token_For_Invalid_Password()
         {
-            var response = await _authenticationService.CreateAccessTokenAsync("invalid@invalid.com", "321").ConfigureAwait(false);
+            var response = await _authenticationService.CreateAccessTokenAsync("invalid@invalid.com", "321");
 
             Assert.NotNull(response);
             Assert.False(response.Success);
@@ -124,7 +125,7 @@ namespace Avalanche.Security.Tests.Services
         [Fact]
         public async Task Should_Refresh_Token_For_Valid_Refresh_Token()
         {
-            var response = await _authenticationService.RefreshTokenAsync("abc", "test@test.com").ConfigureAwait(false);
+            var response = await _authenticationService.RefreshTokenAsync("abc", "test@test.com");
 
             Assert.NotNull(response);
             Assert.True(response.Success);
@@ -134,7 +135,7 @@ namespace Avalanche.Security.Tests.Services
         [Fact]
         public async Task Should_Not_Refresh_Token_When_Token_Is_Expired()
         {
-            var response = await _authenticationService.RefreshTokenAsync("expired", "test@test.com").ConfigureAwait(false);
+            var response = await _authenticationService.RefreshTokenAsync("expired", "test@test.com");
 
             Assert.NotNull(response);
             Assert.False(response.Success);
@@ -144,7 +145,7 @@ namespace Avalanche.Security.Tests.Services
         [Fact]
         public async Task Should_Not_Refresh_Token_For_Invalid_User_Data()
         {
-            var response = await _authenticationService.RefreshTokenAsync("invalid", "test@test.com").ConfigureAwait(false);
+            var response = await _authenticationService.RefreshTokenAsync("invalid", "test@test.com");
 
             Assert.NotNull(response);
             Assert.False(response.Success);
@@ -155,7 +156,7 @@ namespace Avalanche.Security.Tests.Services
         public void Should_Revoke_Refresh_Token()
         {
             _authenticationService.RevokeRefreshToken("abc");
-
+            
             Assert.True(_calledRefreshToken);
         }
     }

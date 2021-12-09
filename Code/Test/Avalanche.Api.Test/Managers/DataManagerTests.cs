@@ -4,6 +4,8 @@ using Avalanche.Api.Managers.Data;
 using Avalanche.Api.Mapping;
 using Avalanche.Api.Services.Health;
 using Avalanche.Api.Services.Maintenance;
+using Avalanche.Api.Services.Media;
+using Avalanche.Api.Services.Security;
 using Avalanche.Shared.Domain.Models;
 using Avalanche.Shared.Infrastructure.Configuration;
 using Microsoft.AspNetCore.Http;
@@ -22,7 +24,10 @@ namespace Avalanche.Api.Tests.Managers
     {
         Mock<IStorageService> _storageService;
         Mock<IDataManagementService> _dataManagementService;
+        Mock<ISecurityService> _securityService;
+        Mock<IAvidisService> _avidisService;
         Mock<IHttpContextAccessor> _httpContextAccessor;
+
         SetupConfiguration _setupConfiguration;
 
         IMapper _mapper;
@@ -33,6 +38,9 @@ namespace Avalanche.Api.Tests.Managers
         {
             _storageService = new Mock<IStorageService>();
             _dataManagementService = new Mock<IDataManagementService>();
+            _securityService = new Mock<ISecurityService>();
+            _avidisService = new Mock<IAvidisService>();
+
             _httpContextAccessor = new Mock<IHttpContextAccessor>();
             _setupConfiguration = new SetupConfiguration()
             {
@@ -46,7 +54,7 @@ namespace Avalanche.Api.Tests.Managers
             });
 
             _mapper = config.CreateMapper();
-            _manager = new DataManager(_mapper, _dataManagementService.Object, _storageService.Object, _httpContextAccessor.Object, _setupConfiguration);
+            _manager = new DeviceDataManager(_mapper, _dataManagementService.Object, _storageService.Object, _httpContextAccessor.Object, _setupConfiguration, _securityService.Object, _avidisService.Object);
         }
 
         [Test]

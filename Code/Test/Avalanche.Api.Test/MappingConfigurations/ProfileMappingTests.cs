@@ -30,9 +30,16 @@ namespace Avalanche.Api.Tests.MappingConfigurations
                 cfg.AddProfile(new RecorderMappingConfiguration());
                 cfg.AddProfile(new RoutingMappingConfiguration());
                 cfg.AddProfile(new MedpresenceMappingConfiguration());
+                cfg.AddProfile(new SecurityMappingConfiguration());
             });
 
             _mapper = config.CreateMapper();
+        }
+
+        [Test]
+        public void SecurityMappingConfiguration_IsValid()
+        {
+            AssertProfileIsValid<SecurityMappingConfiguration>();
         }
 
         [Test]
@@ -95,7 +102,7 @@ namespace Avalanche.Api.Tests.MappingConfigurations
                 Id = 2,
                 LastName = "Last",
                 MRN = "1234",
-                Physician = new Shared.Domain.Models.PhysicianModel { Id = "3", FirstName = "f", LastName = "l" },
+                Physician = new Shared.Domain.Models.PhysicianModel { Id = 3, FirstName = "f", LastName = "l" },
                 ProcedureType = new Shared.Domain.Models.ProcedureTypeModel { Id = 4, DepartmentId = 1, Name = "proc" },
                 Sex = new KeyValuePairViewModel { Id = "M", TranslationKey = "key", Value = "M" }
             };

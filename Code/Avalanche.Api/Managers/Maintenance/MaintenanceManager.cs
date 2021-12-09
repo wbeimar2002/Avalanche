@@ -1,3 +1,9 @@
+using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.Dynamic;
+using System.Linq;
+using System.Threading.Tasks;
 using AutoMapper;
 using Avalanche.Api.Helpers;
 using Avalanche.Api.Managers.Data;
@@ -7,6 +13,7 @@ using Avalanche.Api.Services.Media;
 using Avalanche.Api.Services.Printing;
 using Avalanche.Api.Utilities;
 using Avalanche.Api.ViewModels;
+using Avalanche.Shared.Domain.Enumerations.Media;
 using Avalanche.Shared.Domain.Models;
 using Avalanche.Shared.Infrastructure.Configuration;
 using Avalanche.Shared.Infrastructure.Enumerations;
@@ -16,12 +23,6 @@ using Ism.Utility.Core;
 using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Dynamic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Avalanche.Api.Managers.Maintenance
 {
@@ -38,7 +39,7 @@ namespace Avalanche.Api.Managers.Maintenance
 
         private readonly ISharedConfigurationManager _sharedConfigurationManager;
 
-        public MaintenanceManager(IStorageService storageService,
+        protected MaintenanceManager(IStorageService storageService,
             IDataManager dataManager,
             IMapper mapper,
             IHttpContextAccessor httpContextAccessor,
@@ -60,8 +61,6 @@ namespace Avalanche.Api.Managers.Maintenance
             _configurationContext = _mapper.Map<UserModel, ConfigurationContext>(user);
             _configurationContext.IdnId = Guid.NewGuid().ToString();
         }
-
-        protected abstract Task SaveEmbeddedList(string settingsKey, string jsonKey, string json, string schema = null);
 
         protected abstract void CheckLinks(DynamicListViewModel category);
 
@@ -142,6 +141,11 @@ namespace Avalanche.Api.Managers.Maintenance
 
             switch (category.SourceKey)
             {
+                case "Users":
+                    var users = await _dataManager.GetAllUsers().ConfigureAwait(false);
+                    values = JsonConvert.DeserializeObject<List<dynamic>>(JsonConvert.SerializeObject(users));
+                    break;
+
                 case "Departments":
                     var departments = await _dataManager.GetAllDepartments().ConfigureAwait(false);
                     values = JsonConvert.DeserializeObject<List<dynamic>>(JsonConvert.SerializeObject(departments));
@@ -181,7 +185,6 @@ namespace Avalanche.Api.Managers.Maintenance
                 default:
                     values = await _storageService.GetJsonDynamicList(category.SourceKey, 1, _configurationContext).ConfigureAwait(false);
                     break;
-
             }
 
             return values == null ? null : await BuildCategoryList(category, values).ConfigureAwait(false);
@@ -279,6 +282,22 @@ namespace Avalanche.Api.Managers.Maintenance
             {
                 switch (property.SourceKey)
                 {
+                    case "GpioPins":
+                        var gpioPins = await _dataManager.GetGpioPins().ConfigureAwait(false);
+
+                        var dynamicGpioPins = gpioPins
+                            .Select(item =>
+                            {
+                                dynamic expandoObj = new ExpandoObject();
+                                expandoObj.Id = item.Index;
+                                expandoObj.Value = $"{item.Alias} ({item.Index})";
+                                expandoObj.RelatedObject = item;
+                                return (ExpandoObject)expandoObj;
+                            })
+                            .ToList();
+
+                        return JsonConvert.DeserializeObject<List<dynamic>>(JsonConvert.SerializeObject(dynamicGpioPins));
+
                     case "VideoSinks":
                         var videoSinks = await _storageService.GetJsonDynamicList(property.SourceKey, 1, _configurationContext);
 
@@ -292,7 +311,26 @@ namespace Avalanche.Api.Managers.Maintenance
                                 return (ExpandoObject)expandoObj;
                             })
                             .ToList();
+
                         return JsonConvert.DeserializeObject<List<dynamic>>(JsonConvert.SerializeObject(dynamicVideoSinks));
+
+                    case "MediaActions":
+                        var dynamicMediaActions = Enum.GetValues(typeof(GpioAction))
+                            .Cast<GpioAction>()
+                            .Select(item =>
+                            {
+                                dynamic expandoObj = new ExpandoObject();
+                                expandoObj.Id = item.ToString();
+                                expandoObj.Value = item.ToString();
+                                expandoObj.TranslationKey = "mediaActions." + item.ToString();
+                                expandoObj.RelatedObject = item;
+                                return (ExpandoObject)expandoObj;
+                            })
+                            .ToList();
+
+                        return JsonConvert.DeserializeObject<List<dynamic>>(JsonConvert.SerializeObject(dynamicMediaActions));
+
+
 
                     case "Departments":
                         var departments = await _dataManager.GetAllDepartments().ConfigureAwait(false);
@@ -407,6 +445,7 @@ namespace Avalanche.Api.Managers.Maintenance
                 case "Printers":
                     var printersResponse = await _printingService.GetPrinters().ConfigureAwait(false);
                     return JsonConvert.DeserializeObject<List<dynamic>>(JsonConvert.SerializeObject(printersResponse.Printers.Select(p => new { Name = p })));
+
                 default:
                     break;
             }
@@ -566,6 +605,9 @@ namespace Avalanche.Api.Managers.Maintenance
                 case "Labels":
                     await SaveLabel(action, customList.Entity).ConfigureAwait(false);
                     break;
+                case "Users":
+                    await SaveUser(action, customList.Entity).ConfigureAwait(false);
+                    break;
                 default:
                     throw new ValidationException("Method Not Allowed");
             }
@@ -593,6 +635,28 @@ namespace Avalanche.Api.Managers.Maintenance
                         await SaveLabel(DynamicListActions.Delete, item).ConfigureAwait(false);
                     }
                     break;
+            }
+        }
+
+        private async Task SaveUser(DynamicListActions action, dynamic source)
+        {
+            var user = new UserModel();
+
+            DynamicSettingsHelper.Map(source, user);
+
+            switch (action)
+            {
+                case DynamicListActions.Insert:
+                    await _dataManager.AddUser(user).ConfigureAwait(false);
+                    break;
+                case DynamicListActions.Update:
+                    await _dataManager.UpdateUser(user).ConfigureAwait(false);
+                    break;
+                case DynamicListActions.Delete:
+                    await _dataManager.DeleteUser(user.Id.Value).ConfigureAwait(false);
+                    break;
+                default:
+                    throw new ValidationException("Method Not Allowed");
             }
         }
 
@@ -690,6 +754,30 @@ namespace Avalanche.Api.Managers.Maintenance
 
             var settingValues = await _storageService.GetJson(sourceKey, 1, _configurationContext).ConfigureAwait(false);
             return DynamicSettingsHelper.GetEmbeddedList(jsonKey, settingValues);
+        }
+
+        private async Task SaveEmbeddedList(string settingsKey, string jsonKey, string json, string schema = null)
+        {
+            if (string.IsNullOrEmpty(schema) || await _storageService.ValidateSchema(schema, json, 1, _configurationContext).ConfigureAwait(false))
+            {
+                await _storageService.UpdateJsonProperty(settingsKey, jsonKey, json, 1, _configurationContext, true).ConfigureAwait(false);
+
+                switch (settingsKey)
+                {
+                    case "ProceduresSearchConfiguration":
+                        _sharedConfigurationManager.UpdateProceduresSearchConfigurationColumns(json.Get<List<ColumnProceduresSearchConfiguration>>());
+                        break;
+                    case "SetupConfiguration":
+                        _sharedConfigurationManager.UpdatePatientInfo(json.Get<List<PatientInfoSetupConfiguration>>());
+                        break;
+                    default:
+                        break;
+                }
+            }
+            else
+            {
+                throw new ValidationException("Json Schema Invalid for " + jsonKey);
+            }
         }
     }
 }

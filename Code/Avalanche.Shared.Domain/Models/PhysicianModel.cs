@@ -1,8 +1,8 @@
-﻿namespace Avalanche.Shared.Domain.Models
+namespace Avalanche.Shared.Domain.Models
 {
     public class PhysicianModel
     {
-        public string? Id { get; set; }
+        public int? Id { get; set; }
 
         public string? FirstName { get; set; }
 

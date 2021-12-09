@@ -16,7 +16,7 @@ namespace Avalanche.Api.Mapping
                  .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Description))
                  .ForMember(dest => dest.Physician, opt => opt.MapFrom(src => src.Physician != null ? new PhysicianMessage
                  {
-                     Id = src.Physician.Id,
+                     Id = src.Physician.Id.ToString(),
                      FirstName = src.Physician.FirstName,
                      LastName = src.Physician.LastName
                  } : null))

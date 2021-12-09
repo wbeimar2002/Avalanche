@@ -1,10 +1,11 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Avalanche.Api.ViewModels;
 
 namespace Avalanche.Api.Managers.Data
 {
     public interface IPhysiciansManager
     {
-        Task<List<dynamic>> GetPhysicians();
+        Task<IList<PhysicianViewModel>> GetPhysicians();
     }
 }

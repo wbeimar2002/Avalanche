@@ -1,10 +1,7 @@
 using System;
-using System.Collections.ObjectModel;
+using Avalanche.Api.Handlers.Security.Tokens;
 using Avalanche.Security.Server.Core.Models;
 using Avalanche.Security.Server.Core.Security.Hashing;
-using Avalanche.Security.Server.Core.Security.Tokens;
-using Avalanche.Security.Server.Entities;
-using Avalanche.Security.Server.Security.Tokens;
 using Avalanche.Shared.Infrastructure.Options;
 using Moq;
 using Xunit;
@@ -16,9 +13,9 @@ namespace Avalanche.Security.Tests.Security.Tokens
         private TokenAuthConfiguration _tokenConfig;
         private Mock<IPasswordHasher> _passwordHasher;
         private SigningOptions _signingOptions;
-        private UserEntity _user;
+        private UserModel _user;
 
-        private readonly ITokenHandler _tokenHandler;
+        private ITokenHandler _tokenHandler;
 
         public TokenHandlerTests()
         {
@@ -41,24 +38,24 @@ namespace Avalanche.Security.Tests.Security.Tokens
 
             _signingOptions = new SigningOptions();
 
-            _user = new UserEntity
+            _user = new UserModel
             {
                 Id = 1,
-                LoginName = "test@test.com",
+                UserName = "test@test.com",
                 Password = "123",
                 FirstName = "Some",
                 LastName = "User",
-                UserRoles = new Collection<UserRole>
-                {
-                    new UserRole
-                    {
-                        Role = new Role
-                        {
-                            Id = 1,
-                            Name = nameof(ERole.Common)
-                        }
-                    }
-                }
+                //UserRoles = new Collection<UserRole>
+                //{
+                //    new UserRole
+                //    {
+                //        Role = new Role
+                //        {
+                //            Id = 1,
+                //            Name = nameof(ERole.Common)
+                //        }
+                //    }
+                //}
             };
         }
 

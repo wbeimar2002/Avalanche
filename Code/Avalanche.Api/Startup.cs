@@ -1,7 +1,10 @@
 using System.Diagnostics.CodeAnalysis;
 using Avalanche.Api.Extensions;
 using Avalanche.Api.Handlers;
+using Avalanche.Api.Handlers.Security.Hashing;
+using Avalanche.Api.Handlers.Security.Tokens;
 using Avalanche.Api.Hubs;
+using Avalanche.Api.Managers;
 using Avalanche.Api.Managers.Data;
 using Avalanche.Api.Managers.Licensing;
 using Avalanche.Api.Managers.Maintenance;
@@ -22,6 +25,7 @@ using Avalanche.Api.Services.Printing;
 using Avalanche.Api.Services.Security;
 using Avalanche.Api.TempExtensions;
 using Avalanche.Api.Utilities;
+using Avalanche.Security.Server.Client.V1.Extensions;
 using Avalanche.Shared.Infrastructure.Configuration;
 using Avalanche.Shared.Infrastructure.Enumerations;
 using Avalanche.Shared.Infrastructure.Models;
@@ -36,7 +40,6 @@ using Ism.Medpresence.Client.V1.Extensions;
 using Ism.PatientInfoEngine.Client.V1.Extensions;
 using Ism.PgsTimeout.Client.V1;
 using Ism.PrintServer.Client.V1;
-using Ism.PrintServer.Client.V1.Extensions;
 using Ism.Recorder.Client.V1;
 using Ism.Routing.Client.V1;
 using Ism.Security.Grpc;
@@ -99,10 +102,11 @@ namespace Avalanche.Api
             // Transient
             if (isDevice)
             {
+                services.AddTransient<IDataManager, DeviceDataManager>();
                 services.AddTransient<IRoutingManager, RoutingManager>();
                 services.AddTransient<IWebRTCManager, WebRTCManager>();
                 services.AddTransient<IRecordingManager, RecordingManager>();
-                services.AddSingleton<IPgsTimeoutManager, PgsTimeoutManager>();
+                services.AddSingleton<IPgsTimeoutManager, PgsTimeoutManager>(); //We need this as singleton
                 services.AddTransient<IActiveProcedureManager, ActiveProcedureManager>();
 
                 services.AddTransient<IConfigurationManager, DeviceConfigurationManager>();
@@ -110,16 +114,17 @@ namespace Avalanche.Api
             }
             else
             {
+                services.AddTransient<IDataManager, ServerDataManager>();
                 services.AddTransient<IConfigurationManager, ServerConfigurationManager>();
                 services.AddTransient<IMaintenanceManager, ServerMaintenanceManager>();
             }
 
             //Shared
+            services.AddTransient<IAuthenticationManager, AuthenticationManager>();
             services.AddTransient<ISharedConfigurationManager, SharedConfigurationManager>();
             services.AddTransient<IFilesManager, FilesManager>();
             services.AddTransient<IPatientsManager, PatientsManager>();
             services.AddTransient<IProceduresManager, ProceduresManager>();
-            services.AddTransient<IDataManager, DataManager>();
             services.AddTransient<ILicensingManager, LicensingManagerMock>();
             services.AddTransient<INotificationsManager, NotificationsManager>();
             services.AddTransient<ISecurityManager, SecurityManager>();
@@ -164,9 +169,12 @@ namespace Avalanche.Api
             services.AddSingleton<IFilesService, FilesService>();
             services.AddSingleton<IPresetManager, PresetManager>();
             services.AddSingleton<IMedpresenceService, MedpresenceService>();
+            services.AddSingleton<ISecurityService, SecurityService>();
+            services.AddSingleton<IPasswordHasher, PasswordHasher>();
+            services.AddSingleton<ITokenHandler, TokenHandler>();
 
-            // gRPC Infrastructure
-            _ = services.AddConfigurationPoco<GrpcServiceRegistry>(_configuration, nameof(GrpcServiceRegistry));
+        // gRPC Infrastructure
+        _ = services.AddConfigurationPoco<GrpcServiceRegistry>(_configuration, nameof(GrpcServiceRegistry));
             _ = services.AddConfigurationPoco<HostingConfiguration>(_configuration, nameof(HostingConfiguration));
             _ = services.AddConfigurationPoco<ClientCertificateConfiguration>(_configuration, nameof(ClientCertificateConfiguration));
 
@@ -180,8 +188,9 @@ namespace Avalanche.Api
             _ = services.AddLibraryActiveProcedureServiceSecureClient();
             _ = services.AddLibraryManagerServiceSecureClient();
 
-            _ = services.AddPatientListSecureClient();
+            _ = services.AddSecurityServiceClient();
             _ = services.AddPatientListStorageSecureClient();
+            _ = services.AddPatientListSecureClient();
 
             _ = services.AddRecorderSecureClient();
             _ = services.AddGrpcStateClient("AvalancheApi"); //TODO: This name should be configurable
@@ -223,9 +232,15 @@ namespace Avalanche.Api
             services.AddSingleton(sp => new SigningOptions(sp.GetRequiredService<AuthConfiguration>().SecretKey));
 
             // Configure
-            services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
-                .AddJwtBearer()
-                .AddCookie();
+            _ = services.AddAuthentication(options =>
+            {
+                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+                //CookieAuthenticationDefaults.AuthenticationScheme; ??? This will affect?
+            })
+            .AddJwtBearer()
+            .AddCookie();
 
             services.ConfigureOptions<ConfigureJwtBearerOptions>();
             services.ConfigureOptions<ConfigureCookieAuthenticiationOptions>();

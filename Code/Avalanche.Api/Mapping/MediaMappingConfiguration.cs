@@ -8,6 +8,15 @@ namespace Avalanche.Api.Mapping
     {
         public MediaMappingConfiguration()
         {
+            CreateMap<AvidisDeviceInterface.V1.Protos.AliasIndexMessage, AliasIndexModel>()
+                .ForMember(dest =>
+                    dest.Alias,
+                    opt => opt.MapFrom(src => src.Alias))
+                .ForMember(dest =>
+                    dest.Index,
+                    opt => opt.MapFrom(src => src.Index))
+                .ReverseMap();
+
             // viewmodel to domain model
             CreateMap<AliasIndexViewModel, AliasIndexModel>()
                 .ForMember(dest =>

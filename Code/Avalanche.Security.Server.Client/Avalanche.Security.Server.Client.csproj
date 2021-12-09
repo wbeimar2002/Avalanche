@@ -1,0 +1,31 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.1</TargetFramework>
+    <Configurations>Debug;Release;DebugLocal</Configurations>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Grpc.Tools" Version="2.42.0">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Ism.CodeQuality" Version="1.0.0-prerelease0011" />
+    <PackageReference Include="Ism.Security.Grpc.Standard" Version="1.0.0-prerelease034" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="V1\Protos\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Protobuf Include="..\Protos\V1\Protos\Security.proto" GrpcServices="client">
+      <Link>V1\Protos\Security.proto</Link>
+    </Protobuf>
+  </ItemGroup>
+
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent" Condition="'$(Configuration)'=='Debug'">
+    <Exec Command="powershell.exe -file &quot;$(SolutionDir)build.local.package.ps1&quot; -Project &quot;$(ProjectPath)&quot;" />
+  </Target>
+
+</Project>

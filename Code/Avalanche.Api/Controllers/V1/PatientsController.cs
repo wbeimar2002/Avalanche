@@ -143,6 +143,11 @@ namespace Avalanche.Api.Controllers.V1
         {
             try
             {
+                if (!ModelState.IsValid)
+                {
+                    return BadRequest(ModelState);
+                }
+
                 _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
 
                 var result = new PagedCollectionViewModel<PatientViewModel>

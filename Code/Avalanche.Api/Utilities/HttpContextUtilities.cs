@@ -54,14 +54,14 @@ namespace Avalanche.Api.Utilities
             var claimPrincipal = httpContext?.User?.Identity as ClaimsIdentity;
             return claimPrincipal == null ? new Shared.Domain.Models.UserModel()
             {
-                Id = "Unidentified",
+                Id = -1,
                 FirstName = "Unidentified",
                 LastName = "Unidentified",
             }
             :
             new Avalanche.Shared.Domain.Models.UserModel()
             {
-                Id = claimPrincipal.FindFirst("Id")?.Value,
+                Id = Convert.ToInt32(claimPrincipal.FindFirst("Id")?.Value),
                 FirstName = claimPrincipal.FindFirst("FirstName")?.Value,
                 LastName = claimPrincipal.FindFirst("LastName")?.Value,
                 SiteId = Environment.GetEnvironmentVariable("AVALANCHE_SITE_ID")
