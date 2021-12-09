@@ -4,6 +4,7 @@ using AutoMapper;
 using Avalanche.Api.Services.Health;
 using Avalanche.Api.Services.Maintenance;
 using Avalanche.Api.Services.Media;
+using Avalanche.Api.Services.Security;
 using Avalanche.Shared.Domain.Models.Media;
 using Avalanche.Shared.Infrastructure.Configuration;
 using AvidisDeviceInterface.V1.Protos;
@@ -21,7 +22,8 @@ namespace Avalanche.Api.Managers.Data
             IStorageService storageService,
             IHttpContextAccessor httpContextAccessor,
             SetupConfiguration setupConfiguration,
-            IAvidisService avidisService) : base(mapper, dataManagementService, storageService, httpContextAccessor, setupConfiguration)
+            ISecurityService securityService,
+            IAvidisService avidisService) : base(mapper, dataManagementService, storageService, httpContextAccessor, setupConfiguration, securityService)
         {
             _avidisService = avidisService;
             _mapper = mapper;

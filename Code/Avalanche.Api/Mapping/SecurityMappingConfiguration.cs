@@ -10,8 +10,25 @@ namespace Avalanche.Api.Mapping
     {
         public SecurityMappingConfiguration()
         {
-            CreateMap<UserCredentialsViewModel, UserModel>();
-            CreateMap<UserMessage, UserModel>();
+            CreateMap<UserCredentialsViewModel, UserModel>()
+                .ForMember(a => a.Id, opt => opt.Ignore())
+                .ForMember(a => a.DepartmentId, opt => opt.Ignore())
+                .ForMember(a => a.FirstName, opt => opt.Ignore())
+                .ForMember(a => a.IdnId, opt => opt.Ignore())
+                .ForMember(a => a.LastName, opt => opt.Ignore())
+                .ForMember(a => a.SiteId, opt => opt.Ignore())
+                .ForMember(a => a.SystemId, opt => opt.Ignore())
+                .ForMember(a => a.UserName, opt => opt.MapFrom(a => a.UserName));
+
+            CreateMap<UserMessage, UserModel>()
+                .ForMember(a => a.DepartmentId, opt => opt.Ignore())
+                .ForMember(a => a.IdnId, opt => opt.Ignore())
+                .ForMember(a => a.SiteId, opt => opt.Ignore())
+                .ForMember(a => a.SystemId, opt => opt.Ignore())
+                .ForMember(a => a.FirstName, opt => opt.MapFrom(a => a.FirstName))
+                .ForMember(a => a.LastName, opt => opt.MapFrom(a => a.LastName))
+                .ForMember(a => a.UserName, opt => opt.MapFrom(a => a.UserName))
+                .ForMember(a => a.Id, opt => opt.MapFrom(a => a.Id));
 
             CreateMap<AccessToken, AccessTokenViewModel>()
                 .ForMember(a => a.AccessToken, opt => opt.MapFrom(a => a.Token))
