@@ -105,13 +105,18 @@ namespace Avalanche.Security.Server.Core
             ThrowIfNull(nameof(user), user);
             _validator.ValidateAndThrow(user);
 
-            user.Password = _passwordHasher.HashPassword(user.Password);
-
             try
             {
                 var entity = _mapper.Map<UserEntity>(user);
 
                 await ThrowIfDuplicate(entity, true).ConfigureAwait(false);
+
+                var existingUser = await GetUser(user.UserName).ConfigureAwait(false);
+
+                if (existingUser.Password != existingUser.Password)
+                {
+                    user.Password = _passwordHasher.HashPassword(user.Password);
+                }
 
                 // perform update
                 _ = await UpdateUserEntity(entity).ConfigureAwait(false);
@@ -189,7 +194,7 @@ namespace Avalanche.Security.Server.Core
             // Check for existing data
             var query = _context.Users.Where(
                 x => x.UserName == entity.UserName
-            );
+            ).AsNoTracking();
 
             if (checkUpdate)
             {
@@ -214,10 +219,13 @@ namespace Avalanche.Security.Server.Core
             // No need to deal with logic around updating detatched entities and children.  Just delete the existing index if it already exists
             _ = await context.Users
                 .Where(x => x.Id == User.Id)
+                .AsNoTracking()
                 .BatchDeleteAsync()
                 .ConfigureAwait(false);
 
-            User = context.Users.Add(User).Entity;
+            User = context.Users
+                    .Add(User)
+                    .Entity;
             _ = await context.SaveChangesAsync().ConfigureAwait(false);
 
             return User;
@@ -253,6 +261,7 @@ namespace Avalanche.Security.Server.Core
             var query = _context.Users.Where(x => x.UserName == userName);
 
             var entity = await query
+                .AsNoTracking()
                 .FirstOrDefaultAsync()
                 .ConfigureAwait(false);
 
