@@ -29,7 +29,7 @@ namespace Avalanche.Api.Managers.Maintenance
             PrintingConfiguration printingConfiguration,
             MedPresenceConfiguration medPresenceConfiguration,
             SetupConfiguration setupConfiguration,
-            ProceduresSearchConfiguration proceduresSearchConfiguration,
+            ProceduresConfiguration proceduresConfiguration,
             LabelsConfiguration labelsConfiguration,
             RecorderConfiguration recorderConfiguration,
             IStorageService storageService,
@@ -38,7 +38,7 @@ namespace Avalanche.Api.Managers.Maintenance
                 printingConfiguration,
                 medPresenceConfiguration,
                 setupConfiguration,
-                proceduresSearchConfiguration)
+                proceduresConfiguration)
         {
             _autoLabelsConfiguration = autoLabelsConfiguration;
             _labelsConfiguration = labelsConfiguration;

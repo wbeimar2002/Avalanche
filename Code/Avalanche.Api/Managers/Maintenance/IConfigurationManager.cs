@@ -13,7 +13,7 @@ namespace Avalanche.Api.Managers.Maintenance
         LabelsConfiguration GetLabelsConfigurationSettings();
         SetupConfiguration GetSetupConfigurationSettings();
         RecorderConfiguration GetRecorderConfigurationSettings();
-        ProceduresSearchConfiguration GetProceduresSearchConfigurationSettings();
+        ProceduresConfiguration GetProceduresConfigurationSettings();
         Task UpdateAutoLabelsConfigurationByProcedureType(int procedureTypeId, List<AutoLabelAutoLabelsConfiguration> autoLabels);
         void UpdatePatientInfo(List<PatientInfoSetupConfiguration> patientInfoSetupConfigurations);
         void UpdateProceduresSearchConfigurationColumns(List<ColumnProceduresSearchConfiguration> columnProceduresSearchConfigurations);

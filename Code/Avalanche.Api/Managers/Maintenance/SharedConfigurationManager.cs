@@ -10,30 +10,30 @@ namespace Avalanche.Api.Managers.Maintenance
         private readonly MedPresenceConfiguration _medPresenceConfiguration;
         private readonly GeneralApiConfiguration _generalApiConfiguration;
         private readonly SetupConfiguration _setupConfiguration;
-        private readonly ProceduresSearchConfiguration _proceduresSearchConfiguration;
+        private readonly ProceduresConfiguration _proceduresConfiguration;
 
         public SharedConfigurationManager(
             GeneralApiConfiguration generalApiConfiguration,
             PrintingConfiguration printingConfiguration,
             MedPresenceConfiguration medPresenceConfiguration,
             SetupConfiguration setupConfiguration,
-            ProceduresSearchConfiguration proceduresSearchConfiguration)
+            ProceduresConfiguration proceduresConfiguration)
         {
             _generalApiConfiguration = generalApiConfiguration;
             _printingConfiguration = printingConfiguration;
             _medPresenceConfiguration = medPresenceConfiguration;
             _setupConfiguration = setupConfiguration;
-            _proceduresSearchConfiguration = proceduresSearchConfiguration;
+            _proceduresConfiguration = proceduresConfiguration;
         }
 
         public GeneralApiConfiguration GetGeneralApiConfigurationSettings() => _generalApiConfiguration;
         public PrintingConfiguration GetPrintingConfigurationSettings() => _printingConfiguration;
         public MedPresenceConfiguration GetMedPresenceConfigurationSettings() => _medPresenceConfiguration;
-        public ProceduresSearchConfiguration GetProceduresSearchConfigurationSettings() => _proceduresSearchConfiguration;
+        public ProceduresConfiguration GetProceduresConfigurationSettings() => _proceduresConfiguration;
         public SetupConfiguration GetSetupConfigurationSettings() => _setupConfiguration;
 
         public void UpdateProceduresSearchConfigurationColumns(List<ColumnProceduresSearchConfiguration> columnProceduresSearchConfigurations) =>
-            _proceduresSearchConfiguration.Columns = columnProceduresSearchConfigurations;
+            _proceduresConfiguration.Columns = columnProceduresSearchConfigurations;
 
         public void UpdatePatientInfo(List<PatientInfoSetupConfiguration> patientInfoSetupConfigurations) =>
             _setupConfiguration.PatientInfo = patientInfoSetupConfigurations;

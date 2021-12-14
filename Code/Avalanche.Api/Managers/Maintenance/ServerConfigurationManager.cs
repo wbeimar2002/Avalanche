@@ -13,11 +13,11 @@ namespace Avalanche.Api.Managers.Maintenance
             PrintingConfiguration printingConfiguration,
             MedPresenceConfiguration medPresenceConfiguration,
             SetupConfiguration setupConfiguration,
-            ProceduresSearchConfiguration proceduresSearchConfiguration) : base(generalApiConfiguration,
+            ProceduresConfiguration proceduresConfiguration) : base(generalApiConfiguration,
                 printingConfiguration,
                 medPresenceConfiguration,
                 setupConfiguration,
-                proceduresSearchConfiguration)
+                proceduresConfiguration)
         {
         }
 
