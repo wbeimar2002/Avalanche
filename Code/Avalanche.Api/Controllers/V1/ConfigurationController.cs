@@ -74,14 +74,14 @@ namespace Avalanche.Api.Controllers.V1
             }
         }
 
-        [HttpGet("settings/ProceduresSearchConfiguration")]
-        [Produces(typeof(ProceduresSearchConfiguration))]
-        public async Task<IActionResult> GetProceduresSearchConfigurationSettings()
+        [HttpGet("settings/ProceduresConfiguration")]
+        [Produces(typeof(ProceduresConfiguration))]
+        public async Task<IActionResult> GetProceduresConfigurationSettings()
         {
             try
             {
                 _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
-                var result = _maintenanceManager.GetProceduresSearchConfigurationSettings();
+                var result = _maintenanceManager.GetProceduresConfigurationSettings();
                 return Ok(result);
 
             }
