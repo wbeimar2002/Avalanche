@@ -33,6 +33,12 @@ namespace Avalanche.Api.Mapping
 
             CreateMap<ProcedureContentType, ContentType>();
 
+            CreateMap<VideoReferenceMessage, VideoPositionReferenceViewModel>()
+                .ForMember(dest => dest.OffsetFromVideoStart, opt => opt.MapFrom(src => GetTimeSpan(src.OffsetFromVideoStart)));
+
+            CreateMap<VideoPositionReferenceViewModel, VideoReferenceMessage>()
+                .ForMember(dest => dest.OffsetFromVideoStart, opt => opt.MapFrom(src => GetFixedTimeSpan(src.OffsetFromVideoStart)));
+
             CreateMap<ProcedureSearchFilterViewModel, GetFinishedProceduresRequest>()
                 .ForMember(dest => dest.Page, opt => opt.MapFrom(src => src.Page))
                 .ForMember(dest => dest.PageSize, opt => opt.MapFrom(src => src.Limit))
@@ -51,12 +57,19 @@ namespace Avalanche.Api.Mapping
                 .ForMember(dest => dest.HasPendingEdits, opt => opt.MapFrom(src => src.HasPendingEdits));
 
             CreateMap<ProcedureImageMessage, ImageContentViewModel>()
+                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
+                .ForMember(dest => dest.Label, opt => opt.MapFrom(src => src.Label))
+                .ForMember(dest => dest.VideoReference, opt => opt.MapFrom(src => src.VideoReference))
+                .ForMember(dest => dest.BackgroundVideoReference, opt => opt.MapFrom(src => src.BackgroundVideoReference))
                 .ForMember(dest => dest.Thumbnail, opt => opt.MapFrom(src => src.Thumbnail))
                 .ForMember(dest => dest.FileName, opt => opt.MapFrom(src => src.FileName))
                 .ForMember(dest => dest.Stream, opt => opt.MapFrom(src => src.Stream))
                 .ForMember(dest => dest.CaptureTimeUtc, opt => opt.MapFrom(src => GetDateTime(src.CaptureTimeUtc)));
 
             CreateMap<ProcedureVideoMessage, VideoContentViewModel>()
+                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
+                .ForMember(dest => dest.Label, opt => opt.MapFrom(src => src.Label))
+                .ForMember(dest => dest.BackgroundVideoReference, opt => opt.MapFrom(src => src.BackgroundVideoReference))
                 .ForMember(dest => dest.Thumbnail, opt => opt.MapFrom(src => src.Thumbnail))
                 .ForMember(dest => dest.FileName, opt => opt.MapFrom(src => src.FileName))
                 .ForMember(dest => dest.Length, opt => opt.MapFrom(src => src.Length))
@@ -64,12 +77,19 @@ namespace Avalanche.Api.Mapping
                 .ForMember(dest => dest.CaptureTimeUtc, opt => opt.MapFrom(src => GetDateTime(src.CaptureTimeUtc)));
 
             CreateMap<ImageContentViewModel, ProcedureImageMessage>()
+                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
+                .ForMember(dest => dest.Label, opt => opt.MapFrom(src => src.Label))
+                .ForMember(dest => dest.VideoReference, opt => opt.MapFrom(src => src.VideoReference))
+                .ForMember(dest => dest.BackgroundVideoReference, opt => opt.MapFrom(src => src.BackgroundVideoReference))
                 .ForMember(dest => dest.Thumbnail, opt => opt.MapFrom(src => src.Thumbnail))
                 .ForMember(dest => dest.FileName, opt => opt.MapFrom(src => src.FileName))
                 .ForMember(dest => dest.Stream, opt => opt.MapFrom(src => src.Stream))
                 .ForMember(dest => dest.CaptureTimeUtc, opt => opt.MapFrom(src => GetFixedDateTime(src.CaptureTimeUtc)));
 
             CreateMap<VideoContentViewModel, ProcedureVideoMessage>()
+                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
+                .ForMember(dest => dest.Label, opt => opt.MapFrom(src => src.Label))
+                .ForMember(dest => dest.BackgroundVideoReference, opt => opt.MapFrom(src => src.BackgroundVideoReference))
                 .ForMember(dest => dest.Thumbnail, opt => opt.MapFrom(src => src.Thumbnail))
                 .ForMember(dest => dest.FileName, opt => opt.MapFrom(src => src.FileName))
                 .ForMember(dest => dest.Length, opt => opt.MapFrom(src => src.Length))
@@ -215,13 +235,13 @@ namespace Avalanche.Api.Mapping
                 .ForMember(dest => dest.BackgroundVideos, opt => opt.MapFrom(src => src.BackgroundVideos));
 
 
-            CreateMap<Ism.IsmLogCommon.Core.AccessInfo, Ism.Library.V1.Protos.AccessInfoMessage>()
+            CreateMap<Ism.IsmLogCommon.Core.AccessInfo, AccessInfoMessage>()
                 .ReverseMap();
 
             CreateMap<ProcedureIdMessage, ProcedureIdViewModel>()
                 .ReverseMap();
 
-            CreateMap<Ism.Library.V1.Protos.AllocateNewProcedureResponse, ProcedureAllocationViewModel>()
+            CreateMap<AllocateNewProcedureResponse, ProcedureAllocationViewModel>()
                 .ReverseMap();
 
             CreateMap<RecordingTimelineModel, RecordingTimelineViewModel>();
@@ -253,6 +273,15 @@ namespace Avalanche.Api.Mapping
                 };
             }
         }
+
+        private FixedTimeSpanMessage GetFixedTimeSpan(TimeSpan time) => new FixedTimeSpanMessage()
+        {
+            Hour = time.Hours,
+            Minute = time.Minutes,
+            Second = time.Seconds,
+        };
+
+        private TimeSpan GetTimeSpan(FixedTimeSpanMessage time) => new TimeSpan(time.Hour, time.Minute, time.Second);
 
         private FixedDateTimeMessage GetFixedDateTime(DateTime dateTime) => new FixedDateTimeMessage()
         {
