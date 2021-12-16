@@ -143,7 +143,8 @@ namespace Avalanche.Api.Controllers.V1
             [FromRoute] string repository,
             [FromRoute] string id,
             [FromRoute] string requestId,
-            [FromBody] List<string> mediaFileNameList
+            [FromBody] List<string> mediaFileNameList,
+            bool includePHI = false
         )
         {
             try
@@ -154,7 +155,8 @@ namespace Avalanche.Api.Controllers.V1
                     {
                         ProcedureId = new ProcedureIdViewModel(id, repository),
                         MediaFileNameList = mediaFileNameList,
-                        RequestId = requestId
+                        RequestId = requestId,
+                        IncludePHI = includePHI
                     }
                 ).ConfigureAwait(false);
 
