@@ -144,7 +144,7 @@ namespace Avalanche.Api.Controllers.V1
             [FromRoute] string id,
             [FromRoute] string requestId,
             [FromBody] List<string> mediaFileNameList,
-            [FromBody] bool includePHI = false
+            bool includePHI = false
         )
         {
             try
