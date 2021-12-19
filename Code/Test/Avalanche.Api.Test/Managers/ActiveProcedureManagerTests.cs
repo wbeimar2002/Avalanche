@@ -27,7 +27,7 @@ namespace Avalanche.Api.Test.Managers
         private Mock<IRecorderService> _recorderService;
         private Mock<IStateClient> _stateClient;
         private Mock<IDataManager> _dataManager;
-        GeneralApiConfiguration _generalApiConfig;
+        LabelsConfiguration _labelsConfig;
 
         ActiveProcedureManager _manager;
 
@@ -43,9 +43,9 @@ namespace Avalanche.Api.Test.Managers
             _stateClient = new Mock<IStateClient>();
             _dataManager = new Mock<IDataManager>();
 
-            _generalApiConfig = new GeneralApiConfiguration();
+            _labelsConfig = new LabelsConfiguration();
 
-            _manager = new ActiveProcedureManager(_stateClient.Object, _libraryService.Object, _accessInfoFactory.Object, _mapper, _recorderService.Object, _dataManager.Object, _generalApiConfig);
+            _manager = new ActiveProcedureManager(_stateClient.Object, _libraryService.Object, _accessInfoFactory.Object, _mapper, _recorderService.Object, _dataManager.Object, _labelsConfig);
         }
 
         [Test]
@@ -239,7 +239,7 @@ namespace Avalanche.Api.Test.Managers
             _dataManager.Setup(d => d.AddLabel(labelModel)).ReturnsAsync(labelModel);
             _dataManager.Setup(d => d.GetLabel(It.IsAny<string>(), It.IsAny<Int32>())).ReturnsAsync(labelModel);
 
-            _generalApiConfig = new GeneralApiConfiguration
+            _labelsConfig = new LabelsConfiguration
             {
                 AdHocLabelsAllowed = true
             };
@@ -300,7 +300,7 @@ namespace Avalanche.Api.Test.Managers
             _dataManager.Setup(d => d.AddLabel(labelModel)).ReturnsAsync(labelModel);
             _dataManager.Setup(d => d.GetLabel(It.IsAny<string>(), It.IsAny<Int32>())).ReturnsAsync(labelModel);
 
-            _generalApiConfig = new GeneralApiConfiguration
+            _labelsConfig = new LabelsConfiguration
             {
                 AdHocLabelsAllowed = true
             };
@@ -360,7 +360,7 @@ namespace Avalanche.Api.Test.Managers
             _dataManager.Setup(d => d.AddLabel(labelModel)).ReturnsAsync(labelModel);
             _dataManager.Setup(d => d.GetLabel(It.IsAny<string>(), It.IsAny<Int32>())).ReturnsAsync(labelModel);
 
-            _generalApiConfig = new GeneralApiConfiguration
+            _labelsConfig = new LabelsConfiguration
             {
                 AdHocLabelsAllowed = true
             };
@@ -418,7 +418,7 @@ namespace Avalanche.Api.Test.Managers
 
             _dataManager.Setup(d => d.GetLabel(It.IsAny<string>(), It.IsAny<Int32>())).ReturnsAsync(labelModel);
 
-            _generalApiConfig = new GeneralApiConfiguration
+            _labelsConfig = new LabelsConfiguration
             {
                 AdHocLabelsAllowed = true
             };
@@ -477,7 +477,7 @@ namespace Avalanche.Api.Test.Managers
             _stateClient.Setup(s => s.GetData<ActiveProcedureState>()).ReturnsAsync(activeProcedure);
             _dataManager.Setup(d => d.GetLabel(It.IsAny<string>(), It.IsAny<Int32>())).ReturnsAsync(labelModel);
 
-            _generalApiConfig = new GeneralApiConfiguration
+            _labelsConfig = new LabelsConfiguration
             {
                 AdHocLabelsAllowed = true
             };

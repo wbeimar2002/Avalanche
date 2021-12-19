@@ -6,7 +6,6 @@ namespace Avalanche.Api.Managers.Maintenance
 {
     public interface IConfigurationManager
     {
-        GeneralApiConfiguration GetGeneralApiConfigurationSettings();
         PrintingConfiguration GetPrintingConfigurationSettings();
         MedPresenceConfiguration GetMedPresenceConfigurationSettings();
         AutoLabelsConfiguration GetAutoLabelsConfigurationSettings(int? procedureTypeId);

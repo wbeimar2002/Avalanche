@@ -25,7 +25,6 @@ namespace Avalanche.Api.Managers.Maintenance
 
         public DeviceConfigurationManager(
             AutoLabelsConfiguration autoLabelsConfiguration,
-            GeneralApiConfiguration generalApiConfiguration,
             PrintingConfiguration printingConfiguration,
             MedPresenceConfiguration medPresenceConfiguration,
             SetupConfiguration setupConfiguration,
@@ -34,7 +33,7 @@ namespace Avalanche.Api.Managers.Maintenance
             RecorderConfiguration recorderConfiguration,
             IStorageService storageService,
             IHttpContextAccessor httpContextAccessor,
-            IMapper mapper) : base(generalApiConfiguration,
+            IMapper mapper) : base(
                 printingConfiguration,
                 medPresenceConfiguration,
                 setupConfiguration,

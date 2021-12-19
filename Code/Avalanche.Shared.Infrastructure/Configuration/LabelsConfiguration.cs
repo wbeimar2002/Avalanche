@@ -9,6 +9,7 @@ namespace Avalanche.Shared.Infrastructure.Configuration
     public class LabelsConfiguration : IConfigurationPoco
     {
         public bool AutoLabelsEnabled { get; set; }
+        public bool AdHocLabelsAllowed { get; set; }
 
         public bool Validate()
         {
