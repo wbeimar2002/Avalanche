@@ -25,7 +25,7 @@ namespace Avalanche.Api.Test.Managers
         Mock<ILibraryService> _libraryService;
         Mock<IStateClient> _stateClient;
         Mock<IDataManager> _dataManager;
-        GeneralApiConfiguration _generalApiConfig;
+        LabelsConfiguration _labelsConfig;
         SetupConfiguration _setupConfiguration;
 
         ProceduresManager _manager;
@@ -44,10 +44,10 @@ namespace Avalanche.Api.Test.Managers
             _stateClient = new Mock<IStateClient>();
             _dataManager = new Mock<IDataManager>();
 
-            _generalApiConfig = new GeneralApiConfiguration();
+            _labelsConfig = new LabelsConfiguration();
             _setupConfiguration = new SetupConfiguration();
 
-            _manager = new ProceduresManager(_stateClient.Object, _libraryService.Object, _accessInfoFactory.Object, _mapper, _dataManager.Object, _generalApiConfig, _setupConfiguration);
+            _manager = new ProceduresManager(_stateClient.Object, _libraryService.Object, _accessInfoFactory.Object, _mapper, _dataManager.Object, _labelsConfig, _setupConfiguration);
         }
 
         [Test]

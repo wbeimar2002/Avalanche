@@ -27,14 +27,14 @@ namespace Avalanche.Api.Managers.Procedures
         private readonly IRecorderService _recorderService;
 
         private readonly IDataManager _dataManager;
-        private readonly GeneralApiConfiguration _generalApiConfig;
+        private readonly LabelsConfiguration _labelsConfig;
 
         public const int MinPageSize = 25;
         public const int MaxPageSize = 100;
 
         public ActiveProcedureManager(IStateClient stateClient, ILibraryService libraryService, IAccessInfoFactory accessInfoFactory,
             IMapper mapper, IRecorderService recorderService,
-            IDataManager dataManager, GeneralApiConfiguration generalApiConfig)
+            IDataManager dataManager, LabelsConfiguration labelsConfig)
         {
             _stateClient = stateClient;
             _libraryService = libraryService;
@@ -44,7 +44,7 @@ namespace Avalanche.Api.Managers.Procedures
             _accessInfoFactory = accessInfoFactory;
             _recorderService = recorderService;
             _dataManager = dataManager;
-            _generalApiConfig = generalApiConfig;
+            _labelsConfig = labelsConfig;
         }
 
         /// <summary>
@@ -173,7 +173,7 @@ namespace Avalanche.Api.Managers.Procedures
             var activeProcedure = await _stateClient.GetData<ActiveProcedureState>().ConfigureAwait(false);
 
             // If adhoc labels allowed option enabled, add label to store
-            if (_generalApiConfig.AdHocLabelsAllowed)
+            if (_labelsConfig.AdHocLabelsAllowed)
             {
                 var newLabel = await _dataManager.GetLabel(labelContent.Label, activeProcedure.ProcedureType?.Id).ConfigureAwait(false);
                 if (newLabel == null || newLabel?.Id == 0)

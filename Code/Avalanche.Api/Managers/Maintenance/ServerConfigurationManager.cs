@@ -9,11 +9,10 @@ namespace Avalanche.Api.Managers.Maintenance
     public class ServerConfigurationManager : SharedConfigurationManager, IConfigurationManager
     {
         public ServerConfigurationManager(
-            GeneralApiConfiguration generalApiConfiguration,
             PrintingConfiguration printingConfiguration,
             MedPresenceConfiguration medPresenceConfiguration,
             SetupConfiguration setupConfiguration,
-            ProceduresConfiguration proceduresConfiguration) : base(generalApiConfiguration,
+            ProceduresConfiguration proceduresConfiguration) : base(
                 printingConfiguration,
                 medPresenceConfiguration,
                 setupConfiguration,

@@ -65,7 +65,6 @@ namespace Avalanche.Api
                 new ConfigurationServiceRequest(nameof(TimeoutApiConfiguration), 1, context),
                 new ConfigurationServiceRequest(nameof(RecorderConfiguration), 1, context),
                 ConfigurationServiceRequestFactory.CreateRequest<SetupConfiguration>(context),
-                ConfigurationServiceRequestFactory.CreateRequest<GeneralApiConfiguration>(context),
                 ConfigurationServiceRequestFactory.CreateRequest<ProceduresConfiguration>(context),
                 ConfigurationServiceRequestFactory.CreateRequest<AutoLabelsConfiguration>(context),
                 ConfigurationServiceRequestFactory.CreateRequest<LabelsConfiguration>(context),
