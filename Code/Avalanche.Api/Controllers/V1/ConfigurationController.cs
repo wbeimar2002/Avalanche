@@ -62,7 +62,6 @@ namespace Avalanche.Api.Controllers.V1
                 _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
                 var result = _maintenanceManager.GetProceduresConfigurationSettings();
                 return Ok(result);
-
             }
             catch (Exception ex)
             {

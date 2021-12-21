@@ -8,7 +8,7 @@ namespace Avalanche.Api.ViewModels
         public string SourceName { get; set; }
         public string ChannelName { get; set; }
         public string RelativePath { get; set; }
-        public string Label { get; set; }
+        public string? Label { get; set; }
         public string ThumbnailRelativePath { get; set; }
         public DateTimeOffset VideoStartTimeUtc { get; set; }
         public DateTimeOffset? VideoStopTimeUtc { get; set; }
