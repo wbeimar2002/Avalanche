@@ -64,6 +64,7 @@ namespace Avalanche.Api.Controllers.V1
         /// Gets the current pgs/timeout room state
         /// </summary>
         [HttpGet("pgsTimeout/roomState")]
+        [Produces(typeof(ResponseValueViewModel))]
         public async Task<IActionResult> GetPgsTimeoutRoomState()
         {
             try
@@ -163,6 +164,7 @@ namespace Avalanche.Api.Controllers.V1
         /// Gets the checked state for all pgs sinks
         /// </summary>
         [HttpGet("pgs/sinks/state")]
+        [Produces(typeof(List<PgsSinkStateModel>))]
         public async Task<IActionResult> GetPgsStateForSinks()
         {
             try
@@ -215,6 +217,7 @@ namespace Avalanche.Api.Controllers.V1
         /// Gets the current pgs audio volume. Range is from 0-1
         /// </summary>
         [HttpGet("pgs/volume/level")]
+        [Produces(typeof(ResponseValueViewModel))]
         public async Task<IActionResult> GetPgsVolume()
         {
             try
@@ -237,6 +240,7 @@ namespace Avalanche.Api.Controllers.V1
         /// <summary>
         /// Sets the PGS player audio mute
         /// </summary>
+        /// <param name="muteState"></param>
         [HttpPut("pgs/volume/mute/{muteState}")]
         [ProducesResponseType(typeof(void), StatusCodes.Status200OK)]
         public async Task<IActionResult> SetPgsMute(bool muteState)
@@ -262,6 +266,7 @@ namespace Avalanche.Api.Controllers.V1
         /// Gets if the pgs player audio is muted
         /// </summary>
         [HttpGet("pgs/volume/mute")]
+        [Produces(typeof(ResponseValueViewModel))]
         public async Task<IActionResult> GetPgsMute()
         {
             try
@@ -385,6 +390,7 @@ namespace Avalanche.Api.Controllers.V1
         /// Returns true/false if the pgs video is playing or paused
         /// </summary>
         [HttpGet("pgs/playbackstate")]
+        [Produces(typeof(ResponseValueViewModel))]
         public async Task<IActionResult> GetPgsPlaybackState()
         {
             try
@@ -509,6 +515,7 @@ namespace Avalanche.Api.Controllers.V1
         /// Get current page in timeout file
         /// </summary>
         [HttpGet("timeout/pages/current")]
+        [Produces(typeof(ResponseValueViewModel))]
         public async Task<IActionResult> GetCurrentPage()
         {
             try
@@ -529,9 +536,10 @@ namespace Avalanche.Api.Controllers.V1
         }
 
         /// <summary>
-        /// Get page count from timeout file 
+        /// Get page count from timeout file
         /// </summary>
         [HttpGet("timeout/pages/count")]
+        [Produces(typeof(ResponseValueViewModel))]
         public async Task<IActionResult> GetPagesCount()
         {
             try
@@ -604,6 +612,7 @@ namespace Avalanche.Api.Controllers.V1
         /// Gets the timeout mode. It's either a pdf file or a video source
         /// </summary>
         [HttpGet("timeout/mode")]
+        [Produces(typeof(ResponseValueViewModel))]
         public async Task<IActionResult> GetTimeoutMode()
         {
             try
