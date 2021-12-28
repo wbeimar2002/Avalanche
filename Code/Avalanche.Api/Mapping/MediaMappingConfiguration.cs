@@ -27,6 +27,15 @@ namespace Avalanche.Api.Mapping
                     opt => opt.MapFrom(src => src.Index))
                 .ReverseMap();
 
+            CreateMap<Avalanche.Api.ViewModels.AliasIndexViewModel, Ism.Routing.V1.Protos.AliasIndexMessage>()
+                .ForMember(dest =>
+                    dest.Alias,
+                    opt => opt.MapFrom(src => src.Alias))
+                .ForMember(dest =>
+                    dest.Index,
+                    opt => opt.MapFrom(src => src.Index))
+                .ReverseMap();
+
             // system state model to domain model
             CreateMap<Ism.SystemState.Models.VideoRouting.AliasIndexModel, AliasIndexModel>()
                 .ForMember(dest =>
