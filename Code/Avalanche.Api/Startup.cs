@@ -140,6 +140,7 @@ namespace Avalanche.Api
                 services.AddConfigurationPoco<AutoLabelsConfiguration>(_configuration, nameof(AutoLabelsConfiguration));
                 services.AddConfigurationPoco<LabelsConfiguration>(_configuration, nameof(LabelsConfiguration));
                 services.AddConfigurationPoco<VaultStreamServerConfiguration>(_configuration, nameof(VaultStreamServerConfiguration));
+                services.AddConfigurationPoco<FinishOptionsConfiguration>(_configuration, nameof(FinishOptionsConfiguration));
             }
 
             //Shared

@@ -71,6 +71,7 @@ namespace Avalanche.Api
                 ConfigurationServiceRequestFactory.CreateRequest<PrintingConfiguration>(context),
                 ConfigurationServiceRequestFactory.CreateRequest<MedPresenceConfiguration>(context),
                 ConfigurationServiceRequestFactory.CreateRequest<VaultStreamServerConfiguration>(context),
+                ConfigurationServiceRequestFactory.CreateRequest<FinishOptionsConfiguration>(context),
             };
         }
     }

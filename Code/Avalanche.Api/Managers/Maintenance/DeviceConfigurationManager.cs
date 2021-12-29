@@ -20,6 +20,7 @@ namespace Avalanche.Api.Managers.Maintenance
         private readonly AutoLabelsConfiguration _autoLabelsConfiguration;
         private readonly LabelsConfiguration _labelsConfiguration;
         private readonly RecorderConfiguration _recorderConfiguration;
+        private readonly FinishOptionsConfiguration _finishOptionsConfiguration;
 
         private readonly IStorageService _storageService;
 
@@ -31,6 +32,7 @@ namespace Avalanche.Api.Managers.Maintenance
             ProceduresConfiguration proceduresConfiguration,
             LabelsConfiguration labelsConfiguration,
             RecorderConfiguration recorderConfiguration,
+            FinishOptionsConfiguration finishOptionsConfiguration,
             IStorageService storageService,
             IHttpContextAccessor httpContextAccessor,
             IMapper mapper) : base(
@@ -42,6 +44,7 @@ namespace Avalanche.Api.Managers.Maintenance
             _autoLabelsConfiguration = autoLabelsConfiguration;
             _labelsConfiguration = labelsConfiguration;
             _recorderConfiguration = recorderConfiguration;
+            _finishOptionsConfiguration = finishOptionsConfiguration;
 
             _storageService = storageService;
 
@@ -59,6 +62,8 @@ namespace Avalanche.Api.Managers.Maintenance
         public LabelsConfiguration GetLabelsConfigurationSettings() => _labelsConfiguration;
 
         public RecorderConfiguration GetRecorderConfigurationSettings() => _recorderConfiguration;
+
+        public FinishOptionsConfiguration GetFinishOptionsConfigurationSettings() => _finishOptionsConfiguration;
 
         public async Task UpdateAutoLabelsConfigurationByProcedureType(int procedureTypeId, List<AutoLabelAutoLabelsConfiguration> autoLabels)
         {

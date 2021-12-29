@@ -9,6 +9,7 @@ namespace Avalanche.Shared.Infrastructure.Configuration
     {
         public GeneralSetupConfiguration General { get; set; }
         public RegistrationSetupConfiguration Registration { get; set; }
+        public List<SearchColumnsConfiguration> SearchColumns { get; set; }
         public List<PatientInfoSetupConfiguration> PatientInfo { get; set; }
 
         public bool Validate()
@@ -25,10 +26,16 @@ namespace Avalanche.Shared.Infrastructure.Configuration
         public bool Required { get; set; }
     }
 
+    public class SearchColumnsConfiguration
+    {
+        public string Id { get; set; }
+        public string LabelTranslationKey { get; set; }
+        public bool Display { get; set; }
+    }
+
     public class GeneralSetupConfiguration
     {
         public int Mode { get; set; }
-        public int ScreenMode { get; set; }
         public bool DepartmentsSupported { get; set; }
     }
 
@@ -36,7 +43,6 @@ namespace Avalanche.Shared.Infrastructure.Configuration
     {
         public bool IsAllowed { get; set; }
         public string DateFormat { get; set; }
-        public bool UseAdministratorAsPhysician { get; set; }
     }
 
     public class ManualSetupConfiguration
