@@ -7,7 +7,6 @@ namespace Avalanche.Shared.Infrastructure.Configuration
     [ConfigurationRequest(nameof(PrintingConfiguration), 1)]
     public class PrintingConfiguration : IConfigurationPoco
     {
-        public bool AllowExportToUSB { get; set; }
         public bool UseVSSPrintingService { get; set; }
 
         public bool Validate()
