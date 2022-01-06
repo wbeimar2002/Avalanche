@@ -123,8 +123,8 @@ stages:
        displayName: 'Install Node'
 
      - script: |
-        npm install -g @angular/cli@12.0.1
-       displayName: 'npm install -g @angular/cli@12.0.1'
+        npm install -g @angular/cli@12.0.5
+       displayName: 'npm install -g @angular/cli@12.0.5'
        workingDirectory: 'avalanche-api-client'
 
      - script: |
