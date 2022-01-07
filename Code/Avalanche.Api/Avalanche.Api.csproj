@@ -45,7 +45,7 @@
   <ItemGroup>
     <PackageReference Include="AutoFixture" Version="4.17.0" />
     <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="8.1.1" />
-    <PackageReference Include="Avalanche.Security.Server.Client" Version="1.0.0-prerelease0004" />
+    <PackageReference Include="Avalanche.Security.Server.Client" Version="1.0.0-prerelease0005" />
     <PackageReference Include="AvidisDeviceInterface.Client" Version="1.0.0-prerelease0020" />
     <PackageReference Include="Grpc.Tools" Version="2.42.0">
       <PrivateAssets>all</PrivateAssets>
@@ -57,7 +57,9 @@
     </PackageReference>
     <PackageReference Include="Ism.Common.Core.Hosting" Version="1.0.0-prerelease050" />
     <PackageReference Include="Ism.Log.Common.Core" Version="1.0.0-prerelease19" />
+
     <PackageReference Include="Ism.PgsTimeout.Client" Version="1.0.0-prerelease0016" />
+
     <PackageReference Include="Ism.Recorder.Client" Version="1.0.0-prerelease0044" />
     <PackageReference Include="Ism.Routing.Client" Version="1.0.0-prerelease0018" />
     <PackageReference Include="Ism.PatientInfoEngine.Client" Version="1.0.0-prerelease0032" />
@@ -78,11 +80,11 @@
     <PackageReference Include="System.Text.Json" Version="5.0.2" />
     <PackageReference Include="Polly" Version="7.2.2" />
     <PackageReference Include="Ism.Storage.DataManagement.Client" Version="1.0.0-prerelease0045" />
-    <PackageReference Include="Ism.Library.Client" Version="1.0.0-prerelease0068" />
+    <PackageReference Include="Ism.SystemState.Client" Version="1.0.0-prerelease0088" />
     <PackageReference Include="Ism.Storage.PatientList.Client" Version="1.0.0-prerelease0030" />
     <PackageReference Include="Ism.PrintServer.Client" Version="1.0.0-prerelease0009" />
-    <PackageReference Include="Ism.SystemState.Client" Version="1.0.0-prerelease0088" />
     <PackageReference Include="Ism.Medpresence.Client" Version="1.0.0-prerelease0006" />
+    <PackageReference Include="Ism.Library.Client" Version="1.0.0-prerelease0073" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(Configuration)'=='DebugLocal'">
