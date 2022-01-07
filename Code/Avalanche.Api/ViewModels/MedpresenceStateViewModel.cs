@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+using Ism.SystemState.Models.Medpresence;
 
 namespace Avalanche.Api.ViewModels
 {
@@ -9,6 +9,6 @@ namespace Avalanche.Api.ViewModels
         public bool IsRecording { get; set; }
         public int ImageCount { get; set; }
         public int ClipCount { get; set; }
-        public List<string>? Attendees { get; set; }
+        public MedpresenceAttendees? Attendees { get; set; }
     }
 }

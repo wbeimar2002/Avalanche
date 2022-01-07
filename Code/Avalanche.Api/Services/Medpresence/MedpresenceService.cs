@@ -1,4 +1,3 @@
-using Avalanche.Api.ViewModels;
 using Ism.Common.Core.Aspects;
 using Ism.Medpresence.Client.V1;
 using Ism.MP.V1.Protos;
@@ -7,6 +6,8 @@ using System.Threading.Tasks;
 
 namespace Avalanche.Api.Services.Medpresence
 {
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Performance", "CA1848:Use the LoggerMessage delegates", Justification = "Pending refactoring...this would affect unit testing")]
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Usage", "CA2254:Template should be a static expression", Justification = "Pending refactoring...this would affect unit testing")]
     public class MedpresenceService : IMedpresenceService
     {
         private readonly ILogger<MedpresenceService> _logger;
@@ -65,6 +66,27 @@ namespace Avalanche.Api.Services.Medpresence
         {
             await _medpresence.ArchiveSession(request).ConfigureAwait(false);
             _logger.LogInformation($"Saved session with id: {request.SessionId}");
+        }
+
+        [AspectLogger]
+        public async Task<GuestListReply> GetGuestList()
+        {
+            _logger.LogInformation("Getting guest list...");
+            return await _medpresence.GetGuestList().ConfigureAwait(false);
+        }
+
+        [AspectLogger]
+        public async Task InviteGuests(InviteRequest request)
+        {
+            _logger.LogInformation("Requesting secure invitations...");
+            await _medpresence.InviteGuests(request).ConfigureAwait(false);
+        }
+
+        [AspectLogger]
+        public async Task ExecuteInMeetingCommand(InMeetingCommandRequest request)
+        {
+            _logger.LogInformation("Requesting secure invitations...");
+            await _medpresence.ExecuteInMeetingCommand(request).ConfigureAwait(false);
         }
     }
 }
