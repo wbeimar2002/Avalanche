@@ -43,7 +43,7 @@ namespace Avalanche.Api.Test.Managers
             {
                 State = "service",
                 SessionId = 12345,
-                Attendees = new List<string>() { "saibal" },
+                Attendees = new MedpresenceAttendees(),
                 IsRecording = true,
                 ClipCount = 101,
                 ImageCount = 101

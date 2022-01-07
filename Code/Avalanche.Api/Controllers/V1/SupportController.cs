@@ -17,6 +17,8 @@ namespace Avalanche.Api.Controllers.V1
     [Route("[controller]")]
     [ApiController]
     [Authorize]
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Performance", "CA1848:Use the LoggerMessage delegates", Justification = "Pending refactoring...this would affect unit testing")]
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Usage", "CA2254:Template should be a static expression", Justification = "Pending refactoring...this would affect unit testing")]
     public class SupportController : ControllerBase
     {
         private readonly ILogger _logger;
@@ -193,6 +195,71 @@ namespace Avalanche.Api.Controllers.V1
                 _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
 
                 await _medpresence.DiscardSessionAsync(sessionId).ConfigureAwait(false);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, LoggerHelper.GetLogMessage(DebugLogType.Exception), ex);
+                return new BadRequestObjectResult(ex.Get(_environment.IsDevelopment()));
+            }
+            finally
+            {
+                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
+            }
+        }
+
+        [HttpGet("guests")]
+        [ProducesResponseType(typeof(MedpresenceGuestListViewModel), StatusCodes.Status200OK)]
+        public async Task<IActionResult> GetServiceGuestList()
+        {
+            try
+            {
+                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
+                var list = await _medpresence.GetGuestList().ConfigureAwait(false);
+                return Ok(list);
+            }
+            catch(Exception ex)
+            {
+                _logger.LogError(ex, LoggerHelper.GetLogMessage(DebugLogType.Exception), ex);
+                return new BadRequestObjectResult(ex.Get(_environment.IsDevelopment()));
+            }
+            finally
+            {
+                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
+            }
+        }
+
+        [HttpPost("guests/invitations")]
+        [ProducesResponseType(typeof(void), StatusCodes.Status200OK)]
+        public async Task<IActionResult> InviteGuests(MedpresenceInviteViewModel request)
+        {
+            try
+            {
+                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
+
+                await _medpresence.InviteGuests(request).ConfigureAwait(false);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, LoggerHelper.GetLogMessage(DebugLogType.Exception), ex);
+                return new BadRequestObjectResult(ex.Get(_environment.IsDevelopment()));
+            }
+            finally
+            {
+                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
+            }
+        }
+
+        [HttpPost("sessions/commands")]
+        [ProducesResponseType(typeof(void), StatusCodes.Status200OK)]
+        public async Task<IActionResult> ExecuteInSessionCommand(MedpresenceInSessionCommandViewModel request)
+        {
+            try
+            {
+                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
+
+                await _medpresence.ExecuteInSessionCommand(request).ConfigureAwait(false);
                 return Ok();
             }
             catch (Exception ex)

@@ -31,6 +31,8 @@ namespace Avalanche.Api.Mapping
                      Id = src.ProcedureType.Id,
                      Name = src.ProcedureType.Name
                  } : null));
+            _ = CreateMap<MedpresenceSecureGuestMessage, MedpresenceSecureGuest>().ReverseMap();
+            _ = CreateMap<MedpresencePractitionerMessage, MedpresencePractitioner>().ReverseMap();
         }
     }
 }

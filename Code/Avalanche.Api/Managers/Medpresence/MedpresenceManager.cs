@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using Avalanche.Api.Mapping;
@@ -42,5 +44,26 @@ namespace Avalanche.Api.Managers.Medpresence
 
         public async Task ArchiveSessionAsync(ArchiveServiceViewModel request) =>
             await _medpresenceService.ArchiveSessionAsync(_mapper.Map<ArchiveSessionRequest>(request)).ConfigureAwait(false);
+
+        public async Task<MedpresenceGuestListViewModel> GetGuestList()
+        {
+            var result = await _medpresenceService.GetGuestList().ConfigureAwait(false);
+            return new MedpresenceGuestListViewModel
+            {
+                GuestList = _mapper.Map<IEnumerable<MedpresencePractitioner>>(result.Guests).ToList()
+            };
+        }
+
+        public async Task InviteGuests(MedpresenceInviteViewModel request)
+        {
+            var message = new InviteRequest();
+            message.Invitees.AddRange(_mapper.Map<IEnumerable<MedpresenceSecureGuestMessage>>(request.Invitees));
+            await _medpresenceService.InviteGuests(message).ConfigureAwait(false);
+        }
+
+        public async Task ExecuteInSessionCommand(MedpresenceInSessionCommandViewModel request) => await _medpresenceService.ExecuteInMeetingCommand(new InMeetingCommandRequest
+        {
+            Request = request.Command
+        }).ConfigureAwait(false);
     }
 }
