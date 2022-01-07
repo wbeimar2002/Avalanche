@@ -81,16 +81,14 @@
     <PackageReference Include="Ism.Library.Client" Version="1.0.0-prerelease0068" />
     <PackageReference Include="Ism.Storage.PatientList.Client" Version="1.0.0-prerelease0030" />
     <PackageReference Include="Ism.PrintServer.Client" Version="1.0.0-prerelease0009" />
+    <PackageReference Include="Ism.SystemState.Client" Version="1.0.0-prerelease0088" />
+    <PackageReference Include="Ism.Medpresence.Client" Version="1.0.0-prerelease0006" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(Configuration)'=='DebugLocal'">
-    <PackageReference Include="Ism.SystemState.Client" Version="99.99.*" />
-    <PackageReference Include="Ism.Medpresence.Client" Version="99.99.*" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(Configuration)'=='Release'  Or '$(Configuration)'=='Debug'">
-    <PackageReference Include="Ism.SystemState.Client" Version="1.0.0-prerelease0087" />
-    <PackageReference Include="Ism.Medpresence.Client" Version="1.0.0-prerelease0005" />
   </ItemGroup>
 
   <ItemGroup>
