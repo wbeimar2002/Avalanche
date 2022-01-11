@@ -1,11 +1,11 @@
+using System;
 using System.Collections.Generic;
+using System.Text;
 using System.Threading.Tasks;
 using Avalanche.Security.Server.Core.Interfaces;
 using Avalanche.Security.Server.Core.Models;
 
-using static Ism.Utility.Core.Preconditions;
-
-namespace Avalanche.Security.Server.Managers
+namespace Avalanche.Security.Server.Core.Managers
 {
     public class UsersManager : IUsersManager
     {
