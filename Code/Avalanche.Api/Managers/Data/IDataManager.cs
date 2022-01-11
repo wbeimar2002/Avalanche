@@ -14,8 +14,6 @@ namespace Avalanche.Api.Managers.Data
         Task<ProcedureTypeModel> AddProcedureType(ProcedureTypeModel procedureType);
         Task DeleteProcedureType(ProcedureTypeModel procedureType);
         Task<List<ProcedureTypeModel>> GetProcedureTypesByDepartment(int? departmentId);
-        Task ValidateDepartmentsSupport();
-        Task ValidateDepartmentsSupport(int? departmentId);
         Task<List<ProcedureTypeModel>> GetAllProcedureTypes();
         Task<LabelModel> AddLabel(LabelModel label);
         Task UpdateLabel(LabelModel label);

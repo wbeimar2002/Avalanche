@@ -110,7 +110,6 @@ namespace Avalanche.Api.Managers.Data
 
         public async Task<DepartmentModel> AddDepartment(DepartmentModel department)
         {
-            await ValidateDepartmentsSupport().ConfigureAwait(false);
             Preconditions.ThrowIfNull(nameof(department.Name), department.Name);
 
             var result = await _dataManagementService.AddDepartment(_mapper.Map<DepartmentModel, AddDepartmentRequest>(department)).ConfigureAwait(false);
@@ -119,15 +118,11 @@ namespace Avalanche.Api.Managers.Data
 
         public async Task DeleteDepartment(int departmentId)
         {
-            await ValidateDepartmentsSupport().ConfigureAwait(false);
-
             await _dataManagementService.DeleteDepartment(new DeleteDepartmentRequest() { DepartmentId = departmentId }).ConfigureAwait(false);
         }
 
         public async Task<IList<DepartmentModel>> GetAllDepartments()
         {
-            await ValidateDepartmentsSupport().ConfigureAwait(false);
-
             var result = await _dataManagementService.GetAllDepartments().ConfigureAwait(false);
 
             return _mapper.Map<IList<DepartmentMessage>, IList<DepartmentModel>>(result.DepartmentList)
@@ -136,8 +131,8 @@ namespace Avalanche.Api.Managers.Data
 
         public async Task<ProcedureTypeModel> AddProcedureType(ProcedureTypeModel procedureType)
         {
-            await ValidateDepartmentsSupport(procedureType.DepartmentId).ConfigureAwait(false);
             Preconditions.ThrowIfNull(nameof(procedureType.Name), procedureType.Name);
+            Preconditions.ThrowIfNull(nameof(procedureType.DepartmentId), procedureType.DepartmentId);
 
             var result = await _dataManagementService.AddProcedureType(_mapper.Map<ProcedureTypeModel, AddProcedureTypeRequest>(procedureType)).ConfigureAwait(false);
             return _mapper.Map<AddProcedureTypeResponse, ProcedureTypeModel>(result);
@@ -146,15 +141,14 @@ namespace Avalanche.Api.Managers.Data
         public async Task DeleteProcedureType(ProcedureTypeModel procedureType)
         {
             Preconditions.ThrowIfNull(nameof(procedureType.Name), procedureType.Name);
-
-            await ValidateDepartmentsSupport(procedureType.DepartmentId).ConfigureAwait(false);
+            Preconditions.ThrowIfNull(nameof(procedureType.DepartmentId), procedureType.DepartmentId);
 
             await _dataManagementService.DeleteProcedureType(_mapper.Map<ProcedureTypeModel, DeleteProcedureTypeRequest>(procedureType)).ConfigureAwait(false);
         }
 
         public async Task<List<ProcedureTypeModel>> GetProcedureTypesByDepartment(int? departmentId)
         {
-            await ValidateDepartmentsSupport(departmentId);
+            Preconditions.ThrowIfNull(nameof(departmentId), departmentId);
 
             var result = await _dataManagementService.GetProcedureTypesByDepartment(new GetProcedureTypesByDepartmentRequest()
             {
@@ -168,35 +162,6 @@ namespace Avalanche.Api.Managers.Data
         {
             var result = await _dataManagementService.GetAllProcedureTypes().ConfigureAwait(false);
             return _mapper.Map<IList<ProcedureTypeMessage>, IList<ProcedureTypeModel>>(result.ProcedureTypeList).ToList();
-        }
-
-        public async Task ValidateDepartmentsSupport()
-        {
-            var departmentSupported = _setupConfiguration.General.DepartmentsSupported;
-            if (!departmentSupported)
-            {
-                throw new InvalidOperationException("Departments are not supported");
-            }
-        }
-
-        public async Task ValidateDepartmentsSupport(int? departmentId)
-        {
-            var departmentSupported = _setupConfiguration.General.DepartmentsSupported;
-#warning TODO: Check the strategy to throw business logic exceptions. Same exceptions in Patients Manager
-            if (departmentSupported)
-            {
-                if (departmentId == null || departmentId == 0)
-                {
-                    throw new ArgumentNullException("Department value is invalid. It should not be null. Departments are supported.");
-                }
-            }
-            else
-            {
-                if (departmentId != null && departmentId != 0)
-                {
-                    throw new ArgumentException("Department value is invalid. Departments are not supported.");
-                }
-            }
         }
 
         public async Task<LabelModel> AddLabel(LabelModel label)
