@@ -183,9 +183,9 @@ namespace Avalanche.Security.Server.Core
                 .ConfigureAwait(false);
 
 
-        private Task<UserEntity> UpdateUserEntity(UserEntity UserEntity)
+        private Task<UserEntity> UpdateUserEntity(UserEntity userEntity)
         {
-            Task<UserEntity> writerFunction(SecurityDbContext context) => AddOrUpdateWriter(UserEntity, context);
+            Task<UserEntity> writerFunction(SecurityDbContext context) => AddOrUpdateWriter(userEntity, context);
             return _writer.Write(writerFunction);
         }
 
@@ -211,24 +211,24 @@ namespace Avalanche.Security.Server.Core
             }
         }
 
-        private static async Task<UserEntity> AddOrUpdateWriter(UserEntity User, SecurityDbContext context)
+        private static async Task<UserEntity> AddOrUpdateWriter(UserEntity user, SecurityDbContext context)
         {
             // Normally we would have to lock around dependent operations
             // But because this class orchestrates it's writes through a single threaded DatabaseWriter we can skip that overhead
 
             // No need to deal with logic around updating detatched entities and children.  Just delete the existing index if it already exists
             _ = await context.Users
-                .Where(x => x.Id == User.Id)
+                .Where(x => x.Id == user.Id)
                 .AsNoTracking()
                 .BatchDeleteAsync()
                 .ConfigureAwait(false);
 
-            User = context.Users
-                    .Add(User)
+            user = context.Users
+                    .Add(user)
                     .Entity;
             _ = await context.SaveChangesAsync().ConfigureAwait(false);
 
-            return User;
+            return user;
         }
 
         #region Disposable
