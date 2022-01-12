@@ -198,6 +198,29 @@ namespace Avalanche.Security.Server.Test.Repositories
             Assert.Equal(user.UserName, readModel.UserName);
         }
 
+        //public async Task AddOrUpdateUser_WriteSucceeds()
+        //{
+        //    // Arrange
+        //    var repository = Utilities.GetUserRepository(_options, _output, out var _);
+        //    var user = Fakers.GetUserFaker().Generate();
+
+        //    // Act
+        //    user = await repository.AddOrUpdateUser(user).ConfigureAwait(false);
+
+        //    // Assert
+        //    using var context = new SecurityDbContext(_options);
+        //    var readEntity = await context.Users
+        //        .FirstAsync(x => x.UserName == user.UserName)
+        //        .ConfigureAwait(false);
+
+        //    var mapper = Utilities.GetMapper(typeof(SecurityDbContext));
+        //    var readModel = mapper.Map<UserModel>(readEntity);
+
+        //    Assert.NotNull(readModel);
+        //    Assert.NotNull(readModel.UserName);
+        //    Assert.Equal(user.UserName, readModel.UserName);
+        //}
+
         public async Task DeleteUser_DeleteSucceeds()
         {
             // Arrange

@@ -7,6 +7,7 @@ using AutoMapper;
 using Avalanche.Security.Server.Core;
 using Avalanche.Security.Server.Core.Security.Hashing;
 using Avalanche.Security.Server.Core.Validators;
+using Avalanche.Security.Server.Security.Hashing;
 using Ism.Storage.Core.Infrastructure;
 using Ism.Storage.Core.Infrastructure.Interfaces;
 using Microsoft.Data.Sqlite;
@@ -22,7 +23,7 @@ namespace Avalanche.Security.Server.Test
     public static class Utilities
     {
         private static readonly Random Random = new Random();
-        private static readonly IPasswordHasher PasswordHasher;
+        private static readonly IPasswordHasher passwordHasher = new PasswordHasher();
 
         public static string CreateString(int stringLength)
         {
@@ -99,7 +100,7 @@ namespace Avalanche.Security.Server.Test
                 new SecurityDbContext(options),
                 dbWriter.Object,
                 new UserValidator(),
-                PasswordHasher
+                passwordHasher
             );
         }
 
@@ -117,16 +118,22 @@ namespace Avalanche.Security.Server.Test
 
         public static UserRepository GetUserRepository(DbContextOptions<SecurityDbContext> options, ITestOutputHelper output, DatabaseWriter<SecurityDbContext> databaseWriter, out Mock<ILogger<UserRepository>> logger)
         {
-            logger = GetLoggerMock<UserRepository>(output);
+            try
+            {
+                logger = GetLoggerMock<UserRepository>(output);
 
-            return new UserRepository(
-                logger.Object,
-                GetMapper(typeof(SecurityDbContext)),
-                new SecurityDbContext(options),
-                databaseWriter,
-                new UserValidator(),
-                PasswordHasher
-            );
+                return new UserRepository(
+                    logger.Object,
+                    GetMapper(typeof(SecurityDbContext)),
+                    new SecurityDbContext(options),
+                    databaseWriter,
+                    new UserValidator(),
+                    passwordHasher
+                );
+            }
+            catch (Exception ex) {
+                throw ex;
+            }
         }
 
         public static T PickRandom<T>(ICollection<T> enumerable)
