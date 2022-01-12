@@ -118,22 +118,16 @@ namespace Avalanche.Security.Server.Test
 
         public static UserRepository GetUserRepository(DbContextOptions<SecurityDbContext> options, ITestOutputHelper output, DatabaseWriter<SecurityDbContext> databaseWriter, out Mock<ILogger<UserRepository>> logger)
         {
-            try
-            {
-                logger = GetLoggerMock<UserRepository>(output);
+            logger = GetLoggerMock<UserRepository>(output);
 
-                return new UserRepository(
-                    logger.Object,
-                    GetMapper(typeof(SecurityDbContext)),
-                    new SecurityDbContext(options),
-                    databaseWriter,
-                    new UserValidator(),
-                    passwordHasher
-                );
-            }
-            catch (Exception ex) {
-                throw ex;
-            }
+            return new UserRepository(
+                logger.Object,
+                GetMapper(typeof(SecurityDbContext)),
+                new SecurityDbContext(options),
+                databaseWriter,
+                new UserValidator(),
+                passwordHasher
+            );
         }
 
         public static T PickRandom<T>(ICollection<T> enumerable)

@@ -14,9 +14,9 @@ namespace Avalanche.Security.Server.Test
                             new UserModel()
                             {
                                 Id = f.Random.Number(1000, 9999),
-                                FirstName = f.Random.String(1, 64),
-                                LastName = f.Random.String(1, 64),
-                                UserName = f.Random.String(1, 64),
+                                FirstName = f.Name.FirstName(Bogus.DataSets.Name.Gender.Male),
+                                LastName = f.Name.LastName(Bogus.DataSets.Name.Gender.Female),
+                                UserName = f.Name.Random.AlphaNumeric(20),
                                 Password = f.Random.AlphaNumeric(64)
                             }
                         );
