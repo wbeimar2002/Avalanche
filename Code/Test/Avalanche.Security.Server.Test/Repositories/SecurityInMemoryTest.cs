@@ -49,11 +49,16 @@ namespace Avalanche.Security.Server.Test.Repositories
         [Fact]
         public Task Repository_GetAllUsers_ReadSucceeds() => _tests.Repository_GetAllUsers_ReadSucceeds();
 
+        [Fact]
+        public Task UpdateUser_When_UserNotExist() => _tests.UpdateUser_When_UserNotExist();
+
         private static DbContextOptions<SecurityDbContext> GetInMemoryDbContextOptions()
         {
             // In-memory database only exists while the connection is open
             var connection = new SqliteConnection("DataSource=:memory:");
             return Utilities.GetDbContextOptions<SecurityDbContext>(connection);
         }
+
+
     }
 }
