@@ -265,7 +265,7 @@ namespace Avalanche.Security.Server.Test.Repositories
         public async Task GetUser_MultithreadedReadsSucceed()
         {
             // Arrange
-            const int quantity = 100;
+            const int quantity = 50;
             const int threads = 4;
             var repository = Utilities.GetUserRepository(_options, _output, out var _);
             var users = Fakers.GetUserFaker().Generate(quantity);
