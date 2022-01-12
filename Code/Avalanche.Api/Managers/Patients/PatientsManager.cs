@@ -120,17 +120,14 @@ namespace Avalanche.Api.Managers.Patients
                         Preconditions.ThrowIfNull(nameof(patient.Physician), patient.Physician);
                         break;
                     case "department":
-                        if (_setupConfiguration.General.DepartmentsSupported)
-                        {
-                            Preconditions.ThrowIfNull(nameof(patient.Department), patient.Department);
-                        }
+                        Preconditions.ThrowIfNull(nameof(patient.Department), patient.Department);
                         break;
                     case "procedureType":
                         Preconditions.ThrowIfNull(nameof(patient.ProcedureType), patient.ProcedureType);
                         break;
                     //case "accessionNumber": TODO: Pending send the value from Register and Update
                         //    Preconditions.ThrowIfNull(nameof(patient.Accession), patient.Accession);
-                        //    break; 
+                        //    break;
                 }
             }
         }

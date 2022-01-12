@@ -36,7 +36,6 @@ namespace Avalanche.Shared.Infrastructure.Configuration
     public class GeneralSetupConfiguration
     {
         public int Mode { get; set; }
-        public bool DepartmentsSupported { get; set; }
     }
 
     public class QuickSetupConfiguration

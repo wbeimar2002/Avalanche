@@ -58,27 +58,8 @@ namespace Avalanche.Api.Tests.Managers
         }
 
         [Test]
-        public void AddProcedureTypeShouldFailIfHasDepartmentAndDepartmentIsNotSupported()
+        public void AddProcedureTypeShouldFailIfDepartmentIsNull()
         {
-            _setupConfiguration.General.DepartmentsSupported = false;
-
-            var newProcedureType = new ProcedureTypeModel()
-            {
-                Id = 1,
-                Name = "Sample",
-                DepartmentId = 1
-            };
-
-            Task Act() => _manager.AddProcedureType(newProcedureType);
-
-            Assert.That(Act, Throws.TypeOf<ArgumentException>());
-        }
-
-        [Test]
-        public void AddProcedureTypeShouldFailIfDepartmentIsNullAndDepartmentIsSupported()
-        {
-            _setupConfiguration.General.DepartmentsSupported = true;
-
             var newProcedureType = new ProcedureTypeModel()
             {
                 Id = 1,
@@ -92,27 +73,8 @@ namespace Avalanche.Api.Tests.Managers
         }
 
         [Test]
-        public void DeleteProcedureTypeShouldFailIfHasDepartmentAndDepartmentIsNotSupported()
+        public void DeleteProcedureTypeShouldFailIfDepartmentIsNull()
         {
-            _setupConfiguration.General.DepartmentsSupported = false;
-
-            var procedureType = new ProcedureTypeModel()
-            {
-                Id = 1,
-                Name = "Sample",
-                DepartmentId = 1
-            };
-
-            Task Act() => _manager.DeleteProcedureType(procedureType);
-
-            Assert.That(Act, Throws.TypeOf<ArgumentException>());
-        }
-
-        [Test]
-        public void DeleteProcedureTypeShouldFailIfDepartmentIsNullAndDepartmentIsSupported()
-        {
-            _setupConfiguration.General.DepartmentsSupported = true;
-
             var procedureType = new ProcedureTypeModel()
             {
                 Id = 1,
@@ -126,43 +88,11 @@ namespace Avalanche.Api.Tests.Managers
         }
 
         [Test]
-        public void GetProceduresByDepartmentShouldFailIfHasDepartmentAndDepartmentIsNotSupported()
+        public void GetProceduresByDepartmentShouldFailIfDepartmentIsNull()
         {
-            _setupConfiguration.General.DepartmentsSupported = false;
-
-            Task Act() => _manager.GetProcedureTypesByDepartment(1);
-
-            Assert.That(Act, Throws.TypeOf<ArgumentException>());
-        }
-
-        [Test]
-        public void GetProceduresByDepartmentShouldFailIfDepartmentIsNullAndDepartmentIsSupported()
-        {
-            _setupConfiguration.General.DepartmentsSupported = true;
-
             Task Act() => _manager.GetProcedureTypesByDepartment(null);
 
             Assert.That(Act, Throws.TypeOf<ArgumentNullException>());
-        }
-
-        [Test]
-        public void AddDepartmentShouldFailIfDepartmentIsNotSupported()
-        {
-            _setupConfiguration.General.DepartmentsSupported = false;
-
-            Task Act() => _manager.AddDepartment(It.IsAny<DepartmentModel>());
-
-            Assert.That(Act, Throws.TypeOf<InvalidOperationException>());
-        }
-
-        [Test]
-        public void DeleteDepartmentShouldFailIfDepartmentIsNotSupported()
-        {
-            _setupConfiguration.General.DepartmentsSupported = false;
-
-            Task Act() => _manager.DeleteDepartment(1);
-
-            Assert.That(Act, Throws.TypeOf<InvalidOperationException>());
         }
 
         [Test]
@@ -174,8 +104,6 @@ namespace Avalanche.Api.Tests.Managers
                 Name = "Sample",
                 ProcedureTypeId = 1
             };
-
-            _setupConfiguration.General.DepartmentsSupported = false;
 
             _dataManagementService.Setup(mock => mock.AddLabel(It.IsAny<Ism.Storage.DataManagement.Client.V1.Protos.AddLabelRequest>()))
                 .ReturnsAsync(new Ism.Storage.DataManagement.Client.V1.Protos.AddLabelResponse()
@@ -202,8 +130,6 @@ namespace Avalanche.Api.Tests.Managers
                 ProcedureTypeId = 1
             };
 
-            _setupConfiguration.General.DepartmentsSupported = false;
-
             Task Act = _manager.AddLabel(newLabel);
             Assert.AreEqual(Act.Exception.InnerException.Message, "Value cannot be null. (Parameter 'Name')");
         }
@@ -217,8 +143,6 @@ namespace Avalanche.Api.Tests.Managers
                 Name = "Sample",
                 ProcedureTypeId = null
             };
-
-            _setupConfiguration.General.DepartmentsSupported = false;
 
             _dataManagementService.Setup(mock => mock.AddLabel(It.IsAny<Ism.Storage.DataManagement.Client.V1.Protos.AddLabelRequest>()))
                 .ReturnsAsync(new Ism.Storage.DataManagement.Client.V1.Protos.AddLabelResponse()
