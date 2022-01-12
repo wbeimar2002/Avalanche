@@ -14,14 +14,14 @@ using System.Diagnostics;
 using Grpc.Core.Logging;
 using System.Linq;
 
-namespace Avalanche.Security.Server.Test.Managers
+namespace Avalanche.Security.Server.Test.Repositories
 {
-    public class UserManagerTest : IUserManagerTest
+    public class UserRepositoryTest : IUserRepositoryTest
     {
         private readonly DbContextOptions<SecurityDbContext> _options;
         private readonly ITestOutputHelper _output;
 
-        public UserManagerTest(ITestOutputHelper output, DbContextOptions<SecurityDbContext> options)
+        public UserRepositoryTest(ITestOutputHelper output, DbContextOptions<SecurityDbContext> options)
         {
             _options = options;
             _output = output;

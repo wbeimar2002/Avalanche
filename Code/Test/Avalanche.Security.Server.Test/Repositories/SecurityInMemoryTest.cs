@@ -5,13 +5,13 @@ using Microsoft.EntityFrameworkCore;
 using Xunit;
 using Xunit.Abstractions;
 
-namespace Avalanche.Security.Server.Test.Managers
+namespace Avalanche.Security.Server.Test.Repositories
 {
-    public class SecurityInMemoryTest : IUserManagerTest
+    public class SecurityInMemoryTest : IUserRepositoryTest
     {
-        private readonly UserManagerTest _tests;
+        private readonly UserRepositoryTest _tests;
         public SecurityInMemoryTest(ITestOutputHelper output) =>
-            _tests = new UserManagerTest(output, GetInMemoryDbContextOptions());
+            _tests = new UserRepositoryTest(output, GetInMemoryDbContextOptions());
 
         [Fact]
         public Task AddUser_Duplicate_Throws() => _tests.AddUser_Duplicate_Throws();

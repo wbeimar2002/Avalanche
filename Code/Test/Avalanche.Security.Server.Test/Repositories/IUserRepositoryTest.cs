@@ -1,9 +1,9 @@
 using System.Threading.Tasks;
 using Xunit;
 
-namespace Avalanche.Security.Server.Test.Managers
+namespace Avalanche.Security.Server.Test.Repositories
 {
-    public interface IUserManagerTest
+    public interface IUserRepositoryTest
     {
         Task AddUser_Duplicate_Throws();
         Task AddUser_MultithreadedWritesSucceed();

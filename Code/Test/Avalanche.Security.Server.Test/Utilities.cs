@@ -2,8 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Runtime.CompilerServices;
-using System.Text;
 using System.Threading.Tasks;
 using AutoMapper;
 using Avalanche.Security.Server.Core;
@@ -24,7 +22,7 @@ namespace Avalanche.Security.Server.Test
     public static class Utilities
     {
         private static readonly Random Random = new Random();
-        private static readonly IPasswordHasher _passwordHasher;
+        private static readonly IPasswordHasher PasswordHasher;
 
         public static string CreateString(int stringLength)
         {
@@ -45,9 +43,6 @@ namespace Avalanche.Security.Server.Test
             _ = dbWriter.Setup(x => x.Write(It.IsAny<Func<TContext, Task>>()))
                 .Throws(new InvalidOperationException());
 
-            // Moq doesn't support type matchers like It.IsAnyType nested inside another type
-            // Workaround it to us It.IsAny<object>() and cast to the desired generic Func
-            // https://github.com/moq/moq4/issues/1001
             _ = dbWriter.Setup(x => x.Write((Func<TContext, Task<It.IsAnyType>>)It.IsAny<object>()))
                 .Throws(new InvalidOperationException());
             return dbWriter;
@@ -97,16 +92,6 @@ namespace Avalanche.Security.Server.Test
         {
             var dbWriter = GetBuggyDatabaseWriter<SecurityDbContext>();
             logger = GetLoggerMock<UserRepository>(output);
-            var passwordHasher = _passwordHasher;
-
-            /*
-              ILogger<UserRepository> logger,
-            IMapper mapper,
-            SecurityDbContext context,
-            IDatabaseWriter<SecurityDbContext> writer,
-            IValidator<UserModel> validator,
-            IPasswordHasher passwordHasher
-             */
 
             return new UserRepository(
                 logger.Object,
@@ -114,37 +99,9 @@ namespace Avalanche.Security.Server.Test
                 new SecurityDbContext(options),
                 dbWriter.Object,
                 new UserValidator(),
-                passwordHasher
+                PasswordHasher
             );
         }
-
-        //public static LabelRepository GetBuggyLabelRepository(DbContextOptions<SecurityDbContext> options, ITestOutputHelper output, out Mock<ILogger<LabelRepository>> logger)
-        //{
-        //    var dbWriter = GetBuggyDatabaseWriter<SecurityDbContext>();
-        //    logger = GetLoggerMock<LabelRepository>(output);
-
-        //    return new LabelRepository(
-        //        logger.Object,
-        //        GetMapper(typeof(SecurityDbContext)),
-        //        new SecurityDbContext(options),
-        //        dbWriter.Object,
-        //        new LabelValidator()
-        //    );
-        //}
-
-        //public static ProcedureTypeRepository GetBuggyProcedureTypeRepository(DbContextOptions<SecurityDbContext> options, ITestOutputHelper output, out Mock<ILogger<ProcedureTypeRepository>> logger)
-        //{
-        //    var dbWriter = GetBuggyDatabaseWriter<SecurityDbContext>();
-        //    logger = GetLoggerMock<ProcedureTypeRepository>(output);
-
-        //    return new ProcedureTypeRepository(
-        //        logger.Object,
-        //        GetMapper(typeof(SecurityDbContext)),
-        //        new SecurityDbContext(options),
-        //        dbWriter.Object,
-        //        new ProcedureTypeValidator()
-        //    );
-        //}
 
         public static DatabaseWriter<SecurityDbContext> GetDatabaseWriter(DbContextOptions<SecurityDbContext> options, ITestOutputHelper output)
         {
@@ -161,7 +118,6 @@ namespace Avalanche.Security.Server.Test
         public static UserRepository GetUserRepository(DbContextOptions<SecurityDbContext> options, ITestOutputHelper output, DatabaseWriter<SecurityDbContext> databaseWriter, out Mock<ILogger<UserRepository>> logger)
         {
             logger = GetLoggerMock<UserRepository>(output);
-            var passwordHasher = _passwordHasher;
 
             return new UserRepository(
                 logger.Object,
@@ -169,7 +125,7 @@ namespace Avalanche.Security.Server.Test
                 new SecurityDbContext(options),
                 databaseWriter,
                 new UserValidator(),
-                passwordHasher
+                PasswordHasher
             );
         }
 
@@ -179,41 +135,6 @@ namespace Avalanche.Security.Server.Test
             var randomIndex = rand.Next(0, enumerable.Count - 1);
             return enumerable.ElementAt(randomIndex);
         }
-
-        //public static LabelRepository GetLabelRepository(DbContextOptions<SecurityDbContext> options, ITestOutputHelper output, out Mock<ILogger<LabelRepository>> logger) =>
-        //    GetLabelRepository(options, output, GetDatabaseWriter(options, output), out logger);
-
-        //public static LabelRepository GetLabelRepository(DbContextOptions<SecurityDbContext> options,
-        //    ITestOutputHelper output,
-        //    DatabaseWriter<SecurityDbContext> databaseWriter,
-        //    out Mock<ILogger<LabelRepository>> logger)
-        //{
-        //    logger = GetLoggerMock<LabelRepository>(output);
-
-        //    return new LabelRepository(
-        //        logger.Object,
-        //        GetMapper(typeof(SecurityDbContext)),
-        //        new SecurityDbContext(options),
-        //        databaseWriter,
-        //        new LabelValidator()
-        //    );
-        //}
-
-        //public static ProcedureTypeRepository GetProcedureTypeRepository(DbContextOptions<SecurityDbContext> options, ITestOutputHelper output, out Mock<ILogger<ProcedureTypeRepository>> logger) =>
-        //                    GetProcedureTypeRepository(options, output, GetDatabaseWriter(options, output), out logger);
-
-        //public static ProcedureTypeRepository GetProcedureTypeRepository(DbContextOptions<SecurityDbContext> options, ITestOutputHelper output, DatabaseWriter<SecurityDbContext> databaseWriter, out Mock<ILogger<ProcedureTypeRepository>> logger)
-        //{
-        //    logger = GetLoggerMock<ProcedureTypeRepository>(output);
-
-        //    return new ProcedureTypeRepository(
-        //        logger.Object,
-        //        GetMapper(typeof(SecurityDbContext)),
-        //        new SecurityDbContext(options),
-        //        databaseWriter,
-        //        new ProcedureTypeValidator()
-        //    );
-        //}
 
         public static DbContextOptions<TContext> GetDbContextOptions<TContext>(SqliteConnection connection) where TContext : DbContext
         {
