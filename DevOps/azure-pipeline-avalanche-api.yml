@@ -11,7 +11,7 @@ resources:
   - repository: devops
     type: git
     name: devops
-    ref: dev
+    ref: task20219
 
   - repository: avalanche-resources
     type: git
