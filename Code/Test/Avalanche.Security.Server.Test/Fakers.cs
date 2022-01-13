@@ -13,7 +13,7 @@ namespace Avalanche.Security.Server.Test
             .CustomInstantiator(f =>
                 new UserModel()
                 {
-                    Id = f.Person.Random.Number(10000, 99999),
+                    Id = f.Person.Random.Number(100000, 999999),
                     FirstName = f.Person.FirstName,
                     LastName = f.Person.LastName,
                     UserName = f.Person.UserName,
