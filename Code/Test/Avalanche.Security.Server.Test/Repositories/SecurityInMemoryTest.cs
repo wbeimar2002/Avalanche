@@ -52,6 +52,9 @@ namespace Avalanche.Security.Server.Test.Repositories
         [Fact]
         public Task UpdateUser_When_UserNotExist() => _tests.UpdateUser_When_UserNotExist();
 
+        [Fact]
+        public Task UpdateUser_When_UserIsNull() => _tests.UpdateUser_When_UserIsNull();
+
         private static DbContextOptions<SecurityDbContext> GetInMemoryDbContextOptions()
         {
             // In-memory database only exists while the connection is open
@@ -59,6 +62,6 @@ namespace Avalanche.Security.Server.Test.Repositories
             return Utilities.GetDbContextOptions<SecurityDbContext>(connection);
         }
 
-
+        
     }
 }

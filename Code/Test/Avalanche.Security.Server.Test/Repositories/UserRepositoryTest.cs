@@ -11,7 +11,6 @@ using System.Collections.Concurrent;
 using Ism.Storage.Core.Infrastructure;
 using Microsoft.Data.Sqlite;
 using System.Diagnostics;
-using Grpc.Core.Logging;
 using System.Linq;
 
 namespace Avalanche.Security.Server.Test.Repositories
@@ -198,6 +197,21 @@ namespace Avalanche.Security.Server.Test.Repositories
             Assert.Equal(user.UserName, readModel.UserName);
         }
 
+        public async Task UpdateUser_When_UserIsNull()
+        {
+            // Arrange
+            var repository = Utilities.GetUserRepository(_options, _output, out var _);
+            UserModel user = null;
+
+            // Act
+            var exception = await Record.ExceptionAsync(async () =>
+                await repository.AddOrUpdateUser(user).ConfigureAwait(false)).ConfigureAwait(false);
+
+            // Assert
+            Assert.NotNull(exception);
+            //_ = Assert.IsType<InvalidCastException>(exception);
+        }
+
         public async Task UpdateUser_When_UserNotExist()
         {
             // Arrange
@@ -206,7 +220,7 @@ namespace Avalanche.Security.Server.Test.Repositories
 
             // Act
             var exception = await Record.ExceptionAsync(async () =>
-                await repository.AddOrUpdateUser(user).ConfigureAwait(false));
+                await repository.AddOrUpdateUser(user).ConfigureAwait(false)).ConfigureAwait(false);
 
             // Assert
             Assert.NotNull(exception);

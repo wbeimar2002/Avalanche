@@ -105,6 +105,9 @@ namespace Avalanche.Security.Server.Core
         public async Task AddOrUpdateUser(UserModel user)
         {
             ThrowIfNull(nameof(user), user);
+            ThrowIfNullOrEmpty(nameof(user), user.UserName);
+            ThrowIfTrue(nameof(user), user.UserName.Length > 64);
+
             _validator.ValidateAndThrow(user);
 
             try
