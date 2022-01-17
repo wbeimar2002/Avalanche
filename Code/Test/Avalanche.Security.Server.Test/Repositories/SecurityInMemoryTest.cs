@@ -67,7 +67,5 @@ namespace Avalanche.Security.Server.Test.Repositories
             var connection = new SqliteConnection("DataSource=:memory:");
             return Utilities.GetDbContextOptions<SecurityDbContext>(connection);
         }
-
-        
     }
 }

@@ -65,19 +65,19 @@ namespace Avalanche.Security.Server.Integration
             _tests.Repository_AddUser_NameEmpty_ThrowsValidationException();
 
         [Fact]
-        public Task Repository_GetAllUsers_ReadSucceeds() => 
+        public Task Repository_GetAllUsers_ReadSucceeds() =>
             _tests.Repository_GetAllUsers_ReadSucceeds();
 
         [Fact]
-        public Task UpdateUser_When_UserNotExist() => 
+        public Task UpdateUser_When_UserNotExist() =>
             _tests.UpdateUser_When_UserNotExist();
 
         [Fact]
-        public Task UpdateUser_When_UserIsNull() => 
+        public Task UpdateUser_When_UserIsNull() =>
             _tests.UpdateUser_When_UserIsNull();
 
         [Fact]
-        public Task UpdateUser_WhenUserNameIsNull() => 
+        public Task UpdateUser_WhenUserNameIsNull() =>
             _tests.UpdateUser_WhenUserNameIsNull();
 
         [Fact]
@@ -99,8 +99,5 @@ namespace Avalanche.Security.Server.Integration
         }
 
         #endregion
-
-
-
     }
 }

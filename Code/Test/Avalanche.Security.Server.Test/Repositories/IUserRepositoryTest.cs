@@ -4,7 +4,7 @@ using Xunit;
 namespace Avalanche.Security.Server.Test.Repositories
 {
     public interface IUserRepositoryTest
-    {       
+    {
         Task AddUser_Duplicate_Throws();
         Task AddUser_MultithreadedWritesSucceed();
         Task AddUser_NameNull_ThrowsValidationException();
