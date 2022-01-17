@@ -178,6 +178,8 @@ namespace Avalanche.Security.Server.Test
             return options;
         }
 
+        public static DatabaseMigrationManager GetDatabaseManager(ITestOutputHelper output) => new DatabaseMigrationManager(GetLoggerMock<DatabaseMigrationManager>(output).Object);
+
         /// <summary>
         /// SqliteConnection is not thread-safe.
         /// In order to execute concurrent reads on multiple threads, we need to get the underlying connection string to create a connection for each thread
