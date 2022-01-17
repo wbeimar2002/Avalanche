@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using AutoMapper;
 using Avalanche.Security.Server.Core;
@@ -128,6 +129,29 @@ namespace Avalanche.Security.Server.Test
                 new UserValidator(),
                 passwordHasher
             );
+        }
+
+        public static void SetAutoPropertyBackingField<T>(T obj, string propertyName, object value)
+        {
+            var privateField = GetAutoPropertyBackingField(typeof(T).GetProperty(propertyName));
+            privateField?.SetValue(obj, value);
+        }
+
+        private static FieldInfo? GetAutoPropertyBackingField(PropertyInfo pi)
+        {
+            if (!pi.CanRead || !pi.GetGetMethod(nonPublic: true).IsDefined(typeof(CompilerGeneratedAttribute), inherit: true))
+            {
+                return null;
+            }
+
+            var backingField = pi.DeclaringType.GetField($"<{pi.Name}>k__BackingField", BindingFlags.Instance | BindingFlags.NonPublic);
+
+            if (!backingField.IsDefined(typeof(CompilerGeneratedAttribute), inherit: true))
+            {
+                return null;
+            }
+
+            return backingField;
         }
 
         public static T PickRandom<T>(ICollection<T> enumerable)

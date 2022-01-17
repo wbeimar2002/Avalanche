@@ -216,6 +216,7 @@ namespace Avalanche.Security.Server.Test.Repositories
         {
             // Arrange
             var repository = Utilities.GetUserRepository(_options, _output, out var _);
+            var users = this.GetUsers_ReadSucceeds();
             var user = Fakers.GetUserFaker().Generate();
 
             // Act
@@ -225,6 +226,51 @@ namespace Avalanche.Security.Server.Test.Repositories
             // Assert
             Assert.NotNull(exception);
             //_ = Assert.IsType<InvalidCastException>(exception);
+        }
+
+        public async Task UpdateUser_WhenUserNameIsNull()
+        {
+            // Arrange
+            var repository = Utilities.GetUserRepository(_options, _output, out var _);
+            var user = Fakers.GetUserFaker().Generate();
+            user.UserName = null;
+
+            // Act
+            var exception = await Record.ExceptionAsync(async () =>
+                await repository.AddOrUpdateUser(user).ConfigureAwait(false)).ConfigureAwait(false);
+
+            // Assert
+            Assert.NotNull(exception);
+            //_ = Assert.IsType<InvalidCastException>(exception);
+        }
+
+        public async Task UpdateUser_Success()
+        {
+            // Arrange
+            const int quantity = 100;
+            var repository = Utilities.GetUserRepository(_options, _output, out _);
+            var users = Fakers.GetUserFaker().Generate(quantity);
+
+            foreach (var saveuser in users)
+            {
+                _ = await repository.AddUser(saveuser).ConfigureAwait(false);
+            }
+
+            var user = users[0];
+
+            // Act
+            await repository.AddOrUpdateUser(user).ConfigureAwait(false);
+
+            // Assert
+            using var context = new SecurityDbContext(_options);
+            var readEntity = await context.Users
+                .FirstAsync(x => x.UserName == user.UserName)
+                .ConfigureAwait(false);
+
+            var mapper = Utilities.GetMapper(typeof(SecurityDbContext));
+            var actual = mapper.Map<UserModel>(readEntity);
+
+            Assert.Equal(user.UserName, actual.UserName);
         }
 
         public async Task DeleteUser_DeleteSucceeds()

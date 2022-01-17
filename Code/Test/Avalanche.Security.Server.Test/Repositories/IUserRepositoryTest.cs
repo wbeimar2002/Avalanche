@@ -17,6 +17,8 @@ namespace Avalanche.Security.Server.Test.Repositories
         Task GetUser_MultithreadedReadsSucceed();
         Task Repository_AddUser_NameEmpty_ThrowsValidationException();
         Task Repository_GetAllUsers_ReadSucceeds();
+        Task UpdateUser_Success();
+        Task UpdateUser_WhenUserNameIsNull();
         Task UpdateUser_When_UserIsNull();
         Task UpdateUser_When_UserNotExist();
     }
