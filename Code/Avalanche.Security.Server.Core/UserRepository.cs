@@ -9,7 +9,6 @@ using Ism.Common.Core.Aspects;
 using Avalanche.Security.Server.Core.Entities;
 using Avalanche.Security.Server.Core.Interfaces;
 using Avalanche.Security.Server.Core.Models;
-using Ism.Storage.Core.Infrastructure.Exceptions;
 using Ism.Storage.Core.Infrastructure.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -59,6 +58,8 @@ namespace Avalanche.Security.Server.Core
         public async Task<UserModel> AddUser(UserModel user)
         {
             ThrowIfNull(nameof(user), user);
+            ThrowIfNullOrEmpty(nameof(user), user.UserName);
+            ThrowIfTrue(nameof(user), user.UserName.Length > 64);
             _validator.ValidateAndThrow(user);
 
             try
@@ -103,6 +104,9 @@ namespace Avalanche.Security.Server.Core
         public async Task AddOrUpdateUser(UserModel user)
         {
             ThrowIfNull(nameof(user), user);
+            ThrowIfNullOrEmpty(nameof(user), user.UserName);
+            ThrowIfTrue(nameof(user), user.UserName.Length > 64);
+
             _validator.ValidateAndThrow(user);
 
             try
@@ -183,9 +187,9 @@ namespace Avalanche.Security.Server.Core
                 .ConfigureAwait(false);
 
 
-        private Task<UserEntity> UpdateUserEntity(UserEntity UserEntity)
+        private Task<UserEntity> UpdateUserEntity(UserEntity userEntity)
         {
-            Task<UserEntity> writerFunction(SecurityDbContext context) => AddOrUpdateWriter(UserEntity, context);
+            Task<UserEntity> writerFunction(SecurityDbContext context) => AddOrUpdateWriter(userEntity, context);
             return _writer.Write(writerFunction);
         }
 
@@ -211,24 +215,24 @@ namespace Avalanche.Security.Server.Core
             }
         }
 
-        private static async Task<UserEntity> AddOrUpdateWriter(UserEntity User, SecurityDbContext context)
+        private static async Task<UserEntity> AddOrUpdateWriter(UserEntity user, SecurityDbContext context)
         {
             // Normally we would have to lock around dependent operations
             // But because this class orchestrates it's writes through a single threaded DatabaseWriter we can skip that overhead
 
             // No need to deal with logic around updating detatched entities and children.  Just delete the existing index if it already exists
             _ = await context.Users
-                .Where(x => x.Id == User.Id)
+                .Where(x => x.Id == user.Id)
                 .AsNoTracking()
                 .BatchDeleteAsync()
                 .ConfigureAwait(false);
 
-            User = context.Users
-                    .Add(User)
+            user = context.Users
+                    .Add(user)
                     .Entity;
             _ = await context.SaveChangesAsync().ConfigureAwait(false);
 
-            return User;
+            return user;
         }
 
         #region Disposable

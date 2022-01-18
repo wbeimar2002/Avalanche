@@ -16,21 +16,25 @@ namespace Avalanche.Security.Server.Core.EntityConfigurations
                 .ValueGeneratedOnAdd();
 
             _ = builder.Property(x => x.FirstName)
+                .HasMaxLength(64)
                 .IsUnicode()
                 .IsRequired()
                 .HasColumnType("TEXT COLLATE NOCASE");
 
             _ = builder.Property(x => x.LastName)
+                .HasMaxLength(64)
                 .IsUnicode()
                 .IsRequired()
                 .HasColumnType("TEXT COLLATE NOCASE");
 
             _ = builder.Property(x => x.UserName)
+                .HasMaxLength(128)
                 .IsUnicode()
                 .IsRequired()
                 .HasColumnType("TEXT COLLATE NOCASE");
 
             _ = builder.Property(x => x.Password)
+                .HasMaxLength(64)
                 .IsUnicode()
                 .IsRequired()
                 .HasColumnType("TEXT COLLATE NOCASE");

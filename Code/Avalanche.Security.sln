@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.29613.14
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.32112.339
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Avalanche.Shared.Domain", "Avalanche.Shared.Domain\Avalanche.Shared.Domain.csproj", "{4DBF83D8-AD38-4D39-8F4B-97EB71D5B25D}"
 EndProject
@@ -22,6 +22,14 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Security", "Security", "{5EEB0664-22A7-4D6A-B5FC-A411D92B55F5}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Avalanche.Security.Server.Core", "Avalanche.Security.Server.Core\Avalanche.Security.Server.Core.csproj", "{3989606E-75CD-4F51-A9B6-620685C9DCF5}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Avalanche.Security.Server.Test", "Test\Avalanche.Security.Server.Test\Avalanche.Security.Server.Test.csproj", "{096593FF-3817-4079-858B-15576C1B651B}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Test", "Test", "{26149080-82AB-45D9-B71D-3387DDA1F9A9}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Integration", "Integration", "{98D1CBB5-18F4-4BD5-9248-3FCEEC21D516}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Avalanche.Security.Server.Integration", "Avalanche.Security.Server.Integration\Avalanche.Security.Server.Integration.csproj", "{48A9D338-A2FD-462B-8B12-EB8F92BDBE49}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -60,6 +68,18 @@ Global
 		{3989606E-75CD-4F51-A9B6-620685C9DCF5}.DebugLocal|Any CPU.Build.0 = DebugLocal|Any CPU
 		{3989606E-75CD-4F51-A9B6-620685C9DCF5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3989606E-75CD-4F51-A9B6-620685C9DCF5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{096593FF-3817-4079-858B-15576C1B651B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{096593FF-3817-4079-858B-15576C1B651B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{096593FF-3817-4079-858B-15576C1B651B}.DebugLocal|Any CPU.ActiveCfg = DebugLocal|Any CPU
+		{096593FF-3817-4079-858B-15576C1B651B}.DebugLocal|Any CPU.Build.0 = DebugLocal|Any CPU
+		{096593FF-3817-4079-858B-15576C1B651B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{096593FF-3817-4079-858B-15576C1B651B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{48A9D338-A2FD-462B-8B12-EB8F92BDBE49}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{48A9D338-A2FD-462B-8B12-EB8F92BDBE49}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{48A9D338-A2FD-462B-8B12-EB8F92BDBE49}.DebugLocal|Any CPU.ActiveCfg = Debug|Any CPU
+		{48A9D338-A2FD-462B-8B12-EB8F92BDBE49}.DebugLocal|Any CPU.Build.0 = Debug|Any CPU
+		{48A9D338-A2FD-462B-8B12-EB8F92BDBE49}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{48A9D338-A2FD-462B-8B12-EB8F92BDBE49}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -70,6 +90,8 @@ Global
 		{64B98C2E-E809-4FB7-AE4E-F66B982B1302} = {5EEB0664-22A7-4D6A-B5FC-A411D92B55F5}
 		{D6B5BFBE-6927-46D9-878C-A373F5197D39} = {5EEB0664-22A7-4D6A-B5FC-A411D92B55F5}
 		{3989606E-75CD-4F51-A9B6-620685C9DCF5} = {5EEB0664-22A7-4D6A-B5FC-A411D92B55F5}
+		{096593FF-3817-4079-858B-15576C1B651B} = {26149080-82AB-45D9-B71D-3387DDA1F9A9}
+		{48A9D338-A2FD-462B-8B12-EB8F92BDBE49} = {98D1CBB5-18F4-4BD5-9248-3FCEEC21D516}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {054B7929-176A-44EB-BF77-6C11E9C160D7}

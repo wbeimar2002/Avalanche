@@ -5,7 +5,7 @@ using Avalanche.Security.Server.Core.Models;
 
 using static Ism.Utility.Core.Preconditions;
 
-namespace Avalanche.Security.Server.Managers
+namespace Avalanche.Security.Server.Core.Managers
 {
     public class UsersManager : IUsersManager
     {
@@ -19,11 +19,19 @@ namespace Avalanche.Security.Server.Managers
 
         public async Task UpdateUser(UserModel user)
         {
+            ThrowIfNull(nameof(user), user);
+            ThrowIfNullOrEmpty(nameof(user), user.UserName);
+            ThrowIfTrue(nameof(user), user.UserName.Length > 64);
+
             await _userRepository.AddOrUpdateUser(user);
         }
 
         public async Task<UserModel> AddUser(UserModel user)
         {
+            ThrowIfNull(nameof(user), user);
+            ThrowIfNullOrEmpty(nameof(user), user.UserName);
+            ThrowIfTrue(nameof(user), user.UserName.Length > 64);
+
             return await _userRepository.AddUser(user);
         }
 
