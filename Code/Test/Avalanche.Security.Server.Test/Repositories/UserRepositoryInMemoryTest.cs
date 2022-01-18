@@ -1,29 +1,23 @@
-using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 using Avalanche.Security.Server.Core;
-using Avalanche.Security.Server.Core.Interfaces;
-using Avalanche.Security.Server.Core.Managers;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Xunit;
 using Xunit.Abstractions;
 
-namespace Avalanche.Security.Server.Test.Managers
+namespace Avalanche.Security.Server.Test.Repositories
 {
-    public class UserManagerInMemoryTest
+    public class UserRepositoryInMemoryTest : IUserRepositoryTest
     {
-        private readonly IUsersManagerTest _tests;
-
-        public UserManagerInMemoryTest(ITestOutputHelper output) =>
-            _tests = new UsersManagerTest(output, GetInMemoryDbContextOptions());
+        private readonly UserRepositoryTest _tests;
+        public UserRepositoryInMemoryTest(ITestOutputHelper output) =>
+            _tests = new UserRepositoryTest(output, GetInMemoryDbContextOptions());
 
         [Fact]
-        public Task AddUserManagerTest() => _tests.AddUserManagerTest();
+        public Task AddUser_Duplicate_Throws() => _tests.AddUser_Duplicate_Throws();
 
-        //[Fact]
-        //public Task AddUser_MultithreadedWritesSucceed() => _tests.AddUser_MultithreadedWritesSucceed();
+        [Fact]
+        public Task AddUser_MultithreadedWritesSucceed() => _tests.AddUser_MultithreadedWritesSucceed();
 
         [Fact]
         public Task AddUser_NameNull_ThrowsValidationException() => _tests.AddUser_NameNull_ThrowsValidationException();
@@ -33,6 +27,9 @@ namespace Avalanche.Security.Server.Test.Managers
 
         [Fact]
         public Task AddUser_UnexpectedError_LogsExceptionAndThrows() => _tests.AddUser_UnexpectedError_LogsExceptionAndThrows();
+
+        [Fact]
+        public Task AddUser_WriteSucceeds() => _tests.AddUser_WriteSucceeds();
 
         [Fact]
         public Task DeleteUser_DeleteSucceeds() => _tests.DeleteUser_DeleteSucceeds();

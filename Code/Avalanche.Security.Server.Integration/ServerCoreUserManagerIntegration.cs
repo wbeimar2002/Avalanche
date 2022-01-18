@@ -24,8 +24,7 @@ namespace Avalanche.Security.Server.Integration
         public Task AddUser_UnexpectedError_LogsExceptionAndThrows() => _tests.AddUser_UnexpectedError_LogsExceptionAndThrows();
 
         [Trait("Category", "SkipWhenLiveUnitTesting")]
-        [Theory]
-        [InlineData]
+        [Fact]
         public Task AddUserManagerTest() => _tests.AddUserManagerTest();
 
         //[Fact]
