@@ -6,6 +6,8 @@ using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using AutoMapper;
 using Avalanche.Security.Server.Core;
+using Avalanche.Security.Server.Core.Interfaces;
+using Avalanche.Security.Server.Core.Managers;
 using Avalanche.Security.Server.Core.Security.Hashing;
 using Avalanche.Security.Server.Core.Validators;
 using Avalanche.Security.Server.Security.Hashing;
@@ -129,6 +131,13 @@ namespace Avalanche.Security.Server.Test
                 new UserValidator(),
                 passwordHasher
             );
+        }
+
+        public static UsersManager GetUserManager(IUserRepository repository)
+        {
+            //logger = GetLoggerMock<UserRepository>(output);
+
+            return new UsersManager(repository);
         }
 
         public static void SetAutoPropertyBackingField<T>(T obj, string propertyName, object value)

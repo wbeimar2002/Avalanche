@@ -1,26 +1,29 @@
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 using Avalanche.Security.Server.Core;
+using Avalanche.Security.Server.Core.Interfaces;
+using Avalanche.Security.Server.Core.Managers;
 using Avalanche.Security.Server.Core.Models;
+using Ism.Storage.Core.Infrastructure;
+using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Moq;
 using Xunit;
 using Xunit.Abstractions;
-using System.Threading.Tasks;
-using System.Collections.Concurrent;
-using Ism.Storage.Core.Infrastructure;
-using Microsoft.Data.Sqlite;
-using System.Diagnostics;
-using System.Linq;
 
-namespace Avalanche.Security.Server.Test.Repositories
+namespace Avalanche.Security.Server.Test.Managers
 {
-    public class UserRepositoryTest : IUserRepositoryTest
+    public class UsersManagerTest : IUsersManagerTest
     {
         private readonly DbContextOptions<SecurityDbContext> _options;
         private readonly ITestOutputHelper _output;
 
-        public UserRepositoryTest(ITestOutputHelper output, DbContextOptions<SecurityDbContext> options)
+        public UsersManagerTest(ITestOutputHelper output, DbContextOptions<SecurityDbContext> options)
         {
             _options = options;
             _output = output;
@@ -28,27 +31,27 @@ namespace Avalanche.Security.Server.Test.Repositories
 
         #region Users
 
-        public async Task AddUser_Duplicate_Throws()
+        public async Task AddUserManagerTest()
         {
             // Arrange
-            var repository = Utilities.GetUserRepository(_options, _output, out _);
+            var repository = Utilities.GetUserRepository(_options, _output, out var _);
             var user = Fakers.GetUserFaker().Generate();
 
             // Act
-            // Add it once
-            _ = await repository.AddUser(user).ConfigureAwait(false);
-            // Add it again...
-            var exception = await Record.ExceptionAsync(async () =>
-                 await repository.AddUser(user).ConfigureAwait(false)
-            ).ConfigureAwait(false);
+            user = await repository.AddUser(user).ConfigureAwait(false);
 
             // Assert
-            Assert.NotNull(exception);
-            _ = Assert.IsType<DuplicateEntityException>(exception);
-            var dupException = (DuplicateEntityException)exception;
-            Assert.Equal(typeof(UserModel), dupException.Entity);
-            Assert.Equal(nameof(user.UserName), dupException.ConstraintName);
-            Assert.Equal(user.UserName, dupException.DuplicateValue);
+            using var context = new SecurityDbContext(_options);
+            var readEntity = await context.Users
+                .FirstAsync(x => x.UserName == user.UserName)
+                .ConfigureAwait(false);
+
+            var mapper = Utilities.GetMapper(typeof(SecurityDbContext));
+            var readModel = mapper.Map<UserModel>(readEntity);
+
+            Assert.NotNull(readModel);
+            Assert.NotNull(readModel.UserName);
+            Assert.Equal(user.UserName, readModel.UserName);
         }
 
         public async Task AddUser_MultithreadedWritesSucceed()
@@ -172,29 +175,6 @@ namespace Avalanche.Security.Server.Test.Repositories
             Assert.NotNull(exception);
             //_ = Assert.IsType<InvalidOperationException>(exception);
             logger.AssertLoggerCalled(Microsoft.Extensions.Logging.LogLevel.Error, Times.Once());
-        }
-
-        public async Task AddUser_WriteSucceeds()
-        {
-            // Arrange
-            var repository = Utilities.GetUserRepository(_options, _output, out var _);
-            var user = Fakers.GetUserFaker().Generate();
-
-            // Act
-            user = await repository.AddUser(user).ConfigureAwait(false);
-
-            // Assert
-            using var context = new SecurityDbContext(_options);
-            var readEntity = await context.Users
-                .FirstAsync(x => x.UserName == user.UserName)
-                .ConfigureAwait(false);
-
-            var mapper = Utilities.GetMapper(typeof(SecurityDbContext));
-            var readModel = mapper.Map<UserModel>(readEntity);
-
-            Assert.NotNull(readModel);
-            Assert.NotNull(readModel.UserName);
-            Assert.Equal(user.UserName, readModel.UserName);
         }
 
         public async Task UpdateUser_When_UserIsNull()
