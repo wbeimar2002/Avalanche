@@ -9,7 +9,6 @@ using Ism.Common.Core.Aspects;
 using Avalanche.Security.Server.Core.Entities;
 using Avalanche.Security.Server.Core.Interfaces;
 using Avalanche.Security.Server.Core.Models;
-using Ism.Storage.Core.Infrastructure.Exceptions;
 using Ism.Storage.Core.Infrastructure.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;

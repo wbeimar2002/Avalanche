@@ -22,6 +22,7 @@ namespace Avalanche.Security.Server.Test.Managers
     {
         private readonly DbContextOptions<SecurityDbContext> _options;
         private readonly ITestOutputHelper _output;
+        private UsersManager _usersManager;
 
         public UsersManagerTest(ITestOutputHelper output, DbContextOptions<SecurityDbContext> options)
         {
@@ -35,23 +36,14 @@ namespace Avalanche.Security.Server.Test.Managers
         {
             // Arrange
             var repository = Utilities.GetUserRepository(_options, _output, out var _);
+            _usersManager = new UsersManager(repository);
             var user = Fakers.GetUserFaker().Generate();
 
             // Act
-            user = await repository.AddUser(user).ConfigureAwait(false);
+            var addedUser = await _usersManager.AddUser(user).ConfigureAwait(false);
 
             // Assert
-            using var context = new SecurityDbContext(_options);
-            var readEntity = await context.Users
-                .FirstAsync(x => x.UserName == user.UserName)
-                .ConfigureAwait(false);
-
-            var mapper = Utilities.GetMapper(typeof(SecurityDbContext));
-            var readModel = mapper.Map<UserModel>(readEntity);
-
-            Assert.NotNull(readModel);
-            Assert.NotNull(readModel.UserName);
-            Assert.Equal(user.UserName, readModel.UserName);
+            Assert.Equal(user.UserName, addedUser.UserName);
         }
 
         public async Task AddUser_MultithreadedWritesSucceed()
@@ -107,6 +99,7 @@ namespace Avalanche.Security.Server.Test.Managers
         {
             // Arrange
             var repository = Utilities.GetUserRepository(_options, _output, out var _);
+            _usersManager = new UsersManager(repository);
             var user = Fakers.GetUserFaker().Generate();
 
             // Empty out required property
@@ -114,7 +107,7 @@ namespace Avalanche.Security.Server.Test.Managers
 
             // Act
             var exception = await Record.ExceptionAsync(async () =>
-                 await repository.AddUser(user).ConfigureAwait(false)
+                 await _usersManager.AddUser(user).ConfigureAwait(false)
             ).ConfigureAwait(false);
 
             // Assert
@@ -126,6 +119,7 @@ namespace Avalanche.Security.Server.Test.Managers
         {
             // Arrange
             var repository = Utilities.GetUserRepository(_options, _output, out var _);
+            _usersManager = new UsersManager(repository);
             var user = Fakers.GetUserFaker().Generate();
 
             // Null out required property
@@ -133,7 +127,7 @@ namespace Avalanche.Security.Server.Test.Managers
 
             // Act
             var exception = await Record.ExceptionAsync(async () =>
-                 await repository.AddUser(user).ConfigureAwait(false)
+                 await _usersManager.AddUser(user).ConfigureAwait(false)
             ).ConfigureAwait(false);
 
             // Assert
@@ -145,6 +139,7 @@ namespace Avalanche.Security.Server.Test.Managers
         {
             // Arrange
             var repository = Utilities.GetUserRepository(_options, _output, out var _);
+            _usersManager = new UsersManager(repository);
             var user = Fakers.GetUserFaker().Generate();
 
             // Empty out required property
@@ -152,7 +147,7 @@ namespace Avalanche.Security.Server.Test.Managers
 
             // Act
             var exception = await Record.ExceptionAsync(async () =>
-                 await repository.AddUser(user).ConfigureAwait(false)
+                 await _usersManager.AddUser(user).ConfigureAwait(false)
             ).ConfigureAwait(false);
 
             // Assert
@@ -164,11 +159,12 @@ namespace Avalanche.Security.Server.Test.Managers
         {
             // Arrange
             var repository = Utilities.GetBuggyUserRepository(_options, _output, out var logger);
+            _usersManager = new UsersManager(repository);
             var user = Fakers.GetUserFaker().Generate();
 
             // Act
             var exception = await Record.ExceptionAsync(async () =>
-                 await repository.AddUser(user).ConfigureAwait(false)
+                 await _usersManager.AddUser(user).ConfigureAwait(false)
             ).ConfigureAwait(false);
 
             // Assert
@@ -181,11 +177,12 @@ namespace Avalanche.Security.Server.Test.Managers
         {
             // Arrange
             var repository = Utilities.GetUserRepository(_options, _output, out var _);
+            _usersManager = new UsersManager(repository);
             UserModel user = null;
 
             // Act
             var exception = await Record.ExceptionAsync(async () =>
-                await repository.AddOrUpdateUser(user).ConfigureAwait(false)).ConfigureAwait(false);
+                await _usersManager.UpdateUser(user).ConfigureAwait(false)).ConfigureAwait(false);
 
             // Assert
             Assert.NotNull(exception);
@@ -196,12 +193,13 @@ namespace Avalanche.Security.Server.Test.Managers
         {
             // Arrange
             var repository = Utilities.GetUserRepository(_options, _output, out var _);
-            var users = this.GetUsers_ReadSucceeds();
+            _usersManager = new UsersManager(repository);
+            var users = GetUsers_ReadSucceeds();
             var user = Fakers.GetUserFaker().Generate();
 
             // Act
             var exception = await Record.ExceptionAsync(async () =>
-                await repository.AddOrUpdateUser(user).ConfigureAwait(false)).ConfigureAwait(false);
+                await _usersManager.UpdateUser(user).ConfigureAwait(false)).ConfigureAwait(false);
 
             // Assert
             Assert.NotNull(exception);
@@ -212,12 +210,13 @@ namespace Avalanche.Security.Server.Test.Managers
         {
             // Arrange
             var repository = Utilities.GetUserRepository(_options, _output, out var _);
+            _usersManager = new UsersManager(repository);
             var user = Fakers.GetUserFaker().Generate();
             user.UserName = null;
 
             // Act
             var exception = await Record.ExceptionAsync(async () =>
-                await repository.AddOrUpdateUser(user).ConfigureAwait(false)).ConfigureAwait(false);
+                await _usersManager.UpdateUser(user).ConfigureAwait(false)).ConfigureAwait(false);
 
             // Assert
             Assert.NotNull(exception);
@@ -227,19 +226,20 @@ namespace Avalanche.Security.Server.Test.Managers
         public async Task UpdateUser_Success()
         {
             // Arrange
-            const int quantity = 100;
+            const int quantity = 10;
             var repository = Utilities.GetUserRepository(_options, _output, out _);
+            _usersManager = new UsersManager(repository);
             var users = Fakers.GetUserFaker().Generate(quantity);
 
-            foreach (var saveuser in users)
+            foreach (var saveUser in users)
             {
-                _ = await repository.AddUser(saveuser).ConfigureAwait(false);
+                _ = await _usersManager.AddUser(saveUser).ConfigureAwait(false);
             }
 
             var user = users[0];
 
             // Act
-            await repository.AddOrUpdateUser(user).ConfigureAwait(false);
+            await _usersManager.UpdateUser(user).ConfigureAwait(false);
 
             // Assert
             using var context = new SecurityDbContext(_options);
@@ -257,15 +257,16 @@ namespace Avalanche.Security.Server.Test.Managers
         {
             // Arrange
             var repository = Utilities.GetUserRepository(_options, _output, out var _);
+            _usersManager = new UsersManager(repository);
             var user = Fakers.GetUserFaker().Generate();
             var written = await repository.AddUser(user).ConfigureAwait(false);
 
             // Act
-            var count = await repository.DeleteUser(written.Id).ConfigureAwait(false);
+            var count = await _usersManager.DeleteUser(written.Id).ConfigureAwait(false);
 
             // Assert
             Assert.Equal(1, count);
-            var result = await repository.GetUser(written.UserName!).ConfigureAwait(false);
+            var result = await _usersManager.FindByUserNameAsync(written.UserName!).ConfigureAwait(false);
             Assert.Null(result);
         }
 
@@ -273,11 +274,12 @@ namespace Avalanche.Security.Server.Test.Managers
         {
             // Arrange
             var repository = Utilities.GetBuggyUserRepository(_options, _output, out var logger);
+            _usersManager = new UsersManager(repository);
             var user = Fakers.GetUserFaker().Generate();
 
             // Act
             var exception = await Record.ExceptionAsync(async () =>
-                 await repository.DeleteUser(user.Id).ConfigureAwait(false)
+                 await _usersManager.DeleteUser(user.Id).ConfigureAwait(false)
             ).ConfigureAwait(false);
 
             // Assert
@@ -291,13 +293,14 @@ namespace Avalanche.Security.Server.Test.Managers
             // Arrange
             const int quantity = 100;
             var repository = Utilities.GetUserRepository(_options, _output, out var _);
+            _usersManager = new UsersManager(repository);
             foreach (var user in Fakers.GetUserFaker().Generate(quantity))
             {
-                _ = await repository.AddUser(user).ConfigureAwait(false);
+                _ = await _usersManager.AddUser(user).ConfigureAwait(false);
             }
 
             // Act
-            var readUsers = await repository.GetAllUsers().ConfigureAwait(false);
+            var readUsers = await _usersManager.GetAllUsers().ConfigureAwait(false);
 
             Assert.True(readUsers.Count() == quantity);
         }
@@ -363,16 +366,17 @@ namespace Avalanche.Security.Server.Test.Managers
             // Arrange
             const int quantity = 100;
             var repository = Utilities.GetUserRepository(_options, _output, out _);
+            _usersManager = new UsersManager(repository);
             var users = Fakers.GetUserFaker().Generate(quantity);
             foreach (var user in users)
             {
-                _ = await repository.AddUser(user).ConfigureAwait(false);
+                _ = await _usersManager.AddUser(user).ConfigureAwait(false);
             }
 
             var findMe = Utilities.PickRandom(users);
 
             // Act
-            var found = await repository.GetUser(findMe.UserName!).ConfigureAwait(false);
+            var found = await _usersManager.FindByUserNameAsync(findMe.UserName!).ConfigureAwait(false);
 
             // Assert
             var mapper = Utilities.GetMapper(typeof(SecurityDbContext));

@@ -1,11 +1,11 @@
-﻿using System.Threading.Tasks;
+using System.Threading.Tasks;
 
 namespace Avalanche.Security.Server.Test.Managers
 {
     public interface IUsersManagerTest
     {
         Task AddUserManagerTest();
-        Task AddUser_MultithreadedWritesSucceed();
+        //Task AddUser_MultithreadedWritesSucceed();
         Task AddUser_NameNull_ThrowsValidationException();
         Task AddUser_NameTooLong_ThrowsValidationException();
         Task AddUser_UnexpectedError_LogsExceptionAndThrows();

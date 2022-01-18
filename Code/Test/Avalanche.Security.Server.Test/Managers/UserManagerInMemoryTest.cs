@@ -22,8 +22,8 @@ namespace Avalanche.Security.Server.Test.Managers
         [Fact]
         public Task AddUserManagerTest() => _tests.AddUserManagerTest();
 
-        [Fact]
-        public Task AddUser_MultithreadedWritesSucceed() => _tests.AddUser_MultithreadedWritesSucceed();
+        //[Fact]
+        //public Task AddUser_MultithreadedWritesSucceed() => _tests.AddUser_MultithreadedWritesSucceed();
 
         [Fact]
         public Task AddUser_NameNull_ThrowsValidationException() => _tests.AddUser_NameNull_ThrowsValidationException();

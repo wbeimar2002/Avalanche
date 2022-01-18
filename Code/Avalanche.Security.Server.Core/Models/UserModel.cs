@@ -1,5 +1,3 @@
-using System;
-
 namespace Avalanche.Security.Server.Core.Models
 {
     public class UserModel
