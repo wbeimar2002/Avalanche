@@ -10,7 +10,6 @@ namespace Avalanche.Security.Tests.Security.Hashing
     {        
         readonly IPasswordHasher _passwordHasher;
         readonly Mock<IPasswordHasher> _passwordHasherMock;
-        //readonly Mock<ILogginService> _logger;
 
         public PasswordHasherTests() => _passwordHasher = new PasswordHasher();
 
