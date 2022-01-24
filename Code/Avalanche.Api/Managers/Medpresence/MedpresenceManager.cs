@@ -61,6 +61,13 @@ namespace Avalanche.Api.Managers.Medpresence
             await _medpresenceService.InviteGuests(message).ConfigureAwait(false);
         }
 
+        public async Task ReInviteLeftGuests(MedpresenceReInviteLeftGuestsViewModel request)
+        {
+            var message = new ReInviteLeftGuestsRequest();
+            message.Invitees.AddRange(request.Invitees);
+            await _medpresenceService.ReInviteLeftGuests(message).ConfigureAwait(false);
+        }
+
         public async Task ExecuteInSessionCommand(MedpresenceInSessionCommandViewModel request) => await _medpresenceService.ExecuteInMeetingCommand(new InMeetingCommandRequest
         {
             Request = request.Command

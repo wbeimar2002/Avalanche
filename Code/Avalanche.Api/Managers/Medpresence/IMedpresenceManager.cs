@@ -16,6 +16,7 @@ namespace Avalanche.Api.Managers.Medpresence
         Task ArchiveSessionAsync(ArchiveServiceViewModel request);
         Task<MedpresenceGuestListViewModel> GetGuestList();
         Task InviteGuests(MedpresenceInviteViewModel request);
+        Task ReInviteLeftGuests(MedpresenceReInviteLeftGuestsViewModel request);
         Task ExecuteInSessionCommand(MedpresenceInSessionCommandViewModel request);
     }
 }

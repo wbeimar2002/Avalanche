@@ -251,6 +251,28 @@ namespace Avalanche.Api.Controllers.V1
             }
         }
 
+        [HttpPost("guests/reinvitations")]
+        [ProducesResponseType(typeof(void), StatusCodes.Status200OK)]
+        public async Task<IActionResult> ReInviteLeftGuests(MedpresenceReInviteLeftGuestsViewModel request)
+        {
+            try
+            {
+                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
+
+                await _medpresence.ReInviteLeftGuests(request).ConfigureAwait(false);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, LoggerHelper.GetLogMessage(DebugLogType.Exception), ex);
+                return new BadRequestObjectResult(ex.Get(_environment.IsDevelopment()));
+            }
+            finally
+            {
+                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
+            }
+        }
+
         [HttpPost("sessions/commands")]
         [ProducesResponseType(typeof(void), StatusCodes.Status200OK)]
         public async Task<IActionResult> ExecuteInSessionCommand(MedpresenceInSessionCommandViewModel request)

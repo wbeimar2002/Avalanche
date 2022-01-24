@@ -83,6 +83,13 @@ namespace Avalanche.Api.Services.Medpresence
         }
 
         [AspectLogger]
+        public async Task ReInviteLeftGuests(ReInviteLeftGuestsRequest request)
+        {
+            _logger.LogInformation("Reinviting left guests...");
+            await _medpresence.ReInviteLeftGuests(request).ConfigureAwait(false);
+        }
+
+        [AspectLogger]
         public async Task ExecuteInMeetingCommand(InMeetingCommandRequest request)
         {
             _logger.LogInformation("Requesting secure invitations...");

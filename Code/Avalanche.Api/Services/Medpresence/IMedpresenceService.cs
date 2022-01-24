@@ -14,6 +14,7 @@ namespace Avalanche.Api.Services.Medpresence
         Task ArchiveSessionAsync(ArchiveSessionRequest request);
         Task<GuestListReply> GetGuestList();
         Task InviteGuests(InviteRequest request);
+        Task ReInviteLeftGuests(ReInviteLeftGuestsRequest request);
         Task ExecuteInMeetingCommand(InMeetingCommandRequest request);
     }
 }
