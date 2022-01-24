@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Avalanche.Security.Server.Core.Models;
 
-namespace Avalanche.Security.Server.Managers
+namespace Avalanche.Security.Server.Core.Managers
 {
     public interface IUsersManager
     {
