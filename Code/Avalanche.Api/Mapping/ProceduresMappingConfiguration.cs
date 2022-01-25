@@ -247,7 +247,7 @@ namespace Avalanche.Api.Mapping
             CreateMap<ProcedureZipRequestViewModel, GenerateProcedureZipRequest>()
                 .ForPath(dest => dest.ProcedureId.Id, opt => opt.MapFrom(src => src.ProcedureId.Id))
                 .ForPath(dest => dest.ProcedureId.RepositoryName, opt => opt.MapFrom(src => src.ProcedureId.RepositoryName))
-                .ForMember(dest => dest.MediaFileNameList, opt => opt.MapFrom(src => src.MediaFileNameList.ToList()))
+                .ForMember(dest => dest.ContentItemIds, opt => opt.MapFrom(src => src.ContentItemIds.ToList()))
                 .ForMember(dest => dest.RequestId, opt => opt.MapFrom(src => src.RequestId))
                 .ForMember(dest => dest.IncludePHI, opt => opt.MapFrom(src => src.IncludePHI));
         }

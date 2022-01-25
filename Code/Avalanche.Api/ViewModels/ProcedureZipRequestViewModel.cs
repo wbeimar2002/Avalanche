@@ -6,13 +6,13 @@ namespace Avalanche.Api.ViewModels
     public class ProcedureZipRequestViewModel
     {
         public ProcedureIdViewModel ProcedureId { get; set; }
-        public List<string> MediaFileNameList { get; set; }
+        public List<string> ContentItemIds { get; set; }
         public string RequestId { get; set; }
         public bool IncludePHI { get; set; }
-        public ProcedureZipRequestViewModel(string requestId, ProcedureIdViewModel procId, List<string> mediaFileNames, bool includePHI )
+        public ProcedureZipRequestViewModel(string requestId, ProcedureIdViewModel procId, List<string> contentItemIds, bool includePHI)
         {
             ProcedureId = procId;
-            MediaFileNameList = mediaFileNames;
+            ContentItemIds = contentItemIds;
             RequestId = requestId;
             IncludePHI = includePHI;
         }
