@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
@@ -84,7 +84,7 @@
     <PackageReference Include="Ism.Storage.PatientList.Client" Version="1.0.0-prerelease0031" />
     <PackageReference Include="Ism.PrintServer.Client" Version="1.0.0-prerelease0009" />
     <PackageReference Include="Ism.Medpresence.Client" Version="1.0.0-prerelease0006" />
-    <PackageReference Include="Ism.Library.Client" Version="1.0.0-prerelease0073" />
+    <PackageReference Include="Ism.Library.Client" Version="1.0.0-prerelease0075" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(Configuration)'=='DebugLocal'">

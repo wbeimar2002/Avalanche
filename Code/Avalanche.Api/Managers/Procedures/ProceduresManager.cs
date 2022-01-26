@@ -249,8 +249,8 @@ namespace Avalanche.Api.Managers.Procedures
         {
             Preconditions.ThrowIfNull(nameof(procedureZipRequest), procedureZipRequest);
             Preconditions.ThrowIfNull(nameof(procedureZipRequest.ProcedureId), procedureZipRequest.ProcedureId);
-            Preconditions.ThrowIfNull(nameof(procedureZipRequest.MediaFileNameList), procedureZipRequest.MediaFileNameList);
-            Preconditions.ThrowIfTrue<ArgumentException>($"{nameof(procedureZipRequest.MediaFileNameList.Count)} cannot be empty", procedureZipRequest.MediaFileNameList.Count == 0);
+            Preconditions.ThrowIfNull(nameof(procedureZipRequest.ContentItemIds), procedureZipRequest.ContentItemIds);
+            Preconditions.ThrowIfTrue<ArgumentException>($"{nameof(procedureZipRequest.ContentItemIds.Count)} cannot be empty", procedureZipRequest.ContentItemIds.Count == 0);
             var procedureDownloadRequest = _mapper.Map<ProcedureZipRequestViewModel, GenerateProcedureZipRequest>(procedureZipRequest);
             await _libraryService.GenerateProcedureZip(procedureDownloadRequest).ConfigureAwait(false);
         }
