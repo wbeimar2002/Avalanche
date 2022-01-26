@@ -10,6 +10,7 @@ using Ism.SystemState.Models.Library;
 using Ism.SystemState.Models.Medpresence;
 using Ism.SystemState.Models.Notifications;
 using Ism.SystemState.Models.PgsTimeout;
+using Ism.SystemState.Models.PIE;
 using Ism.SystemState.Models.Procedure;
 using Ism.SystemState.Models.Recorder;
 using Ism.SystemState.Models.VideoRouting;
@@ -76,6 +77,8 @@ namespace Avalanche.Api.Services.Notifications
             AddDataSubscription<MedpresenceState>(evt => _hubContext.Clients.All.OnMedpresenceStateDataChanged(evt));
 
             AddSubscription<ImageCaptureSucceededEvent>(evt => _hubContext.Clients.All.OnImageCaptureSucceeded(evt));
+
+            AddSubscription<PatientListUpdatedEvent>(evt => _hubContext.Clients.All.OnPatientListUpdated(evt));
 
             return Task.CompletedTask;
         }
