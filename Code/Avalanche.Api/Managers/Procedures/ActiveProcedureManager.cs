@@ -145,13 +145,13 @@ namespace Avalanche.Api.Managers.Procedures
 
             await _recorderService.FinishProcedure().ConfigureAwait(false);
 
-            await _libraryService.CommitActiveProcedure(request).ConfigureAwait(false);
-
             var procedureFinished = new ProcedureFinishedEvent
             {
                 PatientInfo = activeProcedure.Patient
             };
             await _stateClient.PublishEvent(procedureFinished).ConfigureAwait(false);
+
+            await _libraryService.CommitActiveProcedure(request).ConfigureAwait(false);
         }
 
         public async Task<ProcedureAllocationViewModel> AllocateNewProcedure()

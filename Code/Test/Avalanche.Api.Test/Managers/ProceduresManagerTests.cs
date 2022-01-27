@@ -245,8 +245,8 @@ namespace Avalanche.Api.Test.Managers
             var procedureZipRequest = new ProcedureZipRequestViewModel()
             {
                 ProcedureId = procedureId,
-                MediaFileNameList = new List<string> { "BX4RecA_2021_10_26T14_28_25_184.jpg", "BX4RecA_2021_10_26T14_28_25_184_t.jpg" },
-                RequestId = "test"
+                ContentItemIds = new List<string> { "3206c25e-d9eb-47e0-80c8-96f5233be969", "8378ff3d-37ac-49fa-b3aa-4c6bda01b41d" },
+                RequestId = "1642114410758"
             };
 
             _libraryService.Setup(mock => mock.GenerateProcedureZip(It.IsAny<GenerateProcedureZipRequest>()));

@@ -143,7 +143,7 @@ namespace Avalanche.Api.Controllers.V1
             [FromRoute] string repository,
             [FromRoute] string id,
             [FromRoute] string requestId,
-            [FromBody] List<string> mediaFileNameList,
+            [FromBody] List<string> contentItemIds,
             bool includePHI = false
         )
         {
@@ -154,7 +154,7 @@ namespace Avalanche.Api.Controllers.V1
                     new ProcedureZipRequestViewModel
                     {
                         ProcedureId = new ProcedureIdViewModel(id, repository),
-                        MediaFileNameList = mediaFileNameList,
+                        ContentItemIds = contentItemIds,
                         RequestId = requestId,
                         IncludePHI = includePHI
                     }

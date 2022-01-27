@@ -84,12 +84,12 @@ namespace Avalanche.Api.Test.Controllers
             var request = new ProcedureZipRequestViewModel
             {
                 ProcedureId = new ProcedureIdViewModel("2021_11_08T21_51_25_TODO", "cache"),
-                MediaFileNameList = new System.Collections.Generic.List<string>
+                ContentItemIds = new System.Collections.Generic.List<string>
                 {
-                    "BX4RecB_2021_11_08T16_53_32_619.jpg",
-                    "BX4RecB_2021_11_08T16_53_59_395.jpg"
+                    "3206c25e-d9eb-47e0-80c8-96f5233be969",
+                    "8378ff3d-37ac-49fa-b3aa-4c6bda01b41d"
                 },
-                RequestId = "123"
+                RequestId = "1642114410758"
             };
 
             _proceduresManager.Setup(mock => mock.GenerateProcedureZip(request));
@@ -98,7 +98,7 @@ namespace Avalanche.Api.Test.Controllers
                 request.ProcedureId.Id,
                 request.ProcedureId.RepositoryName,
                 request.RequestId,
-                request.MediaFileNameList
+                request.ContentItemIds
             );
 
             if (_checkLogger)
