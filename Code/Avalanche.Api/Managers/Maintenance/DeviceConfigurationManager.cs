@@ -35,11 +35,13 @@ namespace Avalanche.Api.Managers.Maintenance
             FinishOptionsConfiguration finishOptionsConfiguration,
             IStorageService storageService,
             IHttpContextAccessor httpContextAccessor,
-            IMapper mapper) : base(
+            IMapper mapper,
+            MedPresenceProvisioningConfiguration medPresenceProvisioningConfiguration) : base(
                 printingConfiguration,
                 medPresenceConfiguration,
                 setupConfiguration,
-                proceduresConfiguration)
+                proceduresConfiguration,
+                medPresenceProvisioningConfiguration)
         {
             _autoLabelsConfiguration = autoLabelsConfiguration;
             _labelsConfiguration = labelsConfiguration;

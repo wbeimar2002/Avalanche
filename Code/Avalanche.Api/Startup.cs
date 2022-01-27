@@ -148,6 +148,7 @@ namespace Avalanche.Api
             services.AddConfigurationPoco<SetupConfiguration>(_configuration, nameof(SetupConfiguration));
             services.AddConfigurationPoco<PrintingConfiguration>(_configuration, nameof(PrintingConfiguration));
             services.AddConfigurationPoco<MedPresenceConfiguration>(_configuration, nameof(MedPresenceConfiguration));
+            services.AddConfigurationPoco<MedPresenceProvisioningConfiguration>(_configuration, nameof(MedPresenceProvisioningConfiguration));
 
             if (isDevice)
             {

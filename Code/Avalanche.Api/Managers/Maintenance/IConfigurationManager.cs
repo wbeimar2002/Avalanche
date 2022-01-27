@@ -17,5 +17,7 @@ namespace Avalanche.Api.Managers.Maintenance
         Task UpdateAutoLabelsConfigurationByProcedureType(int procedureTypeId, List<AutoLabelAutoLabelsConfiguration> autoLabels);
         void UpdatePatientInfo(List<PatientInfoSetupConfiguration> patientInfoSetupConfigurations);
         void UpdateProceduresSearchConfigurationColumns(List<ColumnProceduresSearchConfiguration> columnProceduresSearchConfigurations);
+
+        MedPresenceProvisioningConfiguration GetMedPresenceProvisioningConfigurationSettings();
     }
 }
