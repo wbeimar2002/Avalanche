@@ -94,8 +94,8 @@ namespace Avalanche.Api.Managers.Patients
             }
 
             await CheckProcedureType(newPatient.ProcedureType, newPatient.Department).ConfigureAwait(false);
-
-            await AllocateNewProcedure(newPatient, false).ConfigureAwait(false);
+            //To review for delete
+            //await AllocateNewProcedure(newPatient, false).ConfigureAwait(false);
 
             return newPatient;
         }
@@ -156,6 +156,7 @@ namespace Avalanche.Api.Managers.Patients
                 }
             };
 
+            //To review for delete
             await AllocateNewProcedure(newPatient, true).ConfigureAwait(false);
 
             return newPatient;
@@ -254,6 +255,14 @@ namespace Avalanche.Api.Managers.Patients
 
         }
 
+        public int GetPatientListSource()
+        {
+            //var x = _pieService.GetPatientListSource();
+
+            return 0;
+        }
+
+        #region Private Methods
         private async Task CheckProcedureType(ProcedureTypeModel procedureType, DepartmentModel department)
         {
             //incase user is not selected or entered a procedure type, assign it to Unknown like in QuickRegister
@@ -323,9 +332,14 @@ namespace Avalanche.Api.Managers.Patients
             await (_routingManager?.PublishDefaultDisplayRecordingState()).ConfigureAwait(false);
         }
 
+        /// <summary>
+        /// This Method must be deleted !!!!!
+        /// </summary>
+        /// <param name="patient"></param>
+        /// <param name="useconfiguredBackgroundRecordingMode"></param>
         private async Task AllocateNewProcedure(PatientViewModel patient, bool useconfiguredBackgroundRecordingMode)
         {
-            var allocatedProcedure = await _activeProcedureManager.AllocateNewProcedure().ConfigureAwait(false);
+            var allocatedProcedure = await _activeProcedureManager.AllocateNewProcedure(1, patient).ConfigureAwait(false);
 
             if (useconfiguredBackgroundRecordingMode)
             {
@@ -344,5 +358,6 @@ namespace Avalanche.Api.Managers.Patients
 
             await PublishActiveProcedure(patient, allocatedProcedure).ConfigureAwait(false);
         }
+        #endregion
     }
 }

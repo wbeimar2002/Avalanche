@@ -1,5 +1,6 @@
 using AutoMapper;
 using Avalanche.Api.Managers.Data;
+using Avalanche.Api.Managers.Patients;
 using Avalanche.Api.Services.Health;
 using Avalanche.Api.Services.Media;
 using Avalanche.Api.Utilities;
@@ -25,6 +26,7 @@ namespace Avalanche.Api.Managers.Procedures
         private readonly IMapper _mapper;
         private readonly IAccessInfoFactory _accessInfoFactory;
         private readonly IRecorderService _recorderService;
+        private readonly IPatientsManager _patientsManager;
 
         private readonly IDataManager _dataManager;
         private readonly LabelsConfiguration _labelsConfig;
@@ -33,8 +35,7 @@ namespace Avalanche.Api.Managers.Procedures
         public const int MaxPageSize = 100;
 
         public ActiveProcedureManager(IStateClient stateClient, ILibraryService libraryService, IAccessInfoFactory accessInfoFactory,
-            IMapper mapper, IRecorderService recorderService,
-            IDataManager dataManager, LabelsConfiguration labelsConfig)
+            IMapper mapper, IRecorderService recorderService, IDataManager dataManager, LabelsConfiguration labelsConfig, IPatientsManager patientsManager)
         {
             _stateClient = stateClient;
             _libraryService = libraryService;
@@ -45,6 +46,7 @@ namespace Avalanche.Api.Managers.Procedures
             _recorderService = recorderService;
             _dataManager = dataManager;
             _labelsConfig = labelsConfig;
+            _patientsManager = patientsManager;
         }
 
         /// <summary>
@@ -154,8 +156,17 @@ namespace Avalanche.Api.Managers.Procedures
             await _libraryService.CommitActiveProcedure(request).ConfigureAwait(false);
         }
 
-        public async Task<ProcedureAllocationViewModel> AllocateNewProcedure()
+        public async Task<ProcedureAllocationViewModel> AllocateNewProcedure(int registrationMode, PatientViewModel? patient)
         {
+            if (registrationMode == 1)
+            {
+                patient = await _patientsManager.QuickPatientRegistration();
+            }
+            else
+            {
+                patient = await _patientsManager.RegisterPatient(patient);
+            }
+
             var accessInfo = _accessInfoFactory.GenerateAccessInfo();
             var response = await _libraryService.AllocateNewProcedure(new AllocateNewProcedureRequest
             {

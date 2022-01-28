@@ -9,5 +9,6 @@ namespace Avalanche.Api.Services.Health
         Task<AddPatientRecordResponse> RegisterPatient(AddPatientRecordRequest addPatientRecordRequest);
         Task UpdatePatient(UpdatePatientRecordRequest updatePatientRecordRequest);
         Task<DeletePatientRecordResponse> DeletePatient(DeletePatientRecordRequest deletePatientRecordRequest);
+        //Task<GetSourceResponse> GetPatientListSource();
     }
 }

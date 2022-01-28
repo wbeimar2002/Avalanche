@@ -240,7 +240,7 @@ namespace Avalanche.Api.Tests.Managers
             // Assert
             _dataManagementService.Verify(mock => mock.GetProcedureType(It.IsAny<Ism.Storage.DataManagement.Client.V1.Protos.GetProcedureTypeRequest>()), Times.Once);
             _dataManagementService.Verify(mock => mock.AddProcedureType(It.IsAny<Ism.Storage.DataManagement.Client.V1.Protos.AddProcedureTypeRequest>()), Times.Once);
-            _activeProcedureManager.Verify(m => m.AllocateNewProcedure(), Times.Once);
+            _activeProcedureManager.Verify(m => m.AllocateNewProcedure(1, null), Times.Once);
         }
 
         [Test]
@@ -295,14 +295,14 @@ namespace Avalanche.Api.Tests.Managers
                 });
 
             var faker = new Faker();
-            _activeProcedureManager.Setup(m => m.AllocateNewProcedure())
+            _activeProcedureManager.Setup(m => m.AllocateNewProcedure(1, null))
                 .ReturnsAsync(new ProcedureAllocationViewModel(new ProcedureIdViewModel(Guid.NewGuid().ToString(), faker.Commerce.Department()), faker.System.FilePath()));
 
             var result = _manager.RegisterPatient(newPatient);
 
             _dataManagementService.Verify(mock => mock.GetProcedureType(It.IsAny<Ism.Storage.DataManagement.Client.V1.Protos.GetProcedureTypeRequest>()), Times.Once);
             _dataManagementService.Verify(mock => mock.AddProcedureType(It.IsAny<Ism.Storage.DataManagement.Client.V1.Protos.AddProcedureTypeRequest>()), Times.Never);
-            _activeProcedureManager.Verify(m => m.AllocateNewProcedure(), Times.Once);
+            _activeProcedureManager.Verify(m => m.AllocateNewProcedure(1, null), Times.Once);
         }
 
         [Test]
@@ -319,12 +319,12 @@ namespace Avalanche.Api.Tests.Managers
             _setupConfiguration.PatientInfo = new List<PatientInfoSetupConfiguration>();
 
             var faker = new Faker();
-            _activeProcedureManager.Setup(m => m.AllocateNewProcedure())
+            _activeProcedureManager.Setup(m => m.AllocateNewProcedure(1, null))
                 .ReturnsAsync(new ProcedureAllocationViewModel(new ProcedureIdViewModel(Guid.NewGuid().ToString(), faker.Commerce.Department()), faker.System.FilePath()));
 
             var result = await _manager.QuickPatientRegistration();
 
-            _activeProcedureManager.Verify(m => m.AllocateNewProcedure(), Times.Once);
+            _activeProcedureManager.Verify(m => m.AllocateNewProcedure(1, null), Times.Once);
         }
 
         [Test, TestCaseSource(nameof(PatientUpdateViewModelWrongDataTestCases))]

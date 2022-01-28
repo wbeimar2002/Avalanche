@@ -279,5 +279,33 @@ namespace Avalanche.Api.Controllers.V1
                 _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
             }
         }
+
+        /// <summary>
+        /// Allocate new procedure for the process
+        /// </summary>
+        /// <param name="registrationMode"></param>
+        [HttpPost]
+        [Route("procedure/{registrationMode}")]
+        [ProducesResponseType(typeof(void), StatusCodes.Status200OK)]
+        public async Task<IActionResult> AllocateNewProcedure(int registrationMode, [FromBody] PatientViewModel? patient)
+        {
+            try
+            {
+                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
+
+                await _activeProcedureManager.AllocateNewProcedure(registrationMode, patient);
+
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, LoggerHelper.GetLogMessage(DebugLogType.Exception));
+                return new BadRequestObjectResult(ex.Get(_environment.IsDevelopment()));
+            }
+            finally
+            {
+                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
+            }
+        }
     }
 }
