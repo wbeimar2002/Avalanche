@@ -156,7 +156,7 @@ namespace Avalanche.Api.Managers.Procedures
             await _libraryService.CommitActiveProcedure(request).ConfigureAwait(false);
         }
 
-        public async Task<ProcedureAllocationViewModel> AllocateNewProcedure(int registrationMode, PatientViewModel? patient)
+        public async Task AllocateNewProcedure(int registrationMode, PatientViewModel? patient)
         {
             if (registrationMode == 1)
             {
@@ -167,14 +167,18 @@ namespace Avalanche.Api.Managers.Procedures
                 patient = await _patientsManager.RegisterPatient(patient);
             }
 
+            //await _patientsManager.PublishActiveProcedure(patient, allocatedProcedure).ConfigureAwait(false);
+
             var accessInfo = _accessInfoFactory.GenerateAccessInfo();
+
             var response = await _libraryService.AllocateNewProcedure(new AllocateNewProcedureRequest
             {
                 AccessInfo = _mapper.Map<AccessInfoMessage>(accessInfo),
                 Clinical = true
             }).ConfigureAwait(false);
 
-            return _mapper.Map<ProcedureAllocationViewModel>(response);
+            var procedure = _mapper.Map<ProcedureAllocationViewModel>(response);
+            await PublishPersistData(patient, procedure).ConfigureAwait(false);
         }
 
         public async Task ApplyLabelToActiveProcedure(ContentViewModel labelContent)
@@ -272,6 +276,33 @@ namespace Avalanche.Api.Managers.Procedures
             {
                 throw new InvalidOperationException("Cannot delete video that is currently recording");
             }
+        }
+
+        private async Task PublishPersistData(PatientViewModel patient, ProcedureAllocationViewModel procedure)
+        {
+            await _stateClient.PersistData(new Ism.SystemState.Models.Procedure.ActiveProcedureState(
+                patient: _mapper.Map<Ism.SystemState.Models.Procedure.Patient>(patient),
+                images: new List<Ism.SystemState.Models.Procedure.ProcedureImage>(),
+                videos: new List<Ism.SystemState.Models.Procedure.ProcedureVideo>(),
+                backgroundVideos: new List<Ism.SystemState.Models.Procedure.ProcedureVideo>(),
+                libraryId: procedure.ProcedureId.Id,
+                repositoryId: procedure.ProcedureId.RepositoryName,
+
+                procedureRelativePath: procedure.RelativePath,
+                department: _mapper.Map<Ism.SystemState.Models.Procedure.Department>(patient.Department),
+                procedureType: _mapper.Map<Ism.SystemState.Models.Procedure.ProcedureType>(patient.ProcedureType),
+                physician: _mapper.Map<Ism.SystemState.Models.Procedure.Physician>(patient.Physician),
+                requiresUserConfirmation: false,
+                // TODO:
+                procedureStartTimeUtc: DateTimeOffset.UtcNow,
+                // TODO:
+                procedureTimezoneId: TimeZoneInfo.Local.Id,
+                isClinical: true,
+                notes: new List<Ism.SystemState.Models.Procedure.ProcedureNote>(),
+                accession: null,
+                recordingEvents: new List<Ism.SystemState.Models.Procedure.VideoRecordingEvent>(),
+                recordingMode: _mapper.Map<Ism.SystemState.Models.Procedure.BackgroundRecordingMode>(patient.BackgroundRecordingMode)))
+                .ConfigureAwait(false);
         }
     }
 }

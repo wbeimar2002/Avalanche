@@ -157,7 +157,7 @@ namespace Avalanche.Api.Managers.Patients
             };
 
             //To review for delete
-            await AllocateNewProcedure(newPatient, true).ConfigureAwait(false);
+            //await AllocateNewProcedure(newPatient, true).ConfigureAwait(false);
 
             return newPatient;
         }
@@ -178,7 +178,7 @@ namespace Avalanche.Api.Managers.Patients
             var request = _mapper.Map<PatientViewModel, UpdatePatientRecordRequest>(existingPatient);
             request.AccessInfo = _mapper.Map<AccessInfoMessage>(accessInfo);
 
-            await AllocateNewProcedure(existingPatient, false).ConfigureAwait(false);
+            //await AllocateNewProcedure(existingPatient, false).ConfigureAwait(false);
 
             await _pieService.UpdatePatient(request).ConfigureAwait(false);
         }
@@ -258,7 +258,6 @@ namespace Avalanche.Api.Managers.Patients
         public int GetPatientListSource()
         {
             //var x = _pieService.GetPatientListSource();
-
             return 0;
         }
 
@@ -337,27 +336,27 @@ namespace Avalanche.Api.Managers.Patients
         /// </summary>
         /// <param name="patient"></param>
         /// <param name="useconfiguredBackgroundRecordingMode"></param>
-        private async Task AllocateNewProcedure(PatientViewModel patient, bool useconfiguredBackgroundRecordingMode)
-        {
-            var allocatedProcedure = await _activeProcedureManager.AllocateNewProcedure(1, patient).ConfigureAwait(false);
+        //private async Task AllocateNewProcedure(PatientViewModel patient, bool useconfiguredBackgroundRecordingMode)
+        //{
+        //    //var allocatedProcedure = await _activeProcedureManager.AllocateNewProcedure(1, patient).ConfigureAwait(false);
 
-            if (useconfiguredBackgroundRecordingMode)
-            {
-                var configuredBackgroundRecordingMode = _recorderConfiguration.BackgroundRecordingMode;
+        //    if (useconfiguredBackgroundRecordingMode)
+        //    {
+        //        var configuredBackgroundRecordingMode = _recorderConfiguration.BackgroundRecordingMode;
 
-                //AlwaysStartOnCapture: This value can be configured in maintenance but it is not used in the Media system to control the behavior
-                if (configuredBackgroundRecordingMode == Shared.Infrastructure.Enumerations.BackgroundRecordingMode.AlwaysStartOnCapture)
-                {
-                    patient.BackgroundRecordingMode = Shared.Infrastructure.Enumerations.BackgroundRecordingMode.StartOnMediaCapture;
-                }
-                else
-                {
-                    patient.BackgroundRecordingMode = configuredBackgroundRecordingMode;
-                }
-            }
+        //        //AlwaysStartOnCapture: This value can be configured in maintenance but it is not used in the Media system to control the behavior
+        //        if (configuredBackgroundRecordingMode == Shared.Infrastructure.Enumerations.BackgroundRecordingMode.AlwaysStartOnCapture)
+        //        {
+        //            patient.BackgroundRecordingMode = Shared.Infrastructure.Enumerations.BackgroundRecordingMode.StartOnMediaCapture;
+        //        }
+        //        else
+        //        {
+        //            patient.BackgroundRecordingMode = configuredBackgroundRecordingMode;
+        //        }
+        //    }
 
-            await PublishActiveProcedure(patient, allocatedProcedure).ConfigureAwait(false);
-        }
+        //    await PublishActiveProcedure(patient, allocatedProcedure).ConfigureAwait(false);
+        //}
         #endregion
     }
 }

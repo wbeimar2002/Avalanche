@@ -8,7 +8,7 @@ namespace Avalanche.Api.Managers.Procedures
 {
     public interface IActiveProcedureManager
     {
-        Task<ProcedureAllocationViewModel> AllocateNewProcedure(int registrationMode, PatientViewModel? patient);
+        Task AllocateNewProcedure(int registrationMode, PatientViewModel? patient);
         Task<ActiveProcedureViewModel> GetActiveProcedure();
 
         Task ConfirmActiveProcedure();
