@@ -156,7 +156,7 @@ namespace Avalanche.Api.Managers.Procedures
             await _libraryService.CommitActiveProcedure(request).ConfigureAwait(false);
         }
 
-        public async Task AllocateNewProcedure(int registrationMode, PatientViewModel? patient)
+        public async Task<ProcedureAllocationViewModel> AllocateNewProcedure(int registrationMode, PatientViewModel? patient)
         {
             if (registrationMode == 1)
             {
@@ -179,6 +179,8 @@ namespace Avalanche.Api.Managers.Procedures
 
             var procedure = _mapper.Map<ProcedureAllocationViewModel>(response);
             await PublishPersistData(patient, procedure).ConfigureAwait(false);
+
+            return _mapper.Map<ProcedureAllocationViewModel>(response);
         }
 
         public async Task ApplyLabelToActiveProcedure(ContentViewModel labelContent)
