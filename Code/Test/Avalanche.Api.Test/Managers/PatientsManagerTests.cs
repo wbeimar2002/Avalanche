@@ -78,7 +78,6 @@ namespace Avalanche.Api.Tests.Managers
                 _accessInfoFactory.Object,
                 _mapper, _dataManagementService.Object,
                 _stateClient.Object,
-                _activeProcedureManager.Object,
                 _routingManager.Object,
                 _httpContextAccessor.Object,
                 recorderConfig,
@@ -240,7 +239,7 @@ namespace Avalanche.Api.Tests.Managers
             // Assert
             _dataManagementService.Verify(mock => mock.GetProcedureType(It.IsAny<Ism.Storage.DataManagement.Client.V1.Protos.GetProcedureTypeRequest>()), Times.Once);
             _dataManagementService.Verify(mock => mock.AddProcedureType(It.IsAny<Ism.Storage.DataManagement.Client.V1.Protos.AddProcedureTypeRequest>()), Times.Once);
-            _activeProcedureManager.Verify(m => m.AllocateNewProcedure(1, newPatient), Times.Never);
+            _activeProcedureManager.Verify(m => m.AllocateNewProcedure(RegistrationMode.Quick, newPatient), Times.Never);
         }
 
         [Test]
@@ -295,14 +294,14 @@ namespace Avalanche.Api.Tests.Managers
                 });
 
             var faker = new Faker();
-            _activeProcedureManager.Setup(m => m.AllocateNewProcedure(1, null))
+            _activeProcedureManager.Setup(m => m.AllocateNewProcedure(RegistrationMode.Quick, null))
             .ReturnsAsync(new ProcedureAllocationViewModel(new ProcedureIdViewModel(Guid.NewGuid().ToString(), faker.Commerce.Department()), faker.System.FilePath()));
 
             var result = _manager.RegisterPatient(newPatient);
 
             _dataManagementService.Verify(mock => mock.GetProcedureType(It.IsAny<Ism.Storage.DataManagement.Client.V1.Protos.GetProcedureTypeRequest>()), Times.Once);
             _dataManagementService.Verify(mock => mock.AddProcedureType(It.IsAny<Ism.Storage.DataManagement.Client.V1.Protos.AddProcedureTypeRequest>()), Times.Never);
-            _activeProcedureManager.Verify(m => m.AllocateNewProcedure(0, result.Result), Times.Never, new ArgumentException().Message);
+            _activeProcedureManager.Verify(m => m.AllocateNewProcedure(RegistrationMode.Manual, result.Result), Times.Never, new ArgumentException().Message);
         }
 
         [Test]
@@ -319,7 +318,7 @@ namespace Avalanche.Api.Tests.Managers
             _setupConfiguration.PatientInfo = new List<PatientInfoSetupConfiguration>();
 
             var faker = new Faker();
-            _activeProcedureManager.Setup(m => m.AllocateNewProcedure(1, null))
+            _activeProcedureManager.Setup(m => m.AllocateNewProcedure(RegistrationMode.Quick, null))
             .ReturnsAsync(new ProcedureAllocationViewModel(new ProcedureIdViewModel(Guid.NewGuid().ToString(), faker.Commerce.Department()), faker.System.FilePath()));
 
             var result = await _manager.QuickPatientRegistration();

@@ -27,7 +27,7 @@ namespace Avalanche.Api.Managers.Patients
         private readonly IPieService _pieService;
         private readonly IDataManagementService _dataManagementService;
         private readonly IStateClient _stateClient;
-        private readonly IActiveProcedureManager _activeProcedureManager;
+        //private readonly IActiveProcedureManager _activeProcedureManager;
 
         // TODO: remove this when we figure out how to clean up dependencies
         private readonly IRoutingManager _routingManager;
@@ -47,7 +47,6 @@ namespace Avalanche.Api.Managers.Patients
             IMapper mapper,
             IDataManagementService dataManagementService,
             IStateClient stateClient,
-            IActiveProcedureManager activeProcedureManager,
             IRoutingManager routingManager,
             IHttpContextAccessor httpContextAccessor,
             RecorderConfiguration recorderConfiguration,
@@ -59,7 +58,6 @@ namespace Avalanche.Api.Managers.Patients
             _dataManagementService = dataManagementService;
             _mapper = mapper;
             _stateClient = stateClient;
-            _activeProcedureManager = activeProcedureManager;
             _routingManager = routingManager;
             _httpContextAccessor = httpContextAccessor;
             _recorderConfiguration = recorderConfiguration;
@@ -78,25 +76,17 @@ namespace Avalanche.Api.Managers.Patients
 
             ValidateDynamicConditions(newPatient);
 
-            var accessInfo = _accessInfoFactory.GenerateAccessInfo();
-
-            if (newPatient.Physician == null)
+            if (newPatient.Physician == null && _setupConfiguration.Registration.Manual.AutoFillPhysician)
             {
-                if (_setupConfiguration.Registration.Manual.AutoFillPhysician)
+                newPatient.Physician = new PhysicianModel()
                 {
-                    newPatient.Physician = new PhysicianModel()
-                    {
-                        Id = user.Id,
-                        FirstName = user.FirstName,
-                        LastName = user.LastName
-                    };
-                }
+                    Id = user.Id,
+                    FirstName = user.FirstName,
+                    LastName = user.LastName
+                };
             }
 
             await CheckProcedureType(newPatient.ProcedureType, newPatient.Department).ConfigureAwait(false);
-            //To review for delete
-            //await AllocateNewProcedure(newPatient, false).ConfigureAwait(false);
-
             return newPatient;
         }
 
@@ -138,7 +128,7 @@ namespace Avalanche.Api.Managers.Patients
             var formattedDate = DateTime.UtcNow.ToLocalTime().ToString(quickRegistrationDateFormat);
 
             //TODO: Pending check this default data
-            var newPatient = new PatientViewModel()
+            return new PatientViewModel()
             {
                 MRN = $"{formattedDate}MRN",
                 DateOfBirth = DateTime.UtcNow.ToLocalTime(),
@@ -155,11 +145,6 @@ namespace Avalanche.Api.Managers.Patients
                     LastName = user.LastName
                 }
             };
-
-            //To review for delete
-            //await AllocateNewProcedure(newPatient, true).ConfigureAwait(false);
-
-            return newPatient;
         }
 
         public async Task UpdatePatient(PatientViewModel existingPatient)
@@ -178,7 +163,7 @@ namespace Avalanche.Api.Managers.Patients
             var request = _mapper.Map<PatientViewModel, UpdatePatientRecordRequest>(existingPatient);
             request.AccessInfo = _mapper.Map<AccessInfoMessage>(accessInfo);
 
-            //await AllocateNewProcedure(existingPatient, false).ConfigureAwait(false);
+            //await _activeProcedureManager.AllocateNewProcedure(existingPatient, false).ConfigureAwait(false);
 
             await _pieService.UpdatePatient(request).ConfigureAwait(false);
         }
@@ -255,10 +240,10 @@ namespace Avalanche.Api.Managers.Patients
 
         }
 
-        public int GetPatientListSource()
+        public async Task<int> GetPatientListSource()
         {
-            //var x = _pieService.GetPatientListSource();
-            return 0;
+            var getSource = await _pieService.GetPatientListSource(new Empty()).ConfigureAwait(false);
+            return getSource.Source;
         }
 
         #region Private Methods

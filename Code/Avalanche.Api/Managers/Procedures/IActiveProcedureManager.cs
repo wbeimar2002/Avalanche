@@ -1,5 +1,6 @@
 using Avalanche.Api.ViewModels;
 using Avalanche.Shared.Domain.Enumerations;
+using Avalanche.Shared.Infrastructure.Enumerations;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -8,7 +9,7 @@ namespace Avalanche.Api.Managers.Procedures
 {
     public interface IActiveProcedureManager
     {
-        Task<ProcedureAllocationViewModel> AllocateNewProcedure(int registrationMode, PatientViewModel? patient);
+        Task<ProcedureAllocationViewModel> AllocateNewProcedure(RegistrationMode registrationMode, PatientViewModel? patient);
         Task<ActiveProcedureViewModel> GetActiveProcedure();
 
         Task ConfirmActiveProcedure();

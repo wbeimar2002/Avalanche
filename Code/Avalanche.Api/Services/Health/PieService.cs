@@ -25,7 +25,7 @@ namespace Avalanche.Api.Services.Health
         public async Task UpdatePatient(UpdatePatientRecordRequest updatePatientRecordRequest) =>
             await _patientListClient.UpdatePatientRecord(updatePatientRecordRequest).ConfigureAwait(false);
 
-        //public async Task<GetSourceResponse> GetPatientListSource() =>
-        //    await _patientListClient.GetPatientListSource().ConfigureAwait(false);
+        public async Task<GetSourceResponse> GetPatientListSource(Empty request) =>
+            await _patientListClient.GetPatientListSource(request).ConfigureAwait(false);
     }
 }

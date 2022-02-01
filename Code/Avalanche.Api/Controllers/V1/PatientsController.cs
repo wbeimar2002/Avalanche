@@ -32,31 +32,6 @@ namespace Avalanche.Api.Controllers.V1
         }
 
         /// <summary>
-        /// Register new patient
-        /// </summary>
-        /// <param name="newPatient"></param>
-        [HttpPost("")]
-        [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(PatientViewModel))]
-        public async Task<IActionResult> ManualPatientRegistration(PatientViewModel newPatient)
-        {
-            try
-            {
-                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
-                var patientRegistered = await _patientsManager.RegisterPatient(newPatient);
-                return new ObjectResult(patientRegistered) { StatusCode = StatusCodes.Status201Created };
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, LoggerHelper.GetLogMessage(DebugLogType.Exception));
-                return new BadRequestObjectResult(ex.Get(_environment.IsDevelopment()));
-            }
-            finally
-            {
-                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
-            }
-        }
-
-        /// <summary>
         /// Update patient
         /// </summary>
         /// <param name="existing"></param>
@@ -96,31 +71,6 @@ namespace Avalanche.Api.Controllers.V1
                 await _patientsManager.DeletePatient(id);
 
                 return Ok();
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, LoggerHelper.GetLogMessage(DebugLogType.Exception));
-                return new BadRequestObjectResult(ex.Get(_environment.IsDevelopment()));
-            }
-            finally
-            {
-                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
-            }
-        }
-
-        /// <summary>
-        /// Quick patient registration
-        /// </summary>
-        [HttpPost("quick")]
-        [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(PatientViewModel))]
-        public async Task<IActionResult> QuickPatientRegistration()
-        {
-            try
-            {
-                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
-                var newPatient = await _patientsManager.QuickPatientRegistration();
-
-                return new ObjectResult(newPatient) { StatusCode = StatusCodes.Status201Created };
             }
             catch (Exception ex)
             {
