@@ -10,6 +10,10 @@ namespace Avalanche.Api.ViewModels
         public int? RecorderState { get; internal set; }
         public bool IsRecording { get; set; }
         public bool IsBackgroundRecording { get; set; }
+
+        public RegistrationMode RegistrationMode { get; set; }
+        public PatientListSource PatientListSource { get; set; }
+
         public ActiveProcedureViewModel()
         { }
 
@@ -26,9 +30,11 @@ namespace Avalanche.Api.ViewModels
             RegistrationMode registrationMode,
             PatientListSource patientListSource,
             bool requiresUserConfirmation)
-            : base(patient, libraryId, repositoryId, procedureRelativePath, procedureStartTimeUtc, procedureTimezoneId, images, videos, backgroundVideos, registrationMode, patientListSource)
+            : base(patient, libraryId, repositoryId, procedureRelativePath, procedureStartTimeUtc, procedureTimezoneId, images, videos, backgroundVideos)
         {
+            RegistrationMode = registrationMode;
             RequiresUserConfirmation = requiresUserConfirmation;
+            PatientListSource = patientListSource;
         }
     }
 }
