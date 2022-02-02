@@ -29,6 +29,7 @@ namespace Avalanche.Api.Test.Managers
         private Mock<IStateClient> _stateClient;
         private Mock<IDataManager> _dataManager;
         private IPatientsManager _patientsManager;
+        private IDataManagementService _dataManagementService;
         LabelsConfiguration _labelsConfig;
 
         ActiveProcedureManager _manager;
@@ -46,7 +47,7 @@ namespace Avalanche.Api.Test.Managers
             _dataManager = new Mock<IDataManager>();
             _labelsConfig = new LabelsConfiguration();
 
-            _manager = new ActiveProcedureManager(_stateClient.Object, _libraryService.Object, _accessInfoFactory.Object, _mapper, _recorderService.Object, _dataManager.Object, _labelsConfig, _patientsManager);
+            _manager = new ActiveProcedureManager(_stateClient.Object, _libraryService.Object, _accessInfoFactory.Object, _mapper, _recorderService.Object, _dataManager.Object, _labelsConfig, _patientsManager, _dataManagementService);
         }
 
         [Test]

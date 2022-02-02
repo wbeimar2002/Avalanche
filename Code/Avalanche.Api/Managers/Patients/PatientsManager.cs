@@ -27,7 +27,6 @@ namespace Avalanche.Api.Managers.Patients
         private readonly IPieService _pieService;
         private readonly IDataManagementService _dataManagementService;
         private readonly IStateClient _stateClient;
-        //private readonly IActiveProcedureManager _activeProcedureManager;
 
         // TODO: remove this when we figure out how to clean up dependencies
         private readonly IRoutingManager _routingManager;
@@ -86,7 +85,6 @@ namespace Avalanche.Api.Managers.Patients
                 };
             }
 
-            await CheckProcedureType(newPatient.ProcedureType, newPatient.Department).ConfigureAwait(false);
             return newPatient;
         }
 
@@ -158,12 +156,8 @@ namespace Avalanche.Api.Managers.Patients
 
             var accessInfo = _accessInfoFactory.GenerateAccessInfo();
 
-            await CheckProcedureType(existingPatient.ProcedureType, existingPatient.Department).ConfigureAwait(false);
-
             var request = _mapper.Map<PatientViewModel, UpdatePatientRecordRequest>(existingPatient);
             request.AccessInfo = _mapper.Map<AccessInfoMessage>(accessInfo);
-
-            //await _activeProcedureManager.AllocateNewProcedure(existingPatient, false).ConfigureAwait(false);
 
             await _pieService.UpdatePatient(request).ConfigureAwait(false);
         }
@@ -245,103 +239,5 @@ namespace Avalanche.Api.Managers.Patients
             var getSource = await _pieService.GetPatientListSource(new Empty()).ConfigureAwait(false);
             return getSource.Source;
         }
-
-        #region Private Methods
-        private async Task CheckProcedureType(ProcedureTypeModel procedureType, DepartmentModel department)
-        {
-            //incase user is not selected or entered a procedure type, assign it to Unknown like in QuickRegister
-            if (string.IsNullOrEmpty(procedureType.Name) || procedureType.Name.Length == 0)
-            {
-                procedureType.Id = 0;
-                procedureType.Name = "Unknown";
-            }
-            else
-            {
-                //TODO: Validate department support
-                var existingProcedureType = await _dataManagementService.GetProcedureType(new Ism.Storage.DataManagement.Client.V1.Protos.GetProcedureTypeRequest()
-                {
-                    ProcedureTypeName = procedureType.Name,
-                    DepartmentId = Convert.ToInt32(department.Id),
-                }).ConfigureAwait(false);
-
-                if (existingProcedureType.Id == 0 && string.IsNullOrEmpty(existingProcedureType.Name))
-                {
-                    await _dataManagementService.AddProcedureType(new Ism.Storage.DataManagement.Client.V1.Protos.AddProcedureTypeRequest()
-                    {
-                        ProcedureTypeName = procedureType.Name,
-                        DepartmentId = Convert.ToInt32(department.Id),
-                    }).ConfigureAwait(false);
-                }
-            }
-        }
-
-        private async Task PublishActiveProcedure(PatientViewModel patient, ProcedureAllocationViewModel procedure)
-        {
-            if (patient != null && procedure != null)
-            {
-                await _stateClient.PersistData(new Ism.SystemState.Models.Procedure.ActiveProcedureState(
-                    patient: _mapper.Map<Ism.SystemState.Models.Procedure.Patient>(patient),
-                    images: new List<Ism.SystemState.Models.Procedure.ProcedureImage>(),
-                    videos: new List<Ism.SystemState.Models.Procedure.ProcedureVideo>(),
-                    backgroundVideos: new List<Ism.SystemState.Models.Procedure.ProcedureVideo>(),
-                    libraryId: procedure.ProcedureId.Id,
-                    repositoryId: procedure.ProcedureId.RepositoryName,
-
-                    procedureRelativePath: procedure.RelativePath,
-                    department: _mapper.Map<Ism.SystemState.Models.Procedure.Department>(patient.Department),
-                    procedureType: _mapper.Map<Ism.SystemState.Models.Procedure.ProcedureType>(patient.ProcedureType),
-                    physician: _mapper.Map<Ism.SystemState.Models.Procedure.Physician>(patient.Physician),
-                    requiresUserConfirmation: false,
-
-                    // TODO:
-                    procedureStartTimeUtc: DateTimeOffset.UtcNow,
-
-                    // TODO:
-                    procedureTimezoneId: TimeZoneInfo.Local.Id,
-                    isClinical: true,
-                    notes: new List<Ism.SystemState.Models.Procedure.ProcedureNote>()
-,
-                    accession: null,
-                    recordingEvents: new List<Ism.SystemState.Models.Procedure.VideoRecordingEvent>(),
-                    recordingMode: _mapper.Map<Ism.SystemState.Models.Procedure.BackgroundRecordingMode>(patient.BackgroundRecordingMode))).ConfigureAwait(false);
-            }
-            else
-            {
-                await _stateClient.PersistData<Ism.SystemState.Models.Procedure.ActiveProcedureState>(null).ConfigureAwait(false);
-            }
-
-            // TODO: figure out how to do dependencies better
-            // maybe have a separate data/event for when a patient is registered
-            // routing manager subscribes to that event and we can have a cleaner dependency graph
-            await (_routingManager?.PublishDefaultDisplayRecordingState()).ConfigureAwait(false);
-        }
-
-        /// <summary>
-        /// This Method must be deleted !!!!!
-        /// </summary>
-        /// <param name="patient"></param>
-        /// <param name="useconfiguredBackgroundRecordingMode"></param>
-        //private async Task AllocateNewProcedure(PatientViewModel patient, bool useconfiguredBackgroundRecordingMode)
-        //{
-        //    //var allocatedProcedure = await _activeProcedureManager.AllocateNewProcedure(1, patient).ConfigureAwait(false);
-
-        //    if (useconfiguredBackgroundRecordingMode)
-        //    {
-        //        var configuredBackgroundRecordingMode = _recorderConfiguration.BackgroundRecordingMode;
-
-        //        //AlwaysStartOnCapture: This value can be configured in maintenance but it is not used in the Media system to control the behavior
-        //        if (configuredBackgroundRecordingMode == Shared.Infrastructure.Enumerations.BackgroundRecordingMode.AlwaysStartOnCapture)
-        //        {
-        //            patient.BackgroundRecordingMode = Shared.Infrastructure.Enumerations.BackgroundRecordingMode.StartOnMediaCapture;
-        //        }
-        //        else
-        //        {
-        //            patient.BackgroundRecordingMode = configuredBackgroundRecordingMode;
-        //        }
-        //    }
-
-        //    await PublishActiveProcedure(patient, allocatedProcedure).ConfigureAwait(false);
-        //}
-        #endregion
     }
 }
