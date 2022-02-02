@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Ism.SystemState.Models.Procedure;
 
 namespace Avalanche.Api.ViewModels
 {
@@ -17,6 +18,16 @@ namespace Avalanche.Api.ViewModels
         public List<ProcedureVideoViewModel> Videos { get; set; }
         public List<ProcedureVideoViewModel> BackgroundVideos { get; set; }
 
+        /// <summary>
+        /// Indicating The registration mode: Manual or Quick
+        /// </summary>
+        public RegistrationMode RegistrationMode { get; set; }
+
+        /// <summary>
+        /// Indicating The Patient List Source: ERM Based Patient List or Local Patient List
+        /// </summary>
+        public PatientListSource PatientListSource { get; set; }
+
         public ProcedureDetailsViewModel()
         {
         }
@@ -30,7 +41,9 @@ namespace Avalanche.Api.ViewModels
             string procedureTimezoneId,
             List<ProcedureImageViewModel> images,
             List<ProcedureVideoViewModel> videos,
-            List<ProcedureVideoViewModel> backgroundVideos)
+            List<ProcedureVideoViewModel> backgroundVideos,
+            RegistrationMode registrationMode,
+            PatientListSource patientListSource)
         {
             Patient = patient;
             LibraryId = libraryId;
@@ -42,6 +55,8 @@ namespace Avalanche.Api.ViewModels
             Images = images;
             Videos = videos;
             BackgroundVideos = backgroundVideos;
+            RegistrationMode = registrationMode;
+            PatientListSource = patientListSource;
         }
     }
 }

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Ism.SystemState.Models.Procedure;
 
 namespace Avalanche.Api.ViewModels
 {
@@ -22,8 +23,10 @@ namespace Avalanche.Api.ViewModels
             List<ProcedureImageViewModel> images,
             List<ProcedureVideoViewModel> videos,
             List<ProcedureVideoViewModel> backgroundVideos,
+            RegistrationMode registrationMode,
+            PatientListSource patientListSource,
             bool requiresUserConfirmation)
-            : base(patient, libraryId, repositoryId, procedureRelativePath, procedureStartTimeUtc, procedureTimezoneId, images, videos, backgroundVideos)
+            : base(patient, libraryId, repositoryId, procedureRelativePath, procedureStartTimeUtc, procedureTimezoneId, images, videos, backgroundVideos, registrationMode, patientListSource)
         {
             RequiresUserConfirmation = requiresUserConfirmation;
         }
