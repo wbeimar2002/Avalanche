@@ -137,7 +137,9 @@ namespace Avalanche.Api.Tests.MappingConfigurations
                     new List<ProcedureNote>(),
                     null,
                     new List<VideoRecordingEvent>(),
-                    BackgroundRecordingMode.StartImmediately)
+                    BackgroundRecordingMode.StartImmediately,
+                    0,
+                    0)
             {
                 IsRecording = true,
                 IsBackgroundRecording = true
