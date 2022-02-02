@@ -28,9 +28,6 @@ namespace Avalanche.Api.Managers.Patients
         private readonly IDataManagementService _dataManagementService;
         private readonly IStateClient _stateClient;
 
-        // TODO: remove this when we figure out how to clean up dependencies
-        private readonly IRoutingManager _routingManager;
-
         private readonly IAccessInfoFactory _accessInfoFactory;
         private readonly IMapper _mapper;
 
@@ -57,7 +54,6 @@ namespace Avalanche.Api.Managers.Patients
             _dataManagementService = dataManagementService;
             _mapper = mapper;
             _stateClient = stateClient;
-            _routingManager = routingManager;
             _httpContextAccessor = httpContextAccessor;
             _recorderConfiguration = recorderConfiguration;
             _setupConfiguration = setupConfiguration;

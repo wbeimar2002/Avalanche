@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using AutoMapper;
 using Avalanche.Api.Managers.Data;
+using Avalanche.Api.Managers.Media;
 using Avalanche.Api.Managers.Patients;
 using Avalanche.Api.Managers.Procedures;
 using Avalanche.Api.Mapping;
@@ -30,6 +31,7 @@ namespace Avalanche.Api.Test.Managers
         private Mock<IDataManager> _dataManager;
         private Mock<IPatientsManager> _patientsManager;
         private IDataManagementService _dataManagementService;
+        private readonly Mock<IRoutingManager> _routingManager;
         LabelsConfiguration _labelsConfig;
 
         ActiveProcedureManager _manager;
@@ -48,7 +50,7 @@ namespace Avalanche.Api.Test.Managers
             _patientsManager = new Mock<IPatientsManager>();
             _labelsConfig = new LabelsConfiguration();
 
-            _manager = new ActiveProcedureManager(_stateClient.Object, _libraryService.Object, _accessInfoFactory.Object, _mapper, _recorderService.Object, _dataManager.Object, _labelsConfig, _patientsManager.Object, _dataManagementService);
+            _manager = new ActiveProcedureManager(_stateClient.Object, _libraryService.Object, _accessInfoFactory.Object, _mapper, _recorderService.Object, _dataManager.Object, _labelsConfig, _patientsManager.Object, _dataManagementService, _routingManager.Object);
         }
 
         [Test]

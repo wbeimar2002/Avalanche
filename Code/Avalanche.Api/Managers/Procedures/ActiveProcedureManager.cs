@@ -1,5 +1,6 @@
 using AutoMapper;
 using Avalanche.Api.Managers.Data;
+using Avalanche.Api.Managers.Media;
 using Avalanche.Api.Managers.Patients;
 using Avalanche.Api.Services.Health;
 using Avalanche.Api.Services.Media;
@@ -32,11 +33,14 @@ namespace Avalanche.Api.Managers.Procedures
         private readonly IDataManager _dataManager;
         private readonly LabelsConfiguration _labelsConfig;
 
+        // TODO: remove this when we figure out how to clean up dependencies
+        private readonly IRoutingManager _routingManager;
+
         public const int MinPageSize = 25;
         public const int MaxPageSize = 100;
 
         public ActiveProcedureManager(IStateClient stateClient, ILibraryService libraryService, IAccessInfoFactory accessInfoFactory,
-            IMapper mapper, IRecorderService recorderService, IDataManager dataManager, LabelsConfiguration labelsConfig, IPatientsManager patientsManager, IDataManagementService dataManagementService)
+            IMapper mapper, IRecorderService recorderService, IDataManager dataManager, LabelsConfiguration labelsConfig, IPatientsManager patientsManager, IDataManagementService dataManagementService, IRoutingManager routingManager)
         {
             _stateClient = stateClient;
             _libraryService = libraryService;
@@ -49,6 +53,7 @@ namespace Avalanche.Api.Managers.Procedures
             _labelsConfig = labelsConfig;
             _patientsManager = patientsManager;
             _dataManagementService = dataManagementService;
+            _routingManager = routingManager;
         }
 
         /// <summary>
@@ -333,6 +338,7 @@ namespace Avalanche.Api.Managers.Procedures
             };
 
             await _stateClient.PersistData(activeProcedureState).ConfigureAwait(false);
+            await (_routingManager?.PublishDefaultDisplayRecordingState()).ConfigureAwait(false);
         }
 
         private async Task CheckProcedureType(ProcedureTypeModel procedureType, DepartmentModel department)
