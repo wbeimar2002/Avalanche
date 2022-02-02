@@ -73,7 +73,9 @@ namespace Avalanche.Api.Test.Managers
                     new List<ProcedureNote>(),
                     null,
                     new List<VideoRecordingEvent>(),
-                    BackgroundRecordingMode.StartImmediately));
+                    BackgroundRecordingMode.StartImmediately,
+                    0,
+                    0));
 
             _recorderService.Setup(mock => mock.GetRecorderState()).ReturnsAsync(new Ism.Recorder.Core.V1.Protos.RecorderState() { State = 0 });
 
@@ -106,7 +108,9 @@ namespace Avalanche.Api.Test.Managers
                     new List<ProcedureNote>(),
                     null,
                     new List<VideoRecordingEvent>(),
-                    BackgroundRecordingMode.StartImmediately));
+                    BackgroundRecordingMode.StartImmediately,
+                    0,
+                    0));
 
             await _manager.DeleteActiveProcedureMediaItem(Shared.Domain.Enumerations.ProcedureContentType.Image, id).ConfigureAwait(false);
         }
@@ -134,7 +138,9 @@ namespace Avalanche.Api.Test.Managers
                     new List<ProcedureNote>(),
                     null,
                     new List<VideoRecordingEvent>(),
-                    BackgroundRecordingMode.StartImmediately));
+                    BackgroundRecordingMode.StartImmediately,
+                    0,
+                    0));
 
             var ex = Assert.ThrowsAsync<InvalidOperationException>(() => _manager.DeleteActiveProcedureMediaItem(Shared.Domain.Enumerations.ProcedureContentType.Video, id));
             Assert.True(ex.Message.Contains("Cannot delete video that is currently recording"));
@@ -163,7 +169,9 @@ namespace Avalanche.Api.Test.Managers
                     new List<ProcedureNote>(),
                     null,
                     new List<VideoRecordingEvent>(),
-                    BackgroundRecordingMode.StartImmediately));
+                    BackgroundRecordingMode.StartImmediately,
+                    0,
+                    0));
 
             await _manager.DeleteActiveProcedureMediaItems(Shared.Domain.Enumerations.ProcedureContentType.Image, new List<Guid>() { imageId }).ConfigureAwait(false);
         }
@@ -191,7 +199,9 @@ namespace Avalanche.Api.Test.Managers
                     new List<ProcedureNote>(),
                     null,
                     new List<VideoRecordingEvent>(),
-                    BackgroundRecordingMode.StartImmediately));
+                    BackgroundRecordingMode.StartImmediately,
+                    0,
+                    0));
 
             var ex = Assert.ThrowsAsync<InvalidOperationException>(() => _manager.DeleteActiveProcedureMediaItems(Shared.Domain.Enumerations.ProcedureContentType.Video, new List<Guid>() { videoId }));
             Assert.True(ex.Message.Contains("Cannot delete video that is currently recording"));
@@ -234,7 +244,9 @@ namespace Avalanche.Api.Test.Managers
                     new List<ProcedureNote>(),
                     null,
                     new List<VideoRecordingEvent>(),
-                    BackgroundRecordingMode.StartImmediately);
+                    BackgroundRecordingMode.StartImmediately,
+                    0,
+                    0);
 
             //arrange
             _stateClient.Setup(s => s.GetData<ActiveProcedureState>()).ReturnsAsync(activeProcedure);
@@ -295,7 +307,9 @@ namespace Avalanche.Api.Test.Managers
                     new List<ProcedureNote>(),
                     null,
                     new List<VideoRecordingEvent>(),
-                    BackgroundRecordingMode.StartImmediately);
+                    BackgroundRecordingMode.StartImmediately,
+                    0,
+                    0);
 
             //arrange
             _stateClient.Setup(s => s.GetData<ActiveProcedureState>()).ReturnsAsync(activeProcedure);
@@ -355,7 +369,9 @@ namespace Avalanche.Api.Test.Managers
                     new List<ProcedureNote>(),
                     null,
                     new List<VideoRecordingEvent>(),
-                    BackgroundRecordingMode.StartImmediately);
+                    BackgroundRecordingMode.StartImmediately,
+                    0,
+                    0);
 
             //arrange
             _stateClient.Setup(s => s.GetData<ActiveProcedureState>()).ReturnsAsync(activeProcedure);
@@ -414,7 +430,9 @@ namespace Avalanche.Api.Test.Managers
                     new List<ProcedureNote>(),
                     null,
                     new List<VideoRecordingEvent>(),
-                    BackgroundRecordingMode.StartImmediately);
+                    BackgroundRecordingMode.StartImmediately,
+                    0,
+                    0);
 
             //arrange
             _stateClient.Setup(s => s.GetData<ActiveProcedureState>()).ReturnsAsync(activeProcedure);
@@ -474,7 +492,9 @@ namespace Avalanche.Api.Test.Managers
                     new List<ProcedureNote>(),
                     null,
                     new List<VideoRecordingEvent>(),
-                    BackgroundRecordingMode.StartImmediately);
+                    BackgroundRecordingMode.StartImmediately,
+                    0,
+                    0);
 
             //arrange
             _stateClient.Setup(s => s.GetData<ActiveProcedureState>()).ReturnsAsync(activeProcedure);
@@ -526,7 +546,9 @@ namespace Avalanche.Api.Test.Managers
                     new List<ProcedureNote>(),
                     null,
                     new List<VideoRecordingEvent>(),
-                    BackgroundRecordingMode.StartImmediately);
+                    BackgroundRecordingMode.StartImmediately,
+                    0,
+                    0);
 
             _stateClient.Setup(s => s.GetData<ActiveProcedureState>()).ReturnsAsync(activeProcedure);
             _recorderService.Setup(mock => mock.GetRecorderState()).ReturnsAsync(new Ism.Recorder.Core.V1.Protos.RecorderState() { State = 0 });
@@ -574,7 +596,9 @@ namespace Avalanche.Api.Test.Managers
                     new List<ProcedureNote>(),
                     null,
                     new List<VideoRecordingEvent>(),
-                    BackgroundRecordingMode.StartImmediately);
+                    BackgroundRecordingMode.StartImmediately,
+                    0,
+                    0);
 
             _stateClient.Setup(s => s.GetData<ActiveProcedureState>()).ReturnsAsync(activeProcedure);
             _recorderService.Setup(mock => mock.GetRecorderState()).ReturnsAsync(new Ism.Recorder.Core.V1.Protos.RecorderState() { State = 0 });
@@ -610,7 +634,9 @@ namespace Avalanche.Api.Test.Managers
                     new List<ProcedureNote>(),
                     null,
                     new List<VideoRecordingEvent>(),
-                    BackgroundRecordingMode.StartImmediately);
+                    BackgroundRecordingMode.StartImmediately,
+                    0,
+                    0);
 
             _stateClient.Setup(s => s.GetData<ActiveProcedureState>()).ReturnsAsync(activeProcedure);
             _recorderService.Setup(mock => mock.GetRecorderState()).ReturnsAsync(new Ism.Recorder.Core.V1.Protos.RecorderState() { State = 0 });
@@ -650,7 +676,9 @@ namespace Avalanche.Api.Test.Managers
                     new List<ProcedureNote>(),
                     null,
                     new List<VideoRecordingEvent>(),
-                    BackgroundRecordingMode.StartImmediately);
+                    BackgroundRecordingMode.StartImmediately,
+                    0,
+                    0);
 
             _stateClient.Setup(s => s.GetData<ActiveProcedureState>()).ReturnsAsync(activeProcedure);
             _recorderService.Setup(mock => mock.GetRecorderState()).ReturnsAsync(new Ism.Recorder.Core.V1.Protos.RecorderState() { State = 0 });
@@ -688,7 +716,9 @@ namespace Avalanche.Api.Test.Managers
                     new List<ProcedureNote>(),
                     null,
                     new List<VideoRecordingEvent>(),
-                    BackgroundRecordingMode.StartImmediately);
+                    BackgroundRecordingMode.StartImmediately,
+                    0,
+                    0);
 
             //arrange
             _stateClient.Setup(s => s.GetData<ActiveProcedureState>()).ReturnsAsync(activeProcedure);
@@ -721,7 +751,9 @@ namespace Avalanche.Api.Test.Managers
                     new List<ProcedureNote>(),
                     null,
                     new List<VideoRecordingEvent>(),
-                    BackgroundRecordingMode.StartImmediately);
+                    BackgroundRecordingMode.StartImmediately,
+                    0,
+                    0);
 
             //arrange
             _stateClient.Setup(s => s.GetData<ActiveProcedureState>()).ReturnsAsync(activeProcedure);

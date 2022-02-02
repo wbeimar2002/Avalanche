@@ -31,5 +31,11 @@ namespace Avalanche.Api.Services.Security
 
         public async Task<Empty> DeleteUserAsync(DeleteUserRequest request) =>
            await _SecurityServiceClient.DeleteUserAsync(request);
+
+        public async Task<SearchUsersResponse> SearchUsers(string keyword) =>
+            await _SecurityServiceClient.SearchUsersAsync(new SearchUsersRequest()
+            {
+                Keyword = keyword
+            }).ConfigureAwait(false);
     }
 }
