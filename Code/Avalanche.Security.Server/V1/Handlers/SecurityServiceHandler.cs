@@ -68,5 +68,15 @@ namespace Avalanche.Security.Server.V1.Handlers
             result.User = user;
             return result;
         }
+
+        public override async Task<SearchUsersResponse> SearchUsers(SearchUsersRequest request, ServerCallContext context)
+        {
+            var users = await _usersManager.SearchUsers(request.Keyword);
+
+            var response = new SearchUsersResponse();
+            response.Users.Add(_mapper.Map<IList<UserModel>, IList<UserMessage>>(users.ToList()));
+
+            return response;
+        }
     }
 }

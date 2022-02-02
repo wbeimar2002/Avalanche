@@ -11,5 +11,6 @@ namespace Avalanche.Security.Server.Core.Managers
         Task<int> DeleteUser(int userId);
         Task<IEnumerable<UserModel>> GetAllUsers();
         Task<UserModel> FindByUserNameAsync(string userName);
+        Task<IEnumerable<UserModel>> SearchUsers(string keyword);
     }
 }
