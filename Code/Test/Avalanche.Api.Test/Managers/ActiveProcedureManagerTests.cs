@@ -28,7 +28,7 @@ namespace Avalanche.Api.Test.Managers
         private Mock<IRecorderService> _recorderService;
         private Mock<IStateClient> _stateClient;
         private Mock<IDataManager> _dataManager;
-        private IPatientsManager _patientsManager;
+        private Mock<IPatientsManager> _patientsManager;
         private IDataManagementService _dataManagementService;
         LabelsConfiguration _labelsConfig;
 
@@ -45,9 +45,10 @@ namespace Avalanche.Api.Test.Managers
             _recorderService = new Mock<IRecorderService>();
             _stateClient = new Mock<IStateClient>();
             _dataManager = new Mock<IDataManager>();
+            _patientsManager = new Mock<IPatientsManager>();
             _labelsConfig = new LabelsConfiguration();
 
-            _manager = new ActiveProcedureManager(_stateClient.Object, _libraryService.Object, _accessInfoFactory.Object, _mapper, _recorderService.Object, _dataManager.Object, _labelsConfig, _patientsManager, _dataManagementService);
+            _manager = new ActiveProcedureManager(_stateClient.Object, _libraryService.Object, _accessInfoFactory.Object, _mapper, _recorderService.Object, _dataManager.Object, _labelsConfig, _patientsManager.Object, _dataManagementService);
         }
 
         [Test]
@@ -731,5 +732,78 @@ namespace Avalanche.Api.Test.Managers
             //assert
             _stateClient.Verify(x => x.PublishEvent(It.IsAny<ProcedureFinishedEvent>()), Times.Never);
         }
+
+        //Reviewing for adding
+        /*
+        [Test]
+        public void RegisterPatientShouldReturnOkWithNewPatientInfo()
+        {
+            PatientViewModel patient = new PatientViewModel();
+            _patientsManager.Setup(mock => mock.RegisterPatient(patient)).ReturnsAsync(new PatientViewModel());
+
+            var okResult = _controller.ManualPatientRegistration(patient);
+
+            if (_checkLogger)
+            {
+                _logger.Verify(LogLevel.Error, $"Exception {_controller.GetType().Name}.ManualPatientRegistration", Times.Never());
+                _logger.Verify(LogLevel.Debug, $"Requested {_controller.GetType().Name}.ManualPatientRegistration", Times.Once());
+                _logger.Verify(LogLevel.Debug, $"Completed {_controller.GetType().Name}.ManualPatientRegistration", Times.Once());
+            }
+
+            Assert.IsInstanceOf<ObjectResult>(okResult.Result);
+        }
+
+        [Test]
+        public void RegisterPatientShouldReturnBadResultIfFails()
+        {
+            _patientsManager.Setup(mock => mock.RegisterPatient(It.IsAny<PatientViewModel>())).Throws(It.IsAny<Exception>());
+
+            var badResult = _controller.ManualPatientRegistration(It.IsAny<PatientViewModel>());
+
+            if (_checkLogger)
+            {
+                _logger.Verify(LogLevel.Error, $"Exception {_controller.GetType().Name}.ManualPatientRegistration", Times.Once());
+                _logger.Verify(LogLevel.Debug, $"Requested {_controller.GetType().Name}.ManualPatientRegistration", Times.Once());
+                _logger.Verify(LogLevel.Debug, $"Completed {_controller.GetType().Name}.ManualPatientRegistration", Times.Once());
+            }
+
+            Assert.IsInstanceOf<BadRequestObjectResult>(badResult.Result);
+        }
+
+        [Test]
+        public void QuickRegistrationShouldReturnOkWithNewPatientInfo()
+        {
+            _patientsManager.Setup(mock => mock.QuickPatientRegistration()).ReturnsAsync(new PatientViewModel());
+
+            var okResult = _controller.QuickPatientRegistration();
+
+            if (_checkLogger)
+            {
+                _logger.Verify(LogLevel.Error, $"Exception {_controller.GetType().Name}.QuickPatientRegistration", Times.Never());
+                _logger.Verify(LogLevel.Debug, $"Requested {_controller.GetType().Name}.QuickPatientRegistration", Times.Once());
+                _logger.Verify(LogLevel.Debug, $"Completed {_controller.GetType().Name}.QuickPatientRegistration", Times.Once());
+            }
+
+            Assert.IsInstanceOf<ObjectResult>(okResult.Result);
+        }
+
+        [Test]
+        public void QuickRegistrationShouldReturnBadResultIfFails()
+        {
+            _patientsManager.Setup(mock => mock.QuickPatientRegistration()).Throws(It.IsAny<Exception>());
+
+            var badResult = _controller.QuickPatientRegistration();
+
+            if (_checkLogger)
+            {
+                _logger.Verify(LogLevel.Error, $"Exception {_controller.GetType().Name}.QuickPatientRegistration", Times.Once());
+                _logger.Verify(LogLevel.Debug, $"Requested {_controller.GetType().Name}.QuickPatientRegistration", Times.Once());
+                _logger.Verify(LogLevel.Debug, $"Completed {_controller.GetType().Name}.QuickPatientRegistration", Times.Once());
+            }
+
+            Assert.IsInstanceOf<BadRequestObjectResult>(badResult.Result);
+        }
+
+         */
     }
 }
