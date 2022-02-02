@@ -338,7 +338,6 @@ namespace Avalanche.Api.Managers.Procedures
             };
 
             await _stateClient.PersistData(activeProcedureState).ConfigureAwait(false);
-            await (_routingManager?.PublishDefaultDisplayRecordingState()).ConfigureAwait(false);
         }
 
         private async Task CheckProcedureType(ProcedureTypeModel procedureType, DepartmentModel department)
