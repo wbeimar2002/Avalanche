@@ -1,5 +1,6 @@
 using AutoMapper;
 using Avalanche.Api.Managers.Data;
+using Avalanche.Api.Managers.Patients;
 using Avalanche.Api.Services.Health;
 using Avalanche.Api.Services.Media;
 using Avalanche.Api.Utilities;
@@ -25,6 +26,8 @@ namespace Avalanche.Api.Managers.Procedures
         private readonly IMapper _mapper;
         private readonly IAccessInfoFactory _accessInfoFactory;
         private readonly IRecorderService _recorderService;
+        private readonly IPatientsManager _patientsManager;
+        private readonly IDataManagementService _dataManagementService;
 
         private readonly IDataManager _dataManager;
         private readonly LabelsConfiguration _labelsConfig;
@@ -33,8 +36,7 @@ namespace Avalanche.Api.Managers.Procedures
         public const int MaxPageSize = 100;
 
         public ActiveProcedureManager(IStateClient stateClient, ILibraryService libraryService, IAccessInfoFactory accessInfoFactory,
-            IMapper mapper, IRecorderService recorderService,
-            IDataManager dataManager, LabelsConfiguration labelsConfig)
+            IMapper mapper, IRecorderService recorderService, IDataManager dataManager, LabelsConfiguration labelsConfig, IPatientsManager patientsManager, IDataManagementService dataManagementService)
         {
             _stateClient = stateClient;
             _libraryService = libraryService;
@@ -45,6 +47,8 @@ namespace Avalanche.Api.Managers.Procedures
             _recorderService = recorderService;
             _dataManager = dataManager;
             _labelsConfig = labelsConfig;
+            _patientsManager = patientsManager;
+            _dataManagementService = dataManagementService;
         }
 
         /// <summary>
@@ -154,14 +158,38 @@ namespace Avalanche.Api.Managers.Procedures
             await _libraryService.CommitActiveProcedure(request).ConfigureAwait(false);
         }
 
-        public async Task<ProcedureAllocationViewModel> AllocateNewProcedure()
+        public async Task<ProcedureAllocationViewModel> AllocateNewProcedure(Shared.Infrastructure.Enumerations.RegistrationMode registrationMode, PatientViewModel? patient)
         {
+            if (registrationMode == Shared.Infrastructure.Enumerations.RegistrationMode.Quick)
+            {
+                patient = await _patientsManager.QuickPatientRegistration();
+            }
+            else
+            {
+                if (registrationMode == Shared.Infrastructure.Enumerations.RegistrationMode.Update)
+                {
+                    await _patientsManager.UpdatePatient(patient).ConfigureAwait(false);
+                }
+                else
+                {
+                    patient = await _patientsManager.RegisterPatient(patient).ConfigureAwait(false);
+                }
+
+                await CheckProcedureType(patient.ProcedureType, patient.Department).ConfigureAwait(false);
+            }
+
             var accessInfo = _accessInfoFactory.GenerateAccessInfo();
+
             var response = await _libraryService.AllocateNewProcedure(new AllocateNewProcedureRequest
             {
                 AccessInfo = _mapper.Map<AccessInfoMessage>(accessInfo),
                 Clinical = true
             }).ConfigureAwait(false);
+
+            var procedure = _mapper.Map<ProcedureAllocationViewModel>(response);
+            var patientListSource = await _patientsManager.GetPatientListSource().ConfigureAwait(false);
+
+            await PublishPersistData(patient, procedure, patientListSource, (int)registrationMode).ConfigureAwait(false);
 
             return _mapper.Map<ProcedureAllocationViewModel>(response);
         }
@@ -260,6 +288,65 @@ namespace Avalanche.Api.Managers.Procedures
             if (!video.VideoStopTimeUtc.HasValue)
             {
                 throw new InvalidOperationException("Cannot delete video that is currently recording");
+            }
+        }
+
+        private async Task PublishPersistData(PatientViewModel patient, ProcedureAllocationViewModel procedure, int patientListSource, int registrationMode)
+        {
+            var activeProcedureState = new ActiveProcedureState()
+            {
+                Patient = _mapper.Map<Patient>(patient),
+                Images = new List<ProcedureImage>(),
+                Videos = new List<ProcedureVideo>(),
+                BackgroundVideos = new List<ProcedureVideo>(),
+                LibraryId = procedure.ProcedureId.Id,
+                RepositoryId = procedure.ProcedureId.RepositoryName,
+                ProcedureRelativePath = procedure.RelativePath,
+                Department = _mapper.Map<Department>(patient.Department),
+                ProcedureType = _mapper.Map<ProcedureType>(patient.ProcedureType),
+                Physician = _mapper.Map<Physician>(patient.Physician),
+                RequiresUserConfirmation = false,
+                // TODO:
+                ProcedureStartTimeUtc = DateTimeOffset.UtcNow,
+                // TODO:
+                ProcedureTimezoneId = TimeZoneInfo.Local.Id,
+                IsClinical = true,
+                Notes = new List<ProcedureNote>(),
+                Accession = null,
+                RecordingEvents = new List<VideoRecordingEvent>(),
+                BackgroundRecordingMode = _mapper.Map<BackgroundRecordingMode>(patient.BackgroundRecordingMode),
+                RegistrationMode = (RegistrationMode)registrationMode,
+                PatientListSource = (PatientListSource)patientListSource
+            };
+
+            await _stateClient.PersistData(activeProcedureState).ConfigureAwait(false);
+        }
+
+        private async Task CheckProcedureType(ProcedureTypeModel procedureType, DepartmentModel department)
+        {
+            //incase user is not selected or entered a procedure type, assign it to Unknown like in QuickRegister
+            if (string.IsNullOrEmpty(procedureType.Name) || procedureType.Name.Length == 0)
+            {
+                procedureType.Id = 0;
+                procedureType.Name = "Unknown";
+            }
+            else
+            {
+                //TODO: Validate department support
+                var existingProcedureType = await _dataManagementService.GetProcedureType(new Ism.Storage.DataManagement.Client.V1.Protos.GetProcedureTypeRequest()
+                {
+                    ProcedureTypeName = procedureType.Name,
+                    DepartmentId = Convert.ToInt32(department.Id),
+                }).ConfigureAwait(false);
+
+                if (existingProcedureType.Id == 0 && string.IsNullOrEmpty(existingProcedureType.Name))
+                {
+                    await _dataManagementService.AddProcedureType(new Ism.Storage.DataManagement.Client.V1.Protos.AddProcedureTypeRequest()
+                    {
+                        ProcedureTypeName = procedureType.Name,
+                        DepartmentId = Convert.ToInt32(department.Id),
+                    }).ConfigureAwait(false);
+                }
             }
         }
     }

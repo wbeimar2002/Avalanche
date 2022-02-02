@@ -62,7 +62,7 @@
 
     <PackageReference Include="Ism.Recorder.Client" Version="1.0.0-prerelease0045" />
     <PackageReference Include="Ism.Routing.Client" Version="1.0.0-prerelease0019" />
-    <PackageReference Include="Ism.PatientInfoEngine.Client" Version="1.0.0-prerelease0032" />
+    <PackageReference Include="Ism.PatientInfoEngine.Client" Version="1.0.0-prerelease0034" />
     <PackageReference Include="Ism.Security.Grpc.Standard" Version="1.0.0-prerelease034" />
     <PackageReference Include="Ism.Storage.Configuration.Client" Version="1.0.0-prerelease0037" />
     <PackageReference Include="Ism.Streaming.Client" Version="1.0.0-prerelease0019" />
@@ -80,7 +80,7 @@
     <PackageReference Include="System.Text.Json" Version="5.0.2" />
     <PackageReference Include="Polly" Version="7.2.2" />
     <PackageReference Include="Ism.Storage.DataManagement.Client" Version="1.0.0-prerelease0046" />
-    <PackageReference Include="Ism.SystemState.Client" Version="1.0.0-prerelease0090" />
+    <PackageReference Include="Ism.SystemState.Client" Version="1.0.0-prerelease0091" />
     <PackageReference Include="Ism.Storage.PatientList.Client" Version="1.0.0-prerelease0031" />
     <PackageReference Include="Ism.PrintServer.Client" Version="1.0.0-prerelease0009" />
     <PackageReference Include="Ism.Medpresence.Client" Version="1.0.0-prerelease0006" />
