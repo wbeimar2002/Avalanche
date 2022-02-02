@@ -41,5 +41,8 @@ namespace Avalanche.Security.Server.Client.V1
 
         public async Task<FindByUserNameResponse> FindByUserNameAsync(FindByUserNameRequest request) =>
            await Client.FindByUserNameAsync(request);
+
+        public async Task<SearchUsersResponse> SearchUsersAsync(SearchUsersRequest request) =>
+           await Client.SearchUsersAsync(request);
     }
 }

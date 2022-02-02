@@ -6,6 +6,16 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Migrations\001 - Initial Database.sql" />
+    <None Remove="Migrations\002 - FTS Table.sql" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Migrations\001 - Initial Database.sql" />
+    <EmbeddedResource Include="Migrations\002 - FTS Table.sql" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="AutoMapper" Version="10.1.1" />
     <PackageReference Include="EFCore.BulkExtensions" Version="5.4.1" />
     <PackageReference Include="FluentValidation" Version="10.3.5" />

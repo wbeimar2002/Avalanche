@@ -10,12 +10,14 @@ using Avalanche.Security.Server.Core.Entities;
 using Avalanche.Security.Server.Core.Interfaces;
 using Avalanche.Security.Server.Core.Models;
 using Ism.Storage.Core.Infrastructure.Interfaces;
+using Ism.Storage.Core.Infrastructure.Extensions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Z.EntityFramework.Plus;
 using static Ism.Utility.Core.Preconditions;
 using EFCore.BulkExtensions;
 using Avalanche.Security.Server.Core.Security.Hashing;
+using Microsoft.EntityFrameworkCore.Metadata;
 
 namespace Avalanche.Security.Server.Core
 {
@@ -29,6 +31,9 @@ namespace Avalanche.Security.Server.Core
 
     public class UserRepository : IUserRepository, IDisposable
     {
+        public const int MinSearchTermLength = 2;
+        private const string EmptySearchExpression = "<None>";
+
         private readonly SecurityDbContext _context;
         private readonly ILogger<UserRepository> _logger;
         private readonly IMapper _mapper;
@@ -233,6 +238,68 @@ namespace Avalanche.Security.Server.Core
             _ = await context.SaveChangesAsync().ConfigureAwait(false);
 
             return user;
+        }
+
+        [AspectLogger]
+        public async Task<IEnumerable<UserModel>> SearchUsers(string keyword)
+        {
+            var baseFtsQuery = _context.UsersFts;
+            IQueryable<UserEntity> userQuery;
+            var searchExpression = keyword.Length > 2 ? FormatAsMatchExpression(keyword) : EmptySearchExpression;
+
+            _logger.LogDebug($"Search Expression = {searchExpression}");
+
+            try
+            {
+                if (searchExpression != EmptySearchExpression)
+                {
+                    // Define query for FTS keyword search
+                    userQuery = baseFtsQuery
+                        .Where(x => x.Match == searchExpression)
+                        .Select(x => x.User);
+                }
+                else
+                {
+                    // Otherwise just query Users directly
+                    userQuery = _context.Users;
+                }
+
+                var entities = await userQuery
+                    .OrderBy(GetSortingColumns(), false)
+                    .ToListAsync()
+                    .ConfigureAwait(false);
+
+                var results = _mapper.Map<IList<UserEntity>, IList<UserModel>>(entities);
+
+                _logger.LogDebug($"Found {results.Count} result(s) for Search Expression = {searchExpression}");
+
+                return results;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"{nameof(SearchUsers)} failed for search expression {searchExpression} with Error: {ex.Message}");
+                throw;
+            }
+        }
+
+        private static string FormatAsMatchExpression(string searchTerm) =>
+            // Takes a enumerable of strings i.e. ["one", "two"]
+            // And formats them as a Sqlite FTS5 MATCH expression, i.e. '"one"* "two*"'
+            // https://www.sqlite.org/fts5.html
+            $"\"{searchTerm.Replace("\"", "\"\"", StringComparison.Ordinal)}\"*";
+
+        private List<string> GetSortingColumns()
+        {
+            var entityType = _context.Model.FindEntityType(typeof(UserEntity));
+            var schema = entityType.GetSchema();
+            var tableName = entityType.GetTableName();
+            var storeObjectIdentifier = StoreObjectIdentifier.Table(tableName, schema);
+
+            return new List<string>
+            {
+                entityType.GetProperties().Select(x => x.GetColumnName(storeObjectIdentifier)).First(x => x == nameof(UserEntity.LastName)),
+                entityType.GetProperties().Select(x => x.GetColumnName(storeObjectIdentifier)).First(x => x == nameof(UserEntity.FirstName))
+            };
         }
 
         #region Disposable

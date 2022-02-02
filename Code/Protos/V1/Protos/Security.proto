@@ -11,6 +11,7 @@ service Security {
     rpc UpdateUser (UpdateUserRequest) returns (google.protobuf.Empty);
     rpc DeleteUser (DeleteUserRequest) returns (google.protobuf.Empty);
     rpc FindByUserName (FindByUserNameRequest) returns (FindByUserNameResponse);
+    rpc SearchUsers (SearchUsersRequest) returns (SearchUsersResponse);
 }
 
 //Requests
@@ -30,6 +31,13 @@ message DeleteUserRequest {
     int32 userId = 1;
 }
 
+message SearchUsersRequest {
+    string firstName = 1;
+    string lastName = 2;
+    string userName = 3;
+    string keyword = 4;
+}
+
 //Responses
 message FindByUserNameResponse {
     UserMessage user = 1;
@@ -40,6 +48,10 @@ message AddUserResponse {
 }
 
 message GetUsersResponse {
+    repeated UserMessage users = 1;
+}
+
+message SearchUsersResponse {
     repeated UserMessage users = 1;
 }
 

@@ -36,9 +36,12 @@ namespace Avalanche.Security.Server.Core
 
         public DbSet<UserEntity> Users { get; set; } = default!;
 
+        public DbSet<UserFtsEntity> UsersFts { get; set; } = default!;
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             _ = modelBuilder.ApplyConfiguration(new UserEntityConfiguration());
+            _ = modelBuilder.ApplyConfiguration(new UserFtsEntityConfiguration());
         }
     }
 }

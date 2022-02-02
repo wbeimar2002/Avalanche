@@ -9,8 +9,6 @@ namespace Avalanche.Security.Server.Core
     {
         public static void Seed(SecurityDbContext context, IPasswordHasher passwordHasher)
         {
-            context.Database.EnsureCreated();
-
             if (!context.Users.Any())
             {
                 var users = new List<UserEntity>
