@@ -166,7 +166,14 @@ namespace Avalanche.Api.Managers.Procedures
             }
             else
             {
-                patient = await _patientsManager.RegisterPatient(patient);
+                if (registrationMode == Shared.Infrastructure.Enumerations.RegistrationMode.Update)
+                {
+                    await _patientsManager.UpdatePatient(patient).ConfigureAwait(false);
+                }
+                else
+                {
+                    patient = await _patientsManager.RegisterPatient(patient).ConfigureAwait(false);
+                }
 
                 await CheckProcedureType(patient.ProcedureType, patient.Department).ConfigureAwait(false);
             }
