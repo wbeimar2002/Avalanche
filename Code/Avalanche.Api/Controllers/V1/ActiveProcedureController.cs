@@ -287,7 +287,7 @@ namespace Avalanche.Api.Controllers.V1
         [HttpPost]
         [Route("procedure/{registrationMode}")]
         [ProducesResponseType(typeof(void), StatusCodes.Status200OK)]
-        public async Task<IActionResult> AllocateNewProcedure(RegistrationMode registrationMode, [FromBody] PatientViewModel? patient)
+        public async Task<IActionResult> AllocateNewProcedure(RegistrationMode registrationMode, [FromBody] PatientViewModel? patient = null)
         {
             try
             {
