@@ -313,7 +313,7 @@ namespace Avalanche.Api.Controllers.V1
         /// </summary>
         /// <param name="registrationMode"></param>
         [HttpPut]
-        [Route("updateprocedure")]
+        [Route("procedure")]
         [ProducesResponseType(typeof(void), StatusCodes.Status200OK)]
         public async Task<IActionResult> UpdateProcedure([FromBody] PatientViewModel patientViewModel)
         {

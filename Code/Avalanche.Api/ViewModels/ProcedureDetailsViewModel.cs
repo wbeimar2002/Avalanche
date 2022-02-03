@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using Ism.SystemState.Models.Procedure;
 
 namespace Avalanche.Api.ViewModels
 {
@@ -16,7 +15,7 @@ namespace Avalanche.Api.ViewModels
 
         public List<ProcedureImageViewModel> Images { get; set; }
         public List<ProcedureVideoViewModel> Videos { get; set; }
-        public List<ProcedureVideoViewModel> BackgroundVideos { get; set; }        
+        public List<ProcedureVideoViewModel> BackgroundVideos { get; set; }
 
         public ProcedureDetailsViewModel()
         {

@@ -289,15 +289,10 @@ namespace Avalanche.Api.Managers.Procedures
 
         public async Task UpdateActiveProcedure(PatientViewModel patient)
         {
-            await GetProcedureToUpdate(patient);
-        }
-
-        private async Task<ActiveProcedureState> GetProcedureToUpdate(PatientViewModel patient)
-        {
             var activeProcedure = await _stateClient.GetData<ActiveProcedureState>();
             var model = _mapper.Map<ActiveProcedureViewModel>(activeProcedure);
 
-            return await _stateClient.UpdateData<ActiveProcedureState>(s => s.Replace(_ => model.Patient, patient)).ConfigureAwait(false);
+            _ = await _stateClient.UpdateData<ActiveProcedureState>(s => s.Replace(_ => model.Patient, patient)).ConfigureAwait(false);
         }
 
         private void ThrowIfVideoCannotBeDeleted(ActiveProcedureState activeProcedure, Guid videoContent)
