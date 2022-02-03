@@ -307,5 +307,33 @@ namespace Avalanche.Api.Controllers.V1
                 _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
             }
         }
+
+        /// <summary>
+        /// Update procedure with PatientViewModelData
+        /// </summary>
+        /// <param name="registrationMode"></param>
+        [HttpPut]
+        [Route("procedure")]
+        [ProducesResponseType(typeof(void), StatusCodes.Status200OK)]
+        public async Task<IActionResult> UpdateProcedure([FromBody] PatientViewModel patientViewModel)
+        {
+            try
+            {
+                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
+
+                await _activeProcedureManager.UpdateActiveProcedure(patientViewModel).ConfigureAwait(false);
+
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, LoggerHelper.GetLogMessage(DebugLogType.Exception));
+                return new BadRequestObjectResult(ex.Get(_environment.IsDevelopment()));
+            }
+            finally
+            {
+                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
+            }
+        }
     }
 }

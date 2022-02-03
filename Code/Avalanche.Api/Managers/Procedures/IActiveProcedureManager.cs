@@ -20,5 +20,6 @@ namespace Avalanche.Api.Managers.Procedures
 
         Task ApplyLabelToActiveProcedure(ContentViewModel labelContent);
         Task ApplyLabelToLatestImages(string label);
+        Task UpdateActiveProcedure(PatientViewModel patient);
     }
 }

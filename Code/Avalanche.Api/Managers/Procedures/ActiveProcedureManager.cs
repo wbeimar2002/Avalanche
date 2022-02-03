@@ -1,5 +1,6 @@
 using AutoMapper;
 using Avalanche.Api.Managers.Data;
+using Avalanche.Api.Managers.Media;
 using Avalanche.Api.Managers.Patients;
 using Avalanche.Api.Services.Health;
 using Avalanche.Api.Services.Media;
@@ -32,11 +33,14 @@ namespace Avalanche.Api.Managers.Procedures
         private readonly IDataManager _dataManager;
         private readonly LabelsConfiguration _labelsConfig;
 
+        // TODO: remove this when we figure out how to clean up dependencies
+        private readonly IRoutingManager _routingManager;
+
         public const int MinPageSize = 25;
         public const int MaxPageSize = 100;
 
         public ActiveProcedureManager(IStateClient stateClient, ILibraryService libraryService, IAccessInfoFactory accessInfoFactory,
-            IMapper mapper, IRecorderService recorderService, IDataManager dataManager, LabelsConfiguration labelsConfig, IPatientsManager patientsManager, IDataManagementService dataManagementService)
+            IMapper mapper, IRecorderService recorderService, IDataManager dataManager, LabelsConfiguration labelsConfig, IPatientsManager patientsManager, IDataManagementService dataManagementService, IRoutingManager routingManager)
         {
             _stateClient = stateClient;
             _libraryService = libraryService;
@@ -49,6 +53,7 @@ namespace Avalanche.Api.Managers.Procedures
             _labelsConfig = labelsConfig;
             _patientsManager = patientsManager;
             _dataManagementService = dataManagementService;
+            _routingManager = routingManager;
         }
 
         /// <summary>
@@ -280,6 +285,14 @@ namespace Avalanche.Api.Managers.Procedures
 
             //update active procedure state with latest changes to the images collection
             _ = await _stateClient.AddOrUpdateData(activeProcedure, x => x.Replace(data => data.Images, activeProcedure.Images)).ConfigureAwait(false);
+        }
+
+        public async Task UpdateActiveProcedure(PatientViewModel patient)
+        {
+            var activeProcedure = await _stateClient.GetData<ActiveProcedureState>();
+            var model = _mapper.Map<ActiveProcedureViewModel>(activeProcedure);
+
+            _ = await _stateClient.UpdateData<ActiveProcedureState>(s => s.Replace(_ => model.Patient, patient)).ConfigureAwait(false);
         }
 
         private void ThrowIfVideoCannotBeDeleted(ActiveProcedureState activeProcedure, Guid videoContent)
