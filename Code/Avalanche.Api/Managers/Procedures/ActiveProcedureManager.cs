@@ -17,6 +17,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Avalanche.Shared.Infrastructure.Enumerations;
 
 namespace Avalanche.Api.Managers.Procedures
 {
@@ -163,15 +164,15 @@ namespace Avalanche.Api.Managers.Procedures
             await _libraryService.CommitActiveProcedure(request).ConfigureAwait(false);
         }
 
-        public async Task<ProcedureAllocationViewModel> AllocateNewProcedure(Shared.Infrastructure.Enumerations.RegistrationMode registrationMode, PatientViewModel? patient = null)
+        public async Task<ProcedureAllocationViewModel> AllocateNewProcedure(PatientRegistrationMode registrationMode, PatientViewModel? patient = null)
         {
-            if (registrationMode == Shared.Infrastructure.Enumerations.RegistrationMode.Quick)
+            if (registrationMode == PatientRegistrationMode.Quick)
             {
                 patient = await _patientsManager.QuickPatientRegistration();
             }
             else
             {
-                if (registrationMode == Shared.Infrastructure.Enumerations.RegistrationMode.Update)
+                if (registrationMode == PatientRegistrationMode.Update)
                 {
                     await _patientsManager.UpdatePatient(patient).ConfigureAwait(false);
                 }
@@ -327,7 +328,7 @@ namespace Avalanche.Api.Managers.Procedures
                 Notes = new List<ProcedureNote>(),
                 Accession = null,
                 RecordingEvents = new List<VideoRecordingEvent>(),
-                BackgroundRecordingMode = _mapper.Map<BackgroundRecordingMode>(patient.BackgroundRecordingMode),
+                BackgroundRecordingMode = _mapper.Map<Ism.SystemState.Models.Procedure.BackgroundRecordingMode>(patient.BackgroundRecordingMode),
                 RegistrationMode = (RegistrationMode)registrationMode,
                 PatientListSource = (PatientListSource)patientListSource
             };
