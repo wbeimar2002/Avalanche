@@ -197,6 +197,11 @@ namespace Avalanche.Api.Managers.Procedures
 
             await PublishPersistData(patient, procedure, patientListSource, (int)registrationMode).ConfigureAwait(false);
 
+            // TODO: figure out how to do dependencies better
+            // maybe have a separate data/event for when a patient is registered
+            // routing manager subscribes to that event and we can have a cleaner dependency graph
+            await (_routingManager?.PublishDefaultDisplayRecordingState()).ConfigureAwait(false);
+
             return _mapper.Map<ProcedureAllocationViewModel>(response);
         }
 
@@ -288,12 +293,22 @@ namespace Avalanche.Api.Managers.Procedures
             _ = await _stateClient.AddOrUpdateData(activeProcedure, x => x.Replace(data => data.Images, activeProcedure.Images)).ConfigureAwait(false);
         }
 
+        /// <summary>
+        /// Update patient in the procedure
+        /// </summary>
+        /// <param name="patient"></param>
+        /// <returns></returns>
         public async Task UpdateActiveProcedure(PatientViewModel patient)
         {
-            var activeProcedure = await _stateClient.GetData<ActiveProcedureState>();
+            var activeProcedure = await _stateClient.GetData<ActiveProcedureState>().ConfigureAwait(false);
             var model = _mapper.Map<ActiveProcedureViewModel>(activeProcedure);
+            model.Patient = patient;
 
-            _ = await _stateClient.UpdateData<ActiveProcedureState>(s => s.Replace(_ => model.Patient, patient)).ConfigureAwait(false);
+            activeProcedure.Physician = new Physician(patient.Physician.Id.ToString(), patient.Physician.FirstName, patient.Physician.LastName);
+            activeProcedure.Department = new Department(patient.Department.Id, patient.Department.Name);
+            activeProcedure.Patient = new Patient(patient.Id, "", patient.FirstName, patient.LastName, (DateTime)patient.DateOfBirth, patient.Sex.Value);
+
+            await _stateClient.PersistData(activeProcedure).ConfigureAwait(false);
         }
 
         private void ThrowIfVideoCannotBeDeleted(ActiveProcedureState activeProcedure, Guid videoContent)
