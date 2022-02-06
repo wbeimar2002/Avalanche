@@ -164,8 +164,16 @@ namespace Avalanche.Api.Managers.Procedures
             await _libraryService.CommitActiveProcedure(request).ConfigureAwait(false);
         }
 
+        /// <summary>
+        /// Creating new procedure, with optional PatientViewModel parameter.
+        /// </summary>
+        /// <param name="registrationMode"></param>
+        /// <param name="patient"></param>
+        /// <returns>ProcedureAllocationViewModel</returns>
         public async Task<ProcedureAllocationViewModel> AllocateNewProcedure(PatientRegistrationMode registrationMode, PatientViewModel? patient = null)
         {
+            Preconditions.ThrowIfNull(nameof(registrationMode), registrationMode);
+
             if (registrationMode == PatientRegistrationMode.Quick)
             {
                 patient = await _patientsManager.QuickPatientRegistration();
@@ -300,6 +308,8 @@ namespace Avalanche.Api.Managers.Procedures
         /// <returns></returns>
         public async Task UpdateActiveProcedure(PatientViewModel patient)
         {
+            Preconditions.ThrowIfNull(nameof(patient), patient);
+
             var activeProcedure = await _stateClient.GetData<ActiveProcedureState>().ConfigureAwait(false);
             var model = _mapper.Map<ActiveProcedureViewModel>(activeProcedure);
             model.Patient = patient;
