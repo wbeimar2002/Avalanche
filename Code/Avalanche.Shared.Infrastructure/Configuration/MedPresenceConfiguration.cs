@@ -36,9 +36,11 @@ namespace Avalanche.Shared.Infrastructure.Configuration
     public class ServiceModeConfiguration
     {
         public string DisplayToShare { get; set; }
+        public bool RecordingEnabled { get; set; }
     }
     public class CollaborationModeConfiguration
     {
         public string DisplayToShare { get; set; }
+        public bool RecordingEnabled { get; set; }
     }
 }
