@@ -17,6 +17,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Avalanche.Shared.Infrastructure.Enumerations;
 
 namespace Avalanche.Api.Managers.Procedures
 {
@@ -163,15 +164,23 @@ namespace Avalanche.Api.Managers.Procedures
             await _libraryService.CommitActiveProcedure(request).ConfigureAwait(false);
         }
 
-        public async Task<ProcedureAllocationViewModel> AllocateNewProcedure(Shared.Infrastructure.Enumerations.RegistrationMode registrationMode, PatientViewModel? patient = null)
+        /// <summary>
+        /// Creating new procedure, with optional PatientViewModel parameter.
+        /// </summary>
+        /// <param name="registrationMode"></param>
+        /// <param name="patient"></param>
+        /// <returns>ProcedureAllocationViewModel</returns>
+        public async Task<ProcedureAllocationViewModel> AllocateNewProcedure(PatientRegistrationMode registrationMode, PatientViewModel? patient = null)
         {
-            if (registrationMode == Shared.Infrastructure.Enumerations.RegistrationMode.Quick)
+            Preconditions.ThrowIfNull(nameof(registrationMode), registrationMode);
+
+            if (registrationMode == PatientRegistrationMode.Quick)
             {
                 patient = await _patientsManager.QuickPatientRegistration();
             }
             else
             {
-                if (registrationMode == Shared.Infrastructure.Enumerations.RegistrationMode.Update)
+                if (registrationMode == PatientRegistrationMode.Update)
                 {
                     await _patientsManager.UpdatePatient(patient).ConfigureAwait(false);
                 }
@@ -195,6 +204,11 @@ namespace Avalanche.Api.Managers.Procedures
             var patientListSource = await _patientsManager.GetPatientListSource().ConfigureAwait(false);
 
             await PublishPersistData(patient, procedure, patientListSource, (int)registrationMode).ConfigureAwait(false);
+
+            // TODO: figure out how to do dependencies better
+            // maybe have a separate data/event for when a patient is registered
+            // routing manager subscribes to that event and we can have a cleaner dependency graph
+            await (_routingManager?.PublishDefaultDisplayRecordingState()).ConfigureAwait(false);
 
             return _mapper.Map<ProcedureAllocationViewModel>(response);
         }
@@ -287,12 +301,24 @@ namespace Avalanche.Api.Managers.Procedures
             _ = await _stateClient.AddOrUpdateData(activeProcedure, x => x.Replace(data => data.Images, activeProcedure.Images)).ConfigureAwait(false);
         }
 
+        /// <summary>
+        /// Update patient in the procedure
+        /// </summary>
+        /// <param name="patient"></param>
+        /// <returns></returns>
         public async Task UpdateActiveProcedure(PatientViewModel patient)
         {
-            var activeProcedure = await _stateClient.GetData<ActiveProcedureState>();
-            var model = _mapper.Map<ActiveProcedureViewModel>(activeProcedure);
+            Preconditions.ThrowIfNull(nameof(patient), patient);
 
-            _ = await _stateClient.UpdateData<ActiveProcedureState>(s => s.Replace(_ => model.Patient, patient)).ConfigureAwait(false);
+            var activeProcedure = await _stateClient.GetData<ActiveProcedureState>().ConfigureAwait(false);
+            var model = _mapper.Map<ActiveProcedureViewModel>(activeProcedure);
+            model.Patient = patient;
+
+            activeProcedure.Physician = new Physician(patient.Physician.Id.ToString(), patient.Physician.FirstName, patient.Physician.LastName);
+            activeProcedure.Department = new Department(patient.Department.Id, patient.Department.Name);
+            activeProcedure.Patient = new Patient(patient.Id, "", patient.FirstName, patient.LastName, (DateTime)patient.DateOfBirth, patient.Sex.Value);
+
+            await _stateClient.PersistData(activeProcedure).ConfigureAwait(false);
         }
 
         private void ThrowIfVideoCannotBeDeleted(ActiveProcedureState activeProcedure, Guid videoContent)
@@ -327,7 +353,7 @@ namespace Avalanche.Api.Managers.Procedures
                 Notes = new List<ProcedureNote>(),
                 Accession = null,
                 RecordingEvents = new List<VideoRecordingEvent>(),
-                BackgroundRecordingMode = _mapper.Map<BackgroundRecordingMode>(patient.BackgroundRecordingMode),
+                BackgroundRecordingMode = _mapper.Map<Ism.SystemState.Models.Procedure.BackgroundRecordingMode>(patient.BackgroundRecordingMode),
                 RegistrationMode = (RegistrationMode)registrationMode,
                 PatientListSource = (PatientListSource)patientListSource
             };

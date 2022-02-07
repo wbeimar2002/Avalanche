@@ -196,12 +196,12 @@ namespace Avalanche.Api.Tests.Managers
             _setupConfiguration.PatientInfo = new List<PatientInfoSetupConfiguration>();
 
             var faker = new Faker();
-            _activeProcedureManager.Setup(m => m.AllocateNewProcedure(RegistrationMode.Quick, null))
+            _activeProcedureManager.Setup(m => m.AllocateNewProcedure(PatientRegistrationMode.Quick, null))
             .ReturnsAsync(new ProcedureAllocationViewModel(new ProcedureIdViewModel(Guid.NewGuid().ToString(), faker.Commerce.Department()), faker.System.FilePath()));
 
             var result = await _manager.QuickPatientRegistration();
 
-            _activeProcedureManager.Verify(m => m.AllocateNewProcedure(RegistrationMode.Manual, result), Times.Never);
+            _activeProcedureManager.Verify(m => m.AllocateNewProcedure(PatientRegistrationMode.Manual, result), Times.Never);
         }
 
         [Test, TestCaseSource(nameof(PatientUpdateViewModelWrongDataTestCases))]

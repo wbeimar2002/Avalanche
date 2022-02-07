@@ -1,6 +1,6 @@
 namespace Avalanche.Shared.Infrastructure.Enumerations
 {
-    public enum RegistrationMode
+    public enum PatientRegistrationMode
     {
         Manual = 0,
         Quick = 1,
