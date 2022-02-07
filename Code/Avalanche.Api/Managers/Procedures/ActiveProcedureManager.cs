@@ -316,11 +316,10 @@ namespace Avalanche.Api.Managers.Procedures
             procedureViewModel.Patient.MRN = patient.MRN;
             procedureViewModel.Patient.ProcedureType = patient.ProcedureType;
 
-            var procedureType = _mapper.Map<ProcedureTypeModel, ProcedureType>(patient.ProcedureType);
             activeProcedure.Physician = _mapper.Map<Physician>(patient.Physician);
             activeProcedure.Department = _mapper.Map<Department>(patient.Department);
             activeProcedure.Patient = _mapper.Map<Patient>(patient);
-            activeProcedure.ProcedureType = procedureType;
+            activeProcedure.ProcedureType = _mapper.Map<ProcedureTypeModel, ProcedureType>(patient.ProcedureType);
 
             await _stateClient.PersistData(activeProcedure).ConfigureAwait(false);
         }
