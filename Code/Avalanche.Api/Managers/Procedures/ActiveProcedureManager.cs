@@ -311,12 +311,16 @@ namespace Avalanche.Api.Managers.Procedures
             Preconditions.ThrowIfNull(nameof(patient), patient);
 
             var activeProcedure = await _stateClient.GetData<ActiveProcedureState>().ConfigureAwait(false);
-            var model = _mapper.Map<ActiveProcedureViewModel>(activeProcedure);
-            model.Patient = patient;
+            var procedureViewModel = _mapper.Map<ActiveProcedureViewModel>(activeProcedure);
+            procedureViewModel.Patient = patient;
+            procedureViewModel.Patient.MRN = patient.MRN;
+            procedureViewModel.Patient.ProcedureType = patient.ProcedureType;
 
-            activeProcedure.Physician = new Physician(patient.Physician.Id.ToString(), patient.Physician.FirstName, patient.Physician.LastName);
-            activeProcedure.Department = new Department(patient.Department.Id, patient.Department.Name);
-            activeProcedure.Patient = new Patient(patient.Id, "", patient.FirstName, patient.LastName, (DateTime)patient.DateOfBirth, patient.Sex.Value);
+            var procedureType = _mapper.Map<ProcedureTypeModel, ProcedureType>(patient.ProcedureType);
+            activeProcedure.Physician = _mapper.Map<Physician>(patient.Physician);
+            activeProcedure.Department = _mapper.Map<Department>(patient.Department);
+            activeProcedure.Patient = _mapper.Map<Patient>(patient);
+            activeProcedure.ProcedureType = procedureType;
 
             await _stateClient.PersistData(activeProcedure).ConfigureAwait(false);
         }
