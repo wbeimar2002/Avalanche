@@ -116,6 +116,17 @@ namespace Avalanche.Api.Managers.Patients
             var quickRegistrationDateFormat = _setupConfiguration.Registration.Quick.DateFormat;
             var formattedDate = DateTime.UtcNow.ToLocalTime().ToString(quickRegistrationDateFormat);
 
+            PhysicianModel? physician;
+
+            if (_setupConfiguration.Registration.Manual == null)
+            {
+                physician = await GetSelectedPhysician(false, false).ConfigureAwait(false);
+            }
+            else
+            {
+                physician = await GetSelectedPhysician(_setupConfiguration.Registration.Manual.AutoFillPhysician, true).ConfigureAwait(false);
+            }
+
             //TODO: Pending check this default data
             return new PatientViewModel()
             {
@@ -127,7 +138,7 @@ namespace Avalanche.Api.Managers.Patients
                 {
                     Id = "U"
                 },
-                Physician = await GetSelectedPhysician(_setupConfiguration.Registration.Manual.AutoFillPhysician, true).ConfigureAwait(false)
+                Physician = physician
             };
         }
 
