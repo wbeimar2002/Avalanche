@@ -74,7 +74,7 @@ namespace Avalanche.Api.Managers.Patients
 
             ValidateDynamicConditions(newPatient);
 
-            newPatient.Physician = await SelectedPhysician(_setupConfiguration.Registration.Manual.AutoFillPhysician, false).ConfigureAwait(false);
+            newPatient.Physician = await GetSelectedPhysician(_setupConfiguration.Registration.Manual.AutoFillPhysician, false).ConfigureAwait(false);
 
             return newPatient;
         }
@@ -127,7 +127,7 @@ namespace Avalanche.Api.Managers.Patients
                 {
                     Id = "U"
                 },
-                Physician = await SelectedPhysician(_setupConfiguration.Registration.Manual.AutoFillPhysician, true).ConfigureAwait(false)
+                Physician = await GetSelectedPhysician(_setupConfiguration.Registration.Manual.AutoFillPhysician, true).ConfigureAwait(false)
             };
         }
 
@@ -236,7 +236,7 @@ namespace Avalanche.Api.Managers.Patients
             return getSource.Source;
         }
 
-        private async Task<PhysicianModel> SelectedPhysician(bool autoFillPhysician, bool isQuickRegister)
+        private async Task<PhysicianModel> GetSelectedPhysician(bool autoFillPhysician, bool isQuickRegister)
         {
             if (autoFillPhysician)
             {
@@ -263,8 +263,8 @@ namespace Avalanche.Api.Managers.Patients
                 return new PhysicianModel
                 {
                     Id = 0,
-                    FirstName = "",
-                    LastName = ""
+                    FirstName = string.Empty,
+                    LastName = string.Empty
                 };
             }
         }
