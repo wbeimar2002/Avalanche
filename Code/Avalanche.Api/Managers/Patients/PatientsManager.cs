@@ -71,15 +71,17 @@ namespace Avalanche.Api.Managers.Patients
 
             ValidateDynamicConditions(newPatient);
 
-            if (newPatient.Physician == null && _setupConfiguration.Registration.Manual.AutoFillPhysician)
-            {
-                newPatient.Physician = new PhysicianModel()
-                {
-                    Id = user.Id,
-                    FirstName = user.FirstName,
-                    LastName = user.LastName
-                };
-            }
+            newPatient.Physician = SelectedPhysician(_setupConfiguration.Registration.Manual.AutoFillPhysician, false);
+
+            //if (newPatient.Physician == null && _setupConfiguration.Registration.Manual.AutoFillPhysician)
+            //{
+            //    newPatient.Physician = new PhysicianModel()
+            //    {
+            //        Id = user.Id,
+            //        FirstName = user.FirstName,
+            //        LastName = user.LastName
+            //    };
+            //}
 
             return newPatient;
         }
@@ -121,6 +123,8 @@ namespace Avalanche.Api.Managers.Patients
             var quickRegistrationDateFormat = _setupConfiguration.Registration.Quick.DateFormat;
             var formattedDate = DateTime.UtcNow.ToLocalTime().ToString(quickRegistrationDateFormat);
 
+            var physician = SelectedPhysician(_setupConfiguration.Registration.Manual.AutoFillPhysician, true);
+
             //TODO: Pending check this default data
             return new PatientViewModel()
             {
@@ -132,12 +136,7 @@ namespace Avalanche.Api.Managers.Patients
                 {
                     Id = "U"
                 },
-                Physician = new PhysicianModel()
-                {
-                    Id = user.Id,
-                    FirstName = user.FirstName,
-                    LastName = user.LastName
-                }
+                Physician = SelectedPhysician(_setupConfiguration.Registration.Manual.AutoFillPhysician, true)
             };
         }
 
@@ -234,6 +233,37 @@ namespace Avalanche.Api.Managers.Patients
         {
             var getSource = await _pieService.GetPatientListSource(new Empty()).ConfigureAwait(false);
             return getSource.Source;
+        }
+
+        private PhysicianModel SelectedPhysician(bool autoFillPhysician, bool isQuickRegister)
+        {
+            if (autoFillPhysician)
+            {
+                return new PhysicianModel()
+                {
+                    Id = user.Id,
+                    FirstName = user.FirstName,
+                    LastName = user.LastName
+                };
+            }
+            else if (isQuickRegister)
+            {
+                return new PhysicianModel
+                {
+                    Id = 123,
+                    FirstName = "System",
+                    LastName = "Administrator"
+                };
+            }
+            else
+            {
+                return new PhysicianModel
+                {
+                    Id = 0,
+                    FirstName = "",
+                    LastName = ""
+                };
+            }
         }
     }
 }
