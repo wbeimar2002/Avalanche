@@ -76,16 +76,6 @@ namespace Avalanche.Api.Managers.Patients
 
             newPatient.Physician = await SelectedPhysician(_setupConfiguration.Registration.Manual.AutoFillPhysician, false).ConfigureAwait(false);
 
-            //if (newPatient.Physician == null && _setupConfiguration.Registration.Manual.AutoFillPhysician)
-            //{
-            //    newPatient.Physician = new PhysicianModel()
-            //    {
-            //        Id = user.Id,
-            //        FirstName = user.FirstName,
-            //        LastName = user.LastName
-            //    };
-            //}
-
             return newPatient;
         }
 
