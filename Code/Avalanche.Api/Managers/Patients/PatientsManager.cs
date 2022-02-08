@@ -2,6 +2,7 @@ using AutoMapper;
 using Avalanche.Api.Managers.Media;
 using Avalanche.Api.Managers.Procedures;
 using Avalanche.Api.Services.Health;
+using Avalanche.Api.Services.Security;
 using Avalanche.Api.Utilities;
 using Avalanche.Api.ViewModels;
 using Avalanche.Shared.Domain.Models;
@@ -34,6 +35,7 @@ namespace Avalanche.Api.Managers.Patients
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly UserModel user;
         private readonly ConfigurationContext _configurationContext;
+        private readonly ISecurityService _securityService;
 
         private readonly RecorderConfiguration _recorderConfiguration;
         private readonly SetupConfiguration _setupConfiguration;
@@ -46,7 +48,8 @@ namespace Avalanche.Api.Managers.Patients
             IRoutingManager routingManager,
             IHttpContextAccessor httpContextAccessor,
             RecorderConfiguration recorderConfiguration,
-            SetupConfiguration setupConfiguration
+            SetupConfiguration setupConfiguration,
+            ISecurityService securityService
             )
         {
             _pieService = pieService;
@@ -57,7 +60,7 @@ namespace Avalanche.Api.Managers.Patients
             _httpContextAccessor = httpContextAccessor;
             _recorderConfiguration = recorderConfiguration;
             _setupConfiguration = setupConfiguration;
-
+            _securityService = securityService;
             user = HttpContextUtilities.GetUser(_httpContextAccessor.HttpContext);
             _configurationContext = _mapper.Map<UserModel, ConfigurationContext>(user);
             _configurationContext.IdnId = Guid.NewGuid().ToString();
@@ -71,15 +74,7 @@ namespace Avalanche.Api.Managers.Patients
 
             ValidateDynamicConditions(newPatient);
 
-            if (newPatient.Physician == null && _setupConfiguration.Registration.Manual.AutoFillPhysician)
-            {
-                newPatient.Physician = new PhysicianModel()
-                {
-                    Id = user.Id,
-                    FirstName = user.FirstName,
-                    LastName = user.LastName
-                };
-            }
+            newPatient.Physician = await GetSelectedPhysician(_setupConfiguration.Registration.Manual.AutoFillPhysician, false).ConfigureAwait(false);
 
             return newPatient;
         }
@@ -109,7 +104,7 @@ namespace Avalanche.Api.Managers.Patients
                     case "procedureType":
                         Preconditions.ThrowIfNull(nameof(patient.ProcedureType), patient.ProcedureType);
                         break;
-                    //case "accessionNumber": TODO: Pending send the value from Register and Update
+                        //case "accessionNumber": TODO: Pending send the value from Register and Update
                         //    Preconditions.ThrowIfNull(nameof(patient.Accession), patient.Accession);
                         //    break;
                 }
@@ -120,6 +115,17 @@ namespace Avalanche.Api.Managers.Patients
         {
             var quickRegistrationDateFormat = _setupConfiguration.Registration.Quick.DateFormat;
             var formattedDate = DateTime.UtcNow.ToLocalTime().ToString(quickRegistrationDateFormat);
+
+            PhysicianModel? physician;
+
+            if (_setupConfiguration.Registration.Manual == null)
+            {
+                physician = await GetSelectedPhysician(false, false).ConfigureAwait(false);
+            }
+            else
+            {
+                physician = await GetSelectedPhysician(_setupConfiguration.Registration.Manual.AutoFillPhysician, true).ConfigureAwait(false);
+            }
 
             //TODO: Pending check this default data
             return new PatientViewModel()
@@ -132,12 +138,7 @@ namespace Avalanche.Api.Managers.Patients
                 {
                     Id = "U"
                 },
-                Physician = new PhysicianModel()
-                {
-                    Id = user.Id,
-                    FirstName = user.FirstName,
-                    LastName = user.LastName
-                }
+                Physician = physician
             };
         }
 
@@ -149,6 +150,16 @@ namespace Avalanche.Api.Managers.Patients
             Preconditions.ThrowIfNull(nameof(existingPatient.LastName), existingPatient.LastName);
 
             ValidateDynamicConditions(existingPatient);
+
+            if (existingPatient.Physician == null || existingPatient.Physician.Id == 0)
+            {
+                existingPatient.Physician = new PhysicianModel()
+                {
+                    Id = user.Id,
+                    FirstName = user.FirstName,
+                    LastName = user.LastName
+                };
+            }
 
             var accessInfo = _accessInfoFactory.GenerateAccessInfo();
 
@@ -234,6 +245,39 @@ namespace Avalanche.Api.Managers.Patients
         {
             var getSource = await _pieService.GetPatientListSource(new Empty()).ConfigureAwait(false);
             return getSource.Source;
+        }
+
+        private async Task<PhysicianModel> GetSelectedPhysician(bool autoFillPhysician, bool isQuickRegister)
+        {
+            if (autoFillPhysician)
+            {
+                return new PhysicianModel()
+                {
+                    Id = user.Id,
+                    FirstName = user.FirstName,
+                    LastName = user.LastName
+                };
+            }
+            else if (isQuickRegister)
+            {
+                var systemAdministrator = await _securityService.FindByUserName("Administrator").ConfigureAwait(false);
+
+                return new PhysicianModel
+                {
+                    Id = systemAdministrator.User.Id,
+                    FirstName = systemAdministrator.User.FirstName,
+                    LastName = systemAdministrator.User.LastName
+                };
+            }
+            else
+            {
+                return new PhysicianModel
+                {
+                    Id = 0,
+                    FirstName = string.Empty,
+                    LastName = string.Empty
+                };
+            }
         }
     }
 }
