@@ -74,7 +74,7 @@ namespace Avalanche.Api.Managers.Patients
 
             ValidateDynamicConditions(newPatient);
 
-            newPatient.Physician = SelectedPhysician(_setupConfiguration.Registration.Manual.AutoFillPhysician, false);
+            newPatient.Physician = await SelectedPhysician(_setupConfiguration.Registration.Manual.AutoFillPhysician, false).ConfigureAwait(false);
 
             //if (newPatient.Physician == null && _setupConfiguration.Registration.Manual.AutoFillPhysician)
             //{
@@ -114,7 +114,7 @@ namespace Avalanche.Api.Managers.Patients
                     case "procedureType":
                         Preconditions.ThrowIfNull(nameof(patient.ProcedureType), patient.ProcedureType);
                         break;
-                    //case "accessionNumber": TODO: Pending send the value from Register and Update
+                        //case "accessionNumber": TODO: Pending send the value from Register and Update
                         //    Preconditions.ThrowIfNull(nameof(patient.Accession), patient.Accession);
                         //    break;
                 }
@@ -126,7 +126,8 @@ namespace Avalanche.Api.Managers.Patients
             var quickRegistrationDateFormat = _setupConfiguration.Registration.Quick.DateFormat;
             var formattedDate = DateTime.UtcNow.ToLocalTime().ToString(quickRegistrationDateFormat);
 
-            var x = new PatientViewModel()
+            //TODO: Pending check this default data
+            return new PatientViewModel()
             {
                 MRN = $"{formattedDate}MRN",
                 DateOfBirth = DateTime.UtcNow.ToLocalTime(),
@@ -136,11 +137,8 @@ namespace Avalanche.Api.Managers.Patients
                 {
                     Id = "U"
                 },
-                Physician = SelectedPhysician(_setupConfiguration.Registration.Manual.AutoFillPhysician, true)
+                Physician = await SelectedPhysician(_setupConfiguration.Registration.Manual.AutoFillPhysician, true).ConfigureAwait(false)
             };
-
-            //TODO: Pending check this default data
-            return x;
         }
 
         public async Task UpdatePatient(PatientViewModel existingPatient)
@@ -238,7 +236,7 @@ namespace Avalanche.Api.Managers.Patients
             return getSource.Source;
         }
 
-        private PhysicianModel SelectedPhysician(bool autoFillPhysician, bool isQuickRegister)
+        private async Task<PhysicianModel> SelectedPhysician(bool autoFillPhysician, bool isQuickRegister)
         {
             if (autoFillPhysician)
             {
@@ -251,11 +249,13 @@ namespace Avalanche.Api.Managers.Patients
             }
             else if (isQuickRegister)
             {
+                var systemAdministrator = await _securityService.FindByUserName("Administrator").ConfigureAwait(false);
+
                 return new PhysicianModel
                 {
-                    Id = 123,
-                    FirstName = "System",
-                    LastName = "Administrator"
+                    Id = systemAdministrator.User.Id,
+                    FirstName = systemAdministrator.User.FirstName,
+                    LastName = systemAdministrator.User.LastName
                 };
             }
             else
