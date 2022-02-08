@@ -150,6 +150,16 @@ namespace Avalanche.Api.Managers.Patients
 
             ValidateDynamicConditions(existingPatient);
 
+            if (existingPatient.Physician == null || existingPatient.Physician.Id == 0)
+            {
+                existingPatient.Physician = new PhysicianModel()
+                {
+                    Id = user.Id,
+                    FirstName = user.FirstName,
+                    LastName = user.LastName
+                };
+            }
+
             var accessInfo = _accessInfoFactory.GenerateAccessInfo();
 
             var request = _mapper.Map<PatientViewModel, UpdatePatientRecordRequest>(existingPatient);
