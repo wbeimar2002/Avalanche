@@ -6,6 +6,7 @@ using Avalanche.Api.Managers.Patients;
 using Avalanche.Api.Managers.Procedures;
 using Avalanche.Api.Mapping;
 using Avalanche.Api.Services.Health;
+using Avalanche.Api.Services.Security;
 using Avalanche.Api.Utilities;
 using Avalanche.Api.ViewModels;
 using Avalanche.Shared.Domain.Models;
@@ -39,6 +40,7 @@ namespace Avalanche.Api.Tests.Managers
         Mock<IHttpContextAccessor> _httpContextAccessor;
         Mock<IActiveProcedureManager> _activeProcedureManager;
         Mock<IRoutingManager> _routingManager;
+        Mock<ISecurityService> _securityService;
         SetupConfiguration _setupConfiguration;
 
         IMapper _mapper;
@@ -54,7 +56,7 @@ namespace Avalanche.Api.Tests.Managers
             _httpContextAccessor = new Mock<IHttpContextAccessor>();
             _activeProcedureManager = new Mock<IActiveProcedureManager>();
             _routingManager = new Mock<IRoutingManager>();
-
+            _securityService = new Mock<ISecurityService>();
             _setupConfiguration = new SetupConfiguration()
             {
                 General = new GeneralSetupConfiguration()
@@ -81,7 +83,8 @@ namespace Avalanche.Api.Tests.Managers
                 _routingManager.Object,
                 _httpContextAccessor.Object,
                 recorderConfig,
-                _setupConfiguration);
+                _setupConfiguration,
+                _securityService.Object);
         }
 
         public static IEnumerable<TestCaseData> NewPatientViewModelWrongDataTestCases
@@ -199,9 +202,7 @@ namespace Avalanche.Api.Tests.Managers
             _activeProcedureManager.Setup(m => m.AllocateNewProcedure(PatientRegistrationMode.Quick, null))
             .ReturnsAsync(new ProcedureAllocationViewModel(new ProcedureIdViewModel(Guid.NewGuid().ToString(), faker.Commerce.Department()), faker.System.FilePath()));
 
-            var result = await _manager.QuickPatientRegistration();
-
-            _activeProcedureManager.Verify(m => m.AllocateNewProcedure(PatientRegistrationMode.Manual, result), Times.Never);
+            _activeProcedureManager.Verify(m => m.AllocateNewProcedure(PatientRegistrationMode.Quick, null), Times.Never);
         }
 
         [Test, TestCaseSource(nameof(PatientUpdateViewModelWrongDataTestCases))]

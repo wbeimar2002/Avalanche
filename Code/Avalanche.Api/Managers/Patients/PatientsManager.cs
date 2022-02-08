@@ -2,6 +2,7 @@ using AutoMapper;
 using Avalanche.Api.Managers.Media;
 using Avalanche.Api.Managers.Procedures;
 using Avalanche.Api.Services.Health;
+using Avalanche.Api.Services.Security;
 using Avalanche.Api.Utilities;
 using Avalanche.Api.ViewModels;
 using Avalanche.Shared.Domain.Models;
@@ -34,6 +35,7 @@ namespace Avalanche.Api.Managers.Patients
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly UserModel user;
         private readonly ConfigurationContext _configurationContext;
+        private readonly ISecurityService _securityService;
 
         private readonly RecorderConfiguration _recorderConfiguration;
         private readonly SetupConfiguration _setupConfiguration;
@@ -46,7 +48,8 @@ namespace Avalanche.Api.Managers.Patients
             IRoutingManager routingManager,
             IHttpContextAccessor httpContextAccessor,
             RecorderConfiguration recorderConfiguration,
-            SetupConfiguration setupConfiguration
+            SetupConfiguration setupConfiguration,
+            ISecurityService securityService
             )
         {
             _pieService = pieService;
@@ -57,7 +60,7 @@ namespace Avalanche.Api.Managers.Patients
             _httpContextAccessor = httpContextAccessor;
             _recorderConfiguration = recorderConfiguration;
             _setupConfiguration = setupConfiguration;
-
+            _securityService = securityService;
             user = HttpContextUtilities.GetUser(_httpContextAccessor.HttpContext);
             _configurationContext = _mapper.Map<UserModel, ConfigurationContext>(user);
             _configurationContext.IdnId = Guid.NewGuid().ToString();
@@ -123,10 +126,7 @@ namespace Avalanche.Api.Managers.Patients
             var quickRegistrationDateFormat = _setupConfiguration.Registration.Quick.DateFormat;
             var formattedDate = DateTime.UtcNow.ToLocalTime().ToString(quickRegistrationDateFormat);
 
-            var physician = SelectedPhysician(_setupConfiguration.Registration.Manual.AutoFillPhysician, true);
-
-            //TODO: Pending check this default data
-            return new PatientViewModel()
+            var x = new PatientViewModel()
             {
                 MRN = $"{formattedDate}MRN",
                 DateOfBirth = DateTime.UtcNow.ToLocalTime(),
@@ -138,6 +138,9 @@ namespace Avalanche.Api.Managers.Patients
                 },
                 Physician = SelectedPhysician(_setupConfiguration.Registration.Manual.AutoFillPhysician, true)
             };
+
+            //TODO: Pending check this default data
+            return x;
         }
 
         public async Task UpdatePatient(PatientViewModel existingPatient)
