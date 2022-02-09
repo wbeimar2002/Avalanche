@@ -17,5 +17,6 @@ namespace Avalanche.Api.Services.Health
         Task<GetFinishedProceduresResponse> GetFinishedProcedures(GetFinishedProceduresRequest getFinishedProceduresRequest);
         Task<GetFinishedProceduresResponse> GetFinishedProceduresByPatient(GetFinishedProceduresRequestByPatient getFinishedProceduresRequestByPatient);
         Task GenerateProcedureZip(GenerateProcedureZipRequest procedureZipRequest);
+        Task<GetPhysiciansSearchResponse> GetPhysicians(GetPhysiciansSearchRequest getPhysiciansSearchRequest);
     }
 }

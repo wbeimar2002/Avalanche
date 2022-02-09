@@ -55,5 +55,8 @@ namespace Avalanche.Api.Services.Health
 
         public async Task GenerateProcedureZip(GenerateProcedureZipRequest procedureZipRequest) =>
             await _managerServiceClient.GenerateProcedureZip(procedureZipRequest).ConfigureAwait(false);
+
+        public async Task<GetPhysiciansSearchResponse> GetPhysicians(GetPhysiciansSearchRequest getPhysiciansSearchRequest) =>
+            await _serviceSearchClient.GetPhysicians(getPhysiciansSearchRequest).ConfigureAwait(false);
     }
 }
