@@ -126,7 +126,6 @@ namespace Avalanche.Api.Managers.Procedures
             await _libraryService.DeleteActiveProcedureMediaItem(request).ConfigureAwait(false);
         }
 
-
         public async Task DeleteActiveProcedureMediaItems(ProcedureContentType procedureContentType, IEnumerable<Guid> contentIds)
         {
             var accessInfo = _accessInfoFactory.GenerateAccessInfo();
@@ -226,9 +225,6 @@ namespace Avalanche.Api.Managers.Procedures
 
             await PublishPersistData(patient, procedure, patientListSource, (int)registrationMode).ConfigureAwait(false);
 
-            // TODO: figure out how to do dependencies better
-            // maybe have a separate data/event for when a patient is registered
-            // routing manager subscribes to that event and we can have a cleaner dependency graph
             await (_routingManager?.PublishDefaultDisplayRecordingState()).ConfigureAwait(false);
 
             return _mapper.Map<ProcedureAllocationViewModel>(response);
@@ -326,7 +322,6 @@ namespace Avalanche.Api.Managers.Procedures
         /// Update patient in the procedure
         /// </summary>
         /// <param name="patient"></param>
-        /// <returns></returns>
         public async Task UpdateActiveProcedure(PatientViewModel patient)
         {
             Preconditions.ThrowIfNull(nameof(patient), patient);
@@ -395,7 +390,6 @@ namespace Avalanche.Api.Managers.Procedures
             }
             else
             {
-                //TODO: Validate department support
                 var existingProcedureType = await _dataManagementService.GetProcedureType(new Ism.Storage.DataManagement.Client.V1.Protos.GetProcedureTypeRequest()
                 {
                     ProcedureTypeName = procedureType.Name,
@@ -421,7 +415,7 @@ namespace Avalanche.Api.Managers.Procedures
 
             ValidateDynamicConditions(newPatient);
 
-            newPatient.Physician = await GetSelectedPhysician(_setupConfiguration.Registration.Manual.AutoFillPhysician, false).ConfigureAwait(false);
+            newPatient.Physician = await GetSelectedPhysician(PatientRegistrationMode.Manual).ConfigureAwait(false);
 
             return newPatient;
         }
@@ -431,16 +425,7 @@ namespace Avalanche.Api.Managers.Procedures
             var quickRegistrationDateFormat = _setupConfiguration.Registration.Quick.DateFormat;
             var formattedDate = DateTime.UtcNow.ToLocalTime().ToString(quickRegistrationDateFormat);
 
-            PhysicianModel? physician;
-
-            if (_setupConfiguration.Registration.Manual == null)
-            {
-                physician = await GetSelectedPhysician(false, false).ConfigureAwait(false);
-            }
-            else
-            {
-                physician = await GetSelectedPhysician(_setupConfiguration.Registration.Manual.AutoFillPhysician, true).ConfigureAwait(false);
-            }
+            var physician = await GetSelectedPhysician(PatientRegistrationMode.Quick).ConfigureAwait(false);
 
             //TODO: Pending check this default data
             return new PatientViewModel()
@@ -489,37 +474,44 @@ namespace Avalanche.Api.Managers.Procedures
             }
         }
 
-        private async Task<PhysicianModel> GetSelectedPhysician(bool autoFillPhysician, bool isQuickRegister)
+        private async Task<PhysicianModel?> GetSelectedPhysician(PatientRegistrationMode registrationMode)
         {
-            if (autoFillPhysician)
+            var isAutoFillPhysicianEnabled = _setupConfiguration.Registration.Manual.AutoFillPhysician;
+
+            return registrationMode switch
             {
-                return new PhysicianModel()
+                PatientRegistrationMode.Manual => await (isAutoFillPhysicianEnabled ? GetPhysician("currentUser") : GetPhysician("blank")).ConfigureAwait(false),
+                PatientRegistrationMode.Quick => await (isAutoFillPhysicianEnabled ? GetPhysician("currentUser") : GetPhysician("administrator")).ConfigureAwait(false),
+                _ => null,
+            };
+        }
+
+        private async Task<PhysicianModel?> GetPhysician(string physicianReturned)
+        {
+            var systemAdministrator = await _securityService.FindByUserName("Administrator").ConfigureAwait(false);
+
+            return physicianReturned switch
+            {
+                "currentUser" => new PhysicianModel()
                 {
                     Id = _user.Id,
                     FirstName = _user.FirstName,
                     LastName = _user.LastName
-                };
-            }
-            else if (isQuickRegister)
-            {
-                var systemAdministrator = await _securityService.FindByUserName("Administrator").ConfigureAwait(false);
-
-                return new PhysicianModel
+                },
+                "administrator" => new PhysicianModel()
                 {
                     Id = systemAdministrator.User.Id,
                     FirstName = systemAdministrator.User.FirstName,
                     LastName = systemAdministrator.User.LastName
-                };
-            }
-            else
-            {
-                return new PhysicianModel
+                },
+                "blank" => new PhysicianModel()
                 {
                     Id = 0,
                     FirstName = string.Empty,
                     LastName = string.Empty
-                };
-            }
+                },
+                _ => null,
+            };
         }
     }
 }

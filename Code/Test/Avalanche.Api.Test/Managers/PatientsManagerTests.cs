@@ -1,20 +1,13 @@
-using AutoFixture;
-
 using AutoMapper;
-using Avalanche.Api.Managers.Media;
 using Avalanche.Api.Managers.Patients;
-using Avalanche.Api.Managers.Procedures;
 using Avalanche.Api.Mapping;
 using Avalanche.Api.Services.Health;
 using Avalanche.Api.Services.Security;
 using Avalanche.Api.Utilities;
 using Avalanche.Api.ViewModels;
-using Avalanche.Shared.Domain.Models;
 using Avalanche.Shared.Infrastructure.Configuration;
 using Avalanche.Shared.Infrastructure.Enumerations;
-using Bogus;
 using Ism.PatientInfoEngine.V1.Protos;
-using Ism.SystemState.Client;
 
 using Microsoft.AspNetCore.Http;
 
@@ -24,7 +17,6 @@ using NUnit.Framework;
 
 using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Threading.Tasks;
 
 namespace Avalanche.Api.Tests.Managers
