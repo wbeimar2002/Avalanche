@@ -57,7 +57,7 @@ namespace Avalanche.Api.Managers.Medpresence
         public async Task InviteGuests(MedpresenceInviteViewModel request)
         {
             var message = new InviteRequest();
-            message.Invitees.AddRange(_mapper.Map<IEnumerable<MedpresenceSecureGuestMessage>>(request.Invitees));
+            message.Invitees.AddRange(_mapper.Map<IEnumerable<string>>(request.Invitees));
             await _medpresenceService.InviteGuests(message).ConfigureAwait(false);
         }
 
