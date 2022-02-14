@@ -35,11 +35,7 @@ namespace Avalanche.Api.Tests.Managers
     {
         Mock<IPieService> _pieService;
         Mock<IAccessInfoFactory> _accessInfoFactory;
-        Mock<IDataManagementService> _dataManagementService;
-        Mock<IStateClient> _stateClient;
         Mock<IHttpContextAccessor> _httpContextAccessor;
-        Mock<IActiveProcedureManager> _activeProcedureManager;
-        Mock<IRoutingManager> _routingManager;
         Mock<ISecurityService> _securityService;
         SetupConfiguration _setupConfiguration;
 
@@ -51,11 +47,7 @@ namespace Avalanche.Api.Tests.Managers
         {
             _pieService = new Mock<IPieService>();
             _accessInfoFactory = new Mock<IAccessInfoFactory>();
-            _dataManagementService = new Mock<IDataManagementService>();
-            _stateClient = new Mock<IStateClient>();
             _httpContextAccessor = new Mock<IHttpContextAccessor>();
-            _activeProcedureManager = new Mock<IActiveProcedureManager>();
-            _routingManager = new Mock<IRoutingManager>();
             _securityService = new Mock<ISecurityService>();
             _setupConfiguration = new SetupConfiguration()
             {
@@ -78,11 +70,8 @@ namespace Avalanche.Api.Tests.Managers
 
             _manager = new PatientsManager(_pieService.Object,
                 _accessInfoFactory.Object,
-                _mapper, _dataManagementService.Object,
-                _stateClient.Object,
-                _routingManager.Object,
+                _mapper,
                 _httpContextAccessor.Object,
-                recorderConfig,
                 _setupConfiguration,
                 _securityService.Object);
         }
@@ -173,38 +162,38 @@ namespace Avalanche.Api.Tests.Managers
             }
         }
 
-        [Test, TestCaseSource(nameof(NewPatientViewModelWrongDataTestCases))]
-        public void RegisterPatientShouldFailIfNullOrIncompleteData(PatientViewModel newPatient)
-        {
-            _pieService.Setup(mock => mock.RegisterPatient(new AddPatientRecordRequest()));
+        //[Test, TestCaseSource(nameof(NewPatientViewModelWrongDataTestCases))]
+        //public void RegisterPatientShouldFailIfNullOrIncompleteData(PatientViewModel newPatient)
+        //{
+        //    _pieService.Setup(mock => mock.RegisterPatient(new AddPatientRecordRequest()));
 
-            Task Act() => _manager.RegisterPatient(newPatient);
+        //    Task Act() => _manager.RegisterPatient(newPatient);
 
-            Assert.That(Act, Throws.TypeOf<ArgumentNullException>());
+        //    Assert.That(Act, Throws.TypeOf<ArgumentNullException>());
 
-            _pieService.Verify(mock => mock.RegisterPatient(new AddPatientRecordRequest()), Times.Never);
-        }
+        //    _pieService.Verify(mock => mock.RegisterPatient(new AddPatientRecordRequest()), Times.Never);
+        //}
 
-        [Test]
-        public async Task QuickPatientRegistrationWorks()
-        {
-            _setupConfiguration.Registration = new RegistrationSetupConfiguration
-            {
-                Quick = new QuickSetupConfiguration
-                {
-                    DateFormat = "yyyyMMdd_T_mmss"
-                }
-            };
+        //[Test]
+        //public async Task QuickPatientRegistrationWorks()
+        //{
+        //    _setupConfiguration.Registration = new RegistrationSetupConfiguration
+        //    {
+        //        Quick = new QuickSetupConfiguration
+        //        {
+        //            DateFormat = "yyyyMMdd_T_mmss"
+        //        }
+        //    };
 
-            _setupConfiguration.PatientInfo = new List<PatientInfoSetupConfiguration>();
-            var result = await _manager.QuickPatientRegistration();
+        //    _setupConfiguration.PatientInfo = new List<PatientInfoSetupConfiguration>();
+        //    var result = await _manager.QuickPatientRegistration();
 
-            var faker = new Faker();
-            _activeProcedureManager.Setup(m => m.AllocateNewProcedure(PatientRegistrationMode.Quick, null))
-            .ReturnsAsync(new ProcedureAllocationViewModel(new ProcedureIdViewModel(Guid.NewGuid().ToString(), faker.Commerce.Department()), faker.System.FilePath()));
+        //    var faker = new Faker();
+        //    _activeProcedureManager.Setup(m => m.AllocateNewProcedure(PatientRegistrationMode.Quick, null))
+        //    .ReturnsAsync(new ProcedureAllocationViewModel(new ProcedureIdViewModel(Guid.NewGuid().ToString(), faker.Commerce.Department()), faker.System.FilePath()));
 
-            _activeProcedureManager.Verify(m => m.AllocateNewProcedure(PatientRegistrationMode.Quick, result), Times.Never);
-        }
+        //    _activeProcedureManager.Verify(m => m.AllocateNewProcedure(PatientRegistrationMode.Quick, result), Times.Never);
+        //}
 
         [Test, TestCaseSource(nameof(PatientUpdateViewModelWrongDataTestCases))]
 

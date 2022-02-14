@@ -18,6 +18,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Avalanche.Shared.Infrastructure.Enumerations;
+using Microsoft.AspNetCore.Http;
+using Avalanche.Api.Services.Security;
 
 namespace Avalanche.Api.Managers.Procedures
 {
@@ -30,18 +32,33 @@ namespace Avalanche.Api.Managers.Procedures
         private readonly IRecorderService _recorderService;
         private readonly IPatientsManager _patientsManager;
         private readonly IDataManagementService _dataManagementService;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
         private readonly IDataManager _dataManager;
         private readonly LabelsConfiguration _labelsConfig;
+        private readonly SetupConfiguration _setupConfiguration;
+        private readonly UserModel _user;
 
         // TODO: remove this when we figure out how to clean up dependencies
         private readonly IRoutingManager _routingManager;
+        private readonly ISecurityService _securityService;
 
         public const int MinPageSize = 25;
         public const int MaxPageSize = 100;
 
-        public ActiveProcedureManager(IStateClient stateClient, ILibraryService libraryService, IAccessInfoFactory accessInfoFactory,
-            IMapper mapper, IRecorderService recorderService, IDataManager dataManager, LabelsConfiguration labelsConfig, IPatientsManager patientsManager, IDataManagementService dataManagementService, IRoutingManager routingManager)
+        public ActiveProcedureManager(IStateClient stateClient,
+            ILibraryService libraryService,
+            IAccessInfoFactory accessInfoFactory,
+            IMapper mapper,
+            IRecorderService recorderService,
+            IDataManager dataManager,
+            LabelsConfiguration labelsConfig,
+            IPatientsManager patientsManager,
+            IDataManagementService dataManagementService,
+            IRoutingManager routingManager,
+            SetupConfiguration setupConfiguration,
+            IHttpContextAccessor httpContextAccessor,
+            ISecurityService securityService)
         {
             _stateClient = stateClient;
             _libraryService = libraryService;
@@ -55,6 +72,10 @@ namespace Avalanche.Api.Managers.Procedures
             _patientsManager = patientsManager;
             _dataManagementService = dataManagementService;
             _routingManager = routingManager;
+            _setupConfiguration = setupConfiguration;
+            _httpContextAccessor = httpContextAccessor;
+            _securityService = securityService;
+            _user = HttpContextUtilities.GetUser(_httpContextAccessor.HttpContext);
         }
 
         /// <summary>
@@ -176,7 +197,7 @@ namespace Avalanche.Api.Managers.Procedures
 
             if (registrationMode == PatientRegistrationMode.Quick)
             {
-                patient = await _patientsManager.QuickPatientRegistration();
+                patient = await QuickPatientRegistration();
             }
             else
             {
@@ -186,7 +207,7 @@ namespace Avalanche.Api.Managers.Procedures
                 }
                 else
                 {
-                    patient = await _patientsManager.RegisterPatient(patient).ConfigureAwait(false);
+                    patient = await RegisterPatient(patient).ConfigureAwait(false);
                 }
 
                 await CheckProcedureType(patient.ProcedureType, patient.Department).ConfigureAwait(false);
@@ -389,6 +410,115 @@ namespace Avalanche.Api.Managers.Procedures
                         DepartmentId = Convert.ToInt32(department.Id),
                     }).ConfigureAwait(false);
                 }
+            }
+        }
+
+        private async Task<PatientViewModel> RegisterPatient(PatientViewModel newPatient)
+        {
+            Preconditions.ThrowIfNull(nameof(newPatient), newPatient);
+            Preconditions.ThrowIfNull(nameof(newPatient.MRN), newPatient.MRN);
+            Preconditions.ThrowIfNull(nameof(newPatient.LastName), newPatient.LastName);
+
+            ValidateDynamicConditions(newPatient);
+
+            newPatient.Physician = await GetSelectedPhysician(_setupConfiguration.Registration.Manual.AutoFillPhysician, false).ConfigureAwait(false);
+
+            return newPatient;
+        }
+
+        public async Task<PatientViewModel> QuickPatientRegistration()
+        {
+            var quickRegistrationDateFormat = _setupConfiguration.Registration.Quick.DateFormat;
+            var formattedDate = DateTime.UtcNow.ToLocalTime().ToString(quickRegistrationDateFormat);
+
+            PhysicianModel? physician;
+
+            if (_setupConfiguration.Registration.Manual == null)
+            {
+                physician = await GetSelectedPhysician(false, false).ConfigureAwait(false);
+            }
+            else
+            {
+                physician = await GetSelectedPhysician(_setupConfiguration.Registration.Manual.AutoFillPhysician, true).ConfigureAwait(false);
+            }
+
+            //TODO: Pending check this default data
+            return new PatientViewModel()
+            {
+                MRN = $"{formattedDate}MRN",
+                DateOfBirth = DateTime.UtcNow.ToLocalTime(),
+                FirstName = $"{formattedDate}FirstName",
+                LastName = $"{formattedDate}LastName",
+                Sex = new KeyValuePairViewModel()
+                {
+                    Id = "U"
+                },
+                Physician = physician
+            };
+        }
+
+        private void ValidateDynamicConditions(PatientViewModel patient)
+        {
+            foreach (var item in _setupConfiguration.PatientInfo.Where(f => f.Required))
+            {
+                switch (item.Id)
+                {
+                    case "firstName":
+                        Preconditions.ThrowIfNull(nameof(patient.FirstName), patient.FirstName);
+                        break;
+                    case "sex":
+                        Preconditions.ThrowIfNull(nameof(patient.Sex), patient.Sex);
+                        break;
+                    case "dateOfBirth":
+                        Preconditions.ThrowIfNull(nameof(patient.DateOfBirth), patient.DateOfBirth);
+                        break;
+
+                    case "physician":
+                        Preconditions.ThrowIfNull(nameof(patient.Physician), patient.Physician);
+                        break;
+                    case "department":
+                        Preconditions.ThrowIfNull(nameof(patient.Department), patient.Department);
+                        break;
+                    case "procedureType":
+                        Preconditions.ThrowIfNull(nameof(patient.ProcedureType), patient.ProcedureType);
+                        break;
+                        //case "accessionNumber": TODO: Pending send the value from Register and Update
+                        //    Preconditions.ThrowIfNull(nameof(patient.Accession), patient.Accession);
+                        //    break;
+                }
+            }
+        }
+
+        private async Task<PhysicianModel> GetSelectedPhysician(bool autoFillPhysician, bool isQuickRegister)
+        {
+            if (autoFillPhysician)
+            {
+                return new PhysicianModel()
+                {
+                    Id = _user.Id,
+                    FirstName = _user.FirstName,
+                    LastName = _user.LastName
+                };
+            }
+            else if (isQuickRegister)
+            {
+                var systemAdministrator = await _securityService.FindByUserName("Administrator").ConfigureAwait(false);
+
+                return new PhysicianModel
+                {
+                    Id = systemAdministrator.User.Id,
+                    FirstName = systemAdministrator.User.FirstName,
+                    LastName = systemAdministrator.User.LastName
+                };
+            }
+            else
+            {
+                return new PhysicianModel
+                {
+                    Id = 0,
+                    FirstName = string.Empty,
+                    LastName = string.Empty
+                };
             }
         }
     }
