@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
@@ -52,7 +52,7 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Ism.Broadcaster.Standard" Version="1.0.0-prerelease0003" />
-    <PackageReference Include="Ism.CodeQuality" Version="1.0.0-prerelease0011">
+    <PackageReference Include="Ism.CodeQuality" Version="1.0.1-prerelease0001">
       <TreatAsUsed>true</TreatAsUsed>
     </PackageReference>
     <PackageReference Include="Ism.Common.Core.Hosting" Version="1.0.0-prerelease050" />
@@ -66,7 +66,7 @@
     <PackageReference Include="Ism.Security.Grpc.Standard" Version="1.0.0-prerelease034" />
     <PackageReference Include="Ism.Storage.Configuration.Client" Version="1.0.0-prerelease0037" />
     <PackageReference Include="Ism.Streaming.Client" Version="1.0.0-prerelease0019" />
-    <PackageReference Include="Ism.Utility.Core" Version="1.0.1-prerelease32" />
+    <PackageReference Include="Ism.Utility.Core" Version="1.0.2-prerelease0001" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="3.1.21" />
     <PackageReference Include="Microsoft.AspNetCore.JsonPatch" Version="5.0.8" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="3.1.17" />
@@ -80,10 +80,10 @@
     <PackageReference Include="System.Text.Json" Version="5.0.2" />
     <PackageReference Include="Polly" Version="7.2.2" />
     <PackageReference Include="Ism.Storage.DataManagement.Client" Version="1.0.0-prerelease0046" />
-    <PackageReference Include="Ism.SystemState.Client" Version="1.0.0-prerelease0092" />
+    <PackageReference Include="Ism.SystemState.Client" Version="1.0.0-prerelease0095" />
     <PackageReference Include="Ism.Storage.PatientList.Client" Version="1.0.0-prerelease0031" />
     <PackageReference Include="Ism.PrintServer.Client" Version="1.0.0-prerelease0009" />
-    <PackageReference Include="Ism.Medpresence.Client" Version="1.0.0-prerelease0006" />
+    <PackageReference Include="Ism.Medpresence.Client" Version="1.0.0-prerelease0007" />
     <PackageReference Include="Ism.Library.Client" Version="1.0.0-prerelease0075" />
   </ItemGroup>
 
