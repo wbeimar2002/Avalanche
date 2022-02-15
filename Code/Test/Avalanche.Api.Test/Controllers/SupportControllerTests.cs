@@ -331,7 +331,7 @@ namespace Avalanche.Api.Test.Controllers
         public async Task InviteGuestShouldReturnOkResult()
         {
             var okResult = await _controller!.InviteGuests(new MedpresenceInviteViewModel{
-                Invitees = new List<MedpresenceSecureGuest>()
+                Invitees = new List<string>()
             }).ConfigureAwait(false);
 
             if (_checkLogger)
@@ -350,7 +350,7 @@ namespace Avalanche.Api.Test.Controllers
             _ = _medpresenceManager!.Setup(s => s.InviteGuests(It.IsAny<MedpresenceInviteViewModel>())).Throws(It.IsAny<Exception>());
             var badResult = await _controller!.InviteGuests(new MedpresenceInviteViewModel
             {
-                Invitees = new List<MedpresenceSecureGuest>()
+                Invitees = new List<string>()
             }).ConfigureAwait(false);
 
             if (_checkLogger)

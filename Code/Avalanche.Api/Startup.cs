@@ -130,6 +130,7 @@ namespace Avalanche.Api
             services.AddTransient<ISecurityManager, SecurityManager>();
             services.AddTransient<IPhysiciansManager, PhysiciansManager>();
             services.AddTransient<IMedpresenceManager, MedpresenceManager>();
+            services.AddTransient<IUsersManager, UsersManager>();
 
             // Singleton
             if (isDevice)

@@ -6,6 +6,7 @@ using Avalanche.Api.Managers.Patients;
 using Avalanche.Api.Managers.Procedures;
 using Avalanche.Api.Mapping;
 using Avalanche.Api.Services.Health;
+using Avalanche.Api.Services.Security;
 using Avalanche.Api.Utilities;
 using Avalanche.Api.ViewModels;
 using Avalanche.Shared.Domain.Models;
@@ -39,6 +40,7 @@ namespace Avalanche.Api.Tests.Managers
         Mock<IHttpContextAccessor> _httpContextAccessor;
         Mock<IActiveProcedureManager> _activeProcedureManager;
         Mock<IRoutingManager> _routingManager;
+        Mock<ISecurityService> _securityService;
         SetupConfiguration _setupConfiguration;
 
         IMapper _mapper;
@@ -54,7 +56,7 @@ namespace Avalanche.Api.Tests.Managers
             _httpContextAccessor = new Mock<IHttpContextAccessor>();
             _activeProcedureManager = new Mock<IActiveProcedureManager>();
             _routingManager = new Mock<IRoutingManager>();
-
+            _securityService = new Mock<ISecurityService>();
             _setupConfiguration = new SetupConfiguration()
             {
                 General = new GeneralSetupConfiguration()
@@ -78,11 +80,11 @@ namespace Avalanche.Api.Tests.Managers
                 _accessInfoFactory.Object,
                 _mapper, _dataManagementService.Object,
                 _stateClient.Object,
-                _activeProcedureManager.Object,
                 _routingManager.Object,
                 _httpContextAccessor.Object,
                 recorderConfig,
-                _setupConfiguration);
+                _setupConfiguration,
+                _securityService.Object);
         }
 
         public static IEnumerable<TestCaseData> NewPatientViewModelWrongDataTestCases
@@ -184,128 +186,6 @@ namespace Avalanche.Api.Tests.Managers
         }
 
         [Test]
-        public void RegisterPatientWorksWithRightDataShouldAddProcedureTypeIfNotExists()
-        {
-            PatientViewModel newPatient = new PatientViewModel()
-            {
-                MRN = "Sample",
-                DateOfBirth = DateTime.Today,
-                FirstName = "Sample",
-                LastName = "Sample",
-                Sex = new KeyValuePairViewModel()
-                {
-                    Id = "S",
-                    TranslationKey = "SampleKey",
-                    Value = "Sample"
-                },
-                Department = new DepartmentModel() { Id = 1, Name = "SampleDepartment" },
-                Physician = new PhysicianModel()
-                {
-                    Id = 1,
-                    FirstName = "SampleFirstName",
-                    LastName = "SampleLastName"
-                },
-                ProcedureType = new ProcedureTypeModel() { Id = 1, Name = "SampleProcedureType" }
-            };
-
-            var response = new AddPatientRecordResponse()
-            {
-                PatientRecord = new PatientRecordMessage()
-                {
-                    InternalId = 1233
-                }
-            };
-
-            _setupConfiguration.Registration = new RegistrationSetupConfiguration
-            {
-                Quick = new QuickSetupConfiguration
-                {
-                    DateFormat = "yyyyMMdd_T_mmss"
-                }
-            };
-
-            _setupConfiguration.PatientInfo = new List<PatientInfoSetupConfiguration>();
-
-            _dataManagementService.Setup(mock => mock.GetProcedureType(It.IsAny<Ism.Storage.DataManagement.Client.V1.Protos.GetProcedureTypeRequest>()))
-                .ReturnsAsync(new Ism.Storage.DataManagement.Client.V1.Protos.ProcedureTypeMessage()
-                {
-                    DepartmentId = 0,
-                    Id = 0,
-                    Name = ""
-                });
-
-            // Act
-            var result = _manager.RegisterPatient(newPatient);
-
-            // Assert
-            _dataManagementService.Verify(mock => mock.GetProcedureType(It.IsAny<Ism.Storage.DataManagement.Client.V1.Protos.GetProcedureTypeRequest>()), Times.Once);
-            _dataManagementService.Verify(mock => mock.AddProcedureType(It.IsAny<Ism.Storage.DataManagement.Client.V1.Protos.AddProcedureTypeRequest>()), Times.Once);
-            _activeProcedureManager.Verify(m => m.AllocateNewProcedure(), Times.Once);
-        }
-
-        [Test]
-        public void RegisterPatientWorksWithRightDataShouldNotAddProcedureTypeIfExists()
-        {
-            PatientViewModel newPatient = new PatientViewModel()
-            {
-                MRN = "Sample",
-                DateOfBirth = DateTime.Today,
-                FirstName = "Sample",
-                LastName = "Sample",
-                Sex = new KeyValuePairViewModel()
-                {
-                    Id = "S",
-                    TranslationKey = "SampleKey",
-                    Value = "Sample"
-                },
-                Department = new DepartmentModel() { Id = 1, Name = "SampleDepartment" },
-                Physician = new PhysicianModel()
-                {
-                    Id = 1,
-                    FirstName = "SampleFirstName",
-                    LastName = "SampleLastName"
-                },
-                ProcedureType = new ProcedureTypeModel() { Id = 1, Name = "SampleProcedureType" }
-            };
-
-            var response = new AddPatientRecordResponse()
-            {
-                PatientRecord = new PatientRecordMessage()
-                {
-                    InternalId = 1233
-                }
-            };
-
-            _setupConfiguration.Registration = new RegistrationSetupConfiguration
-            {
-                Quick = new QuickSetupConfiguration
-                {
-                    DateFormat = "yyyyMMdd_T_mmss"
-                }
-            };
-
-            _setupConfiguration.PatientInfo = new List<PatientInfoSetupConfiguration>();
-
-            _dataManagementService.Setup(mock => mock.GetProcedureType(It.IsAny<Ism.Storage.DataManagement.Client.V1.Protos.GetProcedureTypeRequest>()))
-                .ReturnsAsync(new Ism.Storage.DataManagement.Client.V1.Protos.ProcedureTypeMessage()
-                {
-                    DepartmentId = 1,
-                    Id = 1,
-                    Name = "Existing"
-                });
-
-            var faker = new Faker();
-            _activeProcedureManager.Setup(m => m.AllocateNewProcedure())
-                .ReturnsAsync(new ProcedureAllocationViewModel(new ProcedureIdViewModel(Guid.NewGuid().ToString(), faker.Commerce.Department()), faker.System.FilePath()));
-
-            var result = _manager.RegisterPatient(newPatient);
-
-            _dataManagementService.Verify(mock => mock.GetProcedureType(It.IsAny<Ism.Storage.DataManagement.Client.V1.Protos.GetProcedureTypeRequest>()), Times.Once);
-            _dataManagementService.Verify(mock => mock.AddProcedureType(It.IsAny<Ism.Storage.DataManagement.Client.V1.Protos.AddProcedureTypeRequest>()), Times.Never);
-            _activeProcedureManager.Verify(m => m.AllocateNewProcedure(), Times.Once);
-        }
-
-        [Test]
         public async Task QuickPatientRegistrationWorks()
         {
             _setupConfiguration.Registration = new RegistrationSetupConfiguration
@@ -317,14 +197,13 @@ namespace Avalanche.Api.Tests.Managers
             };
 
             _setupConfiguration.PatientInfo = new List<PatientInfoSetupConfiguration>();
-
-            var faker = new Faker();
-            _activeProcedureManager.Setup(m => m.AllocateNewProcedure())
-                .ReturnsAsync(new ProcedureAllocationViewModel(new ProcedureIdViewModel(Guid.NewGuid().ToString(), faker.Commerce.Department()), faker.System.FilePath()));
-
             var result = await _manager.QuickPatientRegistration();
 
-            _activeProcedureManager.Verify(m => m.AllocateNewProcedure(), Times.Once);
+            var faker = new Faker();
+            _activeProcedureManager.Setup(m => m.AllocateNewProcedure(PatientRegistrationMode.Quick, null))
+            .ReturnsAsync(new ProcedureAllocationViewModel(new ProcedureIdViewModel(Guid.NewGuid().ToString(), faker.Commerce.Department()), faker.System.FilePath()));
+
+            _activeProcedureManager.Verify(m => m.AllocateNewProcedure(PatientRegistrationMode.Quick, result), Times.Never);
         }
 
         [Test, TestCaseSource(nameof(PatientUpdateViewModelWrongDataTestCases))]
@@ -348,122 +227,6 @@ namespace Avalanche.Api.Tests.Managers
             Assert.That(Act, Throws.TypeOf<ArgumentNullException>());
 
             _pieService.Verify(mock => mock.UpdatePatient(new UpdatePatientRecordRequest()), Times.Never);
-        }
-
-        [Test]
-
-        public void UpdatePatientWorksWithRightDataShouldAddProcedureTypeIfNotExists()
-        {
-            var existingPatient = new PatientViewModel()
-            {
-                Id = 1,
-                MRN = "Sample",
-                DateOfBirth = DateTime.Today,
-                FirstName = "Sample",
-                LastName = "Sample",
-                Sex = new KeyValuePairViewModel()
-                {
-                    Id = "S",
-                    TranslationKey = "SampleKey",
-                    Value = "Sample"
-                },
-                Department = new DepartmentModel() { Id = 1, Name = "SampleDepartment" },
-                Physician = new PhysicianModel()
-                {
-                    Id = 1,
-                    FirstName = "SampleFirstName",
-                    LastName = "SampleLastName"
-                },
-                ProcedureType = new ProcedureTypeModel() { Id = 1, Name = "SampleProcedureType" }
-            };
-
-            _setupConfiguration.Registration = new RegistrationSetupConfiguration
-            {
-                Quick = new QuickSetupConfiguration
-                {
-                    DateFormat = "yyyyMMdd_T_mmss"
-                }
-            };
-
-            _setupConfiguration.PatientInfo = new List<PatientInfoSetupConfiguration>();
-
-            _dataManagementService.Setup(mock => mock.GetProcedureType(It.IsAny<Ism.Storage.DataManagement.Client.V1.Protos.GetProcedureTypeRequest>()))
-                .ReturnsAsync(new Ism.Storage.DataManagement.Client.V1.Protos.ProcedureTypeMessage()
-                {
-                    DepartmentId = 0,
-                    Id = 0,
-                    Name = ""
-                });
-
-            _pieService.Setup(mock => mock.UpdatePatient(It.IsAny<UpdatePatientRecordRequest>()));
-
-            var result = _manager.UpdatePatient(existingPatient);
-
-            _dataManagementService.Verify(mock => mock.GetProcedureType(It.IsAny<Ism.Storage.DataManagement.Client.V1.Protos.GetProcedureTypeRequest>()), Times.Once);
-            _dataManagementService.Verify(mock => mock.AddProcedureType(It.IsAny<Ism.Storage.DataManagement.Client.V1.Protos.AddProcedureTypeRequest>()), Times.Once);
-            _pieService.Verify(mock => mock.UpdatePatient(It.IsAny<UpdatePatientRecordRequest>()), Times.Once);
-        }
-
-        [Test]
-
-        public void UpdatePatientWorksWithRightDataShouldNotAddProcedureTypeIfExists()
-        {
-            PatientViewModel existingPatient = new PatientViewModel()
-            {
-                Id = 1,
-                MRN = "Sample",
-                DateOfBirth = DateTime.Today,
-                FirstName = "Sample",
-                LastName = "Sample",
-                Sex = new KeyValuePairViewModel()
-                {
-                    Id = "S",
-                    TranslationKey = "SampleKey",
-                    Value = "Sample"
-                },
-                Department = new DepartmentModel()
-                {
-                    Id = 1,
-                    Name = "SampleDepartment"
-                },
-                Physician = new PhysicianModel()
-                {
-                    Id = 1,
-                    FirstName = "SampleFirstName",
-                    LastName = "SampleLastName"
-                },
-                ProcedureType = new ProcedureTypeModel() 
-                {
-                    Id = 1,
-                    Name = "SampleProcedureType" 
-                }
-            };
-
-            _setupConfiguration.Registration = new RegistrationSetupConfiguration
-            {
-                Quick = new QuickSetupConfiguration
-                {
-                    DateFormat = "yyyyMMdd_T_mmss"
-                }
-            };
-
-            _setupConfiguration.PatientInfo = new List<PatientInfoSetupConfiguration>();
-
-            _dataManagementService.Setup(mock => mock.GetProcedureType(It.IsAny< Ism.Storage.DataManagement.Client.V1.Protos.GetProcedureTypeRequest>()))
-                .ReturnsAsync(new Ism.Storage.DataManagement.Client.V1.Protos.ProcedureTypeMessage()
-                {
-                    DepartmentId = 1,
-                    Id = 1,
-                    Name = "Existing"
-                });
-
-            _pieService.Setup(mock => mock.UpdatePatient(It.IsAny<UpdatePatientRecordRequest>()));
-
-            var result = _manager.UpdatePatient(existingPatient);
-
-            _dataManagementService.Verify(mock => mock.GetProcedureType(It.IsAny<Ism.Storage.DataManagement.Client.V1.Protos.GetProcedureTypeRequest>()), Times.Once);
-            _dataManagementService.Verify(mock => mock.AddProcedureType(It.IsAny<Ism.Storage.DataManagement.Client.V1.Protos.AddProcedureTypeRequest>()), Times.Never);
-            _pieService.Verify(mock => mock.UpdatePatient(It.IsAny<UpdatePatientRecordRequest>()), Times.Once);
         }
 
         [Test]

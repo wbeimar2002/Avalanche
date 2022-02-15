@@ -45,14 +45,14 @@
   <ItemGroup>
     <PackageReference Include="AutoFixture" Version="4.17.0" />
     <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="8.1.1" />
-    <PackageReference Include="Avalanche.Security.Server.Client" Version="1.0.0-prerelease0005" />
+    <PackageReference Include="Avalanche.Security.Server.Client" Version="1.0.0-prerelease0006" />
     <PackageReference Include="AvidisDeviceInterface.Client" Version="1.0.0-prerelease0021" />
     <PackageReference Include="Grpc.Tools" Version="2.42.0">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Ism.Broadcaster.Standard" Version="1.0.0-prerelease0003" />
-    <PackageReference Include="Ism.CodeQuality" Version="1.0.0-prerelease0011">
+    <PackageReference Include="Ism.CodeQuality" Version="1.0.1-prerelease0001">
       <TreatAsUsed>true</TreatAsUsed>
     </PackageReference>
     <PackageReference Include="Ism.Common.Core.Hosting" Version="1.0.0-prerelease050" />
@@ -62,7 +62,7 @@
 
     <PackageReference Include="Ism.Recorder.Client" Version="1.0.0-prerelease0045" />
     <PackageReference Include="Ism.Routing.Client" Version="1.0.0-prerelease0019" />
-    <PackageReference Include="Ism.PatientInfoEngine.Client" Version="1.0.0-prerelease0032" />
+    <PackageReference Include="Ism.PatientInfoEngine.Client" Version="1.0.0-prerelease0034" />
     <PackageReference Include="Ism.Security.Grpc.Standard" Version="1.0.0-prerelease034" />
     <PackageReference Include="Ism.Storage.Configuration.Client" Version="1.0.0-prerelease0037" />
     <PackageReference Include="Ism.Streaming.Client" Version="1.0.0-prerelease0019" />
@@ -80,10 +80,10 @@
     <PackageReference Include="System.Text.Json" Version="5.0.2" />
     <PackageReference Include="Polly" Version="7.2.2" />
     <PackageReference Include="Ism.Storage.DataManagement.Client" Version="1.0.0-prerelease0046" />
-    <PackageReference Include="Ism.SystemState.Client" Version="1.0.0-prerelease0090" />
+    <PackageReference Include="Ism.SystemState.Client" Version="1.0.0-prerelease0095" />
     <PackageReference Include="Ism.Storage.PatientList.Client" Version="1.0.0-prerelease0031" />
     <PackageReference Include="Ism.PrintServer.Client" Version="1.0.0-prerelease0009" />
-    <PackageReference Include="Ism.Medpresence.Client" Version="1.0.0-prerelease0006" />
+    <PackageReference Include="Ism.Medpresence.Client" Version="1.0.0-prerelease0007" />
     <PackageReference Include="Ism.Library.Client" Version="1.0.0-prerelease0075" />
   </ItemGroup>
 

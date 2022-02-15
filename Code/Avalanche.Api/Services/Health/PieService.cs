@@ -1,3 +1,4 @@
+using Google.Protobuf.WellKnownTypes;
 using Ism.PatientInfoEngine.Grpc;
 using Ism.PatientInfoEngine.V1.Protos;
 using System.Diagnostics.CodeAnalysis;
@@ -23,5 +24,8 @@ namespace Avalanche.Api.Services.Health
 
         public async Task UpdatePatient(UpdatePatientRecordRequest updatePatientRecordRequest) =>
             await _patientListClient.UpdatePatientRecord(updatePatientRecordRequest).ConfigureAwait(false);
+
+        public async Task<GetSourceResponse> GetPatientListSource(Empty request) =>
+            await _patientListClient.GetPatientListSource(request).ConfigureAwait(false);
     }
 }

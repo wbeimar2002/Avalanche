@@ -49,5 +49,10 @@ namespace Avalanche.Security.Server.Core.Managers
         {
             return await _userRepository.GetAllUsers();
         }
+
+        public async Task<IEnumerable<UserModel>> SearchUsers(string keyword)
+        {
+            return await _userRepository.SearchUsers(keyword);
+        }
     }
 }

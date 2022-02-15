@@ -2,6 +2,7 @@ using AutoMapper;
 using Avalanche.Api.Managers.Media;
 using Avalanche.Api.Managers.Procedures;
 using Avalanche.Api.Services.Health;
+using Avalanche.Api.Services.Security;
 using Avalanche.Api.Utilities;
 using Avalanche.Api.ViewModels;
 using Avalanche.Shared.Domain.Models;
@@ -27,10 +28,6 @@ namespace Avalanche.Api.Managers.Patients
         private readonly IPieService _pieService;
         private readonly IDataManagementService _dataManagementService;
         private readonly IStateClient _stateClient;
-        private readonly IActiveProcedureManager _activeProcedureManager;
-
-        // TODO: remove this when we figure out how to clean up dependencies
-        private readonly IRoutingManager _routingManager;
 
         private readonly IAccessInfoFactory _accessInfoFactory;
         private readonly IMapper _mapper;
@@ -38,6 +35,7 @@ namespace Avalanche.Api.Managers.Patients
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly UserModel user;
         private readonly ConfigurationContext _configurationContext;
+        private readonly ISecurityService _securityService;
 
         private readonly RecorderConfiguration _recorderConfiguration;
         private readonly SetupConfiguration _setupConfiguration;
@@ -47,11 +45,11 @@ namespace Avalanche.Api.Managers.Patients
             IMapper mapper,
             IDataManagementService dataManagementService,
             IStateClient stateClient,
-            IActiveProcedureManager activeProcedureManager,
             IRoutingManager routingManager,
             IHttpContextAccessor httpContextAccessor,
             RecorderConfiguration recorderConfiguration,
-            SetupConfiguration setupConfiguration
+            SetupConfiguration setupConfiguration,
+            ISecurityService securityService
             )
         {
             _pieService = pieService;
@@ -59,12 +57,10 @@ namespace Avalanche.Api.Managers.Patients
             _dataManagementService = dataManagementService;
             _mapper = mapper;
             _stateClient = stateClient;
-            _activeProcedureManager = activeProcedureManager;
-            _routingManager = routingManager;
             _httpContextAccessor = httpContextAccessor;
             _recorderConfiguration = recorderConfiguration;
             _setupConfiguration = setupConfiguration;
-
+            _securityService = securityService;
             user = HttpContextUtilities.GetUser(_httpContextAccessor.HttpContext);
             _configurationContext = _mapper.Map<UserModel, ConfigurationContext>(user);
             _configurationContext.IdnId = Guid.NewGuid().ToString();
@@ -78,24 +74,7 @@ namespace Avalanche.Api.Managers.Patients
 
             ValidateDynamicConditions(newPatient);
 
-            var accessInfo = _accessInfoFactory.GenerateAccessInfo();
-
-            if (newPatient.Physician == null)
-            {
-                if (_setupConfiguration.Registration.Manual.AutoFillPhysician)
-                {
-                    newPatient.Physician = new PhysicianModel()
-                    {
-                        Id = user.Id,
-                        FirstName = user.FirstName,
-                        LastName = user.LastName
-                    };
-                }
-            }
-
-            await CheckProcedureType(newPatient.ProcedureType, newPatient.Department).ConfigureAwait(false);
-
-            await AllocateNewProcedure(newPatient, false).ConfigureAwait(false);
+            newPatient.Physician = await GetSelectedPhysician(_setupConfiguration.Registration.Manual.AutoFillPhysician, false).ConfigureAwait(false);
 
             return newPatient;
         }
@@ -125,7 +104,7 @@ namespace Avalanche.Api.Managers.Patients
                     case "procedureType":
                         Preconditions.ThrowIfNull(nameof(patient.ProcedureType), patient.ProcedureType);
                         break;
-                    //case "accessionNumber": TODO: Pending send the value from Register and Update
+                        //case "accessionNumber": TODO: Pending send the value from Register and Update
                         //    Preconditions.ThrowIfNull(nameof(patient.Accession), patient.Accession);
                         //    break;
                 }
@@ -137,8 +116,19 @@ namespace Avalanche.Api.Managers.Patients
             var quickRegistrationDateFormat = _setupConfiguration.Registration.Quick.DateFormat;
             var formattedDate = DateTime.UtcNow.ToLocalTime().ToString(quickRegistrationDateFormat);
 
+            PhysicianModel? physician;
+
+            if (_setupConfiguration.Registration.Manual == null)
+            {
+                physician = await GetSelectedPhysician(false, false).ConfigureAwait(false);
+            }
+            else
+            {
+                physician = await GetSelectedPhysician(_setupConfiguration.Registration.Manual.AutoFillPhysician, true).ConfigureAwait(false);
+            }
+
             //TODO: Pending check this default data
-            var newPatient = new PatientViewModel()
+            return new PatientViewModel()
             {
                 MRN = $"{formattedDate}MRN",
                 DateOfBirth = DateTime.UtcNow.ToLocalTime(),
@@ -148,17 +138,8 @@ namespace Avalanche.Api.Managers.Patients
                 {
                     Id = "U"
                 },
-                Physician = new PhysicianModel()
-                {
-                    Id = user.Id,
-                    FirstName = user.FirstName,
-                    LastName = user.LastName
-                }
+                Physician = physician
             };
-
-            await AllocateNewProcedure(newPatient, true).ConfigureAwait(false);
-
-            return newPatient;
         }
 
         public async Task UpdatePatient(PatientViewModel existingPatient)
@@ -170,14 +151,20 @@ namespace Avalanche.Api.Managers.Patients
 
             ValidateDynamicConditions(existingPatient);
 
-            var accessInfo = _accessInfoFactory.GenerateAccessInfo();
+            if (existingPatient.Physician == null || existingPatient.Physician.Id == 0)
+            {
+                existingPatient.Physician = new PhysicianModel()
+                {
+                    Id = user.Id,
+                    FirstName = user.FirstName,
+                    LastName = user.LastName
+                };
+            }
 
-            await CheckProcedureType(existingPatient.ProcedureType, existingPatient.Department).ConfigureAwait(false);
+            var accessInfo = _accessInfoFactory.GenerateAccessInfo();
 
             var request = _mapper.Map<PatientViewModel, UpdatePatientRecordRequest>(existingPatient);
             request.AccessInfo = _mapper.Map<AccessInfoMessage>(accessInfo);
-
-            await AllocateNewProcedure(existingPatient, false).ConfigureAwait(false);
 
             await _pieService.UpdatePatient(request).ConfigureAwait(false);
         }
@@ -254,95 +241,43 @@ namespace Avalanche.Api.Managers.Patients
 
         }
 
-        private async Task CheckProcedureType(ProcedureTypeModel procedureType, DepartmentModel department)
+        public async Task<int> GetPatientListSource()
         {
-            //incase user is not selected or entered a procedure type, assign it to Unknown like in QuickRegister
-            if (string.IsNullOrEmpty(procedureType.Name) || procedureType.Name.Length == 0)
+            var getSource = await _pieService.GetPatientListSource(new Empty()).ConfigureAwait(false);
+            return getSource.Source;
+        }
+
+        private async Task<PhysicianModel> GetSelectedPhysician(bool autoFillPhysician, bool isQuickRegister)
+        {
+            if (autoFillPhysician)
             {
-                procedureType.Id = 0;
-                procedureType.Name = "Unknown";
+                return new PhysicianModel()
+                {
+                    Id = user.Id,
+                    FirstName = user.FirstName,
+                    LastName = user.LastName
+                };
+            }
+            else if (isQuickRegister)
+            {
+                var systemAdministrator = await _securityService.FindByUserName("Administrator").ConfigureAwait(false);
+
+                return new PhysicianModel
+                {
+                    Id = systemAdministrator.User.Id,
+                    FirstName = systemAdministrator.User.FirstName,
+                    LastName = systemAdministrator.User.LastName
+                };
             }
             else
             {
-                //TODO: Validate department support
-                var existingProcedureType = await _dataManagementService.GetProcedureType(new Ism.Storage.DataManagement.Client.V1.Protos.GetProcedureTypeRequest()
+                return new PhysicianModel
                 {
-                    ProcedureTypeName = procedureType.Name,
-                    DepartmentId = Convert.ToInt32(department.Id),
-                }).ConfigureAwait(false);
-
-                if (existingProcedureType.Id == 0 && string.IsNullOrEmpty(existingProcedureType.Name))
-                {
-                    await _dataManagementService.AddProcedureType(new Ism.Storage.DataManagement.Client.V1.Protos.AddProcedureTypeRequest()
-                    {
-                        ProcedureTypeName = procedureType.Name,
-                        DepartmentId = Convert.ToInt32(department.Id),
-                    }).ConfigureAwait(false);
-                }
+                    Id = 0,
+                    FirstName = string.Empty,
+                    LastName = string.Empty
+                };
             }
-        }
-
-        private async Task PublishActiveProcedure(PatientViewModel patient, ProcedureAllocationViewModel procedure)
-        {
-            if (patient != null && procedure != null)
-            {
-                await _stateClient.PersistData(new Ism.SystemState.Models.Procedure.ActiveProcedureState(
-                    patient: _mapper.Map<Ism.SystemState.Models.Procedure.Patient>(patient),
-                    images: new List<Ism.SystemState.Models.Procedure.ProcedureImage>(),
-                    videos: new List<Ism.SystemState.Models.Procedure.ProcedureVideo>(),
-                    backgroundVideos: new List<Ism.SystemState.Models.Procedure.ProcedureVideo>(),
-                    libraryId: procedure.ProcedureId.Id,
-                    repositoryId: procedure.ProcedureId.RepositoryName,
-
-                    procedureRelativePath: procedure.RelativePath,
-                    department: _mapper.Map<Ism.SystemState.Models.Procedure.Department>(patient.Department),
-                    procedureType: _mapper.Map<Ism.SystemState.Models.Procedure.ProcedureType>(patient.ProcedureType),
-                    physician: _mapper.Map<Ism.SystemState.Models.Procedure.Physician>(patient.Physician),
-                    requiresUserConfirmation: false,
-
-                    // TODO:
-                    procedureStartTimeUtc: DateTimeOffset.UtcNow,
-
-                    // TODO:
-                    procedureTimezoneId: TimeZoneInfo.Local.Id,
-                    isClinical: true,
-                    notes: new List<Ism.SystemState.Models.Procedure.ProcedureNote>()
-,
-                    accession: null,
-                    recordingEvents: new List<Ism.SystemState.Models.Procedure.VideoRecordingEvent>(),
-                    recordingMode: _mapper.Map<Ism.SystemState.Models.Procedure.BackgroundRecordingMode>(patient.BackgroundRecordingMode))).ConfigureAwait(false);
-            }
-            else
-            {
-                await _stateClient.PersistData<Ism.SystemState.Models.Procedure.ActiveProcedureState>(null).ConfigureAwait(false);
-            }
-
-            // TODO: figure out how to do dependencies better
-            // maybe have a separate data/event for when a patient is registered
-            // routing manager subscribes to that event and we can have a cleaner dependency graph
-            await (_routingManager?.PublishDefaultDisplayRecordingState()).ConfigureAwait(false);
-        }
-
-        private async Task AllocateNewProcedure(PatientViewModel patient, bool useconfiguredBackgroundRecordingMode)
-        {
-            var allocatedProcedure = await _activeProcedureManager.AllocateNewProcedure().ConfigureAwait(false);
-
-            if (useconfiguredBackgroundRecordingMode)
-            {
-                var configuredBackgroundRecordingMode = _recorderConfiguration.BackgroundRecordingMode;
-
-                //AlwaysStartOnCapture: This value can be configured in maintenance but it is not used in the Media system to control the behavior
-                if (configuredBackgroundRecordingMode == Shared.Infrastructure.Enumerations.BackgroundRecordingMode.AlwaysStartOnCapture)
-                {
-                    patient.BackgroundRecordingMode = Shared.Infrastructure.Enumerations.BackgroundRecordingMode.StartOnMediaCapture;
-                }
-                else
-                {
-                    patient.BackgroundRecordingMode = configuredBackgroundRecordingMode;
-                }
-            }
-
-            await PublishActiveProcedure(patient, allocatedProcedure).ConfigureAwait(false);
         }
     }
 }

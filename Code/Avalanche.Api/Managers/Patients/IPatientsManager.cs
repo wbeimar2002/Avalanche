@@ -12,5 +12,6 @@ namespace Avalanche.Api.Managers.Patients
         Task<PatientViewModel> QuickPatientRegistration();
         Task UpdatePatient(PatientViewModel existing);
         Task DeletePatient(ulong id);
+        Task<int> GetPatientListSource();
     }
 }
