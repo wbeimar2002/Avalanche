@@ -333,6 +333,7 @@ namespace Avalanche.Api.Managers.Procedures
             await _stateClient.PersistData(activeProcedure).ConfigureAwait(false);
         }
 
+        #region Private Methods
         private void ThrowIfVideoCannotBeDeleted(ActiveProcedureState activeProcedure, Guid videoContent)
         {
             var video = activeProcedure.Videos.Single(v => v.VideoId == videoContent);
@@ -413,7 +414,7 @@ namespace Avalanche.Api.Managers.Procedures
             return newPatient;
         }
 
-        public async Task<PatientViewModel> GetPatientForQuickRegistration()
+        private async Task<PatientViewModel> GetPatientForQuickRegistration()
         {
             var quickRegistrationDateFormat = _setupConfiguration.Registration.Quick.DateFormat;
             var formattedDate = DateTime.UtcNow.ToLocalTime().ToString(quickRegistrationDateFormat);
@@ -435,7 +436,7 @@ namespace Avalanche.Api.Managers.Procedures
             };
         }
 
-        public async Task<PatientViewModel> ValidatePatientForUpdateRegistration(PatientViewModel existingPatient)
+        private async Task<PatientViewModel> ValidatePatientForUpdateRegistration(PatientViewModel existingPatient)
         {
             Preconditions.ThrowIfNull(nameof(existingPatient), existingPatient);
             Preconditions.ThrowIfNull(nameof(existingPatient.Id), existingPatient.Id);
@@ -539,5 +540,7 @@ namespace Avalanche.Api.Managers.Procedures
             PatientRegistrationMode.Update => await ValidatePatientForUpdateRegistration(patient).ConfigureAwait(false),
             _ => new PatientViewModel(),
         };
+
+        #endregion
     }
 }
