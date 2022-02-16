@@ -28,7 +28,6 @@ namespace Avalanche.Api.Tests.Managers
         Mock<IPieService> _pieService;
         Mock<IAccessInfoFactory> _accessInfoFactory;
         Mock<IHttpContextAccessor> _httpContextAccessor;
-        Mock<ISecurityService> _securityService;
         SetupConfiguration _setupConfiguration;
 
         IMapper _mapper;
@@ -40,7 +39,6 @@ namespace Avalanche.Api.Tests.Managers
             _pieService = new Mock<IPieService>();
             _accessInfoFactory = new Mock<IAccessInfoFactory>();
             _httpContextAccessor = new Mock<IHttpContextAccessor>();
-            _securityService = new Mock<ISecurityService>();
             _setupConfiguration = new SetupConfiguration()
             {
                 General = new GeneralSetupConfiguration()
@@ -64,8 +62,7 @@ namespace Avalanche.Api.Tests.Managers
                 _accessInfoFactory.Object,
                 _mapper,
                 _httpContextAccessor.Object,
-                _setupConfiguration,
-                _securityService.Object);
+                _setupConfiguration);
         }
 
         public static IEnumerable<TestCaseData> NewPatientViewModelWrongDataTestCases

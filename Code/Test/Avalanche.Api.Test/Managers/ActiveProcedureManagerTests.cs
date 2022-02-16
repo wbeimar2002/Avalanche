@@ -38,6 +38,7 @@ namespace Avalanche.Api.Test.Managers
         LabelsConfiguration _labelsConfig;
         private Mock<IHttpContextAccessor> _httpContextAccessor;
         private Mock<ISecurityService> _securityService;
+        private Mock<IPieService> _pieService;
 
         ActiveProcedureManager _manager;
 
@@ -58,8 +59,9 @@ namespace Avalanche.Api.Test.Managers
             _setupConfiguration = new Mock<SetupConfiguration>();
             _httpContextAccessor = new Mock<IHttpContextAccessor>();
             _securityService = new Mock<ISecurityService>();
+            _pieService = new Mock<IPieService>();
 
-            _manager = new ActiveProcedureManager(_stateClient.Object, _libraryService.Object, _accessInfoFactory.Object, _mapper, _recorderService.Object, _dataManager.Object, _labelsConfig, _patientsManager.Object, _dataManagementService, _routingManager.Object, _setupConfiguration.Object, _httpContextAccessor.Object, _securityService.Object);
+            _manager = new ActiveProcedureManager(_stateClient.Object, _libraryService.Object, _accessInfoFactory.Object, _mapper, _recorderService.Object, _dataManager.Object, _labelsConfig, _patientsManager.Object, _dataManagementService, _routingManager.Object, _setupConfiguration.Object, _httpContextAccessor.Object, _securityService.Object, _pieService.Object);
         }
 
         [Test]

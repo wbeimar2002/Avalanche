@@ -20,6 +20,7 @@ using System.Threading.Tasks;
 using Avalanche.Shared.Infrastructure.Enumerations;
 using Microsoft.AspNetCore.Http;
 using Avalanche.Api.Services.Security;
+using Google.Protobuf.WellKnownTypes;
 
 namespace Avalanche.Api.Managers.Procedures
 {
@@ -42,6 +43,7 @@ namespace Avalanche.Api.Managers.Procedures
         // TODO: remove this when we figure out how to clean up dependencies
         private readonly IRoutingManager _routingManager;
         private readonly ISecurityService _securityService;
+        private readonly IPieService _pieService;
 
         public const int MinPageSize = 25;
         public const int MaxPageSize = 100;
@@ -58,7 +60,8 @@ namespace Avalanche.Api.Managers.Procedures
             IRoutingManager routingManager,
             SetupConfiguration setupConfiguration,
             IHttpContextAccessor httpContextAccessor,
-            ISecurityService securityService)
+            ISecurityService securityService,
+            IPieService pieService)
         {
             _stateClient = stateClient;
             _libraryService = libraryService;
@@ -75,6 +78,7 @@ namespace Avalanche.Api.Managers.Procedures
             _setupConfiguration = setupConfiguration;
             _httpContextAccessor = httpContextAccessor;
             _securityService = securityService;
+            _pieService = pieService;
             _user = HttpContextUtilities.GetUser(_httpContextAccessor.HttpContext);
         }
 
@@ -221,7 +225,7 @@ namespace Avalanche.Api.Managers.Procedures
             }).ConfigureAwait(false);
 
             var procedure = _mapper.Map<ProcedureAllocationViewModel>(response);
-            var patientListSource = await _patientsManager.GetPatientListSource().ConfigureAwait(false);
+            var patientListSource = await GetPatientListSource().ConfigureAwait(false);
 
             await PublishPersistData(patient, procedure, patientListSource, (int)registrationMode).ConfigureAwait(false);
 
@@ -492,6 +496,12 @@ namespace Avalanche.Api.Managers.Procedures
                         //    break;
                 }
             }
+        }
+
+        private async Task<int> GetPatientListSource()
+        {
+            var getSource = await _pieService.GetPatientListSource(new Empty()).ConfigureAwait(false);
+            return getSource.Source;
         }
 
         private async Task<PhysicianModel?> GetSelectedPhysician(PatientRegistrationMode registrationMode)

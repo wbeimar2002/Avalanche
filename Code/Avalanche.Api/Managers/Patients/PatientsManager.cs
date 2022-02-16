@@ -26,26 +26,19 @@ namespace Avalanche.Api.Managers.Patients
     public class PatientsManager : IPatientsManager
     {
         private readonly IPieService _pieService;
-        //private readonly IDataManagementService _dataManagementService;
-        //private readonly IStateClient _stateClient;
-        //private readonly IRoutingManager _routingManager;
         private readonly IAccessInfoFactory _accessInfoFactory;
         private readonly IMapper _mapper;
 
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly UserModel user;
         private readonly ConfigurationContext _configurationContext;
-        private readonly ISecurityService _securityService;
-
-        //private readonly RecorderConfiguration _recorderConfiguration;
         private readonly SetupConfiguration _setupConfiguration;
 
         public PatientsManager(IPieService pieService,
             IAccessInfoFactory accessInfoFactory,
             IMapper mapper,
             IHttpContextAccessor httpContextAccessor,
-            SetupConfiguration setupConfiguration,
-            ISecurityService securityService
+            SetupConfiguration setupConfiguration
             )
         {
             _pieService = pieService;
@@ -53,24 +46,10 @@ namespace Avalanche.Api.Managers.Patients
             _mapper = mapper;
             _httpContextAccessor = httpContextAccessor;
             _setupConfiguration = setupConfiguration;
-            _securityService = securityService;
             user = HttpContextUtilities.GetUser(_httpContextAccessor.HttpContext);
             _configurationContext = _mapper.Map<UserModel, ConfigurationContext>(user);
             _configurationContext.IdnId = Guid.NewGuid().ToString();
         }
-
-        //public async Task<PatientViewModel> RegisterPatient(PatientViewModel newPatient)
-        //{
-        //    Preconditions.ThrowIfNull(nameof(newPatient), newPatient);
-        //    Preconditions.ThrowIfNull(nameof(newPatient.MRN), newPatient.MRN);
-        //    Preconditions.ThrowIfNull(nameof(newPatient.LastName), newPatient.LastName);
-
-        //    ValidateDynamicConditions(newPatient);
-
-        //    newPatient.Physician = await GetSelectedPhysician(_setupConfiguration.Registration.Manual.AutoFillPhysician, false).ConfigureAwait(false);
-
-        //    return newPatient;
-        //}
 
         private void ValidateDynamicConditions(PatientViewModel patient)
         {
@@ -104,37 +83,6 @@ namespace Avalanche.Api.Managers.Patients
             }
         }
 
-        //public async Task<PatientViewModel> QuickPatientRegistration()
-        //{
-        //    var quickRegistrationDateFormat = _setupConfiguration.Registration.Quick.DateFormat;
-        //    var formattedDate = DateTime.UtcNow.ToLocalTime().ToString(quickRegistrationDateFormat);
-
-        //    PhysicianModel? physician;
-
-        //    if (_setupConfiguration.Registration.Manual == null)
-        //    {
-        //        physician = await GetSelectedPhysician(false, false).ConfigureAwait(false);
-        //    }
-        //    else
-        //    {
-        //        physician = await GetSelectedPhysician(_setupConfiguration.Registration.Manual.AutoFillPhysician, true).ConfigureAwait(false);
-        //    }
-
-        //    //TODO: Pending check this default data
-        //    return new PatientViewModel()
-        //    {
-        //        MRN = $"{formattedDate}MRN",
-        //        DateOfBirth = DateTime.UtcNow.ToLocalTime(),
-        //        FirstName = $"{formattedDate}FirstName",
-        //        LastName = $"{formattedDate}LastName",
-        //        Sex = new KeyValuePairViewModel()
-        //        {
-        //            Id = "U"
-        //        },
-        //        Physician = physician
-        //    };
-        //}
-
         public async Task UpdatePatient(PatientViewModel existingPatient)
         {
             Preconditions.ThrowIfNull(nameof(existingPatient), existingPatient);
@@ -153,17 +101,6 @@ namespace Avalanche.Api.Managers.Patients
                     LastName = user.LastName
                 };
             }
-
-            //var accessInfo = _accessInfoFactory.GenerateAccessInfo();
-
-            //await CheckProcedureType(existingPatient.ProcedureType, existingPatient.Department).ConfigureAwait(false);
-
-            //var request = _mapper.Map<PatientViewModel, UpdatePatientRecordRequest>(existingPatient);
-            //request.AccessInfo = _mapper.Map<AccessInfoMessage>(accessInfo);
-
-            //await AllocateNewProcedure(existingPatient, false).ConfigureAwait(false);
-
-            //await _pieService.UpdatePatient(request).ConfigureAwait(false);
 
             var accessInfo = _accessInfoFactory.GenerateAccessInfo();
 
@@ -242,13 +179,6 @@ namespace Avalanche.Api.Managers.Patients
             var queryResult = await _pieService.Search(request).ConfigureAwait(false);
 
             return _mapper.Map<IList<PatientRecordMessage>, IList<PatientViewModel>>(queryResult.UpdatedPatList);
-
-        }
-
-        public async Task<int> GetPatientListSource()
-        {
-            var getSource = await _pieService.GetPatientListSource(new Empty()).ConfigureAwait(false);
-            return getSource.Source;
         }
     }
 }
