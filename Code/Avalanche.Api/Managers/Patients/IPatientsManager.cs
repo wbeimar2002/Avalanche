@@ -8,7 +8,7 @@ namespace Avalanche.Api.Managers.Patients
     {
         Task<IList<PatientViewModel>> Search(PatientKeywordSearchFilterViewModel filter);
         Task<IList<PatientViewModel>> Search(PatientDetailsSearchFilterViewModel filter);
-        Task UpdatePatient(PatientViewModel existing);
-        Task DeletePatient(ulong id);
+        //Task UpdatePatient(PatientViewModel existing);
+        //Task DeletePatient(ulong id);
     }
 }

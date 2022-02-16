@@ -184,38 +184,38 @@ namespace Avalanche.Api.Tests.Managers
         //    _activeProcedureManager.Verify(m => m.AllocateNewProcedure(PatientRegistrationMode.Quick, result), Times.Never);
         //}
 
-        [Test, TestCaseSource(nameof(PatientUpdateViewModelWrongDataTestCases))]
+        //[Test, TestCaseSource(nameof(PatientUpdateViewModelWrongDataTestCases))]
 
-        public void UpdatePatientShouldFailIfNullOrIncompleteData(PatientViewModel patient)
-        {
-            _setupConfiguration = new SetupConfiguration
-            {
-                Registration = new RegistrationSetupConfiguration
-                {
-                    Quick = new QuickSetupConfiguration
-                    {
-                        DateFormat = "yyyyMMdd_T_mmss"
-                    }
-                }
-            };
+        //public void UpdatePatientShouldFailIfNullOrIncompleteData(PatientViewModel patient)
+        //{
+        //    _setupConfiguration = new SetupConfiguration
+        //    {
+        //        Registration = new RegistrationSetupConfiguration
+        //        {
+        //            Quick = new QuickSetupConfiguration
+        //            {
+        //                DateFormat = "yyyyMMdd_T_mmss"
+        //            }
+        //        }
+        //    };
 
-            _pieService.Setup(mock => mock.UpdatePatient(new UpdatePatientRecordRequest()));
+        //    _pieService.Setup(mock => mock.UpdatePatient(new UpdatePatientRecordRequest()));
 
-            Task Act() => _manager.UpdatePatient(patient);
-            Assert.That(Act, Throws.TypeOf<ArgumentNullException>());
+        //    Task Act() => _manager.UpdatePatient(patient);
+        //    Assert.That(Act, Throws.TypeOf<ArgumentNullException>());
 
-            _pieService.Verify(mock => mock.UpdatePatient(new UpdatePatientRecordRequest()), Times.Never);
-        }
+        //    _pieService.Verify(mock => mock.UpdatePatient(new UpdatePatientRecordRequest()), Times.Never);
+        //}
 
-        [Test]
-        public async Task DeleteWorks()
-        {
-            _pieService.Setup(mock => mock.DeletePatient(It.IsAny<DeletePatientRecordRequest>()));
+        //[Test]
+        //public async Task DeleteWorks()
+        //{
+        //    _pieService.Setup(mock => mock.DeletePatient(It.IsAny<DeletePatientRecordRequest>()));
 
-            await _manager.DeletePatient(It.IsAny<ulong>());
+        //    await _manager.DeletePatient(It.IsAny<ulong>());
 
-            _pieService.Verify(mock => mock.DeletePatient(It.IsAny<DeletePatientRecordRequest>()), Times.Once);
-        }
+        //    _pieService.Verify(mock => mock.DeletePatient(It.IsAny<DeletePatientRecordRequest>()), Times.Once);
+        //}
 
         //TODO: Pending to solve
         //[Test]

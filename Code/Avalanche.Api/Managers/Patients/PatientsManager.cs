@@ -1,8 +1,5 @@
 using AutoMapper;
-using Avalanche.Api.Managers.Media;
-using Avalanche.Api.Managers.Procedures;
 using Avalanche.Api.Services.Health;
-using Avalanche.Api.Services.Security;
 using Avalanche.Api.Utilities;
 using Avalanche.Api.ViewModels;
 using Avalanche.Shared.Domain.Models;
@@ -11,7 +8,6 @@ using Google.Protobuf.WellKnownTypes;
 
 using Ism.Common.Core.Configuration.Models;
 using Ism.PatientInfoEngine.V1.Protos;
-using Ism.SystemState.Client;
 using Ism.Utility.Core;
 using Microsoft.AspNetCore.Http;
 
@@ -51,78 +47,78 @@ namespace Avalanche.Api.Managers.Patients
             _configurationContext.IdnId = Guid.NewGuid().ToString();
         }
 
-        private void ValidateDynamicConditions(PatientViewModel patient)
-        {
-            foreach (var item in _setupConfiguration.PatientInfo.Where(f => f.Required))
-            {
-                switch (item.Id)
-                {
-                    case "firstName":
-                        Preconditions.ThrowIfNull(nameof(patient.FirstName), patient.FirstName);
-                        break;
-                    case "sex":
-                        Preconditions.ThrowIfNull(nameof(patient.Sex), patient.Sex);
-                        break;
-                    case "dateOfBirth":
-                        Preconditions.ThrowIfNull(nameof(patient.DateOfBirth), patient.DateOfBirth);
-                        break;
+        //private void ValidateDynamicConditions(PatientViewModel patient)
+        //{
+        //    foreach (var item in _setupConfiguration.PatientInfo.Where(f => f.Required))
+        //    {
+        //        switch (item.Id)
+        //        {
+        //            case "firstName":
+        //                Preconditions.ThrowIfNull(nameof(patient.FirstName), patient.FirstName);
+        //                break;
+        //            case "sex":
+        //                Preconditions.ThrowIfNull(nameof(patient.Sex), patient.Sex);
+        //                break;
+        //            case "dateOfBirth":
+        //                Preconditions.ThrowIfNull(nameof(patient.DateOfBirth), patient.DateOfBirth);
+        //                break;
 
-                    case "physician":
-                        Preconditions.ThrowIfNull(nameof(patient.Physician), patient.Physician);
-                        break;
-                    case "department":
-                        Preconditions.ThrowIfNull(nameof(patient.Department), patient.Department);
-                        break;
-                    case "procedureType":
-                        Preconditions.ThrowIfNull(nameof(patient.ProcedureType), patient.ProcedureType);
-                        break;
-                        //case "accessionNumber": TODO: Pending send the value from Register and Update
-                        //    Preconditions.ThrowIfNull(nameof(patient.Accession), patient.Accession);
-                        //    break;
-                }
-            }
-        }
+        //            case "physician":
+        //                Preconditions.ThrowIfNull(nameof(patient.Physician), patient.Physician);
+        //                break;
+        //            case "department":
+        //                Preconditions.ThrowIfNull(nameof(patient.Department), patient.Department);
+        //                break;
+        //            case "procedureType":
+        //                Preconditions.ThrowIfNull(nameof(patient.ProcedureType), patient.ProcedureType);
+        //                break;
+        //                //case "accessionNumber": TODO: Pending send the value from Register and Update
+        //                //    Preconditions.ThrowIfNull(nameof(patient.Accession), patient.Accession);
+        //                //    break;
+        //        }
+        //    }
+        //}
 
-        public async Task UpdatePatient(PatientViewModel existingPatient)
-        {
-            Preconditions.ThrowIfNull(nameof(existingPatient), existingPatient);
-            Preconditions.ThrowIfNull(nameof(existingPatient.Id), existingPatient.Id);
-            Preconditions.ThrowIfNull(nameof(existingPatient.MRN), existingPatient.MRN);
-            Preconditions.ThrowIfNull(nameof(existingPatient.LastName), existingPatient.LastName);
+        //public async Task UpdatePatient(PatientViewModel existingPatient)
+        //{
+        //    Preconditions.ThrowIfNull(nameof(existingPatient), existingPatient);
+        //    Preconditions.ThrowIfNull(nameof(existingPatient.Id), existingPatient.Id);
+        //    Preconditions.ThrowIfNull(nameof(existingPatient.MRN), existingPatient.MRN);
+        //    Preconditions.ThrowIfNull(nameof(existingPatient.LastName), existingPatient.LastName);
 
-            ValidateDynamicConditions(existingPatient);
+        //    ValidateDynamicConditions(existingPatient);
 
-            if (existingPatient.Physician == null || existingPatient.Physician.Id == 0)
-            {
-                existingPatient.Physician = new PhysicianModel()
-                {
-                    Id = user.Id,
-                    FirstName = user.FirstName,
-                    LastName = user.LastName
-                };
-            }
+        //    if (existingPatient.Physician == null || existingPatient.Physician.Id == 0)
+        //    {
+        //        existingPatient.Physician = new PhysicianModel()
+        //        {
+        //            Id = user.Id,
+        //            FirstName = user.FirstName,
+        //            LastName = user.LastName
+        //        };
+        //    }
 
-            var accessInfo = _accessInfoFactory.GenerateAccessInfo();
+        //    var accessInfo = _accessInfoFactory.GenerateAccessInfo();
 
-            var request = _mapper.Map<PatientViewModel, UpdatePatientRecordRequest>(existingPatient);
-            request.AccessInfo = _mapper.Map<AccessInfoMessage>(accessInfo);
+        //    var request = _mapper.Map<PatientViewModel, UpdatePatientRecordRequest>(existingPatient);
+        //    request.AccessInfo = _mapper.Map<AccessInfoMessage>(accessInfo);
 
-            await _pieService.UpdatePatient(request).ConfigureAwait(false);
-        }
+        //    await _pieService.UpdatePatient(request).ConfigureAwait(false);
+        //}
 
-        public async Task DeletePatient(ulong id)
-        {
-            Preconditions.ThrowIfNull(nameof(id), id);
+        //public async Task DeletePatient(ulong id)
+        //{
+        //    Preconditions.ThrowIfNull(nameof(id), id);
 
-            var accessInfo = _accessInfoFactory.GenerateAccessInfo();
-            var accessInfoMessage = _mapper.Map<AccessInfoMessage>(accessInfo);
+        //    var accessInfo = _accessInfoFactory.GenerateAccessInfo();
+        //    var accessInfoMessage = _mapper.Map<AccessInfoMessage>(accessInfo);
 
-            await _pieService.DeletePatient(new DeletePatientRecordRequest()
-            {
-                AccessInfo = accessInfoMessage,
-                PatientRecordId = id
-            }).ConfigureAwait(false);
-        }
+        //    await _pieService.DeletePatient(new DeletePatientRecordRequest()
+        //    {
+        //        AccessInfo = accessInfoMessage,
+        //        PatientRecordId = id
+        //    }).ConfigureAwait(false);
+        //}
 
         public async Task<IList<PatientViewModel>> Search(PatientKeywordSearchFilterViewModel filter)
         {

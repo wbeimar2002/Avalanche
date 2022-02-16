@@ -199,76 +199,76 @@ namespace Avalanche.Api.Tests.Controllers
             Assert.IsInstanceOf<BadRequestObjectResult>(badResult.Result);
         }
 
-        [Test]
-        public void UpdatePatientShouldReturnOk()
-        {
-            PatientViewModel patientUpdated = new PatientViewModel();
-            _patientsManager.Setup(mock => mock.UpdatePatient(patientUpdated));
+        //[Test]
+        //public void UpdatePatientShouldReturnOk()
+        //{
+        //    PatientViewModel patientUpdated = new PatientViewModel();
+        //    _patientsManager.Setup(mock => mock.UpdatePatient(patientUpdated));
 
-            var okResult = _controller.UpdatePatient(patientUpdated);
+        //    var okResult = _controller.UpdatePatient(patientUpdated);
 
-            if (_checkLogger)
-            {
-                _logger.Verify(LogLevel.Error, $"Exception {_controller.GetType().Name}.UpdatePatient", Times.Never());
-                _logger.Verify(LogLevel.Debug, $"Requested {_controller.GetType().Name}.UpdatePatient", Times.Once());
-                _logger.Verify(LogLevel.Debug, $"Completed {_controller.GetType().Name}.UpdatePatient", Times.Once());
-            }
+        //    if (_checkLogger)
+        //    {
+        //        _logger.Verify(LogLevel.Error, $"Exception {_controller.GetType().Name}.UpdatePatient", Times.Never());
+        //        _logger.Verify(LogLevel.Debug, $"Requested {_controller.GetType().Name}.UpdatePatient", Times.Once());
+        //        _logger.Verify(LogLevel.Debug, $"Completed {_controller.GetType().Name}.UpdatePatient", Times.Once());
+        //    }
 
-            Assert.IsInstanceOf<OkResult>(okResult.Result);
-        }
+        //    Assert.IsInstanceOf<OkResult>(okResult.Result);
+        //}
 
-        [Test]
-        public void UpdatePatientShouldReturnBadResultIfFails()
-        {
-            _patientsManager.Setup(mock => mock.UpdatePatient(It.IsAny<PatientViewModel>())).Throws(It.IsAny<Exception>());
+        //[Test]
+        //public void UpdatePatientShouldReturnBadResultIfFails()
+        //{
+        //    _patientsManager.Setup(mock => mock.UpdatePatient(It.IsAny<PatientViewModel>())).Throws(It.IsAny<Exception>());
 
-            var badResult = _controller.UpdatePatient(It.IsAny<PatientViewModel>());
+        //    var badResult = _controller.UpdatePatient(It.IsAny<PatientViewModel>());
 
-            if (_checkLogger)
-            {
-                _logger.Verify(LogLevel.Error, $"Exception {_controller.GetType().Name}.UpdatePatient", Times.Once());
-                _logger.Verify(LogLevel.Debug, $"Requested {_controller.GetType().Name}.UpdatePatient", Times.Once());
-                _logger.Verify(LogLevel.Debug, $"Completed {_controller.GetType().Name}.UpdatePatient", Times.Once());
-            }
+        //    if (_checkLogger)
+        //    {
+        //        _logger.Verify(LogLevel.Error, $"Exception {_controller.GetType().Name}.UpdatePatient", Times.Once());
+        //        _logger.Verify(LogLevel.Debug, $"Requested {_controller.GetType().Name}.UpdatePatient", Times.Once());
+        //        _logger.Verify(LogLevel.Debug, $"Completed {_controller.GetType().Name}.UpdatePatient", Times.Once());
+        //    }
 
-            Assert.IsInstanceOf<BadRequestObjectResult>(badResult.Result);
-        }
+        //    Assert.IsInstanceOf<BadRequestObjectResult>(badResult.Result);
+        //}
 
-        [Test]
-        public void DeletePatientShouldReturnOk()
-        {
-            ulong patientId = default(ulong);
-            _patientsManager.Setup(mock => mock.DeletePatient(patientId));
+        //[Test]
+        //public void DeletePatientShouldReturnOk()
+        //{
+        //    ulong patientId = default(ulong);
+        //    _patientsManager.Setup(mock => mock.DeletePatient(patientId));
 
-            var okResult = _controller.DeletePatient(patientId);
+        //    var okResult = _controller.DeletePatient(patientId);
 
-            if (_checkLogger)
-            {
-                _logger.Verify(LogLevel.Error, $"Exception {_controller.GetType().Name}.DeletePatient", Times.Never());
-                _logger.Verify(LogLevel.Debug, $"Requested {_controller.GetType().Name}.DeletePatient", Times.Once());
-                _logger.Verify(LogLevel.Debug, $"Completed {_controller.GetType().Name}.DeletePatient", Times.Once());
-            }
+        //    if (_checkLogger)
+        //    {
+        //        _logger.Verify(LogLevel.Error, $"Exception {_controller.GetType().Name}.DeletePatient", Times.Never());
+        //        _logger.Verify(LogLevel.Debug, $"Requested {_controller.GetType().Name}.DeletePatient", Times.Once());
+        //        _logger.Verify(LogLevel.Debug, $"Completed {_controller.GetType().Name}.DeletePatient", Times.Once());
+        //    }
 
-            Assert.IsInstanceOf<OkResult>(okResult.Result);
-        }
+        //    Assert.IsInstanceOf<OkResult>(okResult.Result);
+        //}
 
-        [Test]
-        public void DeletePatientShouldReturnBadResultIfFails()
-        {
-            ulong patientId = default(ulong);
-            _patientsManager.Setup(mock => mock.DeletePatient(patientId)).Throws(It.IsAny<Exception>());
+        //[Test]
+        //public void DeletePatientShouldReturnBadResultIfFails()
+        //{
+        //    ulong patientId = default(ulong);
+        //    _patientsManager.Setup(mock => mock.DeletePatient(patientId)).Throws(It.IsAny<Exception>());
 
-            var badResult = _controller.DeletePatient(patientId);
+        //    var badResult = _controller.DeletePatient(patientId);
 
-            if (_checkLogger)
-            {
-                _logger.Verify(LogLevel.Error, $"Exception {_controller.GetType().Name}.DeletePatient", Times.Once());
-                _logger.Verify(LogLevel.Debug, $"Requested {_controller.GetType().Name}.DeletePatient", Times.Once());
-                _logger.Verify(LogLevel.Debug, $"Completed {_controller.GetType().Name}.DeletePatient", Times.Once());
-            }
+        //    if (_checkLogger)
+        //    {
+        //        _logger.Verify(LogLevel.Error, $"Exception {_controller.GetType().Name}.DeletePatient", Times.Once());
+        //        _logger.Verify(LogLevel.Debug, $"Requested {_controller.GetType().Name}.DeletePatient", Times.Once());
+        //        _logger.Verify(LogLevel.Debug, $"Completed {_controller.GetType().Name}.DeletePatient", Times.Once());
+        //    }
 
-            Assert.IsInstanceOf<BadRequestObjectResult>(badResult.Result);
-        }
+        //    Assert.IsInstanceOf<BadRequestObjectResult>(badResult.Result);
+        //}
 
     }
 }

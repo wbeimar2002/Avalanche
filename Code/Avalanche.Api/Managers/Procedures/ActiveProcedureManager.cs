@@ -198,21 +198,10 @@ namespace Avalanche.Api.Managers.Procedures
         {
             Preconditions.ThrowIfNull(nameof(registrationMode), registrationMode);
 
-            if (registrationMode == PatientRegistrationMode.Quick)
-            {
-                patient = await GetPatientForQuickRegistration();
-            }
-            else
-            {
-                if (registrationMode == PatientRegistrationMode.Update)
-                {
-                    await GetPatientForUpdateRegistration(patient).ConfigureAwait(false);
-                }
-                else
-                {
-                    patient = await GetPatientForManual(patient).ConfigureAwait(false);
-                }
+            patient = await GetRegisterPatient(registrationMode, patient);
 
+            if (registrationMode != PatientRegistrationMode.Quick)
+            {
                 await CheckProcedureType(patient.ProcedureType, patient.Department).ConfigureAwait(false);
             }
 
@@ -229,7 +218,7 @@ namespace Avalanche.Api.Managers.Procedures
 
             await PublishPersistData(patient, procedure, patientListSource, (int)registrationMode).ConfigureAwait(false);
 
-            await (_routingManager.PublishDefaultDisplayRecordingState()).ConfigureAwait(false);
+            await _routingManager.PublishDefaultDisplayRecordingState().ConfigureAwait(false);
 
             return _mapper.Map<ProcedureAllocationViewModel>(response);
         }
@@ -446,7 +435,7 @@ namespace Avalanche.Api.Managers.Procedures
             };
         }
 
-        public async Task GetPatientForUpdateRegistration(PatientViewModel existingPatient)
+        public async Task<PatientViewModel> ValidatePatientForUpdateRegistration(PatientViewModel existingPatient)
         {
             Preconditions.ThrowIfNull(nameof(existingPatient), existingPatient);
             Preconditions.ThrowIfNull(nameof(existingPatient.Id), existingPatient.Id);
@@ -455,15 +444,14 @@ namespace Avalanche.Api.Managers.Procedures
 
             ValidateDynamicConditions(existingPatient);
 
-            if (existingPatient.Physician == null || existingPatient.Physician.Id == 0)
+            existingPatient.Physician = new PhysicianModel()
             {
-                existingPatient.Physician = new PhysicianModel()
-                {
-                    Id = _user.Id,
-                    FirstName = _user.FirstName,
-                    LastName = _user.LastName
-                };
-            }
+                Id = _user.Id,
+                FirstName = _user.FirstName,
+                LastName = _user.LastName
+            };
+
+            return existingPatient;
         }
 
         private void ValidateDynamicConditions(PatientViewModel patient)
@@ -543,5 +531,13 @@ namespace Avalanche.Api.Managers.Procedures
                 _ => null,
             };
         }
+
+        private async Task<PatientViewModel> GetRegisterPatient(PatientRegistrationMode registrationMode, PatientViewModel? patient) => registrationMode switch
+        {
+            PatientRegistrationMode.Quick => await GetPatientForQuickRegistration().ConfigureAwait(false),
+            PatientRegistrationMode.Manual => await GetPatientForManual(patient).ConfigureAwait(false),
+            PatientRegistrationMode.Update => await ValidatePatientForUpdateRegistration(patient).ConfigureAwait(false),
+            _ => new PatientViewModel(),
+        };
     }
 }
