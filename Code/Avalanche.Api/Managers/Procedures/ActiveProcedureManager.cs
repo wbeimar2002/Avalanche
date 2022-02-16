@@ -31,7 +31,6 @@ namespace Avalanche.Api.Managers.Procedures
         private readonly IMapper _mapper;
         private readonly IAccessInfoFactory _accessInfoFactory;
         private readonly IRecorderService _recorderService;
-        private readonly IPatientsManager _patientsManager;
         private readonly IDataManagementService _dataManagementService;
         private readonly IHttpContextAccessor _httpContextAccessor;
 
@@ -55,7 +54,6 @@ namespace Avalanche.Api.Managers.Procedures
             IRecorderService recorderService,
             IDataManager dataManager,
             LabelsConfiguration labelsConfig,
-            IPatientsManager patientsManager,
             IDataManagementService dataManagementService,
             IRoutingManager routingManager,
             SetupConfiguration setupConfiguration,
@@ -72,7 +70,6 @@ namespace Avalanche.Api.Managers.Procedures
             _recorderService = recorderService;
             _dataManager = dataManager;
             _labelsConfig = labelsConfig;
-            _patientsManager = patientsManager;
             _dataManagementService = dataManagementService;
             _routingManager = routingManager;
             _setupConfiguration = setupConfiguration;
