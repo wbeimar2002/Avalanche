@@ -1,7 +1,6 @@
 using AutoMapper;
 using Avalanche.Api.Managers.Data;
 using Avalanche.Api.Managers.Media;
-using Avalanche.Api.Managers.Patients;
 using Avalanche.Api.Services.Health;
 using Avalanche.Api.Services.Media;
 using Avalanche.Api.Utilities;

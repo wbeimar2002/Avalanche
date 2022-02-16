@@ -31,58 +31,6 @@ namespace Avalanche.Api.Controllers.V1
             _patientsManager = patientsManager;
         }
 
-        ///// <summary>
-        ///// Update patient
-        ///// </summary>
-        ///// <param name="existing"></param>
-        //[HttpPut("{id}")]
-        //[Produces(typeof(PatientViewModel))]
-        //public async Task<IActionResult> UpdatePatient(PatientViewModel existing)
-        //{
-        //    try
-        //    {
-        //        _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
-        //        //await _patientsManager.UpdatePatient(existing);
-
-        //        return Ok();
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        _logger.LogError(ex, LoggerHelper.GetLogMessage(DebugLogType.Exception));
-        //        return new BadRequestObjectResult(ex.Get(_environment.IsDevelopment()));
-        //    }
-        //    finally
-        //    {
-        //        _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
-        //    }
-        //}
-
-        ///// <summary>
-        ///// Delete patient
-        ///// </summary>
-        ///// <param name="id"></param>
-        //[HttpDelete("{id}")]
-        //[Produces(typeof(PatientViewModel))]
-        //public async Task<IActionResult> DeletePatient(ulong id)
-        //{
-        //    try
-        //    {
-        //        _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
-        //        //await _patientsManager.DeletePatient(id);
-
-        //        return Ok();
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        _logger.LogError(ex, LoggerHelper.GetLogMessage(DebugLogType.Exception));
-        //        return new BadRequestObjectResult(ex.Get(_environment.IsDevelopment()));
-        //    }
-        //    finally
-        //    {
-        //        _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
-        //    }
-        //}
-
         /// <summary>
         /// Search patient using keyword and paging
         /// </summary>

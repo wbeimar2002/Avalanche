@@ -2,12 +2,10 @@ using AutoMapper;
 using Avalanche.Api.Managers.Patients;
 using Avalanche.Api.Mapping;
 using Avalanche.Api.Services.Health;
-using Avalanche.Api.Services.Security;
 using Avalanche.Api.Utilities;
 using Avalanche.Api.ViewModels;
 using Avalanche.Shared.Infrastructure.Configuration;
 using Avalanche.Shared.Infrastructure.Enumerations;
-using Ism.PatientInfoEngine.V1.Protos;
 
 using Microsoft.AspNetCore.Http;
 
@@ -17,7 +15,6 @@ using NUnit.Framework;
 
 using System;
 using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace Avalanche.Api.Tests.Managers
 {
@@ -28,7 +25,6 @@ namespace Avalanche.Api.Tests.Managers
         Mock<IPieService> _pieService;
         Mock<IAccessInfoFactory> _accessInfoFactory;
         Mock<IHttpContextAccessor> _httpContextAccessor;
-        SetupConfiguration _setupConfiguration;
 
         IMapper _mapper;
         PatientsManager _manager;
@@ -39,10 +35,12 @@ namespace Avalanche.Api.Tests.Managers
             _pieService = new Mock<IPieService>();
             _accessInfoFactory = new Mock<IAccessInfoFactory>();
             _httpContextAccessor = new Mock<IHttpContextAccessor>();
-            _setupConfiguration = new SetupConfiguration()
-            {
-                General = new GeneralSetupConfiguration()
-            };
+
+            // FOR REVIEWED
+            //_setupConfiguration = new SetupConfiguration()
+            //{
+            //    General = new GeneralSetupConfiguration()
+            //};
 
             var config = new MapperConfiguration(cfg =>
             {
@@ -61,8 +59,7 @@ namespace Avalanche.Api.Tests.Managers
             _manager = new PatientsManager(_pieService.Object,
                 _accessInfoFactory.Object,
                 _mapper,
-                _httpContextAccessor.Object,
-                _setupConfiguration);
+                _httpContextAccessor.Object);
         }
 
         public static IEnumerable<TestCaseData> NewPatientViewModelWrongDataTestCases
