@@ -196,17 +196,17 @@ namespace Avalanche.Api.Managers.Procedures
 
             if (registrationMode == PatientRegistrationMode.Quick)
             {
-                patient = await QuickPatientRegistration();
+                patient = await GetPatientForQuickRegistration();
             }
             else
             {
                 if (registrationMode == PatientRegistrationMode.Update)
                 {
-                    await UpdatePatient(patient).ConfigureAwait(false);
+                    await GetPatientForUpdateRegistration(patient).ConfigureAwait(false);
                 }
                 else
                 {
-                    patient = await RegisterPatient(patient).ConfigureAwait(false);
+                    patient = await GetPatientForManual(patient).ConfigureAwait(false);
                 }
 
                 await CheckProcedureType(patient.ProcedureType, patient.Department).ConfigureAwait(false);
@@ -225,7 +225,7 @@ namespace Avalanche.Api.Managers.Procedures
 
             await PublishPersistData(patient, procedure, patientListSource, (int)registrationMode).ConfigureAwait(false);
 
-            //await (_routingManager?.PublishDefaultDisplayRecordingState()).ConfigureAwait(false);
+            await (_routingManager.PublishDefaultDisplayRecordingState()).ConfigureAwait(false);
 
             return _mapper.Map<ProcedureAllocationViewModel>(response);
         }
@@ -407,7 +407,7 @@ namespace Avalanche.Api.Managers.Procedures
             }
         }
 
-        private async Task<PatientViewModel> RegisterPatient(PatientViewModel newPatient)
+        private async Task<PatientViewModel> GetPatientForManual(PatientViewModel newPatient)
         {
             Preconditions.ThrowIfNull(nameof(newPatient), newPatient);
             Preconditions.ThrowIfNull(nameof(newPatient.MRN), newPatient.MRN);
@@ -420,7 +420,7 @@ namespace Avalanche.Api.Managers.Procedures
             return newPatient;
         }
 
-        public async Task<PatientViewModel> QuickPatientRegistration()
+        public async Task<PatientViewModel> GetPatientForQuickRegistration()
         {
             var quickRegistrationDateFormat = _setupConfiguration.Registration.Quick.DateFormat;
             var formattedDate = DateTime.UtcNow.ToLocalTime().ToString(quickRegistrationDateFormat);
@@ -442,7 +442,7 @@ namespace Avalanche.Api.Managers.Procedures
             };
         }
 
-        public async Task UpdatePatient(PatientViewModel existingPatient)
+        public async Task GetPatientForUpdateRegistration(PatientViewModel existingPatient)
         {
             Preconditions.ThrowIfNull(nameof(existingPatient), existingPatient);
             Preconditions.ThrowIfNull(nameof(existingPatient.Id), existingPatient.Id);

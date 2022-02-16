@@ -250,38 +250,5 @@ namespace Avalanche.Api.Managers.Patients
             var getSource = await _pieService.GetPatientListSource(new Empty()).ConfigureAwait(false);
             return getSource.Source;
         }
-
-        private async Task<PhysicianModel> GetSelectedPhysician(bool autoFillPhysician, bool isQuickRegister)
-        {
-            if (autoFillPhysician)
-            {
-                return new PhysicianModel()
-                {
-                    Id = user.Id,
-                    FirstName = user.FirstName,
-                    LastName = user.LastName
-                };
-            }
-            else if (isQuickRegister)
-            {
-                var systemAdministrator = await _securityService.FindByUserName("Administrator").ConfigureAwait(false);
-
-                return new PhysicianModel
-                {
-                    Id = systemAdministrator.User.Id,
-                    FirstName = systemAdministrator.User.FirstName,
-                    LastName = systemAdministrator.User.LastName
-                };
-            }
-            else
-            {
-                return new PhysicianModel
-                {
-                    Id = 0,
-                    FirstName = string.Empty,
-                    LastName = string.Empty
-                };
-            }
-        }
     }
 }
