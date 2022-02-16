@@ -202,7 +202,7 @@ namespace Avalanche.Api.Managers.Procedures
             {
                 if (registrationMode == PatientRegistrationMode.Update)
                 {
-                    await _patientsManager.UpdatePatient(patient).ConfigureAwait(false);
+                    await UpdatePatient(patient).ConfigureAwait(false);
                 }
                 else
                 {
@@ -225,7 +225,7 @@ namespace Avalanche.Api.Managers.Procedures
 
             await PublishPersistData(patient, procedure, patientListSource, (int)registrationMode).ConfigureAwait(false);
 
-            await (_routingManager?.PublishDefaultDisplayRecordingState()).ConfigureAwait(false);
+            //await (_routingManager?.PublishDefaultDisplayRecordingState()).ConfigureAwait(false);
 
             return _mapper.Map<ProcedureAllocationViewModel>(response);
         }
@@ -440,6 +440,26 @@ namespace Avalanche.Api.Managers.Procedures
                 },
                 Physician = physician
             };
+        }
+
+        public async Task UpdatePatient(PatientViewModel existingPatient)
+        {
+            Preconditions.ThrowIfNull(nameof(existingPatient), existingPatient);
+            Preconditions.ThrowIfNull(nameof(existingPatient.Id), existingPatient.Id);
+            Preconditions.ThrowIfNull(nameof(existingPatient.MRN), existingPatient.MRN);
+            Preconditions.ThrowIfNull(nameof(existingPatient.LastName), existingPatient.LastName);
+
+            ValidateDynamicConditions(existingPatient);
+
+            if (existingPatient.Physician == null || existingPatient.Physician.Id == 0)
+            {
+                existingPatient.Physician = new PhysicianModel()
+                {
+                    Id = _user.Id,
+                    FirstName = _user.FirstName,
+                    LastName = _user.LastName
+                };
+            }
         }
 
         private void ValidateDynamicConditions(PatientViewModel patient)

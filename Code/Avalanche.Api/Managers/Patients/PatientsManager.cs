@@ -154,6 +154,17 @@ namespace Avalanche.Api.Managers.Patients
                 };
             }
 
+            //var accessInfo = _accessInfoFactory.GenerateAccessInfo();
+
+            //await CheckProcedureType(existingPatient.ProcedureType, existingPatient.Department).ConfigureAwait(false);
+
+            //var request = _mapper.Map<PatientViewModel, UpdatePatientRecordRequest>(existingPatient);
+            //request.AccessInfo = _mapper.Map<AccessInfoMessage>(accessInfo);
+
+            //await AllocateNewProcedure(existingPatient, false).ConfigureAwait(false);
+
+            //await _pieService.UpdatePatient(request).ConfigureAwait(false);
+
             var accessInfo = _accessInfoFactory.GenerateAccessInfo();
 
             var request = _mapper.Map<PatientViewModel, UpdatePatientRecordRequest>(existingPatient);
