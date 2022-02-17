@@ -2,10 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Avalanche.Api.Managers.Maintenance;
+using Avalanche.Api.Services.Health;
 using Avalanche.Shared.Infrastructure.Configuration;
 using Avalanche.Shared.Infrastructure.Enumerations;
 using Avalanche.Shared.Infrastructure.Extensions;
 using Avalanche.Shared.Infrastructure.Helpers;
+using Google.Protobuf.WellKnownTypes;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -23,10 +25,12 @@ namespace Avalanche.Api.Controllers.V1
         private readonly ILogger _logger;
         private readonly IConfigurationManager _maintenanceManager;
         private readonly IWebHostEnvironment _environment;
+        private readonly IPieService _pieService;
 
-        public ConfigurationController(IConfigurationManager maintenanceManager, ILogger<ConfigurationController> logger, IWebHostEnvironment environment)
+        public ConfigurationController(IConfigurationManager maintenanceManager, ILogger<ConfigurationController> logger, IWebHostEnvironment environment, IPieService pieService)
         {
             _environment = environment;
+            _pieService = pieService;
             _logger = logger;
             _maintenanceManager = maintenanceManager;
         }
@@ -214,6 +218,31 @@ namespace Avalanche.Api.Controllers.V1
             catch (Exception ex)
             {
                 _logger.LogError(ex, LoggerHelper.GetLogMessage(DebugLogType.Exception), ex);
+                return new BadRequestObjectResult(ex.Get(_environment.IsDevelopment()));
+            }
+            finally
+            {
+                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
+            }
+        }
+
+        /// <summary>
+        /// Return the List Source at result
+        /// </summary>
+        [HttpGet("listsource")]
+        [Produces(typeof(int))]
+        public async Task<IActionResult> GetListSource()
+        {
+            try
+            {
+                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
+
+                var result = await _pieService.GetPatientListSource(new Empty()).ConfigureAwait(false);
+                return Ok(result.Source);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, LoggerHelper.GetLogMessage(DebugLogType.Exception));
                 return new BadRequestObjectResult(ex.Get(_environment.IsDevelopment()));
             }
             finally
