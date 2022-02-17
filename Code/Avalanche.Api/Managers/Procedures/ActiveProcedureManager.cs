@@ -194,7 +194,7 @@ namespace Avalanche.Api.Managers.Procedures
         {
             Preconditions.ThrowIfNull(nameof(registrationMode), registrationMode);
 
-            patient = await GetRegisterPatient(registrationMode, patient);
+            patient = await GetPatientForRegistration(registrationMode, patient);
 
             if (registrationMode != PatientRegistrationMode.Quick)
             {
@@ -529,12 +529,12 @@ namespace Avalanche.Api.Managers.Procedures
             };
         }
 
-        private async Task<PatientViewModel> GetRegisterPatient(PatientRegistrationMode registrationMode, PatientViewModel? patient) => registrationMode switch
+        private async Task<PatientViewModel> GetPatientForRegistration(PatientRegistrationMode registrationMode, PatientViewModel? patient) => registrationMode switch
         {
             PatientRegistrationMode.Quick => await GetPatientForQuickRegistration().ConfigureAwait(false),
             PatientRegistrationMode.Manual => await GetPatientForManual(patient).ConfigureAwait(false),
             PatientRegistrationMode.Update => await ValidatePatientForUpdateRegistration(patient).ConfigureAwait(false),
-            _ => new PatientViewModel(),
+            _ => null
         };
 
         #endregion
