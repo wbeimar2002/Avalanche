@@ -9,12 +9,14 @@ using Avalanche.Api.Managers.Procedures;
 using Avalanche.Api.Mapping;
 using Avalanche.Api.Services.Health;
 using Avalanche.Api.Services.Media;
+using Avalanche.Api.Services.Security;
 using Avalanche.Api.Utilities;
 using Avalanche.Api.ViewModels;
 using Avalanche.Shared.Domain.Models;
 using Avalanche.Shared.Infrastructure.Configuration;
 using Ism.SystemState.Client;
 using Ism.SystemState.Models.Procedure;
+using Microsoft.AspNetCore.Http;
 using Moq;
 using NUnit.Framework;
 
@@ -32,7 +34,11 @@ namespace Avalanche.Api.Test.Managers
         private Mock<IPatientsManager> _patientsManager;
         private IDataManagementService _dataManagementService;
         private Mock<IRoutingManager> _routingManager;
+        private Mock<SetupConfiguration> _setupConfiguration;
         LabelsConfiguration _labelsConfig;
+        private Mock<IHttpContextAccessor> _httpContextAccessor;
+        private Mock<ISecurityService> _securityService;
+        private Mock<IPieService> _pieService;
 
         ActiveProcedureManager _manager;
 
@@ -47,11 +53,14 @@ namespace Avalanche.Api.Test.Managers
             _recorderService = new Mock<IRecorderService>();
             _stateClient = new Mock<IStateClient>();
             _dataManager = new Mock<IDataManager>();
-            _patientsManager = new Mock<IPatientsManager>();
             _labelsConfig = new LabelsConfiguration();
             _routingManager = new Mock<IRoutingManager>();
+            _setupConfiguration = new Mock<SetupConfiguration>();
+            _httpContextAccessor = new Mock<IHttpContextAccessor>();
+            _securityService = new Mock<ISecurityService>();
+            _pieService = new Mock<IPieService>();
 
-            _manager = new ActiveProcedureManager(_stateClient.Object, _libraryService.Object, _accessInfoFactory.Object, _mapper, _recorderService.Object, _dataManager.Object, _labelsConfig, _patientsManager.Object, _dataManagementService, _routingManager.Object);
+            _manager = new ActiveProcedureManager(_stateClient.Object, _libraryService.Object, _accessInfoFactory.Object, _mapper, _recorderService.Object, _dataManager.Object, _labelsConfig, _dataManagementService, _routingManager.Object, _setupConfiguration.Object, _httpContextAccessor.Object, _securityService.Object, _pieService.Object);
         }
 
         [Test]

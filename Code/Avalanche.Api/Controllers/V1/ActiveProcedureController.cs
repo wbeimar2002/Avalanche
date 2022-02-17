@@ -311,7 +311,7 @@ namespace Avalanche.Api.Controllers.V1
         /// <summary>
         /// Update procedure with PatientViewModelData
         /// </summary>
-        /// <param name="registrationMode"></param>
+        /// <param name="patientViewModel"></param>
         [HttpPut]
         [Route("procedure")]
         [ProducesResponseType(typeof(void), StatusCodes.Status200OK)]
