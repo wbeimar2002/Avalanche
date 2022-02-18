@@ -8,5 +8,6 @@ namespace Avalanche.Api.Managers.Patients
     {
         Task<IList<PatientViewModel>> Search(PatientKeywordSearchFilterViewModel filter);
         Task<IList<PatientViewModel>> Search(PatientDetailsSearchFilterViewModel filter);
+        Task<int> GetPatientListSource();
     }
 }

@@ -42,6 +42,12 @@ namespace Avalanche.Api.Managers.Patients
             _configurationContext.IdnId = Guid.NewGuid().ToString();
         }
 
+        public async Task<int> GetPatientListSource()
+        {
+            var getSource = await _pieService.GetPatientListSource(new Empty()).ConfigureAwait(false);
+            return getSource.Source;
+        }
+
         public async Task<IList<PatientViewModel>> Search(PatientKeywordSearchFilterViewModel filter)
         {
             Preconditions.ThrowIfNull(nameof(filter), filter);
