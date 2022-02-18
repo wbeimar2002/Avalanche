@@ -7,7 +7,8 @@ namespace Avalanche.Api.ViewModels
     {
         public string? PatientLastName { get; set; }
         public string? PatientId { get; set; }
-        public string? PhysicianId { get; set; }
+        public string? PhysicianFirstName { get; set; }
+        public string? PhysicianLastName { get; set; }
         public string? DepartmentName { get; set; }
         public string? ProcedureTypeName { get; set; }
         public bool? IsClinical { get; set; }
@@ -30,7 +31,8 @@ namespace Avalanche.Api.ViewModels
 
         public ProcedureSearchFilterViewModel(string? keyword, DateTime? startCreationTime,
             DateTime? endCreationTime, bool? hasPendingEdits, bool isDescending, ProcedureIndexSortingColumns procedureIndexSortingColumn,
-            string patientLastName, string? patientId, string? physicianId, string? departmentName, string? procedureTypeName, bool? isClinical, string? sex)
+            string patientLastName, string? patientId, string? physicianFirstName, string? physicianLastName, string? departmentName,
+            string? procedureTypeName, bool? isClinical, string? sex)
         {
             this.Keyword = keyword;
             this.StartCreationTime = startCreationTime;
@@ -40,7 +42,8 @@ namespace Avalanche.Api.ViewModels
             this.ProcedureIndexSortingColumn = procedureIndexSortingColumn;
             this.PatientLastName = patientLastName;
             this.PatientId = patientId;
-            this.PhysicianId = physicianId;
+            this.PhysicianFirstName = physicianFirstName;
+            this.PhysicianLastName = physicianLastName;
             this.DepartmentName = departmentName;
             this.ProcedureTypeName = procedureTypeName;
             this.IsClinical = isClinical;
@@ -50,8 +53,8 @@ namespace Avalanche.Api.ViewModels
         public override object Clone()
         {
             return new ProcedureSearchFilterViewModel(this.Keyword, this.StartCreationTime, this.EndCreationTime, 
-                this.HasPendingEdits, this.IsDescending, this.ProcedureIndexSortingColumn,
-                this.PatientLastName, this.PatientId, this.PhysicianId, this.DepartmentName, this.ProcedureTypeName, this.IsClinical, this.Sex);
+                this.HasPendingEdits, this.IsDescending, this.ProcedureIndexSortingColumn, this.PatientLastName,
+                this.PatientId, this.PhysicianFirstName, this.PhysicianLastName, this.DepartmentName, this.ProcedureTypeName, this.IsClinical, this.Sex);
         }
     }
 }

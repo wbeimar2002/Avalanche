@@ -2,6 +2,7 @@ using AutoMapper;
 using Avalanche.Api.ViewModels;
 using Avalanche.Security.Server.Client.V1.Protos;
 using Avalanche.Shared.Domain.Models;
+using Ism.Library.V1.Protos;
 using Ism.Storage.DataManagement.Client.V1.Protos;
 
 namespace Avalanche.Api.Mapping
@@ -161,6 +162,15 @@ namespace Avalanche.Api.Mapping
                 .ForMember(dest =>
                     dest.ProcedureTypeId,
                     opt => opt.MapFrom(src => src.ProcedureTypeId))
+                .ReverseMap();
+
+            CreateMap<PhysicianSearchMessage, PhysicianSearchResultViewModel>()
+                .ForMember(dest =>
+                    dest.FirstName,
+                    opt => opt.MapFrom(src => src.FirstName))
+                .ForMember(dest =>
+                    dest.LastName,
+                    opt => opt.MapFrom(src => src.LastName))
                 .ReverseMap();
 
         }
