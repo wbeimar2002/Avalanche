@@ -64,7 +64,7 @@
     <PackageReference Include="Ism.Routing.Client" Version="1.0.0-prerelease0019" />
     <PackageReference Include="Ism.PatientInfoEngine.Client" Version="1.0.0-prerelease0034" />
     <PackageReference Include="Ism.Security.Grpc.Standard" Version="1.0.0-prerelease034" />
-    <PackageReference Include="Ism.Storage.Configuration.Client" Version="1.0.0-prerelease0040" />
+    <PackageReference Include="Ism.Storage.Configuration.Client" Version="1.0.0-prerelease0042" />
     <PackageReference Include="Ism.Streaming.Client" Version="1.0.0-prerelease0019" />
     <PackageReference Include="Ism.Utility.Core" Version="1.0.2-prerelease0002" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="3.1.21" />
@@ -79,12 +79,13 @@
     <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.14.1" />
     <PackageReference Include="System.Text.Json" Version="5.0.2" />
     <PackageReference Include="Polly" Version="7.2.2" />
-    <PackageReference Include="Ism.Storage.DataManagement.Client" Version="1.0.0-prerelease0048" />
+    <PackageReference Include="Ism.Storage.DataManagement.Client" Version="1.0.0-prerelease0050" />
     <PackageReference Include="Ism.SystemState.Client" Version="1.0.0-prerelease0096" />
-    <PackageReference Include="Ism.Storage.PatientList.Client" Version="1.0.0-prerelease0033" />
+    <PackageReference Include="Ism.Storage.PatientList.Client" Version="1.0.0-prerelease0035" />
     <PackageReference Include="Ism.PrintServer.Client" Version="1.0.0-prerelease0009" />
     <PackageReference Include="Ism.Medpresence.Client" Version="1.0.0-prerelease0007" />
     <PackageReference Include="Ism.Library.Client" Version="1.0.0-prerelease0079" />
+    <PackageReference Include="Yarp.ReverseProxy" Version="1.0.0" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(Configuration)'=='DebugLocal'">
