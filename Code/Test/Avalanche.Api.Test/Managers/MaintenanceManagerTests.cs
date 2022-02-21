@@ -42,7 +42,6 @@ namespace Avalanche.Api.Test.Managers
             {
                 cfg.AddProfile(new PatientMappingConfiguration());
                 cfg.AddProfile(new DataMappingConfiguration());
-                cfg.AddProfile(new MaintenanceMappingConfiguration());
             });
 
             _mapper = config.CreateMapper();
@@ -64,20 +63,6 @@ namespace Avalanche.Api.Test.Managers
                 _filesService.Object,
                 _printingService.Object,
                 _sharedConfigurationManager.Object, _deviceConfigurationManager.Object);
-        }
-
-        [Test]
-        public async Task TestReindexRepositoryReturnsStatus()
-        {
-            var expected = new Ism.Library.V1.Protos.ReindexRepositoryResponse { ErrorCount = 2, SuccessCount = 4, TotalCount = 6 };
-            _libraryService.Setup(m => m.ReindexRepository(It.IsAny<string>())).ReturnsAsync(expected);
-
-            var response = await _manager.ReindexRepository(new ReindexRepositoryRequestViewModel("repo"));
-
-            Assert.NotNull(response);
-            Assert.AreEqual(expected.ErrorCount, response.ErrorCount);
-            Assert.AreEqual(expected.SuccessCount, response.SuccessCount);
-            Assert.AreEqual(expected.TotalCount, response.TotalCount);
         }
 
         [Test]

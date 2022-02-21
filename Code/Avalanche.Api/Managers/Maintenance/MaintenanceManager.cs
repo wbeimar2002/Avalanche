@@ -19,7 +19,6 @@ using Avalanche.Shared.Infrastructure.Configuration;
 using Avalanche.Shared.Infrastructure.Enumerations;
 using Avalanche.Shared.Infrastructure.Extensions;
 using Ism.Common.Core.Configuration.Models;
-using Ism.Utility.Core;
 using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -65,15 +64,6 @@ namespace Avalanche.Api.Managers.Maintenance
         protected abstract void CheckLinks(DynamicListViewModel category);
 
         protected abstract Task SetIsRequired(string key, DynamicPropertyViewModel item);
-
-        public async Task<ReindexStatusViewModel> ReindexRepository(ReindexRepositoryRequestViewModel reindexRequest)
-        {
-            Preconditions.ThrowIfNull(nameof(reindexRequest), reindexRequest);
-            Preconditions.ThrowIfNullOrEmpty(nameof(reindexRequest.RepositoryName), reindexRequest.RepositoryName);
-
-            var response = await _libraryService.ReindexRepository(reindexRequest.RepositoryName).ConfigureAwait(false);
-            return _mapper.Map<ReindexStatusViewModel>(response);
-        }
 
         public async Task SaveCategoryPolicies(DynamicSectionViewModel category)
         {
