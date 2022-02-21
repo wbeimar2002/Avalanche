@@ -286,16 +286,16 @@ namespace Avalanche.Api.Controllers.V1
         /// <param name="registrationMode"></param>
         [HttpPost]
         [Route("procedure/{registrationMode}")]
-        [ProducesResponseType(typeof(void), StatusCodes.Status200OK)]
+        [Produces(typeof(string))]
         public async Task<IActionResult> AllocateNewProcedure(PatientRegistrationMode registrationMode, [FromBody] PatientViewModel? patient = null)
         {
             try
             {
                 _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
 
-                await _activeProcedureManager.AllocateNewProcedure(registrationMode, patient).ConfigureAwait(false);
+                var procedure = await _activeProcedureManager.AllocateNewProcedure(registrationMode, patient).ConfigureAwait(false);
 
-                return Ok();
+                return Ok(procedure);
             }
             catch (Exception ex)
             {
