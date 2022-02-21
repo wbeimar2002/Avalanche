@@ -102,13 +102,13 @@ namespace Avalanche.Api
             // Transient
             if (isDevice)
             {
-                services.AddTransient<IDataManager, DeviceDataManager>();
                 services.AddTransient<IRoutingManager, RoutingManager>();
                 services.AddTransient<IWebRTCManager, WebRTCManager>();
                 services.AddTransient<IRecordingManager, RecordingManager>();
                 services.AddSingleton<IPgsTimeoutManager, PgsTimeoutManager>(); //We need this as singleton
                 services.AddTransient<IActiveProcedureManager, ActiveProcedureManager>();
 
+                services.AddTransient<IDataManager, DeviceDataManager>();
                 services.AddTransient<IConfigurationManager, DeviceConfigurationManager>();
                 services.AddTransient<IMaintenanceManager, DeviceMaintenanceManager>();
             }
@@ -120,8 +120,9 @@ namespace Avalanche.Api
             }
 
             //Shared
-            services.AddTransient<IAuthenticationManager, AuthenticationManager>();
             services.AddTransient<ISharedConfigurationManager, SharedConfigurationManager>();
+
+            services.AddTransient<IAuthenticationManager, AuthenticationManager>();
             services.AddTransient<IFilesManager, FilesManager>();
             services.AddTransient<IPatientsManager, PatientsManager>();
             services.AddTransient<IProceduresManager, ProceduresManager>();

@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using AutoMapper;
 using Avalanche.Shared.Infrastructure.Configuration;
 
 namespace Avalanche.Api.Managers.Maintenance
@@ -24,6 +23,7 @@ namespace Avalanche.Api.Managers.Maintenance
         public LabelsConfiguration GetLabelsConfigurationSettings() => throw new InvalidOperationException();
         public RecorderConfiguration GetRecorderConfigurationSettings() => throw new InvalidOperationException();
         public FinishOptionsConfiguration GetFinishOptionsConfigurationSettings() => throw new InvalidOperationException();
+
         public Task UpdateAutoLabelsConfigurationByProcedureType(int procedureTypeId, List<AutoLabelAutoLabelsConfiguration> autoLabels) => throw new InvalidOperationException();
     }
 }

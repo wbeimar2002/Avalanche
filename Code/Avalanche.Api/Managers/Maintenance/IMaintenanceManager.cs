@@ -12,7 +12,5 @@ namespace Avalanche.Api.Managers.Maintenance
         Task<DynamicListViewModel> GetCategoryListByKey(string key, string parentId);
         Task<dynamic> GetSettingValues(string key);
         Task SaveCategoryPolicies(DynamicSectionViewModel category);
-
-        Task<ReindexStatusViewModel> ReindexRepository(ReindexRepositoryRequestViewModel reindexRequest);
     }
 }
