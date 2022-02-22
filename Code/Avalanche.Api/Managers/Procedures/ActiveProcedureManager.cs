@@ -196,34 +196,34 @@ namespace Avalanche.Api.Managers.Procedures
 
             var activeProcedure = await _stateClient.GetData<ActiveProcedureState>().ConfigureAwait(false);
 
-            if (activeProcedure == null)
+            if (activeProcedure != null)
             {
-                patient = await GetPatientForRegistration(registrationMode, patient).ConfigureAwait(false);
-
-                if (registrationMode != PatientRegistrationMode.Quick)
-                {
-                    await CheckProcedureType(patient.ProcedureType, patient.Department).ConfigureAwait(false);
-                }
-
-                var accessInfo = _accessInfoFactory.GenerateAccessInfo();
-
-                var response = await _libraryService.AllocateNewProcedure(new AllocateNewProcedureRequest
-                {
-                    AccessInfo = _mapper.Map<AccessInfoMessage>(accessInfo),
-                    Clinical = true
-                }).ConfigureAwait(false);
-
-                var procedure = _mapper.Map<ProcedureAllocationViewModel>(response);
-                var patientListSource = await GetPatientListSource().ConfigureAwait(false);
-
-                await PublishPersistData(patient, procedure, patientListSource, (int)registrationMode).ConfigureAwait(false);
-
-                await _routingManager.PublishDefaultDisplayRecordingState().ConfigureAwait(false);
-
-                return _mapper.Map<ProcedureAllocationViewModel>(response);
+                throw new InvalidOperationException($"{nameof(AllocateNewProcedure)} cannot proceed when another procedure is already active.");
             }
 
-            throw new InvalidOperationException();
+            patient = await GetPatientForRegistration(registrationMode, patient).ConfigureAwait(false);
+
+            if (registrationMode != PatientRegistrationMode.Quick)
+            {
+                await CheckProcedureType(patient.ProcedureType, patient.Department).ConfigureAwait(false);
+            }
+
+            var accessInfo = _accessInfoFactory.GenerateAccessInfo();
+
+            var response = await _libraryService.AllocateNewProcedure(new AllocateNewProcedureRequest
+            {
+                AccessInfo = _mapper.Map<AccessInfoMessage>(accessInfo),
+                Clinical = true
+            }).ConfigureAwait(false);
+
+            var procedure = _mapper.Map<ProcedureAllocationViewModel>(response);
+            var patientListSource = await GetPatientListSource().ConfigureAwait(false);
+
+            await PublishPersistData(patient, procedure, patientListSource, (int)registrationMode).ConfigureAwait(false);
+
+            await _routingManager.PublishDefaultDisplayRecordingState().ConfigureAwait(false);
+
+            return _mapper.Map<ProcedureAllocationViewModel>(response);
         }
 
         public async Task ApplyLabelToActiveProcedure(ContentViewModel labelContent)
@@ -420,7 +420,7 @@ namespace Avalanche.Api.Managers.Procedures
         private async Task<PatientViewModel> GetPatientForQuickRegistration()
         {
             var quickRegistrationDateFormat = _setupConfiguration.Registration.Quick.DateFormat;
-            var formattedDate = DateTime.UtcNow.ToLocalTime().ToString(quickRegistrationDateFormat);
+            var formattedDate = DateTime.UtcNow.ToLocalTime().ToString("yyMMdd_HHMMss");
 
             var physician = await GetSelectedPhysician(PatientRegistrationMode.Quick).ConfigureAwait(false);
 

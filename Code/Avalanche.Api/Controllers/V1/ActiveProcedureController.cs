@@ -295,7 +295,7 @@ namespace Avalanche.Api.Controllers.V1
 
                 var procedure = await _activeProcedureManager.AllocateNewProcedure(registrationMode, patient).ConfigureAwait(false);
 
-                return Ok(procedure);
+                return Ok();
             }
             catch (Exception ex)
             {
