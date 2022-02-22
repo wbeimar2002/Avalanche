@@ -96,6 +96,7 @@ namespace Avalanche.Api.Mapping
                 .ForMember(dest => dest.CaptureTimeUtc, opt => opt.MapFrom(src => GetFixedDateTime(src.CaptureTimeUtc)));
 
             CreateMap<ProcedureMessage, ProcedureViewModel>()
+                .ForMember(dest => dest.UserNames, opt => opt.MapFrom(src => src.UserNames))
                 .ForMember(dest => dest.Videos, opt => opt.MapFrom(src => src.Videos))
                 .ForMember(dest => dest.Images, opt => opt.MapFrom(src => src.Images))
                 .ForMember(dest => dest.BackgroundVideos, opt => opt.MapFrom(src => src.BackgroundVideos))

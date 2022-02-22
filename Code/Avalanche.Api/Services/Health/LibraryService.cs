@@ -1,6 +1,6 @@
 using Ism.Library.Client.V1;
 using Ism.Library.V1.Protos;
-
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 
@@ -52,5 +52,8 @@ namespace Avalanche.Api.Services.Health
 
         public async Task<GetPhysiciansSearchResponse> GetPhysicians(GetPhysiciansSearchRequest getPhysiciansSearchRequest) =>
             await _serviceSearchClient.GetPhysicians(getPhysiciansSearchRequest).ConfigureAwait(false);
+        public async Task ShareProcedure(ShareProcedureRequest shareProcedureRequest) =>
+            await _managerServiceClient.ShareProcedure(shareProcedureRequest).ConfigureAwait(false);
+
     }
 }
