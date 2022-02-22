@@ -420,7 +420,7 @@ namespace Avalanche.Api.Managers.Procedures
         private async Task<PatientViewModel> GetPatientForQuickRegistration()
         {
             var quickRegistrationDateFormat = _setupConfiguration.Registration.Quick.DateFormat;
-            var formattedDate = DateTime.UtcNow.ToLocalTime().ToString("yyMMdd_HHMMss");
+            var formattedDate = DateTime.UtcNow.ToLocalTime().ToString(quickRegistrationDateFormat);
 
             var physician = await GetSelectedPhysician(PatientRegistrationMode.Quick).ConfigureAwait(false);
 
