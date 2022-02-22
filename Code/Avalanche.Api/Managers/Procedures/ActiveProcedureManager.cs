@@ -190,11 +190,13 @@ namespace Avalanche.Api.Managers.Procedures
         /// <param name="registrationMode"></param>
         /// <param name="patient"></param>
         /// <returns>ProcedureAllocationViewModel</returns>
-        public async Task<string> AllocateNewProcedure(PatientRegistrationMode registrationMode, PatientViewModel? patient = null)
+        public async Task<ProcedureAllocationViewModel> AllocateNewProcedure(PatientRegistrationMode registrationMode, PatientViewModel? patient = null)
         {
             Preconditions.ThrowIfNull(nameof(registrationMode), registrationMode);
 
-            if (!await IsProcedureActive().ConfigureAwait(false))
+            var activeProcedure = await _stateClient.GetData<ActiveProcedureState>().ConfigureAwait(false);
+
+            if (activeProcedure == null)
             {
                 patient = await GetPatientForRegistration(registrationMode, patient).ConfigureAwait(false);
 
@@ -218,12 +220,10 @@ namespace Avalanche.Api.Managers.Procedures
 
                 await _routingManager.PublishDefaultDisplayRecordingState().ConfigureAwait(false);
 
-                var procedureCreate = _mapper.Map<ProcedureAllocationViewModel>(response);
-
-                return procedureCreate.ProcedureId.Id;
+                return _mapper.Map<ProcedureAllocationViewModel>(response);
             }
 
-            return "There is already a Procedure in progress.";
+            throw new InvalidOperationException();
         }
 
         public async Task ApplyLabelToActiveProcedure(ContentViewModel labelContent)
@@ -543,12 +543,6 @@ namespace Avalanche.Api.Managers.Procedures
             PatientRegistrationMode.Update => await ValidatePatientForUpdateRegistration(patient).ConfigureAwait(false),
             _ => null
         };
-
-        private async Task<bool> IsProcedureActive()
-        {
-            var activeProcedure = await _stateClient.GetData<ActiveProcedureState>().ConfigureAwait(false);
-            return activeProcedure != null;
-        }
 
         #endregion
     }
