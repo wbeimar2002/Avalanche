@@ -26,7 +26,7 @@ namespace Avalanche.Api.Managers
 
         public async Task<TokenResponseViewModel> CreateAccessTokenAsync(string userName, string password)
         {
-            var response = await _usersService.FindByUserName(userName);
+            var response = await _usersService.GetUser(userName);
 
             if (response.User == null || !_passwordHasher.PasswordMatches(password, response.User.Password))
             {
@@ -52,7 +52,7 @@ namespace Avalanche.Api.Managers
                 return new TokenResponseViewModel(false, "Expired refresh token.", null);
             }
 
-            var response = await _usersService.FindByUserName(userName);
+            var response = await _usersService.GetUser(userName);
             if (response.User == null)
             {
                 return new TokenResponseViewModel(false, "Invalid refresh token.", null);

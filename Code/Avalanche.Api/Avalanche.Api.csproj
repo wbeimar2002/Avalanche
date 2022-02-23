@@ -45,7 +45,7 @@
   <ItemGroup>
     <PackageReference Include="AutoFixture" Version="4.17.0" />
     <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="8.1.1" />
-    <PackageReference Include="Avalanche.Security.Server.Client" Version="1.0.0-prerelease0006" />
+    
     <PackageReference Include="AvidisDeviceInterface.Client" Version="1.0.0-prerelease0021" />
     <PackageReference Include="Grpc.Tools" Version="2.42.0">
       <PrivateAssets>all</PrivateAssets>
@@ -87,13 +87,16 @@
     <PackageReference Include="Ism.Library.Client" Version="1.0.0-prerelease0079" />
   </ItemGroup>
 
-  <ItemGroup Condition="'$(Configuration)'=='DebugLocal'">
+  <!--<ItemGroup Condition="'$(Configuration)'=='DebugLocal'">
+    <PackageReference Include="Avalanche.Security.Server.Client" Version="99.99.*" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(Configuration)'=='Release'  Or '$(Configuration)'=='Debug'">
-  </ItemGroup>
+    <PackageReference Include="Avalanche.Security.Server.Client" Version="1.0.0-prerelease0006" />
+  </ItemGroup>-->
 
   <ItemGroup>
+    <ProjectReference Include="..\Avalanche.Security.Server.Client\Avalanche.Security.Server.Client.csproj" />
     <ProjectReference Include="..\Avalanche.Shared.Domain\Avalanche.Shared.Domain.csproj" />
     <ProjectReference Include="..\Avalanche.Shared.Infrastructure\Avalanche.Shared.Infrastructure.csproj" />
   </ItemGroup>

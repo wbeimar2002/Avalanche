@@ -64,6 +64,7 @@ namespace Avalanche.Security.Server.Mappings
                     FirstName = source.FirstName,
                     LastName = source.LastName,
                     UserName = source.UserName,
+                    PasswordHash = source.PasswordHash
                 };
             }
         }

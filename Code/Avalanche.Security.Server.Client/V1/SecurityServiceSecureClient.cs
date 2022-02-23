@@ -27,21 +27,22 @@ namespace Avalanche.Security.Server.Client.V1
         {
         }
 
-        public async Task<AddUserResponse> AddUserAsync(AddUserRequest request) =>
+        public async Task<AddUserResponse> AddUser(AddUserRequest request) =>
            await Client.AddUserAsync(request);
 
-        public async Task<Empty> DeleteUserAsync(DeleteUserRequest request) =>
+        public async Task<Empty> DeleteUser(DeleteUserRequest request) =>
            await Client.DeleteUserAsync(request);
 
-        public async Task<GetUserResponse> FindByUserNameAsync(GetUserRequest request) =>
+        public async Task<GetUserResponse> GetUser(GetUserRequest request) =>
            await Client.GetUserAsync(request);
 
-        public async Task<GetUsersResponse> GetUsersAsync() =>
+        public async Task<GetUsersResponse> GetUsers() =>
             await Client.GetUsersAsync(new Empty());
-        public async Task<SearchUsersResponse> SearchUsersAsync(SearchUsersRequest request) =>
+
+        public async Task<SearchUsersResponse> SearchUsers(SearchUsersRequest request) =>
            await Client.SearchUsersAsync(request);
 
-        public async Task<Empty> UpdateUserAsync(UpdateUserRequest request) =>
+        public async Task<Empty> UpdateUser(UpdateUserRequest request) =>
             await Client.UpdateUserAsync(request);
     }
 }

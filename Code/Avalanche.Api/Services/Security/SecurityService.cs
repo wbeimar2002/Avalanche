@@ -7,30 +7,32 @@ namespace Avalanche.Api.Services.Security
 {
     public class SecurityService : ISecurityService
     {
-        private readonly SecurityServiceClient _client;
+        private readonly SecurityServiceSecureClient _client;
 
-        public SecurityService(SecurityServiceClient client) => _client = client;
+        public SecurityService(SecurityServiceSecureClient client) => _client = client;
 
         public async Task<GetUsersResponse> GetAllUsers() =>
-            await _client.GetUsersAsync(new Empty()).ConfigureAwait(false);
+            await _client.GetUsers().ConfigureAwait(false);
 
-        public async Task<FindByUserNameResponse> FindByUserName(string userName) =>
-            await _client.FindByUserNameAsync(new FindByUserNameRequest()
-            {
-                UserName = userName
-            }).ConfigureAwait(false);
+        public async Task<GetUserResponse> GetUser(string userName) =>
+            await _client.GetUser(
+                new GetUserRequest
+                {
+                    UserName = userName
+                })
+            .ConfigureAwait(false);
 
         public async Task<AddUserResponse> AddUser(AddUserRequest request) =>
-           await _client.AddUserAsync(request).ConfigureAwait(false);
+           await _client.AddUser(request).ConfigureAwait(false);
 
         public async Task<Empty> UpdateUser(UpdateUserRequest request) =>
-           await _client.UpdateUserAsync(request).ConfigureAwait(false);
+           await _client.UpdateUser(request).ConfigureAwait(false);
 
         public async Task<Empty> DeleteUser(DeleteUserRequest request) =>
-           await _client.DeleteUserAsync(request).ConfigureAwait(false);
+           await _client.DeleteUser(request).ConfigureAwait(false);
 
         public async Task<SearchUsersResponse> SearchUsers(string keyword) =>
-            await _client.SearchUsersAsync(new SearchUsersRequest()
+            await _client.SearchUsers(new SearchUsersRequest()
             {
                 Keyword = keyword
             }).ConfigureAwait(false);

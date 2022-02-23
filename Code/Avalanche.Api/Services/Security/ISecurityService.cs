@@ -10,7 +10,7 @@ namespace Avalanche.Api.Services.Security
         Task<AddUserResponse> AddUser(AddUserRequest request);
         Task<Empty> UpdateUser(UpdateUserRequest request);
         Task<Empty> DeleteUser(DeleteUserRequest request);
-        Task<FindByUserNameResponse> FindByUserName(string userName);
+        Task<GetUserResponse> GetUser(string userName);
         Task<SearchUsersResponse> SearchUsers(string keyword);
     }
 }

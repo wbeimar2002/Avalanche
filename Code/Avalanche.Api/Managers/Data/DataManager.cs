@@ -71,7 +71,7 @@ namespace Avalanche.Api.Managers.Data
 
             var request = new AddUserRequest()
             {
-                User = _mapper.Map<UserMessage>(user)
+                User = _mapper.Map<NewUserMessage>(user)
             };
 
             var result = await _securityService.AddUser(request).ConfigureAwait(false);
@@ -88,7 +88,7 @@ namespace Avalanche.Api.Managers.Data
 
             var request = new UpdateUserRequest()
             {
-                User = _mapper.Map<UserMessage>(user)
+                User = _mapper.Map<UpdateUserMessage>(user)
             };
 
             await _securityService.UpdateUser(request).ConfigureAwait(false);

@@ -63,14 +63,14 @@ message UserMessage {
     string userName = 2;
     string firstName = 3;
     string lastName = 4;
-    // Don't let password hash cross service boundary
+    string passwordHash = 5;  // TODO: Don't let password hash cross service boundary
 }
 
 message NewUserMessage {
-    string userName = 2;
-    string firstName = 3;
-    string lastName = 4;
-    string password = 5;
+    string userName = 1;
+    string firstName = 2;
+    string lastName = 3;
+    string password = 4;
 }
 
 message UpdateUserMessage {
