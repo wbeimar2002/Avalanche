@@ -2,15 +2,19 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Avalanche.Security.Server.Core.Models;
 
-namespace Avalanche.Security.Server.Core.Managers
+namespace Avalanche.Security.Server.Core.Interfaces
 {
     public interface IUsersManager
     {
-        Task<UserModel> AddUser(UserModel user);
-        Task UpdateUser(UserModel user);
+        Task<UserModel> AddUser(NewUserModel user);
         Task<int> DeleteUser(int userId);
-        Task<IEnumerable<UserModel>> GetAllUsers();
-        Task<UserModel> FindByUserNameAsync(string userName);
+
+        Task<UserModel?> GetUser(string userName);
+
+        Task<IEnumerable<UserModel>> GetUsers();
+
         Task<IEnumerable<UserModel>> SearchUsers(string keyword);
+
+        Task UpdateUser(UpdateUserModel user);
     }
 }

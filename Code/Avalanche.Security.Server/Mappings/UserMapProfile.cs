@@ -1,4 +1,3 @@
-
 using AutoMapper;
 using Avalanche.Security.Server.Client.V1.Protos;
 using Avalanche.Security.Server.Core.Models;
@@ -9,6 +8,49 @@ namespace Avalanche.Security.Server.Mappings
 {
     public class UserMapProfile : Profile
     {
+        public UserMapProfile()
+        {
+            CreateMap<UserModel, UserMessage>(MemberList.Destination).ConvertUsing<UserMessageConverter>();
+            CreateMap<UserMessage, UserModel>(MemberList.Destination).ConvertUsing<UserModelConverter>();
+            CreateMap<NewUserMessage, NewUserModel>(MemberList.Destination).ConvertUsing<NewUserModelConverter>();
+            CreateMap<UpdateUserMessage, UpdateUserModel>(MemberList.Destination).ConvertUsing<UpdateUserModelConverter>();
+        }
+
+        public sealed class NewUserModelConverter : ITypeConverter<NewUserMessage, NewUserModel>
+        {
+            public NewUserModel Convert(NewUserMessage source, NewUserModel destination, ResolutionContext context)
+            {
+                ThrowIfNull(nameof(source), source);
+                ThrowIfNull(nameof(context), context);
+
+                return new NewUserModel()
+                {
+                    FirstName = source.FirstName,
+                    LastName = source.LastName,
+                    UserName = source.UserName,
+                    Password = source.Password
+                };
+            }
+        }
+
+        public sealed class UpdateUserModelConverter : ITypeConverter<UpdateUserMessage, UpdateUserModel>
+        {
+            public UpdateUserModel Convert(UpdateUserMessage source, UpdateUserModel destination, ResolutionContext context)
+            {
+                ThrowIfNull(nameof(source), source);
+                ThrowIfNull(nameof(context), context);
+
+                return new UpdateUserModel()
+                {
+                    Id = source.Id,
+                    FirstName = source.FirstName,
+                    LastName = source.LastName,
+                    UserName = source.UserName,
+                    Password = source.Password
+                };
+            }
+        }
+
         public sealed class UserMessageConverter : ITypeConverter<UserModel, UserMessage>
         {
             public UserMessage Convert(UserModel source, UserMessage destination, ResolutionContext context)
@@ -22,7 +64,6 @@ namespace Avalanche.Security.Server.Mappings
                     FirstName = source.FirstName,
                     LastName = source.LastName,
                     UserName = source.UserName,
-                    Password = source.Password
                 };
             }
         }
@@ -40,15 +81,8 @@ namespace Avalanche.Security.Server.Mappings
                     FirstName = source.FirstName,
                     LastName = source.LastName,
                     UserName = source.UserName,
-                    Password = source.Password
                 };
             }
-        }
-
-        public UserMapProfile()
-        {
-            CreateMap<UserModel, UserMessage>(MemberList.Destination).ConvertUsing<UserMessageConverter>();
-            CreateMap<UserMessage, UserModel>(MemberList.Destination).ConvertUsing<UserModelConverter>();
         }
     }
 }

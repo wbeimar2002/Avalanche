@@ -6,29 +6,26 @@ option csharp_namespace = "Avalanche.Security.Server.Client.V1.Protos";
 package security;
 
 service Security {
-    rpc GetUsers (google.protobuf.Empty) returns (GetUsersResponse);
+    
     rpc AddUser (AddUserRequest) returns (AddUserResponse);
-    rpc UpdateUser (UpdateUserRequest) returns (google.protobuf.Empty);
     rpc DeleteUser (DeleteUserRequest) returns (google.protobuf.Empty);
-    rpc FindByUserName (FindByUserNameRequest) returns (FindByUserNameResponse);
+    rpc GetUser (GetUserRequest) returns (GetUserResponse);
+    rpc GetUsers (google.protobuf.Empty) returns (GetUsersResponse);
+    rpc UpdateUser (UpdateUserRequest) returns (google.protobuf.Empty);
     rpc SearchUsers (SearchUsersRequest) returns (SearchUsersResponse);
 }
 
-//Requests
-message FindByUserNameRequest {
-    string userName = 1;
-}
-
+// Requests
 message AddUserRequest {
-    UserMessage user = 1;
-}
-
-message UpdateUserRequest {
-    UserMessage user = 1;
+    NewUserMessage user = 1;
 }
 
 message DeleteUserRequest {
     int32 userId = 1;
+}
+
+message GetUserRequest {
+    string userName = 1;
 }
 
 message SearchUsersRequest {
@@ -38,12 +35,16 @@ message SearchUsersRequest {
     string keyword = 4;
 }
 
-//Responses
-message FindByUserNameResponse {
+message UpdateUserRequest {
+    UpdateUserMessage user = 1;
+}
+
+// Responses
+message AddUserResponse {
     UserMessage user = 1;
 }
 
-message AddUserResponse {
+message GetUserResponse {
     UserMessage user = 1;
 }
 
@@ -55,10 +56,27 @@ message SearchUsersResponse {
     repeated UserMessage users = 1;
 }
 
+
+// Messages
 message UserMessage {
-    int32 Id = 1;
-    string UserName = 2;
-    string FirstName = 3;
-    string LastName = 4;
-    string Password = 5;
+    int32 id = 1;
+    string userName = 2;
+    string firstName = 3;
+    string lastName = 4;
+    // Don't let password hash cross service boundary
+}
+
+message NewUserMessage {
+    string userName = 2;
+    string firstName = 3;
+    string lastName = 4;
+    string password = 5;
+}
+
+message UpdateUserMessage {
+    int32 id = 1;    
+    string userName = 2;
+    string firstName = 3;
+    string lastName = 4;
+    string password = 5;
 }

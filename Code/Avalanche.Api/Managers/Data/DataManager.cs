@@ -74,7 +74,7 @@ namespace Avalanche.Api.Managers.Data
                 User = _mapper.Map<UserMessage>(user)
             };
 
-            var result = await _securityService.AddUserAsync(request).ConfigureAwait(false);
+            var result = await _securityService.AddUser(request).ConfigureAwait(false);
 
             return _mapper.Map<UserModel>(result.User);
         }
@@ -91,13 +91,13 @@ namespace Avalanche.Api.Managers.Data
                 User = _mapper.Map<UserMessage>(user)
             };
 
-            await _securityService.UpdateUserAsync(request).ConfigureAwait(false);
+            await _securityService.UpdateUser(request).ConfigureAwait(false);
         }
 
         public async Task DeleteUser(int userId)
         {
             Preconditions.ThrowIfNull(nameof(userId), userId);
-            await _securityService.DeleteUserAsync(new DeleteUserRequest() { UserId = userId }).ConfigureAwait(false);
+            await _securityService.DeleteUser(new DeleteUserRequest() { UserId = userId }).ConfigureAwait(false);
         }
 
         public async Task<IList<UserModel>> GetAllUsers()

@@ -1,6 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Text;
 using Avalanche.Security.Server.Core.Models;
 using Bogus;
 
@@ -12,6 +9,29 @@ namespace Avalanche.Security.Server.Test
             new Faker<UserModel>()
             .CustomInstantiator(f =>
                 new UserModel()
+                {
+                    Id = f.Person.Random.Number(100000, 999999),
+                    FirstName = f.Person.FirstName,
+                    LastName = f.Person.LastName,
+                    UserName = f.Person.UserName,
+                    PasswordHash = f.Random.AlphaNumeric(64)
+                });
+
+        public static Faker<NewUserModel> GetNewUserFaker() =>
+            new Faker<NewUserModel>()
+            .CustomInstantiator(f =>
+                new NewUserModel()
+                {
+                    FirstName = f.Person.FirstName,
+                    LastName = f.Person.LastName,
+                    UserName = f.Person.UserName,
+                    Password = f.Random.AlphaNumeric(64)
+                });
+
+        public static Faker<UpdateUserModel> GetUpdateUserFaker() =>
+            new Faker<UpdateUserModel>()
+            .CustomInstantiator(f =>
+                new UpdateUserModel()
                 {
                     Id = f.Person.Random.Number(100000, 999999),
                     FirstName = f.Person.FirstName,

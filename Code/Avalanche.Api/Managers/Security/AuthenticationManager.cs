@@ -1,10 +1,10 @@
 using System.Threading.Tasks;
 using AutoMapper;
-using Avalanche.Api.Handlers.Security.Hashing;
 using Avalanche.Api.Handlers.Security.Tokens;
 using Avalanche.Api.Services.Security;
 using Avalanche.Api.ViewModels;
 using Avalanche.Shared.Domain.Models;
+using Avalanche.Shared.Infrastructure.Security.Hashing;
 
 namespace Avalanche.Api.Managers
 {

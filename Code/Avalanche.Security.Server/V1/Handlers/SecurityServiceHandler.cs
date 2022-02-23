@@ -3,10 +3,11 @@ using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using Avalanche.Security.Server.Client.V1.Protos;
-using Avalanche.Security.Server.Core.Managers;
+using Avalanche.Security.Server.Core.Interfaces;
 using Avalanche.Security.Server.Core.Models;
 using Google.Protobuf.WellKnownTypes;
 using Grpc.Core;
+using Ism.Common.Core.Aspects;
 using Microsoft.Extensions.Logging;
 
 namespace Avalanche.Security.Server.V1.Handlers
@@ -24,54 +25,58 @@ namespace Avalanche.Security.Server.V1.Handlers
             _usersManager = usersManager;
         }
 
+        [AspectLogger]
         public override async Task<AddUserResponse> AddUser(AddUserRequest request, ServerCallContext context)
         {
-            var response = await _usersManager.AddUser(_mapper.Map<UserModel>(request.User));
-
+            var response = await _usersManager.AddUser(_mapper.Map<NewUserModel>(request.User)).ConfigureAwait(false);
             var user = _mapper.Map<UserMessage>(response);
 
-            var result = new AddUserResponse();
-            result.User = user;
-            return result;
+            return new AddUserResponse
+            {
+                User = user
+            };
         }
 
+        [AspectLogger]
         public override async Task<Empty> DeleteUser(DeleteUserRequest request, ServerCallContext context)
         {
-            var response = await _usersManager.DeleteUser(request.UserId);
+            _ = await _usersManager.DeleteUser(request.UserId).ConfigureAwait(false);
             return new Empty();
         }
 
+        [AspectLogger]
         public override async Task<GetUsersResponse> GetUsers(Empty request, ServerCallContext context)
         {
-            var response = await _usersManager.GetAllUsers();
-
+            var response = await _usersManager.GetUsers().ConfigureAwait(false);
             var resultList = _mapper.Map<IList<UserMessage>>(response.ToList());
 
-            var result = new GetUsersResponse();
-            result.Users.Add(resultList);
-            return result;
+            return new GetUsersResponse() { Users = { resultList } };
         }
 
+        [AspectLogger]
         public override async Task<Empty> UpdateUser(UpdateUserRequest request, ServerCallContext context)
         {
-            await _usersManager.UpdateUser(_mapper.Map<UserModel>(request.User));
+            await _usersManager.UpdateUser(_mapper.Map<UpdateUserModel>(request.User)).ConfigureAwait(false);
             return new Empty();
         }
 
-        public override async Task<FindByUserNameResponse> FindByUserName(FindByUserNameRequest request, ServerCallContext context)
+        [AspectLogger]
+        public override async Task<GetUserResponse> GetUser(GetUserRequest request, ServerCallContext context)
         {
-            var response = await _usersManager.FindByUserNameAsync(request.UserName);
+            var response = await _usersManager.GetUser(request.UserName).ConfigureAwait(false);
 
             var user = _mapper.Map<UserMessage>(response);
 
-            var result = new FindByUserNameResponse();
-            result.User = user;
-            return result;
+            return new GetUserResponse
+            {
+                User = user
+            };
         }
 
+        [AspectLogger]
         public override async Task<SearchUsersResponse> SearchUsers(SearchUsersRequest request, ServerCallContext context)
         {
-            var users = await _usersManager.SearchUsers(request.Keyword);
+            var users = await _usersManager.SearchUsers(request.Keyword).ConfigureAwait(false);
 
             var response = new SearchUsersResponse();
             response.Users.Add(_mapper.Map<IList<UserModel>, IList<UserMessage>>(users.ToList()));

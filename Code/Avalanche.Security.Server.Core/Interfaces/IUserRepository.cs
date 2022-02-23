@@ -6,11 +6,11 @@ namespace Avalanche.Security.Server.Core.Interfaces
 {
     public interface IUserRepository
     {
-        Task<UserModel> AddUser(UserModel user);
-        Task AddOrUpdateUser(UserModel user);
+        Task<UserModel> AddUser(NewUserModel user);
+        Task UpdateUser(UpdateUserModel user);
         Task<int> DeleteUser(int userId);
-        Task<IEnumerable<UserModel>> GetAllUsers();
-        Task<UserModel> FindByUserNameAsync(string userName);
+        Task<IEnumerable<UserModel>> GetUsers();
+        Task<UserModel?> GetUser(string userName);
         Task<IEnumerable<UserModel>> SearchUsers(string keyword);
     }
 }

@@ -7,9 +7,9 @@ namespace Avalanche.Api.Services.Security
     public interface ISecurityService
     {
         Task<GetUsersResponse> GetAllUsers();
-        Task<AddUserResponse> AddUserAsync(AddUserRequest request);
-        Task<Empty> UpdateUserAsync(UpdateUserRequest request);
-        Task<Empty> DeleteUserAsync(DeleteUserRequest request);
+        Task<AddUserResponse> AddUser(AddUserRequest request);
+        Task<Empty> UpdateUser(UpdateUserRequest request);
+        Task<Empty> DeleteUser(DeleteUserRequest request);
         Task<FindByUserNameResponse> FindByUserName(string userName);
         Task<SearchUsersResponse> SearchUsers(string keyword);
     }

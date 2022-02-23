@@ -1,7 +1,7 @@
-using Avalanche.Shared.Domain.Models.Media;
-using Ism.Common.Core.Configuration;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
+using Avalanche.Shared.Domain.Models.Media;
+using FluentValidation;
+using Ism.Common.Core.Configuration;
 
 namespace Avalanche.Shared.Infrastructure.Configuration
 {

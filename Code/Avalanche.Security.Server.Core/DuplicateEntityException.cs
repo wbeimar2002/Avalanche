@@ -39,7 +39,6 @@ namespace Avalanche.Security.Server.Core
         public string? ConstraintName { get; }
         public string? DuplicateValue { get; }
         public Type? Entity { get; }
-
         public string? EntityId { get; }
     }
 }

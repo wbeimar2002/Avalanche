@@ -3,12 +3,12 @@ using FluentValidation;
 
 namespace Avalanche.Security.Server.Core.Validators
 {
-    public class UserValidator : AbstractValidator<UserModel>
+    public class UpdateUserValidator : AbstractValidator<UpdateUserModel>
     {
-        public UserValidator()
+        public UpdateUserValidator()
         {
             Include(new PersistedUserValidator());
-            RuleFor(x => x.PasswordHash).NotNull().NotEmpty();
+            RuleFor(x => x.Password).NotNull().NotEmpty();
         }
     }
 }

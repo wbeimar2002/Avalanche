@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
-using Avalanche.Api.Handlers.Security.Hashing;
 using Avalanche.Api.ViewModels.Security;
 using Avalanche.Shared.Domain.Models;
 using Avalanche.Shared.Infrastructure.Options;
+using Avalanche.Shared.Infrastructure.Security.Hashing;
 
 namespace Avalanche.Api.Handlers.Security.Tokens
 {

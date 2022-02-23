@@ -1,59 +1,90 @@
 using System;
-using Avalanche.Security.Server.Core.Security.Hashing;
-using Avalanche.Security.Server.Security.Hashing;
-using Moq;
+using System.Linq;
+using Avalanche.Shared.Infrastructure.Security.Hashing;
 using Xunit;
 
-namespace Avalanche.Security.Tests.Security.Hashing
+namespace Avalanche.Security.Server.Test.Security.Hashing
 {
+#pragma warning disable CA1707 // Identifiers should not contain underscores
     public class PasswordHasherTests
-    {        
-        readonly IPasswordHasher _passwordHasher;
-        readonly Mock<IPasswordHasher> _passwordHasherMock;
-
-        public PasswordHasherTests() => _passwordHasher = new PasswordHasher();
-
+    {
         [Fact]
-        public void ShouldThrowExceptionForEmptyPasswordWhenHashing()
+        public void PasswordHasher_EmptyPassword_Throws()
         {
-            string password = "";
-            _ = Assert.Throws<ArgumentNullException>(() => _passwordHasher.HashPassword(password));
+            // Arrange
+            var hasher = new PasswordHasher();
+            const string password = "";
+
+            // Act & Assert
+            _ = Assert.Throws<ArgumentNullException>(() => hasher.HashPassword(password));
         }
 
         [Fact]
-        public void ShouldHashPasswords()
+        public void PasswordHasher_Succeeds()
+
         {
-            var firstPassword = "123456";
-            var secondPassword = "123456";
+            // Arrange
+            const string password = "123456";
+            var hasher = new PasswordHasher();
 
-            var firstPasswordAsHash = _passwordHasher.HashPassword(firstPassword);
-            var secondPasswordAsHash = _passwordHasher.HashPassword(secondPassword);
+            // Act
+            var firstHash = hasher.HashPassword(password);
+            var secondHash = hasher.HashPassword(password);
 
-            Assert.NotSame(firstPasswordAsHash, firstPassword);
-            Assert.NotSame(secondPasswordAsHash, secondPassword);
-            Assert.NotSame(firstPasswordAsHash, secondPasswordAsHash);
+            // Assert
+            Assert.NotSame(firstHash, password);
+            Assert.NotSame(secondHash, password);
+            Assert.NotSame(firstHash, secondHash);
         }
 
         [Fact]
-        public void ShouldMatchPasswordForValidHash()
+        public void PasswordHasher_PasswordMatches_ValidHashSucceeds()
         {
-            var firstPassword = "123456";
-            var firstPasswordAsHash = _passwordHasher.HashPassword(firstPassword);
 
-            Assert.True(_passwordHasher.PasswordMatches(firstPassword, firstPasswordAsHash));
+            // Arrange
+            const string password = "123456";
+            var hasher = new PasswordHasher();
+
+            // Act
+            var hash = hasher.HashPassword(password);
+
+            // Assert
+            Assert.True(hasher.PasswordMatches(password, hash));
         }
 
         [Fact]
-        public void ShouldReturnFalseForDifferentHasherPasswords()
+        public void PasswordHasher_PasswordMatches_InvalidHashFails()
         {
-            var firstPassword = "123456";
-            var secondPassword = "654321";
 
-            var firstPasswordAsHash = _passwordHasher.HashPassword(firstPassword);
-            var secondPasswordAsHash = _passwordHasher.HashPassword(secondPassword);
+            // Arrange
+            const string password = "123456";
+            var hasher = new PasswordHasher();
 
-            Assert.False(_passwordHasher.PasswordMatches(firstPassword, secondPasswordAsHash));
-            Assert.False(_passwordHasher.PasswordMatches(secondPassword, firstPasswordAsHash));
+            // Act
+            var hash = hasher.HashPassword(password);
+
+            var charToReplace = hash.First(x => x != 'a');
+            var mutilatedHash = hash.Replace(charToReplace, 'a');
+
+            // Assert
+            Assert.False(hasher.PasswordMatches(password, mutilatedHash));
+        }
+
+        [Fact]
+        public void PasswordHasher_PasswordMatches_InvalidPasswordFails()
+        {
+
+            // Arrange
+            const string password = "123456";
+            const string invalidPassword = "thispassworddoesntmatch";
+            var hasher = new PasswordHasher();
+
+            // Act
+            var hash = hasher.HashPassword(password);
+
+            // Assert
+            Assert.False(hasher.PasswordMatches(invalidPassword, hash));
         }
     }
+#pragma warning restore CA1707 // Identifiers should not contain underscores
 }
