@@ -266,7 +266,7 @@ namespace Avalanche.Api.Managers.Procedures
                 }
             };
 
-            userNames.ForEach(x => request.ShareListIds.Add(x));
+            userNames.ForEach(x => request.UserNames.Add(x));
 
             await _libraryService.ShareProcedure(request).ConfigureAwait(false);
         }
