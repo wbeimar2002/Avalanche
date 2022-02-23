@@ -86,6 +86,11 @@ namespace Avalanche.Api
             var isDevice = IsDevice(services);
 
             services.AddControllers();
+
+            services
+                .AddReverseProxy()
+                .LoadFromConfig(_configuration.GetSection("ReverseProxy"));
+
             services.AddSignalR();
             services.AddMvc().AddNewtonsoftJson();
             services.AddHttpContextAccessor();
@@ -308,6 +313,7 @@ namespace Avalanche.Api
             {
                 endpoints.MapHub<BroadcastHub>(BroadcastHub.BroadcastHubRoute);
                 endpoints.MapControllers();
+                endpoints.MapReverseProxy();
             });
         }
 

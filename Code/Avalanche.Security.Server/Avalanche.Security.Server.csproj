@@ -38,7 +38,7 @@
     </PackageReference>
     <PackageReference Include="Ism.Common.Core" Version="1.0.0-prerelease058" />
     <PackageReference Include="Ism.Common.Core.Hosting" Version="1.0.0-prerelease051" />
-    <PackageReference Include="Ism.Storage.Core.Infrastructure" Version="1.0.0-prerelease0006" />
+    <PackageReference Include="Ism.Storage.Core.Infrastructure" Version="1.0.0-prerelease0008" />
     <PackageReference Include="Ism.Utility.Core" Version="1.0.2-prerelease0002" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="3.1.2" />
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.14.0" />
