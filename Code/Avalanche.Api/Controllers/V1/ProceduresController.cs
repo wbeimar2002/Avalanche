@@ -137,6 +137,29 @@ namespace Avalanche.Api.Controllers.V1
         }
 
 
+
+        [HttpPut("{repository}/{id}/shareRequest")]
+        [ProducesResponseType(typeof(void), StatusCodes.Status200OK)]
+        public async Task<IActionResult> ShareProcedure([FromRoute] string repository, [FromRoute] string id,[FromBody] List<string> userNames)
+        {
+            try
+            {
+                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
+                await _proceduresManager.ShareProcedure(repository, id, userNames);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, LoggerHelper.GetLogMessage(DebugLogType.Exception));
+                return new BadRequestObjectResult(ex.Get(_environment.IsDevelopment()));
+            }
+            finally
+            {
+                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
+            }
+        }
+
+
         [HttpPost("{repository}/{id}/files/downloadrequest/{requestId}")]
         [ProducesResponseType(typeof(void), StatusCodes.Status200OK)]
         public async Task<IActionResult> CreateDownloadRequest(

@@ -1,5 +1,5 @@
 using Ism.Library.V1.Protos;
-
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Avalanche.Api.Services.Health
@@ -17,5 +17,6 @@ namespace Avalanche.Api.Services.Health
         Task<GetFinishedProceduresResponse> GetFinishedProceduresByPatient(GetFinishedProceduresRequestByPatient getFinishedProceduresRequestByPatient);
         Task GenerateProcedureZip(GenerateProcedureZipRequest procedureZipRequest);
         Task<GetPhysiciansSearchResponse> GetPhysicians(GetPhysiciansSearchRequest getPhysiciansSearchRequest);
+        Task ShareProcedure(ShareProcedureRequest shareProcedureRequest);
     }
 }
