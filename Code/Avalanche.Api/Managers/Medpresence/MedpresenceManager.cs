@@ -65,5 +65,28 @@ namespace Avalanche.Api.Managers.Medpresence
         {
             Request = request.Command
         }).ConfigureAwait(false);
+
+        public async Task ProvisionMedpresence(MedpresenceProvisioningViewModel request)
+        {
+            var protoRequest = new MedpresenceProvisioningRequest
+            {
+                InputParameters = new ProvisioningInputParametersMessage
+                {
+                    CustomerName = request.InputParameters.CustomerName,
+                    Environment = request.InputParameters.Environment,
+                    Name = request.InputParameters.Name,
+                    SerialNumber = request.InputParameters.SerialNumber,
+                    Department = request.InputParameters.Department,
+                    Speciality = request.InputParameters.Speciality
+                },
+                EnvironmentSettings = new ProvisioiningEnvironmentSettingsMessage
+                {
+                    ApiUrl = request.EnvironmentSettings.ApiUrl,
+                    IdentityUrl = request.EnvironmentSettings.IdentityUrl,
+                    ClientId = request.EnvironmentSettings.ClientId
+                }
+            };
+            await _medpresenceService.ProvisionMedpresence(protoRequest).ConfigureAwait(false);
+        }
     }
 }
