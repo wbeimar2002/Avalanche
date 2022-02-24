@@ -29,7 +29,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Test", "Test", "{26149080-8
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Integration", "Integration", "{98D1CBB5-18F4-4BD5-9248-3FCEEC21D516}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Avalanche.Security.Server.Integration", "Avalanche.Security.Server.Integration\Avalanche.Security.Server.Integration.csproj", "{48A9D338-A2FD-462B-8B12-EB8F92BDBE49}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Avalanche.Security.Server.Integration", "Integration\Avalanche.Security.Server.Integration\Avalanche.Security.Server.Integration.csproj", "{48A9D338-A2FD-462B-8B12-EB8F92BDBE49}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
