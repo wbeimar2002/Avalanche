@@ -1,11 +1,14 @@
-using FluentValidation;
 using Avalanche.Security.Server.Core.Models;
+using FluentValidation;
 
 namespace Avalanche.Security.Server.Core.Validators
 {
     public class UserValidator : AbstractValidator<UserModel>
     {
-        //TODO: Pending Finish Validations
-        public UserValidator() => RuleFor(x => x.FirstName).NotEmpty().NotNull().Length(1, 64);
+        public UserValidator()
+        {
+            Include(new PersistedUserValidator());
+            RuleFor(x => x.PasswordHash).NotNull().NotEmpty();
+        }
     }
 }

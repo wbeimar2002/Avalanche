@@ -4,7 +4,7 @@ using Avalanche.Security.Server.Core.Models;
 
 namespace Avalanche.Security.Server.Core.Interfaces
 {
-    public interface IUserRepository
+    public interface IUsersManager
     {
         Task<UserModel> AddUser(NewUserModel user);
         Task<int> DeleteUser(int userId);
@@ -17,5 +17,6 @@ namespace Avalanche.Security.Server.Core.Interfaces
 
         Task UpdateUser(UpdateUserModel update);
         Task UpdateUserPassword(UpdateUserPasswordModel passwordUpdate);
+        Task<(bool LoginValid, UserModel? User)> VerifyUserLogin(string userName, string password);
     }
 }
