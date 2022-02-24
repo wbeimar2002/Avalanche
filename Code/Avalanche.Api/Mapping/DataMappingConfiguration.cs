@@ -26,7 +26,7 @@ namespace Avalanche.Api.Mapping
                     opt => opt.MapFrom(src => src.UserName))
                 .ForMember(dest =>
                     dest.Password,
-                    opt => opt.MapFrom(src => src.PasswordHash))
+                    opt => opt.Ignore())
                 .ReverseMap();
 
             CreateMap<UserModel, UpdateUserMessage>()
@@ -39,6 +39,11 @@ namespace Avalanche.Api.Mapping
                 .ForMember(dest =>
                     dest.LastName,
                     opt => opt.MapFrom(src => src.LastName))
+                .ForMember(dest =>
+                    dest.UserName,
+                    opt => opt.MapFrom(src => src.UserName));
+
+            CreateMap<UserModel, UpdateUserPasswordMessage>()
                 .ForMember(dest =>
                     dest.UserName,
                     opt => opt.MapFrom(src => src.UserName))

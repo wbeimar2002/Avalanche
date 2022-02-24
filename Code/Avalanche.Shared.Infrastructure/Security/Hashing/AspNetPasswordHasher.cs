@@ -9,7 +9,7 @@ namespace Avalanche.Shared.Infrastructure.Security.Hashing
     /// Explanation: https://stackoverflow.com/questions/20621950/asp-net-identity-default-password-hasher-how-does-it-work-and-is-it-secure
     /// Full implementation: https://gist.github.com/malkafly/e873228cb9515010bdbe
     /// </summary>
-    public class PasswordHasher : IPasswordHasher
+    public class AspNetPasswordHasher : IPasswordHasher
     {
         public string HashPassword(string password)
         {

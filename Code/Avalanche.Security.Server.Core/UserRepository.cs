@@ -6,6 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using AutoMapper;
 using Avalanche.Security.Server.Core.Entities;
+using Avalanche.Security.Server.Core.Exceptions;
 using Avalanche.Security.Server.Core.Interfaces;
 using Avalanche.Security.Server.Core.Models;
 using Avalanche.Shared.Infrastructure.Security.Hashing;
@@ -35,13 +36,14 @@ namespace Avalanche.Security.Server.Core
         private const string EmptySearchExpression = "<None>";
 
         private readonly SecurityDbContext _context;
+        private readonly SemaphoreSlim _locker = new SemaphoreSlim(1, 1);
         private readonly ILogger<UserRepository> _logger;
         private readonly IMapper _mapper;
-        private readonly IPasswordHasher _passwordHasher;
         private readonly IValidator<NewUserModel> _newUserValidator;
+        private readonly IPasswordHasher _passwordHasher;
+        private readonly IValidator<UpdateUserPasswordModel> _updateUserPasswordValidator;
         private readonly IValidator<UpdateUserModel> _updateUserValidator;
         private readonly IDatabaseWriter<SecurityDbContext> _writer;
-        private readonly SemaphoreSlim _locker = new SemaphoreSlim(1, 1);
         private bool _disposedValue;
 
         public UserRepository(
@@ -51,6 +53,7 @@ namespace Avalanche.Security.Server.Core
             IDatabaseWriter<SecurityDbContext> writer,
             IValidator<NewUserModel> newUserValidator,
             IValidator<UpdateUserModel> updateUserValidator,
+            IValidator<UpdateUserPasswordModel> updateUserPasswordValidator,
             IPasswordHasher passwordHasher
         )
         {
@@ -60,38 +63,8 @@ namespace Avalanche.Security.Server.Core
             _writer = ThrowIfNullOrReturn(nameof(writer), writer);
             _newUserValidator = ThrowIfNullOrReturn(nameof(newUserValidator), newUserValidator);
             _updateUserValidator = ThrowIfNullOrReturn(nameof(updateUserValidator), updateUserValidator);
+            _updateUserPasswordValidator = ThrowIfNullOrReturn(nameof(updateUserPasswordValidator), updateUserPasswordValidator);
             _passwordHasher = ThrowIfNullOrReturn(nameof(passwordHasher), passwordHasher);
-        }
-
-        [AspectLogger]
-        public async Task UpdateUser(UpdateUserModel user)
-        {
-            ThrowIfNull(nameof(user), user);
-            _updateUserValidator.ValidateAndThrow(user);
-
-            try
-            {
-                var entity = new UserEntity
-                {
-                    Id = user.Id,
-                    UserName = user.UserName,
-                    LastName = user.LastName,
-                    FirstName = user.FirstName,
-                    PasswordHash = _passwordHasher.HashPassword(user.Password)
-                };
-
-                // perform update
-                _ = await UpdateUserEntity(entity).ConfigureAwait(false);
-            }
-            catch (DbUpdateException ex) when (ex.InnerException.Message.Contains("UNIQUE Constraint Failed", StringComparison.OrdinalIgnoreCase))
-            {
-                throw new DuplicateEntityException(typeof(UserEntity), user.Id.ToString(CultureInfo.InvariantCulture), nameof(UserEntity.UserName), user.UserName, ex);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, $"{nameof(UpdateUser)} failed for {nameof(user)} with {nameof(user.UserName)} = {user.UserName}{Environment.NewLine}Error: {ex.Message}");
-                throw;
-            }
         }
 
         [AspectLogger]
@@ -120,7 +93,7 @@ namespace Avalanche.Security.Server.Core
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, $"{nameof(AddUser)} failed for {nameof(NewUserModel)} with {nameof(NewUserModel.UserName)} = {user.UserName}{Environment.NewLine}Error: {ex.Message}");
+                _logger.LogError(ex, $"{nameof(AddUser)} failed for {nameof(NewUserModel)} with {nameof(NewUserModel.UserName)} = '{user.UserName}'{Environment.NewLine}Error: {ex.Message}");
                 throw;
             }
         }
@@ -139,20 +112,9 @@ namespace Avalanche.Security.Server.Core
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, $"{nameof(DeleteUser)} failed for {nameof(UserEntity)} with {nameof(UserEntity.Id)} {userId}{Environment.NewLine}Error: {ex.Message}");
+                _logger.LogError(ex, $"{nameof(DeleteUser)} failed for {nameof(UserEntity)} with {nameof(UserEntity.Id)} = '{userId}'{Environment.NewLine}Error: {ex.Message}");
                 throw;
             }
-        }
-
-        [AspectLogger]
-        public async Task<IEnumerable<UserModel>> GetUsers()
-        {
-            var result = await _context.Users
-                .AsNoTracking()
-                .ToListAsync()
-                .ConfigureAwait(false);
-
-            return _mapper.Map<IList<UserEntity>, IList<UserModel>>(result);
         }
 
         [AspectLogger]
@@ -165,8 +127,19 @@ namespace Avalanche.Security.Server.Core
                 return _mapper.Map<UserModel>(entity);
             }
 
-            _logger.LogWarning($"{nameof(GetUser)} failed to retrieve a {nameof(UserModel)} with {nameof(UserModel.UserName)} {userName}");
+            _logger.LogWarning($"{nameof(GetUser)} failed to retrieve a {nameof(UserModel)} with {nameof(UserModel.UserName)} = '{userName}'");
             return null;
+        }
+
+        [AspectLogger]
+        public async Task<IEnumerable<UserModel>> GetUsers()
+        {
+            var result = await _context.Users
+                .AsNoTracking()
+                .ToListAsync()
+                .ConfigureAwait(false);
+
+            return _mapper.Map<IList<UserEntity>, IList<UserModel>>(result);
         }
 
         [AspectLogger]
@@ -210,13 +183,50 @@ namespace Avalanche.Security.Server.Core
                 throw;
             }
         }
-        private static async Task<UserEntity> UpdateWriter(UserEntity userEntity, SecurityDbContext context)
-        {
-            var updated = context.Users
-                .Update(userEntity);
 
-            _ = await context.SaveChangesAsync().ConfigureAwait(false);
-            return updated.Entity;
+        [AspectLogger]
+        public async Task UpdateUser(UpdateUserModel update)
+        {
+            ThrowIfNull(nameof(update), update);
+            _updateUserValidator.ValidateAndThrow(update);
+
+            try
+            {
+                var userToUpdate = await GetUserEntityAndThrowIfNull(update.UserName).ConfigureAwait(false);
+                userToUpdate.UserName = update.UserName;
+                userToUpdate.FirstName = update.FirstName;
+                userToUpdate.LastName = update.LastName;
+
+                _ = await UpdateUserEntity(userToUpdate).ConfigureAwait(false);
+            }
+            catch (DbUpdateException ex) when (ex.InnerException.Message.Contains("UNIQUE Constraint Failed", StringComparison.OrdinalIgnoreCase))
+            {
+                throw new DuplicateEntityException(typeof(UserEntity), update.Id.ToString(CultureInfo.InvariantCulture), nameof(UserEntity.UserName), update.UserName, ex);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"{nameof(UpdateUser)} failed for {nameof(update)} with {nameof(update.UserName)} = '{update.UserName}'{Environment.NewLine}Error: {ex.Message}");
+                throw;
+            }
+        }
+
+        [AspectLogger]
+        public async Task UpdateUserPassword(UpdateUserPasswordModel passwordUpdate)
+        {
+            ThrowIfNull(nameof(passwordUpdate), passwordUpdate);
+            _updateUserPasswordValidator.ValidateAndThrow(passwordUpdate);
+
+            try
+            {
+                var userToUpdate = await GetUserEntityAndThrowIfNull(passwordUpdate.UserName).ConfigureAwait(false);
+                userToUpdate.PasswordHash = _passwordHasher.HashPassword(passwordUpdate.Password);
+                _ = await UpdateUserEntity(userToUpdate).ConfigureAwait(false);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"{nameof(UpdateUserPassword)} failed for User with {nameof(passwordUpdate.UserName)} = '{passwordUpdate.UserName}'{Environment.NewLine}Error: {ex.Message}");
+                throw;
+            }
         }
 
         private static async Task<UserEntity> AddUserWriter(UserEntity userEntity, SecurityDbContext context)
@@ -240,6 +250,15 @@ namespace Avalanche.Security.Server.Core
             // And formats them as a Sqlite FTS5 MATCH expression, i.e. '"one"* "two*"'
             // https://www.sqlite.org/fts5.html
             $"\"{searchTerm.Replace("\"", "\"\"", StringComparison.Ordinal)}\"*";
+
+        private static async Task<UserEntity> UpdateWriter(UserEntity userEntity, SecurityDbContext context)
+        {
+            var updated = context.Users
+                .Update(userEntity);
+
+            _ = await context.SaveChangesAsync().ConfigureAwait(false);
+            return updated.Entity;
+        }
 
         private Task<UserEntity> AddUserEntity(UserEntity userEntity)
         {
@@ -268,6 +287,16 @@ namespace Avalanche.Security.Server.Core
                 .FirstOrDefaultAsync()
                 .ConfigureAwait(false);
 
+        private async Task<UserEntity> GetUserEntityAndThrowIfNull(string userName)
+        {
+            var user = await GetUserEntity(userName).ConfigureAwait(false);
+            if (user == null)
+            {
+                throw new InvalidOperationException($"Cannot {nameof(GetUserEntity)} for User with {nameof(userName)} = '{userName}' because it does not already exist");
+            }
+
+            return user;
+        }
         private async Task<UserEntity> UpdateUserEntity(UserEntity userEntity)
         {
             try
@@ -291,7 +320,7 @@ namespace Avalanche.Security.Server.Core
             }
             finally
             {
-                _locker.Release();
+                _ = _locker.Release();
             }
         }
         #region Disposable
@@ -310,6 +339,7 @@ namespace Avalanche.Security.Server.Core
                 {
                     // dispose managed state (managed objects)
                     _context.Dispose();
+                    _locker.Dispose();
                 }
 
                 // free unmanaged resources (unmanaged objects) and override finalizer

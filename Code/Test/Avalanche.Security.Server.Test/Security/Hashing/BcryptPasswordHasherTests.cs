@@ -6,13 +6,13 @@ using Xunit;
 namespace Avalanche.Security.Server.Test.Security.Hashing
 {
 #pragma warning disable CA1707 // Identifiers should not contain underscores
-    public class PasswordHasherTests
+    public class BcryptPasswordHasherTests
     {
         [Fact]
         public void PasswordHasher_EmptyPassword_Throws()
         {
             // Arrange
-            var hasher = new PasswordHasher();
+            var hasher = new BcryptPasswordHasher();
             const string password = "";
 
             // Act & Assert
@@ -25,7 +25,7 @@ namespace Avalanche.Security.Server.Test.Security.Hashing
         {
             // Arrange
             const string password = "123456";
-            var hasher = new PasswordHasher();
+            var hasher = new BcryptPasswordHasher();
 
             // Act
             var firstHash = hasher.HashPassword(password);
@@ -43,7 +43,7 @@ namespace Avalanche.Security.Server.Test.Security.Hashing
 
             // Arrange
             const string password = "123456";
-            var hasher = new PasswordHasher();
+            var hasher = new BcryptPasswordHasher();
 
             // Act
             var hash = hasher.HashPassword(password);
@@ -53,31 +53,13 @@ namespace Avalanche.Security.Server.Test.Security.Hashing
         }
 
         [Fact]
-        public void PasswordHasher_PasswordMatches_InvalidHashFails()
-        {
-
-            // Arrange
-            const string password = "123456";
-            var hasher = new PasswordHasher();
-
-            // Act
-            var hash = hasher.HashPassword(password);
-
-            var charToReplace = hash.First(x => x != 'a');
-            var mutilatedHash = hash.Replace(charToReplace, 'a');
-
-            // Assert
-            Assert.False(hasher.PasswordMatches(password, mutilatedHash));
-        }
-
-        [Fact]
         public void PasswordHasher_PasswordMatches_InvalidPasswordFails()
         {
 
             // Arrange
             const string password = "123456";
             const string invalidPassword = "thispassworddoesntmatch";
-            var hasher = new PasswordHasher();
+            var hasher = new BcryptPasswordHasher();
 
             // Act
             var hash = hasher.HashPassword(password);

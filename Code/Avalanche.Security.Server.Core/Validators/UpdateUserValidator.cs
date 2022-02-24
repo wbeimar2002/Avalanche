@@ -8,7 +8,6 @@ namespace Avalanche.Security.Server.Core.Validators
         public UpdateUserValidator()
         {
             Include(new PersistedUserValidator());
-            RuleFor(x => x.Password).NotNull().NotEmpty();
         }
     }
 }

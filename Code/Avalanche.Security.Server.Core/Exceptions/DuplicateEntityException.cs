@@ -1,7 +1,7 @@
 using System;
 using System.Runtime.Serialization;
 
-namespace Avalanche.Security.Server.Core
+namespace Avalanche.Security.Server.Core.Exceptions
 {
     [Serializable]
     public class DuplicateEntityException : Exception

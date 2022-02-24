@@ -29,10 +29,5 @@ namespace Avalanche.Security.Server.Core.Models
     }
 
     public class UpdateUserModel : PersistedUserBase
-    {
-        /// <summary>
-        /// Unhashed Password from user input.  Handle with care.
-        /// </summary>
-        public string Password { get; set; }
-    }
+    { }
 }

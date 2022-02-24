@@ -177,7 +177,7 @@ namespace Avalanche.Api
             services.AddSingleton<IPresetManager, PresetManager>();
             services.AddSingleton<IMedpresenceService, MedpresenceService>();
             services.AddSingleton<ISecurityService, SecurityService>();
-            services.AddSingleton<IPasswordHasher, PasswordHasher>();
+            services.AddSingleton<IPasswordHasher, BcryptPasswordHasher>();
             services.AddSingleton<ITokenHandler, TokenHandler>();
 
         // gRPC Infrastructure

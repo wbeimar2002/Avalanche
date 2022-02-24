@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Avalanche.Security.Server.Core.Interfaces;
 using Avalanche.Security.Server.Core.Models;
+using Avalanche.Shared.Infrastructure.Security.Hashing;
 
 namespace Avalanche.Security.Server.Core.Managers
 {
@@ -10,29 +11,52 @@ namespace Avalanche.Security.Server.Core.Managers
     /// This is currently nothing but a proxy/not a very valuable abstraction.
     /// Keeping it around for now in case we need to wrap anymore business logic around these methods in the future.
     /// e.g. Notify VSS if local user Added or Updated
+    /// There is also a reasonable argument that the public methods on UserRepository, which take models could be moved here
+    /// and the private Repository methods, which take Entities, could be lifted up and made public.
     /// </summary>
     public class UsersManager : IUsersManager
     {
+        private readonly IPasswordHasher _passwordHasher;
         private readonly IUserRepository _userRepository;
 
-        public UsersManager(IUserRepository userRepository) =>
+        public UsersManager(IUserRepository userRepository, IPasswordHasher passwordHasher)
+        {
             _userRepository = userRepository;
+            _passwordHasher = passwordHasher;
+        }
 
-        public async Task<UserModel> AddUser(NewUserModel user) =>
-            await _userRepository.AddUser(user).ConfigureAwait(false);
+        public Task<UserModel> AddUser(NewUserModel user) =>
+            _userRepository.AddUser(user);
 
-        public async Task<int> DeleteUser(int userId) =>
-            await _userRepository.DeleteUser(userId).ConfigureAwait(false);
+        public Task<int> DeleteUser(int userId) =>
+            _userRepository.DeleteUser(userId);
 
-        public async Task<UserModel?> GetUser(string userName) =>
-            await _userRepository.GetUser(userName).ConfigureAwait(false);
+        public Task<UserModel?> GetUser(string userName) =>
+            _userRepository.GetUser(userName);
 
-        public async Task<IEnumerable<UserModel>> GetUsers() =>
-                    await _userRepository.GetUsers().ConfigureAwait(false);
-        public async Task<IEnumerable<UserModel>> SearchUsers(string keyword) =>
-            await _userRepository.SearchUsers(keyword).ConfigureAwait(false);
+        public Task<IEnumerable<UserModel>> GetUsers() =>
+            _userRepository.GetUsers();
 
-        public async Task UpdateUser(UpdateUserModel user) =>
-            await _userRepository.UpdateUser(user).ConfigureAwait(false);
+        public Task<IEnumerable<UserModel>> SearchUsers(string keyword) =>
+            _userRepository.SearchUsers(keyword);
+
+        public Task UpdateUser(UpdateUserModel update) =>
+            _userRepository.UpdateUser(update);
+
+        public Task UpdateUserPassword(UpdateUserPasswordModel passwordUpdate) =>
+            _userRepository.UpdateUserPassword(passwordUpdate);
+
+        public async Task<(bool, UserModel?)> VerifyUserLogin(string userName, string password)
+        {
+            var user = await _userRepository.GetUser(userName).ConfigureAwait(false);
+            if (user == null)
+            {
+                return (false, null);
+            }
+
+            var valid = _passwordHasher.PasswordMatches(password, user.PasswordHash);
+
+            return (valid, user);
+        }
     }
 }

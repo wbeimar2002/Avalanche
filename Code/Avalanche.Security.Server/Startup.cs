@@ -49,7 +49,7 @@ namespace Avalanche.Security.Server
 
             // Singleton
             _ = services.AddSingleton<IDatabaseWriter<SecurityDbContext>, DatabaseWriter<SecurityDbContext>>();
-            _ = services.AddSingleton<IPasswordHasher, PasswordHasher>();
+            _ = services.AddSingleton<IPasswordHasher, BcryptPasswordHasher>();
             _ = services.AddSingleton<IUsersManager, UsersManager>();
 
             _ = services.AddSingleton(sp => new SigningOptions(sp.GetRequiredService<AuthConfiguration>().SecretKey));
@@ -63,7 +63,9 @@ namespace Avalanche.Security.Server
             _ = services.AddTransient<IUserRepository, UserRepository>();
 
             // Validation
-            _ = services.AddTransient<IValidator<UserModel>, UserBaseValidator>();
+            _ = services.AddTransient<IValidator<NewUserModel>, NewUserValidator>();
+            _ = services.AddTransient<IValidator<UpdateUserModel>, UpdateUserValidator>();
+            _ = services.AddTransient<IValidator<UpdateUserPasswordModel>, UpdateUserPasswordValidator>();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

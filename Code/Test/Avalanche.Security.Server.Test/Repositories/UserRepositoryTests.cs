@@ -6,6 +6,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Avalanche.Security.Server.Core;
 using Avalanche.Security.Server.Core.Entities;
+using Avalanche.Security.Server.Core.Exceptions;
 using Avalanche.Security.Server.Core.Models;
 using FluentValidation;
 using Ism.Storage.Core.Infrastructure;

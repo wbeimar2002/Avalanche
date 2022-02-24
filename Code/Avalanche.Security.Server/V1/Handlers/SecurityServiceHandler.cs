@@ -9,6 +9,7 @@ using Google.Protobuf.WellKnownTypes;
 using Grpc.Core;
 using Ism.Common.Core.Aspects;
 using Microsoft.Extensions.Logging;
+using static Ism.Utility.Core.Preconditions;
 
 namespace Avalanche.Security.Server.V1.Handlers
 {
@@ -20,14 +21,17 @@ namespace Avalanche.Security.Server.V1.Handlers
 
         public SecurityServiceHandler(ILogger<SecurityServiceHandler> logger, IMapper mapper, IUsersManager usersManager)
         {
-            _logger = logger;
-            _mapper = mapper;
-            _usersManager = usersManager;
+            _logger = ThrowIfNullOrReturn(nameof(logger), logger);
+            _mapper = ThrowIfNullOrReturn(nameof(mapper), mapper);
+            _usersManager = ThrowIfNullOrReturn(nameof(usersManager), usersManager);
         }
 
         [AspectLogger]
         public override async Task<AddUserResponse> AddUser(AddUserRequest request, ServerCallContext context)
         {
+            ThrowIfNull(nameof(request), request);
+            ThrowIfNull(nameof(request.User), request.User);
+
             var response = await _usersManager.AddUser(_mapper.Map<NewUserModel>(request.User)).ConfigureAwait(false);
             var user = _mapper.Map<UserMessage>(response);
 
@@ -40,6 +44,9 @@ namespace Avalanche.Security.Server.V1.Handlers
         [AspectLogger]
         public override async Task<Empty> DeleteUser(DeleteUserRequest request, ServerCallContext context)
         {
+            ThrowIfNull(nameof(request), request);
+            ThrowIfNullOrDefault(nameof(request.UserId), request.UserId);
+
             _ = await _usersManager.DeleteUser(request.UserId).ConfigureAwait(false);
             return new Empty();
         }
@@ -56,15 +63,30 @@ namespace Avalanche.Security.Server.V1.Handlers
         [AspectLogger]
         public override async Task<Empty> UpdateUser(UpdateUserRequest request, ServerCallContext context)
         {
-            await _usersManager.UpdateUser(_mapper.Map<UpdateUserModel>(request.User)).ConfigureAwait(false);
+            ThrowIfNull(nameof(request), request);
+            ThrowIfNull(nameof(request.Update), request.Update);
+
+            await _usersManager.UpdateUser(_mapper.Map<UpdateUserModel>(request.Update)).ConfigureAwait(false);
+            return new Empty();
+        }
+
+        [AspectLogger]
+        public override async Task<Empty> UpdateUserPassword(UpdateUserPasswordRequest request, ServerCallContext context)
+        {
+            ThrowIfNull(nameof(request), request);
+            ThrowIfNull(nameof(request.PasswordUpdate), request.PasswordUpdate);
+
+            await _usersManager.UpdateUserPassword(_mapper.Map<UpdateUserPasswordModel>(request.PasswordUpdate)).ConfigureAwait(false);
             return new Empty();
         }
 
         [AspectLogger]
         public override async Task<GetUserResponse> GetUser(GetUserRequest request, ServerCallContext context)
         {
-            var response = await _usersManager.GetUser(request.UserName).ConfigureAwait(false);
+            ThrowIfNull(nameof(request), request);
+            ThrowIfNullOrEmptyOrWhiteSpace(nameof(request.UserName), request.UserName);
 
+            var response = await _usersManager.GetUser(request.UserName).ConfigureAwait(false);
             var user = _mapper.Map<UserMessage>(response);
 
             return new GetUserResponse
@@ -76,12 +98,27 @@ namespace Avalanche.Security.Server.V1.Handlers
         [AspectLogger]
         public override async Task<SearchUsersResponse> SearchUsers(SearchUsersRequest request, ServerCallContext context)
         {
-            var users = await _usersManager.SearchUsers(request.Keyword).ConfigureAwait(false);
+            ThrowIfNull(nameof(request), request);
 
+            var users = await _usersManager.SearchUsers(request.Keyword).ConfigureAwait(false);
             var response = new SearchUsersResponse();
             response.Users.Add(_mapper.Map<IList<UserModel>, IList<UserMessage>>(users.ToList()));
 
             return response;
+        }
+
+        [AspectLogger]
+        public override async Task<VerifyUserLoginResponse> VerifyUserLogin(VerifyUserLoginRequest request, ServerCallContext context)
+        {
+            ThrowIfNull(nameof(request), request);
+            ThrowIfNullOrEmptyOrWhiteSpace(nameof(request.UserName), request.UserName);
+
+            var (loginValid, user) = await _usersManager.VerifyUserLogin(request.UserName, request.Password).ConfigureAwait(false);
+            return new VerifyUserLoginResponse
+            {
+                LoginValid = loginValid,
+                User = user == null ? null : _mapper.Map<UserModel, UserMessage>(user)
+            };
         }
     }
 }

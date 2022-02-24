@@ -14,6 +14,7 @@ namespace Avalanche.Security.Server.Mappings
             CreateMap<UserMessage, UserModel>(MemberList.Destination).ConvertUsing<UserModelConverter>();
             CreateMap<NewUserMessage, NewUserModel>(MemberList.Destination).ConvertUsing<NewUserModelConverter>();
             CreateMap<UpdateUserMessage, UpdateUserModel>(MemberList.Destination).ConvertUsing<UpdateUserModelConverter>();
+            CreateMap<UpdateUserPasswordMessage, UpdateUserPasswordModel>(MemberList.Destination).ConvertUsing<UpdateUserPasswordModelConverter>();
         }
 
         public sealed class NewUserModelConverter : ITypeConverter<NewUserMessage, NewUserModel>
@@ -45,8 +46,22 @@ namespace Avalanche.Security.Server.Mappings
                     Id = source.Id,
                     FirstName = source.FirstName,
                     LastName = source.LastName,
-                    UserName = source.UserName,
-                    Password = source.Password
+                    UserName = source.UserName
+                };
+            }
+        }
+
+        public sealed class UpdateUserPasswordModelConverter : ITypeConverter<UpdateUserPasswordMessage, UpdateUserPasswordModel>
+        {
+            public UpdateUserPasswordModel Convert(UpdateUserPasswordMessage source, UpdateUserPasswordModel destination, ResolutionContext context)
+            {
+                ThrowIfNull(nameof(source), source);
+                ThrowIfNull(nameof(context), context);
+
+                return new UpdateUserPasswordModel()
+                {
+                    Password = source.Password,
+                    UserName = source.UserName
                 };
             }
         }
@@ -63,8 +78,7 @@ namespace Avalanche.Security.Server.Mappings
                     Id = source.Id,
                     FirstName = source.FirstName,
                     LastName = source.LastName,
-                    UserName = source.UserName,
-                    PasswordHash = source.PasswordHash
+                    UserName = source.UserName
                 };
             }
         }

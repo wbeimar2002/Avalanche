@@ -86,12 +86,25 @@ namespace Avalanche.Api.Managers.Data
             Preconditions.ThrowIfNull(nameof(user.LastName), user.LastName);
             Preconditions.ThrowIfNull(nameof(user.UserName), user.UserName);
 
-            var request = new UpdateUserRequest()
+            // If password is not null then it's a password Update otherwise the update was just for other User information 
+            if (user.Password != null)
             {
-                User = _mapper.Map<UpdateUserMessage>(user)
-            };
+                var request = new UpdateUserPasswordRequest()
+                {
+                    PasswordUpdate = _mapper.Map<UpdateUserPasswordMessage>(user)
+                };
 
-            await _securityService.UpdateUser(request).ConfigureAwait(false);
+                await _securityService.UpdateUserPassword(request).ConfigureAwait(false);
+            }
+            else
+            {
+                var request = new UpdateUserRequest()
+                {
+                    Update = _mapper.Map<UpdateUserMessage>(user)
+                };
+
+                await _securityService.UpdateUser(request).ConfigureAwait(false);
+            }
         }
 
         public async Task DeleteUser(int userId)

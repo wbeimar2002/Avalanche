@@ -15,6 +15,8 @@ namespace Avalanche.Security.Server.Core.Interfaces
 
         Task<IEnumerable<UserModel>> SearchUsers(string keyword);
 
-        Task UpdateUser(UpdateUserModel user);
+        Task UpdateUser(UpdateUserModel update);
+        Task UpdateUserPassword(UpdateUserPasswordModel passwordUpdate);
+        Task<(bool LoginValid, UserModel? User)> VerifyUserLogin(string userName, string password);
     }
 }
