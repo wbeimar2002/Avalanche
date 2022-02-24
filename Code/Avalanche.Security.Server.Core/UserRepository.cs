@@ -246,8 +246,7 @@ namespace Avalanche.Security.Server.Core
                 .DeleteAsync().ConfigureAwait(false);
 
         private static string FormatAsMatchExpression(string searchTerm) =>
-            // Takes a enumerable of strings i.e. ["one", "two"]
-            // And formats them as a Sqlite FTS5 MATCH expression, i.e. '"one"* "two*"'
+            // Formats a string as a Sqlite FTS5 MATCH expression, i.e. one -> '"one"*'
             // https://www.sqlite.org/fts5.html
             $"\"{searchTerm.Replace("\"", "\"\"", StringComparison.Ordinal)}\"*";
 
