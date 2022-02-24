@@ -80,8 +80,6 @@ namespace Avalanche.Security.Server.Integration
 
         [Fact]
         public Task GetUsers_ReadSucceeds() => _tests.GetUsers_ReadSucceeds();
-        [Fact]
-        public Task UpdateUser_DefaultId_ThrowsValidationException() => _tests.UpdateUser_DefaultId_ThrowsValidationException();
 
         [Fact]
         public Task UpdateUser_FirstNameEmpty_ThrowsValidationException() => _tests.UpdateUser_FirstNameEmpty_ThrowsValidationException();

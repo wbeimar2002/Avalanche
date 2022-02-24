@@ -46,8 +46,6 @@ namespace Avalanche.Security.Server.Test.Repositories
 
         Task GetUsers_ReadSucceeds();
 
-        Task UpdateUser_DefaultId_ThrowsValidationException();
-
         Task UpdateUser_FirstNameEmpty_ThrowsValidationException();
 
         Task UpdateUser_FirstNameNull_ThrowsValidationException();

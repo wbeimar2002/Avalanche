@@ -25,7 +25,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Test\Avalanche.Security.Server.Test\Avalanche.Security.Server.Test.csproj" />
+    <ProjectReference Include="..\..\Test\Avalanche.Security.Server.Test\Avalanche.Security.Server.Test.csproj" />
   </ItemGroup>
 
 </Project>

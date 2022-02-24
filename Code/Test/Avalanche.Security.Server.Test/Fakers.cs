@@ -33,7 +33,6 @@ namespace Avalanche.Security.Server.Test
             .CustomInstantiator(f =>
                 new UpdateUserModel()
                 {
-                    Id = f.Person.Random.Number(100000, 999999),
                     FirstName = f.Person.FirstName,
                     LastName = f.Person.LastName,
                     UserName = f.Person.UserName

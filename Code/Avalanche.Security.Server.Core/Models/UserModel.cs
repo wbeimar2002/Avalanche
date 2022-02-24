@@ -30,6 +30,6 @@ namespace Avalanche.Security.Server.Core.Models
         public string Password { get; set; }
     }
 
-    public class UpdateUserModel : PersistedUserBase
+    public class UpdateUserModel : UserBase
     { }
 }

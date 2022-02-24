@@ -514,25 +514,6 @@ namespace Avalanche.Security.Server.Test.Repositories
             Assert.NotEqual(findMe.Password, actual.PasswordHash);
         }
 
-        public async Task UpdateUser_DefaultId_ThrowsValidationException()
-        {
-            // Arrange
-            var repository = GetUserRepository(_options, _output, out var _);
-            var user = Fakers.GetUpdateUserFaker().Generate();
-
-            // Set to default value
-            user.Id = 0;
-
-            // Act
-            var exception = await Record.ExceptionAsync(async () =>
-                 await repository.UpdateUser(user).ConfigureAwait(false)
-            ).ConfigureAwait(false);
-
-            // Assert
-            Assert.NotNull(exception);
-            _ = Assert.IsType<ValidationException>(exception);
-        }
-
         public async Task UpdateUser_FirstNameEmpty_ThrowsValidationException()
         {
             // Arrange
@@ -699,7 +680,6 @@ namespace Avalanche.Security.Server.Test.Repositories
                         _output.WriteLine($"Updating record with Id {toUpdate.Id} on Thread {Environment.CurrentManagedThreadId}");
                         var updateModel = new UpdateUserModel
                         {
-                            Id = toUpdate.Id,
                             UserName = toUpdate.UserName,
                             FirstName = toUpdate.FirstName,
                             LastName = toUpdate.LastName
@@ -733,7 +713,6 @@ namespace Avalanche.Security.Server.Test.Repositories
 
             var model = new UpdateUserModel
             {
-                Id = added[0].Id,
                 UserName = added[0].UserName,
                 FirstName = updateValue,
                 LastName = updateValue

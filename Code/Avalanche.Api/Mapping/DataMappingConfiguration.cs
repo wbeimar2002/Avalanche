@@ -31,9 +31,6 @@ namespace Avalanche.Api.Mapping
 
             CreateMap<UserModel, UpdateUserMessage>()
                 .ForMember(dest =>
-                    dest.Id,
-                    opt => opt.MapFrom(src => src.Id))
-                .ForMember(dest =>
                     dest.FirstName,
                     opt => opt.MapFrom(src => src.FirstName))
                 .ForMember(dest =>

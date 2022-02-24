@@ -193,15 +193,12 @@ namespace Avalanche.Security.Server.Core
             try
             {
                 var userToUpdate = await GetUserEntityAndThrowIfNull(update.UserName).ConfigureAwait(false);
-                userToUpdate.UserName = update.UserName;
+
+                // Only FirstName & LastName should be updated.  Never update UserName
                 userToUpdate.FirstName = update.FirstName;
                 userToUpdate.LastName = update.LastName;
 
                 _ = await UpdateUserEntity(userToUpdate).ConfigureAwait(false);
-            }
-            catch (DbUpdateException ex) when (ex.InnerException.Message.Contains("UNIQUE Constraint Failed", StringComparison.OrdinalIgnoreCase))
-            {
-                throw new DuplicateEntityException(typeof(UserEntity), update.Id.ToString(CultureInfo.InvariantCulture), nameof(UserEntity.UserName), update.UserName, ex);
             }
             catch (Exception ex)
             {
@@ -296,6 +293,7 @@ namespace Avalanche.Security.Server.Core
 
             return user;
         }
+
         private async Task<UserEntity> UpdateUserEntity(UserEntity userEntity)
         {
             try

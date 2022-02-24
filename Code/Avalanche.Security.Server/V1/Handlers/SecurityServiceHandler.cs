@@ -141,11 +141,6 @@ namespace Avalanche.Security.Server.V1.Handlers
                 await _usersManager.UpdateUser(_mapper.Map<UpdateUserModel>(request.Update)).ConfigureAwait(false);
                 return new Empty();
             }
-            catch (DuplicateEntityException ex)
-            {
-                var status = GetDuplicatedStatus(ex);
-                throw status.ToException();
-            }
             catch (Exception ex)
             {
                 throw ex.LogAndReturnGrpcException(_logger);
@@ -190,7 +185,7 @@ namespace Avalanche.Security.Server.V1.Handlers
         }
 
         private static Google.Rpc.Status GetDuplicatedStatus(DuplicateEntityException ex) =>
-           new Google.Rpc.Status
+           new()
            {
                Code = (int)StatusCode.AlreadyExists,
                Message = ex.Message

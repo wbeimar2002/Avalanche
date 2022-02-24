@@ -43,7 +43,6 @@ namespace Avalanche.Security.Server.V1.Mappings
 
                 return new UpdateUserModel()
                 {
-                    Id = source.Id,
                     FirstName = source.FirstName,
                     LastName = source.LastName,
                     UserName = source.UserName

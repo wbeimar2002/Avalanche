@@ -5,6 +5,6 @@ namespace Avalanche.Security.Server.Core.Validators
 {
     public class UpdateUserValidator : AbstractValidator<UpdateUserModel>
     {
-        public UpdateUserValidator() => Include(new PersistedUserValidator());
+        public UpdateUserValidator() => Include(new UserBaseValidator());
     }
 }
