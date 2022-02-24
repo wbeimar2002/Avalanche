@@ -185,7 +185,7 @@ namespace Avalanche.Security.Server.V1.Handlers
         }
 
         private static Google.Rpc.Status GetDuplicatedStatus(DuplicateEntityException ex) =>
-           new()
+           new Google.Rpc.Status
            {
                Code = (int)StatusCode.AlreadyExists,
                Message = ex.Message
