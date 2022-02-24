@@ -10,15 +10,19 @@
   <ItemGroup>
     <Compile Remove="logs\**" />
     <Compile Remove="Managers\**" />
+    <Compile Remove="Mappings\**" />
     <Compile Remove="V1\Extensions\**" />
     <Content Remove="logs\**" />
     <Content Remove="Managers\**" />
+    <Content Remove="Mappings\**" />
     <Content Remove="V1\Extensions\**" />
     <EmbeddedResource Remove="logs\**" />
     <EmbeddedResource Remove="Managers\**" />
+    <EmbeddedResource Remove="Mappings\**" />
     <EmbeddedResource Remove="V1\Extensions\**" />
     <None Remove="logs\**" />
     <None Remove="Managers\**" />
+    <None Remove="Mappings\**" />
     <None Remove="V1\Extensions\**" />
   </ItemGroup>
 
@@ -53,7 +57,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="V1\Mappings\" />
     <Folder Include="V1\Protos\" />
   </ItemGroup>
 

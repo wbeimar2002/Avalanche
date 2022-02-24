@@ -7,9 +7,9 @@ namespace Avalanche.Security.Server.Core.Validators
     {
         public UserBaseValidator()
         {
-            RuleFor(x => x.FirstName).NotNull().NotEmpty().Length(1, 64);
-            RuleFor(x => x.LastName).NotNull().NotEmpty().Length(1, 64);
-            RuleFor(x => x.UserName).NotNull().NotEmpty().Length(1, 64);
+            _ = RuleFor(x => x.FirstName).NotNull().NotEmpty().Length(1, 64);
+            _ = RuleFor(x => x.LastName).NotNull().NotEmpty().Length(1, 64);
+            _ = RuleFor(x => x.UserName).NotNull().NotEmpty().Length(1, 64);
         }
     }
 }
