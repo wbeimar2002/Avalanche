@@ -4,7 +4,7 @@ using Avalanche.Security.Server.Core.Models;
 
 using static Ism.Utility.Core.Preconditions;
 
-namespace Avalanche.Security.Server.Mappings
+namespace Avalanche.Security.Server.V1.Mappings
 {
     public class UserMapProfile : Profile
     {

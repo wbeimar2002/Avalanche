@@ -75,7 +75,7 @@ namespace Avalanche.Security.Server.Test
         public static Mock<IPasswordHasher> GetMockPasswordHasher()
         {
             var mock = new Mock<IPasswordHasher>();
-            mock.Setup(x => x.HashPassword(It.IsAny<string>())).Returns(MockHashedPassword);
+            _ = mock.Setup(x => x.HashPassword(It.IsAny<string>())).Returns(MockHashedPassword);
             return mock;
         }
 

@@ -7,8 +7,8 @@ namespace Avalanche.Security.Server.Core.Validators
     {
         public UpdateUserPasswordValidator()
         {
-            RuleFor(x => x.UserName).NotNull().NotEmpty().Length(1, 64);
-            RuleFor(x => x.Password).NotNull().NotEmpty();
+            _ = RuleFor(x => x.UserName).NotNull().NotEmpty().Length(1, 64);
+            _ = RuleFor(x => x.Password).NotNull().NotEmpty();
         }
     }
 }

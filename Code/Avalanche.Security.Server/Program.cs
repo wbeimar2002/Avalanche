@@ -47,4 +47,3 @@ namespace Avalanche.Security.Server
         }
     }
 }
-

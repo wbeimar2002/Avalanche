@@ -8,7 +8,7 @@ namespace Avalanche.Security.Server.Core.Validators
         public PersistedUserValidator()
         {
             Include(new UserBaseValidator());
-            RuleFor(x => x.Id).NotNull().NotEmpty(); // NotEmpty include default value for non-nullable types (e.g. 0 for int)
+            _ = RuleFor(x => x.Id).NotNull().NotEmpty(); // NotEmpty include default value for non-nullable types (e.g. 0 for int)
         }
     }
 }

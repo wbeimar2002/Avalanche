@@ -83,18 +83,18 @@ namespace Avalanche.Security.Server
 
             if (env.IsDevelopment())
             {
-                app.UseDeveloperExceptionPage();
+                _ = app.UseDeveloperExceptionPage();
             }
 
-            app.UseSerilogRequestLogging();
-            app.UseRouting();
+            _ = app.UseSerilogRequestLogging();
+            _ = app.UseRouting();
 
-            app.UseEndpoints(endpoints =>
-            {
-                _ = endpoints.MapControllers();
+            _ = app.UseEndpoints(endpoints =>
+              {
+                  _ = endpoints.MapControllers();
 
-                _ = endpoints.MapGrpcService<SecurityServiceHandler>();
-            });
+                  _ = endpoints.MapGrpcService<SecurityServiceHandler>();
+              });
         }
 
         private string GetDatabaseLocation(string database) => Path.Combine(Path.GetDirectoryName(typeof(Startup).Assembly.Location) ?? _environment.ContentRootPath, "database", database);

@@ -7,7 +7,6 @@ using Avalanche.Security.Server.Core.Models;
 using Avalanche.Shared.Infrastructure.Security.Hashing;
 using Moq;
 using Xunit;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace Avalanche.Security.Server.Test.Managers
 {

@@ -147,7 +147,7 @@ namespace Avalanche.Security.Server.Core
         {
             var baseFtsQuery = _context.UsersFts;
             IQueryable<UserEntity> userQuery;
-            var searchExpression = (keyword?.Length ?? 0) > 2 ? FormatAsMatchExpression(keyword) : EmptySearchExpression;
+            var searchExpression = keyword?.Length > 2 ? FormatAsMatchExpression(keyword) : EmptySearchExpression;
 
             _logger.LogDebug($"Search Expression = {searchExpression}");
 

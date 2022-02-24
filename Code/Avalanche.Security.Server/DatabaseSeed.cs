@@ -1,9 +1,10 @@
 using System.Collections.Generic;
 using System.Linq;
+using Avalanche.Security.Server.Core;
 using Avalanche.Security.Server.Core.Entities;
 using Avalanche.Shared.Infrastructure.Security.Hashing;
 
-namespace Avalanche.Security.Server.Core
+namespace Avalanche.Security.Server
 {
     public class DatabaseSeed
     {
@@ -20,7 +21,7 @@ namespace Avalanche.Security.Server.Core
                 };
 
                 context.Users.AddRange(users);
-                context.SaveChanges();
+                _ = context.SaveChanges();
             }
         }
     }
