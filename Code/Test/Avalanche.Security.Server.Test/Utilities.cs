@@ -107,6 +107,7 @@ namespace Avalanche.Security.Server.Test
                 dbWriter.Object,
                 new NewUserValidator(),
                 new UpdateUserValidator(),
+                new UpdateUserPasswordValidator(),
                 GetMockPasswordHasher().Object
             );
         }
@@ -134,6 +135,7 @@ namespace Avalanche.Security.Server.Test
                 databaseWriter,
                 new NewUserValidator(),
                 new UpdateUserValidator(),
+                new UpdateUserPasswordValidator(),
                 GetMockPasswordHasher().Object
             );
         }

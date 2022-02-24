@@ -104,13 +104,10 @@ namespace Avalanche.Security.Server.Test.Repositories
 #pragma warning restore S2699 // Tests should include assertions
 
         [Fact]
-        public Task UpdateUser_PasswordEmpty_ThrowsValidationException() => _tests.UpdateUser_PasswordEmpty_ThrowsValidationException();
-
-        [Fact]
-        public Task UpdateUser_PasswordNull_ThrowsValidationException() => _tests.UpdateUser_PasswordNull_ThrowsValidationException();
-
-        [Fact]
         public Task UpdateUser_Succeeds() => _tests.UpdateUser_Succeeds();
+
+        [Fact]
+        public Task UpdateUser_UnexpectedError_LogsExceptionAndThrows() => _tests.UpdateUser_UnexpectedError_LogsExceptionAndThrows();
 
         [Fact]
         public Task UpdateUser_UserNameEmpty_ThrowsValidationException() => _tests.UpdateUser_UserNameEmpty_ThrowsValidationException();
@@ -126,6 +123,17 @@ namespace Avalanche.Security.Server.Test.Repositories
 
         [Fact]
         public Task UpdateUser_UserNull_Throws() => _tests.UpdateUser_UserNull_Throws();
+        [Fact]
+        public Task UpdateUserPassword_PasswordEmpty_ThrowsValidationException() => _tests.UpdateUserPassword_PasswordEmpty_ThrowsValidationException();
+
+        [Fact]
+        public Task UpdateUserPassword_PasswordNull_ThrowsValidationException() => _tests.UpdateUserPassword_PasswordNull_ThrowsValidationException();
+
+        [Fact]
+        public Task UpdateUserPassword_Succeeds() => _tests.UpdateUserPassword_Succeeds();
+        [Fact]
+        public Task UpdateUserPassword_UnexpectedError_LogsExceptionAndThrows() => _tests.UpdateUserPassword_UnexpectedError_LogsExceptionAndThrows();
+
         private static DbContextOptions<SecurityDbContext> GetInMemoryDbContextOptions()
         {
             // In-memory database only exists while the connection is open

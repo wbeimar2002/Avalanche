@@ -11,6 +11,8 @@ namespace Avalanche.Security.Server.Core.Models
     {
         /// <summary>
         /// Hashed Password from persistence
+        /// Used only to compare with provided password to verify login.
+        /// Does not leave security service
         /// </summary>
         public string PasswordHash { get; set; }
     }

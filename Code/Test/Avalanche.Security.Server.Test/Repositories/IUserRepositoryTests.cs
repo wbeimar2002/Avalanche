@@ -18,29 +18,34 @@ namespace Avalanche.Security.Server.Test.Repositories
 
         Task AddUser_LastNameTooLong_ThrowsValidationException();
 
-        Task UpdateUser_MultithreadedUpdates_Succeeds();
-
         Task AddUser_MultithreadedWrites_Succeeds();
 
         Task AddUser_PasswordEmpty_ThrowsValidationException();
 
         Task AddUser_PasswordNull_ThrowsValidationException();
+
         Task AddUser_UnexpectedError_LogsExceptionAndThrows();
 
         Task AddUser_UserNameEmpty_ThrowsValidationException();
 
         Task AddUser_UserNameNull_ThrowsValidationException();
+
         Task AddUser_UserNameTooLong_ThrowsValidationException();
+
         Task AddUser_WriteSucceeds();
+
         Task DeleteUser_DefaultUserId_Throws();
 
         Task DeleteUser_DeleteSucceeds();
+
         Task DeleteUser_LogsExceptionAndThrows();
+
         Task GetAllUsers_ReadSucceeds();
 
         Task GetUser_MultithreadedReadsSucceed();
 
         Task GetUsers_ReadSucceeds();
+
         Task UpdateUser_DefaultId_ThrowsValidationException();
 
         Task UpdateUser_FirstNameEmpty_ThrowsValidationException();
@@ -55,11 +60,13 @@ namespace Avalanche.Security.Server.Test.Repositories
 
         Task UpdateUser_LastNameTooLong_ThrowsValidationException();
 
-        Task UpdateUser_PasswordEmpty_ThrowsValidationException();
-
-        Task UpdateUser_PasswordNull_ThrowsValidationException();
-
+        Task UpdateUser_MultithreadedUpdates_Succeeds();
         Task UpdateUser_Succeeds();
+
+        // Task UpdateUser_DuplicateUserName_Throws();
+
+        Task UpdateUser_UnexpectedError_LogsExceptionAndThrows();
+
         Task UpdateUser_UserNameEmpty_ThrowsValidationException();
 
         Task UpdateUser_UserNameNull_ThrowsValidationException();
@@ -69,6 +76,13 @@ namespace Avalanche.Security.Server.Test.Repositories
         Task UpdateUser_UserNotExist_Throws();
 
         Task UpdateUser_UserNull_Throws();
+
+        Task UpdateUserPassword_PasswordEmpty_ThrowsValidationException();
+
+        Task UpdateUserPassword_PasswordNull_ThrowsValidationException();
+
+        Task UpdateUserPassword_Succeeds();
+        Task UpdateUserPassword_UnexpectedError_LogsExceptionAndThrows();
     }
 #pragma warning restore CA1707 // Identifiers should not contain underscores
 }

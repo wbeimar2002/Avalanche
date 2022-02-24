@@ -105,13 +105,10 @@ namespace Avalanche.Security.Server.Integration
         public Task UpdateUser_MultithreadedUpdates_Succeeds() => _tests.UpdateUser_MultithreadedUpdates_Succeeds();
 
         [Fact]
-        public Task UpdateUser_PasswordEmpty_ThrowsValidationException() => _tests.UpdateUser_PasswordEmpty_ThrowsValidationException();
-
-        [Fact]
-        public Task UpdateUser_PasswordNull_ThrowsValidationException() => _tests.UpdateUser_PasswordNull_ThrowsValidationException();
-
-        [Fact]
         public Task UpdateUser_Succeeds() => _tests.UpdateUser_Succeeds();
+
+        [Fact]
+        public Task UpdateUser_UnexpectedError_LogsExceptionAndThrows() => _tests.UpdateUser_UnexpectedError_LogsExceptionAndThrows();
 
         [Fact]
         public Task UpdateUser_UserNameEmpty_ThrowsValidationException() => _tests.UpdateUser_UserNameEmpty_ThrowsValidationException();
@@ -127,6 +124,18 @@ namespace Avalanche.Security.Server.Integration
 
         [Fact]
         public Task UpdateUser_UserNull_Throws() => _tests.UpdateUser_UserNull_Throws();
+        [Fact]
+        public Task UpdateUserPassword_PasswordEmpty_ThrowsValidationException() => _tests.UpdateUserPassword_PasswordEmpty_ThrowsValidationException();
+
+        [Fact]
+        public Task UpdateUserPassword_PasswordNull_ThrowsValidationException() => _tests.UpdateUserPassword_PasswordNull_ThrowsValidationException();
+
+        [Fact]
+        public Task UpdateUserPassword_Succeeds() => _tests.UpdateUserPassword_Succeeds();
+
+        [Fact]
+        public Task UpdateUserPassword_UnexpectedError_LogsExceptionAndThrows() => _tests.UpdateUserPassword_UnexpectedError_LogsExceptionAndThrows();
+
         private static DbContextOptions<SecurityDbContext> GetInMemoryDbContextOptions(ITestOutputHelper output)
         {
             var databasePath = $"users_storagetests_{ DateTime.Now.Ticks}.db";

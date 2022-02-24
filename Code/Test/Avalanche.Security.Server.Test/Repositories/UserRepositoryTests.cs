@@ -702,8 +702,7 @@ namespace Avalanche.Security.Server.Test.Repositories
                             Id = toUpdate.Id,
                             UserName = toUpdate.UserName,
                             FirstName = toUpdate.FirstName,
-                            LastName = toUpdate.LastName,
-                            Password = $"{DateTime.Now.Ticks}-{i}",
+                            LastName = toUpdate.LastName
                         };
 
                         await repo.UpdateUser(updateModel).ConfigureAwait(false);
@@ -718,50 +717,11 @@ namespace Avalanche.Security.Server.Test.Repositories
             }
         }
 
-        public async Task UpdateUser_PasswordEmpty_ThrowsValidationException()
-        {
-            // Arrange
-            var repository = GetUserRepository(_options, _output, out var _);
-            var user = Fakers.GetUpdateUserFaker().Generate();
-
-            // Empty out required property
-            user.Password = "";
-
-            // Act
-            var exception = await Record.ExceptionAsync(async () =>
-                 await repository.UpdateUser(user).ConfigureAwait(false)
-            ).ConfigureAwait(false);
-
-            // Assert
-            Assert.NotNull(exception);
-            _ = Assert.IsType<ValidationException>(exception);
-        }
-
-        public async Task UpdateUser_PasswordNull_ThrowsValidationException()
-        {
-            // Arrange
-            var repository = GetUserRepository(_options, _output, out var _);
-            var user = Fakers.GetUpdateUserFaker().Generate();
-
-            // Null out required property
-#pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
-            user.Password = null;
-#pragma warning restore CS8625 // Cannot convert null literal to non-nullable reference type.
-
-            // Act
-            var exception = await Record.ExceptionAsync(async () =>
-                 await repository.UpdateUser(user).ConfigureAwait(false)
-            ).ConfigureAwait(false);
-
-            // Assert
-            Assert.NotNull(exception);
-            _ = Assert.IsType<ValidationException>(exception);
-        }
-
         public async Task UpdateUser_Succeeds()
         {
             // Arrange
             const int quantity = 10;
+            const string updateValue = "Updated";
             var repository = GetUserRepository(_options, _output, out _);
             var users = Fakers.GetNewUserFaker().Generate(quantity);
             var added = new List<UserModel>();
@@ -775,9 +735,8 @@ namespace Avalanche.Security.Server.Test.Repositories
             {
                 Id = added[0].Id,
                 UserName = added[0].UserName,
-                FirstName = added[0].FirstName,
-                LastName = added[0].LastName,
-                Password = "new Password"
+                FirstName = updateValue,
+                LastName = updateValue
             };
 
             // Act
@@ -797,11 +756,26 @@ namespace Avalanche.Security.Server.Test.Repositories
             Assert.Equal(model.UserName, updated.UserName);
             Assert.Equal(model.FirstName, updated.FirstName);
             Assert.Equal(model.LastName, updated.LastName);
-            Assert.Equal(readEntity.PasswordHash, updated.PasswordHash);
 
-            // Ensure that password was hashed on update
-            Assert.NotEqual(model.Password, updated.PasswordHash);
-            Assert.Equal(MockHashedPassword, updated.PasswordHash);
+            // Assert password is unchanged by update
+            Assert.Equal(added[0].PasswordHash, updated.PasswordHash);
+        }
+
+        public async Task UpdateUser_UnexpectedError_LogsExceptionAndThrows()
+        {
+            // Arrange
+            var repository = GetBuggyUserRepository(_options, _output, out var logger);
+            var update = Fakers.GetUpdateUserFaker().Generate();
+
+            // Act
+            var exception = await Record.ExceptionAsync(async () =>
+                 await repository.UpdateUser(update).ConfigureAwait(false)
+            ).ConfigureAwait(false);
+
+            // Assert
+            Assert.NotNull(exception);
+            _ = Assert.IsType<InvalidOperationException>(exception);
+            logger.AssertLoggerCalled(Microsoft.Extensions.Logging.LogLevel.Error, Times.Once());
         }
 
         public async Task UpdateUser_UserNameEmpty_ThrowsValidationException()
@@ -890,6 +864,103 @@ namespace Avalanche.Security.Server.Test.Repositories
             // Assert
             Assert.NotNull(exception);
             _ = Assert.IsType<ArgumentNullException>(exception);
+        }
+
+        public async Task UpdateUserPassword_PasswordEmpty_ThrowsValidationException()
+        {
+            // Arrange
+            var repository = GetUserRepository(_options, _output, out var _);
+            var update = Fakers.GetUpdateUserPasswordFaker().Generate();
+
+            // Empty out required property
+            update.Password = "";
+
+            // Act
+            var exception = await Record.ExceptionAsync(async () =>
+                 await repository.UpdateUserPassword(update).ConfigureAwait(false)
+            ).ConfigureAwait(false);
+
+            // Assert
+            Assert.NotNull(exception);
+            _ = Assert.IsType<ValidationException>(exception);
+        }
+
+        public async Task UpdateUserPassword_PasswordNull_ThrowsValidationException()
+        {
+            // Arrange
+            var repository = GetUserRepository(_options, _output, out var _);
+            var update = Fakers.GetUpdateUserPasswordFaker().Generate();
+
+            // Null out required property
+#pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
+            update.Password = null;
+#pragma warning restore CS8625 // Cannot convert null literal to non-nullable reference type.
+
+            // Act
+            var exception = await Record.ExceptionAsync(async () =>
+                 await repository.UpdateUserPassword(update).ConfigureAwait(false)
+            ).ConfigureAwait(false);
+
+            // Assert
+            Assert.NotNull(exception);
+            _ = Assert.IsType<ValidationException>(exception);
+        }
+        public async Task UpdateUserPassword_Succeeds()
+        {
+            // Arrange
+            const int quantity = 10;
+            const string updateValue = "Updated";
+            var repository = GetUserRepository(_options, _output, out _);
+            var users = Fakers.GetNewUserFaker().Generate(quantity);
+            var added = new List<UserModel>();
+
+            foreach (var saveuser in users)
+            {
+                added.Add(await repository.AddUser(saveuser).ConfigureAwait(false));
+            }
+
+            var model = new UpdateUserPasswordModel
+            {
+                UserName = added[0].UserName,
+                Password = updateValue
+            };
+
+            // Act
+            await repository.UpdateUserPassword(model).ConfigureAwait(false);
+
+            // Assert
+            using var context = new SecurityDbContext(_options);
+            var readEntity = await context.Users
+                .FirstAsync(x => x.UserName == model.UserName)
+                .ConfigureAwait(false);
+
+            var mapper = GetMapper(typeof(SecurityDbContext));
+            var updated = mapper.Map<UserModel>(readEntity);
+
+            Assert.NotNull(updated);
+            Assert.NotNull(updated.UserName);
+            Assert.Equal(model.UserName, updated.UserName);
+            Assert.Equal(readEntity.PasswordHash, updated.PasswordHash);
+
+            // Ensure that password was hashed on update
+            Assert.NotEqual(model.Password, updated.PasswordHash);
+            Assert.Equal(MockHashedPassword, updated.PasswordHash);
+        }
+        public async Task UpdateUserPassword_UnexpectedError_LogsExceptionAndThrows()
+        {
+            // Arrange
+            var repository = GetBuggyUserRepository(_options, _output, out var logger);
+            var update = Fakers.GetUpdateUserPasswordFaker().Generate();
+
+            // Act
+            var exception = await Record.ExceptionAsync(async () =>
+                 await repository.UpdateUserPassword(update).ConfigureAwait(false)
+            ).ConfigureAwait(false);
+
+            // Assert
+            Assert.NotNull(exception);
+            _ = Assert.IsType<InvalidOperationException>(exception);
+            logger.AssertLoggerCalled(Microsoft.Extensions.Logging.LogLevel.Error, Times.Once());
         }
     }
 }

@@ -36,6 +36,14 @@ namespace Avalanche.Security.Server.Test
                     Id = f.Person.Random.Number(100000, 999999),
                     FirstName = f.Person.FirstName,
                     LastName = f.Person.LastName,
+                    UserName = f.Person.UserName
+                });
+
+        public static Faker<UpdateUserPasswordModel> GetUpdateUserPasswordFaker() =>
+            new Faker<UpdateUserPasswordModel>()
+            .CustomInstantiator(f =>
+                new UpdateUserPasswordModel()
+                {
                     UserName = f.Person.UserName,
                     Password = f.Random.AlphaNumeric(64)
                 });

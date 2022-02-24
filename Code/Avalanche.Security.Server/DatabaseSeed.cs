@@ -7,6 +7,7 @@ namespace Avalanche.Security.Server.Core
 {
     public class DatabaseSeed
     {
+        // TODO: Move to dbup migration so plaintext passwords are not included in source
         public static void Seed(SecurityDbContext context, IPasswordHasher passwordHasher)
         {
             if (!context.Users.Any())

@@ -46,7 +46,7 @@ namespace Avalanche.Security.Server.Core.Managers
         public Task UpdateUserPassword(UpdateUserPasswordModel passwordUpdate) =>
             _userRepository.UpdateUserPassword(passwordUpdate);
 
-        public async Task<(bool, UserModel?)> VerifyUserLogin(string userName, string password)
+        public async Task<(bool LoginValid, UserModel? User)> VerifyUserLogin(string userName, string password)
         {
             var user = await _userRepository.GetUser(userName).ConfigureAwait(false);
             if (user == null)
@@ -55,8 +55,13 @@ namespace Avalanche.Security.Server.Core.Managers
             }
 
             var valid = _passwordHasher.PasswordMatches(password, user.PasswordHash);
+            if (valid)
+            {
+                return (valid, user);
+            }
 
-            return (valid, user);
+            // Make sure to return null User if password doesn't match
+            return (false, null);
         }
     }
 }

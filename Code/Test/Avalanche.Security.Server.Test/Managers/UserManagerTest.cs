@@ -7,6 +7,7 @@ using Avalanche.Security.Server.Core.Models;
 using Avalanche.Shared.Infrastructure.Security.Hashing;
 using Moq;
 using Xunit;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace Avalanche.Security.Server.Test.Managers
 {
@@ -103,17 +104,101 @@ namespace Avalanche.Security.Server.Test.Managers
 
         {
             // Arrange
-            var user = Fakers.GetUpdateUserFaker().Generate();
+            var update = Fakers.GetUpdateUserFaker().Generate();
             var repoMoq = new Mock<IUserRepository>();
             var hashMoq = new Mock<IPasswordHasher>();
-            _ = repoMoq.Setup(x => x.UpdateUser(user)).Returns(Task.FromResult(user));
+            _ = repoMoq.Setup(x => x.UpdateUser(update)).Returns(Task.CompletedTask);
             var usersManager = new UsersManager(repoMoq.Object, hashMoq.Object);
 
             // Act
-            await usersManager.UpdateUser(user).ConfigureAwait(false);
+            await usersManager.UpdateUser(update).ConfigureAwait(false);
 
             // Assert
-            repoMoq.Verify(x => x.UpdateUser(user), Times.Once());
+            repoMoq.Verify(x => x.UpdateUser(update), Times.Once());
+        }
+
+        [Fact]
+        public async Task UserManager_UpdateUserPassword_Succeeds()
+
+        {
+            // Arrange
+            var update = Fakers.GetUpdateUserPasswordFaker().Generate();
+            var repoMoq = new Mock<IUserRepository>();
+            var hashMoq = new Mock<IPasswordHasher>();
+            _ = repoMoq.Setup(x => x.UpdateUserPassword(update)).Returns(Task.CompletedTask);
+            var usersManager = new UsersManager(repoMoq.Object, hashMoq.Object);
+
+            // Act
+            await usersManager.UpdateUserPassword(update).ConfigureAwait(false);
+
+            // Assert
+            repoMoq.Verify(x => x.UpdateUserPassword(update), Times.Once());
+        }
+
+        [Fact]
+        public async Task UserManager_VerifyUserLogin_LoginFails_WrongPassword()
+        {
+            // Arrange
+            const string providedPassword = "UserProvidedPassword";
+            var user = Fakers.GetUserFaker().Generate();
+            var repoMoq = new Mock<IUserRepository>();
+            var hashMoq = new Mock<IPasswordHasher>();
+            _ = repoMoq.Setup(x => x.GetUser(user.UserName)).Returns(Task.FromResult(user)!);
+
+            _ = hashMoq.Setup(x => x.PasswordMatches(providedPassword, user.PasswordHash)).Returns(false);
+            var usersManager = new UsersManager(repoMoq.Object, hashMoq.Object);
+
+            // Act
+            var (loginValid, userResult) = await usersManager.VerifyUserLogin(user.UserName, providedPassword).ConfigureAwait(false);
+
+            // Assert
+            hashMoq.Verify(x => x.PasswordMatches(providedPassword, user.PasswordHash), Times.Once());
+            Assert.False(loginValid);
+            Assert.Null(userResult);
+        }
+
+        [Fact]
+        public async Task UserManager_VerifyUuserPassword_LoginSucceeds()
+        {
+            // Arrange
+            const string providedPassword = "UserProvidedPassword";
+            var user = Fakers.GetUserFaker().Generate();
+            var repoMoq = new Mock<IUserRepository>();
+            var hashMoq = new Mock<IPasswordHasher>();
+            _ = repoMoq.Setup(x => x.GetUser(user.UserName)).Returns(Task.FromResult(user)!);
+
+            _ = hashMoq.Setup(x => x.PasswordMatches(providedPassword, user.PasswordHash)).Returns(true);
+            var usersManager = new UsersManager(repoMoq.Object, hashMoq.Object);
+
+            // Act
+            var (loginValid, userResult) = await usersManager.VerifyUserLogin(user.UserName, providedPassword).ConfigureAwait(false);
+
+            // Assert
+            hashMoq.Verify(x => x.PasswordMatches(providedPassword, user.PasswordHash), Times.Once());
+            Assert.True(loginValid);
+            Assert.NotNull(userResult);
+            Assert.Equal(user, userResult);
+        }
+
+        [Fact]
+        public async Task UserManager_VerifyUserLogin_LoginFails_NoUser()
+        {
+            // Arrange
+            const string providedPassword = "UserProvidedPassword";
+            var user = Fakers.GetUserFaker().Generate();
+            var repoMoq = new Mock<IUserRepository>();
+            var hashMoq = new Mock<IPasswordHasher>();
+            _ = repoMoq.Setup(x => x.GetUser(user.UserName)).Returns(Task.FromResult((UserModel?)null)!);
+
+            var usersManager = new UsersManager(repoMoq.Object, hashMoq.Object);
+
+            // Act
+            var (loginValid, userResult) = await usersManager.VerifyUserLogin(user.UserName, providedPassword).ConfigureAwait(false);
+
+            // Assert
+            hashMoq.Verify(x => x.PasswordMatches(It.IsAny<string>(), It.IsAny<string>()), Times.Never());
+            Assert.False(loginValid);
+            Assert.Null(userResult);
         }
 #pragma warning restore CA1707 // Identifiers should not contain underscores
     }

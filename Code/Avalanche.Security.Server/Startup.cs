@@ -76,8 +76,8 @@ namespace Avalanche.Security.Server
 
             _ = dbManager.UpgradeDatabase(GetSecurityDatabaseLocation(), typeof(SecurityDbContext).Assembly);
 
-            var context = app.ApplicationServices.GetService<SecurityDbContext>();
-            var passwordHasher = app.ApplicationServices.GetService<IPasswordHasher>();
+            var context = app.ApplicationServices.GetRequiredService<SecurityDbContext>();
+            var passwordHasher = app.ApplicationServices.GetRequiredService<IPasswordHasher>();
 
             DatabaseSeed.Seed(context, passwordHasher);
 
