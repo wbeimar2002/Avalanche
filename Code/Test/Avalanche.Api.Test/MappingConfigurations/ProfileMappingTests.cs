@@ -24,7 +24,6 @@ namespace Avalanche.Api.Tests.MappingConfigurations
             {
                 cfg.AddProfile(new PatientMappingConfiguration());
                 cfg.AddProfile(new DataMappingConfiguration());
-                cfg.AddProfile(new MaintenanceMappingConfiguration());
                 cfg.AddProfile(new MediaMappingConfiguration());
                 cfg.AddProfile(new ProceduresMappingConfiguration());
                 cfg.AddProfile(new RecorderMappingConfiguration());
@@ -64,12 +63,6 @@ namespace Avalanche.Api.Tests.MappingConfigurations
         public void MediaMappingConfiguration_IsValid()
         {
             AssertProfileIsValid<MediaMappingConfiguration>();
-        }
-
-        [Test]
-        public void MaintenanceMappingConfiguration_IsValid()
-        {
-            AssertProfileIsValid<MaintenanceMappingConfiguration>();
         }
 
         [Test]

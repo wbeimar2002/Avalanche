@@ -45,12 +45,13 @@ namespace Avalanche.Api
             var hostLogger = CreateDefaultHostLogger(typeof(Program));
             var configClient = ConfigurationServiceSecureClient.FromEnvironment(hostLogger);
 
-            return CreateInsecureIsmHostBuilder<Startup>(
+            return CreateIsmHostBuilder<Startup>(
                     args,
                     hostLogger,
                     typeof(Program).Assembly,
                     GetConfigurationServiceRequests(),
                     configClient,
+                    false,
                     HttpProtocols.Http1AndHttp2
                 );
         }

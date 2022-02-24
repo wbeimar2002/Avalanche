@@ -1,6 +1,6 @@
 using Ism.Library.Client.V1;
 using Ism.Library.V1.Protos;
-
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 
@@ -38,12 +38,6 @@ namespace Avalanche.Api.Services.Health
         public async Task DeleteActiveProcedureMediaItems(DeleteActiveProcedureMediaItemsRequest deleteActiveProcedureMediaItemsRequest) =>
             await _activeClient.DeleteActiveProcedureMediaItems(deleteActiveProcedureMediaItemsRequest).ConfigureAwait(false);
 
-        public async Task<ReindexRepositoryResponse> ReindexRepository(string repositoryName) =>
-            await _managerServiceClient.ReindexRepository(new ReindexRepositoryRequest()
-            {
-                RepositoryName = repositoryName
-            }).ConfigureAwait(false);
-
         public async Task<GetFinishedProcedureResponse> GetFinishedProcedure(GetFinishedProcedureRequest getFinishedProcedureRequest) =>
             await _serviceSearchClient.GetFinishedProcedure(getFinishedProcedureRequest).ConfigureAwait(false);
 
@@ -55,5 +49,11 @@ namespace Avalanche.Api.Services.Health
 
         public async Task GenerateProcedureZip(GenerateProcedureZipRequest procedureZipRequest) =>
             await _managerServiceClient.GenerateProcedureZip(procedureZipRequest).ConfigureAwait(false);
+
+        public async Task<GetPhysiciansSearchResponse> GetPhysicians(GetPhysiciansSearchRequest getPhysiciansSearchRequest) =>
+            await _serviceSearchClient.GetPhysicians(getPhysiciansSearchRequest).ConfigureAwait(false);
+        public async Task ShareProcedure(ShareProcedureRequest shareProcedureRequest) =>
+            await _managerServiceClient.ShareProcedure(shareProcedureRequest).ConfigureAwait(false);
+
     }
 }

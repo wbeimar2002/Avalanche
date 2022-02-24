@@ -31,6 +31,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Avalanche.Security.Server.C
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Avalanche.Security.Server", "Avalanche.Security.Server\Avalanche.Security.Server.csproj", "{4EDF525A-1D06-4E28-B303-36CD08EB4F7E}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Avalanche.Security.Server.Test", "Test\Avalanche.Security.Server.Test\Avalanche.Security.Server.Test.csproj", "{49B431F1-9AE6-43FB-AF6A-068FBBF4ED62}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -80,6 +82,12 @@ Global
 		{4EDF525A-1D06-4E28-B303-36CD08EB4F7E}.DebugLocal|Any CPU.Build.0 = DebugLocal|Any CPU
 		{4EDF525A-1D06-4E28-B303-36CD08EB4F7E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4EDF525A-1D06-4E28-B303-36CD08EB4F7E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{49B431F1-9AE6-43FB-AF6A-068FBBF4ED62}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{49B431F1-9AE6-43FB-AF6A-068FBBF4ED62}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{49B431F1-9AE6-43FB-AF6A-068FBBF4ED62}.DebugLocal|Any CPU.ActiveCfg = DebugLocal|Any CPU
+		{49B431F1-9AE6-43FB-AF6A-068FBBF4ED62}.DebugLocal|Any CPU.Build.0 = DebugLocal|Any CPU
+		{49B431F1-9AE6-43FB-AF6A-068FBBF4ED62}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{49B431F1-9AE6-43FB-AF6A-068FBBF4ED62}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -92,6 +100,7 @@ Global
 		{3FF8E815-DC75-47AF-8DED-0DA18204724B} = {01A1893A-FC5E-4F22-A827-E4CF5FCCABCE}
 		{8A8605DB-3740-469A-BA18-CB825723D63D} = {01A1893A-FC5E-4F22-A827-E4CF5FCCABCE}
 		{4EDF525A-1D06-4E28-B303-36CD08EB4F7E} = {01A1893A-FC5E-4F22-A827-E4CF5FCCABCE}
+		{49B431F1-9AE6-43FB-AF6A-068FBBF4ED62} = {907645CA-DE39-41DE-9B95-3C233CE26ABA}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {054B7929-176A-44EB-BF77-6C11E9C160D7}

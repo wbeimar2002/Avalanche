@@ -86,6 +86,11 @@ namespace Avalanche.Api
             var isDevice = IsDevice(services);
 
             services.AddControllers();
+
+            services
+                .AddReverseProxy()
+                .LoadFromConfig(_configuration.GetSection("ReverseProxy"));
+
             services.AddSignalR();
             services.AddMvc().AddNewtonsoftJson();
             services.AddHttpContextAccessor();
@@ -102,13 +107,13 @@ namespace Avalanche.Api
             // Transient
             if (isDevice)
             {
-                services.AddTransient<IDataManager, DeviceDataManager>();
                 services.AddTransient<IRoutingManager, RoutingManager>();
                 services.AddTransient<IWebRTCManager, WebRTCManager>();
                 services.AddTransient<IRecordingManager, RecordingManager>();
                 services.AddSingleton<IPgsTimeoutManager, PgsTimeoutManager>(); //We need this as singleton
                 services.AddTransient<IActiveProcedureManager, ActiveProcedureManager>();
 
+                services.AddTransient<IDataManager, DeviceDataManager>();
                 services.AddTransient<IConfigurationManager, DeviceConfigurationManager>();
                 services.AddTransient<IMaintenanceManager, DeviceMaintenanceManager>();
             }
@@ -120,8 +125,9 @@ namespace Avalanche.Api
             }
 
             //Shared
-            services.AddTransient<IAuthenticationManager, AuthenticationManager>();
             services.AddTransient<ISharedConfigurationManager, SharedConfigurationManager>();
+
+            services.AddTransient<IAuthenticationManager, AuthenticationManager>();
             services.AddTransient<IFilesManager, FilesManager>();
             services.AddTransient<IPatientsManager, PatientsManager>();
             services.AddTransient<IProceduresManager, ProceduresManager>();
@@ -269,7 +275,7 @@ namespace Avalanche.Api
                 {
                     // TODO: this still is not correct for remote clients...not sure how to handle that if web is being served from separate endpoint to api, since we do not have a well-known address.
                     builder
-                        .WithOrigins("https://localhost:4200", "http://localhost:4200", "http://localhost:8080", "http://localhost:8082")
+                        .WithOrigins("https://localhost:4200", "http://localhost:4200", "https://localhost:8080", "http://localhost:8082")
                         .AllowAnyHeader()
                         //.AllowAnyOrigin()
                         .AllowAnyMethod()
@@ -308,6 +314,7 @@ namespace Avalanche.Api
             {
                 endpoints.MapHub<BroadcastHub>(BroadcastHub.BroadcastHubRoute);
                 endpoints.MapControllers();
+                endpoints.MapReverseProxy();
             });
         }
 

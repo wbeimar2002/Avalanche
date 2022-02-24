@@ -8,8 +8,8 @@
 
   <ItemGroup>
     <PackageReference Include="Bogus" Version="34.0.1" />
-    <PackageReference Include="Ism.CodeQuality" Version="1.0.0-prerelease0011" />
-    <PackageReference Include="Ism.Storage.Core.Infrastructure" Version="1.0.0-prerelease0003" />
+    <PackageReference Include="Ism.CodeQuality" Version="1.0.1-prerelease0002" />
+    <PackageReference Include="Ism.Storage.Core.Infrastructure" Version="1.0.0-prerelease0008" />
     <PackageReference Include="Moq" Version="4.16.1" />
   </ItemGroup>
 

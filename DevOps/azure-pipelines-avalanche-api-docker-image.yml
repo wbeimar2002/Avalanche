@@ -8,7 +8,7 @@ resources:
   - repository: devops
     type: git
     name: devops
-    ref: task21500
+    ref: dev
 
 #pool:
   #vmImage: $(PoolVmImage)
@@ -37,6 +37,14 @@ stages:
      - checkout: self
      - checkout: devops
 
+     - powershell: |
+          if( $Env:DEBUG_BUILD_CONFIGURATION -eq 'true')
+          {
+          $PS_Debug = "debug"
+          write-host "BuildConfiguration="$PS_Debug
+          Write-Host "##vso[task.setvariable variable=BuildConfiguration;]$PS_Debug"
+          }
+       displayName: Update BuildConfiguration
      - task: PowerShell@2
        displayName: List environmental variables
        inputs:
@@ -60,7 +68,7 @@ stages:
         fi
        displayName: set run_tests variable
 
-     - template: 'pipeline\templates\restore-build-test-msbuild7.yml@devops'
+     - template: 'pipeline\templates\restore-build-test-msbuild10.yml@devops'
        parameters: 
           repo: '$(Repo)'
           projectsolution: '$(ProjectSolution)'
@@ -100,6 +108,9 @@ stages:
        displayName: 'Set image name'
        condition: and(succeeded(),  ne(variables['Build.Reason'], 'PullRequest'))
      
+
+
+   
      - bash: |
               acrname='acr$(env)$(AppPlatform)global'
               echo 'target acr name' $acrname
@@ -142,7 +153,7 @@ stages:
 
        displayName: "set/print tag buildnumber_postfix"
        condition: and(succeeded(),  ne(variables['Build.Reason'], 'PullRequest'))
-     
+   
        
      - template: 'pipeline\templates\acr-build-push-task.yml@devops'
        parameters: 
@@ -155,7 +166,13 @@ stages:
             repo: '$(Repo)'
         
      - task: CopyFiles@2
-       #condition: and(succeeded(),  eq(variables['Build.Reason'], 'PullRequest'))
+       condition: |
+              and
+              (
+                eq(variables['Build.SourceBranchName'], 'dev'),
+                ne(variables['Build.Reason'], 'PullRequest')
+              )
+       #condition: and(succeeded(),  ne(variables['Build.Reason'], 'PullRequest'))
        inputs:
         Contents: |
           $(Repo)/$(BinFolder)/**
@@ -163,7 +180,13 @@ stages:
        displayName: 'Copy Files to $(Build.ArtifactStagingDirectory)'
      
      - publish: '$(Build.ArtifactStagingDirectory)/$(Repo)/$(BinFolder)'
-       #condition: and(succeeded(),  eq(variables['Build.Reason'], 'PullRequest'))
+       condition: |
+              and
+              (
+                eq(variables['Build.SourceBranchName'], 'dev'),
+                ne(variables['Build.Reason'], 'PullRequest')
+              )
+       #condition: and(succeeded(),  ne(variables['Build.Reason'], 'PullRequest'))
        artifact: drop
      
      # %AZURE_DEVOPS_CLI_PAT% on Windows when using script
@@ -181,16 +204,23 @@ stages:
           az pipelines build queue --definition-id $(CIBuildId) --detect --branch  $(BranchForMainBuild) --org $(AdoInstanceUrl) -p $(AdoProject)
        displayName: "Run Avalanche build"
      
-- stage: publish_te
+- stage: te_archive
   dependsOn: build
-  condition: and(succeeded(), eq(variables['publish_te'], 'true'))
+  condition: |
+        and
+        (
+          succeeded(),
+          eq(variables['te_archive'], 'true'),
+          ne(variables['Build.Reason'], 'PullRequest')
+        )
+ 
   
   jobs:
   - job: publish
 
     pool:
       name: 'ism-build-pool-on-prem'
-      demands: 
+      demands:
         - msbuild
        
     steps:
@@ -201,19 +231,18 @@ stages:
         source: 'current'
         artifactName: drop
         targetPath: '$(System.DefaultWorkingDirectory)\drop'
+        
+    - powershell: |
+          write-host "PS Build Config="$DEBUG_BUILD_CONFIGURATION
+          if( $Env:DEBUG_BUILD_CONFIGURATION -eq 'true')
+          {
+          $PS_SubPath = "VeraCode"
+          write-host "NetworkSubPath="$PS_SubPath
+          Write-Host "##vso[task.setvariable variable=NetworkSubPath;]$PS_SubPath"
+          }
+      displayName: Check BuildConfiguration
 
-    - template: 'pipeline\templates\create-push-octopus-release1.yml@devops'
-      parameters: 
-        octopusBaseURL: '$(OctopusBaseURL)'
-        octopusAPIKey: '$(OctopusAPIKey)'
-        octopusSpaceName: '$(OctopusSpaceName)'
-        octopusEnvironmentName: '$(OctopusEnvironmentName)'
-        octopusChannelName: '$(OctopusChannelName)'
-        octopusProject: '$(OctopusProject)'
-        octopusPackageId: '$(OctopusPackageId)'
-        triggerBranch: 'dev'
-       
-    - template: 'pipeline\templates\copy-release-to-network-share.yml@devops'
+    - template: 'pipeline\templates\copy-release-to-network-share-v2.yml@devops'
       parameters: 
         adoProject: '$(AdoProject)'
         vsProjectNamePrefix: '$(VsProjectNamePrefix)'
@@ -223,4 +252,62 @@ stages:
         networkPassword: '$(NetworkPassword)'
         builidNumber: '$Env:BUILD_BUILDNUMBER'
         copyTrue: '$(copy_to_network_share)'  
+        
+- stage: te_octopus
+  dependsOn: build
+  condition: |
+        and
+        (
+          succeeded(),
+          eq(variables['te_octopus'], 'true'),
+          ne(variables['Build.Reason'], 'PullRequest')
+        )
+  #condition: and(succeeded(), eq(variables['te_octopus'], 'true'))
+  
+  jobs:
+  - job: publish
+
+    pool:
+      name: ism-build-pool-on-prem
+      demands:
+      - msbuild
+       
+    steps:
+    - checkout: devops
+
+    - task: DownloadPipelineArtifact@2
+      displayName: Download Pipeline Artifact
+      inputs:
+        source: current
+        artifactName: drop
+        targetPath: $(System.DefaultWorkingDirectory)\drop
+        
+    - powershell: |
+            $buildnumber_postfix=""
+            $tag =""
+
+            $buildnumber = $Env:BUILD_BUILDNUMBER
+            
+            $tempString=$buildnumber.split("_")
+            $buildnumber_postfix = $tempString[1]
+            
+            if($buildnumber_postfix)
+            {
+            write-host "buildnumber_postfix="$buildnumber_postfix 
+            Write-Host "##vso[task.setvariable variable=PackageVersion;]$buildnumber_postfix"
+            
+            }
+            else
+            {
+            Throw("buildnumber_postfix variable is empty")
+            }
+
+      displayName: "set/print PackageVersion"
+      condition: and(succeeded(),  ne(variables['Build.Reason'], 'PullRequest'))
+   
+    - template: 'pipeline\templates\create-push-octopus-release.yml@devops'
+      parameters: 
+        octopusProject: '$(OctopusProject)'
+        octopusPackageId: '$(OctopusPackageId)'
+        packageVersion: '$(PackageVersion)'
         

@@ -254,5 +254,21 @@ namespace Avalanche.Api.Managers.Procedures
             var procedureDownloadRequest = _mapper.Map<ProcedureZipRequestViewModel, GenerateProcedureZipRequest>(procedureZipRequest);
             await _libraryService.GenerateProcedureZip(procedureDownloadRequest).ConfigureAwait(false);
         }
+
+        public async Task ShareProcedure(string repository, string id, List<string> userNames)
+        {
+            var request = new ShareProcedureRequest()
+            {
+                ProcedureId = new ProcedureIdMessage()
+                {
+                    Id = id,
+                    RepositoryName = repository
+                }
+            };
+
+            userNames.ForEach(x => request.UserNames.Add(x));
+
+            await _libraryService.ShareProcedure(request).ConfigureAwait(false);
+        }
     }
 }

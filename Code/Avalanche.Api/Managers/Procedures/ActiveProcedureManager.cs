@@ -1,7 +1,6 @@
 using AutoMapper;
 using Avalanche.Api.Managers.Data;
 using Avalanche.Api.Managers.Media;
-using Avalanche.Api.Managers.Patients;
 using Avalanche.Api.Services.Health;
 using Avalanche.Api.Services.Media;
 using Avalanche.Api.Utilities;
@@ -18,6 +17,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Avalanche.Shared.Infrastructure.Enumerations;
+using Microsoft.AspNetCore.Http;
+using Avalanche.Api.Services.Security;
+using Google.Protobuf.WellKnownTypes;
 
 namespace Avalanche.Api.Managers.Procedures
 {
@@ -28,20 +30,35 @@ namespace Avalanche.Api.Managers.Procedures
         private readonly IMapper _mapper;
         private readonly IAccessInfoFactory _accessInfoFactory;
         private readonly IRecorderService _recorderService;
-        private readonly IPatientsManager _patientsManager;
         private readonly IDataManagementService _dataManagementService;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
         private readonly IDataManager _dataManager;
         private readonly LabelsConfiguration _labelsConfig;
+        private readonly SetupConfiguration _setupConfiguration;
+        private readonly UserModel _user;
 
         // TODO: remove this when we figure out how to clean up dependencies
         private readonly IRoutingManager _routingManager;
+        private readonly ISecurityService _securityService;
+        private readonly IPieService _pieService;
 
         public const int MinPageSize = 25;
         public const int MaxPageSize = 100;
 
-        public ActiveProcedureManager(IStateClient stateClient, ILibraryService libraryService, IAccessInfoFactory accessInfoFactory,
-            IMapper mapper, IRecorderService recorderService, IDataManager dataManager, LabelsConfiguration labelsConfig, IPatientsManager patientsManager, IDataManagementService dataManagementService, IRoutingManager routingManager)
+        public ActiveProcedureManager(IStateClient stateClient,
+            ILibraryService libraryService,
+            IAccessInfoFactory accessInfoFactory,
+            IMapper mapper,
+            IRecorderService recorderService,
+            IDataManager dataManager,
+            LabelsConfiguration labelsConfig,
+            IDataManagementService dataManagementService,
+            IRoutingManager routingManager,
+            SetupConfiguration setupConfiguration,
+            IHttpContextAccessor httpContextAccessor,
+            ISecurityService securityService,
+            IPieService pieService)
         {
             _stateClient = stateClient;
             _libraryService = libraryService;
@@ -52,9 +69,13 @@ namespace Avalanche.Api.Managers.Procedures
             _recorderService = recorderService;
             _dataManager = dataManager;
             _labelsConfig = labelsConfig;
-            _patientsManager = patientsManager;
             _dataManagementService = dataManagementService;
             _routingManager = routingManager;
+            _setupConfiguration = setupConfiguration;
+            _httpContextAccessor = httpContextAccessor;
+            _securityService = securityService;
+            _pieService = pieService;
+            _user = HttpContextUtilities.GetUser(_httpContextAccessor.HttpContext);
         }
 
         /// <summary>
@@ -104,7 +125,6 @@ namespace Avalanche.Api.Managers.Procedures
 
             await _libraryService.DeleteActiveProcedureMediaItem(request).ConfigureAwait(false);
         }
-
 
         public async Task DeleteActiveProcedureMediaItems(ProcedureContentType procedureContentType, IEnumerable<Guid> contentIds)
         {
@@ -174,21 +194,10 @@ namespace Avalanche.Api.Managers.Procedures
         {
             Preconditions.ThrowIfNull(nameof(registrationMode), registrationMode);
 
-            if (registrationMode == PatientRegistrationMode.Quick)
-            {
-                patient = await _patientsManager.QuickPatientRegistration();
-            }
-            else
-            {
-                if (registrationMode == PatientRegistrationMode.Update)
-                {
-                    await _patientsManager.UpdatePatient(patient).ConfigureAwait(false);
-                }
-                else
-                {
-                    patient = await _patientsManager.RegisterPatient(patient).ConfigureAwait(false);
-                }
+            patient = await GetPatientForRegistration(registrationMode, patient);
 
+            if (registrationMode != PatientRegistrationMode.Quick)
+            {
                 await CheckProcedureType(patient.ProcedureType, patient.Department).ConfigureAwait(false);
             }
 
@@ -201,14 +210,11 @@ namespace Avalanche.Api.Managers.Procedures
             }).ConfigureAwait(false);
 
             var procedure = _mapper.Map<ProcedureAllocationViewModel>(response);
-            var patientListSource = await _patientsManager.GetPatientListSource().ConfigureAwait(false);
+            var patientListSource = await GetPatientListSource().ConfigureAwait(false);
 
             await PublishPersistData(patient, procedure, patientListSource, (int)registrationMode).ConfigureAwait(false);
 
-            // TODO: figure out how to do dependencies better
-            // maybe have a separate data/event for when a patient is registered
-            // routing manager subscribes to that event and we can have a cleaner dependency graph
-            await (_routingManager?.PublishDefaultDisplayRecordingState()).ConfigureAwait(false);
+            await _routingManager.PublishDefaultDisplayRecordingState().ConfigureAwait(false);
 
             return _mapper.Map<ProcedureAllocationViewModel>(response);
         }
@@ -305,7 +311,6 @@ namespace Avalanche.Api.Managers.Procedures
         /// Update patient in the procedure
         /// </summary>
         /// <param name="patient"></param>
-        /// <returns></returns>
         public async Task UpdateActiveProcedure(PatientViewModel patient)
         {
             Preconditions.ThrowIfNull(nameof(patient), patient);
@@ -324,6 +329,7 @@ namespace Avalanche.Api.Managers.Procedures
             await _stateClient.PersistData(activeProcedure).ConfigureAwait(false);
         }
 
+        #region Private Methods
         private void ThrowIfVideoCannotBeDeleted(ActiveProcedureState activeProcedure, Guid videoContent)
         {
             var video = activeProcedure.Videos.Single(v => v.VideoId == videoContent);
@@ -374,7 +380,6 @@ namespace Avalanche.Api.Managers.Procedures
             }
             else
             {
-                //TODO: Validate department support
                 var existingProcedureType = await _dataManagementService.GetProcedureType(new Ism.Storage.DataManagement.Client.V1.Protos.GetProcedureTypeRequest()
                 {
                     ProcedureTypeName = procedureType.Name,
@@ -391,5 +396,147 @@ namespace Avalanche.Api.Managers.Procedures
                 }
             }
         }
+
+        private async Task<PatientViewModel> GetPatientForManual(PatientViewModel newPatient)
+        {
+            Preconditions.ThrowIfNull(nameof(newPatient), newPatient);
+            Preconditions.ThrowIfNull(nameof(newPatient.MRN), newPatient.MRN);
+            Preconditions.ThrowIfNull(nameof(newPatient.LastName), newPatient.LastName);
+
+            ValidateDynamicConditions(newPatient);
+
+            newPatient.Physician = await GetSelectedPhysician(PatientRegistrationMode.Manual).ConfigureAwait(false);
+
+            return newPatient;
+        }
+
+        private async Task<PatientViewModel> GetPatientForQuickRegistration()
+        {
+            var quickRegistrationDateFormat = _setupConfiguration.Registration.Quick.DateFormat;
+            var formattedDate = DateTime.UtcNow.ToLocalTime().ToString(quickRegistrationDateFormat);
+
+            var physician = await GetSelectedPhysician(PatientRegistrationMode.Quick).ConfigureAwait(false);
+
+            //TODO: Pending check this default data
+            return new PatientViewModel()
+            {
+                MRN = $"{formattedDate}MRN",
+                DateOfBirth = DateTime.UtcNow.ToLocalTime(),
+                FirstName = $"{formattedDate}FirstName",
+                LastName = $"{formattedDate}LastName",
+                Sex = new KeyValuePairViewModel()
+                {
+                    Id = "U"
+                },
+                Physician = physician
+            };
+        }
+
+        private async Task<PatientViewModel> ValidatePatientForUpdateRegistration(PatientViewModel existingPatient)
+        {
+            Preconditions.ThrowIfNull(nameof(existingPatient), existingPatient);
+            Preconditions.ThrowIfNull(nameof(existingPatient.Id), existingPatient.Id);
+            Preconditions.ThrowIfNull(nameof(existingPatient.MRN), existingPatient.MRN);
+            Preconditions.ThrowIfNull(nameof(existingPatient.LastName), existingPatient.LastName);
+
+            ValidateDynamicConditions(existingPatient);
+
+            existingPatient.Physician = new PhysicianModel()
+            {
+                Id = _user.Id,
+                FirstName = _user.FirstName,
+                LastName = _user.LastName
+            };
+
+            return existingPatient;
+        }
+
+        private void ValidateDynamicConditions(PatientViewModel patient)
+        {
+            foreach (var item in _setupConfiguration.PatientInfo.Where(f => f.Required))
+            {
+                switch (item.Id)
+                {
+                    case "firstName":
+                        Preconditions.ThrowIfNull(nameof(patient.FirstName), patient.FirstName);
+                        break;
+                    case "sex":
+                        Preconditions.ThrowIfNull(nameof(patient.Sex), patient.Sex);
+                        break;
+                    case "dateOfBirth":
+                        Preconditions.ThrowIfNull(nameof(patient.DateOfBirth), patient.DateOfBirth);
+                        break;
+
+                    case "physician":
+                        Preconditions.ThrowIfNull(nameof(patient.Physician), patient.Physician);
+                        break;
+                    case "department":
+                        Preconditions.ThrowIfNull(nameof(patient.Department), patient.Department);
+                        break;
+                    case "procedureType":
+                        Preconditions.ThrowIfNull(nameof(patient.ProcedureType), patient.ProcedureType);
+                        break;
+                        //case "accessionNumber": TODO: Pending send the value from Register and Update
+                        //    Preconditions.ThrowIfNull(nameof(patient.Accession), patient.Accession);
+                        //    break;
+                }
+            }
+        }
+
+        private async Task<int> GetPatientListSource()
+        {
+            var getSource = await _pieService.GetPatientListSource(new Empty()).ConfigureAwait(false);
+            return getSource.Source;
+        }
+
+        private async Task<PhysicianModel?> GetSelectedPhysician(PatientRegistrationMode registrationMode)
+        {
+            var isAutoFillPhysicianEnabled = _setupConfiguration.Registration.Manual.AutoFillPhysician;
+
+            return registrationMode switch
+            {
+                PatientRegistrationMode.Manual => await (isAutoFillPhysicianEnabled ? GetPhysician("currentUser") : GetPhysician("blank")).ConfigureAwait(false),
+                PatientRegistrationMode.Quick => await (isAutoFillPhysicianEnabled ? GetPhysician("currentUser") : GetPhysician("administrator")).ConfigureAwait(false),
+                _ => null,
+            };
+        }
+
+        private async Task<PhysicianModel?> GetPhysician(string physicianReturned)
+        {
+            var systemAdministrator = await _securityService.FindByUserName("Administrator").ConfigureAwait(false);
+
+            return physicianReturned switch
+            {
+                "currentUser" => new PhysicianModel()
+                {
+                    Id = _user.Id,
+                    FirstName = _user.FirstName,
+                    LastName = _user.LastName
+                },
+                "administrator" => new PhysicianModel()
+                {
+                    Id = systemAdministrator.User.Id,
+                    FirstName = systemAdministrator.User.FirstName,
+                    LastName = systemAdministrator.User.LastName
+                },
+                "blank" => new PhysicianModel()
+                {
+                    Id = 0,
+                    FirstName = string.Empty,
+                    LastName = string.Empty
+                },
+                _ => null,
+            };
+        }
+
+        private async Task<PatientViewModel> GetPatientForRegistration(PatientRegistrationMode registrationMode, PatientViewModel? patient) => registrationMode switch
+        {
+            PatientRegistrationMode.Quick => await GetPatientForQuickRegistration().ConfigureAwait(false),
+            PatientRegistrationMode.Manual => await GetPatientForManual(patient).ConfigureAwait(false),
+            PatientRegistrationMode.Update => await ValidatePatientForUpdateRegistration(patient).ConfigureAwait(false),
+            _ => null
+        };
+
+        #endregion
     }
 }

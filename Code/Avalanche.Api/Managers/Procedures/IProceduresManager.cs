@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Avalanche.Api.ViewModels;
 
@@ -11,6 +12,6 @@ namespace Avalanche.Api.Managers.Procedures
         Task UpdateProcedure(ProcedureViewModel procedureViewModel);
 
         Task GenerateProcedureZip(ProcedureZipRequestViewModel procedureZipRequest);
-
+        Task ShareProcedure(string repository, string id, List<string> userNames);
     }
 }

@@ -1,6 +1,4 @@
 using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
 using AutoMapper;
 using Avalanche.Api.Managers.Data;
@@ -11,8 +9,6 @@ using Avalanche.Api.Services.Printing;
 using Avalanche.Api.Utilities;
 using Avalanche.Api.ViewModels;
 using Avalanche.Shared.Domain.Models;
-using Avalanche.Shared.Infrastructure.Configuration;
-using Avalanche.Shared.Infrastructure.Extensions;
 using Ism.Common.Core.Configuration.Models;
 using Microsoft.AspNetCore.Http;
 using Avalanche.Api.Managers.Medpresence;
@@ -21,7 +17,6 @@ namespace Avalanche.Api.Managers.Maintenance
 {
     public class DeviceMaintenanceManager : MaintenanceManager
     {
-        private readonly IStorageService _storageService;
         private readonly ConfigurationContext _configurationContext;
 
         private readonly IConfigurationManager _deviceConfigurationManager;
@@ -38,7 +33,6 @@ namespace Avalanche.Api.Managers.Maintenance
             IMedpresenceManager medpresenceManager) : base(storageService, dataManager, mapper, httpContextAccessor, libraryService, filesService, printingService, sharedConfigurationManager, medpresenceManager)
         {
             _deviceConfigurationManager = deviceConfigurationManager;
-            _storageService = storageService;
 
             var user = HttpContextUtilities.GetUser(httpContextAccessor.HttpContext);
             _configurationContext = mapper.Map<UserModel, ConfigurationContext>(user);

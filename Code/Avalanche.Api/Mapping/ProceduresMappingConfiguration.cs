@@ -49,7 +49,8 @@ namespace Avalanche.Api.Mapping
                 .ForMember(dest => dest.EndCreationTime, opt => opt.MapFrom(src => GetFixedDateTime(src.EndCreationTime)))
                 .ForMember(dest => dest.PatientId, opt => opt.MapFrom(src => src.PatientId))
                 .ForMember(dest => dest.PatientLastName, opt => opt.MapFrom(src => src.PatientLastName))
-                .ForMember(dest => dest.PhysicianId, opt => opt.MapFrom(src => src.PhysicianId))
+                .ForMember(dest => dest.PhysicianFirstName, opt => opt.MapFrom(src => src.PhysicianFirstName))
+                .ForMember(dest => dest.PhysicianLastName, opt => opt.MapFrom(src => src.PhysicianLastName))
                 .ForMember(dest => dest.DepartmentName, opt => opt.MapFrom(src => src.DepartmentName))
                 .ForMember(dest => dest.ProcedureTypeName, opt => opt.MapFrom(src => src.ProcedureTypeName))
                 .ForMember(dest => dest.IsClinical, opt => opt.MapFrom(src => src.IsClinical))
@@ -95,6 +96,7 @@ namespace Avalanche.Api.Mapping
                 .ForMember(dest => dest.CaptureTimeUtc, opt => opt.MapFrom(src => GetFixedDateTime(src.CaptureTimeUtc)));
 
             CreateMap<ProcedureMessage, ProcedureViewModel>()
+                .ForMember(dest => dest.UserNames, opt => opt.MapFrom(src => src.UserNames))
                 .ForMember(dest => dest.Videos, opt => opt.MapFrom(src => src.Videos))
                 .ForMember(dest => dest.Images, opt => opt.MapFrom(src => src.Images))
                 .ForMember(dest => dest.BackgroundVideos, opt => opt.MapFrom(src => src.BackgroundVideos))
