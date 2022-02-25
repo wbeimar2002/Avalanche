@@ -1,6 +1,5 @@
-﻿using Ism.Common.Core.Configuration;
-
-using System.ComponentModel.DataAnnotations;
+using FluentValidation;
+using Ism.Common.Core.Configuration;
 
 namespace Avalanche.Shared.Infrastructure.Models
 {

@@ -1,6 +1,6 @@
-﻿using Ism.IsmLogCommon.Core;
-using Microsoft.AspNetCore.Http;
 using System;
+using Ism.IsmLogCommon.Core;
+using Microsoft.AspNetCore.Http;
 
 namespace Avalanche.Api.Utilities
 {

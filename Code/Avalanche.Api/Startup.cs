@@ -1,7 +1,6 @@
 using System.Diagnostics.CodeAnalysis;
 using Avalanche.Api.Extensions;
 using Avalanche.Api.Handlers;
-using Avalanche.Api.Handlers.Security.Hashing;
 using Avalanche.Api.Handlers.Security.Tokens;
 using Avalanche.Api.Hubs;
 using Avalanche.Api.Managers;
@@ -30,6 +29,7 @@ using Avalanche.Shared.Infrastructure.Configuration;
 using Avalanche.Shared.Infrastructure.Enumerations;
 using Avalanche.Shared.Infrastructure.Models;
 using Avalanche.Shared.Infrastructure.Options;
+using Avalanche.Shared.Infrastructure.Security.Hashing;
 using AvidisDeviceInterface.Client.V1;
 using Ism.Broadcaster.Services;
 using Ism.Common.Core.Configuration.Extensions;
@@ -155,7 +155,6 @@ namespace Avalanche.Api
             services.AddConfigurationPoco<SetupConfiguration>(_configuration, nameof(SetupConfiguration));
             services.AddConfigurationPoco<PrintingConfiguration>(_configuration, nameof(PrintingConfiguration));
             services.AddConfigurationPoco<MedPresenceConfiguration>(_configuration, nameof(MedPresenceConfiguration));
-            services.AddConfigurationPoco<MedPresenceProvisioningConfiguration>(_configuration, nameof(MedPresenceProvisioningConfiguration));
 
             if (isDevice)
             {
@@ -178,7 +177,7 @@ namespace Avalanche.Api
             services.AddSingleton<IPresetManager, PresetManager>();
             services.AddSingleton<IMedpresenceService, MedpresenceService>();
             services.AddSingleton<ISecurityService, SecurityService>();
-            services.AddSingleton<IPasswordHasher, PasswordHasher>();
+            services.AddSingleton<IPasswordHasher, BcryptPasswordHasher>();
             services.AddSingleton<ITokenHandler, TokenHandler>();
 
         // gRPC Infrastructure

@@ -140,15 +140,20 @@ namespace Avalanche.Api.Controllers.V1
 
                 return Ok();
             }
+
+            // TODO: Should not have references to Grpc Exceptions in an HTTP Controller.  These should be caught an converted to domain types further down the stack.
             catch (RpcException ex)
             {
                 _logger.LogError(ex, LoggerHelper.GetLogMessage(DebugLogType.Exception), ex);
 
                 if (ex.StatusCode == Grpc.Core.StatusCode.AlreadyExists)
+                {
                     return Conflict(ex.Get(_environment.IsDevelopment()));
+                }
                 else
+                {
                     return new BadRequestObjectResult(ex.Get(_environment.IsDevelopment()));
-
+                }
             }
             catch (Exception ex)
             {

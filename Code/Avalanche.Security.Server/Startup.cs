@@ -4,12 +4,11 @@ using Avalanche.Security.Server.Core;
 using Avalanche.Security.Server.Core.Interfaces;
 using Avalanche.Security.Server.Core.Managers;
 using Avalanche.Security.Server.Core.Models;
-using Avalanche.Security.Server.Core.Security.Hashing;
 using Avalanche.Security.Server.Core.Validators;
-using Avalanche.Security.Server.Security.Hashing;
 using Avalanche.Security.Server.V1.Handlers;
 using Avalanche.Shared.Infrastructure.Models;
 using Avalanche.Shared.Infrastructure.Options;
+using Avalanche.Shared.Infrastructure.Security.Hashing;
 using FluentValidation;
 using Ism.Common.Core.Configuration.Extensions;
 using Ism.Common.Core.Extensions;
@@ -50,21 +49,19 @@ namespace Avalanche.Security.Server
 
             // Singleton
             _ = services.AddSingleton<IDatabaseWriter<SecurityDbContext>, DatabaseWriter<SecurityDbContext>>();
-            _ = services.AddSingleton<IPasswordHasher, PasswordHasher>();
-            _ = services.AddSingleton<IUsersManager, UsersManager>();
-
-            _ = services.AddSingleton(sp => new SigningOptions(sp.GetRequiredService<AuthConfiguration>().SecretKey));
 
             // Configuration
-            _ = services.AddConfigurationPoco<TokenAuthConfiguration>(_configuration, nameof(TokenAuthConfiguration));
-            _ = services.AddConfigurationPoco<AuthConfiguration>(_configuration, nameof(AuthConfiguration));
             _ = services.AddConfigurationLoggingOnStartup();
 
             // Transient
+            _ = services.AddTransient<IPasswordHasher, BcryptPasswordHasher>();
+            _ = services.AddTransient<IUsersManager, UsersManager>();
             _ = services.AddTransient<IUserRepository, UserRepository>();
 
             // Validation
-            _ = services.AddTransient<IValidator<UserModel>, UserValidator>();
+            _ = services.AddTransient<IValidator<NewUserModel>, NewUserValidator>();
+            _ = services.AddTransient<IValidator<UpdateUserModel>, UpdateUserValidator>();
+            _ = services.AddTransient<IValidator<UpdateUserPasswordModel>, UpdateUserPasswordValidator>();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -75,25 +72,25 @@ namespace Avalanche.Security.Server
 
             _ = dbManager.UpgradeDatabase(GetSecurityDatabaseLocation(), typeof(SecurityDbContext).Assembly);
 
-            var context = app.ApplicationServices.GetService<SecurityDbContext>();
-            var passwordHasher = app.ApplicationServices.GetService<IPasswordHasher>();
+            var context = app.ApplicationServices.GetRequiredService<SecurityDbContext>();
+            var passwordHasher = app.ApplicationServices.GetRequiredService<IPasswordHasher>();
 
             DatabaseSeed.Seed(context, passwordHasher);
 
             if (env.IsDevelopment())
             {
-                app.UseDeveloperExceptionPage();
+                _ = app.UseDeveloperExceptionPage();
             }
 
-            app.UseSerilogRequestLogging();
-            app.UseRouting();
+            _ = app.UseSerilogRequestLogging();
+            _ = app.UseRouting();
 
-            app.UseEndpoints(endpoints =>
-            {
-                _ = endpoints.MapControllers();
+            _ = app.UseEndpoints(endpoints =>
+              {
+                  _ = endpoints.MapControllers();
 
-                _ = endpoints.MapGrpcService<SecurityServiceHandler>();
-            });
+                  _ = endpoints.MapGrpcService<SecurityServiceHandler>();
+              });
         }
 
         private string GetDatabaseLocation(string database) => Path.Combine(Path.GetDirectoryName(typeof(Startup).Assembly.Location) ?? _environment.ContentRootPath, "database", database);
