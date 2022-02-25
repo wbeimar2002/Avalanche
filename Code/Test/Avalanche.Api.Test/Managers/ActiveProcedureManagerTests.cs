@@ -4,7 +4,6 @@ using System.Threading.Tasks;
 using AutoMapper;
 using Avalanche.Api.Managers.Data;
 using Avalanche.Api.Managers.Media;
-using Avalanche.Api.Managers.Patients;
 using Avalanche.Api.Managers.Procedures;
 using Avalanche.Api.Mapping;
 using Avalanche.Api.Services.Health;
@@ -31,7 +30,6 @@ namespace Avalanche.Api.Test.Managers
         private Mock<IRecorderService> _recorderService;
         private Mock<IStateClient> _stateClient;
         private Mock<IDataManager> _dataManager;
-        private Mock<IPatientsManager> _patientsManager;
         private IDataManagementService _dataManagementService;
         private Mock<IRoutingManager> _routingManager;
         private Mock<SetupConfiguration> _setupConfiguration;
@@ -533,34 +531,7 @@ namespace Avalanche.Api.Test.Managers
         {
             //arrange
             const string autolabel = "LabelA";
-            var correlationId = Guid.NewGuid();
-
-            var activeProcedure = new ActiveProcedureState(
-                    new Patient() { LastName = "name" },
-                    new List<ProcedureImage>
-                    {
-                        new ProcedureImage(Guid.NewGuid(), "source", "channel", false, "path", "path", null, DateTimeOffset.UtcNow, correlationId),
-                        new ProcedureImage(Guid.NewGuid(), "source", "channel", false, "path", "path", null, DateTimeOffset.UtcNow, correlationId),
-                        new ProcedureImage(Guid.NewGuid(), "source", "channel", false, "path", "path", null, DateTimeOffset.UtcNow, correlationId),
-                    },
-                    new List<ProcedureVideo>(),
-                    new List<ProcedureVideo>(),
-                    "libId",
-                    "repId",
-                    "path",
-                    null,
-                    new ProcedureType() { Id = 1, Name = "TestProceType" },
-                    null,
-                    false,
-                    DateTimeOffset.UtcNow,
-                    TimeZoneInfo.Local.Id,
-                    false,
-                    new List<ProcedureNote>(),
-                    null,
-                    new List<VideoRecordingEvent>(),
-                    BackgroundRecordingMode.StartImmediately,
-                    RegistrationMode.Quick,
-                    PatientListSource.Local);
+            var activeProcedure = Fakers.GetActiveProcedureWhitCorrelationImagesFaker();
 
             _stateClient.Setup(s => s.GetData<ActiveProcedureState>()).ReturnsAsync(activeProcedure);
             _recorderService.Setup(mock => mock.GetRecorderState()).ReturnsAsync(new Ism.Recorder.Core.V1.Protos.RecorderState() { State = 0 });
@@ -583,34 +554,7 @@ namespace Avalanche.Api.Test.Managers
         public async Task ProcedureManager_ApplyLabelToLatestImages_LabelNameEmpty_Fails(string label)
         {
             //arrange
-            var correlationId = Guid.NewGuid();
-
-            var activeProcedure = new ActiveProcedureState(
-                    new Patient() { LastName = "name" },
-                    new List<ProcedureImage>
-                    {
-                        new ProcedureImage(Guid.NewGuid(), "source", "channel", false, "path", "path", null, DateTimeOffset.UtcNow, correlationId),
-                        new ProcedureImage(Guid.NewGuid(), "source", "channel", false, "path", "path", null, DateTimeOffset.UtcNow, correlationId),
-                        new ProcedureImage(Guid.NewGuid(), "source", "channel", false, "path", "path", null, DateTimeOffset.UtcNow, correlationId),
-                    },
-                    new List<ProcedureVideo>(),
-                    new List<ProcedureVideo>(),
-                    "libId",
-                    "repId",
-                    "path",
-                    null,
-                    new ProcedureType() { Id = 1, Name = "TestProceType" },
-                    null,
-                    false,
-                    DateTimeOffset.UtcNow,
-                    TimeZoneInfo.Local.Id,
-                    false,
-                    new List<ProcedureNote>(),
-                    null,
-                    new List<VideoRecordingEvent>(),
-                    BackgroundRecordingMode.StartImmediately,
-                    RegistrationMode.Quick,
-                    PatientListSource.Local);
+            var activeProcedure = Fakers.GetActiveProcedureWhitCorrelationImagesFaker();
 
             _stateClient.Setup(s => s.GetData<ActiveProcedureState>()).ReturnsAsync(activeProcedure);
             _recorderService.Setup(mock => mock.GetRecorderState()).ReturnsAsync(new Ism.Recorder.Core.V1.Protos.RecorderState() { State = 0 });
@@ -628,27 +572,7 @@ namespace Avalanche.Api.Test.Managers
             //arrange
             const string autolabel = "LabelA";
 
-            var activeProcedure = new ActiveProcedureState(
-                    new Patient() { LastName = "name" },
-                    new List<ProcedureImage>(),
-                    new List<ProcedureVideo>(),
-                    new List<ProcedureVideo>(),
-                    "libId",
-                    "repId",
-                    "path",
-                    null,
-                    new ProcedureType() { Id = 1, Name = "TestProceType" },
-                    null,
-                    false,
-                    DateTimeOffset.UtcNow,
-                    TimeZoneInfo.Local.Id,
-                    false,
-                    new List<ProcedureNote>(),
-                    null,
-                    new List<VideoRecordingEvent>(),
-                    BackgroundRecordingMode.StartImmediately,
-                    RegistrationMode.Quick,
-                    PatientListSource.Local);
+            var activeProcedure = Fakers.GetActiveProcedureFaker();
 
             _stateClient.Setup(s => s.GetData<ActiveProcedureState>()).ReturnsAsync(activeProcedure);
             _recorderService.Setup(mock => mock.GetRecorderState()).ReturnsAsync(new Ism.Recorder.Core.V1.Protos.RecorderState() { State = 0 });
@@ -665,32 +589,7 @@ namespace Avalanche.Api.Test.Managers
         {
             //arrange
             const string autolabel = "LabelA";
-            var activeProcedure = new ActiveProcedureState(
-                    new Patient() { LastName = "name" },
-                    new List<ProcedureImage>
-                    {
-                        new ProcedureImage(Guid.NewGuid(), "source", "channel", false, "path", "path", null, DateTimeOffset.UtcNow.AddSeconds(-2), Guid.NewGuid()),
-                        new ProcedureImage(Guid.NewGuid(), "source", "channel", false, "path", "path", null, DateTimeOffset.UtcNow.AddSeconds(-1), Guid.NewGuid()),
-                        new ProcedureImage(Guid.NewGuid(), "source", "channel", false, "path", "path", null, DateTimeOffset.UtcNow, Guid.NewGuid()),
-                    },
-                    new List<ProcedureVideo>(),
-                    new List<ProcedureVideo>(),
-                    "libId",
-                    "repId",
-                    "path",
-                    null,
-                    new ProcedureType() { Id = 1, Name = "TestProceType" },
-                    null,
-                    false,
-                    DateTimeOffset.UtcNow,
-                    TimeZoneInfo.Local.Id,
-                    false,
-                    new List<ProcedureNote>(),
-                    null,
-                    new List<VideoRecordingEvent>(),
-                    BackgroundRecordingMode.StartImmediately,
-                    RegistrationMode.Quick,
-                    PatientListSource.Local);
+            var activeProcedure = Fakers.GetActiveProcedureWhitImagesDifferentTimeFaker();
 
             _stateClient.Setup(s => s.GetData<ActiveProcedureState>()).ReturnsAsync(activeProcedure);
             _recorderService.Setup(mock => mock.GetRecorderState()).ReturnsAsync(new Ism.Recorder.Core.V1.Protos.RecorderState() { State = 0 });
@@ -710,27 +609,7 @@ namespace Avalanche.Api.Test.Managers
         [Test]
         public async Task ProcedureManagerFinishPublishesFinishEvent()
         {
-            var activeProcedure = new ActiveProcedureState(
-                    new Patient() { LastName = "name" },
-                    new List<ProcedureImage>(),
-                    new List<ProcedureVideo>(),
-                    new List<ProcedureVideo>(),
-                    "libId",
-                    "repId",
-                    "path",
-                    null,
-                    new ProcedureType() { Id = 1, Name = "TestProceType" },
-                    null,
-                    false,
-                    DateTimeOffset.UtcNow,
-                    TimeZoneInfo.Local.Id,
-                    false,
-                    new List<ProcedureNote>(),
-                    null,
-                    new List<VideoRecordingEvent>(),
-                    BackgroundRecordingMode.StartImmediately,
-                    RegistrationMode.Quick,
-                    PatientListSource.Local);
+            var activeProcedure = Fakers.GetActiveProcedureFaker();
 
             //arrange
             _stateClient.Setup(s => s.GetData<ActiveProcedureState>()).ReturnsAsync(activeProcedure);
@@ -745,27 +624,7 @@ namespace Avalanche.Api.Test.Managers
         [Test]
         public async Task ProcedureManagerDiscardDoesNotPublishesFinishEvent()
         {
-            var activeProcedure = new ActiveProcedureState(
-                    new Patient() { LastName = "name" },
-                    new List<ProcedureImage>(),
-                    new List<ProcedureVideo>(),
-                    new List<ProcedureVideo>(),
-                    "libId",
-                    "repId",
-                    "path",
-                    null,
-                    new ProcedureType() { Id = 1, Name = "TestProceType" },
-                    null,
-                    false,
-                    DateTimeOffset.UtcNow,
-                    TimeZoneInfo.Local.Id,
-                    false,
-                    new List<ProcedureNote>(),
-                    null,
-                    new List<VideoRecordingEvent>(),
-                    BackgroundRecordingMode.StartImmediately,
-                    RegistrationMode.Quick,
-                    PatientListSource.Local);
+            var activeProcedure = Fakers.GetActiveProcedureFaker();
 
             //arrange
             _stateClient.Setup(s => s.GetData<ActiveProcedureState>()).ReturnsAsync(activeProcedure);
@@ -775,6 +634,19 @@ namespace Avalanche.Api.Test.Managers
 
             //assert
             _stateClient.Verify(x => x.PublishEvent(It.IsAny<ProcedureFinishedEvent>()), Times.Never);
+        }
+
+        [Test]
+        public void AllocateNewProcedureWhenAnotherProcedureIsActive()
+        {
+            var activeProcedure = Fakers.GetActiveProcedureFaker();
+            var patientRegistrationMode = Shared.Infrastructure.Enumerations.PatientRegistrationMode.Quick;
+
+            //act
+            _ = _stateClient.Setup(s => s.GetData<ActiveProcedureState>()).ReturnsAsync(activeProcedure);
+
+            //assert
+            Assert.ThrowsAsync<InvalidOperationException>(async () => await _manager.AllocateNewProcedure(patientRegistrationMode, null).ConfigureAwait(false));
         }
     }
 }
