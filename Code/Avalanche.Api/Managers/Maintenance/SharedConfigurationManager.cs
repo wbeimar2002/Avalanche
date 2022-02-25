@@ -10,17 +10,20 @@ namespace Avalanche.Api.Managers.Maintenance
         private readonly MedPresenceConfiguration _medPresenceConfiguration;
         private readonly SetupConfiguration _setupConfiguration;
         private readonly ProceduresConfiguration _proceduresConfiguration;
+        private readonly MedPresenceProvisioningConfiguration _medPresenceProvisioningConfiguration;
 
         public SharedConfigurationManager(
             PrintingConfiguration printingConfiguration,
             MedPresenceConfiguration medPresenceConfiguration,
             SetupConfiguration setupConfiguration,
-            ProceduresConfiguration proceduresConfiguration)
+            ProceduresConfiguration proceduresConfiguration,
+            MedPresenceProvisioningConfiguration medPresenceProvisioningConfiguration)
         {
             _printingConfiguration = printingConfiguration;
             _medPresenceConfiguration = medPresenceConfiguration;
             _setupConfiguration = setupConfiguration;
             _proceduresConfiguration = proceduresConfiguration;
+            _medPresenceProvisioningConfiguration = medPresenceProvisioningConfiguration;
         }
 
         public PrintingConfiguration GetPrintingConfigurationSettings() => _printingConfiguration;
@@ -36,5 +39,7 @@ namespace Avalanche.Api.Managers.Maintenance
 
         public void UseVSSPrintingService(bool useVSSPrintingService) =>
             _printingConfiguration.UseVSSPrintingService = useVSSPrintingService;
+
+        public MedPresenceProvisioningConfiguration GetMedPresenceProvisioningConfigurationSettings() => _medPresenceProvisioningConfiguration;
     }
 }

@@ -88,5 +88,12 @@ namespace Avalanche.Api.Services.Medpresence
             _logger.LogInformation("Requesting secure invitations...");
             await _medpresence.ExecuteInMeetingCommand(request).ConfigureAwait(false);
         }
+
+        [AspectLogger]
+        public async Task ProvisionMedpresence(MedpresenceProvisioningRequest request)
+        {
+            _logger.LogInformation("Provision Medpresence");
+            await _medpresence.ProvisionMedPresence(request).ConfigureAwait(false);
+        }
     }
 }

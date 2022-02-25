@@ -15,6 +15,7 @@ using Microsoft.AspNetCore.Http;
 using Moq;
 using Newtonsoft.Json;
 using NUnit.Framework;
+using Avalanche.Api.Managers.Medpresence;
 
 namespace Avalanche.Api.Test.Managers
 {
@@ -35,6 +36,8 @@ namespace Avalanche.Api.Test.Managers
 
         MaintenanceManager _manager;
 
+        Mock<IMedpresenceManager> _medpresenceManager;
+
         [SetUp]
         public void Setup()
         {
@@ -53,6 +56,7 @@ namespace Avalanche.Api.Test.Managers
             _printingService = new Mock<IPrintingService>();
             _sharedConfigurationManager = new Mock<ISharedConfigurationManager>();
             _deviceConfigurationManager = new Mock<IConfigurationManager>();
+            _medpresenceManager = new Mock<IMedpresenceManager>();
 
             _manager = new DeviceMaintenanceManager(
                 _storageService.Object,
@@ -62,7 +66,7 @@ namespace Avalanche.Api.Test.Managers
                 _libraryService.Object,
                 _filesService.Object,
                 _printingService.Object,
-                _sharedConfigurationManager.Object, _deviceConfigurationManager.Object);
+                _sharedConfigurationManager.Object, _deviceConfigurationManager.Object, _medpresenceManager.Object);
         }
 
         [Test]
