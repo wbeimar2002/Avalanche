@@ -1,5 +1,7 @@
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 using Avalanche.Api.Managers.Media;
-using Avalanche.Api.Services.Security;
 using Avalanche.Api.ViewModels;
 using Avalanche.Shared.Domain.Models.Media;
 using Avalanche.Shared.Infrastructure.Enumerations;
@@ -12,9 +14,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.FeatureManagement.Mvc;
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 using static Ism.Utility.Core.Preconditions;
 
 namespace Avalanche.Api.Controllers.V1

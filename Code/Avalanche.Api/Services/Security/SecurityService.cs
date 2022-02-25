@@ -1,41 +1,49 @@
 using System.Threading.Tasks;
 using Avalanche.Security.Server.Client.V1;
 using Avalanche.Security.Server.Client.V1.Protos;
-using Google.Protobuf.WellKnownTypes;
 
 namespace Avalanche.Api.Services.Security
 {
     public class SecurityService : ISecurityService
     {
-        private readonly SecurityServiceClient _SecurityServiceClient;
+        private readonly SecurityServiceSecureClient _client;
 
-        public SecurityService(SecurityServiceClient SecurityServiceClient)
+        public SecurityService(SecurityServiceSecureClient client) => _client = client;
+
+        public Task<GetUsersResponse> GetAllUsers() =>
+            _client.GetUsers();
+
+        public Task<GetUserResponse> GetUser(string userName) =>
+            _client.GetUser(
+                new GetUserRequest
+                {
+                    UserName = userName
+                });
+
+        public Task<AddUserResponse> AddUser(AddUserRequest request) =>
+           _client.AddUser(request);
+
+        public Task UpdateUser(UpdateUserRequest request) =>
+           _client.UpdateUser(request);
+
+        public Task DeleteUser(DeleteUserRequest request) =>
+           _client.DeleteUser(request);
+
+        public Task<SearchUsersResponse> SearchUsers(string keyword) =>
+        _client.SearchUsers(new SearchUsersRequest()
         {
-            _SecurityServiceClient = SecurityServiceClient;
-        }
+            Keyword = keyword
+        });
 
-        public async Task<GetUsersResponse> GetAllUsers() =>
-            await _SecurityServiceClient.GetUsersAsync(new Empty()).ConfigureAwait(false);
+        public async Task<VerifyUserLoginResponse> VerifyUserLogin(string userName, string password) =>
+            await _client.VerifyUserLogin(
+                new VerifyUserLoginRequest
+                {
+                    UserName = userName,
+                    Password = password
+                }).ConfigureAwait(false);
 
-        public async Task<FindByUserNameResponse> FindByUserName(string userName) =>
-            await _SecurityServiceClient.FindByUserNameAsync(new FindByUserNameRequest()
-            {
-                UserName = userName
-            }).ConfigureAwait(false);
-
-        public async Task<AddUserResponse> AddUserAsync(AddUserRequest request) =>
-           await _SecurityServiceClient.AddUserAsync(request);
-
-        public async Task<Empty> UpdateUserAsync(UpdateUserRequest request) =>
-           await _SecurityServiceClient.UpdateUserAsync(request);
-
-        public async Task<Empty> DeleteUserAsync(DeleteUserRequest request) =>
-           await _SecurityServiceClient.DeleteUserAsync(request);
-
-        public async Task<SearchUsersResponse> SearchUsers(string keyword) =>
-            await _SecurityServiceClient.SearchUsersAsync(new SearchUsersRequest()
-            {
-                Keyword = keyword
-            }).ConfigureAwait(false);
+        public Task UpdateUserPassword(UpdateUserPasswordRequest request) =>
+            _client.UpdateUserPassword(request);
     }
 }

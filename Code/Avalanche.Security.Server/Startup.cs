@@ -49,17 +49,13 @@ namespace Avalanche.Security.Server
 
             // Singleton
             _ = services.AddSingleton<IDatabaseWriter<SecurityDbContext>, DatabaseWriter<SecurityDbContext>>();
-            _ = services.AddSingleton<IPasswordHasher, BcryptPasswordHasher>();
-            _ = services.AddSingleton<IUsersManager, UsersManager>();
-
-            _ = services.AddSingleton(sp => new SigningOptions(sp.GetRequiredService<AuthConfiguration>().SecretKey));
 
             // Configuration
-            _ = services.AddConfigurationPoco<TokenAuthConfiguration>(_configuration, nameof(TokenAuthConfiguration));
-            _ = services.AddConfigurationPoco<AuthConfiguration>(_configuration, nameof(AuthConfiguration));
             _ = services.AddConfigurationLoggingOnStartup();
 
             // Transient
+            _ = services.AddTransient<IPasswordHasher, BcryptPasswordHasher>();
+            _ = services.AddTransient<IUsersManager, UsersManager>();
             _ = services.AddTransient<IUserRepository, UserRepository>();
 
             // Validation

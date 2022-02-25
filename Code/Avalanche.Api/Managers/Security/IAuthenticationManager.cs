@@ -6,7 +6,7 @@ namespace Avalanche.Api.Managers
     public interface IAuthenticationManager
     {
         Task<TokenResponseViewModel> CreateAccessTokenAsync(string userName, string password);
-        Task<TokenResponseViewModel> RefreshTokenAsync(string refreshToken, string userEmail);
+        Task<TokenResponseViewModel> RefreshTokenAsync(string refreshToken, string userName);
         void RevokeRefreshToken(string refreshToken);
     }
 }

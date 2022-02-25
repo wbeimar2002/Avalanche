@@ -71,10 +71,10 @@ namespace Avalanche.Api.Managers.Data
 
             var request = new AddUserRequest()
             {
-                User = _mapper.Map<UserMessage>(user)
+                User = _mapper.Map<NewUserMessage>(user)
             };
 
-            var result = await _securityService.AddUserAsync(request).ConfigureAwait(false);
+            var result = await _securityService.AddUser(request).ConfigureAwait(false);
 
             return _mapper.Map<UserModel>(result.User);
         }
@@ -86,18 +86,31 @@ namespace Avalanche.Api.Managers.Data
             Preconditions.ThrowIfNull(nameof(user.LastName), user.LastName);
             Preconditions.ThrowIfNull(nameof(user.UserName), user.UserName);
 
-            var request = new UpdateUserRequest()
+            // If password is not null then it's a password Update otherwise the update was just for other User information 
+            if (user.Password != null)
             {
-                User = _mapper.Map<UserMessage>(user)
-            };
+                var request = new UpdateUserPasswordRequest()
+                {
+                    PasswordUpdate = _mapper.Map<UpdateUserPasswordMessage>(user)
+                };
 
-            await _securityService.UpdateUserAsync(request).ConfigureAwait(false);
+                await _securityService.UpdateUserPassword(request).ConfigureAwait(false);
+            }
+            else
+            {
+                var request = new UpdateUserRequest()
+                {
+                    Update = _mapper.Map<UpdateUserMessage>(user)
+                };
+
+                await _securityService.UpdateUser(request).ConfigureAwait(false);
+            }
         }
 
         public async Task DeleteUser(int userId)
         {
             Preconditions.ThrowIfNull(nameof(userId), userId);
-            await _securityService.DeleteUserAsync(new DeleteUserRequest() { UserId = userId }).ConfigureAwait(false);
+            await _securityService.DeleteUser(new DeleteUserRequest() { UserId = userId }).ConfigureAwait(false);
         }
 
         public async Task<IList<UserModel>> GetAllUsers()

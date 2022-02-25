@@ -503,7 +503,7 @@ namespace Avalanche.Api.Managers.Procedures
 
         private async Task<PhysicianModel?> GetPhysician(string physicianReturned)
         {
-            var systemAdministrator = await _securityService.FindByUserName("Administrator").ConfigureAwait(false);
+            var systemAdministrator = await _securityService.GetUser("Administrator").ConfigureAwait(false);
 
             return physicianReturned switch
             {
