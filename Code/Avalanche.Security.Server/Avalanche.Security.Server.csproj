@@ -41,7 +41,7 @@
       <TreatAsUsed>true</TreatAsUsed>
     </PackageReference>
     <PackageReference Include="Ism.Common.Core" Version="1.0.0-prerelease058" />
-    <PackageReference Include="Ism.Common.Core.Hosting" Version="1.0.0-prerelease051" />
+    <PackageReference Include="Ism.Common.Core.Hosting" Version="1.0.0-prerelease052" />
     <PackageReference Include="Ism.Storage.Core.Infrastructure" Version="1.0.0-prerelease0008" />
     <PackageReference Include="Ism.Utility.Core" Version="1.0.2-prerelease0002" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="3.1.2" />
