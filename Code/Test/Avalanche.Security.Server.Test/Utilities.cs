@@ -2,15 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using AutoMapper;
 using Avalanche.Security.Server.Core;
-using Avalanche.Security.Server.Core.Interfaces;
-using Avalanche.Security.Server.Core.Managers;
-using Avalanche.Security.Server.Core.Security.Hashing;
 using Avalanche.Security.Server.Core.Validators;
-using Avalanche.Security.Server.Security.Hashing;
+using Avalanche.Shared.Infrastructure.Security.Hashing;
 using Ism.Storage.Core.Infrastructure;
 using Ism.Storage.Core.Infrastructure.Interfaces;
 using Microsoft.Data.Sqlite;
@@ -25,8 +21,8 @@ namespace Avalanche.Security.Server.Test
 {
     public static class Utilities
     {
+        public const string MockHashedPassword = "ThisIsTheValueAlwaysReturnedByMockPasswordHasher";
         private static readonly Random Random = new Random();
-        private static readonly IPasswordHasher passwordHasher = new PasswordHasher();
 
         public static string CreateString(int stringLength)
         {
@@ -76,6 +72,13 @@ namespace Avalanche.Security.Server.Test
             return new Mapper(mapperConfig);
         }
 
+        public static Mock<IPasswordHasher> GetMockPasswordHasher()
+        {
+            var mock = new Mock<IPasswordHasher>();
+            _ = mock.Setup(x => x.HashPassword(It.IsAny<string>())).Returns(MockHashedPassword);
+            return mock;
+        }
+
         public static MapperConfiguration GetMapperConfiguration(Type type) =>
             new MapperConfiguration(cfg =>
             {
@@ -102,8 +105,10 @@ namespace Avalanche.Security.Server.Test
                 GetMapper(typeof(SecurityDbContext)),
                 new SecurityDbContext(options),
                 dbWriter.Object,
-                new UserValidator(),
-                passwordHasher
+                new NewUserValidator(),
+                new UpdateUserValidator(),
+                new UpdateUserPasswordValidator(),
+                GetMockPasswordHasher().Object
             );
         }
 
@@ -128,39 +133,11 @@ namespace Avalanche.Security.Server.Test
                 GetMapper(typeof(SecurityDbContext)),
                 new SecurityDbContext(options),
                 databaseWriter,
-                new UserValidator(),
-                passwordHasher
+                new NewUserValidator(),
+                new UpdateUserValidator(),
+                new UpdateUserPasswordValidator(),
+                GetMockPasswordHasher().Object
             );
-        }
-
-        public static UsersManager GetUserManager(IUserRepository repository)
-        {
-            //logger = GetLoggerMock<UserRepository>(output);
-
-            return new UsersManager(repository);
-        }
-
-        public static void SetAutoPropertyBackingField<T>(T obj, string propertyName, object value)
-        {
-            var privateField = GetAutoPropertyBackingField(typeof(T).GetProperty(propertyName));
-            privateField?.SetValue(obj, value);
-        }
-
-        private static FieldInfo? GetAutoPropertyBackingField(PropertyInfo pi)
-        {
-            if (!pi.CanRead || !pi.GetGetMethod(nonPublic: true).IsDefined(typeof(CompilerGeneratedAttribute), inherit: true))
-            {
-                return null;
-            }
-
-            var backingField = pi.DeclaringType.GetField($"<{pi.Name}>k__BackingField", BindingFlags.Instance | BindingFlags.NonPublic);
-
-            if (!backingField.IsDefined(typeof(CompilerGeneratedAttribute), inherit: true))
-            {
-                return null;
-            }
-
-            return backingField;
         }
 
         public static T PickRandom<T>(ICollection<T> enumerable)
@@ -179,9 +156,9 @@ namespace Avalanche.Security.Server.Test
                 .Options;
 
             // Create the schema in the database
-            using (var context = (TContext)Activator.CreateInstance(typeof(TContext), options))
+            using (var context = (TContext?)Activator.CreateInstance(typeof(TContext), options))
             {
-                _ = context.Database.EnsureCreated();
+                _ = context!.Database.EnsureCreated();
             }
 
             return options;

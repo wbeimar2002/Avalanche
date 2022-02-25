@@ -1,13 +1,18 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using Avalanche.Security.Server.Client.V1.Protos;
-using Avalanche.Security.Server.Core.Managers;
+using Avalanche.Security.Server.Core.Interfaces;
 using Avalanche.Security.Server.Core.Models;
 using Google.Protobuf.WellKnownTypes;
 using Grpc.Core;
+using Ism.Common.Core.Aspects;
+using Ism.Common.Core.Grpc.Extensions;
+using Ism.Storage.Core.Infrastructure.Exceptions;
 using Microsoft.Extensions.Logging;
+using static Ism.Utility.Core.Preconditions;
 
 namespace Avalanche.Security.Server.V1.Handlers
 {
@@ -19,64 +24,171 @@ namespace Avalanche.Security.Server.V1.Handlers
 
         public SecurityServiceHandler(ILogger<SecurityServiceHandler> logger, IMapper mapper, IUsersManager usersManager)
         {
-            _logger = logger;
-            _mapper = mapper;
-            _usersManager = usersManager;
+            _logger = ThrowIfNullOrReturn(nameof(logger), logger);
+            _mapper = ThrowIfNullOrReturn(nameof(mapper), mapper);
+            _usersManager = ThrowIfNullOrReturn(nameof(usersManager), usersManager);
         }
 
+        [AspectLogger]
         public override async Task<AddUserResponse> AddUser(AddUserRequest request, ServerCallContext context)
         {
-            var response = await _usersManager.AddUser(_mapper.Map<UserModel>(request.User));
+            try
+            {
+                ThrowIfNull(nameof(request), request);
+                ThrowIfNull(nameof(request.User), request.User);
 
-            var user = _mapper.Map<UserMessage>(response);
+                var response = await _usersManager.AddUser(_mapper.Map<NewUserModel>(request.User)).ConfigureAwait(false);
+                var user = _mapper.Map<UserMessage>(response);
 
-            var result = new AddUserResponse();
-            result.User = user;
-            return result;
+                return new AddUserResponse
+                {
+                    User = user
+                };
+            }
+            catch (DuplicateEntityException ex)
+            {
+                var status = GetDuplicatedStatus(ex);
+                throw status.ToException();
+            }
+            catch (Exception ex)
+            {
+                throw ex.LogAndReturnGrpcException(_logger);
+            }
         }
 
+        [AspectLogger]
         public override async Task<Empty> DeleteUser(DeleteUserRequest request, ServerCallContext context)
         {
-            var response = await _usersManager.DeleteUser(request.UserId);
-            return new Empty();
+            try
+            {
+                ThrowIfNull(nameof(request), request);
+                ThrowIfNullOrDefault(nameof(request.UserId), request.UserId);
+
+                _ = await _usersManager.DeleteUser(request.UserId).ConfigureAwait(false);
+                return new Empty();
+            }
+            catch (Exception ex)
+            {
+                throw ex.LogAndReturnGrpcException(_logger);
+            }
         }
 
+        [AspectLogger]
+        public override async Task<GetUserResponse> GetUser(GetUserRequest request, ServerCallContext context)
+        {
+            try
+            {
+                ThrowIfNull(nameof(request), request);
+                ThrowIfNullOrEmptyOrWhiteSpace(nameof(request.UserName), request.UserName);
+
+                var response = await _usersManager.GetUser(request.UserName).ConfigureAwait(false);
+                var user = _mapper.Map<UserMessage>(response);
+
+                return new GetUserResponse
+                {
+                    User = user
+                };
+            }
+            catch (Exception ex)
+            {
+                throw ex.LogAndReturnGrpcException(_logger);
+            }
+        }
+
+        [AspectLogger]
         public override async Task<GetUsersResponse> GetUsers(Empty request, ServerCallContext context)
         {
-            var response = await _usersManager.GetAllUsers();
+            try
+            {
+                var response = await _usersManager.GetUsers().ConfigureAwait(false);
+                var resultList = _mapper.Map<IList<UserMessage>>(response.ToList());
 
-            var resultList = _mapper.Map<IList<UserMessage>>(response.ToList());
-
-            var result = new GetUsersResponse();
-            result.Users.Add(resultList);
-            return result;
+                return new GetUsersResponse() { Users = { resultList } };
+            }
+            catch (Exception ex)
+            {
+                throw ex.LogAndReturnGrpcException(_logger);
+            }
         }
 
-        public override async Task<Empty> UpdateUser(UpdateUserRequest request, ServerCallContext context)
-        {
-            await _usersManager.UpdateUser(_mapper.Map<UserModel>(request.User));
-            return new Empty();
-        }
-
-        public override async Task<FindByUserNameResponse> FindByUserName(FindByUserNameRequest request, ServerCallContext context)
-        {
-            var response = await _usersManager.FindByUserNameAsync(request.UserName);
-
-            var user = _mapper.Map<UserMessage>(response);
-
-            var result = new FindByUserNameResponse();
-            result.User = user;
-            return result;
-        }
-
+        [AspectLogger]
         public override async Task<SearchUsersResponse> SearchUsers(SearchUsersRequest request, ServerCallContext context)
         {
-            var users = await _usersManager.SearchUsers(request.Keyword);
+            try
+            {
+                ThrowIfNull(nameof(request), request);
 
-            var response = new SearchUsersResponse();
-            response.Users.Add(_mapper.Map<IList<UserModel>, IList<UserMessage>>(users.ToList()));
+                var users = await _usersManager.SearchUsers(request.Keyword).ConfigureAwait(false);
+                var response = new SearchUsersResponse();
+                response.Users.Add(_mapper.Map<IList<UserModel>, IList<UserMessage>>(users.ToList()));
 
-            return response;
+                return response;
+            }
+            catch (Exception ex)
+            {
+                throw ex.LogAndReturnGrpcException(_logger);
+            }
         }
+
+        [AspectLogger]
+        public override async Task<Empty> UpdateUser(UpdateUserRequest request, ServerCallContext context)
+        {
+            try
+            {
+                ThrowIfNull(nameof(request), request);
+                ThrowIfNull(nameof(request.Update), request.Update);
+
+                await _usersManager.UpdateUser(_mapper.Map<UpdateUserModel>(request.Update)).ConfigureAwait(false);
+                return new Empty();
+            }
+            catch (Exception ex)
+            {
+                throw ex.LogAndReturnGrpcException(_logger);
+            }
+        }
+
+        [AspectLogger]
+        public override async Task<Empty> UpdateUserPassword(UpdateUserPasswordRequest request, ServerCallContext context)
+        {
+            try
+            {
+                ThrowIfNull(nameof(request), request);
+                ThrowIfNull(nameof(request.PasswordUpdate), request.PasswordUpdate);
+
+                await _usersManager.UpdateUserPassword(_mapper.Map<UpdateUserPasswordModel>(request.PasswordUpdate)).ConfigureAwait(false);
+                return new Empty();
+            }
+            catch (Exception ex)
+            {
+                throw ex.LogAndReturnGrpcException(_logger);
+            }
+        }
+        [AspectLogger]
+        public override async Task<VerifyUserLoginResponse> VerifyUserLogin(VerifyUserLoginRequest request, ServerCallContext context)
+        {
+            try
+            {
+                ThrowIfNull(nameof(request), request);
+                ThrowIfNullOrEmptyOrWhiteSpace(nameof(request.UserName), request.UserName);
+
+                var (loginValid, user) = await _usersManager.VerifyUserLogin(request.UserName, request.Password).ConfigureAwait(false);
+                return new VerifyUserLoginResponse
+                {
+                    LoginValid = loginValid,
+                    User = user == null ? null : _mapper.Map<UserModel, UserMessage>(user)
+                };
+            }
+            catch (Exception ex)
+            {
+                throw ex.LogAndReturnGrpcException(_logger);
+            }
+        }
+
+        private static Google.Rpc.Status GetDuplicatedStatus(DuplicateEntityException ex) =>
+           new Google.Rpc.Status
+           {
+               Code = (int)StatusCode.AlreadyExists,
+               Message = ex.Message
+           };
     }
 }

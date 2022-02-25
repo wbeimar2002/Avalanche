@@ -33,7 +33,8 @@ namespace Avalanche.Security.Server.Core.EntityConfigurations
                 .IsRequired()
                 .HasColumnType("TEXT COLLATE NOCASE");
 
-            _ = builder.Property(x => x.Password)
+            _ = builder.Property(x => x.PasswordHash)
+                .HasColumnName("Password")
                 .HasMaxLength(64)
                 .IsUnicode()
                 .IsRequired()

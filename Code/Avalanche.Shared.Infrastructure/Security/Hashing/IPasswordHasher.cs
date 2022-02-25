@@ -1,4 +1,4 @@
-namespace Avalanche.Security.Server.Core.Security.Hashing
+namespace Avalanche.Shared.Infrastructure.Security.Hashing
 {
     public interface IPasswordHasher
     {

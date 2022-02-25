@@ -8,7 +8,6 @@ using Microsoft.Extensions.Logging;
 
 using static Ism.Common.Core.Hosting.HostingUtilities;
 
-
 namespace Avalanche.Security.Server
 {
     [ExcludeFromCodeCoverage]
@@ -48,4 +47,3 @@ namespace Avalanche.Security.Server
         }
     }
 }
-

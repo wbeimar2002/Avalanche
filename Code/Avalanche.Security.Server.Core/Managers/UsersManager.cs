@@ -2,57 +2,66 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Avalanche.Security.Server.Core.Interfaces;
 using Avalanche.Security.Server.Core.Models;
-
-using static Ism.Utility.Core.Preconditions;
+using Avalanche.Shared.Infrastructure.Security.Hashing;
 
 namespace Avalanche.Security.Server.Core.Managers
 {
+    // 
+    /// <summary>
+    /// This is currently nothing but a proxy/not a very valuable abstraction.
+    /// Keeping it around for now in case we need to wrap anymore business logic around these methods in the future.
+    /// e.g. Notify VSS if local user Added or Updated
+    /// There is also a reasonable argument that the public methods on UserRepository, which take models could be moved here
+    /// and the private Repository methods, which take Entities, could be lifted up and made public.
+    /// </summary>
     public class UsersManager : IUsersManager
     {
-        //TODO: Finish the preconditions
+        private readonly IPasswordHasher _passwordHasher;
         private readonly IUserRepository _userRepository;
 
-        public UsersManager(IUserRepository userRepository)
+        public UsersManager(IUserRepository userRepository, IPasswordHasher passwordHasher)
         {
             _userRepository = userRepository;
+            _passwordHasher = passwordHasher;
         }
 
-        public async Task UpdateUser(UserModel user)
+        public Task<UserModel> AddUser(NewUserModel user) =>
+            _userRepository.AddUser(user);
+
+        public Task<int> DeleteUser(int userId) =>
+            _userRepository.DeleteUser(userId);
+
+        public Task<UserModel?> GetUser(string userName) =>
+            _userRepository.GetUser(userName);
+
+        public Task<IEnumerable<UserModel>> GetUsers() =>
+            _userRepository.GetUsers();
+
+        public Task<IEnumerable<UserModel>> SearchUsers(string keyword) =>
+            _userRepository.SearchUsers(keyword);
+
+        public Task UpdateUser(UpdateUserModel update) =>
+            _userRepository.UpdateUser(update);
+
+        public Task UpdateUserPassword(UpdateUserPasswordModel passwordUpdate) =>
+            _userRepository.UpdateUserPassword(passwordUpdate);
+
+        public async Task<(bool LoginValid, UserModel? User)> VerifyUserLogin(string userName, string password)
         {
-            ThrowIfNull(nameof(user), user);
-            ThrowIfNullOrEmpty(nameof(user), user.UserName);
-            ThrowIfTrue(nameof(user), user.UserName.Length > 64);
+            var user = await _userRepository.GetUser(userName).ConfigureAwait(false);
+            if (user == null)
+            {
+                return (false, null);
+            }
 
-            await _userRepository.AddOrUpdateUser(user);
-        }
+            var valid = _passwordHasher.PasswordMatches(password, user.PasswordHash);
+            if (valid)
+            {
+                return (valid, user);
+            }
 
-        public async Task<UserModel> AddUser(UserModel user)
-        {
-            ThrowIfNull(nameof(user), user);
-            ThrowIfNullOrEmpty(nameof(user), user.UserName);
-            ThrowIfTrue(nameof(user), user.UserName.Length > 64);
-
-            return await _userRepository.AddUser(user);
-        }
-
-        public async Task<int> DeleteUser(int userId)
-        {
-            return await _userRepository.DeleteUser(userId);
-        }
-
-        public async Task<UserModel> FindByUserNameAsync(string userName)
-        {
-            return await _userRepository.FindByUserNameAsync(userName);
-        }
-
-        public async Task<IEnumerable<UserModel>> GetAllUsers()
-        {
-            return await _userRepository.GetAllUsers();
-        }
-
-        public async Task<IEnumerable<UserModel>> SearchUsers(string keyword)
-        {
-            return await _userRepository.SearchUsers(keyword);
+            // Make sure to return null User if password doesn't match
+            return (false, null);
         }
     }
 }

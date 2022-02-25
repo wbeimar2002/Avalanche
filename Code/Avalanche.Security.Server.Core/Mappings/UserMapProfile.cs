@@ -1,4 +1,3 @@
-
 using AutoMapper;
 using Avalanche.Security.Server.Core.Entities;
 using Avalanche.Security.Server.Core.Models;
@@ -9,6 +8,12 @@ namespace Avalanche.Security.Server.Core.Mappings
 {
     public class UserMapProfile : Profile
     {
+        public UserMapProfile()
+        {
+            CreateMap<UserModel, UserEntity>(MemberList.Destination).ConvertUsing<UserEntityConverter>();
+            CreateMap<UserEntity, UserModel>(MemberList.Destination).ConvertUsing<UserConverter>();
+        }
+
         public sealed class UserConverter : ITypeConverter<UserEntity, UserModel>
         {
             public UserModel Convert(UserEntity source, UserModel destination, ResolutionContext context)
@@ -22,7 +27,7 @@ namespace Avalanche.Security.Server.Core.Mappings
                     FirstName = source.FirstName,
                     LastName = source.LastName,
                     UserName = source.UserName,
-                    Password = source.Password
+                    PasswordHash = source.PasswordHash
                 };
             }
         }
@@ -40,15 +45,9 @@ namespace Avalanche.Security.Server.Core.Mappings
                     FirstName = source.FirstName,
                     LastName = source.LastName,
                     UserName = source.UserName,
-                    Password = source.Password
+                    PasswordHash = source.PasswordHash
                 };
             }
-        }
-
-        public UserMapProfile()
-        {
-            CreateMap<UserModel, UserEntity>(MemberList.Destination).ConvertUsing<UserEntityConverter>();
-            CreateMap<UserEntity, UserModel>(MemberList.Destination).ConvertUsing<UserConverter>();
         }
     }
 }
