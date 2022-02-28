@@ -75,6 +75,7 @@ namespace Avalanche.Api.Services.Notifications
             AddDataSubscription<VideoRoutingStateData>(data => _hubContext.Clients.All.OnVideoRoutingStateDataChanged(data));
 
             AddDataSubscription<MedpresenceState>(evt => _hubContext.Clients.All.OnMedpresenceStateDataChanged(evt));
+            AddSubscription<MedpresenceEvent>(evt => _hubContext.Clients.All.OnMedpresenceEvent(evt));
 
             AddSubscription<ImageCaptureSucceededEvent>(evt => _hubContext.Clients.All.OnImageCaptureSucceeded(evt));
 

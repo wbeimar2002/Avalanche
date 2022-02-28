@@ -6,6 +6,7 @@ namespace Avalanche.Api.ViewModels
     {
         public string? State { get; set; }
         public ulong? SessionId { get; set; }
+        public bool IsLocked { get; set; }
         public bool IsRecording { get; set; }
         public int ImageCount { get; set; }
         public int ClipCount { get; set; }

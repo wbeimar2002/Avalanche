@@ -47,6 +47,8 @@ namespace Avalanche.Api.Hubs
 
         Task OnMedpresenceStateDataChanged(MedpresenceState medpresenceState);
 
+        Task OnMedpresenceEvent(MedpresenceEvent medpresenceEvent);
+
         Task OnImageCaptureSucceeded(ImageCaptureSucceededEvent evt);
 
         Task OnDownloadReady(DownloadReadyEvent evt);
