@@ -194,7 +194,14 @@ namespace Avalanche.Api.Managers.Procedures
         {
             Preconditions.ThrowIfNull(nameof(registrationMode), registrationMode);
 
-            patient = await GetPatientForRegistration(registrationMode, patient);
+            var activeProcedure = await _stateClient.GetData<ActiveProcedureState>().ConfigureAwait(false);
+
+            if (activeProcedure != null)
+            {
+                throw new InvalidOperationException($"{nameof(AllocateNewProcedure)} cannot proceed when another procedure is already active.");
+            }
+
+            patient = await GetPatientForRegistration(registrationMode, patient).ConfigureAwait(false);
 
             if (registrationMode != PatientRegistrationMode.Quick)
             {
@@ -491,7 +498,7 @@ namespace Avalanche.Api.Managers.Procedures
 
         private async Task<PhysicianModel?> GetSelectedPhysician(PatientRegistrationMode registrationMode)
         {
-            var isAutoFillPhysicianEnabled = _setupConfiguration.Registration.Manual.AutoFillPhysician;
+            var isAutoFillPhysicianEnabled = _setupConfiguration.Registration.Manual.PhysicianAsLoggedInUser;
 
             return registrationMode switch
             {

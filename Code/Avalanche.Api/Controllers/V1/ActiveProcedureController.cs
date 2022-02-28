@@ -293,7 +293,7 @@ namespace Avalanche.Api.Controllers.V1
             {
                 _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
 
-                await _activeProcedureManager.AllocateNewProcedure(registrationMode, patient).ConfigureAwait(false);
+                _ = await _activeProcedureManager.AllocateNewProcedure(registrationMode, patient).ConfigureAwait(false);
 
                 return Ok();
             }
