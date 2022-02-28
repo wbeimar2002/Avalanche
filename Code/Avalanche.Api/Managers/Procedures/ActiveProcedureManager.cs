@@ -498,7 +498,7 @@ namespace Avalanche.Api.Managers.Procedures
 
         private async Task<PhysicianModel?> GetSelectedPhysician(PatientRegistrationMode registrationMode)
         {
-            var isAutoFillPhysicianEnabled = _setupConfiguration.Registration.Manual.AutoFillPhysician;
+            var isAutoFillPhysicianEnabled = _setupConfiguration.Registration.Manual.PhysicianAsLoggedInUser;
 
             return registrationMode switch
             {
