@@ -47,7 +47,6 @@ namespace Avalanche.Shared.Infrastructure.Configuration
     public class ManualSetupConfiguration
     {
         public bool PhysicianAsLoggedInUser { get; set; }
-        public bool AutoFillPhysician { get; set; }
     }
 
     public class RegistrationSetupConfiguration
