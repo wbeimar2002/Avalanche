@@ -125,6 +125,7 @@ namespace Avalanche.Api.Mapping
                 .ForMember(dest => dest.Videos, opt => opt.MapFrom(src => src.Videos))
                 .ForMember(dest => dest.Images, opt => opt.MapFrom(src => src.Images))
                 .ForMember(dest => dest.Notes, opt => opt.MapFrom(src => src.Notes))
+                .ForMember(dest => dest.Tasks, opt => opt.Ignore())
                 .ForMember(dest => dest.IsClinical, opt => opt.MapFrom(src => src.IsClinical))
                 .ForMember(dest => dest.VideoAutoEditStatus, opt => opt.MapFrom(src => src.VideoAutoEditStatus))
                 .ForMember(dest => dest.Accession, opt => opt.MapFrom(src => src.Accession))
