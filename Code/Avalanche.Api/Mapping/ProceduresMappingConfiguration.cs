@@ -312,20 +312,27 @@ namespace Avalanche.Api.Mapping
 
         private List<TaskViewModel> GetTasksToShow(List<TaskMessage> tasks)
         {
-            List<TaskViewModel> tasksStatus = new List<TaskViewModel>();
+            var tasksStatus = new List<TaskViewModel>();
 
             foreach (var item in tasks)
             {
                 tasksStatus.Add(new TaskViewModel()
                 {
                     Created = GetDateTime(item.Created),
+                    Ended = GetDateTime(item.Ended),
                     Status = (TaskStatuses)item.Status,
                     Type = (TaskTypes)item.Type
                 })
                 ;
             }
 
-            return tasksStatus;
+            var tasksToShow = tasksStatus
+                .OrderByDescending(t => t.Ended)
+                .GroupBy(t => t.Type)
+                .Select(t => t.FirstOrDefault())
+                .ToList();
+
+            return tasksToShow;
         }
     }
 }

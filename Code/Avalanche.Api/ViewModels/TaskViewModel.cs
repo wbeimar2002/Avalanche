@@ -8,5 +8,6 @@ namespace Avalanche.Api.ViewModels
         public TaskTypes Type { get; set; }
         public TaskStatuses Status { get; set; }
         public DateTime Created { get; set; }
+        public DateTime Ended { get; set; }
     }
 }
