@@ -423,14 +423,15 @@ namespace Avalanche.Api.Managers.Procedures
             var formattedDate = DateTime.UtcNow.ToLocalTime().ToString(quickRegistrationDateFormat);
 
             var physician = await GetSelectedPhysician(PatientRegistrationMode.Quick).ConfigureAwait(false);
+            var roomName = "Room_Name";
 
             //TODO: Pending check this default data
             return new PatientViewModel()
             {
-                MRN = $"{formattedDate}MRN",
+                MRN = $"{formattedDate}_{roomName}",
                 DateOfBirth = DateTime.UtcNow.ToLocalTime(),
-                FirstName = $"{formattedDate}FirstName",
-                LastName = $"{formattedDate}LastName",
+                FirstName = $"{formattedDate}_{roomName}",
+                LastName = $"{formattedDate}_{roomName}",
                 Sex = new KeyValuePairViewModel()
                 {
                     Id = "U"
