@@ -119,7 +119,7 @@ namespace Avalanche.Api.Mapping
                 .ForMember(dest => dest.ProcedureStartTimeUtc, opt => opt.MapFrom(src => GetDateTime(src.ProcedureStartTimeUtc)))
                 .ForMember(dest => dest.Repository, opt => opt.MapFrom(src => src.Repository))
                 .ForMember(dest => dest.LibraryId, opt => opt.MapFrom(src => src.LibraryId))
-                .ForMember(dest => dest.ExportStatus, opt => opt.MapFrom(src => GetProcedureExportStatus()));
+                .ForMember(dest => dest.TasksStatus, opt => opt.MapFrom(src => GetTasksToShow(src.Tasks.ToList())));
 
             CreateMap<ProcedureViewModel, ProcedureMessage>()
                 .ForMember(dest => dest.Videos, opt => opt.MapFrom(src => src.Videos))
@@ -310,11 +310,22 @@ namespace Avalanche.Api.Mapping
                 dateTime.Minute,
                 dateTime.Second);
 
-        private List<ProcedureExportStatus> GetProcedureExportStatus()
+        private List<TaskViewModel> GetTasksToShow(List<TaskMessage> tasks)
         {
-            var rnd = new Random();
-            var fixture = new Fixture();
-            return fixture.CreateMany<ProcedureExportStatus>(rnd.Next(1, 4)).ToList();
+            List<TaskViewModel> tasksStatus = new List<TaskViewModel>();
+
+            foreach (var item in tasks)
+            {
+                tasksStatus.Add(new TaskViewModel()
+                {
+                    Created = GetDateTime(item.Created),
+                    Status = (TaskStatuses)item.Status,
+                    Type = (TaskTypes)item.Type
+                })
+                ;
+            }
+
+            return tasksStatus;
         }
     }
 }
