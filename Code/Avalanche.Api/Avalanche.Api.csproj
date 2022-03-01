@@ -55,7 +55,7 @@
     <PackageReference Include="Ism.CodeQuality" Version="1.0.1-prerelease0002">
       <TreatAsUsed>true</TreatAsUsed>
     </PackageReference>
-    <PackageReference Include="Ism.Common.Core.Hosting" Version="1.0.0-prerelease053" />
+    <PackageReference Include="Ism.Common.Core.Hosting" Version="1.0.0-prerelease051" />
     <PackageReference Include="Ism.Log.Common.Core" Version="1.0.0-prerelease19" />
 
     <PackageReference Include="Ism.PgsTimeout.Client" Version="1.0.0-prerelease0016" />
@@ -64,7 +64,7 @@
     <PackageReference Include="Ism.Routing.Client" Version="1.0.0-prerelease0019" />
     <PackageReference Include="Ism.PatientInfoEngine.Client" Version="1.0.0-prerelease0034" />
     <PackageReference Include="Ism.Security.Grpc.Standard" Version="1.0.0-prerelease034" />
-    <PackageReference Include="Ism.Storage.Configuration.Client" Version="1.0.0-prerelease0043" />
+    <PackageReference Include="Ism.Storage.Configuration.Client" Version="1.0.0-prerelease0044" />
     <PackageReference Include="Ism.Streaming.Client" Version="1.0.0-prerelease0019" />
     <PackageReference Include="Ism.Utility.Core" Version="1.0.2-prerelease0002" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="3.1.21" />
