@@ -119,12 +119,13 @@ namespace Avalanche.Api.Mapping
                 .ForMember(dest => dest.ProcedureStartTimeUtc, opt => opt.MapFrom(src => GetDateTime(src.ProcedureStartTimeUtc)))
                 .ForMember(dest => dest.Repository, opt => opt.MapFrom(src => src.Repository))
                 .ForMember(dest => dest.LibraryId, opt => opt.MapFrom(src => src.LibraryId))
-                .ForMember(dest => dest.ExportStatus, opt => opt.MapFrom(src => GetProcedureExportStatus()));
+                .ForMember(dest => dest.TasksStatus, opt => opt.MapFrom(src => GetTasksToShow(src.Tasks.ToList())));
 
             CreateMap<ProcedureViewModel, ProcedureMessage>()
                 .ForMember(dest => dest.Videos, opt => opt.MapFrom(src => src.Videos))
                 .ForMember(dest => dest.Images, opt => opt.MapFrom(src => src.Images))
                 .ForMember(dest => dest.Notes, opt => opt.MapFrom(src => src.Notes))
+                .ForMember(dest => dest.Tasks, opt => opt.Ignore())
                 .ForMember(dest => dest.IsClinical, opt => opt.MapFrom(src => src.IsClinical))
                 .ForMember(dest => dest.VideoAutoEditStatus, opt => opt.MapFrom(src => src.VideoAutoEditStatus))
                 .ForMember(dest => dest.Accession, opt => opt.MapFrom(src => src.Accession))
@@ -310,11 +311,29 @@ namespace Avalanche.Api.Mapping
                 dateTime.Minute,
                 dateTime.Second);
 
-        private List<ProcedureExportStatus> GetProcedureExportStatus()
+        private List<TaskViewModel> GetTasksToShow(List<TaskMessage> tasks)
         {
-            var rnd = new Random();
-            var fixture = new Fixture();
-            return fixture.CreateMany<ProcedureExportStatus>(rnd.Next(1, 4)).ToList();
+            var tasksStatus = new List<TaskViewModel>();
+
+            foreach (var item in tasks)
+            {
+                tasksStatus.Add(new TaskViewModel()
+                {
+                    Created = GetDateTime(item.Created),
+                    Ended = GetDateTime(item.Ended),
+                    Status = (TaskStatuses)item.Status,
+                    Type = (TaskTypes)item.Type
+                })
+                ;
+            }
+
+            var tasksToShow = tasksStatus
+                .OrderByDescending(t => t.Ended)
+                .GroupBy(t => t.Type)
+                .Select(t => t.FirstOrDefault())
+                .ToList();
+
+            return tasksToShow;
         }
     }
 }

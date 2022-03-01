@@ -3,10 +3,10 @@ using System.Text;
 
 namespace Avalanche.Shared.Domain.Enumerations
 {
-    public enum ExportStatus
+    public enum TaskTypes
     {
-        Pending = 0,
-        Succeeded = 1,
-        Failed = 2
+        VNA = 0,
+        EMR = 1,
+        PACS = 2
     }
 }

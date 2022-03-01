@@ -16,7 +16,7 @@ namespace Avalanche.Api.ViewModels
         public string Diagnosis { get; set; }
         public string ClinicalNotes { get; set; }
         public VideoAutoEditStatus VideoAutoEditStatus { get; set; }
-        public List<ProcedureExportStatus> ExportStatus { get; set; }
+        public List<TaskViewModel> TasksStatus { get; set; }
 
         public PatientModel Patient { get; set; }
         public DepartmentModel Department { get; set; }
