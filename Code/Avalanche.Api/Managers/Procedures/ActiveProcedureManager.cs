@@ -20,6 +20,7 @@ using Avalanche.Shared.Infrastructure.Enumerations;
 using Microsoft.AspNetCore.Http;
 using Avalanche.Api.Services.Security;
 using Google.Protobuf.WellKnownTypes;
+using System.Reflection;
 
 namespace Avalanche.Api.Managers.Procedures
 {
@@ -425,20 +426,17 @@ namespace Avalanche.Api.Managers.Procedures
             var physician = await GetSelectedPhysician(PatientRegistrationMode.Quick).ConfigureAwait(false);
             var roomName = "Room_Name";
 
-            //TODO: Pending check this default data
-            return new PatientViewModel()
+            var patient = QuickRegisterPatientPopulateProperties(formattedDate, roomName);
+
+            patient.Sex = new KeyValuePairViewModel()
             {
-                MRN = $"{formattedDate}_{roomName}",
-                DateOfBirth = DateTime.UtcNow.ToLocalTime(),
-                FirstName = $"{formattedDate}_{roomName}",
-                LastName = $"{formattedDate}_{roomName}",
-                Sex = new KeyValuePairViewModel()
-                {
-                    Id = "U"
-                },
-                Physician = physician
+                Id = "U"
             };
+            patient.Physician = physician;
+
+            return patient;
         }
+
 
         private async Task<PatientViewModel> ValidatePatientForUpdateRegistration(PatientViewModel existingPatient)
         {
@@ -474,7 +472,6 @@ namespace Avalanche.Api.Managers.Procedures
                     case "dateOfBirth":
                         Preconditions.ThrowIfNull(nameof(patient.DateOfBirth), patient.DateOfBirth);
                         break;
-
                     case "physician":
                         Preconditions.ThrowIfNull(nameof(patient.Physician), patient.Physician);
                         break;
@@ -489,6 +486,35 @@ namespace Avalanche.Api.Managers.Procedures
                         //    break;
                 }
             }
+        }
+
+        private PatientViewModel? QuickRegisterPatientPopulateProperties(string formattedDate, string roomName)
+        {
+            var patient = new PatientViewModel();
+
+            //Call all PatientViewModel properties
+            var type = typeof(PatientViewModel);
+            var properties = type.GetProperties();
+
+            //By default all string required values set "Quick Register" Value
+            foreach (var item in _setupConfiguration.PatientInfo.Where(f => f.Required))
+            {
+                foreach (var p in properties)
+                {
+                    if (p.PropertyType == typeof(string) && p.Name.ToLower() == item.Id.ToLower())
+                    {
+                        p.SetValue(patient, "Quick Register");
+                    }
+                }
+            }
+
+            // Change the MRN, DOB, FirstName and LastName with especific values
+            patient.MRN = $"{formattedDate}_{roomName}";
+            patient.DateOfBirth = DateTime.UtcNow.ToLocalTime();
+            patient.FirstName = $"{formattedDate}_{roomName}";
+            patient.LastName = $"{formattedDate}_{roomName}";
+
+            return patient;
         }
 
         private async Task<int> GetPatientListSource()
