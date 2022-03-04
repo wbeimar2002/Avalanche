@@ -484,21 +484,20 @@ namespace Avalanche.Api.Managers.Procedures
         private PatientViewModel? GetQuickRegisterPatient(string formattedDate, string roomName, PhysicianModel physician)
         {
             var patient = new PatientViewModel();
-            var quickRegisterValue = "Quick Register";
+
+            //Call all PatientViewModel properties
+            var type = typeof(PatientViewModel);
+            var properties = type.GetProperties();
 
             //By default all string required values set "Quick Register" Value
             foreach (var item in _setupConfiguration.PatientInfo.Where(f => f.Required))
             {
-                switch (item.Id)
+                foreach (var p in properties)
                 {
-                    case "firstName":
-                        patient.FirstName = quickRegisterValue;
-                        break;
-                    case "lastName":
-                        patient.LastName = quickRegisterValue;
-                        break;
-                    default:
-                        break;
+                    if (p.PropertyType == typeof(string) && p.Name.ToLower() == item.Id.ToLower())
+                    {
+                        p.SetValue(patient, "Quick Register");
+                    }
                 }
             }
 
