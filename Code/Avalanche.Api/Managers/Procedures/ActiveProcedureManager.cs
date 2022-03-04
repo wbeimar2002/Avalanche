@@ -426,14 +426,7 @@ namespace Avalanche.Api.Managers.Procedures
             var physician = await GetSelectedPhysician(PatientRegistrationMode.Quick).ConfigureAwait(false);
             var roomName = "Room_Name";
 
-            var patient = QuickRegisterPatientPopulateProperties(formattedDate, roomName);
-
-            patient.Sex = new KeyValuePairViewModel()
-            {
-                Id = "U"
-            };
-            patient.Physician = physician;
-
+            var patient = GetQuickRegisterPatient(formattedDate, roomName, physician);
             return patient;
         }
 
@@ -488,23 +481,24 @@ namespace Avalanche.Api.Managers.Procedures
             }
         }
 
-        private PatientViewModel? QuickRegisterPatientPopulateProperties(string formattedDate, string roomName)
+        private PatientViewModel? GetQuickRegisterPatient(string formattedDate, string roomName, PhysicianModel physician)
         {
             var patient = new PatientViewModel();
-
-            //Call all PatientViewModel properties
-            var type = typeof(PatientViewModel);
-            var properties = type.GetProperties();
+            var quickRegisterValue = "Quick Register";
 
             //By default all string required values set "Quick Register" Value
             foreach (var item in _setupConfiguration.PatientInfo.Where(f => f.Required))
             {
-                foreach (var p in properties)
+                switch (item.Id)
                 {
-                    if (p.PropertyType == typeof(string) && p.Name.ToLower() == item.Id.ToLower())
-                    {
-                        p.SetValue(patient, "Quick Register");
-                    }
+                    case "firstName":
+                        patient.FirstName = quickRegisterValue;
+                        break;
+                    case "lastName":
+                        patient.LastName = quickRegisterValue;
+                        break;
+                    default:
+                        break;
                 }
             }
 
@@ -513,6 +507,11 @@ namespace Avalanche.Api.Managers.Procedures
             patient.DateOfBirth = DateTime.UtcNow.ToLocalTime();
             patient.FirstName = $"{formattedDate}_{roomName}";
             patient.LastName = $"{formattedDate}_{roomName}";
+            patient.Sex = new KeyValuePairViewModel()
+            {
+                Id = "U"
+            };
+            patient.Physician = physician;
 
             return patient;
         }
