@@ -40,6 +40,11 @@ namespace Avalanche.Security.Server.Core.EntityConfigurations
                 .IsRequired()
                 .HasColumnType("TEXT COLLATE NOCASE");
 
+            _ = builder.Property(x => x.IsAdmin)
+                .IsRequired()
+                .HasColumnType("INTEGER")
+                .HasDefaultValue(false);
+
             // Indexes
             _ = builder.HasIndex(n => n.UserName)
                 .IsUnique(true);

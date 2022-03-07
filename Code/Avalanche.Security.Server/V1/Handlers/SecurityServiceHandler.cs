@@ -163,6 +163,7 @@ namespace Avalanche.Security.Server.V1.Handlers
                 throw ex.LogAndReturnGrpcException(_logger);
             }
         }
+
         [AspectLogger]
         public override async Task<VerifyUserLoginResponse> VerifyUserLogin(VerifyUserLoginRequest request, ServerCallContext context)
         {
@@ -172,6 +173,27 @@ namespace Avalanche.Security.Server.V1.Handlers
                 ThrowIfNullOrEmptyOrWhiteSpace(nameof(request.UserName), request.UserName);
 
                 var (loginValid, user) = await _usersManager.VerifyUserLogin(request.UserName, request.Password).ConfigureAwait(false);
+                return new VerifyUserLoginResponse
+                {
+                    LoginValid = loginValid,
+                    User = user == null ? null : _mapper.Map<UserModel, UserMessage>(user)
+                };
+            }
+            catch (Exception ex)
+            {
+                throw ex.LogAndReturnGrpcException(_logger);
+            }
+        }
+
+        [AspectLogger]
+        public override async Task<VerifyUserLoginResponse> VerifyAdminUserLogin(VerifyUserLoginRequest request, ServerCallContext context)
+        {
+            try
+            {
+                ThrowIfNull(nameof(request), request);
+                ThrowIfNullOrEmptyOrWhiteSpace(nameof(request.UserName), request.UserName);
+
+                var (loginValid, user) = await _usersManager.VerifyAdminUserLogin(request.UserName, request.Password).ConfigureAwait(false);
                 return new VerifyUserLoginResponse
                 {
                     LoginValid = loginValid,

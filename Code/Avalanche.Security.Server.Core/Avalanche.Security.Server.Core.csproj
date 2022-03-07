@@ -8,9 +8,11 @@
   <ItemGroup>
     <None Remove="Migrations\001 - Initial Database.sql" />
     <None Remove="Migrations\002 - FTS Table.sql" />
+    <None Remove="Migrations\003 - User admin column.sql" />
   </ItemGroup>
 
   <ItemGroup>
+    <EmbeddedResource Include="Migrations\003 - User admin column.sql" />
     <EmbeddedResource Include="Migrations\001 - Initial Database.sql" />
     <EmbeddedResource Include="Migrations\002 - FTS Table.sql" />
   </ItemGroup>

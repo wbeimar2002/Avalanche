@@ -15,6 +15,7 @@ service Security {
     rpc UpdateUserPassword (UpdateUserPasswordRequest) returns (google.protobuf.Empty);
     rpc SearchUsers (SearchUsersRequest) returns (SearchUsersResponse);
     rpc VerifyUserLogin (VerifyUserLoginRequest) returns (VerifyUserLoginResponse);
+    rpc VerifyAdminUserLogin (VerifyUserLoginRequest) returns (VerifyUserLoginResponse);
 }
 
 // Requests
@@ -74,6 +75,7 @@ message UserMessage {
     string userName = 2;
     string firstName = 3;
     string lastName = 4;
+    bool isAdmin = 5;
 }
 
 message NewUserMessage {
