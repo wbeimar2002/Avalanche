@@ -77,7 +77,8 @@ namespace Avalanche.Security.Server.V1.Mappings
                     Id = source.Id,
                     FirstName = source.FirstName,
                     LastName = source.LastName,
-                    UserName = source.UserName
+                    UserName = source.UserName,
+                    IsAdmin = source.IsAdmin
                 };
             }
         }
@@ -95,6 +96,7 @@ namespace Avalanche.Security.Server.V1.Mappings
                     FirstName = source.FirstName,
                     LastName = source.LastName,
                     UserName = source.UserName,
+                    IsAdmin = source.IsAdmin
                 };
             }
         }

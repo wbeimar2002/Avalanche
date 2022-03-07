@@ -50,5 +50,8 @@ namespace Avalanche.Security.Server.Client.V1
 
         public async Task<VerifyUserLoginResponse> VerifyUserLogin(VerifyUserLoginRequest request) =>
             await Client.VerifyUserLoginAsync(request);
+
+        public async Task<VerifyUserLoginResponse> VerifyAdminUserLoginAsync(VerifyUserLoginRequest request) =>
+            await Client.VerifyAdminUserLoginAsync(request);
     }
 }
