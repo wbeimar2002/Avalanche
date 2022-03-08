@@ -154,7 +154,6 @@ namespace Avalanche.Api.Managers.Data
         public async Task DeleteProcedureType(ProcedureTypeModel procedureType)
         {
             Preconditions.ThrowIfNull(nameof(procedureType.Name), procedureType.Name);
-            Preconditions.ThrowIfNull(nameof(procedureType.DepartmentId), procedureType.DepartmentId);
 
             await _dataManagementService.DeleteProcedureType(_mapper.Map<ProcedureTypeModel, DeleteProcedureTypeRequest>(procedureType)).ConfigureAwait(false);
         }

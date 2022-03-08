@@ -73,12 +73,12 @@ namespace Avalanche.Api.Tests.Managers
         }
 
         [Test]
-        public void DeleteProcedureTypeShouldFailIfDepartmentIsNull()
+        public void DeleteProcedureTypeShouldFailIfNameIsNull()
         {
             var procedureType = new ProcedureTypeModel()
             {
                 Id = 1,
-                Name = "Sample",
+                Name = null,
                 DepartmentId = null
             };
 
