@@ -91,6 +91,7 @@ namespace Avalanche.Api.Handlers.Security.Tokens
                 new Claim("Id", user.Id.ToString()),
                 new Claim("FirstName", user.FirstName),
                 new Claim("LastName", user.LastName),
+                new Claim("IsAdmin", user.IsAdmin?.ToString() ?? false.ToString())
             };
 
             //TODO: Don't delete this need to be added in the future
