@@ -21,7 +21,5 @@ namespace Avalanche.Security.Server.Core.Interfaces
         Task UpdateUserPassword(UpdateUserPasswordModel passwordUpdate);
 
         Task<(bool LoginValid, UserModel? User)> VerifyUserLogin(string userName, string password);
-
-        Task<(bool LoginValid, UserModel? User)> VerifyAdminUserLogin(string userName, string password);
     }
 }

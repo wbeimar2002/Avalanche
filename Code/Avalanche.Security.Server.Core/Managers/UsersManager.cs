@@ -63,17 +63,5 @@ namespace Avalanche.Security.Server.Core.Managers
             // Make sure to return null User if password doesn't match
             return (false, null);
         }
-
-        public async Task<(bool LoginValid, UserModel? User)> VerifyAdminUserLogin(string userName, string password)
-        {
-            var (loginValid, user) = await VerifyUserLogin(userName, password).ConfigureAwait(false);
-
-            if (!loginValid || user is null)
-            {
-                return (loginValid, user);
-            }
-
-            return (user.IsAdmin, user);
-        }
     }
 }

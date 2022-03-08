@@ -185,27 +185,6 @@ namespace Avalanche.Security.Server.V1.Handlers
             }
         }
 
-        [AspectLogger]
-        public override async Task<VerifyUserLoginResponse> VerifyAdminUserLogin(VerifyUserLoginRequest request, ServerCallContext context)
-        {
-            try
-            {
-                ThrowIfNull(nameof(request), request);
-                ThrowIfNullOrEmptyOrWhiteSpace(nameof(request.UserName), request.UserName);
-
-                var (loginValid, user) = await _usersManager.VerifyAdminUserLogin(request.UserName, request.Password).ConfigureAwait(false);
-                return new VerifyUserLoginResponse
-                {
-                    LoginValid = loginValid,
-                    User = user == null ? null : _mapper.Map<UserModel, UserMessage>(user)
-                };
-            }
-            catch (Exception ex)
-            {
-                throw ex.LogAndReturnGrpcException(_logger);
-            }
-        }
-
         private static Google.Rpc.Status GetDuplicatedStatus(DuplicateEntityException ex) =>
            new Google.Rpc.Status
            {
