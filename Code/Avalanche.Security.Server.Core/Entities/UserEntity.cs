@@ -7,5 +7,6 @@ namespace Avalanche.Security.Server.Core.Entities
         public string LastName { get; set; }
         public string PasswordHash { get; set; }
         public string UserName { get; set; }
+        public bool IsAdmin { get; set; }
     }
 }
