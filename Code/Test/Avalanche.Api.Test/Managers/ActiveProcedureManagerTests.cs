@@ -629,11 +629,8 @@ namespace Avalanche.Api.Test.Managers
 
             _ = stateClientMock.Setup(s => s.GetData<ActiveProcedureState>()).ReturnsAsync(activeProcedure);
 
-            // Act
-
-
-            // Assert
-            Assert.ThrowsAsync<InvalidOperationException>(async () => await manager.AllocateNewProcedure(patientRegistrationMode, null).ConfigureAwait(false));
+            // Act & Assert
+            _ = Assert.ThrowsAsync<InvalidOperationException>(async () => await manager.AllocateNewProcedure(patientRegistrationMode, null).ConfigureAwait(false));
         }
     }
 }

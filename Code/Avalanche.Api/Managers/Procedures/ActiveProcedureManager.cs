@@ -20,7 +20,7 @@ using Avalanche.Shared.Infrastructure.Enumerations;
 using Microsoft.AspNetCore.Http;
 using Avalanche.Api.Services.Security;
 using Google.Protobuf.WellKnownTypes;
-using System.Reflection;
+using Avalanche.Api.Helpers;
 
 namespace Avalanche.Api.Managers.Procedures
 {
@@ -484,19 +484,15 @@ namespace Avalanche.Api.Managers.Procedures
         private PatientViewModel? GetQuickRegisterPatient(string formattedDate, string roomName, PhysicianModel physician)
         {
             var patient = new PatientViewModel();
+            var setupHelper = SetupConfigurationHelper.PatientInfoHelper();
 
-            //Call all PatientViewModel properties
-            var type = typeof(PatientViewModel);
-            var properties = type.GetProperties();
-
-            //By default all string required values set "Quick Register" Value
             foreach (var item in _setupConfiguration.PatientInfo.Where(f => f.Required))
             {
-                foreach (var p in properties)
+                foreach (var info in setupHelper)
                 {
-                    if (p.PropertyType == typeof(string) && p.Name.ToLower() == item.Id.ToLower())
+                    if (info.Key.ToString() == item.Id && info.Value.PropertyType == typeof(string))
                     {
-                        p.SetValue(patient, "Quick Register");
+                        info.Value.SetValue(patient, "Quick Register");
                     }
                 }
             }
