@@ -27,6 +27,9 @@ namespace Avalanche.Api.Mapping
                 .ForMember(dest =>
                     dest.Password,
                     opt => opt.Ignore())
+                .ForMember(dest =>
+                    dest.IsAdmin,
+                    opt => opt.MapFrom(src => src.IsAdmin))
                 .ReverseMap();
 
             CreateMap<UserModel, UpdateUserMessage>()

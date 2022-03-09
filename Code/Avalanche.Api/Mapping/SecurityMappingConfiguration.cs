@@ -31,7 +31,7 @@ namespace Avalanche.Api.Mapping
                 .ForMember(a => a.UserName, opt => opt.MapFrom(a => a.UserName))
                 .ForMember(a => a.Id, opt => opt.MapFrom(a => a.Id))
                 .ForMember(a => a.Password, opt => opt.Ignore())
-                .ForMember(a => a.IsAdmin, opt => opt.Ignore()); // TODO: Change this map when nuget updated.
+                .ForMember(a => a.IsAdmin, opt => opt.MapFrom(a => a.IsAdmin));
 
             CreateMap<AccessToken, AccessTokenViewModel>()
                 .ForMember(a => a.AccessToken, opt => opt.MapFrom(a => a.Token))
