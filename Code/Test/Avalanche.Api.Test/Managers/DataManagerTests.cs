@@ -29,6 +29,7 @@ namespace Avalanche.Api.Tests.Managers
         Mock<IHttpContextAccessor> _httpContextAccessor;
 
         SetupConfiguration _setupConfiguration;
+        Mock<IDataManager> _dataManager;
 
         IMapper _mapper;
         DataManager _manager;
@@ -52,7 +53,7 @@ namespace Avalanche.Api.Tests.Managers
                 cfg.AddProfile(new PatientMappingConfiguration());
                 cfg.AddProfile(new DataMappingConfiguration());
             });
-
+            _dataManager = new Mock<IDataManager>();
             _mapper = config.CreateMapper();
             _manager = new DeviceDataManager(_mapper, _dataManagementService.Object, _storageService.Object, _httpContextAccessor.Object, _setupConfiguration, _securityService.Object, _avidisService.Object);
         }
@@ -103,11 +104,11 @@ namespace Avalanche.Api.Tests.Managers
         }
 
         [Test]
-        public void GetProceduresByDepartmentShouldFailIfDepartmentIsNull()
+        public void GetProceduresByDepartmentSucceedIfDepartmentIsNull()
         {
-            Task Act() => _manager.GetProcedureTypesByDepartment(null);
+            var result = _dataManager.Setup(m => m.GetProcedureTypesByDepartment(null));
 
-            Assert.That(Act, Throws.TypeOf<ArgumentNullException>());
+            Assert.NotNull(result);
         }
 
         [Test]

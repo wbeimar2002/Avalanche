@@ -160,12 +160,19 @@ namespace Avalanche.Api.Managers.Data
 
         public async Task<List<ProcedureTypeModel>> GetProcedureTypesByDepartment(int? departmentId)
         {
-            Preconditions.ThrowIfNull(nameof(departmentId), departmentId);
+            GetProcedureTypesResponse result;
 
-            var result = await _dataManagementService.GetProcedureTypesByDepartment(new GetProcedureTypesByDepartmentRequest()
+            if (departmentId != null)
             {
-                DepartmentId = departmentId
-            }).ConfigureAwait(false);
+                result = await _dataManagementService.GetProcedureTypesByDepartment(new GetProcedureTypesByDepartmentRequest()
+                {
+                    DepartmentId = departmentId
+                }).ConfigureAwait(false);
+            }
+            else
+            {
+                result = await _dataManagementService.GetAllProcedureTypes().ConfigureAwait(false);
+            }
 
             return _mapper.Map<IList<ProcedureTypeMessage>, IList<ProcedureTypeModel>>(result.ProcedureTypeList).ToList();
         }
