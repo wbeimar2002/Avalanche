@@ -173,8 +173,8 @@ namespace Avalanche.Api.Controllers.V1
             try
             {
                 _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
-                await _proceduresManager.GenerateProcedureZip(
-                    new ProcedureZipRequestViewModel
+                await _proceduresManager.DownloadProcedure(
+                    new ProcedureDownloadRequestViewModel
                     {
                         ProcedureId = new ProcedureIdViewModel(id, repository),
                         ContentItemIds = contentItemIds,

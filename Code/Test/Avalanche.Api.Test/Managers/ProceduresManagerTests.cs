@@ -242,16 +242,16 @@ namespace Avalanche.Api.Test.Managers
         public async Task GenerateProcedureZipTest()
         {
             var procedureId = new ProcedureIdViewModel("2021_06_18T19_52_44_TODO", "cache");
-            var procedureZipRequest = new ProcedureZipRequestViewModel()
+            var procedureZipRequest = new ProcedureDownloadRequestViewModel()
             {
                 ProcedureId = procedureId,
                 ContentItemIds = new List<string> { "3206c25e-d9eb-47e0-80c8-96f5233be969", "8378ff3d-37ac-49fa-b3aa-4c6bda01b41d" },
                 RequestId = "1642114410758"
             };
 
-            _libraryService.Setup(mock => mock.GenerateProcedureZip(It.IsAny<GenerateProcedureZipRequest>()));
-            await _manager.GenerateProcedureZip(procedureZipRequest).ConfigureAwait(true);
-            _libraryService.Verify(mock => mock.GenerateProcedureZip(It.IsAny<GenerateProcedureZipRequest>()), Times.Once);
+            _libraryService.Setup(mock => mock.DownloadProcedure(It.IsAny<ProcedureDownloadRequest>()));
+            await _manager.DownloadProcedure(procedureZipRequest).ConfigureAwait(true);
+            _libraryService.Verify(mock => mock.DownloadProcedure(It.IsAny<ProcedureDownloadRequest>()), Times.Once);
         }
     }
 }

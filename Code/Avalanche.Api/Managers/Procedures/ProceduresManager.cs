@@ -245,14 +245,14 @@ namespace Avalanche.Api.Managers.Procedures
 
         }
 
-        public async Task GenerateProcedureZip(ProcedureZipRequestViewModel procedureZipRequest)
+        public async Task DownloadProcedure(ProcedureDownloadRequestViewModel procedureDownloadRequestModel)
         {
-            Preconditions.ThrowIfNull(nameof(procedureZipRequest), procedureZipRequest);
-            Preconditions.ThrowIfNull(nameof(procedureZipRequest.ProcedureId), procedureZipRequest.ProcedureId);
-            Preconditions.ThrowIfNull(nameof(procedureZipRequest.ContentItemIds), procedureZipRequest.ContentItemIds);
-            Preconditions.ThrowIfTrue<ArgumentException>($"{nameof(procedureZipRequest.ContentItemIds.Count)} cannot be empty", procedureZipRequest.ContentItemIds.Count == 0);
-            var procedureDownloadRequest = _mapper.Map<ProcedureZipRequestViewModel, GenerateProcedureZipRequest>(procedureZipRequest);
-            await _libraryService.GenerateProcedureZip(procedureDownloadRequest).ConfigureAwait(false);
+            Preconditions.ThrowIfNull(nameof(procedureDownloadRequestModel), procedureDownloadRequestModel);
+            Preconditions.ThrowIfNull(nameof(procedureDownloadRequestModel.ProcedureId), procedureDownloadRequestModel.ProcedureId);
+            Preconditions.ThrowIfNull(nameof(procedureDownloadRequestModel.ContentItemIds), procedureDownloadRequestModel.ContentItemIds);
+            Preconditions.ThrowIfTrue<ArgumentException>($"{nameof(procedureDownloadRequestModel.ContentItemIds.Count)} cannot be empty", procedureDownloadRequestModel.ContentItemIds.Count == 0);
+            var procedureDownloadRequest = _mapper.Map<ProcedureDownloadRequestViewModel, ProcedureDownloadRequest>(procedureDownloadRequestModel);
+            await _libraryService.DownloadProcedure(procedureDownloadRequest).ConfigureAwait(false);
         }
 
         public async Task ShareProcedure(string repository, string id, List<string> userNames)
