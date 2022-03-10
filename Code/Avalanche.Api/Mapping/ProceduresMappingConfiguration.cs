@@ -144,7 +144,8 @@ namespace Avalanche.Api.Mapping
                 .ForMember(dest => dest.ProcedureType, opt => opt.MapFrom(src => src.ProcedureType == null ? null : src.ProcedureType.Name))
                 .ForMember(dest => dest.ProcedureStartTimeUtc, opt => opt.MapFrom(src => GetFixedDateTime(src.ProcedureStartTimeUtc)))
                 .ForMember(dest => dest.Repository, opt => opt.MapFrom(src => src.Repository))
-                .ForMember(dest => dest.LibraryId, opt => opt.MapFrom(src => src.LibraryId));
+                .ForMember(dest => dest.LibraryId, opt => opt.MapFrom(src => src.LibraryId))
+                .ForMember(dest => dest.ProcedureTimezoneId, opt => opt.Ignore()); // TODO: Temporary Fix Development in progress
 
             CreateMap<ActiveProcedureState, DiscardActiveProcedureRequest>()
                 .ForPath(dest => dest.ProcedureId.Id, opt => opt.MapFrom(src => src.LibraryId))
