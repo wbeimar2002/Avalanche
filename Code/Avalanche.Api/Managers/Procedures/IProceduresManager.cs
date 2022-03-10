@@ -11,7 +11,7 @@ namespace Avalanche.Api.Managers.Procedures
         Task<ProcedureViewModel> GetProcedureDetails(ProcedureIdViewModel procedureIdViewModel);
         Task UpdateProcedure(ProcedureViewModel procedureViewModel);
 
-        Task GenerateProcedureZip(ProcedureZipRequestViewModel procedureZipRequest);
+        Task DownloadProcedure(ProcedureDownloadRequestViewModel procedureDownloadRequestModel);
         Task ShareProcedure(string repository, string id, List<string> userNames);
     }
 }

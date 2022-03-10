@@ -47,8 +47,8 @@ namespace Avalanche.Api.Services.Health
         public async Task<GetFinishedProceduresResponse> GetFinishedProceduresByPatient(GetFinishedProceduresRequestByPatient getFinishedProceduresRequestByPatient) =>
             await _serviceSearchClient.GetFinishedProceduresByPatient(getFinishedProceduresRequestByPatient).ConfigureAwait(false);
 
-        public async Task GenerateProcedureZip(GenerateProcedureZipRequest procedureZipRequest) =>
-            await _managerServiceClient.GenerateProcedureZip(procedureZipRequest).ConfigureAwait(false);
+        public async Task DownloadProcedure(ProcedureDownloadRequest procedureDownloadRequest) =>
+            await _managerServiceClient.DownloadProcedure(procedureDownloadRequest).ConfigureAwait(false);
 
         public async Task<GetPhysiciansSearchResponse> GetPhysicians(GetPhysiciansSearchRequest getPhysiciansSearchRequest) =>
             await _serviceSearchClient.GetPhysicians(getPhysiciansSearchRequest).ConfigureAwait(false);

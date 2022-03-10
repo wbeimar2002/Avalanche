@@ -81,6 +81,8 @@ namespace Avalanche.Api.Services.Notifications
 
             AddSubscription<PatientListUpdatedEvent>(evt => _hubContext.Clients.All.OnPatientListUpdated(evt));
 
+            AddSubscription<DownloadReadyEvent>(evt => _hubContext.Clients.All.OnDownloadReady(evt));
+
             return Task.CompletedTask;
         }
     }

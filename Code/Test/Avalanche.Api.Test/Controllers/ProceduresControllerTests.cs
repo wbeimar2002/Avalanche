@@ -81,7 +81,7 @@ namespace Avalanche.Api.Test.Controllers
         [Test]
         public void CreateDownloadRequestControllerTest()
         {
-            var request = new ProcedureZipRequestViewModel
+            var request = new ProcedureDownloadRequestViewModel
             {
                 ProcedureId = new ProcedureIdViewModel("2021_11_08T21_51_25_TODO", "cache"),
                 ContentItemIds = new System.Collections.Generic.List<string>
@@ -92,7 +92,7 @@ namespace Avalanche.Api.Test.Controllers
                 RequestId = "1642114410758"
             };
 
-            _proceduresManager.Setup(mock => mock.GenerateProcedureZip(request));
+            _proceduresManager.Setup(mock => mock.DownloadProcedure(request));
 
             var result = _controller.CreateDownloadRequest(
                 request.ProcedureId.Id,
