@@ -73,18 +73,33 @@ namespace Avalanche.Api.Tests.Managers
         }
 
         [Test]
-        public void DeleteProcedureTypeShouldFailIfDepartmentIsNull()
+        public void DeleteProcedureTypeShouldFailIfNameIsNull()
         {
             var procedureType = new ProcedureTypeModel()
             {
                 Id = 1,
-                Name = "Sample",
+                Name = null,
                 DepartmentId = null
             };
 
             Task Act() => _manager.DeleteProcedureType(procedureType);
 
             Assert.That(Act, Throws.TypeOf<ArgumentNullException>());
+        }
+
+        [Test]
+        public void DeleteProcedureTypeShouldSucceedIfDepartmentIsNull()
+        {
+            var procedureType = new ProcedureTypeModel()
+            {
+                Id = 1,
+                Name = "Test ProcedureType",
+                DepartmentId = null
+            };
+
+            Task Act() => _manager.DeleteProcedureType(procedureType);
+
+            Assert.DoesNotThrowAsync(Act);
         }
 
         [Test]

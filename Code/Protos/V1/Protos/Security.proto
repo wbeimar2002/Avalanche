@@ -74,6 +74,7 @@ message UserMessage {
     string userName = 2;
     string firstName = 3;
     string lastName = 4;
+    bool isAdmin = 5;
 }
 
 message NewUserMessage {

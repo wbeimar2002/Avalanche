@@ -163,6 +163,7 @@ namespace Avalanche.Security.Server.V1.Handlers
                 throw ex.LogAndReturnGrpcException(_logger);
             }
         }
+
         [AspectLogger]
         public override async Task<VerifyUserLoginResponse> VerifyUserLogin(VerifyUserLoginRequest request, ServerCallContext context)
         {

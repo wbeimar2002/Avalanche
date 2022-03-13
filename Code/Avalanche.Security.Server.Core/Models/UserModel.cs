@@ -20,6 +20,8 @@ namespace Avalanche.Security.Server.Core.Models
     public abstract class PersistedUserBase : UserBase
     {
         public int Id { get; set; }
+
+        public bool IsAdmin { get; set; }
     }
 
     public class NewUserModel : UserBase

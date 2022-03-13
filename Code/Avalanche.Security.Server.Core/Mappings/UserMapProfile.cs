@@ -27,7 +27,8 @@ namespace Avalanche.Security.Server.Core.Mappings
                     FirstName = source.FirstName,
                     LastName = source.LastName,
                     UserName = source.UserName,
-                    PasswordHash = source.PasswordHash
+                    PasswordHash = source.PasswordHash,
+                    IsAdmin = source.IsAdmin
                 };
             }
         }
@@ -45,7 +46,8 @@ namespace Avalanche.Security.Server.Core.Mappings
                     FirstName = source.FirstName,
                     LastName = source.LastName,
                     UserName = source.UserName,
-                    PasswordHash = source.PasswordHash
+                    PasswordHash = source.PasswordHash,
+                    IsAdmin = source.IsAdmin
                 };
             }
         }
