@@ -2,8 +2,6 @@ using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using Ism.Library.Client.V1;
 using Ism.Library.V1.Protos;
-
-using Avalanche.Shared.Infrastructure.Enumerations;
 using Ism.Security.Grpc;
 
 using static Ism.Library.V1.Protos.LibraryActiveProcedureService;
@@ -28,6 +26,7 @@ namespace Avalanche.Api.Services.Health
             base(managerFactory, searchFactory)
         {
             _libraryActiveProcedureServiceSecureClient = activeProcedureFactory.GetClient("Local");
+
             _libraryManagerServiceSecureClientRemote = managerFactory.GetClient("Remote");
             _librarySearchServiceSecureClientRemote = searchFactory.GetClient("Remote");
         }

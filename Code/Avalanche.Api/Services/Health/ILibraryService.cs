@@ -1,6 +1,5 @@
-using Ism.Library.V1.Protos;
-using System.Collections.Generic;
 using System.Threading.Tasks;
+using Ism.Library.V1.Protos;
 
 namespace Avalanche.Api.Services.Health
 {

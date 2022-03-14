@@ -2,11 +2,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using Ism.Library.Client.V1;
 using Ism.Library.V1.Protos;
-
-using Avalanche.Shared.Infrastructure.Enumerations;
 using Ism.Security.Grpc;
-using Microsoft.FeatureManagement;
-using static Ism.Library.V1.Protos.LibraryActiveProcedureService;
 using static Ism.Library.V1.Protos.LibraryManagerService;
 using static Ism.Library.V1.Protos.LibrarySearchService;
 
