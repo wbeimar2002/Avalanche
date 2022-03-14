@@ -61,7 +61,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.FeatureManagement;
 using Serilog;
-
+using static Ism.Library.V1.Protos.LibraryManagerService;
+using static Ism.Library.V1.Protos.LibrarySearchService;
 using static Ism.PrintServer.V1.Protos.PrintServer;
 
 namespace Avalanche.Api
@@ -181,8 +182,8 @@ namespace Avalanche.Api
             services.AddSingleton<IPasswordHasher, BcryptPasswordHasher>();
             services.AddSingleton<ITokenHandler, TokenHandler>();
 
-        // gRPC Infrastructure
-        _ = services.AddConfigurationPoco<GrpcServiceRegistry>(_configuration, nameof(GrpcServiceRegistry));
+            // gRPC Infrastructure
+            _ = services.AddConfigurationPoco<GrpcServiceRegistry>(_configuration, nameof(GrpcServiceRegistry));
             _ = services.AddConfigurationPoco<HostingConfiguration>(_configuration, nameof(HostingConfiguration));
             _ = services.AddConfigurationPoco<ClientCertificateConfiguration>(_configuration, nameof(ClientCertificateConfiguration));
 
@@ -191,10 +192,6 @@ namespace Avalanche.Api
             // gRPC Clients
             _ = services.AddMedpresenceSecureClient();
             _ = services.AddDataManagementStorageSecureClient();
-
-            _ = services.AddLibrarySearchServiceSecureClient();
-            _ = services.AddLibraryActiveProcedureServiceSecureClient();
-            _ = services.AddLibraryManagerServiceSecureClient();
 
             _ = services.AddSecurityServiceClient();
             _ = services.AddPatientListStorageSecureClient();
@@ -207,27 +204,30 @@ namespace Avalanche.Api
 
             if (isDevice)
             {
+                _ = services.AddLibraryActiveProcedureServiceSecureClient();
+
                 _ = services.AddWebRtcStreamerSecureClient();
                 _ = services.AddAvidisSecureClient();
 
                 _ = services.AddPgsTimeoutSecureClient();
                 _ = services.AddRoutingSecureClient();
 
-                //For printing both Services can be used according to a configuration
-                //_ = services.AddPrintingServerSecureClients();
-
-                // TEMP Fix until changes are moved back to Ism.Security and Print
                 _ = services.AddLocalAndRemoteSecureGrpcClient<PrintingServerSecureClient, PrintServerClient>("PrintServer", "PrintServerVSS");
+                _ = services.AddLocalAndRemoteSecureGrpcClient<LibraryManagerServiceSecureClient, LibraryManagerServiceClient>("Library", "LibraryVSS");
+                _ = services.AddLocalAndRemoteSecureGrpcClient<LibrarySearchServiceSecureClient, LibrarySearchServiceClient>("Library", "LibraryVSS");
 
                 // Hosted Services
-                services.AddHostedService<DeviceNotificationsListener>();
+                _ = services.AddHostedService<DeviceNotificationsListener>();
             }
             else
             {
+                _ = services.AddNamedSecureGrpcClient<LibraryManagerServiceSecureClient, LibraryManagerServiceClient>("Library", "Local");
+                _ = services.AddNamedSecureGrpcClient<LibrarySearchServiceSecureClient, LibrarySearchServiceClient>("Library", "Local");
+
                 _ = services.AddNamedSecureGrpcClient<PrintingServerSecureClient, PrintServerClient>("PrintServer", "Local");
 
                 // Hosted Services
-                services.AddHostedService<ServerNotificationsListener>();
+                _ = services.AddHostedService<ServerNotificationsListener>();
             }
         }
 

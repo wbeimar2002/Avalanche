@@ -84,7 +84,7 @@
     <PackageReference Include="Ism.Storage.PatientList.Client" Version="1.0.0-prerelease0036" />
     <PackageReference Include="Ism.PrintServer.Client" Version="1.0.0-prerelease0010" />
     <PackageReference Include="Ism.Medpresence.Client" Version="1.0.0-prerelease0009" />
-    <PackageReference Include="Ism.Library.Client" Version="1.0.0-prerelease0082" />
+    <PackageReference Include="Ism.Library.Client" Version="1.0.0-prerelease0083" />
     <PackageReference Include="Yarp.ReverseProxy" Version="1.0.0" />
   </ItemGroup>
 
