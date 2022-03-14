@@ -61,6 +61,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.FeatureManagement;
 using Serilog;
+using static Ism.Library.V1.Protos.LibraryActiveProcedureService;
 using static Ism.Library.V1.Protos.LibraryManagerService;
 using static Ism.Library.V1.Protos.LibrarySearchService;
 using static Ism.PrintServer.V1.Protos.PrintServer;
@@ -117,12 +118,14 @@ namespace Avalanche.Api
                 services.AddTransient<IDataManager, DeviceDataManager>();
                 services.AddTransient<IConfigurationManager, DeviceConfigurationManager>();
                 services.AddTransient<IMaintenanceManager, DeviceMaintenanceManager>();
+                services.AddSingleton<ILibraryService, DeviceLibraryService>();
             }
             else
             {
                 services.AddTransient<IDataManager, ServerDataManager>();
                 services.AddTransient<IConfigurationManager, ServerConfigurationManager>();
                 services.AddTransient<IMaintenanceManager, ServerMaintenanceManager>();
+                services.AddSingleton<ILibraryService, ServerLibraryService>();
             }
 
             //Shared
@@ -173,7 +176,6 @@ namespace Avalanche.Api
             services.AddSingleton<IBroadcastService, BroadcastService>();
             services.AddSingleton<IStorageService, StorageService>();
             services.AddSingleton<IDataManagementService, DataManagementService>();
-            services.AddSingleton<ILibraryService, LibraryService>();
             services.AddSingleton<IAccessInfoFactory, AccessInfoFactory>();
             services.AddSingleton<IFilesService, FilesService>();
             services.AddSingleton<IPresetManager, PresetManager>();
@@ -202,10 +204,11 @@ namespace Avalanche.Api
 
             _ = services.AddConfigurationServiceSecureClient();
 
+            //TODO: This should be registered for Server.
+            _ = services.AddNamedSecureGrpcClient<LibraryActiveProcedureServiceSecureClient, LibraryActiveProcedureServiceClient>("Library", "Local");
+
             if (isDevice)
             {
-                _ = services.AddLibraryActiveProcedureServiceSecureClient();
-
                 _ = services.AddWebRtcStreamerSecureClient();
                 _ = services.AddAvidisSecureClient();
 
@@ -213,6 +216,7 @@ namespace Avalanche.Api
                 _ = services.AddRoutingSecureClient();
 
                 _ = services.AddLocalAndRemoteSecureGrpcClient<PrintingServerSecureClient, PrintServerClient>("PrintServer", "PrintServerVSS");
+
                 _ = services.AddLocalAndRemoteSecureGrpcClient<LibraryManagerServiceSecureClient, LibraryManagerServiceClient>("Library", "LibraryVSS");
                 _ = services.AddLocalAndRemoteSecureGrpcClient<LibrarySearchServiceSecureClient, LibrarySearchServiceClient>("Library", "LibraryVSS");
 
@@ -221,10 +225,10 @@ namespace Avalanche.Api
             }
             else
             {
-                _ = services.AddNamedSecureGrpcClient<LibraryManagerServiceSecureClient, LibraryManagerServiceClient>("Library", "Local");
-                _ = services.AddNamedSecureGrpcClient<LibrarySearchServiceSecureClient, LibrarySearchServiceClient>("Library", "Local");
+                _ = services.AddNamedSecureGrpcClient<LibraryManagerServiceSecureClient, LibraryManagerServiceClient>("LibraryVSS", "Local");
+                _ = services.AddNamedSecureGrpcClient<LibrarySearchServiceSecureClient, LibrarySearchServiceClient>("LibraryVSS", "Local");
 
-                _ = services.AddNamedSecureGrpcClient<PrintingServerSecureClient, PrintServerClient>("PrintServer", "Local");
+                _ = services.AddNamedSecureGrpcClient<PrintingServerSecureClient, PrintServerClient>("PrintServerVSS", "Local");
 
                 // Hosted Services
                 _ = services.AddHostedService<ServerNotificationsListener>();
