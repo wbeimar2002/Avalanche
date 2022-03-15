@@ -47,7 +47,7 @@ namespace Avalanche.Api.Test.Managers
             _labelsConfig = new LabelsConfiguration();
             _setupConfiguration = new SetupConfiguration();
 
-            _manager = new ProceduresManager(_stateClient.Object, _libraryService.Object, _accessInfoFactory.Object, _mapper, _dataManager.Object, _labelsConfig, _setupConfiguration);
+            _manager = new ProceduresManager(_libraryService.Object, _mapper, _setupConfiguration);
         }
 
         [Test]
