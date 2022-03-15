@@ -119,6 +119,8 @@ namespace Avalanche.Api
                 services.AddTransient<IConfigurationManager, DeviceConfigurationManager>();
                 services.AddTransient<IMaintenanceManager, DeviceMaintenanceManager>();
                 services.AddSingleton<ILibraryService, DeviceLibraryService>();
+
+                services.AddSingleton<IMedpresenceService, MedpresenceService>();
             }
             else
             {
@@ -179,7 +181,6 @@ namespace Avalanche.Api
             services.AddSingleton<IAccessInfoFactory, AccessInfoFactory>();
             services.AddSingleton<IFilesService, FilesService>();
             services.AddSingleton<IPresetManager, PresetManager>();
-            services.AddSingleton<IMedpresenceService, MedpresenceService>();
             services.AddSingleton<ISecurityService, SecurityService>();
             services.AddSingleton<IPasswordHasher, BcryptPasswordHasher>();
             services.AddSingleton<ITokenHandler, TokenHandler>();
