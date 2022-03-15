@@ -11,13 +11,11 @@ namespace Avalanche.Api.Managers.Maintenance
             PrintingConfiguration printingConfiguration,
             MedPresenceConfiguration medPresenceConfiguration,
             SetupConfiguration setupConfiguration,
-            ProceduresConfiguration proceduresConfiguration,
-            MedPresenceProvisioningConfiguration medPresenceProvisioningConfiguration) : base(
+            ProceduresConfiguration proceduresConfiguration) : base(
                 printingConfiguration,
                 medPresenceConfiguration,
                 setupConfiguration,
-                proceduresConfiguration,
-                medPresenceProvisioningConfiguration)
+                proceduresConfiguration)
         {
         }
 
@@ -25,7 +23,7 @@ namespace Avalanche.Api.Managers.Maintenance
         public LabelsConfiguration GetLabelsConfigurationSettings() => throw new InvalidOperationException();
         public RecorderConfiguration GetRecorderConfigurationSettings() => throw new InvalidOperationException();
         public FinishOptionsConfiguration GetFinishOptionsConfigurationSettings() => throw new InvalidOperationException();
-
         public Task UpdateAutoLabelsConfigurationByProcedureType(int procedureTypeId, List<AutoLabelAutoLabelsConfiguration> autoLabels) => throw new InvalidOperationException();
+        public MedPresenceProvisioningConfiguration GetMedPresenceProvisioningConfigurationSettings() => throw new NotImplementedException();
     }
 }

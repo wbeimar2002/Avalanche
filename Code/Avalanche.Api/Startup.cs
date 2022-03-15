@@ -129,8 +129,6 @@ namespace Avalanche.Api
             }
 
             //Shared
-            services.AddTransient<ISharedConfigurationManager, SharedConfigurationManager>();
-
             services.AddTransient<IAuthenticationManager, AuthenticationManager>();
             services.AddTransient<IFilesManager, FilesManager>();
             services.AddTransient<IPatientsManager, PatientsManager>();
@@ -192,7 +190,6 @@ namespace Avalanche.Api
             _ = services.AddSingleton<ICertificateProvider, FileSystemCertificateProvider>();
 
             // gRPC Clients
-            _ = services.AddMedpresenceSecureClient();
             _ = services.AddDataManagementStorageSecureClient();
 
             _ = services.AddSecurityServiceClient();
@@ -209,6 +206,8 @@ namespace Avalanche.Api
 
             if (isDevice)
             {
+                _ = services.AddMedpresenceSecureClient();
+
                 _ = services.AddWebRtcStreamerSecureClient();
                 _ = services.AddAvidisSecureClient();
 

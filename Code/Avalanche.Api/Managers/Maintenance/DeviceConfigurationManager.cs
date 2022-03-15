@@ -21,6 +21,7 @@ namespace Avalanche.Api.Managers.Maintenance
         private readonly LabelsConfiguration _labelsConfiguration;
         private readonly RecorderConfiguration _recorderConfiguration;
         private readonly FinishOptionsConfiguration _finishOptionsConfiguration;
+        private readonly MedPresenceProvisioningConfiguration _medPresenceProvisioningConfiguration;
 
         private readonly IStorageService _storageService;
 
@@ -40,13 +41,13 @@ namespace Avalanche.Api.Managers.Maintenance
                 printingConfiguration,
                 medPresenceConfiguration,
                 setupConfiguration,
-                proceduresConfiguration,
-                medPresenceProvisioningConfiguration)
+                proceduresConfiguration)
         {
             _autoLabelsConfiguration = autoLabelsConfiguration;
             _labelsConfiguration = labelsConfiguration;
             _recorderConfiguration = recorderConfiguration;
             _finishOptionsConfiguration = finishOptionsConfiguration;
+            _medPresenceProvisioningConfiguration = medPresenceProvisioningConfiguration;
 
             _storageService = storageService;
 
@@ -54,6 +55,8 @@ namespace Avalanche.Api.Managers.Maintenance
             _configurationContext = mapper.Map<UserModel, ConfigurationContext>(user);
             _configurationContext.IdnId = Guid.NewGuid().ToString();
         }
+
+        public MedPresenceProvisioningConfiguration GetMedPresenceProvisioningConfigurationSettings() => _medPresenceProvisioningConfiguration;
 
         public AutoLabelsConfiguration GetAutoLabelsConfigurationSettings(int? procedureTypeId) => new AutoLabelsConfiguration()
         {
