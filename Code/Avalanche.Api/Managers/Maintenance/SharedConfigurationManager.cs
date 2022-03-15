@@ -3,7 +3,7 @@ using Avalanche.Shared.Infrastructure.Configuration;
 
 namespace Avalanche.Api.Managers.Maintenance
 {
-    public class SharedConfigurationManager
+    public class SharedConfigurationManager : ISharedConfigurationManager
     {
         //These values can be changed in execution time
         private readonly PrintingConfiguration _printingConfiguration;
