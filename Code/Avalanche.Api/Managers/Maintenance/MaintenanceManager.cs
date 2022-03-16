@@ -7,7 +7,6 @@ using System.Threading.Tasks;
 using AutoMapper;
 using Avalanche.Api.Helpers;
 using Avalanche.Api.Managers.Data;
-using Avalanche.Api.Managers.Medpresence;
 using Avalanche.Api.Services.Health;
 using Avalanche.Api.Services.Maintenance;
 using Avalanche.Api.Services.Media;
