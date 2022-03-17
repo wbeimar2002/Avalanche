@@ -27,6 +27,7 @@ namespace Avalanche.Shared.Infrastructure.Configuration
 
     public class InputParametersConfiguration
     {
+        public string Region { get; set; }
         public string Environment { get; set; }
         public string Name { get; set; }
         public string SerialNumber { get; set; }

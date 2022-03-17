@@ -10,6 +10,7 @@ namespace Avalanche.Api.ViewModels
 
     public class ProvisioningInputParametersViewModel
     {
+        public string Region { get; set; }
         public string Environment { get; set; }
         public string Name { get; set; }
         public string SerialNumber { get; set; }

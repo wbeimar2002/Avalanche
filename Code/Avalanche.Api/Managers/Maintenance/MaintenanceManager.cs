@@ -421,6 +421,7 @@ namespace Avalanche.Api.Managers.Maintenance
 
                             case VisualStyles.DropDownEmbeddedList:
                             case VisualStyles.DropDownExternalList:
+                            case VisualStyles.DropDownCustomListWithSelectionChange:
                                 setting.SourceValues = await GetDynamicData(setting, settingValues).ConfigureAwait(false);
                                 break;
 
@@ -429,7 +430,7 @@ namespace Avalanche.Api.Managers.Maintenance
                                 var values = await GetDynamicData(setting).ConfigureAwait(false);
                                 setting.SourceValues = AddTypes(values, types);
                                 break;
-                            case VisualStyles.DropDownCustomList:
+                            case VisualStyles.DropDownCustomList:                            
                                 var customValues = await GetCustomValues(setting).ConfigureAwait(false);
                                 setting.SourceValues = GetDynamicList(setting, customValues);
                                 break;
@@ -446,7 +447,6 @@ namespace Avalanche.Api.Managers.Maintenance
                 case "Printers":
                     var printersResponse = await _printingService.GetPrinters().ConfigureAwait(false);
                     return JsonConvert.DeserializeObject<List<dynamic>>(JsonConvert.SerializeObject(printersResponse.Printers.Select(p => new { Name = p })));
-
                 default:
                     break;
             }
