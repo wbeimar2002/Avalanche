@@ -16,5 +16,8 @@ namespace Avalanche.Api.ViewModels
         public ProcedureTypeModel? ProcedureType { get; set; }
         public PhysicianModel? Physician { get; set; }
         public BackgroundRecordingMode BackgroundRecordingMode { get; set; }
+        public string? AccessionNumber { get; set; }
+        public string? Diagnosis { get; set; }
+        public string? ScopeSerialNumber { get; set; }
     }
 }

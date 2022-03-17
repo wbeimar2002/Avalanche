@@ -1,9 +1,9 @@
 using System;
 using System.Collections.Generic;
-using System.Text;
 using Avalanche.Api.ViewModels;
 using Avalanche.Shared.Domain.Models;
 using Bogus;
+using Ism.Library.V1.Protos;
 using Ism.SystemState.Models.Procedure;
 
 namespace Avalanche.Api.Test
@@ -20,6 +20,8 @@ namespace Avalanche.Api.Test
                     FirstName = f.Person.FirstName,
                     LastName = f.Person.LastName,
                     DateOfBirth = f.Person.DateOfBirth,
+                    AccessionNumber = f.Random.String(64),
+                    BackgroundRecordingMode = f.PickRandom<Shared.Infrastructure.Enumerations.BackgroundRecordingMode>(),
                     Sex = new KeyValuePairViewModel()
                     {
                         Id = "U",
@@ -28,20 +30,20 @@ namespace Avalanche.Api.Test
                     },
                     Department = new DepartmentModel()
                     {
-                        Id = 0,
-                        Name = ""
+                        Id = 1,
+                        Name = f.Commerce.Department()
                     },
                     ProcedureType = new ProcedureTypeModel()
                     {
-                        Id = 0,
-                        DepartmentId = null,
-                        Name = ""
+                        Id = 1,
+                        DepartmentId = 1,
+                        Name = f.Commerce.ProductName()
                     },
                     Physician = new PhysicianModel()
                     {
-                        Id = 0,
-                        FirstName = string.Empty,
-                        LastName = string.Empty
+                        Id = 1,
+                        FirstName = f.Person.FirstName,
+                        LastName = f.Person.LastName
                     }
                 });
 
@@ -190,11 +192,24 @@ namespace Avalanche.Api.Test
                     BackgroundRecordingMode = BackgroundRecordingMode.StartImmediately,
                     RegistrationMode = RegistrationMode.Quick,
                     PatientListSource = PatientListSource.Local
-                });
+                }
+            );
 
             return activeProcedureFaker;
         }
 
-
+        public static Faker<AllocateNewProcedureResponse> GetAllocateNewProcedureResponseFaker() =>
+            new Faker<AllocateNewProcedureResponse>()
+                .CustomInstantiator(f =>
+                    new AllocateNewProcedureResponse()
+                    {
+                        ProcedureId = new ProcedureIdMessage
+                        {
+                            Id = f.Random.String(24),
+                            RepositoryName = f.Random.String(64)
+                        },
+                        RelativePath = f.System.FilePath()
+                    }
+                );
     }
 }

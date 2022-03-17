@@ -4,6 +4,5 @@ namespace Avalanche.Shared.Infrastructure.Enumerations
     {
         Manual = 0,
         Quick = 1,
-        Update = 2
     }
 }

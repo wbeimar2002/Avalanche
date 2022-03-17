@@ -7,6 +7,7 @@ using Avalanche.Api.ViewModels;
 using Avalanche.Shared.Domain.Enumerations;
 using Avalanche.Shared.Domain.Models;
 using Avalanche.Shared.Infrastructure.Configuration;
+using Avalanche.Shared.Infrastructure.Enumerations;
 using Ism.Library.V1.Protos;
 using Ism.SystemState.Client;
 using Ism.SystemState.Models.Procedure;
@@ -68,43 +69,48 @@ namespace Avalanche.Api.Managers.Procedures
         {
             foreach (var item in _setupConfiguration.PatientInfo.Where(f => f.Required))
             {
+
                 switch (item.Id)
                 {
-                    case "firstName":
+                    case ProcedureInfoField.firstName:
                         Preconditions.ThrowIfNull(nameof(procedure.Patient.FirstName), procedure.Patient.FirstName);
                         break;
-                    case "sex":
+                    case ProcedureInfoField.sex:
                         Preconditions.ThrowIfNull(nameof(procedure.Patient.Sex), procedure.Patient.Sex);
                         break;
-                    case "dateOfBirth":
+                    case ProcedureInfoField.dateOfBirth:
                         Preconditions.ThrowIfNull(nameof(procedure.Patient.DateOfBirth), procedure.Patient.DateOfBirth);
                         break;
-                    case "physician":
+                    case ProcedureInfoField.physician:
                         Preconditions.ThrowIfNull(nameof(procedure.Physician), procedure.Physician);
                         break;
-                    case "department":
+                    case ProcedureInfoField.department:
                         Preconditions.ThrowIfNull(nameof(procedure.Department), procedure.Department);
                         break;
-                    case "procedureType":
+                    case ProcedureInfoField.procedureType:
                         Preconditions.ThrowIfNull(nameof(procedure.ProcedureType), procedure.ProcedureType);
                         break;
-                    case "accessionNumber":
+                    case ProcedureInfoField.accessionNumber:
                         Preconditions.ThrowIfNull(nameof(procedure.Accession), procedure.Accession);
                         break;
-                    case "scopeSerialNumber":
+                    case ProcedureInfoField.scopeSerialNumber:
                         Preconditions.ThrowIfNull(nameof(procedure.ScopeSerialNumber), procedure.ScopeSerialNumber);
                         break;
-                    case "diagnosis":
+                    case ProcedureInfoField.diagnosis:
                         Preconditions.ThrowIfNull(nameof(procedure.Diagnosis), procedure.Diagnosis);
                         break;
-                    case "clinicalNotes":
+                    case ProcedureInfoField.clinicalNotes:
                         Preconditions.ThrowIfNull(nameof(procedure.ClinicalNotes), procedure.ClinicalNotes);
                         break;
-                    //TODO: This is not comming from UI for Update
-                    //case "procedureId":
-                    //    Preconditions.ThrowIfNull(nameof(procedure.ProcedureId), procedure.ProcedureId);
-                    //    break;
+#pragma warning disable RCS1069 // Remove unnecessary case label.  We want to see here which fields are not handled by switch
+                    case ProcedureInfoField.undefined:
+                    case ProcedureInfoField.mrn:
+                    case ProcedureInfoField.lastName:
+                    default:
+                        break;
+#pragma warning restore RCS1069 // Remove unnecessary case label.
                 }
+
             }
         }
 

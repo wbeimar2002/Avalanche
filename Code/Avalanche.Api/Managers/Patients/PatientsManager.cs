@@ -44,7 +44,7 @@ namespace Avalanche.Api.Managers.Patients
 
         public async Task<int> GetPatientListSource()
         {
-            var getSource = await _pieService.GetPatientListSource(new Empty()).ConfigureAwait(false);
+            var getSource = await _pieService.GetPatientListSource().ConfigureAwait(false);
             return getSource.Source;
         }
 

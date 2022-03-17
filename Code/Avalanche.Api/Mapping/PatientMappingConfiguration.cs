@@ -1,5 +1,6 @@
 using AutoMapper;
 using Avalanche.Api.ViewModels;
+using Avalanche.Shared.Infrastructure.Enumerations;
 using Google.Protobuf.WellKnownTypes;
 using Ism.Common.Core.Configuration.Models;
 using Ism.PatientInfoEngine.V1.Protos;
@@ -10,8 +11,8 @@ namespace Avalanche.Api.Mapping
     public class PatientMappingConfiguration : Profile
     {
         public PatientMappingConfiguration()
-        {            
-            CreateMap<Ism.IsmLogCommon.Core.AccessInfo, AccessInfoMessage>();
+        {
+            CreateMap<PatientRegistrationMode, Ism.SystemState.Models.Procedure.RegistrationMode>();
 
             CreateMap<Ism.IsmLogCommon.Core.AccessInfo, AccessInfoMessage>()
                 .ForPath(dest =>
