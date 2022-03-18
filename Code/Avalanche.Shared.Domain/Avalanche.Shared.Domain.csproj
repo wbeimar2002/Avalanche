@@ -1,20 +1,19 @@
 <Project Sdk="Microsoft.NET.Sdk">
-
-  <PropertyGroup>
-    <TargetFramework>netstandard2.1</TargetFramework>
-    <Nullable>enable</Nullable>
-    <Configurations>Debug;Release;DebugLocal</Configurations>
-  </PropertyGroup>
-
-  <ItemGroup>
-    <Compile Remove="Models\AccessInfoModel.cs" />
-    <Compile Remove="Models\Patient.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <PackageReference Include="Ism.CodeQuality" Version="1.0.1-prerelease0002">
-      <TreatAsUsed>true</TreatAsUsed>
-    </PackageReference>
-  </ItemGroup>
-
+	<PropertyGroup>
+		<TargetFramework>netstandard2.1</TargetFramework>
+		<Nullable>enable</Nullable>
+		<Configurations>Debug;Release;DebugLocal</Configurations>
+	</PropertyGroup>
+	<ItemGroup>
+		<Compile Remove="Models\AccessInfoModel.cs" />
+		<Compile Remove="Models\Patient.cs" />
+	</ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="Ism.CodeQuality" Version="1.0.1-prerelease0002">
+			<TreatAsUsed>true</TreatAsUsed>
+		</PackageReference>
+	</ItemGroup>
+	<PropertyGroup>
+		<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+	</PropertyGroup>
 </Project>
