@@ -117,8 +117,8 @@ namespace Avalanche.Api.Mapping
                 .ForPath(dest => dest.Department.Name, opt => opt.MapFrom(src => src.Department))
                 .ForPath(dest => dest.ProcedureType.Name, opt => opt.MapFrom(src => src.ProcedureType))
                 .ForMember(dest => dest.ProcedureStartTimeUtc, opt => opt.MapFrom(src => GetDateTime(src.ProcedureStartTimeUtc)))
-                .ForMember(dest => dest.Repository, opt => opt.MapFrom(src => src.Repository))
-                .ForMember(dest => dest.LibraryId, opt => opt.MapFrom(src => src.LibraryId))
+                .ForMember(dest => dest.Repository, opt => opt.MapFrom(src => src.ProcedureId.RepositoryId))
+                .ForMember(dest => dest.LibraryId, opt => opt.MapFrom(src => src.ProcedureId.Id))
                 .ForMember(dest => dest.TasksStatus, opt => opt.MapFrom(src => GetTasksToShow(src.Tasks.ToList())));
 
             CreateMap<ProcedureViewModel, ProcedureMessage>()
@@ -143,23 +143,23 @@ namespace Avalanche.Api.Mapping
                 .ForMember(dest => dest.Department, opt => opt.MapFrom(src => src.Department == null ? null : src.Department.Name))
                 .ForMember(dest => dest.ProcedureType, opt => opt.MapFrom(src => src.ProcedureType == null ? null : src.ProcedureType.Name))
                 .ForMember(dest => dest.ProcedureStartTimeUtc, opt => opt.MapFrom(src => GetFixedDateTime(src.ProcedureStartTimeUtc)))
-                .ForMember(dest => dest.Repository, opt => opt.MapFrom(src => src.Repository))
-                .ForMember(dest => dest.LibraryId, opt => opt.MapFrom(src => src.LibraryId))
+                .ForPath(dest => dest.ProcedureId.RepositoryId, opt => opt.MapFrom(src => src.Repository))
+                .ForMember(dest => dest.ProcedureId.Id, opt => opt.MapFrom(src => src.LibraryId))
                 .ForMember(dest => dest.ProcedureTimezoneId, opt => opt.Ignore()); // TODO: Temporary Fix Development in progress
 
             CreateMap<ActiveProcedureState, DiscardActiveProcedureRequest>()
                 .ForPath(dest => dest.ProcedureId.Id, opt => opt.MapFrom(src => src.LibraryId))
-                .ForPath(dest => dest.ProcedureId.RepositoryName, opt => opt.MapFrom(src => src.RepositoryId))
+                .ForPath(dest => dest.ProcedureId.RepositoryId, opt => opt.MapFrom(src => src.RepositoryId))
                 .ForMember(dest => dest.AccessInfo, opt => opt.Ignore());
 
             CreateMap<ActiveProcedureState, CommitActiveProcedureRequest>()
                 .ForPath(dest => dest.ProcedureId.Id, opt => opt.MapFrom(src => src.LibraryId))
-                .ForPath(dest => dest.ProcedureId.RepositoryName, opt => opt.MapFrom(src => src.RepositoryId))
+                .ForPath(dest => dest.ProcedureId.RepositoryId, opt => opt.MapFrom(src => src.RepositoryId))
                 .ForMember(dest => dest.AccessInfo, opt => opt.Ignore());
 
             CreateMap<ActiveProcedureState, ProcedureIdMessage>()
                 .ForPath(dest => dest.Id, opt => opt.MapFrom(src => src.LibraryId))
-                .ForPath(dest => dest.RepositoryName, opt => opt.MapFrom(src => src.RepositoryId));
+                .ForPath(dest => dest.RepositoryId, opt => opt.MapFrom(src => src.RepositoryId));
 
             CreateMap<Ism.IsmLogCommon.Core.AccessInfo, AccessInfoMessage>()
                 .ForPath(dest =>
@@ -250,7 +250,7 @@ namespace Avalanche.Api.Mapping
 
             CreateMap<ProcedureDownloadRequestViewModel, ProcedureDownloadRequest>()
                 .ForPath(dest => dest.ProcedureId.Id, opt => opt.MapFrom(src => src.ProcedureId.Id))
-                .ForPath(dest => dest.ProcedureId.RepositoryName, opt => opt.MapFrom(src => src.ProcedureId.RepositoryName))
+                .ForPath(dest => dest.ProcedureId.RepositoryId, opt => opt.MapFrom(src => src.ProcedureId.RepositoryId))
                 .ForMember(dest => dest.ContentItemIds, opt => opt.MapFrom(src => src.ContentItemIds.ToList()))
                 .ForMember(dest => dest.RequestId, opt => opt.MapFrom(src => src.RequestId))
                 .ForMember(dest => dest.IncludePHI, opt => opt.MapFrom(src => src.IncludePHI));

@@ -129,12 +129,12 @@ namespace Avalanche.Api.Managers.Procedures
         {
             Preconditions.ThrowIfNull(nameof(procedureIdViewModel), procedureIdViewModel);
             Preconditions.ThrowIfNullOrEmptyOrWhiteSpace(nameof(procedureIdViewModel.Id), procedureIdViewModel.Id);
-            Preconditions.ThrowIfNullOrEmptyOrWhiteSpace(nameof(procedureIdViewModel.RepositoryName), procedureIdViewModel.RepositoryName);
+            Preconditions.ThrowIfNullOrEmptyOrWhiteSpace(nameof(procedureIdViewModel.RepositoryId), procedureIdViewModel.RepositoryId);
 
             var response = await _libraryService.GetFinishedProcedure(new GetFinishedProcedureRequest()
             {
                 LibraryId = procedureIdViewModel.Id,
-                RepositoryName = procedureIdViewModel.RepositoryName
+                RepositoryId = procedureIdViewModel.RepositoryId
             }).ConfigureAwait(false);
 
             return _mapper.Map<ProcedureMessage, ProcedureViewModel>(response.Procedure);
@@ -157,7 +157,7 @@ namespace Avalanche.Api.Managers.Procedures
                 ProcedureId = new ProcedureIdMessage()
                 {
                     Id = id,
-                    RepositoryName = repository
+                    RepositoryId = repository
                 }
             };
 

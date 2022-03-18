@@ -96,7 +96,7 @@ namespace Avalanche.Api.Test.Controllers
 
             var result = _controller.CreateDownloadRequest(
                 request.ProcedureId.Id,
-                request.ProcedureId.RepositoryName,
+                request.ProcedureId.RepositoryId,
                 request.RequestId,
                 request.ContentItemIds
             );

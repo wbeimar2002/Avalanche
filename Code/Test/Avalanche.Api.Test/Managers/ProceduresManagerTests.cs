@@ -61,7 +61,7 @@ namespace Avalanche.Api.Test.Managers
             _libraryService.Setup(mock => mock.GetFinishedProcedure(new GetFinishedProcedureRequest()
             {
                 LibraryId = procedureId.Id,
-                RepositoryName = procedureId.RepositoryName
+                RepositoryName = procedureId.RepositoryId
 
             })).ReturnsAsync(response);
 
@@ -70,7 +70,7 @@ namespace Avalanche.Api.Test.Managers
             _libraryService.Verify(mock => mock.GetFinishedProcedure(new GetFinishedProcedureRequest()
             {
                 LibraryId = procedureId.Id,
-                RepositoryName = procedureId.RepositoryName
+                RepositoryName = procedureId.RepositoryId
             }), Times.Once);
         }
 
@@ -87,7 +87,7 @@ namespace Avalanche.Api.Test.Managers
             _libraryService.Setup(mock => mock.GetFinishedProcedure(new GetFinishedProcedureRequest()
             {
                 LibraryId = string.Empty,
-                RepositoryName = procedureId.RepositoryName
+                RepositoryName = procedureId.RepositoryId
             })).ReturnsAsync(response);
 
             Task Act() => _manager.GetProcedureDetails(procedureId);
@@ -97,7 +97,7 @@ namespace Avalanche.Api.Test.Managers
             _libraryService.Verify(mock => mock.GetFinishedProcedure(new GetFinishedProcedureRequest()
             {
                 LibraryId = string.Empty,
-                RepositoryName = procedureId.RepositoryName
+                RepositoryName = procedureId.RepositoryId
             }), Times.Never);
         }
 

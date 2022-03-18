@@ -354,7 +354,7 @@ namespace Avalanche.Api.Managers.Procedures
                 Videos = new List<ProcedureVideo>(),
                 BackgroundVideos = new List<ProcedureVideo>(),
                 LibraryId = procedure.ProcedureId.Id,
-                RepositoryId = procedure.ProcedureId.RepositoryName,
+                RepositoryId = procedure.ProcedureId.RepositoryId,
                 ProcedureRelativePath = procedure.RelativePath,
                 Department = _mapper.Map<Department>(patient.Department),
                 ProcedureType = _mapper.Map<ProcedureType>(patient.ProcedureType),
