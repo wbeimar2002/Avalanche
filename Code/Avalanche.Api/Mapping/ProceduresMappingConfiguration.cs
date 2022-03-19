@@ -161,6 +161,10 @@ namespace Avalanche.Api.Mapping
                 .ForPath(dest => dest.Id, opt => opt.MapFrom(src => src.LibraryId))
                 .ForPath(dest => dest.RepositoryId, opt => opt.MapFrom(src => src.RepositoryId));
 
+            CreateMap<ProcedureIdMessage, ProcedureIdViewModel>()
+                .ForPath(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
+                .ForPath(dest => dest.RepositoryId, opt => opt.MapFrom(src => src.RepositoryId));
+
             CreateMap<Ism.IsmLogCommon.Core.AccessInfo, AccessInfoMessage>()
                 .ForPath(dest =>
                     dest.ApplicationName,
