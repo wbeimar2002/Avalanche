@@ -10,6 +10,6 @@ namespace Avalanche.Shared.Infrastructure.Configuration
         public bool Media { get; set; }
         public bool Presets { get; set; }
         public bool Recording { get; set; }
-        public bool StreamSessions { get; set; }
+        public bool WebRtc { get; set; }
     }
 }

@@ -1,3 +1,5 @@
+using System;
+using System.Threading.Tasks;
 using Avalanche.Api.Managers.Media;
 using Avalanche.Shared.Domain.Models.Media;
 using Avalanche.Shared.Infrastructure.Enumerations;
@@ -10,23 +12,28 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.FeatureManagement.Mvc;
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace Avalanche.Api.Controllers.V1
 {
+    // TODOs:
+    // use strongly typed request-response models
+    // such as don't return VideoDeviceModel for GetSourceStreams
+
+    // where does source selection logic go?
+    // where does Preview logic go?
+
     [Route("[controller]")]
     [ApiController]
-    [Authorize]
-    [FeatureGate(FeatureFlags.StreamSessions)]
-    public class StreamSessionsController : ControllerBase
+#warning uncomment this before PR
+    //[Authorize]
+    [FeatureGate(FeatureFlags.WebRtc)]
+    public class WebRtcController : ControllerBase
     {
-        private readonly ILogger _logger;
-        private readonly IWebRTCManager _webRTCManager;
+        private readonly ILogger<WebRtcController> _logger;
+        private readonly IWebRtcManager _webRTCManager;
         private readonly IWebHostEnvironment _environment;
 
-        public StreamSessionsController(ILogger<LicensesController> logger, IWebRTCManager webRTCManager, IWebHostEnvironment environment)
+        public WebRtcController(ILogger<WebRtcController> logger, IWebRtcManager webRTCManager, IWebHostEnvironment environment)
         {
             _environment = environment;
             _logger = logger;
@@ -38,101 +45,101 @@ namespace Avalanche.Api.Controllers.V1
         /// </summary>
         /// <returns></returns>
         [HttpGet("sources")]
-        [Produces(typeof(IList<VideoDeviceModel>))]
+        [Produces(typeof(GetWebRtcStreamsResponse))]
         public async Task<IActionResult> GetSourceStreams()
         {
             try
             {
-                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
-                var result = await _webRTCManager.GetSourceStreams();
+                _logger.LogRequested();
+                var result = await _webRTCManager.GetSourceStreams().ConfigureAwait(false);
                 return Ok(result);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, LoggerHelper.GetLogMessage(DebugLogType.Exception), ex);
+                _logger.LogException(ex);
                 return new BadRequestObjectResult(ex.Get(_environment.IsDevelopment()));
             }
             finally
             {
-                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
+                _logger.LogCompleted();
             }
         }
 
         /// <summary>
         /// Play video with WebRTC
         /// </summary>
-        /// <param name="session"></param>
+        /// <param name="request"></param>
         /// <returns></returns>
         [HttpPost("")]
-        [Produces(typeof(List<string>))]
-        public async Task<IActionResult> InitSession(WebRTCSessionModel session)
+        [Produces(typeof(InitWebRtcSessionResponse))]
+        public async Task<IActionResult> InitSession(InitWebRtcSessionRequest request)
         {
             try
             {
-                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
-                var result = await _webRTCManager.InitSessionAsync(session);
+                _logger.LogRequested();
+                var result = await _webRTCManager.InitSession(request).ConfigureAwait(false);
                 return Ok(result);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, LoggerHelper.GetLogMessage(DebugLogType.Exception), ex);
+                _logger.LogException(ex);
                 return new BadRequestObjectResult(ex.Get(_environment.IsDevelopment()));
             }
             finally
             {
-                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
+                _logger.LogCompleted();
             }
         }
 
         /// <summary>
         /// Handle WebRTC message
         /// </summary>
-        /// <param name="message"></param>
+        /// <param name="request"></param>
         /// <returns></returns>
         [HttpPut("")]
         [ProducesResponseType(typeof(void), StatusCodes.Status200OK)]
-        public async Task<IActionResult> HandleMessage(WebRTCMessaggeModel message)
+        public async Task<IActionResult> HandleMessage(HandleWebRtcMessageRequest request)
         {
             try
             {
-                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
-                await _webRTCManager.HandleMessageForVideo(message);
+                _logger.LogRequested();
+                await _webRTCManager.HandleMessage(request).ConfigureAwait(false);
                 return Ok();
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, LoggerHelper.GetLogMessage(DebugLogType.Exception), ex);
+                _logger.LogException(ex);
                 return new BadRequestObjectResult(ex.Get(_environment.IsDevelopment()));
             }
             finally
             {
-                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
+                _logger.LogCompleted();
             }
         }
 
         /// <summary>
         /// Stop WebRTC video reproduction
         /// </summary>
-        /// <param name="message"></param>
+        /// <param name="request"></param>
         /// <returns></returns>
         [HttpDelete("")]
         [ProducesResponseType(typeof(void), StatusCodes.Status200OK)]
-        public async Task<IActionResult> DeInitSession(WebRTCMessaggeModel message)
+        public async Task<IActionResult> DeInitSession(DeInitWebRtcSessionRequest request)
         {
             try
             {
-                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
-                await _webRTCManager.DeInitSessionAsync(message);
+                _logger.LogRequested();
+                await _webRTCManager.DeInitSession(request).ConfigureAwait(false);
                 return Ok();
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, LoggerHelper.GetLogMessage(DebugLogType.Exception), ex);
+                _logger.LogException(ex);
                 return new BadRequestObjectResult(ex.Get(_environment.IsDevelopment()));
             }
             finally
             {
-                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
+                _logger.LogCompleted();
             }
         }
     }
