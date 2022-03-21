@@ -31,7 +31,6 @@ namespace Avalanche.Api.Managers.Procedures
         private readonly IAccessInfoFactory _accessInfoFactory;
         private readonly IRecorderService _recorderService;
         private readonly IDataManagementService _dataManagementService;
-        private readonly IHttpContextAccessor _httpContextAccessor;
 
         private readonly IDataManager _dataManager;
         private readonly LabelsConfiguration _labelsConfig;
@@ -72,10 +71,10 @@ namespace Avalanche.Api.Managers.Procedures
             _dataManagementService = dataManagementService;
             _routingManager = routingManager;
             _setupConfiguration = setupConfiguration;
-            _httpContextAccessor = httpContextAccessor;
             _securityService = securityService;
             _pieService = pieService;
-            _user = HttpContextUtilities.GetUser(_httpContextAccessor.HttpContext);
+
+            _user = HttpContextUtilities.GetUser(httpContextAccessor.HttpContext);
         }
 
         /// <summary>
@@ -355,7 +354,7 @@ namespace Avalanche.Api.Managers.Procedures
                 Videos = new List<ProcedureVideo>(),
                 BackgroundVideos = new List<ProcedureVideo>(),
                 LibraryId = procedure.ProcedureId.Id,
-                RepositoryId = procedure.ProcedureId.RepositoryName,
+                RepositoryId = procedure.ProcedureId.RepositoryId,
                 ProcedureRelativePath = procedure.RelativePath,
                 Department = _mapper.Map<Department>(patient.Department),
                 ProcedureType = _mapper.Map<ProcedureType>(patient.ProcedureType),

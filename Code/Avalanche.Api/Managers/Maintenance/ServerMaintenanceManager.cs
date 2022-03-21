@@ -11,7 +11,6 @@ using Avalanche.Api.ViewModels;
 using Avalanche.Shared.Domain.Models;
 using Ism.Common.Core.Configuration.Models;
 using Microsoft.AspNetCore.Http;
-using Avalanche.Api.Managers.Medpresence;
 
 namespace Avalanche.Api.Managers.Maintenance
 {
@@ -25,8 +24,7 @@ namespace Avalanche.Api.Managers.Maintenance
             ILibraryService libraryService,
             IFilesService filesService,
             IPrintingService printingService,
-            ISharedConfigurationManager sharedConfigurationManager,
-            IMedpresenceManager medpresenceManager) : base(storageService, dataManager, mapper, httpContextAccessor, libraryService, filesService, printingService, sharedConfigurationManager, medpresenceManager)
+            ISharedConfigurationManager sharedConfigurationManager) : base(storageService, dataManager, mapper, httpContextAccessor, libraryService, filesService, printingService, sharedConfigurationManager)
         {
             var user = HttpContextUtilities.GetUser(httpContextAccessor.HttpContext);
             _configurationContext = mapper.Map<UserModel, ConfigurationContext>(user);

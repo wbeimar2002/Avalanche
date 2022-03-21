@@ -61,7 +61,9 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.FeatureManagement;
 using Serilog;
-
+using static Ism.Library.V1.Protos.LibraryActiveProcedureService;
+using static Ism.Library.V1.Protos.LibraryManagerService;
+using static Ism.Library.V1.Protos.LibrarySearchService;
 using static Ism.PrintServer.V1.Protos.PrintServer;
 
 namespace Avalanche.Api
@@ -116,17 +118,21 @@ namespace Avalanche.Api
                 services.AddTransient<IDataManager, DeviceDataManager>();
                 services.AddTransient<IConfigurationManager, DeviceConfigurationManager>();
                 services.AddTransient<IMaintenanceManager, DeviceMaintenanceManager>();
+                services.AddSingleton<ILibraryService, DeviceLibraryService>();
+
+                services.AddSingleton<IMedpresenceService, MedpresenceService>();
             }
             else
             {
                 services.AddTransient<IDataManager, ServerDataManager>();
                 services.AddTransient<IConfigurationManager, ServerConfigurationManager>();
                 services.AddTransient<IMaintenanceManager, ServerMaintenanceManager>();
+                services.AddSingleton<ILibraryService, ServerLibraryService>();
             }
 
             //Shared
-            services.AddTransient<ISharedConfigurationManager, SharedConfigurationManager>();
 
+            services.AddTransient<ISharedConfigurationManager, SharedConfigurationManager>();
             services.AddTransient<IAuthenticationManager, AuthenticationManager>();
             services.AddTransient<IFilesManager, FilesManager>();
             services.AddTransient<IPatientsManager, PatientsManager>();
@@ -172,29 +178,22 @@ namespace Avalanche.Api
             services.AddSingleton<IBroadcastService, BroadcastService>();
             services.AddSingleton<IStorageService, StorageService>();
             services.AddSingleton<IDataManagementService, DataManagementService>();
-            services.AddSingleton<ILibraryService, LibraryService>();
             services.AddSingleton<IAccessInfoFactory, AccessInfoFactory>();
             services.AddSingleton<IFilesService, FilesService>();
             services.AddSingleton<IPresetManager, PresetManager>();
-            services.AddSingleton<IMedpresenceService, MedpresenceService>();
             services.AddSingleton<ISecurityService, SecurityService>();
             services.AddSingleton<IPasswordHasher, BcryptPasswordHasher>();
             services.AddSingleton<ITokenHandler, TokenHandler>();
 
-        // gRPC Infrastructure
-        _ = services.AddConfigurationPoco<GrpcServiceRegistry>(_configuration, nameof(GrpcServiceRegistry));
+            // gRPC Infrastructure
+            _ = services.AddConfigurationPoco<GrpcServiceRegistry>(_configuration, nameof(GrpcServiceRegistry));
             _ = services.AddConfigurationPoco<HostingConfiguration>(_configuration, nameof(HostingConfiguration));
             _ = services.AddConfigurationPoco<ClientCertificateConfiguration>(_configuration, nameof(ClientCertificateConfiguration));
 
             _ = services.AddSingleton<ICertificateProvider, FileSystemCertificateProvider>();
 
             // gRPC Clients
-            _ = services.AddMedpresenceSecureClient();
             _ = services.AddDataManagementStorageSecureClient();
-
-            _ = services.AddLibrarySearchServiceSecureClient();
-            _ = services.AddLibraryActiveProcedureServiceSecureClient();
-            _ = services.AddLibraryManagerServiceSecureClient();
 
             _ = services.AddSecurityServiceClient();
             _ = services.AddPatientListStorageSecureClient();
@@ -205,29 +204,36 @@ namespace Avalanche.Api
 
             _ = services.AddConfigurationServiceSecureClient();
 
+            //TODO: This should be registered for Server.
+            _ = services.AddNamedSecureGrpcClient<LibraryActiveProcedureServiceSecureClient, LibraryActiveProcedureServiceClient>("Library", "Local");
+
             if (isDevice)
             {
+                _ = services.AddMedpresenceSecureClient();
+
                 _ = services.AddWebRtcStreamerSecureClient();
                 _ = services.AddAvidisSecureClient();
 
                 _ = services.AddPgsTimeoutSecureClient();
                 _ = services.AddRoutingSecureClient();
 
-                //For printing both Services can be used according to a configuration
-                //_ = services.AddPrintingServerSecureClients();
-
-                // TEMP Fix until changes are moved back to Ism.Security and Print
                 _ = services.AddLocalAndRemoteSecureGrpcClient<PrintingServerSecureClient, PrintServerClient>("PrintServer", "PrintServerVSS");
 
+                _ = services.AddLocalAndRemoteSecureGrpcClient<LibraryManagerServiceSecureClient, LibraryManagerServiceClient>("Library", "LibraryVSS");
+                _ = services.AddLocalAndRemoteSecureGrpcClient<LibrarySearchServiceSecureClient, LibrarySearchServiceClient>("Library", "LibraryVSS");
+
                 // Hosted Services
-                services.AddHostedService<DeviceNotificationsListener>();
+                _ = services.AddHostedService<DeviceNotificationsListener>();
             }
             else
             {
-                _ = services.AddNamedSecureGrpcClient<PrintingServerSecureClient, PrintServerClient>("PrintServer", "Local");
+                _ = services.AddNamedSecureGrpcClient<LibraryManagerServiceSecureClient, LibraryManagerServiceClient>("LibraryVSS", "Local");
+                _ = services.AddNamedSecureGrpcClient<LibrarySearchServiceSecureClient, LibrarySearchServiceClient>("LibraryVSS", "Local");
+
+                _ = services.AddNamedSecureGrpcClient<PrintingServerSecureClient, PrintServerClient>("PrintServerVSS", "Local");
 
                 // Hosted Services
-                services.AddHostedService<ServerNotificationsListener>();
+                _ = services.AddHostedService<ServerNotificationsListener>();
             }
         }
 
@@ -275,7 +281,7 @@ namespace Avalanche.Api
                 {
                     // TODO: this still is not correct for remote clients...not sure how to handle that if web is being served from separate endpoint to api, since we do not have a well-known address.
                     builder
-                        .WithOrigins("https://localhost:4200", "http://localhost:4200", "https://localhost:8080", "http://localhost:8082")
+                        .WithOrigins("https://localhost:4200", "http://localhost:4200", "https://localhost:8080", "https://localhost:8082")
                         .AllowAnyHeader()
                         //.AllowAnyOrigin()
                         .AllowAnyMethod()

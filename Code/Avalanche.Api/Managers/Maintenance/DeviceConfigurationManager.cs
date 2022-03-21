@@ -21,6 +21,8 @@ namespace Avalanche.Api.Managers.Maintenance
         private readonly LabelsConfiguration _labelsConfiguration;
         private readonly RecorderConfiguration _recorderConfiguration;
         private readonly FinishOptionsConfiguration _finishOptionsConfiguration;
+        private readonly MedPresenceProvisioningConfiguration _medPresenceProvisioningConfiguration;
+        private readonly MedPresenceConfiguration _medPresenceConfiguration;
 
         private readonly IStorageService _storageService;
 
@@ -38,15 +40,15 @@ namespace Avalanche.Api.Managers.Maintenance
             IMapper mapper,
             MedPresenceProvisioningConfiguration medPresenceProvisioningConfiguration) : base(
                 printingConfiguration,
-                medPresenceConfiguration,
                 setupConfiguration,
-                proceduresConfiguration,
-                medPresenceProvisioningConfiguration)
+                proceduresConfiguration)
         {
             _autoLabelsConfiguration = autoLabelsConfiguration;
             _labelsConfiguration = labelsConfiguration;
             _recorderConfiguration = recorderConfiguration;
             _finishOptionsConfiguration = finishOptionsConfiguration;
+            _medPresenceProvisioningConfiguration = medPresenceProvisioningConfiguration;
+            _medPresenceConfiguration = medPresenceConfiguration;
 
             _storageService = storageService;
 
@@ -54,6 +56,10 @@ namespace Avalanche.Api.Managers.Maintenance
             _configurationContext = mapper.Map<UserModel, ConfigurationContext>(user);
             _configurationContext.IdnId = Guid.NewGuid().ToString();
         }
+
+        public MedPresenceProvisioningConfiguration GetMedPresenceProvisioningConfigurationSettings() => _medPresenceProvisioningConfiguration;
+
+        public MedPresenceConfiguration GetMedPresenceConfigurationSettings() => throw new NotImplementedException();
 
         public AutoLabelsConfiguration GetAutoLabelsConfigurationSettings(int? procedureTypeId) => new AutoLabelsConfiguration()
         {
