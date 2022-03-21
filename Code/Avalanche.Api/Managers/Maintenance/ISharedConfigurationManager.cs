@@ -6,7 +6,8 @@ namespace Avalanche.Api.Managers.Maintenance
     public interface ISharedConfigurationManager
     {
         PrintingConfiguration GetPrintingConfigurationSettings();
-        MedPresenceConfiguration GetMedPresenceConfigurationSettings();
+        ProceduresConfiguration GetProceduresConfigurationSettings();
+        SetupConfiguration GetSetupConfigurationSettings();
 
         void UpdateProceduresSearchConfigurationColumns(List<ColumnProceduresSearchConfiguration> columnProceduresSearchConfigurations);
         void UpdatePatientInfo(List<PatientInfoSetupConfiguration> patientInfoSetupConfigurations);

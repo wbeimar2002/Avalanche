@@ -22,9 +22,6 @@ using Ism.Common.Core.Configuration.Models;
 using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using Avalanche.Api.Services.Medpresence;
-using Ism.MP.V1.Protos;
-using Avalanche.Api.Managers.Medpresence;
 
 namespace Avalanche.Api.Managers.Maintenance
 {
@@ -32,7 +29,6 @@ namespace Avalanche.Api.Managers.Maintenance
     {
         private readonly IStorageService _storageService;
         private readonly IDataManager _dataManager;
-        private readonly ILibraryService _libraryService;
         private readonly IFilesService _filesService;
         private readonly IPrintingService _printingService;
 
@@ -40,7 +36,6 @@ namespace Avalanche.Api.Managers.Maintenance
         private readonly ConfigurationContext _configurationContext;
 
         private readonly ISharedConfigurationManager _sharedConfigurationManager;
-        private readonly IMedpresenceManager _medpresenceManager;
 
         protected MaintenanceManager(IStorageService storageService,
             IDataManager dataManager,
@@ -49,13 +44,11 @@ namespace Avalanche.Api.Managers.Maintenance
             ILibraryService libraryService,
             IFilesService filesService,
             IPrintingService printingService,
-            ISharedConfigurationManager sharedConfigurationManager,
-            IMedpresenceManager medpresenceManager)
+            ISharedConfigurationManager sharedConfigurationManager)
         {
             _storageService = storageService;
             _dataManager = dataManager;
             _mapper = mapper;
-            _libraryService = libraryService;
             _filesService = filesService;
             _printingService = printingService;
 
@@ -64,7 +57,6 @@ namespace Avalanche.Api.Managers.Maintenance
             var user = HttpContextUtilities.GetUser(httpContextAccessor.HttpContext);
             _configurationContext = _mapper.Map<UserModel, ConfigurationContext>(user);
             _configurationContext.IdnId = Guid.NewGuid().ToString();
-            _medpresenceManager = medpresenceManager;
         }
 
         protected abstract void CheckLinks(DynamicListViewModel category);
@@ -80,13 +72,8 @@ namespace Avalanche.Api.Managers.Maintenance
             await _storageService.SaveJsonMetadata(category.Metadata, JsonConvert.SerializeObject(category), 1, _configurationContext).ConfigureAwait(false);
         }
 
-        public async Task SaveCategory(DynamicSectionViewModel category)
+        public virtual async Task SaveCategory(DynamicSectionViewModel category)
         {
-            if (category.JsonKey.Equals("medpresenceprovisioningconfiguration", StringComparison.CurrentCultureIgnoreCase))
-            {
-                await ProvisionMedpresence(category).ConfigureAwait(false);
-            }
-
             await SaveSources(category, category.JsonKey).ConfigureAwait(false);
 
             if (category.Sections != null)
@@ -591,32 +578,6 @@ namespace Avalanche.Api.Managers.Maintenance
             {
                 throw new ValidationException("Json Schema Invalid for " + category.JsonKey);
             }
-        }
-
-        private async Task ProvisionMedpresence(DynamicSectionViewModel category)
-        {
-            var json = DynamicSettingsHelper.GetJsonValues(category);
-
-            var request = new MedpresenceProvisioningViewModel
-            {
-                InputParameters = new ProvisioningInputParametersViewModel
-                {
-                    CustomerName = json.Get<MedPresenceProvisioningConfiguration>().InputParameters.CustomerName,
-                    Environment = json.Get<MedPresenceProvisioningConfiguration>().InputParameters.Environment,
-                    Name = json.Get<MedPresenceProvisioningConfiguration>().InputParameters.Name,
-                    SerialNumber = json.Get<MedPresenceProvisioningConfiguration>().InputParameters.SerialNumber,
-                    Department = json.Get<MedPresenceProvisioningConfiguration>().InputParameters.Department,
-                    Speciality = json.Get<MedPresenceProvisioningConfiguration>().InputParameters.Specialty
-                },
-                EnvironmentSettings = new ProvisioiningEnvironmentSettingsViewModel
-                {
-                    ApiUrl = json.Get<MedPresenceProvisioningConfiguration>().EnvironmentSettings.ApiUrl,
-                    IdentityUrl = json.Get<MedPresenceProvisioningConfiguration>().EnvironmentSettings.IdentityUrl,
-                    ClientId = json.Get<MedPresenceProvisioningConfiguration>().EnvironmentSettings.ClientId
-                }
-            };
-
-            await _medpresenceManager.ProvisionMedpresence(request).ConfigureAwait(false);
         }
 
         private async Task SaveCustomEntity(DynamicListViewModel customList, DynamicListActions action)

@@ -47,7 +47,7 @@ namespace Avalanche.Api.Test.Managers
             _labelsConfig = new LabelsConfiguration();
             _setupConfiguration = new SetupConfiguration();
 
-            _manager = new ProceduresManager(_stateClient.Object, _libraryService.Object, _accessInfoFactory.Object, _mapper, _dataManager.Object, _labelsConfig, _setupConfiguration);
+            _manager = new ProceduresManager(_libraryService.Object, _mapper, _setupConfiguration);
         }
 
         [Test]
@@ -61,7 +61,7 @@ namespace Avalanche.Api.Test.Managers
             _libraryService.Setup(mock => mock.GetFinishedProcedure(new GetFinishedProcedureRequest()
             {
                 LibraryId = procedureId.Id,
-                RepositoryName = procedureId.RepositoryName
+                RepositoryId = procedureId.RepositoryId
 
             })).ReturnsAsync(response);
 
@@ -70,7 +70,7 @@ namespace Avalanche.Api.Test.Managers
             _libraryService.Verify(mock => mock.GetFinishedProcedure(new GetFinishedProcedureRequest()
             {
                 LibraryId = procedureId.Id,
-                RepositoryName = procedureId.RepositoryName
+                RepositoryId = procedureId.RepositoryId
             }), Times.Once);
         }
 
@@ -87,7 +87,7 @@ namespace Avalanche.Api.Test.Managers
             _libraryService.Setup(mock => mock.GetFinishedProcedure(new GetFinishedProcedureRequest()
             {
                 LibraryId = string.Empty,
-                RepositoryName = procedureId.RepositoryName
+                RepositoryId = procedureId.RepositoryId
             })).ReturnsAsync(response);
 
             Task Act() => _manager.GetProcedureDetails(procedureId);
@@ -97,7 +97,7 @@ namespace Avalanche.Api.Test.Managers
             _libraryService.Verify(mock => mock.GetFinishedProcedure(new GetFinishedProcedureRequest()
             {
                 LibraryId = string.Empty,
-                RepositoryName = procedureId.RepositoryName
+                RepositoryId = procedureId.RepositoryId
             }), Times.Never);
         }
 
@@ -111,7 +111,6 @@ namespace Avalanche.Api.Test.Managers
                 Page = 1,
                 ProcedureIndexSortingColumn = Shared.Infrastructure.Enumerations.ProcedureIndexSortingColumns.Created                
             };
-
             var response = new GetFinishedProceduresResponse()
             { };
 

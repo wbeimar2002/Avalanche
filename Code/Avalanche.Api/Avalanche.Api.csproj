@@ -1,110 +1,96 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
-
-  <PropertyGroup>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
-    <DockerComposeProjectPath>..\docker-compose.dcproj</DockerComposeProjectPath>
-    <UserSecretsId>2f27c3dd-6545-459d-9b88-0b474aab5e53</UserSecretsId>
-    <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
-    <Configurations>Debug;Release;DebugLocal</Configurations>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DebugLocal|AnyCPU'">
-    <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
-  </PropertyGroup>
-
-  <ItemGroup>
-    <Compile Remove="Repositories\**" />
-    <Compile Remove="Services\Data\**" />
-    <Content Remove="Repositories\**" />
-    <Content Remove="Services\Data\**" />
-    <EmbeddedResource Remove="Repositories\**" />
-    <EmbeddedResource Remove="Services\Data\**" />
-    <None Remove="Repositories\**" />
-    <None Remove="Services\Data\**" />
+	<PropertyGroup>
+		<TargetFramework>netcoreapp3.1</TargetFramework>
+		<DockerComposeProjectPath>..\docker-compose.dcproj</DockerComposeProjectPath>
+		<UserSecretsId>2f27c3dd-6545-459d-9b88-0b474aab5e53</UserSecretsId>
+		<DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+		<Configurations>Debug;Release;DebugLocal</Configurations>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+		<DocumentationFile>bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DebugLocal|AnyCPU'">
+		<DocumentationFile>bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
+	</PropertyGroup>
+	<ItemGroup>
+		<Compile Remove="Repositories\**" />
+		<Compile Remove="Services\Data\**" />
+		<Content Remove="Repositories\**" />
+		<Content Remove="Services\Data\**" />
+		<EmbeddedResource Remove="Repositories\**" />
+		<EmbeddedResource Remove="Services\Data\**" />
+		<None Remove="Repositories\**" />
+		<None Remove="Services\Data\**" />
+	</ItemGroup>
+	<ItemGroup>
+		<Compile Remove="Helpers\ProceduresHelper.cs" />
+		<Compile Remove="Services\Maintenance\ISettingsService.cs" />
+		<Compile Remove="Services\Maintenance\SettingsService.cs" />
+		<Compile Remove="ViewModels\DynamicSourceKeyValuePairViewModel.cs" />
+	</ItemGroup>
+	<ItemGroup>
+		<Content Remove="appsettings.Development.json" />
+	</ItemGroup>
+	<ItemGroup>
+		<None Include="appsettings.Development.json" />
+	</ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="AutoFixture" Version="4.17.0" />
+		<PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="8.1.1" />
+		<PackageReference Include="Avalanche.Security.Server.Client" Version="1.0.0-prerelease0010" />
+		<PackageReference Include="AvidisDeviceInterface.Client" Version="1.0.0-prerelease0022" />
+		<PackageReference Include="Grpc.Tools" Version="2.42.0">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+		<PackageReference Include="Ism.Broadcaster.Standard" Version="1.0.0-prerelease0003" />
+		<PackageReference Include="Ism.CodeQuality" Version="1.0.1-prerelease0002">
+			<TreatAsUsed>true</TreatAsUsed>
+		</PackageReference>
+		<PackageReference Include="Ism.Common.Core.Hosting" Version="1.0.0-prerelease053" />
+		<PackageReference Include="Ism.Log.Common.Core" Version="1.0.0-prerelease19" />
+		<PackageReference Include="Ism.PgsTimeout.Client" Version="1.0.0-prerelease0017" />
+		<PackageReference Include="Ism.Recorder.Client" Version="1.0.0-prerelease0047" />
+		<PackageReference Include="Ism.Routing.Client" Version="1.0.0-prerelease0020" />
+		<PackageReference Include="Ism.PatientInfoEngine.Client" Version="1.0.0-prerelease0035" />
+		<PackageReference Include="Ism.Security.Grpc.Standard" Version="1.0.0-prerelease035" />
+		<PackageReference Include="Ism.Storage.Configuration.Client" Version="1.0.0-prerelease0046" />
+		<PackageReference Include="Ism.Streaming.Client" Version="1.0.0-prerelease0021" />
+		<PackageReference Include="Ism.Utility.Core" Version="1.0.2-prerelease0003" />
+		<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="3.1.21" />
+		<PackageReference Include="Microsoft.AspNetCore.JsonPatch" Version="5.0.8" />
+		<PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="3.1.17" />
+		<PackageReference Include="Microsoft.FeatureManagement.AspNetCore" Version="2.3.0" />
+		<PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.14.0" />
+		<PackageReference Include="Newtonsoft.Json.Schema" Version="3.0.14" />
+		<PackageReference Include="NSwag.AspNetCore" Version="13.15.5" />
+		<PackageReference Include="NSwag.Generation.AspNetCore" Version="13.15.5" />
+		<PackageReference Include="Serilog.AspNetCore" Version="4.1.0" />
+		<PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.14.1" />
+		<PackageReference Include="System.Text.Json" Version="5.0.2" />
+		<PackageReference Include="Polly" Version="7.2.2" />
+		<PackageReference Include="Ism.Storage.DataManagement.Client" Version="1.0.0-prerelease0052" />
+		<PackageReference Include="Ism.SystemState.Client" Version="1.0.0-prerelease0100" />
+		<PackageReference Include="Ism.Storage.PatientList.Client" Version="1.0.0-prerelease0037" />
+		<PackageReference Include="Ism.PrintServer.Client" Version="1.0.0-prerelease0010" />
+		<PackageReference Include="Ism.Medpresence.Client" Version="1.0.0-prerelease0009" />
+		<PackageReference Include="Ism.Library.Client" Version="1.0.0-prerelease0085" />
+		<PackageReference Include="Yarp.ReverseProxy" Version="1.0.0" />
+	</ItemGroup>
+	<ItemGroup Condition="'$(Configuration)'=='DebugLocal'">
   </ItemGroup>
-
-  <ItemGroup>
-    <Compile Remove="Helpers\ProceduresHelper.cs" />
-    <Compile Remove="Services\Maintenance\ISettingsService.cs" />
-    <Compile Remove="Services\Maintenance\SettingsService.cs" />
-    <Compile Remove="ViewModels\DynamicSourceKeyValuePairViewModel.cs" />
+	<ItemGroup Condition="'$(Configuration)'=='Release'  Or '$(Configuration)'=='Debug'">
   </ItemGroup>
-
-  <ItemGroup>
-    <Content Remove="appsettings.Development.json" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Include="appsettings.Development.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-
-  <ItemGroup>
-    <PackageReference Include="AutoFixture" Version="4.17.0" />
-    <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="8.1.1" />
-    <PackageReference Include="Avalanche.Security.Server.Client" Version="1.0.0-prerelease0010" />
-    <PackageReference Include="AvidisDeviceInterface.Client" Version="1.0.0-prerelease0022" />
-    <PackageReference Include="Grpc.Tools" Version="2.42.0">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
-    <PackageReference Include="Ism.Broadcaster.Standard" Version="1.0.0-prerelease0003" />
-    <PackageReference Include="Ism.CodeQuality" Version="1.0.1-prerelease0002">
-      <TreatAsUsed>true</TreatAsUsed>
-    </PackageReference>
-    <PackageReference Include="Ism.Common.Core.Hosting" Version="1.0.0-prerelease053" />
-    <PackageReference Include="Ism.Log.Common.Core" Version="1.0.0-prerelease19" />
-
-    <PackageReference Include="Ism.PgsTimeout.Client" Version="1.0.0-prerelease0017" />
-
-    <PackageReference Include="Ism.Recorder.Client" Version="1.0.0-prerelease0047" />
-    <PackageReference Include="Ism.Routing.Client" Version="1.0.0-prerelease0020" />
-    <PackageReference Include="Ism.PatientInfoEngine.Client" Version="1.0.0-prerelease0035" />
-    <PackageReference Include="Ism.Security.Grpc.Standard" Version="1.0.0-prerelease035" />
-    <PackageReference Include="Ism.Storage.Configuration.Client" Version="1.0.0-prerelease0046" />
-    <PackageReference Include="Ism.Streaming.Client" Version="1.0.0-prerelease0021" />
-    <PackageReference Include="Ism.Utility.Core" Version="1.0.2-prerelease0003" />
-    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="3.1.21" />
-    <PackageReference Include="Microsoft.AspNetCore.JsonPatch" Version="5.0.8" />
-    <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="3.1.17" />
-    <PackageReference Include="Microsoft.FeatureManagement.AspNetCore" Version="2.3.0" />
-    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.14.0" />
-    <PackageReference Include="Newtonsoft.Json.Schema" Version="3.0.14" />
-    <PackageReference Include="NSwag.AspNetCore" Version="13.15.5" />
-    <PackageReference Include="NSwag.Generation.AspNetCore" Version="13.15.5" />
-    <PackageReference Include="Serilog.AspNetCore" Version="4.1.0" />
-    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.14.1" />
-    <PackageReference Include="System.Text.Json" Version="5.0.2" />
-    <PackageReference Include="Polly" Version="7.2.2" />
-    <PackageReference Include="Ism.Storage.DataManagement.Client" Version="1.0.0-prerelease0052" />
-    <PackageReference Include="Ism.SystemState.Client" Version="1.0.0-prerelease0097" />
-    <PackageReference Include="Ism.Storage.PatientList.Client" Version="1.0.0-prerelease0037" />
-    <PackageReference Include="Ism.PrintServer.Client" Version="1.0.0-prerelease0010" />
-    <PackageReference Include="Ism.Medpresence.Client" Version="1.0.0-prerelease0009" />
-    <PackageReference Include="Ism.Library.Client" Version="1.0.0-prerelease0083" />
-    <PackageReference Include="Yarp.ReverseProxy" Version="1.0.0" />
-  </ItemGroup>
-
-  <ItemGroup Condition="'$(Configuration)'=='DebugLocal'">
-  </ItemGroup>
-
-  <ItemGroup Condition="'$(Configuration)'=='Release'  Or '$(Configuration)'=='Debug'">
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\Avalanche.Shared.Domain\Avalanche.Shared.Domain.csproj" />
-    <ProjectReference Include="..\Avalanche.Shared.Infrastructure\Avalanche.Shared.Infrastructure.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Update="Avalanche.Api.xml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-
+	<ItemGroup>
+		<ProjectReference Include="..\Avalanche.Shared.Domain\Avalanche.Shared.Domain.csproj" />
+		<ProjectReference Include="..\Avalanche.Shared.Infrastructure\Avalanche.Shared.Infrastructure.csproj" />
+	</ItemGroup>
+	<ItemGroup>
+		<None Update="Avalanche.Api.xml">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+	</ItemGroup>
+	<PropertyGroup>
+		<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+	</PropertyGroup>
 </Project>

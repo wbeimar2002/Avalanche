@@ -7,27 +7,20 @@ namespace Avalanche.Api.Managers.Maintenance
     {
         //These values can be changed in execution time
         private readonly PrintingConfiguration _printingConfiguration;
-        private readonly MedPresenceConfiguration _medPresenceConfiguration;
         private readonly SetupConfiguration _setupConfiguration;
         private readonly ProceduresConfiguration _proceduresConfiguration;
-        private readonly MedPresenceProvisioningConfiguration _medPresenceProvisioningConfiguration;
 
         public SharedConfigurationManager(
             PrintingConfiguration printingConfiguration,
-            MedPresenceConfiguration medPresenceConfiguration,
             SetupConfiguration setupConfiguration,
-            ProceduresConfiguration proceduresConfiguration,
-            MedPresenceProvisioningConfiguration medPresenceProvisioningConfiguration)
+            ProceduresConfiguration proceduresConfiguration)
         {
             _printingConfiguration = printingConfiguration;
-            _medPresenceConfiguration = medPresenceConfiguration;
             _setupConfiguration = setupConfiguration;
             _proceduresConfiguration = proceduresConfiguration;
-            _medPresenceProvisioningConfiguration = medPresenceProvisioningConfiguration;
         }
 
         public PrintingConfiguration GetPrintingConfigurationSettings() => _printingConfiguration;
-        public MedPresenceConfiguration GetMedPresenceConfigurationSettings() => _medPresenceConfiguration;
         public ProceduresConfiguration GetProceduresConfigurationSettings() => _proceduresConfiguration;
         public SetupConfiguration GetSetupConfigurationSettings() => _setupConfiguration;
 
@@ -39,7 +32,5 @@ namespace Avalanche.Api.Managers.Maintenance
 
         public void UseVSSPrintingService(bool useVSSPrintingService) =>
             _printingConfiguration.UseVSSPrintingService = useVSSPrintingService;
-
-        public MedPresenceProvisioningConfiguration GetMedPresenceProvisioningConfigurationSettings() => _medPresenceProvisioningConfiguration;
     }
 }
