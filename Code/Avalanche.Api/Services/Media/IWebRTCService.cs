@@ -1,13 +1,16 @@
-﻿using Ism.PgsTimeout.V1.Protos;
 using System.Threading.Tasks;
+using Ism.Streaming.V1.Protos;
 
 namespace Avalanche.Api.Services.Media
 {
-    public interface IWebRTCService
+    /// <summary>
+    /// Thin wrapper around the webrtc gRPC client
+    /// </summary>
+    public interface IWebRtcService
     {
-        Task<Ism.Streaming.V1.Protos.GetSourceStreamsResponse> GetSourceStreamsAsync();
-        Task HandleMessageAsync(Ism.Streaming.V1.Protos.HandleMessageRequest handleMessageRequest);
-        Task<Ism.Streaming.V1.Protos.InitSessionResponse> InitSessionAsync(Ism.Streaming.V1.Protos.InitSessionRequest initSessionRequest);
-        Task DeInitSessionAsync(Ism.Streaming.V1.Protos.DeInitSessionRequest deInitSessionRequest);
+        Task<GetSourceStreamsResponse> GetSourceStreamsAsync();
+        Task HandleMessageAsync(HandleMessageRequest handleMessageRequest);
+        Task<InitSessionResponse> InitSessionAsync(InitSessionRequest initSessionRequest);
+        Task DeInitSessionAsync(DeInitSessionRequest deInitSessionRequest);
     }
 }

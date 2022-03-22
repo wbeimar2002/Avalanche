@@ -1,94 +1,68 @@
+using System.Threading.Tasks;
 using AutoMapper;
 using Avalanche.Api.Services.Media;
 using Avalanche.Api.Utilities;
 using Avalanche.Shared.Domain.Models.Media;
 using Ism.Streaming.V1.Protos;
-using Ism.Utility.Core;
 using Microsoft.AspNetCore.Http;
-using System.Collections.Generic;
-using System.Threading.Tasks;
+using static Ism.Utility.Core.Preconditions;
 
 namespace Avalanche.Api.Managers.Media
 {
-    public class WebRTCManager : IWebRTCManager
+    public class WebRtcManager : IWebRtcManager
     {
-        private readonly IWebRTCService _webRTCService;
+        private readonly IWebRtcService _webRTCService;
         private readonly IMapper _mapper;
-        private readonly IAccessInfoFactory _accessInfoFactory;
         private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public WebRTCManager(IWebRTCService webRTCService,
-            IAccessInfoFactory accessInfoFactory,
+        public WebRtcManager(
+            IWebRtcService webRTCService,
             IHttpContextAccessor httpContextAccessor,
             IMapper mapper)
         {
-            _webRTCService = webRTCService;
-            _accessInfoFactory = accessInfoFactory;
-            _httpContextAccessor = httpContextAccessor;
-            _mapper = mapper;
+            _webRTCService = ThrowIfNullOrReturn(nameof(webRTCService), webRTCService);
+            _httpContextAccessor = ThrowIfNullOrReturn(nameof(httpContextAccessor), httpContextAccessor);
+            _mapper = ThrowIfNullOrReturn(nameof(mapper), mapper);
         }
 
-        public async Task<IList<VideoDeviceModel>> GetSourceStreams()
+        public async Task<InitWebRtcSessionResponse> InitSession(InitWebRtcSessionRequest request)
         {
-            var result = await _webRTCService.GetSourceStreamsAsync().ConfigureAwait(false);
-            var listResult = _mapper.Map<IList<WebRtcSourceMessage>, IList<VideoDeviceModel>>(result.Sources);
-            return listResult;
-        }
+            ThrowIfNull(nameof(request), request);
+            var initRequest = _mapper.Map<InitWebRtcSessionRequest, InitSessionRequest>(request);
+            initRequest.RemoteUser = _httpContextAccessor.HttpContext.User.Identity.Name ?? string.Empty;
 
-        public async Task HandleMessageForVideo(WebRTCMessaggeModel message)
-        {
-            Preconditions.ThrowIfNull(nameof(message.SessionId), message.SessionId);
-            Preconditions.ThrowIfNull(nameof(message.Message), message.Message);
-            Preconditions.ThrowIfNull(nameof(message.Type), message.Type);
-
-            await _webRTCService.HandleMessageAsync(_mapper.Map<WebRTCMessaggeModel, HandleMessageRequest>(message));
-        }
-
-        public async Task<List<string>> InitSessionAsync(WebRTCSessionModel session)
-        {
-            Preconditions.ThrowIfNull(nameof(session.SessionId), session.SessionId);
-            Preconditions.ThrowIfNull(nameof(session.Message), session.Message);
-            Preconditions.ThrowIfNull(nameof(session.Type), session.Type);
-
-            //TODO: Complete preconditions
-
-            var accessInfo = _accessInfoFactory.GenerateAccessInfo();
-
-            var initRequest = _mapper.Map<WebRTCMessaggeModel, InitSessionRequest>(session);
-            initRequest.AccessInfo = _mapper.Map<Ism.IsmLogCommon.Core.AccessInfo, AccessInfoMessage>(accessInfo);
-
-            SetInitRequestIpInfo(initRequest);
-
-            var actionResponse = await _webRTCService.InitSessionAsync(initRequest).ConfigureAwait(false);
-
-            var messages = new List<string>();
-
-            foreach (var item in actionResponse.Answer)
-            {
-                messages.Add(item.Message);
-            }
-
-            return messages;
-        }
-
-        public async Task DeInitSessionAsync(WebRTCMessaggeModel message)
-        {
-            Preconditions.ThrowIfNull(nameof(message.SessionId), message.SessionId);
-            await _webRTCService.DeInitSessionAsync(_mapper.Map<WebRTCMessaggeModel, DeInitSessionRequest>(message)).ConfigureAwait(false);
-        }
-
-        private void SetInitRequestIpInfo(InitSessionRequest initRequest)
-        {
-            //Migrated Note of Zac
+            // Migrated Note of Zac
 #warning FIX this: Correct solution depends on determining avalanche-web hosting model
             // TODO: this is a hack to get local webrtc working until we implement a hosting strategy for the web application. 
             //          - running via ng-serve means we will never get a correct remote IP as observed by AvalancheApi
-            initRequest.AccessInfo.Ip = "127.0.0.1";
+            initRequest.RemoteIp = "127.0.0.1";
+            // initRequest.RemoteIp = HttpContextUtilities.GetRequestIP(_httpContextAccessor.HttpContext);
+
             // NOTE: "ExternalObservedIp" needs to be the IP address the browser contacts media service on. So:
             //          - if the browser is running local, it should be 127.0.0.1. 
             //          - If the browser is remote, it must be the external IP of the host.
             //      - the following is probably ok for pgs streams requested directly from the box, since the "host" header is likely to only ever be localhost or the correct IP.
             initRequest.ExternalObservedIp = HttpContextUtilities.GetHostAddress(_httpContextAccessor.HttpContext, true);
+
+            var initResponse = await _webRTCService.InitSessionAsync(initRequest).ConfigureAwait(false);
+
+            return _mapper.Map<InitSessionResponse, InitWebRtcSessionResponse>(initResponse);
+        }
+        public async Task HandleMessage(HandleWebRtcMessageRequest request)
+        {
+            ThrowIfNull(nameof(request), request);
+            await _webRTCService.HandleMessageAsync(_mapper.Map<HandleWebRtcMessageRequest, HandleMessageRequest>(request)).ConfigureAwait(false);
+        }
+        public async Task DeInitSession(DeInitWebRtcSessionRequest request)
+        {
+            ThrowIfNull(nameof(request), request);
+            await _webRTCService.DeInitSessionAsync(_mapper.Map<DeInitWebRtcSessionRequest, DeInitSessionRequest>(request)).ConfigureAwait(false);
+        }
+
+        public async Task<GetWebRtcStreamsResponse> GetSourceStreams()
+        {
+            var response = await _webRTCService.GetSourceStreamsAsync().ConfigureAwait(false);
+            return _mapper.Map<GetSourceStreamsResponse, GetWebRtcStreamsResponse>(response);
         }
     }
 }

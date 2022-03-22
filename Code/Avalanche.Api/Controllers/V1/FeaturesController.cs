@@ -40,7 +40,7 @@ namespace Avalanche.Api.Controllers.V1
             try
             {
                 _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
-                var result = FeaturesHelper.GetFeatures(_featureManager).Result;
+                var result = await FeaturesHelper.GetFeatures(_featureManager).ConfigureAwait(false);
                 return Ok(result);
             }
             catch (Exception ex)

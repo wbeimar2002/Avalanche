@@ -1,24 +1,38 @@
-﻿using Avalanche.Shared.Infrastructure.Enumerations;
+using System;
+using System.Runtime.CompilerServices;
+using Avalanche.Shared.Infrastructure.Enumerations;
+using Microsoft.Extensions.Logging;
 
 namespace Avalanche.Shared.Infrastructure.Helpers
 {
-    public class LoggerHelper
+    public static class LoggerHelper
     {
         private static string GetFileName(string path)
         {
             var parts = path.Split("\\");
-            string fileName = parts[parts.Length - 1];
-            string className = fileName.Split('.')[0];
+            var fileName = parts[^1];
+            var className = fileName.Split('.')[0];
 
             return className;
         }
 
         public static string GetLogMessage(DebugLogType debugLogType,
-        [System.Runtime.CompilerServices.CallerMemberName] string memberName = "",
-        [System.Runtime.CompilerServices.CallerFilePath] string sourceFilePath = "")
+        [CallerMemberName] string memberName = "",
+        [CallerFilePath] string sourceFilePath = "")
         {
-            var message = $"{debugLogType.ToString()} {GetFileName(sourceFilePath)}.{memberName}".Trim();
+            var message = $"{debugLogType} {GetFileName(sourceFilePath)}.{memberName}".Trim();
             return message;
         }
+
+        private static string GetMessage(DebugLogType debugLogType, string memberName, string sourceFilePath) => $"{debugLogType} {GetFileName(sourceFilePath)}.{memberName}".Trim();
+
+        public static void LogRequested(this ILogger logger, [CallerMemberName] string memberName = "", [CallerFilePath] string sourceFilePath = "") =>
+            logger.LogDebug(GetMessage(DebugLogType.Requested, memberName, sourceFilePath));
+
+        public static void LogCompleted(this ILogger logger, [CallerMemberName] string memberName = "", [CallerFilePath] string sourceFilePath = "") =>
+            logger.LogDebug(GetMessage(DebugLogType.Completed, memberName, sourceFilePath));
+
+        public static void LogException(this ILogger logger, Exception ex, [CallerMemberName] string memberName = "", [CallerFilePath] string sourceFilePath = "") =>
+            logger.LogError(ex, GetMessage(DebugLogType.Exception, memberName, sourceFilePath));
     }
 }
