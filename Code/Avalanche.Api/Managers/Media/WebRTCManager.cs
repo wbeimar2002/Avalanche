@@ -20,9 +20,9 @@ namespace Avalanche.Api.Managers.Media
             IHttpContextAccessor httpContextAccessor,
             IMapper mapper)
         {
-            _webRTCService = webRTCService;
-            _httpContextAccessor = httpContextAccessor;
-            _mapper = mapper;
+            _webRTCService = ThrowIfNullOrReturn(nameof(webRTCService), webRTCService);
+            _httpContextAccessor = ThrowIfNullOrReturn(nameof(httpContextAccessor), httpContextAccessor);
+            _mapper = ThrowIfNullOrReturn(nameof(mapper), mapper);
         }
 
         public async Task<InitWebRtcSessionResponse> InitSession(InitWebRtcSessionRequest request)
@@ -31,7 +31,7 @@ namespace Avalanche.Api.Managers.Media
             var initRequest = _mapper.Map<InitWebRtcSessionRequest, InitSessionRequest>(request);
             initRequest.RemoteUser = _httpContextAccessor.HttpContext.User.Identity.Name ?? string.Empty;
 
-            //Migrated Note of Zac
+            // Migrated Note of Zac
 #warning FIX this: Correct solution depends on determining avalanche-web hosting model
             // TODO: this is a hack to get local webrtc working until we implement a hosting strategy for the web application. 
             //          - running via ng-serve means we will never get a correct remote IP as observed by AvalancheApi

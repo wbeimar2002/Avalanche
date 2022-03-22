@@ -149,6 +149,7 @@ namespace Avalanche.Api
             {
                 services.AddConfigurationPoco<PgsApiConfiguration>(_configuration, nameof(PgsApiConfiguration));
                 services.AddConfigurationPoco<TimeoutApiConfiguration>(_configuration, nameof(TimeoutApiConfiguration));
+                services.AddConfigurationPoco<WebRtcApiConfiguration>(_configuration, nameof(WebRtcApiConfiguration));
                 services.AddConfigurationPoco<RecorderConfiguration>(_configuration, nameof(RecorderConfiguration));
                 services.AddConfigurationPoco<AutoLabelsConfiguration>(_configuration, nameof(AutoLabelsConfiguration));
                 services.AddConfigurationPoco<LabelsConfiguration>(_configuration, nameof(LabelsConfiguration));
@@ -326,8 +327,6 @@ namespace Avalanche.Api
 
         private bool IsDevice(IServiceCollection services)
         {
-#warning revert before pr
-            return true;
             using var provider = services.BuildServiceProvider();
             var featureManager = provider.GetRequiredService<IFeatureManager>();
 

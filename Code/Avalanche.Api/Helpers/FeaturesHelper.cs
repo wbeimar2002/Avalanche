@@ -22,7 +22,7 @@ namespace Avalanche.Api.Helpers
                 Media = await featureManager.IsEnabledAsync(FeatureFlags.Media).ConfigureAwait(false),
                 Presets = await featureManager.IsEnabledAsync(FeatureFlags.Presets).ConfigureAwait(false),
                 Recording = await featureManager.IsEnabledAsync(FeatureFlags.Recording).ConfigureAwait(false),
-                WebRtc = await featureManager.IsEnabledAsync(FeatureFlags.WebRtc).ConfigureAwait(false),
+                LiveStream = await featureManager.IsEnabledAsync(FeatureFlags.LiveStream).ConfigureAwait(false),
             };
         }
     }

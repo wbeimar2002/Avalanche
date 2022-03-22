@@ -32,7 +32,9 @@
 		<Content Remove="appsettings.Development.json" />
 	</ItemGroup>
 	<ItemGroup>
-		<None Include="appsettings.Development.json" />
+		<None Include="appsettings.Development.json">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
 	</ItemGroup>
 	<ItemGroup>
 		<PackageReference Include="AutoFixture" Version="4.17.0" />
@@ -47,15 +49,16 @@
 		<PackageReference Include="Ism.CodeQuality" Version="1.0.1-prerelease0002">
 			<TreatAsUsed>true</TreatAsUsed>
 		</PackageReference>
-		<PackageReference Include="Ism.Common.Core.Hosting" Version="1.0.0-prerelease053" />
+    <PackageReference Include="Ism.Common.Core" Version="1.0.0-prerelease058" />
+		<PackageReference Include="Ism.Common.Core.Hosting" Version="1.0.0-prerelease051" />
 		<PackageReference Include="Ism.Log.Common.Core" Version="1.0.0-prerelease19" />
 		<PackageReference Include="Ism.PgsTimeout.Client" Version="1.0.0-prerelease0017" />
-		<PackageReference Include="Ism.Recorder.Client" Version="1.0.0-prerelease0047" />
+		<PackageReference Include="Ism.Recorder.Client" Version="1.0.0-prerelease0046" />
 		<PackageReference Include="Ism.Routing.Client" Version="1.0.0-prerelease0020" />
 		<PackageReference Include="Ism.PatientInfoEngine.Client" Version="1.0.0-prerelease0035" />
 		<PackageReference Include="Ism.Security.Grpc.Standard" Version="1.0.0-prerelease035" />
 		<PackageReference Include="Ism.Storage.Configuration.Client" Version="1.0.0-prerelease0046" />
-		<PackageReference Include="Ism.Streaming.Client" Version="1.0.0-prerelease0021" />
+		<PackageReference Include="Ism.Streaming.Client" Version="1.0.0-prerelease0022" />
 		<PackageReference Include="Ism.Utility.Core" Version="1.0.2-prerelease0003" />
 		<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="3.1.21" />
 		<PackageReference Include="Microsoft.AspNetCore.JsonPatch" Version="5.0.8" />
