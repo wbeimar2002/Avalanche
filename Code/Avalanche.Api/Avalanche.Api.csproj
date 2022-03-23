@@ -47,10 +47,11 @@
 		<PackageReference Include="Ism.CodeQuality" Version="1.0.1-prerelease0002">
 			<TreatAsUsed>true</TreatAsUsed>
 		</PackageReference>
+		<PackageReference Include="Ism.Common.Core" Version="1.0.0-prerelease059" />
 		<PackageReference Include="Ism.Common.Core.Hosting" Version="1.0.0-prerelease053" />
 		<PackageReference Include="Ism.Log.Common.Core" Version="1.0.0-prerelease19" />
 		<PackageReference Include="Ism.PgsTimeout.Client" Version="1.0.0-prerelease0018" />
-		<PackageReference Include="Ism.Recorder.Client" Version="1.0.0-prerelease0048" />
+		<PackageReference Include="Ism.Recorder.Client" Version="1.0.0-prerelease0049" />
 		<PackageReference Include="Ism.Routing.Client" Version="1.0.0-prerelease0021" />
 		<PackageReference Include="Ism.PatientInfoEngine.Client" Version="1.0.0-prerelease0036" />
 		<PackageReference Include="Ism.Security.Grpc.Standard" Version="1.0.0-prerelease035" />
@@ -70,7 +71,7 @@
 		<PackageReference Include="System.Text.Json" Version="5.0.2" />
 		<PackageReference Include="Polly" Version="7.2.2" />
 		<PackageReference Include="Ism.Storage.DataManagement.Client" Version="1.0.0-prerelease0052" />
-		<PackageReference Include="Ism.SystemState.Client" Version="1.0.0-prerelease0101" />
+		<PackageReference Include="Ism.SystemState.Client" Version="1.0.0-prerelease0102" />
 		<PackageReference Include="Ism.Storage.PatientList.Client" Version="1.0.0-prerelease0037" />
 		<PackageReference Include="Ism.PrintServer.Client" Version="1.0.0-prerelease0011" />
 		<PackageReference Include="Ism.Medpresence.Client" Version="1.0.0-prerelease0010" />
