@@ -32,7 +32,9 @@
 		<Content Remove="appsettings.Development.json" />
 	</ItemGroup>
 	<ItemGroup>
-		<None Include="appsettings.Development.json" />
+    <None Include="appsettings.Development.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
 	</ItemGroup>
 	<ItemGroup>
 		<PackageReference Include="AutoFixture" Version="4.17.0" />
