@@ -108,7 +108,7 @@ namespace Avalanche.Api
             if (isDevice)
             {
                 services.AddTransient<IRoutingManager, RoutingManager>();
-                services.AddTransient<IWebRTCManager, WebRTCManager>();
+                services.AddTransient<IWebRtcManager, WebRtcManager>();
                 services.AddTransient<IRecordingManager, RecordingManager>();
                 services.AddSingleton<IPgsTimeoutManager, PgsTimeoutManager>(); //We need this as singleton
                 services.AddTransient<IActiveProcedureManager, ActiveProcedureManager>();
@@ -143,6 +143,7 @@ namespace Avalanche.Api
             {
                 services.AddConfigurationPoco<PgsApiConfiguration>(_configuration, nameof(PgsApiConfiguration));
                 services.AddConfigurationPoco<TimeoutApiConfiguration>(_configuration, nameof(TimeoutApiConfiguration));
+                services.AddConfigurationPoco<WebRtcApiConfiguration>(_configuration, nameof(WebRtcApiConfiguration));
                 services.AddConfigurationPoco<RecorderConfiguration>(_configuration, nameof(RecorderConfiguration));
                 services.AddConfigurationPoco<AutoLabelsConfiguration>(_configuration, nameof(AutoLabelsConfiguration));
                 services.AddConfigurationPoco<LabelsConfiguration>(_configuration, nameof(LabelsConfiguration));
@@ -159,7 +160,7 @@ namespace Avalanche.Api
 
             if (isDevice)
             {
-                services.AddSingleton<IWebRTCService, WebRtcService>();
+                services.AddSingleton<IWebRtcService, WebRtcService>();
                 services.AddSingleton<IRecorderService, RecorderService>();
                 services.AddSingleton<IAvidisService, AvidisService>();
                 services.AddSingleton<IRoutingService, RoutingService>();

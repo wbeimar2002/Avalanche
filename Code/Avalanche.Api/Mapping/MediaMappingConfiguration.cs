@@ -1,6 +1,7 @@
 using AutoMapper;
 using Avalanche.Api.ViewModels;
 using Avalanche.Shared.Domain.Models.Media;
+using System.Linq;
 
 namespace Avalanche.Api.Mapping
 {
@@ -110,111 +111,72 @@ namespace Avalanche.Api.Mapping
                    opt => opt.MapFrom(src => src.FilePath))
                .ReverseMap();
 
-            // TODO: webrtc models should not have anything in common with routing models
-            CreateMap<Ism.Streaming.V1.Protos.WebRtcSourceMessage, VideoDeviceModel>()
-                .ForPath(dest =>
-                    dest.Sink.Index,
-                    opt => opt.MapFrom(src => src.PreviewIndex))
-                .ForMember(dest =>
-                    dest.Name,
-                    opt => opt.MapFrom(src => src.StreamName))
-                .ForMember(dest =>
-                    dest.IsVisible,
-                    opt => opt.MapFrom(src => true))
-                .ForMember(dest =>
-                    dest.PositionInScreen,
-                    opt => opt.MapFrom(src => 0))
-                .ForPath(dest =>
-                    dest.Sink.Alias,
-                    opt => opt.Ignore())
-                .ForMember(dest =>
-                    dest.Type,
-                    opt => opt.MapFrom(src => src.StreamType))
-                .ForMember(dest =>
-                    dest.Source,
-                    opt => opt.Ignore()) 
-                .ReverseMap();
+            #region webrtc protos
 
-            CreateMap<WebRTCMessaggeModel, Ism.Streaming.V1.Protos.HandleMessageRequest>()
+            CreateMap<WebRtcInfo, Ism.Streaming.V1.Protos.WebRtcInfoMessage>()
                     .ForMember(dest =>
-                        dest.SessionId,
-                        opt => opt.MapFrom(src => src.SessionId))
-                    .ForPath(dest =>
-                        dest.Offer.Message,
+                        dest.Aor,
+                        opt => opt.MapFrom(src => src.AoR))
+                    .ForMember(dest =>
+                        dest.BypassMaxStreamRestrictions,
+                        opt => opt.MapFrom(src => src.BypassMaxStreamRestrictions))
+                    .ForMember(dest =>
+                        dest.Message,
                         opt => opt.MapFrom(src => src.Message))
-                    .ForPath(dest =>
-                        dest.Offer.Type,
+                    .ForMember(dest =>
+                        dest.Type,
                         opt => opt.MapFrom(src => src.Type))
                     .ReverseMap();
 
-            CreateMap<Ism.IsmLogCommon.Core.AccessInfo, Ism.Streaming.V1.Protos.AccessInfoMessage>()
-                .ForPath(dest =>
-                    dest.ApplicationName,
-                    opt => opt.MapFrom(src => src.ApplicationName))
-                .ForPath(dest =>
-                    dest.Details,
-                    opt => opt.MapFrom(src => src.Details))
-                .ForPath(dest =>
-                    dest.Id,
-                    opt => opt.MapFrom(src => src.Id))
-                .ForPath(dest =>
-                    dest.Ip,
-                    opt => opt.MapFrom(src => src.Ip))
-                .ForPath(dest =>
-                    dest.MachineName,
-                    opt => opt.MapFrom(src => src.MachineName))
-                .ForPath(dest =>
-                    dest.UserName,
-                    opt => opt.MapFrom(src => src.UserName))
-                .ReverseMap();
+            CreateMap<HandleWebRtcMessageRequest, Ism.Streaming.V1.Protos.HandleMessageRequest>()
+                    .ForMember(dest =>
+                        dest.Offer,
+                        opt => opt.MapFrom(src => src.Offer))
+                    .ForMember(dest =>
+                        dest.SessionId,
+                        opt => opt.MapFrom(src => src.SessionId))
+                    .ReverseMap();
 
-            CreateMap<WebRTCSessionModel, Ism.Streaming.V1.Protos.InitSessionRequest>()
-                .ForPath(dest =>
-                    dest.AccessInfo.ApplicationName,
-                    opt => opt.Ignore())
-                .ForPath(dest =>
-                    dest.AccessInfo.Details,
-                    opt => opt.Ignore())
-                .ForPath(dest =>
-                    dest.AccessInfo.Id,
-                    opt => opt.Ignore())
-                .ForPath(dest =>
-                    dest.AccessInfo.Ip,
-                    opt => opt.Ignore())
-                .ForPath(dest =>
-                    dest.AccessInfo.MachineName,
-                    opt => opt.Ignore())
-                .ForPath(dest =>
-                    dest.AccessInfo.UserName,
-                    opt => opt.Ignore())
-                .ForPath(dest =>
+            CreateMap<InitWebRtcSessionRequest, Ism.Streaming.V1.Protos.InitSessionRequest>()
+                .ForMember(dest =>
                     dest.ExternalObservedIp,
-                    opt => opt.Ignore())
+                    opt => opt.MapFrom(src => src.ExternalIp))
                 .ForMember(dest =>
-                    dest.StreamId,
-                    opt => opt.MapFrom(src => src.Sink.Alias))
+                    dest.Offer,
+                    opt => opt.MapFrom(src => src.Offer))
+                .ForMember(dest =>
+                    dest.RemoteIp,
+                    opt => opt.MapFrom(src => src.RemoteIp))
+                .ForMember(dest =>
+                    dest.RemoteUser,
+                    opt => opt.MapFrom(src => src.RemoteUser))
                 .ForMember(dest =>
                     dest.SessionId,
                     opt => opt.MapFrom(src => src.SessionId))
-                .ForPath(dest =>
-                    dest.Offer.BypassMaxStreamRestrictions,
-                    opt => opt.MapFrom(src => true))
-                .ForPath(dest =>
-                    dest.Offer.Aor,
-                    opt => opt.MapFrom(src => "AOR"))
-                .ForPath(dest =>
-                    dest.Offer.Message,
-                    opt => opt.MapFrom(src => src.Message))
-                .ForPath(dest =>
-                    dest.Offer.Type,
-                    opt => opt.MapFrom(src => src.Type))
+                .ForMember(dest =>
+                    dest.StreamName,
+                    opt => opt.MapFrom(src => src.StreamName))
                 .ReverseMap();
 
-            CreateMap<WebRTCMessaggeModel, Ism.Streaming.V1.Protos.DeInitSessionRequest>()
+            CreateMap<Ism.Streaming.V1.Protos.InitSessionResponse, InitWebRtcSessionResponse>()
+                .ForMember(dest =>
+                    dest.Answer,
+                    opt => opt.MapFrom(src => src.Answer)) // TODO: does this work for repeatedfields?
+                .ReverseMap();
+
+            CreateMap<DeInitWebRtcSessionRequest, Ism.Streaming.V1.Protos.DeInitSessionRequest>()
                 .ForMember(dest =>
                     dest.SessionId,
                     opt => opt.MapFrom(src => src.SessionId))
                 .ReverseMap();
+
+            CreateMap<Ism.Streaming.V1.Protos.GetSourceStreamsResponse, GetWebRtcStreamsResponse>()
+                .ForMember(dest =>
+                    dest.StreamNames,
+                    opt => opt.MapFrom(src => src.StreamNames)) // TODO: does this work for repeatedfields?
+                .ReverseMap();
+
+            #endregion webrtc protos
 
             // domain model to view model
             CreateMap<TileLayoutModel, Ism.Routing.V1.Protos.TileLayoutMessage>()
@@ -225,7 +187,8 @@ namespace Avalanche.Api.Mapping
                    dest.NumViewports,
                    opt => opt.Ignore())
                .ForMember(dest =>
-                    dest.Viewports, opt => opt.MapFrom(src => src.ViewPorts))
+                   dest.Viewports,
+                   opt => opt.MapFrom(src => src.ViewPorts))
                .ReverseMap();
 
             // domain model to view model
