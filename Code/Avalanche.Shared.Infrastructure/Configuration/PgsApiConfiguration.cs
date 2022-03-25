@@ -1,4 +1,4 @@
-﻿namespace Avalanche.Shared.Infrastructure.Configuration
+namespace Avalanche.Shared.Infrastructure.Configuration
 {
     public class PgsApiConfiguration : SingleSourceMultipleSinksConfiguration
     {

@@ -8,6 +8,6 @@ namespace Avalanche.Shared.Infrastructure.Enumerations
         public const string Presets = "Presets";
         public const string Devices = "Devices";
         public const string Recording = "Recording";
-        public const string StreamSessions = "StreamSessions";
+        public const string LiveStream = "LiveStream";
     }
 }
