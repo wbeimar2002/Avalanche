@@ -22,5 +22,7 @@ namespace Avalanche.Api.ViewModels
         public string? ActionMethod { get; set; }
 
         public string? ActionTranslationKey { get; set; }
+
+        public List<string>? JsonKeyForRelatedSettings { get; set; }
     }
 }
