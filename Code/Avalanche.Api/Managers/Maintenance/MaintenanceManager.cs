@@ -31,7 +31,7 @@ namespace Avalanche.Api.Managers.Maintenance
         private readonly IDataManager _dataManager;
         private readonly IFilesService _filesService;
         private readonly IPrintingService _printingService;
-
+        private readonly ILibraryService _libraryService;
         private readonly IMapper _mapper;
         private readonly ConfigurationContext _configurationContext;
 
@@ -51,6 +51,7 @@ namespace Avalanche.Api.Managers.Maintenance
             _mapper = mapper;
             _filesService = filesService;
             _printingService = printingService;
+            _libraryService = libraryService;
 
             _sharedConfigurationManager = sharedConfigurationManager;
 
@@ -767,5 +768,10 @@ namespace Avalanche.Api.Managers.Maintenance
                 throw new ValidationException("Json Schema Invalid for " + jsonKey);
             }
         }
+
+        public async Task ReindexRepository(string repositoryId) => await _libraryService.ReindexRepository(new Ism.Library.V1.Protos.ReindexRepositoryRequest()
+        {
+            RepositoryId = repositoryId
+        }).ConfigureAwait(false);
     }
 }

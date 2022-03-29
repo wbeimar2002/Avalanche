@@ -17,5 +17,6 @@ namespace Avalanche.Api.Services.Health
         Task DownloadProcedure(ProcedureDownloadRequest procedureDownloadRequest);
         Task<GetPhysiciansSearchResponse> GetPhysicians(GetPhysiciansSearchRequest getPhysiciansSearchRequest);
         Task ShareProcedure(ShareProcedureRequest shareProcedureRequest);
+        Task<ReindexRepositoryResponse> ReindexRepository(ReindexRepositoryRequest reindexRepositoryRequest);
     }
 }

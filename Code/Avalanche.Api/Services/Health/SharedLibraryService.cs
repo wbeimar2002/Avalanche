@@ -33,6 +33,9 @@ namespace Avalanche.Api.Services.Health
         public async Task ShareProcedure(ShareProcedureRequest shareProcedureRequest) =>
             await _libraryManagerServiceSecureClient.ShareProcedure(shareProcedureRequest).ConfigureAwait(false);
 
+        public async Task<ReindexRepositoryResponse> ReindexRepository(ReindexRepositoryRequest reindexRepositoryRequest) =>
+            await _libraryManagerServiceSecureClient.ReindexRepository(reindexRepositoryRequest).ConfigureAwait(false);
+
         //Search
 
         public async Task<GetFinishedProcedureResponse> GetFinishedProcedure(GetFinishedProcedureRequest getFinishedProcedureRequest) =>
