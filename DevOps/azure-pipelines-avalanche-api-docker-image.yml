@@ -210,6 +210,8 @@ stages:
        displayName: "Run Avalanche build"
        
      - template: 'pipeline\templates\veracode-agent-scan.yml@devops'
+       parameters: 
+        BuildScanPath: '$(PublishPath)'
 
 - stage: te_archive
   dependsOn: build
