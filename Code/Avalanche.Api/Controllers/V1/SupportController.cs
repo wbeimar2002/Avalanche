@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Avalanche.Api.Controllers.V1
@@ -261,6 +262,36 @@ namespace Avalanche.Api.Controllers.V1
 
                 await _medpresence.ExecuteInSessionCommand(request).ConfigureAwait(false);
                 return Ok();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, LoggerHelper.GetLogMessage(DebugLogType.Exception), ex);
+                return new BadRequestObjectResult(ex.Get(_environment.IsDevelopment()));
+            }
+            finally
+            {
+                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
+            }
+        }
+
+        [HttpGet("departments/{environment}")]
+        [ProducesResponseType(typeof(List<object>), StatusCodes.Status200OK)]
+        public async Task<IActionResult> GetProvisioningDepartments(string environment)
+        {
+            try
+            {
+                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
+                var list = new List<object> {
+                    new {
+                        Id = "Dep1",
+                        Value = "Dep1"
+                    },
+                    new {
+                        Id = "Dep2",
+                        Value = "Dep2"
+                    }
+                };
+                return Ok(list);
             }
             catch (Exception ex)
             {

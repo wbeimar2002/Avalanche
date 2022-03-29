@@ -417,7 +417,6 @@ namespace Avalanche.Api.Managers.Maintenance
                                 setting.SourceValues = AddTypes(values, types);
                                 break;
                             case VisualStyles.DropDownCustomList:
-                            case VisualStyles.DropDownCustomListWithSelectionChange:
                                 var customValues = await GetCustomValues(setting).ConfigureAwait(false);
                                 setting.SourceValues = GetDynamicList(setting, customValues);
                                 break;
@@ -434,23 +433,13 @@ namespace Avalanche.Api.Managers.Maintenance
                 case "Printers":
                     var printersResponse = await _printingService.GetPrinters().ConfigureAwait(false);
                     return JsonConvert.DeserializeObject<List<dynamic>>(JsonConvert.SerializeObject(printersResponse.Printers.Select(p => new { Name = p })));
-                case "Regions":
-                    //TODO: replace this with actual service call in the next sprint
-                    var regions = new List<ExpandoObject>();
 
-                    dynamic usRegion = new ExpandoObject();
-                    usRegion.Id = "us";
-                    usRegion.Value = "US";
-                    regions.Add(usRegion);
+                case "Medpresence-Environments":
+                    return JsonConvert.DeserializeObject<List<dynamic>>(JsonConvert.SerializeObject(new List<object>{new { Name = "Debug" }, new { Name = "Prod" } }));
 
-                    dynamic euRegion = new ExpandoObject();
-                    euRegion.Id = "eu";
-                    euRegion.Value = "EU";
-                    regions.Add(euRegion);
+                case "Medpresence-Departments":
+                    return JsonConvert.DeserializeObject<List<dynamic>>(JsonConvert.SerializeObject(new List<object> { new { Name = "Radiology" }, new { Name = "Cardiology" } }));
 
-                    var dynamicRegions = JsonConvert.DeserializeObject<List<dynamic>>(JsonConvert.SerializeObject(regions));
-
-                    return dynamicRegions;
                 default:
                     break;
             }
