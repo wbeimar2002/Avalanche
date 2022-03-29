@@ -32,6 +32,11 @@ stages:
   jobs:
 
   - job: build_test_publish
+    pool:
+      name: ism-build-pool-on-prem
+      ${{ if eq(variables['debug_build_configuration'],'true')}}:
+      demands:
+      - VC_Scan -equals YES   
     steps:
      
      - checkout: self
@@ -203,7 +208,9 @@ stages:
          script: |
           az pipelines build queue --definition-id $(CIBuildId) --detect --branch  $(BranchForMainBuild) --org $(AdoInstanceUrl) -p $(AdoProject)
        displayName: "Run Avalanche build"
-     
+       
+     - template: 'pipeline\templates\veracode-agent-scan.yml@devops'
+
 - stage: te_archive
   dependsOn: build
   condition: |
