@@ -5,6 +5,7 @@ using System.Linq;
 using System.Security.Claims;
 using Avalanche.Api.ViewModels.Security;
 using Avalanche.Shared.Domain.Models;
+using Avalanche.Shared.Infrastructure.Constants;
 using Avalanche.Shared.Infrastructure.Options;
 using Avalanche.Shared.Infrastructure.Security.Hashing;
 
@@ -84,15 +85,21 @@ namespace Avalanche.Api.Handlers.Security.Tokens
 
         private IEnumerable<Claim> GetClaims(UserModel user)
         {
-            var claims = new List<Claim>
+            var claims = new List<Claim>();
+            if (user.AutoLogin == true)
             {
-                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-                new Claim(JwtRegisteredClaimNames.Sub, user.UserName),
-                new Claim("Id", user.Id.ToString()),
-                new Claim("FirstName", user.FirstName),
-                new Claim("LastName", user.LastName),
-                new Claim("IsAdmin", user.IsAdmin?.ToString() ?? false.ToString(), ClaimValueTypes.Boolean)
-            };
+                claims.Add(new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()));
+                claims.Add(new Claim(AvalancheClaimTypes.AutoLogin, "true", ClaimValueTypes.Boolean));
+            }
+            else
+            {
+                claims.Add(new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()));
+                claims.Add(new Claim(JwtRegisteredClaimNames.Sub, user.UserName));
+                claims.Add(new Claim(AvalancheClaimTypes.Id, user.Id.ToString()));
+                claims.Add(new Claim(AvalancheClaimTypes.FirstName, user.FirstName));
+                claims.Add(new Claim(AvalancheClaimTypes.LastName, user.LastName));
+                claims.Add(new Claim(AvalancheClaimTypes.IsAdmin, user.IsAdmin?.ToString() ?? false.ToString(), ClaimValueTypes.Boolean));
+            }
 
             //TODO: Don't delete this need to be added in the future
             //foreach (var userRole in user.UserRoles)

@@ -4,6 +4,7 @@ using Avalanche.Api.Handlers;
 using Avalanche.Api.Handlers.Security.Tokens;
 using Avalanche.Api.Hubs;
 using Avalanche.Api.Managers;
+using Avalanche.Api.Managers.AutoLogin;
 using Avalanche.Api.Managers.Data;
 using Avalanche.Api.Managers.Licensing;
 using Avalanche.Api.Managers.Maintenance;
@@ -185,6 +186,7 @@ namespace Avalanche.Api
             services.AddSingleton<ISecurityService, SecurityService>();
             services.AddSingleton<IPasswordHasher, BcryptPasswordHasher>();
             services.AddSingleton<ITokenHandler, TokenHandler>();
+            services.AddSingleton<IAutoLoginManager, AutoLoginManager>();
 
             // gRPC Infrastructure
             _ = services.AddConfigurationPoco<GrpcServiceRegistry>(_configuration, nameof(GrpcServiceRegistry));
@@ -240,6 +242,9 @@ namespace Avalanche.Api
 
         private void ConfigureAuthorization(IServiceCollection services)
         {
+            // Add configuration for AutoLogin
+            services.AddConfigurationPoco<AutoLoginConfiguration>(_configuration, nameof(AutoLoginConfiguration));
+
             // Add configuration for Auth
             services.AddConfigurationPoco<TokenAuthConfiguration>(_configuration, nameof(TokenAuthConfiguration));
             services.AddConfigurationPoco<AuthConfiguration>(_configuration, nameof(AuthConfiguration));

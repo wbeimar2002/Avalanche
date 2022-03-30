@@ -14,5 +14,6 @@ namespace Avalanche.Shared.Domain.Models
         public string? IdnId { get; set; }
         public string? SiteId { get; set; }
         public string? SystemId { get; set; }
+        public bool? AutoLogin { get; set; }
     }
 }
