@@ -433,13 +433,8 @@ namespace Avalanche.Api.Managers.Maintenance
                 case "Printers":
                     var printersResponse = await _printingService.GetPrinters().ConfigureAwait(false);
                     return JsonConvert.DeserializeObject<List<dynamic>>(JsonConvert.SerializeObject(printersResponse.Printers.Select(p => new { Name = p })));
-
                 case "Medpresence-Environments":
-                    return JsonConvert.DeserializeObject<List<dynamic>>(JsonConvert.SerializeObject(new List<object>{new { Name = "Debug" }, new { Name = "Prod" } }));
-
-                case "Medpresence-Departments":
-                    return JsonConvert.DeserializeObject<List<dynamic>>(JsonConvert.SerializeObject(new List<object> { new { Name = "Radiology" }, new { Name = "Cardiology" } }));
-
+                    return JsonConvert.DeserializeObject<List<dynamic>>(JsonConvert.SerializeObject(new List<object> { new { Name = "Debug" }, new { Name = "Te" }, new { Name = "Prod" } }));
                 default:
                     break;
             }

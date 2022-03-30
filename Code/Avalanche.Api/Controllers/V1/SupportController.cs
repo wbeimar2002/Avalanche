@@ -274,9 +274,69 @@ namespace Avalanche.Api.Controllers.V1
             }
         }
 
-        [HttpGet("departments/{environment}")]
+        [HttpGet("regions/{environment}")]
         [ProducesResponseType(typeof(List<object>), StatusCodes.Status200OK)]
-        public async Task<IActionResult> GetProvisioningDepartments(string environment)
+        public async Task<IActionResult> GetProvisioningRegions(string environment)
+        {
+            try
+            {
+                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
+                var list = new List<object> {
+                    new {
+                        Id = "us",
+                        Value = "US"
+                    },
+                    new {
+                        Id = "eu",
+                        Value = "EU"
+                    }
+                };
+                return Ok(list);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, LoggerHelper.GetLogMessage(DebugLogType.Exception), ex);
+                return new BadRequestObjectResult(ex.Get(_environment.IsDevelopment()));
+            }
+            finally
+            {
+                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
+            }
+        }
+
+        [HttpGet("customers/{region}")]
+        [ProducesResponseType(typeof(List<object>), StatusCodes.Status200OK)]
+        public async Task<IActionResult> GetProvisioningCustomers(string region)
+        {
+            try
+            {
+                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
+                var list = new List<object> {
+                    new {
+                        Id = "image stream medical",
+                        Value = "Image Stream Medical"
+                    },
+                    new {
+                        Id = "olympus",
+                        Value = "Olympus"
+                    }
+                };
+                return Ok(list);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, LoggerHelper.GetLogMessage(DebugLogType.Exception), ex);
+                return new BadRequestObjectResult(ex.Get(_environment.IsDevelopment()));
+            }
+            finally
+            {
+                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
+            }
+        }
+
+        [HttpGet("departments/{customername}")]
+        [ProducesResponseType(typeof(List<object>), StatusCodes.Status200OK)]
+        public async Task<IActionResult> GetProvisioningDepartments(string customerName)
         {
             try
             {
@@ -289,6 +349,36 @@ namespace Avalanche.Api.Controllers.V1
                     new {
                         Id = "Dep2",
                         Value = "Dep2"
+                    }
+                };
+                return Ok(list);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, LoggerHelper.GetLogMessage(DebugLogType.Exception), ex);
+                return new BadRequestObjectResult(ex.Get(_environment.IsDevelopment()));
+            }
+            finally
+            {
+                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Completed));
+            }
+        }
+
+        [HttpGet("specialities/{department}")]
+        [ProducesResponseType(typeof(List<object>), StatusCodes.Status200OK)]
+        public async Task<IActionResult> GetProvisioningSpecialities(string department)
+        {
+            try
+            {
+                _logger.LogDebug(LoggerHelper.GetLogMessage(DebugLogType.Requested));
+                var list = new List<object> {
+                    new {
+                        Id = "mri",
+                        Value = "MRI"
+                    },
+                    new {
+                        Id = "ct",
+                        Value = "CT"
                     }
                 };
                 return Ok(list);
